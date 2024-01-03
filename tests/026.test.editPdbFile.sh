@@ -4,7 +4,7 @@ printf "Testing 026.test.editPDB.cpp... ~2 seconds. "
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
 
-if [[ "${GMML_ROOT_DIR}" != *"gmml" ]]; then
+if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 026 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
     exit 1
 fi
