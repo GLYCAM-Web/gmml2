@@ -18,14 +18,14 @@ AUTO_TESTIN_TIME=0
 #gmml and we just check there are a couple key files. This is not a very good idea BUT it is better than
 #nothing. GEMSHOME requirement was taken out in order to help decrease complexity and help make life a
 #bit easier for users trying to build GMML from scratch
-if [[ "$(pwd)" == *"gmml" ]] && [ -f cmakeFileLists/cFileList.txt ] && [ -f cmakeFileLists/externalHDirectoryList.txt ] && [ -f cmakeFileLists/hDirectoryList.txt ] && [ -f CMakeLists.txt ]; then
+if [[ "$(pwd)" == *"gmml2" ]] && [ -f cmakeFileLists/cFileList.txt ] && [ -f cmakeFileLists/externalHDirectoryList.txt ] && [ -f cmakeFileLists/hDirectoryList.txt ] && [ -f CMakeLists.txt ]; then
     echo "Lazy check to see you are running the script in the actual gmml directory passed so"
     echo "continuing script. If you are not running this script in the actual gmml directory"
     echo -e "it exists in stuff is probably gonna break so please dont do that"
 else
     echo -e "${ERROR_STYLE}ERROR:${RESET_STYLE}\tThe GMML make.sh script expects you to be running the script from"
     echo -e "\tthe same directory it exists in. Furthermore, the script expects to"
-    echo -e "\tbe within a directory whose name ends with \"gmml\" so please"
+    echo -e "\tbe within a directory whose name ends with \"gmml2\" so please"
     echo -e "\tkeep that in mind.\n\nExiting...."
     exit 1
 fi
