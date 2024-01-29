@@ -15,8 +15,6 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-cp -r "${GMML_ROOT_DIR}"/.hooks/* "${GMML_ROOT_DIR}"/.git/hooks/
-
 FAILED_FILES=()
 PASSED_FILES=()
 

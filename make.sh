@@ -176,6 +176,24 @@ optionsBorked()
     esac
 }
 
+checkConfigHooks()
+{
+    if [ "$(git config --list | grep 'core.hookspath')" != "core.hookspath=.hooks/" ]; then
+        echo -e "${INFO_STYLE}WARNING: YOUR GIT HOOKS PATH IS NOT SET TO THE CORRECT DIRECTORY.
+If planning to push, ensure that your \'core.hooksPath\' value in your gitconfig
+is set to the .hooks directory
+This can be fixed now or rerun the script with the \'-i\' flag${RESET_STYLE}"
+
+        read -p "Change core.hooksPath to the correct value? (y/n): " value
+        case "${value:0:1}" in
+            y | Y)
+                git config --local core.hooksPath .hooks/
+                ;;
+            *) ;;
+        esac
+    fi
+}
+
 ################################################################
 #########              CREATE CLIENT HOOKS             #########
 ################################################################
@@ -240,8 +258,13 @@ NMP=4
 # Please refer to https://blog.feabhas.com/2021/07/cmake-part-1-the-dark-arts/
 # Follow the paradigm
 #check the compile_run_tests.sh file for a description of what this stuff is
-while getopts "j:o:cwhd:" option; do
+while getopts "j:o:cwhd:i" option; do
     case "${option}" in
+        #may make this multi option so we can init for stuff like cppcheck etc.
+        i)
+            #this is just gonna be the git hook initialization
+            git config --local core.hooksPath .hooks/
+            ;;
         j)
             jIn="${OPTARG}"
             if [[ "${jIn}" =~ ^[1-9][0-9]*$ ]]; then
@@ -331,6 +354,9 @@ echo -e "Steps this script takes:
 "
 #check our file lists before we do anything
 checkCMakeFileLists
+
+#check our git config for hooks being proper point 2
+checkConfigHooks
 
 ################################################################
 #########                  COMPILE GMML                #########

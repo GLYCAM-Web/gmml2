@@ -94,11 +94,6 @@ ensure_feature_close()
     fi
 }
 
-## OG Oct 2021 have the hooks update themselves.
-#TODO: Do this more auto like, if this script is updated the first run the next time will not
-#reflect the made changes due to the old script calling the copy then continuing.
-cp -r "${GMML_DIR}"/.hooks/* "${GMML_DIR}"/.git/hooks/
-
 #imagine this means "check if current branch is behind origin of the same branch". Basically all
 #we are doing are checking either the GEMS or GMML repo to ensure there are no commits that the
 #user has not pulled.
