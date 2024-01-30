@@ -9,6 +9,8 @@ ERROR_STYLE='\033[0;31m\033[1m'
 #variable that will be used to check if we are trying to run any linting
 #on our test files
 AUTO_TESTIN_TIME=0
+#Run cppcheck, bool
+CPPCHECK=0
 
 ################################################################
 #########                 PreCheck                     #########
@@ -145,6 +147,12 @@ Options are as follows:
 \t\t\t\t\t\ton our codebase. Eventually will also be used to check
 \t\t\t\t\t\tour test coverage but that is in the future. Note this
 \t\t\t\t\t\tbreaks the abilitiy to compile the code!
+\t-t\t\t\tTooling functionalities
+\t\tcppcheck\t\tRemakes the library correctly for cpp check to analyze
+\t\t\t\t\t\tand runs cppcheck on the project.
+\t\t\t\t\t\tWARNING: This implies the \'no_wrap\' flag, will delete
+\t\t\t\t\t\t\tany built code/intermediate files, and trigger a
+\t\t\t\t\t\t\t total rebuild.
 \t-h\t\t\tPrint this help message and exit
 *************************************************************
 Exiting."
@@ -258,8 +266,17 @@ NMP=4
 # Please refer to https://blog.feabhas.com/2021/07/cmake-part-1-the-dark-arts/
 # Follow the paradigm
 #check the compile_run_tests.sh file for a description of what this stuff is
-while getopts "j:o:cwhd:i" option; do
+while getopts "j:o:cwhd:it:" option; do
     case "${option}" in
+        t)
+            if [ "${OPTARG}" == "cppcheck" ]; then
+                CMAKE_NOWRAP_FLAG="-DDEBUG_NO_WRAP=True"
+                CPPCHECK=1
+            else
+
+                optionsBorked "${option}" "badArg"
+            fi
+            ;;
         #may make this multi option so we can init for stuff like cppcheck etc.
         i)
             #this is just gonna be the git hook initialization
@@ -412,6 +429,10 @@ make -j"${NMP}" "${MAKE_TARGET}" ||
         exit 1
     }
 cd ..
+
+if [[ "${CPPCHECK}" -eq 1 ]]; then
+    cppcheck --project=./cmakeBuild/compile_commands.json
+fi
 
 ################################################################
 #########              WRAP UP TO GEMS                 #########
