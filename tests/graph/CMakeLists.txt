@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13.4)
-
+set( CMAKE_VERBOSE_MAKEFILE ON )
 #you always have to create a project. This is what your files
 #are named, how you create objects, etc.
 project(glygraph VERSION 0.0.1 DESCRIPTION "GLYCAM Graph Library")
@@ -61,10 +61,20 @@ set_target_properties( gmml PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/..
 #add a library that will be an object libary built out of all our cfiles. Dunno if this should stay shared
 add_library(${PROJECT_NAME} SHARED graph.cpp)
 
+target_include_directories(
+    ${PROJECT_NAME} PUBLIC
+    "${CMAKE_SOURCE_DIR}/../../"
+    #"${CMAKE_SOURCE_DIR}/../../includes/MolecularModeling/TemplateGraph/Algorithms/include"
+	#"${CMAKE_SOURCE_DIR}/../../includes/MolecularModeling/TemplateGraph/GraphStructure/include"
+    #"${CMAKE_SOURCE_DIR}/../../includes/MolecularModeling/TemplateGraph/LazyPrints"
+	)
+
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -W)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
 target_link_libraries(${PROJECT_NAME} gmml)
-target_link_libraries(${PROJECT_NAME} stdc++fs)
+#target_link_libraries(${PROJECT_NAME} stdc++fs)
 
 #tryna figure out wtf is happening.....
 get_property(HALP TARGET gmml PROPERTY LOCATION)
