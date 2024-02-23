@@ -10,8 +10,6 @@ NMP=1
 VALGRIND_COMM=""
 CACHEGRIND_COMM=""
 
-#gets full path of all directories matching <NUM><NUM><NUM>.test.<testName>/
-TEST_DIRS=$(find . -maxdepth 1 -type d -regex "\./[0-9][0-9][0-9].test.*" -exec realpath {} \; 2>/dev/null)
 printHelp()
 {
     echo -e "\t========= GMML TEST RUNNER SCRIPT =========
@@ -29,13 +27,14 @@ Options are as follows:
 \t-t\t\t\tRun a tool on each test, and save the output to a file
 \t\tcache\t\t\tRun \"cool command\" on each test
 \t\tval\t\t\tRun valgrind with sane-ish options on each test
+\t-s <NUM>\t\tSnipe run that begins with <NUM>
 \t-h\t\t\tPrint this help message and exit
 *************************************************************
 Exiting."
     exit 1
 }
 
-while getopts "j:fp:t:h" option; do
+while getopts "j:fp:t:hs:" option; do
     case "${option}" in
         j)
             if [[ "${OPTARG}" =~ ^[1-9][0-9]*$ ]]; then
@@ -55,6 +54,18 @@ while getopts "j:fp:t:h" option; do
             else
                 printHelp
             fi
+            ;;
+        s)
+            if ! [[ "${OPTARG}" =~ [0-9][0-9][0-9] ]]; then
+                printHelp
+            fi
+            DIR_ADD=$(find . -maxdepth 1 -type d -regex "\./${OPTARG}.test.*" -exec realpath {} \; 2>/dev/null)
+            #dumb way to get around figuring out how to get find to return 1 on failure and do the full path
+            if [ -z "${DIR_ADD}" ]; then
+                echo "ERROR: Could not find dir starting with ${OPTARG}"
+                exit 1
+            fi
+            TEST_DIRS+=("${DIR_ADD}")
             ;;
         t)
             if [ "${OPTARG}" == "cache" ]; then
@@ -81,7 +92,12 @@ while getopts "j:fp:t:h" option; do
     esac
 done
 
-for DIR in ${TEST_DIRS}; do
+#gets full path of all directories matching <NUM><NUM><NUM>.test.<testName>/
+if [[ ${#TEST_DIRS[@]} == 0 ]]; then
+    TEST_DIRS=($(find . -maxdepth 1 -type d -regex "\./[0-9][0-9][0-9].test.*" -exec realpath {} \; 2>/dev/null))
+fi
+
+for DIR in "${TEST_DIRS[@]}"; do
 
     cd "${DIR}" || {
         echo "ERROR: Cannot cd into ${DIR}"
@@ -93,7 +109,6 @@ for DIR in ${TEST_DIRS}; do
             #possibly switch to -rf
             echo "ERROR: build directory for ${DIR} already exists"
             exit 1
-
         fi
         rm -r "${DIR}/build"
         mkdir build
@@ -141,7 +156,7 @@ for DIR in ${TEST_DIRS}; do
             #shorts to next loop iteration
             continue
         }
-    echo "PASSED: $(basename ${DIR})"
+    echo "PASSED: $(basename "${DIR}")"
 
     if [[ ${KEEP_LOG} == 0 ]]; then
         rm "${LOG_FILE}"
@@ -150,4 +165,5 @@ for DIR in ${TEST_DIRS}; do
     if [[ ${KEEP_BUILD} == 0 ]]; then
         rm -r "${DIR}"/build
     fi
+
 done
