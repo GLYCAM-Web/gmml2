@@ -54,36 +54,39 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0 -DNDEBUG")
 
 ################## END SETTING BASE COMPILE FLAGS ###################
-
-add_library(gmml SHARED IMPORTED PUBLIC)
-set_target_properties( gmml PROPERTIES IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/../../lib/libgmml.so")
-
 #add a library that will be an object libary built out of all our cfiles. Dunno if this should stay shared
 add_library(${PROJECT_NAME} SHARED graph.cpp)
 
-target_include_directories(
-    ${PROJECT_NAME} PUBLIC
-    "${CMAKE_SOURCE_DIR}/../../"
-    #"${CMAKE_SOURCE_DIR}/../../includes/MolecularModeling/TemplateGraph/Algorithms/include"
-	#"${CMAKE_SOURCE_DIR}/../../includes/MolecularModeling/TemplateGraph/GraphStructure/include"
-    #"${CMAKE_SOURCE_DIR}/../../includes/MolecularModeling/TemplateGraph/LazyPrints"
-	)
+#help to have abs paths
+get_filename_component(GMML_BASE_DIR "${CMAKE_SOURCE_DIR}../../../" ABSOLUTE)
 
-target_compile_options(${PROJECT_NAME} PUBLIC -Wall -W)
+#Set up paths to gmml.so lib stuff
+add_library(gmml SHARED IMPORTED PUBLIC)
+set_target_properties(gmml PROPERTIES IMPORTED_LOCATION "${GMML_BASE_DIR}/lib/libgmml.so")
 
+#set up our header sources for the executable
+set(HEADER_FILES
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/Algorithms/include/SubgraphMatching.hpp
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/GraphStructure/include/Edge.hpp
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/LazyPrints/LazyPrinters.hpp
+    ${GMML_BASE_DIR}/includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp
+    )
+
+
+add_executable(test graph.cpp ${HEADER_FILES})
+target_link_libraries(test gmml)
+
+include_directories("${GMML_BASE_DIR}")
+
+target_compile_options(test PUBLIC -Wall -W)
+
+#multithread supp
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
-target_link_libraries(${PROJECT_NAME} gmml)
-#target_link_libraries(${PROJECT_NAME} stdc++fs)
-
-#tryna figure out wtf is happening.....
-get_property(HALP TARGET gmml PROPERTY LOCATION)
-message(STATUS ${HALP})
-
-add_executable(testDriver graph.cpp)
-#lole need to do this proper.
-#Currently thinking of having files read in as one arg then
-#other arg(s) are the algo/tests to run
+#Actually have our testing
 #enable_testing()
-#add_test(NAME testDriver_test
-#            COMMAND cmp testDriver "${CMAKE_SOURCE_DIR}/graphTest.txt")
+#add_test(NAME test_test
+#            COMMAND cmp test "${CMAKE_SOURCE_DIR}/graphTest.txt")
