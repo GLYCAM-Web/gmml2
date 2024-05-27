@@ -49,6 +49,7 @@ Assembly& Assembly::operator=(Assembly other)
 std::vector<Molecule*> Assembly::getMolecules() const
 {
     std::vector<Molecule*> molecules;
+    molecules.reserve(molecules_.size());
     for (auto& molPtr : molecules_)
     {
         molecules.push_back(molPtr.get());

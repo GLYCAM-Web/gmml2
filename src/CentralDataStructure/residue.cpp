@@ -70,6 +70,7 @@ Residue& Residue::operator=(Residue other)
 std::vector<Atom*> Residue::getAtoms() const
 {
     std::vector<Atom*> atoms;
+    atoms.reserve(atoms_.size());
     for (auto& atomPtr : atoms_)
     {
         atoms.push_back(atomPtr.get());
@@ -93,9 +94,10 @@ const std::string Residue::GetParmName() const // If terminal, need to look up e
 std::vector<std::string> Residue::getAtomNames() const
 {
     std::vector<std::string> foundAtomNames;
-    for (auto& atom : this->getAtoms())
+    foundAtomNames.reserve(atoms_.size());
+    for (auto& atom : atoms_)
     {
-        foundAtomNames.push_back(atom->getName());
+        foundAtomNames.push_back(atom.get()->getName());
     }
     return foundAtomNames;
 }

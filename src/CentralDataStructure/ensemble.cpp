@@ -76,6 +76,7 @@ std::vector<Molecule*> Ensemble::getMolecules() const
 std::vector<Assembly*> Ensemble::getAssemblies() const
 {
     std::vector<Assembly*> assemblies;
+    assemblies.reserve(assemblies_.size());
     for (auto& assPtr : assemblies_)
     {
         assemblies.push_back(assPtr.get()); // raw ptr from unique_ptr

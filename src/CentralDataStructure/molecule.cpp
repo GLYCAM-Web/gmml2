@@ -54,6 +54,7 @@ Molecule& Molecule::operator=(Molecule other)
 std::vector<Residue*> Molecule::getResidues() const
 {
     std::vector<Residue*> residues;
+    residues.reserve(residues_.size());
     for (auto& residuePtr : residues_)
     {
         residues.push_back(residuePtr.get());
