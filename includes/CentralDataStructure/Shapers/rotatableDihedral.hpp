@@ -152,8 +152,7 @@ namespace cds
                                                      std::vector<cds::Atom*>& overlapAtomSet2,
                                                      const int& angleIncrement, const double& lowerBound,
                                                      const double& upperBound);
-        unsigned int WiggleWithinRangesDistanceCheck(std::vector<cds::Residue*>& overlapResidueSet1,
-                                                     std::vector<cds::Residue*>& overlapResidueSet2,
+        unsigned int WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
                                                      const int& angleIncrement, const double& lowerBound,
                                                      const double& upperBound);
 

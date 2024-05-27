@@ -8,20 +8,34 @@
 
 #include <sstream>
 #include <vector>
+#include <utility>
 #include <iostream>
 
 namespace cds
 {
-    using cds::Atom;
+    struct ResidueAtomOverlapInput
+    {
+        bool isPartOfDihedral;
+        Coordinate geometricCenter;
+        std::vector<Coordinate*> coordinates;
+    };
+
+    typedef std::pair<std::vector<ResidueAtomOverlapInput>, std::vector<ResidueAtomOverlapInput>>
+        ResidueAtomOverlapInputPair;
+
+    void setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair);
+    ResidueAtomOverlapInputPair toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
+                                                          const std::vector<Residue*>& residuesB);
+
     double CalculateAtomicOverlaps(Atom* atomA, Atom* atomB, double radiusA = 0.0, double radiusB = 0.0);
     double CalculateAtomicOverlaps(std::vector<Atom*> atomsA, std::vector<Atom*> atomsB, bool print = false);
     double CalculateAtomicOverlapsBetweenNonBondedAtoms(std::vector<Atom*>& atomsA, std::vector<Atom*>& atomsB);
-    unsigned int CountOverlappingResidues(const std::vector<cds::Residue*>& residuesA,
-                                          const std::vector<cds::Residue*>& residuesB);
+    unsigned int CountOverlappingResidues(const std::vector<Residue*>& residuesA,
+                                          const std::vector<Residue*>& residuesB);
     unsigned int CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    unsigned int CountOverlappingAtoms(const std::vector<cds::Residue*>& residuesA,
-                                       const std::vector<cds::Residue*>& residuesB);
-    unsigned int CountOverlappingCoordinates(const std::vector<cds::Coordinate*>& coordsA,
-                                             const std::vector<cds::Coordinate*>& coordsB);
+    unsigned int CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInput>& residuesA,
+                                       const std::vector<ResidueAtomOverlapInput>& residuesB);
+    unsigned int CountOverlappingCoordinates(const std::vector<Coordinate*>& coordsA,
+                                             const std::vector<Coordinate*>& coordsB);
 } // namespace cds
 #endif

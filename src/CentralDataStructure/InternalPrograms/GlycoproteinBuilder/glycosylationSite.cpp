@@ -222,7 +222,7 @@ void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
     std::vector<cds::Residue*> allOtherGlycanResidues;
     for (auto& other_glycosite : this->GetOtherGlycosites())
     {
-        std::vector otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
+        std::vector<Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
         allOtherGlycanResidues.insert(allOtherGlycanResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
     }
     for (auto& glycoLinkage : this->GetGlycan()->GetGlycosidicLinkages())
@@ -282,7 +282,8 @@ unsigned int GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
 unsigned int GlycosylationSite::CountOverlaps(const std::vector<Residue*>& residuesA,
                                               const std::vector<Residue*>& residuesB)
 {
-    return cds::CountOverlappingAtoms(residuesA, residuesB);
+    auto input = cds::toResidueAtomOverlapInput(residuesA, residuesB);
+    return cds::CountOverlappingAtoms(input.first, input.second);
 }
 
 void GlycosylationSite::PrintOverlaps()
@@ -408,7 +409,7 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
                                this->GetOtherProteinResidues().end());
         for (auto& other_glycosite : this->GetOtherGlycosites())
         {
-            std::vector otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
+            std::vector<cds::Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
             overlapResidues.insert(overlapResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
         }
     }
