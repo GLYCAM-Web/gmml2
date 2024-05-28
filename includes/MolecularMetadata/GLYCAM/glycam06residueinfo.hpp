@@ -20,6 +20,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <utility>
 
 namespace gmml
 {
@@ -65,7 +66,7 @@ namespace gmml
                 {
                     std::vector<std::string> matching_types;
                     // Iterate over the multimap using range based for loop
-                    for (std::pair<std::string, std::string> elem : glycam06NamesToTypesLookupMap_)
+                    for (auto& elem : glycam06NamesToTypesLookupMap_)
                     {
                         if (elem.first.compare(query) == 0)
                         {
@@ -77,7 +78,7 @@ namespace gmml
                 }
 
               private:
-                std::multimap<std::string, std::string> glycam06NamesToTypesLookupMap_;
+                std::vector<std::pair<std::string, std::string>> glycam06NamesToTypesLookupMap_;
             };
         } // namespace GLYCAM
     }     // namespace MolecularMetadata
