@@ -5,7 +5,9 @@ using cds::RotationMatrix;
 // Constructors:
 RotationMatrix::RotationMatrix(Coordinate* direction, Coordinate* parent, double angle) // the way
 {
-    matrix_ = std::vector<std::vector<double>>(3, std::vector<double>(4, 0.0));
+    matrix_ = std::array<std::array<double, 4>, 3> {
+        {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}
+    };
     direction->Normalize();
     double u = direction->GetX();
     double v = direction->GetY();

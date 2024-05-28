@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_ROTATIONMATRIX_HPP_
 
 #include "includes/CentralDataStructure/coordinate.hpp"
+#include <array>
 #include <vector>
 
 namespace cds
@@ -19,7 +20,7 @@ namespace cds
         void rotateCoordinates(std::vector<Coordinate*> coords);
 
       private:
-        std::vector<std::vector<double>> matrix_;
+        std::array<std::array<double, 4>, 3> matrix_;
     };
 
 } // namespace cds
