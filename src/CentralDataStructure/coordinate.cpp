@@ -64,21 +64,6 @@ void Coordinate::Translate(double x, double y, double z)
     z_ += z;
 }
 
-bool Coordinate::withinDistance(const Coordinate* coordinate, const double distance) const
-{ // Vast majority of calls to this function will be able to return false after first if.
-    if (this->GetX() - coordinate->GetX() < distance)
-    {
-        if (this->GetY() - coordinate->GetY() < distance)
-        {
-            if (this->Distance(coordinate) < distance) // Need to test if also checking Z is faster.
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 double Coordinate::Distance(const Coordinate* coordinate) const
 {
     double dist = (x_ - coordinate->GetX()) * (x_ - coordinate->GetX()) +

@@ -35,7 +35,7 @@ namespace atomicBonds
     {
         // std::mutex mtx;           // mutex for critical section
         double maxLength = atomicBonds::getMaxBondLengthByAtomType(atom1->getElement(), atom2->getElement());
-        if (atom1->getCoordinate()->withinDistance(atom2->getCoordinate(), maxLength))
+        if (withinDistance(maxLength, *atom1->getCoordinate(), *atom2->getCoordinate()))
         {
             // std::lock_guard<std::mutex> guard(mtx); // pre C++17 version
             // std::lock_guard guard(mtx);//RAII, the mutex will be unlocked upon guard destruction. Exception safe.

@@ -163,8 +163,7 @@ double cds::CalculateAtomicOverlaps(std::vector<cds::Atom*> atomsA, std::vector<
         for (auto& atomB : atomsB)
         { // if not the same atom (index is unique)
             if ((atomA->getIndex() != atomB->getIndex()) &&
-                (cds::CheckIfOtherCoordinateIsWithinDistance(atomA->getCoordinate(), atomB->getCoordinate(),
-                                                             constants::maxCutOff * 2)))
+                (cds::withinDistance(constants::maxCutOff * 2, *atomA->getCoordinate(), *atomB->getCoordinate())))
             {
                 currentOverlap = cds::CalculateAtomicOverlaps(atomA, atomB);
                 totalOverlap   += currentOverlap;
@@ -204,8 +203,7 @@ double cds::CalculateAtomicOverlapsBetweenNonBondedAtoms(std::vector<cds::Atom*>
                 }
             }
             if ((isNeighbor == false) && (atomA->getIndex() != atomB->getIndex()) &&
-                (cds::CheckIfOtherCoordinateIsWithinDistance(atomA->getCoordinate(), atomB->getCoordinate(),
-                                                             constants::maxCutOff)))
+                (cds::withinDistance(constants::maxCutOff, *atomA->getCoordinate(), *atomB->getCoordinate())))
             {
                 totalOverlap += cds::CalculateAtomicOverlaps(atomA, atomB);
             }
@@ -225,8 +223,8 @@ unsigned int cds::CountOverlappingResidues(const std::vector<cds::Residue*>& res
         const Coordinate* residueA_Center = residueA->calculateGeometricCenter();
         for (auto& residueB : residuesB)
         {
-            overlapCount += cds::CheckIfOtherCoordinateIsWithinDistance(residueA_Center, residueB->getGeometricCenter(),
-                                                                        constants::residueDistanceOverlapCutoff);
+            overlapCount += cds::withinDistance(constants::residueDistanceOverlapCutoff, *residueA_Center,
+                                                *residueB->getGeometricCenter());
         }
     }
     return overlapCount;
@@ -239,8 +237,7 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, c
     {
         for (auto& atomB : atomsB)
         {
-            overlapCount += cds::CheckIfOtherCoordinateIsWithinDistance(atomA->getCoordinate(), atomB->getCoordinate(),
-                                                                        constants::maxCutOff);
+            overlapCount += cds::withinDistance(constants::maxCutOff, *atomA->getCoordinate(), *atomB->getCoordinate());
         }
     }
     return overlapCount;
@@ -255,8 +252,8 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInpu
         for (auto& residueB : residuesB)
         {
             if (!(residueA.isPartOfDihedral && residueB.isPartOfDihedral) &&
-                cds::CheckIfOtherCoordinateIsWithinDistance(&residueA.geometricCenter, &residueB.geometricCenter,
-                                                            constants::residueDistanceOverlapCutoff))
+                cds::withinDistance(constants::residueDistanceOverlapCutoff, residueA.geometricCenter,
+                                    residueB.geometricCenter))
             {
                 overlapCount += cds::CountOverlappingCoordinates(residueA.coordinates, residueB.coordinates);
             }
@@ -273,7 +270,7 @@ unsigned int cds::CountOverlappingCoordinates(const std::vector<cds::Coordinate*
     {
         for (auto& coordB : coordsB)
         {
-            overlapCount += cds::CheckIfOtherCoordinateIsWithinDistance(coordA, coordB, constants::maxCutOff);
+            overlapCount += cds::withinDistance(constants::maxCutOff, *coordA, *coordB);
         }
     }
     return overlapCount;

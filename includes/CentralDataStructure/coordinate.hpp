@@ -70,7 +70,6 @@ namespace cds
         //                         FUNCTIONS                    //
         //////////////////////////////////////////////////////////
         void Translate(const double x, const double y, const double z);
-        bool withinDistance(const Coordinate* coordinate, const double distance) const;
         double Distance(const Coordinate* coordinate) const;
         double length() const;
         void Normalize();
@@ -112,5 +111,13 @@ namespace cds
         double y_ = constants::dNotSet;
         double z_ = constants::dNotSet;
     };
+
+    inline bool withinDistance(double distance, const Coordinate& a, const Coordinate& b)
+    {
+        double dx = a.GetX() - b.GetX();
+        double dy = a.GetY() - b.GetY();
+        double dz = a.GetZ() - b.GetZ();
+        return (dx * dx + dy * dy + dz * dz) < distance * distance;
+    }
 } // namespace cds
 #endif
