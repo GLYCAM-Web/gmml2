@@ -15,7 +15,7 @@ namespace cds
             delete; // I only want the class to be instantiated in a certain way. These deleted ctors allow this.
         RotationMatrix(const RotationMatrix&)            = delete;
         RotationMatrix& operator=(const RotationMatrix&) = delete;
-        RotationMatrix(Coordinate* direction, Coordinate* parent, double angle); // the way
+        RotationMatrix(Coordinate direction, const Coordinate& parent, double angle); // the way
         // Functions
         void rotateCoordinates(std::vector<Coordinate*> coords);
 

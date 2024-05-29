@@ -5,19 +5,19 @@
 using cds::RotationMatrix;
 
 // Constructors:
-RotationMatrix::RotationMatrix(Coordinate* direction, Coordinate* parent, double angle) // the way
+RotationMatrix::RotationMatrix(Coordinate direction, const Coordinate& parent, double angle) // the way
 {
     matrix_ = std::array<std::array<double, 4>, 3> {
         {{0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0}}
     };
-    direction->Normalize();
-    double u = direction->GetX();
-    double v = direction->GetY();
-    double w = direction->GetZ();
+    direction = normal(direction);
+    double u  = direction.GetX();
+    double v  = direction.GetY();
+    double w  = direction.GetZ();
 
-    double a = parent->GetX();
-    double b = parent->GetY();
-    double c = parent->GetZ();
+    double a = parent.GetX();
+    double b = parent.GetY();
+    double c = parent.GetZ();
 
     double u2                 = u * u;
     double v2                 = v * v;
@@ -48,14 +48,13 @@ RotationMatrix::RotationMatrix(Coordinate* direction, Coordinate* parent, double
 // Functions
 void RotationMatrix::rotateCoordinates(std::vector<Coordinate*> coords)
 {
+    auto col = [&](const Coordinate& coord, int n)
+    {
+        auto& m = matrix_[n];
+        return dotProduct(coord, {m[0], m[1], m[2]}) + m[3];
+    };
     for (auto& coord : coords)
     {
-        double x = matrix_[0][0] * coord->GetX() + matrix_[0][1] * coord->GetY() + matrix_[0][2] * coord->GetZ() +
-                   matrix_[0][3];
-        double y = matrix_[1][0] * coord->GetX() + matrix_[1][1] * coord->GetY() + matrix_[1][2] * coord->GetZ() +
-                   matrix_[1][3];
-        double z = matrix_[2][0] * coord->GetX() + matrix_[2][1] * coord->GetY() + matrix_[2][2] * coord->GetZ() +
-                   matrix_[2][3];
-        coord->Set(x, y, z);
+        coord->set({col(*coord, 0), col(*coord, 1), col(*coord, 2)});
     }
 }

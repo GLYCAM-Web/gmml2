@@ -19,9 +19,7 @@ void cds::ReplaceCoordinatesFromMatrix(std::vector<Coordinate*>* coordinates, Ei
     for (std::vector<Coordinate*>::iterator coordinate = coordinates->begin(); coordinate != coordinates->end();
          ++coordinate)
     {
-        (*coordinate)->SetX((*matrix)(0, col));
-        (*coordinate)->SetY((*matrix)(1, col));
-        (*coordinate)->SetZ((*matrix)(2, col));
+        (*coordinate)->set({(*matrix)(0, col), (*matrix)(1, col), (*matrix)(2, col)});
         ++col;
     }
 }

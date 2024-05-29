@@ -18,7 +18,5 @@ namespace cds
     Coordinate calculateCoordinateFromInternalCoords(const Coordinate& a, const Coordinate& b, const Coordinate& c,
                                                      double angle_Degrees, double dihedral_Degrees,
                                                      double distance_Angstrom);
-    Coordinate subtractCoordinates(const Coordinate& minuaend, const Coordinate& subtrahend);
-    double CalculateMaxDistanceBetweenCoordinates(std::vector<Coordinate*> coords);
 } // namespace cds
 #endif /* INCLUDES_CENTRALDATASTRUCTURE_MEASUREMENTS_MEASUREMENTS_HPP_ */

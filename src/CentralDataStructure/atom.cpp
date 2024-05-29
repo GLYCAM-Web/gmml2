@@ -162,7 +162,7 @@ bool Atom::isWithinBondingDistance(const Atom* otherAtom) const
 
 double Atom::calculateDistance(const Atom* otherAtom) const
 {
-    return this->getCoordinate()->Distance(otherAtom->getCoordinate());
+    return distance(*this->getCoordinate(), *otherAtom->getCoordinate());
 }
 
 //////////////////////////////////////////////////////////

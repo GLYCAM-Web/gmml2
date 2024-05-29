@@ -21,10 +21,7 @@ namespace
         res.reserve(residues.size());
         for (auto& a : residues)
         {
-            res.emplace_back(cds::ResidueAtomOverlapInput {
-                false, Coordinate {0.0, 0.0, 0.0},
-                  a->getCoordinates()
-            });
+            res.emplace_back(cds::ResidueAtomOverlapInput {false, cds::Coordinate(0.0, 0.0, 0.0), a->getCoordinates()});
         }
         return res;
     }
@@ -67,7 +64,7 @@ cds::ResidueAtomOverlapInputPair cds::toResidueAtomOverlapInput(const std::vecto
 
 double cds::CalculateAtomicOverlaps(cds::Atom* atomA, cds::Atom* atomB, double radiusA, double radiusB)
 {
-    double distance = atomA->getCoordinate()->Distance(atomB->getCoordinate());
+    double dist = distance(*atomA->getCoordinate(), *atomB->getCoordinate());
     if (radiusA == 0.0) // default value is 0.0, but user can provide.
     { // element info not usually set, so I look at first letter of atom name. This may be why you're reading this.
         if (atomA->getName().at(0) == 'C')
@@ -124,10 +121,10 @@ double cds::CalculateAtomicOverlaps(cds::Atom* atomA, cds::Atom* atomB, double r
     }
     //    std::cout << "Distance: " << distance << " radiusA: " << radiusA << " radiusB: " << radiusB << std::endl;
     double overlap = 0.0;
-    if (radiusA + radiusB > distance) // Close enough to overlap
+    if (radiusA + radiusB > dist) // Close enough to overlap
     {
-        if (std::abs(radiusA - radiusB) > distance) // If one sphere is completely inside the other
-        {                                           // then calculate the surface area of the buried (smaller) sphere.
+        if (std::abs(radiusA - radiusB) > dist) // If one sphere is completely inside the other
+        {                                       // then calculate the surface area of the buried (smaller) sphere.
             if (radiusA < radiusB)
             {
                 overlap = 4 * constants::PI_RADIAN * (radiusA * radiusA);
@@ -141,7 +138,7 @@ double cds::CalculateAtomicOverlaps(cds::Atom* atomA, cds::Atom* atomB, double r
         {    // Eqn 1, Rychkov and Petukhov, J. Comput. Chem., 2006, Joint Neighbours. Each atom against each atom, so
              // overlap can be "double" counted. See paper.
             overlap = (2 * (constants::PI_RADIAN)*radiusA *
-                       (radiusA - distance / 2 - (((radiusA * radiusA) - (radiusB * radiusB)) / (2 * distance))));
+                       (radiusA - dist / 2 - (((radiusA * radiusA) - (radiusB * radiusB)) / (2 * dist))));
         }
     }
     if ((overlap < 0.0) || (radiusA == -0.1) || (radiusB == -0.1))

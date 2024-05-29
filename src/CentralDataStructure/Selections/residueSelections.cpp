@@ -98,8 +98,8 @@ std::vector<Residue*> cdsSelections::selectNClosestResidues(std::vector<Residue*
 
         bool operator()(Residue* i, Residue* j)
         {
-            return (reference_->Distance(i->calculateGeometricCenter()) <
-                    reference_->Distance(j->calculateGeometricCenter()));
+            return (squaredDistance(*reference_, *i->getGeometricCenter()) <
+                    squaredDistance(*reference_, *j->getGeometricCenter()));
         }
 
         const Coordinate* reference_;
@@ -135,7 +135,7 @@ std::vector<Residue*> cdsSelections::selectResiduesWithinDistanceN(std::vector<R
     const cds::Coordinate* queryCenter = queryResidue->getGeometricCenter();
     for (auto& inputRes : inputResidues)
     {
-        if (queryCenter->Distance(inputRes->getGeometricCenter()) <= queryDistance)
+        if (withinDistance(queryDistance, *queryCenter, *inputRes->getGeometricCenter()))
         {
             foundResidues.push_back(inputRes);
         }

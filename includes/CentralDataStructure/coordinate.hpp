@@ -1,105 +1,101 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_COORDINATE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_COORDINATE_HPP
 
+#include <array>
 #include <iostream>
-#include <vector>
 
 namespace cds
 {
     class Coordinate
     {
       public:
-        Coordinate(double x, double y, double z) : x_(x), y_(y), z_(z)
+        Coordinate(double x, double y, double z) : values_({x, y, z})
         {}
 
-        Coordinate(const Coordinate& a) : Coordinate(a.GetX(), a.GetY(), a.GetZ()) {};
-        Coordinate& operator=(const Coordinate&);
-
-        //////////////////////////////////////////////////////////
-        //                           ACCESSOR                   //
-        //////////////////////////////////////////////////////////
-        double GetX() const
+        inline double nth(int n) const
         {
-            return x_;
+            return values_[n];
         }
 
-        double GetY() const
+        inline double GetX() const
         {
-            return y_;
+            return nth(0);
         }
 
-        double GetZ() const
+        inline double GetY() const
         {
-            return z_;
+            return nth(1);
         }
 
-        //////////////////////////////////////////////////////////
-        //                           MUTATOR                    //
-        //////////////////////////////////////////////////////////
-        void SetX(const double x)
+        inline double GetZ() const
         {
-            x_ = x;
+            return nth(2);
         }
 
-        void SetY(const double y)
+        void set(const Coordinate& a)
         {
-            y_ = y;
+            operator=(a);
         }
 
-        void SetZ(const double z)
+        inline Coordinate operator+(const Coordinate& a) const
         {
-            z_ = z;
+            auto add = [&](int n)
+            {
+                return nth(n) + a.nth(n);
+            };
+            return {add(0), add(1), add(2)};
         }
 
-        void Set(const double x, const double y, const double z)
+        inline Coordinate operator-(const Coordinate& a) const
         {
-            x_ = x;
-            y_ = y;
-            z_ = z;
+            auto sub = [&](int n)
+            {
+                return nth(n) - a.nth(n);
+            };
+            return {sub(0), sub(1), sub(2)};
         }
 
-        //////////////////////////////////////////////////////////
-        //                         FUNCTIONS                    //
-        //////////////////////////////////////////////////////////
-        void Translate(const double x, const double y, const double z);
-        double Distance(const Coordinate* coordinate) const;
-        double length() const;
-        void Normalize();
-        double DotProduct(const Coordinate& coordinate);
-        void CrossProduct(const Coordinate& coordinate);
-        void operator+=(const Coordinate& coordinate);
-        void operator-=(const Coordinate& coordinate);
-        void operator*=(const double multiplier);
-
-        bool operator==(const Coordinate& rhs) const
-        {
-            return (this->GetX() == rhs.GetX() && this->GetY() == rhs.GetY() && this->GetZ() == rhs.GetZ());
-        }
-
-        // Coordinate operator-(const Coordinate& rhs) const { return Coordinate(x_ - rhs.x_, y_ - rhs.y_, z_ -
-        // rhs.z_);}
-        //////////////////////////////////////////////////////////
-        //                     DISPLAY FUNCTIONS                //
-        //////////////////////////////////////////////////////////
         void Print(std::ostream& out = std::cerr) const;
         std::string ToString() const;
 
       private:
-        //////////////////////////////////////////////////////////
-        //                         ATTRIBUTES                   //
-        //////////////////////////////////////////////////////////
-        double x_;
-        double y_;
-        double z_;
+        std::array<double, 3> values_;
     };
+
+    inline double squaredLength(const Coordinate& a)
+    {
+        auto sq = [&](int n)
+        {
+            double d = a.nth(n);
+            return d * d;
+        };
+        return sq(0) + sq(1) + sq(2);
+    }
+
+    inline double squaredDistance(const Coordinate& a, const Coordinate& b)
+    {
+        return squaredLength(a - b);
+    }
+
+    inline double dotProduct(const Coordinate& a, const Coordinate& b)
+    {
+        auto dot = [&](int n)
+        {
+            return a.nth(n) * b.nth(n);
+        };
+        return dot(0) + dot(1) + dot(2);
+    }
 
     inline bool withinDistance(double distance, const Coordinate& a, const Coordinate& b)
     {
-        double dx = a.GetX() - b.GetX();
-        double dy = a.GetY() - b.GetY();
-        double dz = a.GetZ() - b.GetZ();
-        return (dx * dx + dy * dy + dz * dz) < distance * distance;
+        return squaredDistance(a, b) < distance * distance;
     }
+
+    double length(const Coordinate& a);
+    double distance(const Coordinate& a, const Coordinate& b);
+    Coordinate scaleBy(double factor, const Coordinate& a);
+    Coordinate normal(const Coordinate& a);
+    Coordinate crossProduct(const Coordinate& a, const Coordinate& b);
 
     Coordinate coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z);
 } // namespace cds

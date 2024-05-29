@@ -68,7 +68,8 @@ void cds::FindAtomsToMoveSetDistance(cds::Atom* parentAtom, cds::Atom* childAtom
     atomsToRotate.erase(atomsToRotate.begin()); // delete the parentAtom
     for (auto& atom : atomsToRotate)
     {
-        atom->getCoordinate()->Translate(cToParent.GetX(), cToParent.GetY(), cToParent.GetZ());
+        Coordinate* coord = atom->getCoordinate();
+        coord->set(*coord + cToParent);
         //        ss << "Moved " << atom->getName() << "_" << atom->getIndex() << " to new position:\n";
         //        atom->getCoordinate()->Print(ss);
         //        ss << "\n";

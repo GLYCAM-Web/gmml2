@@ -6,33 +6,24 @@ using cds::Coordinate;
 
 Coordinate cds::calculateGeometricCenter(const std::vector<Coordinate*> coords)
 {
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
-    for (auto& coord : coords)
-    {
-        x += coord->GetX();
-        y += coord->GetY();
-        z += coord->GetZ();
-    }
-    if (x == 0.0 || y == 0.0 || x == 0.0 || coords.size() == 0)
+    if (coords.size() == 0)
     {
         throw std::runtime_error("Oliver what were you thinking in cds::calculateGeometricCenter?");
     }
-    x = x / coords.size();
-    y = y / coords.size();
-    z = z / coords.size();
-    return Coordinate(x, y, z);
+    Coordinate center(0.0, 0.0, 0.0);
+    for (auto& coord : coords)
+    {
+        center = center + *coord;
+    }
+    return scaleBy(1.0 / coords.size(), center);
 }
 
 double cds::CalculateAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, const bool returnRadians)
 { // returns Degrees by default, must set bool returnRadians to true for radians.
     double current_angle = 0.0;
-    Coordinate b1        = *a1;
-    b1.operator-=(*a2);
-    Coordinate b2 = *a3;
-    b2.operator-=(*a2);
-    current_angle = acos((b1.DotProduct(b2)) / (b1.length() * b2.length() + constants::DIST_EPSILON));
+    Coordinate b1        = *a1 - *a2;
+    Coordinate b2        = *a3 - *a2;
+    current_angle        = acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + constants::DIST_EPSILON));
     if (returnRadians)
     {
         return current_angle;
@@ -43,25 +34,19 @@ double cds::CalculateAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, const
 double cds::CalculateDihedralAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, Coordinate* a4,
                                    const bool returnRadians)
 { // returns Degrees by default, must set bool returnRadians to true for radians.
-    Coordinate b1 = *a2;
-    b1.operator-=(*a1);
-    Coordinate b2 = *a3;
-    b2.operator-=(*a2);
-    Coordinate b3 = *a4;
-    b3.operator-=(*a3);
+    Coordinate b1 = *a2 - *a1;
+    Coordinate b2 = *a3 - *a2;
+    Coordinate b3 = *a4 - *a3;
     //    Coordinate b4 = b2;
     //    b4.operator*(-1);
 
-    Coordinate b2xb3 = b2;
-    b2xb3.CrossProduct(b3);
+    Coordinate b2xb3 = crossProduct(b2, b3);
 
-    Coordinate b1_m_b2n = b1;
-    b1_m_b2n.operator*=(b2.length());
+    Coordinate b1_m_b2n = scaleBy(length(b2), b1);
 
-    Coordinate b1xb2 = b1;
-    b1xb2.CrossProduct(b2);
+    Coordinate b1xb2 = crossProduct(b1, b2);
 
-    double current_dihedral_angle = atan2(b1_m_b2n.DotProduct(b2xb3), b1xb2.DotProduct(b2xb3));
+    double current_dihedral_angle = atan2(dotProduct(b1_m_b2n, b2xb3), dotProduct(b1xb2, b2xb3));
     if (returnRadians)
     {
         return current_dihedral_angle;
@@ -76,14 +61,12 @@ Coordinate cds::CreateCoordinateForCenterAwayFromNeighbors(const Coordinate* cen
     Coordinate combinedVs(0.0, 0.0, 0.0);
     for (auto& neighbor : threeNeighbors)
     {
-        Coordinate temp(centralCoord->GetX() - neighbor->GetX(), centralCoord->GetY() - neighbor->GetY(),
-                        centralCoord->GetZ() - neighbor->GetZ());
-        temp.Normalize(); // So a small bond length in a H doesn't create a wonky tetrahedral
-        combinedVs += temp;
+        combinedVs =
+            combinedVs +
+            normal(*centralCoord -
+                   *neighbor); // normalize so that a small bond length in a H doesn't create a wonky tetrahedral
     }
-    return Coordinate(centralCoord->GetX() + (combinedVs.GetX() * distance),
-                      centralCoord->GetY() + (combinedVs.GetY() * distance),
-                      centralCoord->GetZ() + (combinedVs.GetZ() * distance));
+    return *centralCoord + scaleBy(distance, combinedVs);
 }
 
 Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const Coordinate& b, const Coordinate& c,
@@ -95,56 +78,18 @@ Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const
     //  std::cout << "Dihedral: " << dihedral_Degrees << std::endl;
     double theta_Radians = constants::degree2Radian(angle_Degrees);
     double phi_Radians   = constants::degree2Radian(dihedral_Degrees);
-    double x_p, y_p, z_p;
 
     // ToDo no. Overload the - operator properly in Coordinate.
-    Coordinate cb = cds::subtractCoordinates(b, c); // original
-    Coordinate ba = cds::subtractCoordinates(a, b); // original
+    Coordinate cb = b - c; // original
+    Coordinate ba = a - b; // original
 
-    Coordinate lmn_y = ba;
-    lmn_y.CrossProduct(cb);
-    lmn_y.Normalize();
+    Coordinate lmn_y = normal(crossProduct(ba, cb));
+    Coordinate lmn_z = normal(cb);
+    Coordinate lmn_x = crossProduct(lmn_z, lmn_y);
 
-    Coordinate lmn_z = cb;
-    lmn_z.Normalize();
+    double x_p = distance_Angstrom * sin(theta_Radians) * cos(phi_Radians);
+    double y_p = distance_Angstrom * sin(theta_Radians) * sin(phi_Radians);
+    double z_p = distance_Angstrom * cos(theta_Radians);
 
-    Coordinate lmn_x = lmn_z;
-    lmn_x.CrossProduct(lmn_y);
-
-    x_p = distance_Angstrom * sin(theta_Radians) * cos(phi_Radians);
-    y_p = distance_Angstrom * sin(theta_Radians) * sin(phi_Radians);
-    z_p = distance_Angstrom * cos(theta_Radians);
-
-    double new_x = lmn_x.GetX() * x_p + lmn_y.GetX() * y_p + lmn_z.GetX() * z_p + c.GetX();
-    double new_y = lmn_x.GetY() * x_p + lmn_y.GetY() * y_p + lmn_z.GetY() * z_p + c.GetY();
-    double new_z = lmn_x.GetZ() * x_p + lmn_y.GetZ() * y_p + lmn_z.GetZ() * z_p + c.GetZ();
-
-    Coordinate new_coordinate(new_x, new_y, new_z);
-    return new_coordinate;
-}
-
-// This is only here until i SORT OUT THE STUOPID OVERLOADS IN COORDINATE CLASS
-Coordinate cds::subtractCoordinates(const Coordinate& minuaend, const Coordinate& subtrahend)
-{
-    Coordinate new_coordinate((minuaend.GetX() - subtrahend.GetX()), (minuaend.GetY() - subtrahend.GetY()),
-                              (minuaend.GetZ() - subtrahend.GetZ()));
-    return new_coordinate;
-}
-
-double cds::CalculateMaxDistanceBetweenCoordinates(std::vector<Coordinate*> coords)
-{
-    double maxDistance = 0.0;
-    for (std::vector<Coordinate*>::iterator it1 = coords.begin(); it1 != coords.end(); ++it1)
-    {
-        Coordinate* coord1 = (*it1);
-        for (std::vector<Coordinate*>::iterator it2 = it1; it2 != coords.end(); ++it2)
-        {
-            Coordinate* coord2 = (*it2);
-            if (coord1->Distance(coord2) > maxDistance)
-            {
-                maxDistance = coord1->Distance(coord2);
-            }
-        }
-    }
-    return maxDistance;
+    return scaleBy(x_p, lmn_x) + scaleBy(y_p, lmn_y) + scaleBy(z_p, lmn_z) + c;
 }

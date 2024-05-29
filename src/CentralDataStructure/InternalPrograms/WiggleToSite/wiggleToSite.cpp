@@ -148,7 +148,7 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
 
 double WiggleToSite::calculateDistance()
 {
-    return wiggleTargetCoordinates_.at(0)->Distance(wiggleMeCoordinates_.at(0));
+    return distance(*wiggleTargetCoordinates_.at(0), *wiggleMeCoordinates_.at(0));
     //    double totalDistance = 0.0;
     //    totalDistance += wiggleTargetCoordinates_.at(0)->Distance(wiggleMeCoordinates_.at(0));
     //    totalDistance += wiggleTargetCoordinates_.at(1)->Distance(wiggleMeCoordinates_.at(1));
