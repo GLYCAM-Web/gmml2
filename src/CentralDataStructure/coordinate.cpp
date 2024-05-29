@@ -74,42 +74,21 @@ void Coordinate::CrossProduct(const Coordinate& coordinate)
 }
 
 // These can all be better, the call is weird:
-void Coordinate::operator+(const Coordinate& coordinate)
+void Coordinate::operator+=(const Coordinate& coordinate)
 {
     x_ += coordinate.x_;
     y_ += coordinate.y_;
     z_ += coordinate.z_;
 }
 
-void Coordinate::operator+(const double addition)
-{
-    x_ += addition;
-    y_ += addition;
-    z_ += addition;
-}
-
-void Coordinate::operator-(const Coordinate& coordinate)
+void Coordinate::operator-=(const Coordinate& coordinate)
 {
     x_ -= coordinate.x_;
     y_ -= coordinate.y_;
     z_ -= coordinate.z_;
 }
 
-void Coordinate::operator/(const Coordinate& coordinate)
-{
-    x_ /= coordinate.x_;
-    y_ /= coordinate.y_;
-    z_ /= coordinate.z_;
-}
-
-void Coordinate::operator/(const double divisor)
-{
-    x_ /= divisor;
-    y_ /= divisor;
-    z_ /= divisor;
-}
-
-void Coordinate::operator*(const double multiplier)
+void Coordinate::operator*=(const double multiplier)
 {
     x_ *= multiplier;
     y_ *= multiplier;

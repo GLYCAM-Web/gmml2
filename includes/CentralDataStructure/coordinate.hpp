@@ -67,24 +67,13 @@ namespace cds
         void Normalize();
         double DotProduct(const Coordinate& coordinate);
         void CrossProduct(const Coordinate& coordinate);
-        void operator+(const Coordinate& coordinate);
-        void operator+(const double addition);
-        void operator-(const Coordinate& coordinate);
-        void operator/(const Coordinate& coordinate);
-        void operator/(const double divisor);
-        void operator*(const double multiplier);
+        void operator+=(const Coordinate& coordinate);
+        void operator-=(const Coordinate& coordinate);
+        void operator*=(const double multiplier);
 
         bool operator==(const Coordinate& rhs) const
         {
             return (this->GetX() == rhs.GetX() && this->GetY() == rhs.GetY() && this->GetZ() == rhs.GetZ());
-        }
-
-        Coordinate& operator+=(const Coordinate& rhs)
-        {
-            x_ += rhs.GetX();
-            y_ += rhs.GetY();
-            z_ += rhs.GetZ();
-            return *this;
         }
 
         // Coordinate operator-(const Coordinate& rhs) const { return Coordinate(x_ - rhs.x_, y_ - rhs.y_, z_ -
