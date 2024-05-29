@@ -4,7 +4,7 @@
 
 using cds::Coordinate;
 
-Coordinate cds::calculateGeometricCenter(const std::vector<Coordinate*> coords)
+Coordinate cds::calculateGeometricCenter(const std::vector<Coordinate*>& coords)
 {
     if (coords.size() == 0)
     {

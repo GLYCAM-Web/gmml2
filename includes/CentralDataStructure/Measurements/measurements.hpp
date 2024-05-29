@@ -8,7 +8,7 @@
 namespace cds
 {
 
-    Coordinate calculateGeometricCenter(const std::vector<Coordinate*> coords);
+    Coordinate calculateGeometricCenter(const std::vector<Coordinate*>& coords);
     double CalculateAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, const bool returnRadians = false);
     double CalculateDihedralAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, Coordinate* a4,
                                   const bool returnRadians = false);
