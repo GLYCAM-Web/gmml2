@@ -42,7 +42,7 @@
 ./src/CentralDataStructure/Selections/atomSelections.cpp
 ./src/CentralDataStructure/Selections/residueSelections.cpp
 ./src/CentralDataStructure/Selections/shaperSelections.cpp
-./src/CentralDataStructure/Shapers/atomToCoordianteInterface.cpp
+./src/CentralDataStructure/Shapers/atomToCoordinateInterface.cpp
 ./src/CentralDataStructure/Shapers/residueLinkage.cpp
 ./src/CentralDataStructure/Shapers/rotatableDihedral.cpp
 ./src/CentralDataStructure/Shapers/rotationMatrix.cpp
