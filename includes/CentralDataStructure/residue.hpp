@@ -64,7 +64,7 @@ namespace cds
             return type_;
         }
 
-        inline unsigned int getNumber() const
+        inline int getNumber() const
         {
             return number_;
         }
@@ -99,7 +99,7 @@ namespace cds
             type_ = type;
         }
 
-        inline void setNumber(unsigned int i)
+        inline void setNumber(int i)
         {
             number_ = i;
         }
@@ -167,7 +167,7 @@ namespace cds
         std::string name_           = "   ";
         Coordinate geometricCenter_ = {constants::dNotSet, constants::dNotSet, constants::dNotSet};
         ResidueType type_           = Undefined; // enum Type. See enum above.
-        unsigned int number_ =
+        int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
     };
 } // namespace cds

@@ -68,7 +68,7 @@ unsigned int Atom::getNumberFromName() const
 {
     const std::string name        = this->getName();
     std::string convertableNumber = "";
-    for (int i = 1; i < name.size(); i++)
+    for (size_t i = 1; i < name.size(); i++)
     {
         if (isdigit(name[i]))
         {

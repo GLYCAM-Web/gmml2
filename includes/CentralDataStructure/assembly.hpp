@@ -62,7 +62,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         // Molecule* addMolecule(const Molecule& molecule);
         Molecule* addMolecule(std::unique_ptr<Molecule> myMolecule);
-        const Atom* findAtom(const int& serialNumber) const;
+        const Atom* findAtom(int serialNumber) const;
         //////////////////////////////////////////////////////////
         //                    DISPLAY                           //
         //////////////////////////////////////////////////////////

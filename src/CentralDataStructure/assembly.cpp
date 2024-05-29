@@ -92,7 +92,7 @@ Molecule* Assembly::addMolecule(std::unique_ptr<Molecule> myMolecule)
     return molecules_.back().get();
 }
 
-const Atom* Assembly::findAtom(const int& serialNumber) const
+const Atom* Assembly::findAtom(int serialNumber) const
 {
     return codeUtils::findElementWithNumber(this->getAtoms(), serialNumber);
 }
