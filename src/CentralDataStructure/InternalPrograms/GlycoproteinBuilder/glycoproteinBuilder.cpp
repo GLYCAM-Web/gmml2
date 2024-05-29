@@ -408,7 +408,7 @@ void GlycoproteinBuilder::SetRandomDihedralAnglesUsingMetadata()
     return;
 }
 
-unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType moleculeType)
+unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType)
 {
     unsigned int overlap = 0;
     for (auto& glycosite : this->GetGlycosites())
@@ -418,7 +418,7 @@ unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType moleculeType)
     return overlap;
 }
 
-std::vector<GlycosylationSite*> GlycoproteinBuilder::DetermineSitesWithOverlap(MoleculeType moleculeType)
+std::vector<GlycosylationSite*> GlycoproteinBuilder::DetermineSitesWithOverlap(MoleculeType)
 {
     std::vector<GlycosylationSite*> sites_to_return;
     unsigned int overlap = 0;
