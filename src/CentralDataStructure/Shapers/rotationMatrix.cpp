@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 
+#include <cmath>
+
 using cds::RotationMatrix;
 
 // Constructors:
@@ -20,8 +22,8 @@ RotationMatrix::RotationMatrix(Coordinate* direction, Coordinate* parent, double
     double u2                 = u * u;
     double v2                 = v * v;
     double w2                 = w * w;
-    double cos_rotation_angle = cos(angle);
-    double sin_rotation_angle = sin(angle);
+    double cos_rotation_angle = std::cos(angle);
+    double sin_rotation_angle = std::sin(angle);
 
     matrix_[0][3] = a * (v2 + w2) - u * (b * v + c * w) + (u * (b * v + c * w) - a * (v2 + w2)) * cos_rotation_angle +
                     (b * w - c * v) * sin_rotation_angle;

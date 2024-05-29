@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CodeUtils/constants.hpp"
 #include <eigen3/Eigen/Geometry>
 
 using cds::Coordinate;
