@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <cmath>
@@ -6,43 +7,6 @@
 #include <iomanip> // setw
 
 using cds::Coordinate;
-
-//////////////////////////////////////////////////////////
-//                       Constructor                    //
-//////////////////////////////////////////////////////////
-Coordinate::Coordinate(double x, double y, double z) : x_(x), y_(y), z_(z)
-{}
-
-Coordinate::Coordinate(const std::string x, const std::string y, const std::string z)
-{
-    try
-    {
-        x_ = std::stod(x);
-        y_ = std::stod(y);
-        z_ = std::stod(z);
-    }
-    catch (...)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::ERR,
-                  "Could not convert these strings to doubles: " + x + ", " + y + ", " + z + ", ");
-        throw;
-    }
-}
-
-// Move Ctor.
-Coordinate::Coordinate(Coordinate&& other) noexcept : Coordinate()
-{
-    gmml::log(__LINE__, __FILE__, gmml::INF, "Coordinate move ctor\n");
-    x_ = std::move(other.x_);
-    y_ = std::move(other.y_);
-    z_ = std::move(other.z_);
-}
-
-Coordinate::Coordinate(const Coordinate& coordinate) : x_(coordinate.x_), y_(coordinate.y_), z_(coordinate.z_)
-{
-    // gmml::log(__LINE__,__FILE__,gmml::INF, "Coordinate copy ctor for " + std::to_string(x_) + " " +
-    // std::to_string(y_) + " " + std::to_string(z_));
-}
 
 Coordinate& Coordinate::operator=(const Coordinate& other)
 {
@@ -150,6 +114,20 @@ void Coordinate::operator*(const double multiplier)
     x_ *= multiplier;
     y_ *= multiplier;
     z_ *= multiplier;
+}
+
+Coordinate cds::coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z)
+{
+    try
+    {
+        return {std::stod(x), std::stod(y), std::stod(z)};
+    }
+    catch (...)
+    {
+        gmml::log(__LINE__, __FILE__, gmml::ERR,
+                  "Could not convert these strings to doubles: " + x + ", " + y + ", " + z + ", ");
+        throw;
+    }
 }
 
 //////////////////////////////////////////////////////////

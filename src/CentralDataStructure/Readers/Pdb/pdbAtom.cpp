@@ -80,9 +80,9 @@ PdbAtom::PdbAtom(const std::string& line)
     }
     try
     {
-        this->setCoordinate(cds::Coordinate(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
-                                            codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
-                                            codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8))));
+        this->setCoordinate(cds::coordinateFromStrings(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
+                                                       codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
+                                                       codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8))));
     }
     catch (...)
     {

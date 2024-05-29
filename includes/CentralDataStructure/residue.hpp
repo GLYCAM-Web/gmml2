@@ -164,9 +164,9 @@ namespace cds
         //                    ATTRIBUTES                        //
         //////////////////////////////////////////////////////////
         std::vector<std::unique_ptr<Atom>> atoms_;
-        std::string name_ = "   ";
-        Coordinate geometricCenter_;
-        ResidueType type_ = Undefined; // enum Type. See enum above.
+        std::string name_           = "   ";
+        Coordinate geometricCenter_ = {constants::dNotSet, constants::dNotSet, constants::dNotSet};
+        ResidueType type_           = Undefined; // enum Type. See enum above.
         unsigned int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
     };

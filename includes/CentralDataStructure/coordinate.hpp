@@ -1,8 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_COORDINATE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_COORDINATE_HPP
 
-#include "includes/CodeUtils/constants.hpp"
-
 #include <iostream>
 #include <vector>
 
@@ -11,16 +9,10 @@ namespace cds
     class Coordinate
     {
       public:
-        //////////////////////////////////////////////////////////
-        //                       Constructor                    //
-        //////////////////////////////////////////////////////////
-        Coordinate()
+        Coordinate(double x, double y, double z) : x_(x), y_(y), z_(z)
         {}
 
-        Coordinate(const std::string x, const std::string y, const std::string z);
-        Coordinate(double x, double y, double z);
-        Coordinate(Coordinate&& other) noexcept; // Move Ctor
-        Coordinate(const Coordinate& coordinate);
+        Coordinate(const Coordinate& a) : Coordinate(a.GetX(), a.GetY(), a.GetZ()) {};
         Coordinate& operator=(const Coordinate&);
 
         //////////////////////////////////////////////////////////
@@ -107,9 +99,9 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                         ATTRIBUTES                   //
         //////////////////////////////////////////////////////////
-        double x_ = constants::dNotSet;
-        double y_ = constants::dNotSet;
-        double z_ = constants::dNotSet;
+        double x_;
+        double y_;
+        double z_;
     };
 
     inline bool withinDistance(double distance, const Coordinate& a, const Coordinate& b)
@@ -119,5 +111,7 @@ namespace cds
         double dz = a.GetZ() - b.GetZ();
         return (dx * dx + dy * dy + dz * dz) < distance * distance;
     }
+
+    Coordinate coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z);
 } // namespace cds
 #endif

@@ -32,7 +32,7 @@ cds::Coordinate pdb::checkShiftsAndExtractCoordinate(const std::string& line)
     { // Combine the shifts, but ignore the first shift in residue sequence number.
         shift += (secondShift - 1);
     }
-    return cds::Coordinate(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
-                           codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
-                           codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8)));
+    return cds::coordinateFromStrings(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
+                                      codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
+                                      codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8)));
 }

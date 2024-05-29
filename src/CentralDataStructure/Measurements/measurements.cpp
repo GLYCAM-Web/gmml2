@@ -95,21 +95,20 @@ Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const
     //  std::cout << "Dihedral: " << dihedral_Degrees << std::endl;
     double theta_Radians = constants::degree2Radian(angle_Degrees);
     double phi_Radians   = constants::degree2Radian(dihedral_Degrees);
-    Coordinate lmn_x, lmn_y, lmn_z;
     double x_p, y_p, z_p;
 
     // ToDo no. Overload the - operator properly in Coordinate.
     Coordinate cb = cds::subtractCoordinates(b, c); // original
     Coordinate ba = cds::subtractCoordinates(a, b); // original
 
-    lmn_y = ba;
+    Coordinate lmn_y = ba;
     lmn_y.CrossProduct(cb);
     lmn_y.Normalize();
 
-    lmn_z = cb;
+    Coordinate lmn_z = cb;
     lmn_z.Normalize();
 
-    lmn_x = lmn_z;
+    Coordinate lmn_x = lmn_z;
     lmn_x.CrossProduct(lmn_y);
 
     x_p = distance_Angstrom * sin(theta_Radians) * cos(phi_Radians);
