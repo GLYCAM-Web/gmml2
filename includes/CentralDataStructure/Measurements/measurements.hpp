@@ -3,6 +3,8 @@
 
 #include "includes/CentralDataStructure/coordinate.hpp"
 
+#include <vector>
+
 namespace cds
 {
 

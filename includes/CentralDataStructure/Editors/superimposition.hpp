@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/coordinate.hpp"
 #include <eigen3/Eigen/Geometry>
+#include <vector>
 
 using cds::Coordinate;
 

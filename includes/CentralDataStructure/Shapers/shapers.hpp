@@ -3,6 +3,8 @@
 
 #include "includes/CentralDataStructure/coordinate.hpp"
 
+#include <vector>
+
 // Everything here should be ignorant of cds classes higher than coordinate.
 namespace cds
 {
