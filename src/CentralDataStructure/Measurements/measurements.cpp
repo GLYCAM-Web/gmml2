@@ -1,6 +1,8 @@
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CodeUtils/constants.hpp"
 
+#include <cmath>
+
 using cds::Coordinate;
 
 Coordinate cds::calculateGeometricCenter(const std::vector<Coordinate*>& coords)
@@ -21,7 +23,7 @@ double cds::CalculateAngle(const std::array<Coordinate*, 3>& coords, bool return
 { // returns Degrees by default, must set bool returnRadians to true for radians.
     Coordinate b1 = *coords[0] - *coords[1];
     Coordinate b2 = *coords[2] - *coords[1];
-    double angle  = acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + constants::DIST_EPSILON));
+    double angle  = std::acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + constants::DIST_EPSILON));
     return angle * (returnRadians ? 1.0 : (180 / constants::PI_RADIAN));
 }
 
@@ -35,7 +37,7 @@ double cds::CalculateDihedralAngle(const std::array<Coordinate*, 4>& coords, boo
     Coordinate b1_m_b2n = scaleBy(length(b2), b1);
     Coordinate b1xb2    = crossProduct(b1, b2);
 
-    double angle = atan2(dotProduct(b1_m_b2n, b2xb3), dotProduct(b1xb2, b2xb3));
+    double angle = std::atan2(dotProduct(b1_m_b2n, b2xb3), dotProduct(b1xb2, b2xb3));
     return angle * (returnRadians ? 1.0 : (180 / constants::PI_RADIAN));
 }
 
@@ -63,9 +65,9 @@ Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const
     Coordinate lmn_z = normal(b - c);
     Coordinate lmn_x = crossProduct(lmn_z, lmn_y);
 
-    double x_p = sin(theta_Radians) * cos(phi_Radians);
-    double y_p = sin(theta_Radians) * sin(phi_Radians);
-    double z_p = cos(theta_Radians);
+    double x_p = std::sin(theta_Radians) * std::cos(phi_Radians);
+    double y_p = std::sin(theta_Radians) * std::sin(phi_Radians);
+    double z_p = std::cos(theta_Radians);
 
     return c + scaleBy(distanceAngstrom, scaleBy(x_p, lmn_x) + scaleBy(y_p, lmn_y) + scaleBy(z_p, lmn_z));
 }
