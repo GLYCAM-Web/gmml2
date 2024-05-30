@@ -188,21 +188,24 @@ double cds::CalculateAtomicOverlapsBetweenNonBondedAtoms(std::vector<cds::Atom*>
     double totalOverlap = 0.0;
     for (auto& atomA : atomsA)
     {
+        std::vector<cds::Atom*> neighbors = atomA->getNeighbors();
         for (auto& atomB : atomsB)
         {
-            bool isNeighbor                   = false;
-            std::vector<cds::Atom*> neighbors = atomA->getNeighbors();
-            for (auto& neighbor : neighbors)
+            if (atomA->getIndex() != atomB->getIndex())
             {
-                if (atomB->getIndex() == neighbor->getIndex())
+                bool isNeighbor = false;
+                for (auto& neighbor : neighbors)
                 {
-                    isNeighbor = true;
+                    if (atomB->getIndex() == neighbor->getIndex())
+                    {
+                        isNeighbor = true;
+                    }
                 }
-            }
-            if ((isNeighbor == false) && (atomA->getIndex() != atomB->getIndex()) &&
-                (cds::withinDistance(constants::maxCutOff, *atomA->getCoordinate(), *atomB->getCoordinate())))
-            {
-                totalOverlap += cds::CalculateAtomicOverlaps(atomA, atomB);
+                if ((isNeighbor == false) &&
+                    (cds::withinDistance(constants::maxCutOff, *atomA->getCoordinate(), *atomB->getCoordinate())))
+                {
+                    totalOverlap += cds::CalculateAtomicOverlaps(atomA, atomB);
+                }
             }
         }
     }
