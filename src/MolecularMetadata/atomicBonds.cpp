@@ -1,9 +1,27 @@
 #include "includes/MolecularMetadata/atomicBonds.hpp"
-// #include "includes/CentralDataStructure/cdsAtom.hpp"
-
-// #include <mutex>
+#include <map>
 
 using namespace atomicBonds;
+
+namespace
+{
+    static const std::map<std::string, std::pair<double, double>> bondLengthMap = {
+        {"CC", std::make_pair(1.22,  1.67)},
+        {"CO", std::make_pair(1.08,  1.68)},
+        {"OC", std::make_pair(1.08,  1.68)},
+        {"CN", std::make_pair(1.26,  1.55)},
+        {"NC", std::make_pair(1.26,  1.55)},
+        {"OP", std::make_pair(1.35, 1.776)},
+        {"PO", std::make_pair(1.35, 1.776)},
+        {"OS", std::make_pair(1.43,  1.78)},
+        {"SO", std::make_pair(1.43,  1.78)},
+        {"NS", std::make_pair(1.62,  1.77)},
+        {"SN", std::make_pair(1.62,  1.77)},
+        {"CS", std::make_pair(1.50,  1.91)},
+        {"SC", std::make_pair(1.50,  1.91)},
+        {"SS", std::make_pair(1.50,  2.10)}
+    };
+}
 
 std::pair<double, double> atomicBonds::getBondLengthByAtomType(const std::string& atom1Element,
                                                                const std::string& atom2Element)
