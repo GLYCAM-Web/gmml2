@@ -1,7 +1,6 @@
 #ifndef GMML_INCLUDES_CODEUTILS_CONSTANTS_HPP
 #define GMML_INCLUDES_CODEUTILS_CONSTANTS_HPP
 
-#include <math.h> // atan
 #include <string>
 
 namespace constants
@@ -12,7 +11,7 @@ namespace constants
         116.8; // Glycam06 J Comput Chem. 2008 Mar; 29(4): 622–655. Used for C-O-C in glycosidic linkages.
     const double CARBON_SURFACE_AREA  = 36.31681103;
     const double MAX_RESIDUE_DIAMETER = 9.0;
-    const double PI_RADIAN            = 4.0 * atan(1.0);
+    const double PI_RADIAN            = 3.141592653589793;
     const double PI_DEGREE            = 180.0;
     const double dNotSet              = 123456789.0;
     const int iNotSet                 = -123456;
