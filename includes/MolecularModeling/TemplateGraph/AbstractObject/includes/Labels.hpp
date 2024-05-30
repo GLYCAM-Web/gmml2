@@ -1,10 +1,8 @@
 #ifndef ABSTRACTOBJECT_INCLUDES_LABELS_HPP
 #define ABSTRACTOBJECT_INCLUDES_LABELS_HPP
 
-#include <regex>
 #include <string>
 #include <vector>
-#include <algorithm>
 
 // TODO: Pick a better namespace name for this, figure out what we should use instead of `unsigned int`
 namespace abstrab
@@ -127,42 +125,6 @@ namespace abstrab
                 }
             }
             return false;
-        }
-
-        bool compareLabels(const std::vector<std::string> otherLabels) const
-        {
-            return this->compareLabels(otherLabels, 1);
-        }
-
-        inline bool compareLabels(const std::vector<std::string> otherLabels, unsigned int numMatches) const
-        {
-            unsigned int matchCounter = 0;
-            for (std::string currLabel : this->getLabels())
-            {
-                if (std::find(otherLabels.begin(), otherLabels.end(), currLabel) != otherLabels.end())
-                {
-                    matchCounter++;
-                    if (matchCounter == numMatches)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        inline std::string findLabelContaining(const std::string query) const
-        {
-            std::regex regexQuery(query, std::regex_constants::ECMAScript);
-            for (auto& label : this->getLabels())
-            {
-                if (std::regex_search(label, regexQuery))
-                {
-                    return label;
-                }
-            }
-            // std::cout << "Found nothing.\n";
-            return "";
         }
 
       private:

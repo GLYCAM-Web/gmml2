@@ -57,14 +57,6 @@ namespace abstrab
 
         virtual ~AbstractObject();
 
-        /************************************************
-         *  FUNCTIONS
-         ***********************************************/
-        inline bool compareLabels(const std::vector<std::string> otherLabels)
-        {
-            return this->Labels::compareLabels(otherLabels, 1);
-        }
-
       private:
         /************************************************
          *  ATTRIBUTES
