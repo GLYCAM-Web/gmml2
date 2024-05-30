@@ -3,6 +3,10 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
+
+#include <vector>
+#include <string>
+#include <iostream>
 #include <fstream>
 
 int main(int argc, char* argv[])

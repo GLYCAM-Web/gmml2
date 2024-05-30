@@ -11,6 +11,9 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp" // selectResiduesByType
+
+#include <fstream>
+
 using cds::Assembly;
 
 //////////////////////////////////////////////////////////

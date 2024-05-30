@@ -1,10 +1,14 @@
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
-#include <iostream>
+
+#include <vector>
 #include <string>
+#include <iostream>
 #include <fstream>
 #include <sys/stat.h> // stat
+#include <stdexcept>
 
 int main(int argc, char** argv)
 {

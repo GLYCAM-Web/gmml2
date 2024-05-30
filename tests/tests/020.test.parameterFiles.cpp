@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 #include <fstream>
+#include <stdexcept>
 
 int main()
 {

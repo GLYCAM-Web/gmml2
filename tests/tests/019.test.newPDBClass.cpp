@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include <string>
+#include <iostream>
+#include <fstream>
 
 int main(int argc, char* argv[])
 {

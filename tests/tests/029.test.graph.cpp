@@ -8,8 +8,13 @@
 #include "includes/MolecularModeling/TemplateGraph/LazyPrints/LazyPrinters.hpp"
 
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp"
+
+#include <vector>
 #include <map>
 #include <set>
+#include <string>
+#include <iostream>
+#include <memory>
 
 using namespace glygraph;
 

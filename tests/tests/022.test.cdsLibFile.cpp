@@ -1,7 +1,9 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include <iostream>
 #include <fstream>
+#include <stdexcept>
 
 int main()
 {

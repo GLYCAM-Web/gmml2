@@ -12,6 +12,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp" // serializeAtomNumbers
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include <sstream>
+#include <fstream>
 #include <cctype>    // isDigit
 #include <algorithm> //  std::erase, std::remove
 

@@ -7,7 +7,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 // Not all the options are available now, like e.g. writing molecule chain numbers, but I will add them as I need them
 namespace cds
