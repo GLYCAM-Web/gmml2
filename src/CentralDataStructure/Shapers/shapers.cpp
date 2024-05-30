@@ -6,7 +6,7 @@
 void cds::SetDihedralAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, Coordinate* a4, const double dihedral_angle,
                            std::vector<Coordinate*>& movingCoords)
 {
-    double current_dihedral     = cds::CalculateDihedralAngle(a1, a2, a3, a4, true);
+    double current_dihedral     = cds::CalculateDihedralAngle({a1, a2, a3, a4}, true);
     Coordinate direction_a3Toa2 = *a2 - *a3;
     RotationMatrix rotationMatrix(direction_a3Toa2, *a2, current_dihedral - constants::degree2Radian(dihedral_angle));
     rotationMatrix.rotateCoordinates(movingCoords);
@@ -15,7 +15,7 @@ void cds::SetDihedralAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, Coord
 void cds::SetAngle(Coordinate* a1, Coordinate* a2, Coordinate* a3, const double angle,
                    std::vector<Coordinate*> coordinatesToMove)
 {
-    double current_angle  = cds::CalculateAngle(a1, a2, a3, true);
+    double current_angle  = cds::CalculateAngle({a1, a2, a3}, true);
     double rotation_angle = constants::degree2Radian(angle) - current_angle;
     Coordinate direction  = crossProduct(*a1 - *a2, *a3 - *a2);
     RotationMatrix rotationMatrix(direction, *a2, rotation_angle);

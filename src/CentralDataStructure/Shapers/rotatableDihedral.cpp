@@ -29,12 +29,12 @@ double RotatableDihedral::CalculateDihedralAngle(const std::string type) const
         { // ToDO there will be an issue with C1-O5 linkages unless atom knows which residue it is in.
             // Coordinate* o5Coord = atom1_->GetResidue()->GetAtom("O5")->getCoordinate();
             Coordinate* o5Coord = cdsSelections::getNeighborNamed(atom1_, "O5")->getCoordinate();
-            return cds::CalculateDihedralAngle(o5Coord, atom2_->getCoordinate(), atom3_->getCoordinate(),
-                                               atom4_->getCoordinate());
+            return cds::CalculateDihedralAngle(
+                {o5Coord, atom2_->getCoordinate(), atom3_->getCoordinate(), atom4_->getCoordinate()});
         }
     }
-    return cds::CalculateDihedralAngle(atom1_->getCoordinate(), atom2_->getCoordinate(), atom3_->getCoordinate(),
-                                       atom4_->getCoordinate());
+    return cds::CalculateDihedralAngle(
+        {atom1_->getCoordinate(), atom2_->getCoordinate(), atom3_->getCoordinate(), atom4_->getCoordinate()});
 }
 
 std::vector<cds::Atom*> RotatableDihedral::GetAtoms() const
@@ -568,7 +568,7 @@ bool RotatableDihedral::IsThereHydrogenForPsiAngle()
 std::unique_ptr<cds::Atom> RotatableDihedral::CreateHydrogenAtomForPsiAngle()
 {
     std::vector<Coordinate*> neighborsCoords = cds::getCoordinatesFromAtoms(atom3_->getNeighbors());
-    Coordinate newCoord = cds::CreateCoordinateForCenterAwayFromNeighbors(atom3_->getCoordinate(), neighborsCoords);
+    Coordinate newCoord = cds::CreateCoordinateForCenterAwayFromNeighbors(*atom3_->getCoordinate(), neighborsCoords);
     std::unique_ptr<cds::Atom> newAtom = std::make_unique<cds::Atom>("HHH", newCoord);
     atom3_->addBond(newAtom.get());
     return newAtom;

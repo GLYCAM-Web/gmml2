@@ -199,7 +199,7 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
             threeNeighbors.push_back(neighbor->getCoordinate());
         }
         Coordinate newOxygenCoordinate =
-            cds::CreateCoordinateForCenterAwayFromNeighbors(anomer->getCoordinate(), threeNeighbors, 1.4);
+            cds::CreateCoordinateForCenterAwayFromNeighbors(*anomer->getCoordinate(), threeNeighbors, 1.4);
         Atom* newAnomericOxygen = residueWithAnomericOxygen.addAtomToFront(
             std::make_unique<cds::Atom>("O" + anomerNumber, newOxygenCoordinate));
         newAnomericOxygen->setCharge(-0.388);

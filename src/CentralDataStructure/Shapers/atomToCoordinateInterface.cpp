@@ -33,7 +33,8 @@ cds::Coordinate cds::GuessMissingCoordinateForAtom(cds::Atom* centralAtom, const
         //        std::cout << neighbor->getName() << ", " << neighbor->getCoordinate()->ToString() << "\n";
         threeNeighborCoords.push_back(neighbor->getCoordinate());
     }
-    return cds::CreateCoordinateForCenterAwayFromNeighbors(centralAtom->getCoordinate(), threeNeighborCoords, distance);
+    return cds::CreateCoordinateForCenterAwayFromNeighbors(*centralAtom->getCoordinate(), threeNeighborCoords,
+                                                           distance);
 }
 
 void cds::FindAtomsToMoveAndSetAngle(cds::Atom* a, cds::Atom* b, cds::Atom* c, const double angle)
