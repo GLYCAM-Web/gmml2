@@ -1,15 +1,11 @@
 #ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 #define GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/constants.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 
-#include <sstream>
 #include <vector>
 #include <utility>
-#include <iostream>
 
 namespace cds
 {

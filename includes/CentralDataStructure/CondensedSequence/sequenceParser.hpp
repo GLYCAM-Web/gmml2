@@ -3,7 +3,8 @@
 
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
+
+#include <vector>
 #include <string>
 
 namespace cdsCondensedSequence

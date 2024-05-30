@@ -1,8 +1,6 @@
 #ifndef TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 #define TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 
-#include <iostream>
-
 #include "../../AbstractObject/includes/AbstractObject.hpp"
 
 namespace glygraph

@@ -11,8 +11,14 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp" // selectResiduesByType
+#include "includes/External_Libraries/PCG/pcg_random.h"
+#include "includes/External_Libraries/PCG/pcg_extras.h"
 
+#include <vector>
+#include <string>
+#include <sstream>
 #include <fstream>
+#include <stdexcept>
 
 using cds::Assembly;
 

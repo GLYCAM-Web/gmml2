@@ -2,6 +2,11 @@
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
 #include "includes/CodeUtils/logging.hpp"
 
+#include <vector>
+#include <string>
+#include <sstream>
+#include <stdexcept>
+
 using cdsCondensedSequence::carbohydrateBuilder;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //

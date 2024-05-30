@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 
+#include <sstream>
+
 /* Below has following flaws:
   1) fail to find inner rotatable bonds here:
    __    __

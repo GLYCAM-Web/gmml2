@@ -3,6 +3,8 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp" // For GetDescriptiveNameForGlycamResidueName in GetName function
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp" //FindConnectedResidues()
 
+#include <sstream>
+
 using cds::ResidueLinkage;
 using cds::RotatableDihedral;
 

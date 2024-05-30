@@ -3,6 +3,9 @@
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/strings.hpp"
+
+#include <vector>
+#include <string>
 #include <fstream>
 
 using glycoprotein::GlycoproteinBuilderInputs;

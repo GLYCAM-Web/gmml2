@@ -2,9 +2,11 @@
 #define GMML_INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include <vector>
+#include <string>
 
 namespace cdsCondensedSequence
 {

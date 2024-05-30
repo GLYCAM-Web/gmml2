@@ -5,6 +5,9 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
 
+#include <vector>
+#include <string>
+
 namespace cdsCondensedSequence
 {
     class SequenceManipulator : public SequenceParser

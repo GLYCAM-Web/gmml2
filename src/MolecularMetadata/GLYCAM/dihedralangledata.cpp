@@ -1,4 +1,5 @@
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include <regex>
 //////////////////////////////////////////////////////////

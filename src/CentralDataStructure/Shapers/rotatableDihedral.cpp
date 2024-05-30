@@ -4,6 +4,8 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 
+#include <sstream>
+
 using cds::RotatableDihedral;
 
 RotatableDihedral::RotatableDihedral(cds::Atom* atom1, cds::Atom* atom2, cds::Atom* atom3, cds::Atom* atom4,

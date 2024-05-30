@@ -1,11 +1,10 @@
 #include <bits/std_abs.h>
 #include <cstdlib>
-#include <iostream>
-#include <iterator>
 #include <string>
-#include <utility>
 #include <vector>
 #include <iomanip> // For setting precision and formating in output
+#include <stdexcept>
+
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateCoordinateFromInternalCoords

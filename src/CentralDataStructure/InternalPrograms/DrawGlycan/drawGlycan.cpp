@@ -2,6 +2,8 @@
 
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 
+#include <string>
+
 using cdsCondensedSequence::SequenceManipulator;
 using CondensedSequence::DrawGlycan;
 

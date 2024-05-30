@@ -1,6 +1,5 @@
 #ifndef CARBOHYDRATE_DIHEDRAL_ANGLE_PREFERENCE_HPP
 #define CARBOHYDRATE_DIHEDRAL_ANGLE_PREFERENCE_HPP
-#include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
 #include <string>
 #include <vector>
 
