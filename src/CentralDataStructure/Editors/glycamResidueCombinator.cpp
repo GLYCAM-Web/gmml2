@@ -34,6 +34,9 @@ void residueCombinator::removeOMeMethyl(cds::Residue& queryResidue, cds::Atom* O
     return;
 }
 
+#include <functional>
+#include <sstream>
+
 void residueCombinator::removeHydroxyHydrogen(cds::Residue& queryResidue, const std::string hydrogenNumber)
 {
     cds::Atom* hydrogen = queryResidue.FindAtom("H" + hydrogenNumber + "O");

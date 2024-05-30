@@ -5,6 +5,8 @@
 #include "includes/MolecularMetadata/GLYCAM/bondlengthbytypepair.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
+#include <sstream>
+
 std::vector<Coordinate*> cds::getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms)
 {
     std::vector<Coordinate*> coordinates;

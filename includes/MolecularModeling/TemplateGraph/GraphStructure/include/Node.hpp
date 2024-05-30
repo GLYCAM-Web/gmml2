@@ -5,8 +5,8 @@
 #include "./Edge.hpp"
 #include "./GenericGraphObject.hpp"
 
+#include <algorithm>
 #include <memory>
-#include <unordered_set>
 #include <mutex> // lock
 
 namespace glygraph

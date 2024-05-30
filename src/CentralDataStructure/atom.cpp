@@ -4,7 +4,9 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/elementattributes.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+
 #include <ctype.h> // isalpha
+#include <sstream>
 
 using cds::Atom;
 
