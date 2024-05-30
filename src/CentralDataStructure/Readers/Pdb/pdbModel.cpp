@@ -126,7 +126,7 @@ void PdbModel::extractCoordinatesFromModel(std::stringstream& stream_block, std:
 
 void PdbModel::addConectRecord(const cds::Atom* atom1, const cds::Atom* atom2)
 {
-    conectRecords_.emplace_back(std::vector {atom1, atom2});
+    conectRecords_.emplace_back(std::vector<const cds::Atom*> {atom1, atom2});
     return;
 }
 

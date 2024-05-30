@@ -415,7 +415,8 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     }
     // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after more
     // residues are added.
-    cds::ResidueLinkage& linkage = glycosidicLinkages_.emplace_back(childResidue, parentResidue);
+    glycosidicLinkages_.emplace_back(childResidue, parentResidue);
+    cds::ResidueLinkage& linkage = glycosidicLinkages_.back();
     linkage.SetDefaultShapeUsingMetadata();
     std::vector<cds::Atom*> childAtoms  = childResidue->getAtoms();  // keeps them alive in memory
     std::vector<cds::Atom*> parentAtoms = parentResidue->getAtoms(); // keeps them alive in memory

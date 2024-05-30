@@ -27,12 +27,14 @@ ParameterManager::ParameterManager()
     gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + gmmlhome);
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        auto& file = prepFiles_.emplace_back(gmmlhome + prepFilePath);
+        prepFiles_.emplace_back(gmmlhome + prepFilePath);
+        auto& file = prepFiles_.back();
         this->InitializeResidueMap(file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        auto& file = libFiles_.emplace_back(gmmlhome + libFilePath);
+        libFiles_.emplace_back(gmmlhome + libFilePath);
+        auto& file = libFiles_.back();
         this->InitializeResidueMap(file.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
@@ -44,12 +46,14 @@ ParameterManager::ParameterManager(const std::vector<std::string> queryNames)
     gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + gmmlhome);
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        auto& file = prepFiles_.emplace_back(gmmlhome + prepFilePath, queryNames);
+        prepFiles_.emplace_back(gmmlhome + prepFilePath, queryNames);
+        auto& file = prepFiles_.back();
         this->InitializeResidueMap(file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        auto& file = libFiles_.emplace_back(gmmlhome + libFilePath, queryNames);
+        libFiles_.emplace_back(gmmlhome + libFilePath, queryNames);
+        auto& file = libFiles_.back();
         this->InitializeResidueMap(file.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
@@ -57,7 +61,8 @@ ParameterManager::ParameterManager(const std::vector<std::string> queryNames)
 
 cds::Residue* ParameterManager::findParameterResidue(const std::string name) const
 {
-    if (auto search = parameterResidueMap_.find(name); search != parameterResidueMap_.end())
+    auto search = parameterResidueMap_.find(name);
+    if (search != parameterResidueMap_.end())
     {
         return search->second;
     }

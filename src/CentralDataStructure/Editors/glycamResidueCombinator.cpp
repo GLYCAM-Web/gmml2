@@ -109,7 +109,8 @@ std::vector<std::vector<std::string>> residueCombinator::getCombinations(const s
 void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombinations,
                                 const std::vector<std::string> numberCombination, const cds::Residue& templateResidue)
 {
-    cds::Residue* newResidue = glycamResidueCombinations.emplace_back(new cds::Residue(templateResidue));
+    glycamResidueCombinations.emplace_back(new cds::Residue(templateResidue));
+    cds::Residue* newResidue = glycamResidueCombinations.back();
     // cds::Residue* newResidue = glycamResidueCombinations.back();
     std::string delimiter    = "";
     std::stringstream numbersAsString;
@@ -244,7 +245,8 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     newResidue->setName(residueName);
     std::cout << "Added " << residueName << "\n";
     // Write out the 0.. version:
-    newResidue  = glycamResidueCombinations.emplace_back(new cds::Residue(residueWithoutAnomericOxygen));
+    glycamResidueCombinations.emplace_back(new cds::Residue(residueWithoutAnomericOxygen));
+    newResidue  = glycamResidueCombinations.back();
     residueName = "0";
     residueName += starterResidue->getName().substr(1);
     newResidue->setName(residueName);
