@@ -1,5 +1,7 @@
 #include "includes/MolecularMetadata/glycoprotein.hpp"
-#include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/find.hpp"
+
+#include <unordered_map>
 
 std::string glycoproteinMetadata::LookupCodeForAminoAcidName(const std::string queryName)
 {

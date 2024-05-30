@@ -1,7 +1,9 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/find.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include <algorithm> // sort
+#include <unordered_map>
 
 std::string GlycamMetadata::GetGlycam06ResidueLinkageCode(const std::string query)
 { // If something like 3,2,6 or 6,4,2 comes in, we need to sort it first.

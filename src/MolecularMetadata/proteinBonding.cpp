@@ -1,6 +1,7 @@
 #include "includes/MolecularMetadata/proteinBonding.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/find.hpp"
+
 #include <unordered_map>
 #include <stdexcept>
 

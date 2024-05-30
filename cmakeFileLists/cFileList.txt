@@ -61,6 +61,7 @@
 ./src/CodeUtils/codetests.cc
 ./src/CodeUtils/directories.cpp
 ./src/CodeUtils/files.cpp
+./src/CodeUtils/find.cpp
 ./src/CodeUtils/logging.cpp
 ./src/CodeUtils/numbers.cpp
 ./src/CodeUtils/strings.cpp
