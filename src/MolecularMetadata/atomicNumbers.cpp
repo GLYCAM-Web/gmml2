@@ -1,14 +1,15 @@
-#ifndef INCLUDES_MOLECULARMETADATA_ELEMENT_ATTRIBUTES
-#define INCLUDES_MOLECULARMETADATA_ELEMENT_ATTRIBUTES
-
-#include <string>
-#include <vector>
-
+#include "includes/MolecularMetadata/atomicNumbers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
-namespace MolecularMetadata
-{ // I ordered this by popularity. Overwhelmingly we will be looking up HCON
-    const std::vector<std::pair<std::string, int>> ElementAtomicNumber = {
+#include <vector>
+#include <utility>
+#include <algorithm>
+
+namespace
+{
+    // I ordered this by popularity. Overwhelmingly we will be looking up HCON
+    static const std::vector<std::pair<std::string, int>> ElementAtomicNumber = {
   // Element Type	Atomic Number
         { "H",   1},
         { "C",   6},
@@ -129,24 +130,23 @@ namespace MolecularMetadata
         {"Ts", 117},
         {"Og", 118},
     };
+} // namespace
 
-    inline int findElementAtomicNumber(const std::string queryElement)
+int MolecularMetadata::findElementAtomicNumber(const std::string& queryElement)
+{
+    auto result = std::find_if(ElementAtomicNumber.begin(), ElementAtomicNumber.end(),
+                               [&](const std::pair<std::string, int>& item)
+                               {
+                                   return item.first == queryElement;
+                               });
+    if (result != ElementAtomicNumber.end())
     {
-        auto result = std::find_if(ElementAtomicNumber.begin(), ElementAtomicNumber.end(),
-                                   [&](const std::pair<std::string, int>& item)
-                                   {
-                                       return item.first == queryElement;
-                                   });
-        if (result != ElementAtomicNumber.end())
-        {
-            return result->second;
-        }
-        else
-        {
-            std::string message = "Did not find this Element in the list of atomic Elements: " + queryElement;
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
-        }
+        return result->second;
     }
-} // namespace MolecularMetadata
-#endif
+    else
+    {
+        std::string message = "Did not find this Element in the list of atomic Elements: " + queryElement;
+        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+        throw std::runtime_error(message);
+    }
+}

@@ -2,7 +2,7 @@
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/MolecularMetadata/elementattributes.hpp"
+#include "includes/MolecularMetadata/atomicNumbers.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 
 #include <ctype.h> // isalpha
