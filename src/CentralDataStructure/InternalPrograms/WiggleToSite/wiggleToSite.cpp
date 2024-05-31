@@ -79,7 +79,7 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         this->randomizeLinkageOrder();
         for (auto& linkage : this->getWiggleLinkages())
         {
-            linkage.SetRandomShapeUsingMetadata(true);
+            linkage.SetRandomShapeUsingMetadata();
             if (this->acceptDistance(useMonteCarlo) && this->acceptOverlaps())
             {
                 cycle = 0; // reset when it improves

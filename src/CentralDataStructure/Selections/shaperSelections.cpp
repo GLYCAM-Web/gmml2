@@ -316,8 +316,6 @@ void cdsSelections::FindEndsOfBranchesFromLinkageAtom(cds::Atom* currentAtom, cd
             if (neighbor->getNeighbors().size() > 1)
             {
                 deadEndAtom = false;
-                // std::cout << "At depth " << branch->GetDepth() << " going deeper from " << currentAtom->GetId() << "
-                // to " << neighbor->GetId() << "\n";
                 FindEndsOfBranchesFromLinkageAtom(neighbor, currentAtom, residue, branch);
                 branch->ChangeDepth(-1);
             }
@@ -327,12 +325,8 @@ void cdsSelections::FindEndsOfBranchesFromLinkageAtom(cds::Atom* currentAtom, cd
             connectsToAnotherResidue = true;
         }
     }
-    // std::cout << "  Status at " << currentAtom->GetId() << " is deadEndAtom:" << std::boolalpha << deadEndAtom << ",
-    // depth: " << branch->GetDepth() << ", connectsToOther: " << connectsToAnotherResidue << std::endl;
     if (deadEndAtom && !connectsToAnotherResidue && branch->GetDepth() > 1 && branch->AtMaxDepth())
     {
-        // std::cout << "      Found a dead end: " << currentAtom->GetId() << " at depth " << branch->GetDepth() <<
-        // std::endl;
         branch->SetEnd(currentAtom);
     }
     return;

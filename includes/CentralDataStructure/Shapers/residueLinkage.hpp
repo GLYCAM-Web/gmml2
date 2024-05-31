@@ -79,8 +79,8 @@ namespace cds
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
         void SetDefaultShapeUsingMetadata();
-        void SetRandomShapeUsingMetadata(bool useRanges = true);
-        void SetSpecificShapeUsingMetadata(int shapeNumber, bool useRanges = false);
+        void SetRandomShapeUsingMetadata();
+        void SetSpecificShapeUsingMetadata(int shapeNumber);
         void SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         void SetCustomDihedralAngles(std::vector<double> dihedral_angles);
         void SetShapeToPrevious();
@@ -159,7 +159,6 @@ namespace cds
         void AddMetadataToRotatableDihedrals(gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata);
         void SetResidues(cds::Residue* residue1, cds::Residue* residue2);
         void SetConnectionAtoms(cds::Residue* residue1, cds::Residue* residue2);
-        void SetConformerUsingMetadata(bool useRanges = false, int conformerNumber = 0);
         unsigned long long GenerateIndex();
         std::string DetermineLinkageNameFromResidueNames() const;
 
