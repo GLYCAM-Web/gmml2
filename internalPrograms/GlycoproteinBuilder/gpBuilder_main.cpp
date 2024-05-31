@@ -1,6 +1,10 @@
 #include "includes/CodeUtils/directories.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
+
+#include <string>
+#include <iostream>
 
 int main(int argc, char* argv[])
 {
