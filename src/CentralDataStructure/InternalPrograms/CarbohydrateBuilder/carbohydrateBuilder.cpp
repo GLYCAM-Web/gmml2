@@ -21,14 +21,12 @@ catch (const std::string& exceptionMessage)
 {
     gmml::log(__LINE__, __FILE__, gmml::ERR,
               "carbohydrateBuilder class caught this exception message: " + exceptionMessage);
-    this->SetStatus("ERROR", exceptionMessage); // this is real dumb.
     throw std::runtime_error(exceptionMessage);
 }
 catch (const std::runtime_error& error)
 {
     gmml::log(__LINE__, __FILE__, gmml::ERR, "carbohydrateBuilder class caught a runtime error:");
     gmml::log(__LINE__, __FILE__, gmml::ERR, error.what());
-    this->SetStatus("ERROR", error.what());
     throw error;
 }
 catch (...)
@@ -36,7 +34,6 @@ catch (...)
     std::string message = "carbohydrateBuilder class caught a throw that was not anticipated. Please report how you "
                           "got to this to glycam@gmail.com.";
     gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-    this->SetStatus("ERROR", message);
     throw std::runtime_error(message);
 }
 
