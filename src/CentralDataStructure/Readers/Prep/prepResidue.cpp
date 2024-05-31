@@ -667,7 +667,7 @@ double PrepResidue::CalculatePrepResidueCharge()
 //////////////////////////////////////////////////////////
 //                     DISPLAY FUNCTIONS                //
 //////////////////////////////////////////////////////////
-std::string PrepResidue::Print() const
+std::string PrepResidue::toString() const
 {
     std::stringstream out;
     //    BondedAtomIndexMap bonded_atoms_map = this->GetBondingsOfResidue();

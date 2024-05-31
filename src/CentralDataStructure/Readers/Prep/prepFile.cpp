@@ -208,7 +208,7 @@ std::string PrepFile::Print() const
     for (auto& residue : this->getResidues())
     {
         out += "**********************************************************************************\n";
-        out += static_cast<PrepResidue*>(residue)->Print();
+        out += static_cast<PrepResidue*>(residue)->toString();
     }
     return out;
 }

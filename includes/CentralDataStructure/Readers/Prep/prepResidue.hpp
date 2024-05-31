@@ -111,7 +111,7 @@ namespace prep
         std::vector<std::string> GetAtomNames() const;
         std::vector<std::string> GetHeavyAtomNames() const;
         double CalculatePrepResidueCharge();
-        std::string Print() const;
+        std::string toString() const;
         void Write(std::ostream& stream);
         std::string GetTitle() const;
 
