@@ -8,24 +8,215 @@
 using cds::ResidueLinkage;
 using cds::RotatableDihedral;
 
-ResidueLinkage::ResidueLinkage(cds::Residue* nonReducingResidue1, cds::Residue* reducingResidue2,
-                               bool reverseAtomsThatMove)
+namespace
 {
-    isExtraAtoms_ = false;
-    this->InitializeClass(nonReducingResidue1, reducingResidue2, reverseAtomsThatMove);
+    cds::ResidueLinkNames toNames(const cds::ResidueLink link)
+    {
+        return {
+            {link.residues.first->getName(), link.residues.second->getName()},
+            {   link.atoms.first->getName(),    link.atoms.second->getName()}
+        };
+    }
+
+    std::string DetermineLinkageNameFromResidueNames(const cds::ResidueLinkNames link)
+    {
+        std::string residue1Name = GlycamMetadata::GetDescriptiveNameForGlycamResidueName(link.residues.first);
+        std::string residue2Name = GlycamMetadata::GetDescriptiveNameForGlycamResidueName(link.residues.second);
+        std::string atom1Name    = link.atoms.first;
+        std::string atom2Name    = link.atoms.second;
+        char link1               = *atom1Name.rbegin(); //
+        char link2               = *atom2Name.rbegin(); // Messy for Acetyl.
+        std::stringstream linkageName;
+        linkageName << residue1Name << link1 << "-" << link2 << residue2Name;
+        return linkageName.str();
+    }
+
+    //  This function splits that list into groups of 4 and creates RotatableDihedral objects
+    std::vector<RotatableDihedral> SplitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms)
+    {
+        // Ok looking for sets of four atoms, but shifting along vector by one atom for each dihedral.
+        //  So four atoms will make one rotatable bond, five will make two bonds, six will make three etc.
+        if (atoms.size() < 4)
+        {
+            std::stringstream ss;
+            ss << "ERROR in ResidueLinkage::SplitAtomVectorIntoRotatableDihedrals, not enough atoms in atom vector: "
+               << atoms.size() << "\n";
+            ss << "This should be 4 or something is very wrong\n";
+            ss << "If there are atoms, here are the ids:\n";
+            for (auto& atom : atoms)
+            {
+                ss << atom->getId() << "\n";
+            }
+            gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
+            throw std::runtime_error(ss.str());
+        }
+        else
+        {
+            std::vector<RotatableDihedral> dihedrals;
+            for (size_t n = 0; n < atoms.size() - 3; n++)
+            {
+                std::array<cds::Atom*, 4> arr {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]};
+                dihedrals.emplace_back(arr, true);
+            }
+            return dihedrals;
+        }
+    }
+
+    std::tuple<std::vector<cds::RotatableDihedral>, std::vector<cds::Atom*>>
+    findRotatableDihedralsinBranchesConnectingResidues(const cds::ResidueLink link,
+                                                       const std::vector<cds::Atom*>& residueCyclePoints)
+    {
+        std::vector<RotatableDihedral> rotatableDihedralsInBranches;
+        std::vector<cds::Atom*> connectingAtoms;
+        for (long unsigned int i = 0; i < residueCyclePoints.size(); i = i + 2)
+        {
+            cds::Atom* cyclePoint1 = residueCyclePoints.at(i);
+            cds::Atom* cyclePoint2 = residueCyclePoints.at(i + 1);
+
+            bool found = false;
+            connectingAtoms.clear();
+            cdsSelections::FindPathBetweenTwoAtoms(cyclePoint1, link.residues.first, cyclePoint2, link.residues.second,
+                                                   &connectingAtoms, &found);
+            cdsSelections::ClearAtomLabels(
+                link.residues.first); // ToDo change to free function or member function that clears labels.
+            cdsSelections::ClearAtomLabels(link.residues.second);
+            // Find neighboring atoms needed to define dihedral. Pass in connecting atoms so don't find any of those.
+            cds::Atom* neighbor1 =
+                cdsSelections::FindCyclePointNeighbor(connectingAtoms, cyclePoint1, link.residues.first);
+            cds::Atom* neighbor2 =
+                cdsSelections::FindCyclePointNeighbor(connectingAtoms, cyclePoint2, link.residues.second);
+            // Insert these neighbors into list of connecting atoms, at beginning and end of vector.
+            // connecting_atoms gets populated as it falls out, so list is reversed from what you'd expect
+            std::reverse(connectingAtoms.begin(), connectingAtoms.end());
+            connectingAtoms.insert(connectingAtoms.begin(), neighbor1);
+            connectingAtoms.push_back(neighbor2);
+            cdsSelections::ClearAtomLabels(
+                link.residues.first); // ToDo change to free function or member function that clears labels.
+            cdsSelections::ClearAtomLabels(link.residues.second);
+            // This mess was made to address the branching in 2-7 and 2-8 linkages.
+            // These branches are long enough that they need default torsions set.
+            if (connectingAtoms.size() > 4) // Otherwise there are no torsions
+            {                               // Only viable linkages. Throw if not >4?
+                for (typename std::vector<cds::Atom*>::iterator it = connectingAtoms.begin() + 1;
+                     it != connectingAtoms.end() - 1; ++it)
+                { //
+                    cds::Atom* connectionAtom = (*it);
+                    if ((connectionAtom != cyclePoint1) && (connectionAtom != cyclePoint2))
+                    {
+                        for (auto& neighbor : connectionAtom->getNeighbors()) // Need an interator
+                        {
+                            if (std::find(connectingAtoms.begin(), connectingAtoms.end(), neighbor) ==
+                                connectingAtoms.end()) // if not in the vector
+                            {
+                                cdsSelections::Branch branch(connectionAtom);
+                                cdsSelections::FindEndsOfBranchesFromLinkageAtom(neighbor, connectionAtom,
+                                                                                 link.residues.second, &branch);
+                                if (branch.IsBranchFound())
+                                {
+                                    found = false;
+                                    std::vector<cds::Atom*> foundPath;
+                                    // This fills in foundPath:
+                                    cdsSelections::FindPathBetweenTwoAtoms(branch.GetRoot(), link.residues.first,
+                                                                           branch.GetEnd(), link.residues.second,
+                                                                           &foundPath, &found);
+                                    cds::Atom* neighbor = cdsSelections::FindCyclePointNeighbor(
+                                        foundPath, branch.GetRoot(), link.residues.second);
+                                    foundPath.push_back(neighbor);
+                                    std::vector<RotatableDihedral> temp =
+                                        SplitAtomVectorIntoRotatableDihedrals(foundPath);
+                                    rotatableDihedralsInBranches.insert(rotatableDihedralsInBranches.end(),
+                                                                        temp.begin(), temp.end());
+                                }
+                            }
+                        }
+                    }
+                }
+            } // End dealing with branching linkages
+        }
+        return {rotatableDihedralsInBranches, connectingAtoms};
+    }
+
+    //  generates a list of linearly connected atoms that define the rotatable bonds
+    std::vector<RotatableDihedral> findRotatableDihedralsConnectingResidues(const cds::ResidueLink link)
+    {
+        // Going to ignore tags etc.
+        // Given two residues that are connected. Find connecting atoms.
+        // Search neighbors other than connected atom. Ie search out in both directions, but remain within same residue.
+        // Warning, residue may have fused cycles!
+        // Will fail for non-protein residues without cycles. As don't have a non-rotatable bond to anchor from. Can
+        // code that later (and deal with branches from these residues).
+
+        std::vector<cds::Atom*> firstResidueCyclePoints =
+            cdsSelections::FindCyclePoints(link.atoms.first, link.residues.first);
+        //    std::cout << "Moving onto second residue.\n";
+        std::vector<cds::Atom*> secondResidueCyclePoints =
+            cdsSelections::FindCyclePoints(link.atoms.second, link.residues.second);
+        // Need to reverse one of these, so when concatenated, they are ordered ok. This might not be ok.
+        // std::reverse(to_this_residue2_cycle_points.begin(), to_this_residue2_cycle_points.end());
+        std::reverse(firstResidueCyclePoints.begin(), firstResidueCyclePoints.end());
+        // Now concatenate:
+        firstResidueCyclePoints.insert(firstResidueCyclePoints.end(), secondResidueCyclePoints.begin(),
+                                       secondResidueCyclePoints.end());
+        // Now that have a list of rotation points. Split into pairs and find rotatable bonds between them
+        auto branchResult = findRotatableDihedralsinBranchesConnectingResidues(link, firstResidueCyclePoints);
+        std::vector<RotatableDihedral>& rotatableDihedralsInBranches = std::get<0>(branchResult);
+        std::vector<cds::Atom*>& connectingAtoms                     = std::get<1>(branchResult);
+        std::vector<RotatableDihedral> RotatableDihedrals = SplitAtomVectorIntoRotatableDihedrals(connectingAtoms);
+        // Add any linkage branches (in 2-7 and 2-8) to the rest.
+        RotatableDihedrals.insert(RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(),
+                                  rotatableDihedralsInBranches.end());
+        return RotatableDihedrals;
+    }
+
+    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector findResidueLinkageMetadata(cds::ResidueLinkNames link)
+    {
+        std::string firstAtom     = link.atoms.first;
+        std::string secondAtom    = link.atoms.second;
+        std::string firstResidue  = link.residues.first;
+        std::string secondResidue = link.residues.second;
+        gmml::MolecularMetadata::GLYCAM::DihedralAngleDataContainer DihedralAngleMetadata;
+        gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector matching_entries =
+            DihedralAngleMetadata.GetEntriesForLinkage(firstAtom, firstResidue, secondAtom, secondResidue);
+        if (matching_entries.empty())
+        {
+            matching_entries =
+                DihedralAngleMetadata.GetEntriesForLinkage(secondAtom, secondResidue, firstAtom, firstResidue);
+        }
+        if (matching_entries.empty())
+        {
+            std::stringstream ss;
+            ss << "No Metadata entries found for connection between " << firstResidue << "@" << firstAtom << " and "
+               << secondResidue << "@" << secondAtom << "\n";
+            ss << "Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it "
+                  "didn't fix the issue.\n";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
+            throw std::runtime_error(ss.str());
+        }
+        return matching_entries;
+    }
+} // namespace
+
+cds::ResidueLink cds::findResidueLink(std::pair<cds::Residue*, cds::Residue*> residues)
+{
+    std::vector<cds::Atom*> atoms;
+    bool found = false;
+    cdsSelections::FindAtomsConnectingResidues(residues.first->getAtoms().at(0), residues.first, residues.second,
+                                               &atoms, &found);
+    if (atoms.size() >= 2)
+    {
+        return {
+            residues, {atoms[0], atoms[1]}
+        };
+    }
+    else
+    {
+        throw std::runtime_error("Two residues passed into findResidueLink that have no connection atoms.");
+    }
 }
 
-ResidueLinkage::ResidueLinkage(cds::Residue* nonReducingResidue1, cds::Residue* reducingResidue2,
-                               std::vector<cds::Atom*> alsoMovingAtoms, bool reverseAtomsThatMove)
-{ // Order of calling functions is important!
-    this->AddExtraAtomsThatMove(alsoMovingAtoms);
-    this->InitializeClass(nonReducingResidue1, reducingResidue2, reverseAtomsThatMove);
-}
-
-std::vector<cds::Residue*> ResidueLinkage::GetResidues() const
+ResidueLinkage::ResidueLinkage(ResidueLink link) : link_(link)
 {
-    std::vector<cds::Residue*> residues {from_this_residue1_, to_this_residue2_};
-    return residues;
+    this->InitializeClass();
 }
 
 std::vector<RotatableDihedral> ResidueLinkage::GetRotatableDihedralsWithMultipleRotamers() const
@@ -46,8 +237,8 @@ std::vector<RotatableDihedral>& ResidueLinkage::GetRotatableDihedralsRef()
     if (rotatableDihedrals_.empty())
     {
         std::stringstream ss;
-        ss << "Error: RotatableDihedrals in this linkage is empty: " << from_this_residue1_->getStringId() << "-"
-           << to_this_residue2_->getStringId() << std::endl;
+        ss << "Error: RotatableDihedrals in this linkage is empty: " << link_.residues.first->getStringId() << "-"
+           << link_.residues.second->getStringId() << std::endl;
         gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
         throw std::runtime_error(ss.str());
     }
@@ -59,8 +250,8 @@ std::vector<RotatableDihedral> ResidueLinkage::GetRotatableDihedrals() const
     if (rotatableDihedrals_.empty())
     {
         std::stringstream ss;
-        ss << "Error: RotatableDihedrals in this linkage is empty: " << from_this_residue1_->getStringId() << "-"
-           << to_this_residue2_->getStringId() << std::endl;
+        ss << "Error: RotatableDihedrals in this linkage is empty: " << link_.residues.first->getStringId() << "-"
+           << link_.residues.second->getStringId() << std::endl;
         gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
         throw std::runtime_error(ss.str());
     }
@@ -119,7 +310,7 @@ std::string ResidueLinkage::GetName() const
     {
         return name_;
     }
-    return this->DetermineLinkageNameFromResidueNames();
+    return DetermineLinkageNameFromResidueNames(toNames(link_));
 }
 
 void ResidueLinkage::AddNonReducingOverlapResidues(std::vector<cds::Residue*> extraResidues)
@@ -137,21 +328,6 @@ std::vector<cds::Residue*>& ResidueLinkage::GetReducingOverlapResidues()
     return reducingOverlapResidues_;
 }
 
-std::string ResidueLinkage::DetermineLinkageNameFromResidueNames() const
-{
-    std::string residue1Name =
-        GlycamMetadata::GetDescriptiveNameForGlycamResidueName(this->GetFromThisResidue1()->getName());
-    std::string residue2Name =
-        GlycamMetadata::GetDescriptiveNameForGlycamResidueName(this->GetToThisResidue2()->getName());
-    std::string atom1Name = this->GetFromThisConnectionAtom1()->getName();
-    std::string atom2Name = this->GetToThisConnectionAtom2()->getName();
-    char link1            = *atom1Name.rbegin(); //
-    char link2            = *atom2Name.rbegin(); // Messy for Acetyl.
-    std::stringstream linkageName;
-    linkageName << residue1Name << link1 << "-" << link2 << residue2Name;
-    return linkageName.str();
-}
-
 unsigned long int ResidueLinkage::GetNumberOfRotatableDihedrals() const
 {
     return rotatableDihedrals_.size();
@@ -160,12 +336,6 @@ unsigned long int ResidueLinkage::GetNumberOfRotatableDihedrals() const
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
-
-void ResidueLinkage::AddExtraAtomsThatMove(std::vector<cds::Atom*> extraAtoms)
-{
-    extraAtomsThatMove_ = extraAtoms;
-    isExtraAtoms_       = true;
-}
 
 void ResidueLinkage::SetDefaultShapeUsingMetadata()
 {
@@ -305,8 +475,8 @@ std::string ResidueLinkage::Print() const
     std::stringstream ss;
     ss << "ResidueLinkage Index: " << this->GetIndex() << ", Name: " << this->GetName()
        << ", NumberOfShapes: " << this->GetNumberOfShapes() << ", ids: " << this->GetFromThisResidue1()->getStringId()
-       << "@" << this->GetFromThisConnectionAtom1()->getName() << " -- " << this->GetToThisResidue2()->getStringId()
-       << "@" << this->GetToThisConnectionAtom2()->getName() << "\n";
+       << "@" << link_.atoms.first->getName() << " -- " << this->GetToThisResidue2()->getStringId() << "@"
+       << link_.atoms.second->getName() << "\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     for (auto& rotatableDihedral : this->GetRotatableDihedrals())
     {
@@ -316,221 +486,43 @@ std::string ResidueLinkage::Print() const
 }
 
 // PRIVATE
-void ResidueLinkage::InitializeClass(cds::Residue* from_this_residue1, cds::Residue* to_this_residue2,
-                                     bool reverseAtomsThatMove)
+void ResidueLinkage::InitializeClass()
 {
     int local_debug = -1;
-    this->SetResidues(from_this_residue1, to_this_residue2);
-    this->SetIfReversedAtomsThatMove(reverseAtomsThatMove);
-    this->SetConnectionAtoms(from_this_residue1_, to_this_residue2_);
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Maybe Finding connection between " + from_this_residue1->getStringId() +
-                      " :: " + to_this_residue2->getStringId());
+                  "Maybe Finding connection between " + link_.residues.first->getStringId() +
+                      " :: " + link_.residues.second->getStringId());
     }
-    if (this->CheckIfViableLinkage())
+    if (local_debug > 0)
     {
-        if (local_debug > 0)
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Finding connection between " + from_this_residue1->getStringId() +
-                          " :: " + to_this_residue2->getStringId());
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Connection atoms are from: " + from_this_connection_atom1_->getId() + " to " +
-                          to_this_connection_atom2_->getId());
-        }
-        rotatableDihedrals_ =
-            this->FindRotatableDihedralsConnectingResidues(from_this_connection_atom1_, to_this_connection_atom2_);
-        if (local_debug > 0)
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Finding metadata for " + from_this_residue1->getStringId() +
-                          " :: " + to_this_residue2->getStringId());
-        }
-        gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata = this->FindMetadata();
-        if (local_debug > 0)
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF, "Metadata found:");
-            for (auto& dihedralAngleData : metadata)
-            {
-                gmml::log(__LINE__, __FILE__, gmml::INF, dihedralAngleData.print());
-            }
-        }
-        this->AddMetadataToRotatableDihedrals(metadata);
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Finding connection between " + link_.residues.first->getStringId() +
+                      " :: " + link_.residues.second->getStringId());
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Connection atoms are from: " + link_.atoms.first->getId() + " to " + link_.atoms.second->getId());
     }
+    rotatableDihedrals_ = findRotatableDihedralsConnectingResidues(link_);
+    if (local_debug > 0)
+    {
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Finding metadata for " + link_.residues.first->getStringId() +
+                      " :: " + link_.residues.second->getStringId());
+    }
+    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata = findResidueLinkageMetadata(toNames(link_));
+    if (local_debug > 0)
+    {
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Metadata found:");
+        for (auto& dihedralAngleData : metadata)
+        {
+            gmml::log(__LINE__, __FILE__, gmml::INF, dihedralAngleData.print());
+        }
+    }
+    this->AddMetadataToRotatableDihedrals(metadata);
     this->SetIndex(this->GenerateIndex());
     this->DetermineResiduesForOverlapCheck(); // speedup overlap calcs
     return;
-}
-
-bool ResidueLinkage::CheckIfViableLinkage() const
-{
-    for (auto& residue : this->GetResidues())
-    {
-        if (residue->getAtoms().size() <= 1)
-        { // If either linkage has only 1 atom, return false. Should not set dihedral.
-            return false;
-        }
-    }
-    return true;
-}
-
-std::vector<RotatableDihedral>
-ResidueLinkage::FindRotatableDihedralsConnectingResidues(cds::Atom* from_this_connection_atom1,
-                                                         cds::Atom* to_this_connection_atom2)
-{
-    // Going to ignore tags etc.
-    // Given two residues that are connected. Find connecting atoms.
-    // Search neighbors other than connected atom. Ie search out in both directions, but remain within same residue.
-    // Warning, residue may have fused cycles!
-    // Will fail for non-protein residues without cycles. As don't have a non-rotatable bond to anchor from. Can code
-    // that later (and deal with branches from these residues).
-
-    std::vector<cds::Atom*> from_this_residue1_cycle_points =
-        cdsSelections::FindCyclePoints(from_this_connection_atom1, this->GetFromThisResidue1());
-    //    std::cout << "Moving onto second residue.\n";
-    std::vector<cds::Atom*> to_this_residue2_cycle_points =
-        cdsSelections::FindCyclePoints(to_this_connection_atom2, this->GetToThisResidue2());
-    // Need to reverse one of these, so when concatenated, they are ordered ok. This might not be ok.
-    // std::reverse(to_this_residue2_cycle_points.begin(), to_this_residue2_cycle_points.end());
-    std::reverse(from_this_residue1_cycle_points.begin(), from_this_residue1_cycle_points.end());
-    // Now concatenate:
-    from_this_residue1_cycle_points.insert(from_this_residue1_cycle_points.end(), to_this_residue2_cycle_points.begin(),
-                                           to_this_residue2_cycle_points.end());
-    // Now that have a list of rotation points. Split into pairs and find rotatable bonds between them
-    bool found                               = false;
-    std::vector<cds::Atom*> connecting_atoms = {from_this_connection_atom1, to_this_connection_atom2};
-    std::vector<RotatableDihedral> rotatableDihedralsInBranches;
-    for (long unsigned int i = 0; i < from_this_residue1_cycle_points.size(); i = i + 2)
-    {
-        cds::Atom* cycle_point1 = from_this_residue1_cycle_points.at(i);
-        cds::Atom* cycle_point2 = from_this_residue1_cycle_points.at(i + 1);
-
-        found = false;
-        connecting_atoms.clear();
-        cdsSelections::FindPathBetweenTwoAtoms(cycle_point1, this->GetFromThisResidue1(), cycle_point2,
-                                               this->GetToThisResidue2(), &connecting_atoms, &found);
-        cdsSelections::ClearAtomLabels(
-            this->GetFromThisResidue1()); // ToDo change to free function or member function that clears labels.
-        cdsSelections::ClearAtomLabels(this->GetToThisResidue2());
-        // Find neighboring atoms needed to define dihedral. Pass in connecting atoms so don't find any of those.
-        cds::Atom* neighbor1 =
-            cdsSelections::FindCyclePointNeighbor(connecting_atoms, cycle_point1, this->GetFromThisResidue1());
-        cds::Atom* neighbor2 =
-            cdsSelections::FindCyclePointNeighbor(connecting_atoms, cycle_point2, this->GetToThisResidue2());
-        // Insert these neighbors into list of connecting atoms, at beginning and end of vector.
-        // connecting_atoms gets populated as it falls out, so list is reversed from what you'd expect
-        std::reverse(connecting_atoms.begin(), connecting_atoms.end());
-        connecting_atoms.insert(connecting_atoms.begin(), neighbor1);
-        connecting_atoms.push_back(neighbor2);
-        cdsSelections::ClearAtomLabels(
-            this->GetFromThisResidue1()); // ToDo change to free function or member function that clears labels.
-        cdsSelections::ClearAtomLabels(this->GetToThisResidue2());
-        // This mess was made to address the branching in 2-7 and 2-8 linkages.
-        // These branches are long enough that they need default torsions set.
-        if (connecting_atoms.size() > 4) // Otherwise there are no torsions
-        {                                // Only viable linkages. Throw if not >4?
-            for (typename std::vector<cds::Atom*>::iterator it = connecting_atoms.begin() + 1;
-                 it != connecting_atoms.end() - 1; ++it)
-            { //
-                cds::Atom* connectionAtom = (*it);
-                if ((connectionAtom != cycle_point1) && (connectionAtom != cycle_point2))
-                {
-                    for (auto& neighbor : connectionAtom->getNeighbors()) // Need an interator
-                    {
-                        if (std::find(connecting_atoms.begin(), connecting_atoms.end(), neighbor) ==
-                            connecting_atoms.end()) // if not in the vector
-                        {
-                            cdsSelections::Branch branch(connectionAtom);
-                            cdsSelections::FindEndsOfBranchesFromLinkageAtom(neighbor, connectionAtom,
-                                                                             this->GetToThisResidue2(), &branch);
-                            if (branch.IsBranchFound())
-                            {
-                                found = false;
-                                std::vector<cds::Atom*> foundPath;
-                                // This fills in foundPath:
-                                cdsSelections::FindPathBetweenTwoAtoms(branch.GetRoot(), this->GetFromThisResidue1(),
-                                                                       branch.GetEnd(), this->GetToThisResidue2(),
-                                                                       &foundPath, &found);
-                                cds::Atom* neighbor = cdsSelections::FindCyclePointNeighbor(foundPath, branch.GetRoot(),
-                                                                                            this->GetToThisResidue2());
-                                foundPath.push_back(neighbor);
-                                std::vector<RotatableDihedral> temp =
-                                    this->SplitAtomVectorIntoRotatableDihedrals(foundPath);
-                                rotatableDihedralsInBranches.insert(rotatableDihedralsInBranches.end(), temp.begin(),
-                                                                    temp.end());
-                            }
-                        }
-                    }
-                }
-            }
-        } // End dealing with branching linkages
-    }
-    std::vector<RotatableDihedral> RotatableDihedrals = this->SplitAtomVectorIntoRotatableDihedrals(connecting_atoms);
-    // Add any linkage branches (in 2-7 and 2-8) to the rest.
-    RotatableDihedrals.insert(RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(),
-                              rotatableDihedralsInBranches.end());
-    return RotatableDihedrals;
-}
-
-std::vector<RotatableDihedral> ResidueLinkage::SplitAtomVectorIntoRotatableDihedrals(std::vector<cds::Atom*> atoms)
-{
-    // Ok looking for sets of four atoms, but shifting along vector by one atom for each dihedral.
-    //  So four atoms will make one rotatable bond, five will make two bonds, six will make three etc.
-    if (atoms.size() < 4)
-    {
-        std::stringstream ss;
-        ss << "ERROR in ResidueLinkage::SplitAtomVectorIntoRotatableDihedrals, not enough atoms in atom vector: "
-           << atoms.size() << "\n";
-        ss << "This should be 4 or something is very wrong\n";
-        ss << "If there are atoms, here are the ids:\n";
-        for (auto& atom : atoms)
-        {
-            ss << atom->getId() << "\n";
-        }
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    else
-    {
-        std::vector<RotatableDihedral> dihedrals;
-        bool isReversed = this->GetIfReversedAtomsThatMove();
-        for (size_t n = 0; n < atoms.size() - 3; n++)
-        {
-            std::array<cds::Atom*, 4> arr {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]};
-            dihedrals.emplace_back(arr, isReversed);
-        }
-        return dihedrals;
-    }
-}
-
-gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector ResidueLinkage::FindMetadata() const
-{
-    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataContainer DihedralAngleMetadata;
-    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector matching_entries =
-        DihedralAngleMetadata.GetEntriesForLinkage(
-            this->GetFromThisConnectionAtom1()->getName(), this->GetFromThisResidue1()->getName(),
-            this->GetToThisConnectionAtom2()->getName(), this->GetToThisResidue2()->getName());
-    if (matching_entries.empty())
-    {
-        matching_entries = DihedralAngleMetadata.GetEntriesForLinkage(
-            this->GetToThisConnectionAtom2()->getName(), this->GetToThisResidue2()->getName(),
-            this->GetFromThisConnectionAtom1()->getName(), this->GetFromThisResidue1()->getName());
-        std::reverse(matching_entries.begin(), matching_entries.end()); // I think this will work...
-    }
-    if (matching_entries.empty())
-    {
-        std::stringstream ss;
-        ss << "No Metadata entries found for connection between " << this->GetFromThisResidue1()->getName() << "@"
-           << this->GetFromThisConnectionAtom1()->getName() << " and " << this->GetToThisResidue2()->getName() << "@"
-           << GetToThisConnectionAtom2()->getName() << "\n";
-        ss << "Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it "
-              "didn't fix the issue.\n";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    return matching_entries;
 }
 
 void ResidueLinkage::AddMetadataToRotatableDihedrals(gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata)
@@ -572,26 +564,6 @@ void ResidueLinkage::AddMetadataToRotatableDihedrals(gmml::MolecularMetadata::GL
     }
 }
 
-void ResidueLinkage::SetResidues(cds::Residue* residue1, cds::Residue* residue2)
-{
-    from_this_residue1_ = residue1;
-    to_this_residue2_   = residue2;
-}
-
-void ResidueLinkage::SetConnectionAtoms(cds::Residue* residue1, cds::Residue* residue2)
-{
-    std::vector<cds::Atom*> connecting_atoms;
-    bool found = false;
-    cdsSelections::FindAtomsConnectingResidues(residue1->getAtoms().at(0), residue1, residue2, &connecting_atoms,
-                                               &found);
-    if (connecting_atoms.size() < 2)
-    {
-        throw std::runtime_error("Two residues passed into ResidueLinkage that have no connection atoms.");
-    }
-    from_this_connection_atom1_ = connecting_atoms.at(0);
-    to_this_connection_atom2_   = connecting_atoms.at(1);
-}
-
 unsigned long long ResidueLinkage::GenerateIndex()
 { // static keyword means it is created only once and persists beyond scope of code block.
     static unsigned long long s_ResidueLinkageIndex = 0;
@@ -602,19 +574,19 @@ unsigned long long ResidueLinkage::GenerateIndex()
 void ResidueLinkage::DetermineResiduesForOverlapCheck()
 {
     reducingOverlapResidues_.clear();
-    reducingOverlapResidues_.push_back(from_this_residue1_);
-    for (auto& neighbor : from_this_residue1_->getNeighbors())
+    reducingOverlapResidues_.push_back(link_.residues.first);
+    for (auto& neighbor : link_.residues.first->getNeighbors())
     {
-        if (neighbor != to_this_residue2_)
+        if (neighbor != link_.residues.second)
         {
             cdsSelections::FindConnectedResidues(reducingOverlapResidues_, neighbor);
         }
     }
     nonReducingOverlapResidues_.clear();
-    nonReducingOverlapResidues_.push_back(to_this_residue2_);
-    for (auto& neighbor : to_this_residue2_->getNeighbors())
+    nonReducingOverlapResidues_.push_back(link_.residues.second);
+    for (auto& neighbor : link_.residues.second->getNeighbors())
     {
-        if (neighbor != from_this_residue1_)
+        if (neighbor != link_.residues.first)
         {
             cdsSelections::FindConnectedResidues(nonReducingOverlapResidues_, neighbor);
         }

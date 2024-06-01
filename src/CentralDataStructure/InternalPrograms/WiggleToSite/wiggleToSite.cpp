@@ -134,7 +134,8 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
         std::cout << residue->getName() << "_" << residue->getNumber() << ", ";
         if (previousResidue != nullptr)
         {
-            wiggleLinkages_.emplace_back(cds::ResidueLinkage(previousResidue, residue));
+            cds::ResidueLink link = cds::findResidueLink({previousResidue, residue});
+            wiggleLinkages_.emplace_back(link);
         }
         previousResidue = residue;
     }

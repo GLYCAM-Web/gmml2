@@ -95,7 +95,8 @@ void Carbohydrate::replaceAglycone(cds::Residue* newAglycone)
             this->cds::Molecule::deleteResidue(this->GetAglycone());
             newAglycone->addNeighbor(newAglycone->getName() + "-" + this->GetReducingResidue()->getName(),
                                      this->GetReducingResidue());
-            linkage = cds::ResidueLinkage(this->GetReducingResidue(), newAglycone);
+            cds::ResidueLink link = cds::findResidueLink({this->GetReducingResidue(), newAglycone});
+            linkage               = cds::ResidueLinkage(link);
             linkage.SetDefaultShapeUsingMetadata();
             return;
         }
@@ -415,7 +416,8 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     }
     // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after more
     // residues are added.
-    glycosidicLinkages_.emplace_back(childResidue, parentResidue);
+    cds::ResidueLink link = cds::findResidueLink({childResidue, parentResidue});
+    glycosidicLinkages_.emplace_back(cds::ResidueLinkage(link));
     cds::ResidueLinkage& linkage = glycosidicLinkages_.back();
     linkage.SetDefaultShapeUsingMetadata();
     std::vector<cds::Atom*> childAtoms  = childResidue->getAtoms();  // keeps them alive in memory
