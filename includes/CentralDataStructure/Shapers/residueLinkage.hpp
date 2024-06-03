@@ -28,6 +28,9 @@ namespace cds
         std::pair<std::string, std::string> atoms;
     };
 
+    typedef std::array<cds::Atom*, 4> DihedralAtoms;
+    typedef std::vector<gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector> DihedralAngleMetadata;
+
     ResidueLink findResidueLink(std::pair<cds::Residue*, cds::Residue*> residues);
 
     class ResidueLinkage
@@ -128,9 +131,8 @@ namespace cds
         //////////////////////////////////////////////////////////
 
         void InitializeClass();
-        // std::vector<cds::Atom*> DealWithBranchesFromLinkages(std::vector<cds::Atom*> linearLinkageAtoms, Atom
-        // *cycle_point1, Atom *cycle_point2);
-        void AddMetadataToRotatableDihedrals(gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata);
+        void CreateHydrogenForPsiAngles(std::vector<DihedralAtoms>& dihedralAtoms,
+                                        const DihedralAngleMetadata& metadata);
         unsigned long long GenerateIndex();
 
         inline void SetName(std::string name)

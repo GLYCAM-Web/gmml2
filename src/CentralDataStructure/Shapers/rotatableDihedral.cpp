@@ -1,5 +1,4 @@
 #include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp" // getCoordinatesFromAtoms
 #include "includes/CentralDataStructure/Shapers/shapers.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
@@ -47,32 +46,24 @@ double RotatableDihedral::CalculateDihedralAngle(const std::string type) const
 
 int RotatableDihedral::GetNumberOfRotamers(bool likelyShapesOnly) const
 {
-    if (this->GetMetadata().empty())
+    int count = 0;
+    for (auto& entry : this->GetMetadata())
     {
-        gmml::log(__LINE__, __FILE__, gmml::ERR,
-                  "Error in RotatableDihedral::GetNumberOfRotamers; no metadata has been set.\n");
-        return 0;
-    }
-    else
-    {
-        int count = 0;
-        for (auto& entry : this->GetMetadata())
+        if ((entry.weight_ < 0.01) && (likelyShapesOnly)) // I'm hardcoding it, I don't care.
+        {}                                                // Do nought.
+        else
         {
-            if ((entry.weight_ < 0.01) && (likelyShapesOnly)) // I'm hardcoding it, I don't care.
-            {}                                                // Do nought.
-            else
-            {
-                count++;
-            }
+            count++;
         }
-        return count;
     }
+    return count;
 }
 
 DihedralAngleDataVector RotatableDihedral::GetLikelyMetadata() const
 {
     DihedralAngleDataVector returningMetadata;
-    for (auto& entry : this->GetMetadata())
+    returningMetadata.reserve(assigned_metadata_.size());
+    for (auto& entry : assigned_metadata_)
     {
         if (entry.weight_ >= 0.01) // HARDCODE EVERYTHING.
         {
@@ -84,29 +75,17 @@ DihedralAngleDataVector RotatableDihedral::GetLikelyMetadata() const
 
 std::vector<double> RotatableDihedral::GetAllPossibleAngleValues(const int interval) const
 {
-    if (assigned_metadata_.empty())
+    std::vector<double> allPossibleAngleValues;
+    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata_entries = this->GetMetadata();
+    for (auto& metadata : metadata_entries)
     {
-        std::stringstream ss;
-        ss << "Error in RotatableDihedral::GetAllPossibleAngleValues; no metadata has been set for:\n"
-           << atoms_[0]->getId() << " " << atoms_[1]->getId() << " " << atoms_[2]->getId() << " " << atoms_[3]->getId()
-           << "\n";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    else
-    {
-        std::vector<double> allPossibleAngleValues;
-        gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata_entries = this->GetMetadata();
-        for (auto& metadata : metadata_entries)
+        Bounds bounds = angleBounds(metadata);
+        for (double angle = bounds.lower; angle <= bounds.upper; angle += interval)
         {
-            Bounds bounds = angleBounds(metadata);
-            for (double angle = bounds.lower; angle <= bounds.upper; angle += interval)
-            {
-                allPossibleAngleValues.push_back(angle);
-            }
+            allPossibleAngleValues.push_back(angle);
         }
-        return allPossibleAngleValues;
     }
+    return allPossibleAngleValues;
 }
 
 std::string RotatableDihedral::GetName() const
@@ -126,10 +105,8 @@ void RotatableDihedral::DetermineAtomsThatMove()
     // In keeping with giving residues as GlcNAc1-4Gal, and wanting the moving atoms to be in the opposite direction
     // (defaults):
     std::vector<cds::Atom*> atoms_that_move;
-    int moving = GetIsAtomsThatMoveReversed() ? 2 : 1;
-    int fixed  = GetIsAtomsThatMoveReversed() ? 1 : 2;
-    atoms_that_move.push_back(atoms_[moving]);
-    cdsSelections::FindConnectedAtoms(atoms_that_move, atoms_[fixed]);
+    atoms_that_move.push_back(atoms_[2]);
+    cdsSelections::FindConnectedAtoms(atoms_that_move, atoms_[1]);
     this->SetAtomsThatMove(atoms_that_move);
 }
 
@@ -154,17 +131,10 @@ void RotatableDihedral::SetDihedralAngle(const double dihedral_angle)
         this->SetWasEverRotated(true);
         this->DetermineAtomsThatMove();
     }
-    Coordinate* a1 = atoms_[0]->getCoordinate();
-    Coordinate* a2 = atoms_[1]->getCoordinate();
-    Coordinate* a3 = atoms_[2]->getCoordinate();
-    Coordinate* a4 = atoms_[3]->getCoordinate();
-    if (this->GetIsAtomsThatMoveReversed())
-    { // A function that was agnostic of this would be great.
-        a1 = atoms_[3]->getCoordinate();
-        a2 = atoms_[2]->getCoordinate();
-        a3 = atoms_[1]->getCoordinate();
-        a4 = atoms_[0]->getCoordinate();
-    }
+    Coordinate* a1 = atoms_[3]->getCoordinate();
+    Coordinate* a2 = atoms_[2]->getCoordinate();
+    Coordinate* a3 = atoms_[1]->getCoordinate();
+    Coordinate* a4 = atoms_[0]->getCoordinate();
     this->RecordPreviousDihedralAngle(this->CalculateDihedralAngle());
     cds::SetDihedralAngle(a1, a2, a3, a4, dihedral_angle, this->GetCoordinatesThatMove());
 }
@@ -196,50 +166,26 @@ double RotatableDihedral::RandomizeDihedralAngleWithinRange(double min, double m
     return random_angle;
 }
 
-void RotatableDihedral::AddMetadata(DihedralAngleData metadata)
-{
-    assigned_metadata_.push_back(metadata);
-}
-
 void RotatableDihedral::SetRandomAngleEntryUsingMetadata(bool useRanges)
 {
-    if (assigned_metadata_.empty())
+    // first randomly pick one of the meta data entries. If there is only one entry, it will randomly always be it.
+    std::uniform_int_distribution<> distr(0, (assigned_metadata_.size() - 1)); // define the range
+    DihedralAngleData& entry = assigned_metadata_.at(distr(rng));
+    this->SetCurrentMetaData(entry);
+    if (useRanges)
     {
-        std::stringstream ss;
-        ss << "Error in RotatableDihedral::SetRandomAngleEntryUsingMetadata; no metadata has been set for:.\n"
-           << atoms_[0]->getId() << atoms_[1]->getId() << atoms_[2]->getId() << atoms_[3]->getId();
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
+        Bounds bounds = angleBounds(entry);
+        this->RandomizeDihedralAngleWithinRange(bounds.lower, bounds.upper);
     }
     else
-    { // first randomly pick one of the meta data entries. If there is only one entry, it will randomly always be it.
-        std::uniform_int_distribution<> distr(0, (assigned_metadata_.size() - 1)); // define the range
-        DihedralAngleData& entry = assigned_metadata_.at(distr(rng));
-        this->SetCurrentMetaData(entry);
-        if (useRanges)
-        {
-            Bounds bounds = angleBounds(entry);
-            this->RandomizeDihedralAngleWithinRange(bounds.lower, bounds.upper);
-        }
-        else
-        { // Just set it to the entries default value
-            this->RandomizeDihedralAngleWithinRange(entry.default_angle_value_, entry.default_angle_value_);
-        }
+    { // Just set it to the entries default value
+        this->RandomizeDihedralAngleWithinRange(entry.default_angle_value_, entry.default_angle_value_);
     }
 }
 
 void RotatableDihedral::SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber)
 {
-    if (assigned_metadata_.empty())
-    {
-        std::stringstream ss;
-        ss << "Error in RotatableDihedral::SetSpecificAngleUsingMetadata; no metadata has been set for:\n"
-           << atoms_[0]->getId() << " " << atoms_[1]->getId() << " " << atoms_[2]->getId() << " " << atoms_[3]->getId()
-           << "\n";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    else if (assigned_metadata_.size() <= angleEntryNumber)
+    if (assigned_metadata_.size() <= angleEntryNumber)
     {
         std::stringstream ss;
         ss << "Error in RotatableDihedral::SetSpecificAngleUsingMetadata; angleEntryNumber of " << angleEntryNumber
@@ -265,16 +211,6 @@ void RotatableDihedral::SetSpecificAngleEntryUsingMetadata(bool useRanges, long 
 
 bool RotatableDihedral::SetSpecificShape(std::string dihedralName, std::string selectedRotamer)
 {
-    if (assigned_metadata_.empty())
-    {
-        std::string message =
-            "Error in RotatableDihedral::SetSpecificAngleUsingMetadata; no metadata has been set for:\n" +
-            atoms_[0]->getId() + " " + atoms_[1]->getId() + " " + atoms_[2]->getId() + " " + atoms_[3]->getId();
-        message += ".\nA rotatable dihedral named: " + dihedralName +
-                   " was requested to be set to the rotamer named: " + selectedRotamer;
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
     if (dihedralName == this->GetMetadata().at(0).dihedral_angle_name_)
     {
         for (auto& metadata : this->GetMetadata())
@@ -431,30 +367,6 @@ unsigned int RotatableDihedral::WiggleWithinRangesDistanceCheck(cds::ResidueAtom
     }
     this->SetDihedralAngle(bestDihedral);
     return lowestOverlap;
-}
-
-bool RotatableDihedral::IsThereHydrogenForPsiAngle()
-{
-    for (auto& neighbor : atoms_[2]->getNeighbors())
-    {
-        if (neighbor->getName().at(0) == 'H')
-        {
-            atoms_[3] = neighbor;
-            return true;
-        }
-    }
-    return false;
-}
-
-// Private
-
-std::unique_ptr<cds::Atom> RotatableDihedral::CreateHydrogenAtomForPsiAngle()
-{
-    std::vector<Coordinate*> neighborsCoords = cds::getCoordinatesFromAtoms(atoms_[2]->getNeighbors());
-    Coordinate newCoord = cds::CreateCoordinateForCenterAwayFromNeighbors(*atoms_[2]->getCoordinate(), neighborsCoords);
-    std::unique_ptr<cds::Atom> newAtom = std::make_unique<cds::Atom>("HHH", newCoord);
-    atoms_[2]->addBond(newAtom.get());
-    return newAtom;
 }
 
 std::string RotatableDihedral::Print() const

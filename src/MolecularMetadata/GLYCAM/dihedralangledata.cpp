@@ -12,10 +12,9 @@ using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
 //                      QUERY FUNCTIONS                 //
 //////////////////////////////////////////////////////////
 // Pass in the two atoms on either side the residue-residue linkage
-DihedralAngleDataVector DihedralAngleDataContainer::GetEntriesForLinkage(const std::string atom1Name,
-                                                                         const std::string residue1Name,
-                                                                         const std::string atom2Name,
-                                                                         const std::string residue2Name) const
+std::vector<DihedralAngleDataVector>
+DihedralAngleDataContainer::GetEntriesForLinkage(const std::string atom1Name, const std::string residue1Name,
+                                                 const std::string atom2Name, const std::string residue2Name) const
 {
     DihedralAngleDataVector matching_entries;
     Glycam06NamesToTypesLookupContainer metadata_residueNamesToTypes;
@@ -50,7 +49,23 @@ DihedralAngleDataVector DihedralAngleDataContainer::GetEntriesForLinkage(const s
             }
         }
     }
-    return matching_entries;
+
+    unsigned int maxMetadataDihedral = 0;
+    for (auto& entry : matching_entries)
+    {
+        maxMetadataDihedral = std::max(maxMetadataDihedral, entry.number_of_bonds_from_anomeric_carbon_);
+    }
+    std::vector<DihedralAngleDataVector> orderedEntries;
+    orderedEntries.resize(maxMetadataDihedral);
+    for (size_t n = 0; n < maxMetadataDihedral; n++)
+    {
+        std::copy_if(matching_entries.begin(), matching_entries.end(), std::back_inserter(orderedEntries[n]),
+                     [&](auto& entry)
+                     {
+                         return entry.number_of_bonds_from_anomeric_carbon_ - 1 == n;
+                     });
+    }
+    return orderedEntries;
 }
 
 //////////////////////////////////////////////////////////

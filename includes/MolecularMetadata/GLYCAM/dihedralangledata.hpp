@@ -20,7 +20,7 @@ namespace gmml
                 double weight_;
                 std::string rotamer_type_; // permutation or conformer
                 std::string rotamer_name_;
-                int number_of_bonds_from_anomeric_carbon_;
+                unsigned int number_of_bonds_from_anomeric_carbon_;
                 int index_; // Used to indicate whether multiple entries are meant to overwrite each other or generate
                             // an additional angle
                 std::vector<std::string> residue1_conditions_;
@@ -64,10 +64,10 @@ namespace gmml
                 //                      QUERY FUNCTIONS                 //
                 //////////////////////////////////////////////////////////
                 // Pass in the two atoms on either side the residue-residue linkage
-                DihedralAngleDataVector GetEntriesForLinkage(const std::string atom1Name,
-                                                             const std::string residue1Name,
-                                                             const std::string atom2Name,
-                                                             const std::string residue2Name) const;
+                std::vector<DihedralAngleDataVector> GetEntriesForLinkage(const std::string atom1Name,
+                                                                          const std::string residue1Name,
+                                                                          const std::string atom2Name,
+                                                                          const std::string residue2Name) const;
 
               private:
                 //////////////////////////////////////////////////////////

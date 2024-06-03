@@ -1,8 +1,12 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp" // For GetDescriptiveNameForGlycamResidueName in GetName function
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp" //FindConnectedResidues()
+#include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp" // For GetDescriptiveNameForGlycamResidueName in GetName function
 
+#include <algorithm>
+#include <memory>
 #include <sstream>
 
 using cds::ResidueLinkage;
@@ -32,7 +36,7 @@ namespace
     }
 
     //  This function splits that list into groups of 4 and creates RotatableDihedral objects
-    std::vector<RotatableDihedral> SplitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms)
+    std::vector<cds::DihedralAtoms> SplitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms)
     {
         // Ok looking for sets of four atoms, but shifting along vector by one atom for each dihedral.
         //  So four atoms will make one rotatable bond, five will make two bonds, six will make three etc.
@@ -52,21 +56,20 @@ namespace
         }
         else
         {
-            std::vector<RotatableDihedral> dihedrals;
+            std::vector<cds::DihedralAtoms> dihedrals;
             for (size_t n = 0; n < atoms.size() - 3; n++)
             {
-                std::array<cds::Atom*, 4> arr {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]};
-                dihedrals.emplace_back(arr, true);
+                dihedrals.emplace_back(std::array<cds::Atom*, 4> {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]});
             }
             return dihedrals;
         }
     }
 
-    std::tuple<std::vector<cds::RotatableDihedral>, std::vector<cds::Atom*>>
-    findRotatableDihedralsinBranchesConnectingResidues(const cds::ResidueLink link,
+    std::tuple<std::vector<cds::DihedralAtoms>, std::vector<cds::Atom*>>
+    findRotatableDihedralsinBranchesConnectingResidues(const cds::ResidueLink& link,
                                                        const std::vector<cds::Atom*>& residueCyclePoints)
     {
-        std::vector<RotatableDihedral> rotatableDihedralsInBranches;
+        std::vector<cds::DihedralAtoms> rotatableDihedralsInBranches;
         std::vector<cds::Atom*> connectingAtoms;
         for (long unsigned int i = 0; i < residueCyclePoints.size(); i = i + 2)
         {
@@ -122,7 +125,7 @@ namespace
                                     cds::Atom* neighbor = cdsSelections::FindCyclePointNeighbor(
                                         foundPath, branch.GetRoot(), link.residues.second);
                                     foundPath.push_back(neighbor);
-                                    std::vector<RotatableDihedral> temp =
+                                    std::vector<cds::DihedralAtoms> temp =
                                         SplitAtomVectorIntoRotatableDihedrals(foundPath);
                                     rotatableDihedralsInBranches.insert(rotatableDihedralsInBranches.end(),
                                                                         temp.begin(), temp.end());
@@ -137,7 +140,7 @@ namespace
     }
 
     //  generates a list of linearly connected atoms that define the rotatable bonds
-    std::vector<RotatableDihedral> findRotatableDihedralsConnectingResidues(const cds::ResidueLink link)
+    std::vector<cds::DihedralAtoms> findRotatableDihedralsConnectingResidues(const cds::ResidueLink& link)
     {
         // Going to ignore tags etc.
         // Given two residues that are connected. Find connecting atoms.
@@ -159,23 +162,23 @@ namespace
                                        secondResidueCyclePoints.end());
         // Now that have a list of rotation points. Split into pairs and find rotatable bonds between them
         auto branchResult = findRotatableDihedralsinBranchesConnectingResidues(link, firstResidueCyclePoints);
-        std::vector<RotatableDihedral>& rotatableDihedralsInBranches = std::get<0>(branchResult);
-        std::vector<cds::Atom*>& connectingAtoms                     = std::get<1>(branchResult);
-        std::vector<RotatableDihedral> RotatableDihedrals = SplitAtomVectorIntoRotatableDihedrals(connectingAtoms);
+        std::vector<cds::DihedralAtoms>& rotatableDihedralsInBranches = std::get<0>(branchResult);
+        std::vector<cds::Atom*>& connectingAtoms                      = std::get<1>(branchResult);
+        std::vector<cds::DihedralAtoms> RotatableDihedrals = SplitAtomVectorIntoRotatableDihedrals(connectingAtoms);
         // Add any linkage branches (in 2-7 and 2-8) to the rest.
         RotatableDihedrals.insert(RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(),
                                   rotatableDihedralsInBranches.end());
         return RotatableDihedrals;
     }
 
-    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector findResidueLinkageMetadata(cds::ResidueLinkNames link)
+    cds::DihedralAngleMetadata findResidueLinkageMetadata(cds::ResidueLinkNames link)
     {
         std::string firstAtom     = link.atoms.first;
         std::string secondAtom    = link.atoms.second;
         std::string firstResidue  = link.residues.first;
         std::string secondResidue = link.residues.second;
         gmml::MolecularMetadata::GLYCAM::DihedralAngleDataContainer DihedralAngleMetadata;
-        gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector matching_entries =
+        cds::DihedralAngleMetadata matching_entries =
             DihedralAngleMetadata.GetEntriesForLinkage(firstAtom, firstResidue, secondAtom, secondResidue);
         if (matching_entries.empty())
         {
@@ -193,6 +196,54 @@ namespace
             throw std::runtime_error(ss.str());
         }
         return matching_entries;
+    }
+
+    cds::Atom* findHydrogenForPsiAngle(const cds::Atom* atom)
+    {
+        for (auto& neighbor : atom->getNeighbors())
+        {
+            if (neighbor->getName().at(0) == 'H')
+            {
+                return neighbor;
+            }
+        }
+        return nullptr;
+    }
+
+    std::vector<cds::RotatableDihedral> CreateRotatableDihedrals(const std::string& linkageName,
+                                                                 const std::vector<cds::DihedralAtoms>& dihedralAtoms,
+                                                                 const cds::DihedralAngleMetadata& metadata)
+    {
+        if (metadata.size() > dihedralAtoms.size())
+        {
+            std::string message =
+                "Found metadata for rotatable bonds that do not exist.\nCheck both dihedralangledata metadata "
+                "and ResidueLinkage::FindRotatableDihedralsConnectingResidues.\nNote this is normal for a sialic acid "
+                "with multiple 2-7, 2-8 and or 2-9 linkages and this warning can be ignored\n";
+            gmml::log(__LINE__, __FILE__, gmml::WAR, message);
+        }
+
+        std::vector<RotatableDihedral> rotatableDihedrals;
+        rotatableDihedrals.reserve(dihedralAtoms.size());
+        for (size_t n = 0; n < dihedralAtoms.size(); n++)
+        {
+            auto& currentMetadata = metadata[n];
+            if (!currentMetadata.empty())
+            {
+                rotatableDihedrals.emplace_back(cds::RotatableDihedral {dihedralAtoms[n], currentMetadata});
+            }
+            else
+            {
+                std::stringstream ss;
+                ss << "Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with "
+                      "bond: ";
+                ss << linkageName << "\n";
+                ss << "At index: " << n << "\n";
+                gmml::log(__LINE__, __FILE__, gmml::WAR, ss.str());
+                throw std::runtime_error(ss.str());
+            }
+        }
+        return rotatableDihedrals;
     }
 } // namespace
 
@@ -503,63 +554,57 @@ void ResidueLinkage::InitializeClass()
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Connection atoms are from: " + link_.atoms.first->getId() + " to " + link_.atoms.second->getId());
     }
-    rotatableDihedrals_ = findRotatableDihedralsConnectingResidues(link_);
+    std::vector<DihedralAtoms> dihedralAtoms = findRotatableDihedralsConnectingResidues(link_);
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Finding metadata for " + link_.residues.first->getStringId() +
                       " :: " + link_.residues.second->getStringId());
     }
-    gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata = findResidueLinkageMetadata(toNames(link_));
+    DihedralAngleMetadata metadata = findResidueLinkageMetadata(toNames(link_));
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Metadata found:");
-        for (auto& dihedralAngleData : metadata)
+        for (auto& entry : metadata)
         {
-            gmml::log(__LINE__, __FILE__, gmml::INF, dihedralAngleData.print());
+            for (auto& dihedralAngleData : entry)
+            {
+                gmml::log(__LINE__, __FILE__, gmml::INF, dihedralAngleData.print());
+            }
         }
     }
-    this->AddMetadataToRotatableDihedrals(metadata);
+    this->CreateHydrogenForPsiAngles(dihedralAtoms, metadata);
+    rotatableDihedrals_ = CreateRotatableDihedrals(this->GetName(), dihedralAtoms, metadata);
     this->SetIndex(this->GenerateIndex());
     this->DetermineResiduesForOverlapCheck(); // speedup overlap calcs
     return;
 }
 
-void ResidueLinkage::AddMetadataToRotatableDihedrals(gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadata)
+void ResidueLinkage::CreateHydrogenForPsiAngles(std::vector<DihedralAtoms>& dihedralAtoms,
+                                                const DihedralAngleMetadata& metadata)
 {
-    // Adding another sanity check to this insanity
-    if (rotatableDihedrals_.size() > metadata.size())
+    for (size_t n = 0; n < dihedralAtoms.size(); n++)
     {
-        std::stringstream ss;
-        ss << "Problem with the metadata found in gmml for this linkage. The number of identified rotatable dihedrals: "
-           << rotatableDihedrals_.size() << " is greater than the number of metadata items: " << metadata.size()
-           << " found for this linkage:\n"
-           << this->Print();
-        gmml::log(__LINE__, __FILE__, gmml::WAR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    for (const auto& entry : metadata)
-    { // ToDo: This is insane, make sane.
-        unsigned long int vector_position = (entry.number_of_bonds_from_anomeric_carbon_ - 1); // vectors start at 0.
-        if (vector_position < rotatableDihedrals_.size())
+        for (auto& entry : metadata[n])
         {
-            RotatableDihedral& currentRotatableDihedral = rotatableDihedrals_.at(vector_position);
-            currentRotatableDihedral.AddMetadata(entry);
             if (entry.dihedral_angle_name_ == "Psi" && entry.atom4_.at(0) == 'H')
             { // If it's a psi angle and is supposed to be defined by a H...
-                if (!currentRotatableDihedral.IsThereHydrogenForPsiAngle())
+                Atom* atom     = dihedralAtoms[n][2];
+                Atom* hydrogen = findHydrogenForPsiAngle(atom);
+                if (hydrogen != nullptr)
                 {
-                    this->GetToThisResidue2()->addAtom(currentRotatableDihedral.CreateHydrogenAtomForPsiAngle());
+                    dihedralAtoms[n][3] = hydrogen;
+                }
+                else
+                {
+                    auto neighborsCoords = getCoordinatesFromAtoms(atom->getNeighbors());
+                    Coordinate newCoord =
+                        cds::CreateCoordinateForCenterAwayFromNeighbors(*atom->getCoordinate(), neighborsCoords);
+                    std::unique_ptr<Atom> newAtom = std::make_unique<cds::Atom>("HHH", newCoord);
+                    atom->addBond(newAtom.get());
+                    link_.residues.second->addAtom(std::move(newAtom));
                 }
             }
-        }
-        else
-        {
-            std::string message =
-                "Tried to add metadata to a rotatable bond that does not exist.\nCheck both dihedralangledata metadata "
-                "and ResidueLinkage::FindRotatableDihedralsConnectingResidues.\nNote this is normal for a sialic acid "
-                "with multiple 2-7, 2-8 and or 2-9 linkages and this warning can be ignored\n";
-            gmml::log(__LINE__, __FILE__, gmml::WAR, message);
         }
     }
 }

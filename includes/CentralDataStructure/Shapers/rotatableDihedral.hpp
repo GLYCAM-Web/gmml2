@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/coordinate.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/CentralDataStructure/Overlaps/cdsOverlaps.hpp"
@@ -25,8 +26,8 @@ namespace cds
     class RotatableDihedral
     {
       public:
-        RotatableDihedral(std::array<Atom*, 4> atoms, bool reverseAtomsThatMove)
-            : atoms_(atoms), isAtomsThatMoveReversed_(reverseAtomsThatMove) {};
+        RotatableDihedral(const std::array<Atom*, 4>& atoms, const std::vector<DihedralAngleData>& metadata)
+            : atoms_(atoms), assigned_metadata_(metadata) {};
 
         ////////////////////////////////////////////
         //////////////
@@ -50,7 +51,6 @@ namespace cds
                                                       // atom3, moving atom4 and connected.
         void SetDihedralAngleToPrevious();            // Sets the dihedral to previous dihedral angle
         double RandomizeDihedralAngle();              // Randomly sets dihedral angle values between 0 and 360
-        void AddMetadata(DihedralAngleData metadata);
 
         void SetRandomAngleEntryUsingMetadata(bool useRanges = true);
         void SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
@@ -63,9 +63,6 @@ namespace cds
                                     const int& angleIncrement);
         void WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapAtomSet1,
                                     std::vector<cds::Residue*>& overlapAtomSet2, const int& angleIncrement);
-        bool IsThereHydrogenForPsiAngle(); // ToDo which of these functions are only public for ResidueLinkage? How
-                                           // about friend function huh?
-        std::unique_ptr<cds::Atom> CreateHydrogenAtomForPsiAngle();
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
@@ -75,12 +72,6 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                  PRIVATE ACCESSORS                   //
         //////////////////////////////////////////////////////////
-
-        inline bool GetIsAtomsThatMoveReversed() const
-        {
-            return isAtomsThatMoveReversed_;
-        }
-
         inline double GetPreviousDihedralAngle() const
         {
             return previous_dihedral_angle_;
@@ -146,9 +137,8 @@ namespace cds
         //    std::vector<cds::Atom*> atoms_that_move_;
         //    std::vector<cds::Atom*> extra_atoms_that_move_;
         std::vector<cds::Coordinate*> coordinatesThatMove_;
-        bool isAtomsThatMoveReversed_;
-        double previous_dihedral_angle_; // I often want to reset a dihedral angle after rotating it, so recording the
-                                         // previous angle makes this easy.
+        double previous_dihedral_angle_ = constants::dNotSet; // I often want to reset a dihedral angle after rotating
+                                                              // it, so recording the previous angle makes this easy.
         DihedralAngleDataVector assigned_metadata_;
         const DihedralAngleData* currentMetadata_ = nullptr;
         bool wasEverRotated_                      = false; // Need this, as it might add a H atom for psi
