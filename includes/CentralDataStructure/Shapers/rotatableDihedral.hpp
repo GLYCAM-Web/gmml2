@@ -56,13 +56,13 @@ namespace cds
         void SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
         bool SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         void WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
-                                        std::vector<cds::Atom*>& overlapAtomSet2, const int& angleIncrement);
+                                        std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
         void WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapResidueSet1,
-                                        std::vector<cds::Residue*>& overlapResidueSet2, const int& angleIncrement);
+                                        std::vector<cds::Residue*>& overlapResidueSet2, int angleIncrement);
         void WiggleUsingAllRotamers(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-                                    const int& angleIncrement);
+                                    int angleIncrement);
         void WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapAtomSet1,
-                                    std::vector<cds::Residue*>& overlapAtomSet2, const int& angleIncrement);
+                                    std::vector<cds::Residue*>& overlapAtomSet2, int angleIncrement);
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
@@ -112,15 +112,13 @@ namespace cds
         }
 
         // double WiggleWithinRanges(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-        //                                  const int& angleIncrement, const double& lowerBound, const double&
+        //                                  int angleIncrement, double lowerBound, double
         //                                  upperBound);
         unsigned int WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                     std::vector<cds::Atom*>& overlapAtomSet2,
-                                                     const int& angleIncrement, const double& lowerBound,
-                                                     const double& upperBound);
-        unsigned int WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
-                                                     const int& angleIncrement, const double& lowerBound,
-                                                     const double& upperBound);
+                                                     std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement,
+                                                     double lowerBound, double upperBound);
+        unsigned int WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput, int angleIncrement,
+                                                     double lowerBound, double upperBound);
 
         inline std::vector<cds::Coordinate*>& GetCoordinatesThatMove()
         {

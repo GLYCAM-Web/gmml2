@@ -124,7 +124,7 @@ void RotatableDihedral::AddExtraAtomsThatMove(std::vector<cds::Atom*>& extraAtom
     }
 }
 
-void RotatableDihedral::SetDihedralAngle(const double dihedral_angle)
+void RotatableDihedral::SetDihedralAngle(double dihedral_angle)
 {
     if (!this->wasEverRotated_)
     {
@@ -229,7 +229,7 @@ bool RotatableDihedral::SetSpecificShape(std::string dihedralName, std::string s
 }
 
 void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapSet1,
-                                               std::vector<cds::Residue*>& overlapSet2, const int& angleIncrement)
+                                               std::vector<cds::Residue*>& overlapSet2, int angleIncrement)
 {
 
     double bestDihedral        = this->CalculateDihedralAngle();
@@ -254,7 +254,7 @@ void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Residue*>& overl
 }
 
 void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
-                                               std::vector<cds::Atom*>& overlapAtomSet2, const int& angleIncrement)
+                                               std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
     double bestDihedral        = this->CalculateDihedralAngle();
     unsigned int lowestOverlap = cds::CountOverlappingAtoms(overlapAtomSet1, overlapAtomSet2);
@@ -279,7 +279,7 @@ void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Atom*>& overlapA
 
 // User requested gg, this prevents flipping into gt like the above would do. i.e. cb won't want a flip, gp would.
 void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                   std::vector<cds::Atom*>& overlapAtomSet2, const int& angleIncrement)
+                                                   std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
     Bounds bounds = angleBounds(*GetCurrentMetaData());
     // Set to lowest deviation, work through to highest. Set best value and return it for reference.
@@ -288,8 +288,7 @@ void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& over
 
 // User requested gg, this prevents flipping into gt like the above would do.
 void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapResidueSet1,
-                                                   std::vector<cds::Residue*>& overlapResidueSet2,
-                                                   const int& angleIncrement)
+                                                   std::vector<cds::Residue*>& overlapResidueSet2, int angleIncrement)
 {
     Bounds bounds = angleBounds(*GetCurrentMetaData());
     // Set to lowest deviation, work through to highest. Set best value and return it for reference.
@@ -299,8 +298,8 @@ void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& o
 
 unsigned int RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
                                                                 std::vector<cds::Atom*>& overlapAtomSet2,
-                                                                const int& angleIncrement, const double& lowerBound,
-                                                                const double& upperBound)
+                                                                int angleIncrement, double lowerBound,
+                                                                double upperBound)
 {
     this->SetDihedralAngle(lowerBound);
     double currentDihedral      = lowerBound;
@@ -330,8 +329,8 @@ unsigned int RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector<cds:
 }
 
 unsigned int RotatableDihedral::WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
-                                                                const int& angleIncrement, const double& lowerBound,
-                                                                const double& upperBound)
+                                                                int angleIncrement, double lowerBound,
+                                                                double upperBound)
 {
     double currentDihedral = lowerBound;
     double bestDihedral    = lowerBound;
