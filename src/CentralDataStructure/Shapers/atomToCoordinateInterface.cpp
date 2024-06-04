@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
-#include "includes/CentralDataStructure/Shapers/shapers.hpp"
+#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/MolecularMetadata/GLYCAM/bondlengthbytypepair.hpp"
@@ -46,8 +46,8 @@ void cds::FindAtomsToMoveAndSetAngle(cds::Atom* a, cds::Atom* b, cds::Atom* c, c
     cdsSelections::FindConnectedAtoms(atomsToMove, c);
     atomsToMove.erase(atomsToMove.begin()); // this is expensive
     std::vector<Coordinate*> coordsToMove = cds::getCoordinatesFromAtoms(atomsToMove);
-    cds::SetAngle(a->getCoordinate(), b->getCoordinate(), c->getCoordinate(), angle, coordsToMove);
-    return;
+    auto matrix = angleToMatrix({a->getCoordinate(), b->getCoordinate(), c->getCoordinate()}, angle);
+    matrix.rotateCoordinates(coordsToMove);
 }
 
 // parentAtom (e.g. O of OME), childAtom (e.g. C1 of Gal1-, S1 of SO3)

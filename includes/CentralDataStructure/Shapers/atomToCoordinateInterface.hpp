@@ -9,7 +9,6 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/MolecularMetadata/GLYCAM/bondlengthbytypepair.hpp"
 #include <vector>
-#include "shapers.hpp"
 
 using cds::Coordinate;
 

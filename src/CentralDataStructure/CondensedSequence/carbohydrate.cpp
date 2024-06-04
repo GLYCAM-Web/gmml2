@@ -8,6 +8,7 @@
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp" // serializeAtomNumbers
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
@@ -409,8 +410,10 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
             //               childAtom->getCoordinate()->ToString()
             //               << "\nchild residue " << childResidue->getName() << " will move\n";
             //            gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
-            cds::SetAngle(parentAtomNeighbor->getCoordinate(), parentAtom->getCoordinate(), childAtom->getCoordinate(),
-                          constants::DEFAULT_ANGLE, childResidue->getCoordinates());
+            auto matrix = cds::angleToMatrix(
+                {parentAtomNeighbor->getCoordinate(), parentAtom->getCoordinate(), childAtom->getCoordinate()},
+                constants::DEFAULT_ANGLE);
+            matrix.rotateCoordinates(childResidue->getCoordinates());
             break;
         }
     }

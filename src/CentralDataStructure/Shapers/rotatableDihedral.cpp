@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
-#include "includes/CentralDataStructure/Shapers/shapers.hpp"
+#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 
@@ -136,7 +136,8 @@ void RotatableDihedral::SetDihedralAngle(const double dihedral_angle)
     Coordinate* a3 = atoms_[1]->getCoordinate();
     Coordinate* a4 = atoms_[0]->getCoordinate();
     this->RecordPreviousDihedralAngle(this->CalculateDihedralAngle());
-    cds::SetDihedralAngle(a1, a2, a3, a4, dihedral_angle, this->GetCoordinatesThatMove());
+    auto matrix = cds::dihedralToMatrix({a1, a2, a3, a4}, dihedral_angle);
+    matrix.rotateCoordinates(this->GetCoordinatesThatMove());
 }
 
 void RotatableDihedral::SetDihedralAngleToPrevious()
