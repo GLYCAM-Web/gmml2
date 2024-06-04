@@ -27,14 +27,12 @@ ParameterManager::ParameterManager()
     gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + gmmlhome);
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        prepFiles_.emplace_back(gmmlhome + prepFilePath);
-        auto& file = prepFiles_.back();
+        auto& file = prepFiles_.emplace_back(gmmlhome + prepFilePath);
         this->InitializeResidueMap(file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        libFiles_.emplace_back(gmmlhome + libFilePath);
-        auto& file = libFiles_.back();
+        auto& file = libFiles_.emplace_back(gmmlhome + libFilePath);
         this->InitializeResidueMap(file.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
@@ -46,14 +44,12 @@ ParameterManager::ParameterManager(const std::vector<std::string> queryNames)
     gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + gmmlhome);
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        prepFiles_.emplace_back(gmmlhome + prepFilePath, queryNames);
-        auto& file = prepFiles_.back();
+        auto& file = prepFiles_.emplace_back(gmmlhome + prepFilePath, queryNames);
         this->InitializeResidueMap(file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        libFiles_.emplace_back(gmmlhome + libFilePath, queryNames);
-        auto& file = libFiles_.back();
+        auto& file = libFiles_.emplace_back(gmmlhome + libFilePath, queryNames);
         this->InitializeResidueMap(file.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
