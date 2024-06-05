@@ -23,6 +23,12 @@ static pcg32
 // and, if moved, the previous dihedral angle, which allows me to reset easily.
 namespace cds
 {
+    struct AngleOverlap
+    {
+        double angle;
+        unsigned int overlaps;
+    };
+
     class RotatableDihedral
     {
       public:
@@ -41,7 +47,7 @@ namespace cds
         DihedralAngleDataVector GetLikelyMetadata() const;
         int GetNumberOfRotamers(bool likelyShapesOnly = false) const;
         std::string GetName() const;
-        double CalculateDihedralAngle(const std::string type = "default") const;
+        double CalculateDihedralAngle() const;
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
@@ -52,7 +58,7 @@ namespace cds
         void SetDihedralAngleToPrevious();            // Sets the dihedral to previous dihedral angle
         double RandomizeDihedralAngle();              // Randomly sets dihedral angle values between 0 and 360
 
-        void SetRandomAngleEntryUsingMetadata(bool useRanges = true);
+        void SetRandomAngleEntryUsingMetadata();
         void SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
         bool SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         void WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
@@ -81,7 +87,6 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                  PRIVATE MUTATORS                    //
         //////////////////////////////////////////////////////////
-        void AddExtraAtomsThatMove(std::vector<cds::Atom*>& extraAtoms);
         void SetAtomsThatMove(std::vector<cds::Atom*>& atoms);
         double RandomizeDihedralAngleWithinRange(double min,
                                                  double max); // Randomly sets dihedral angle to a value within the
@@ -90,6 +95,8 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
         //////////////////////////////////////////////////////////
+
+        std::array<Coordinate*, 4> dihedralCoordinates() const;
 
         inline void RecordPreviousDihedralAngle(double d)
         {
@@ -114,11 +121,12 @@ namespace cds
         // double WiggleWithinRanges(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
         //                                  int angleIncrement, double lowerBound, double
         //                                  upperBound);
-        unsigned int WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                     std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement,
-                                                     double lowerBound, double upperBound);
-        unsigned int WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput, int angleIncrement,
-                                                     double lowerBound, double upperBound);
+        AngleOverlap WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
+                                                     std::vector<cds::Atom*>& overlapAtomSet2, double defaultAngle,
+                                                     int angleIncrement, double lowerBound, double upperBound);
+        AngleOverlap WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
+                                                     double defaultAngle, int angleIncrement, double lowerBound,
+                                                     double upperBound);
 
         inline std::vector<cds::Coordinate*>& GetCoordinatesThatMove()
         {

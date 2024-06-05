@@ -402,7 +402,7 @@ void ResidueLinkage::SetRandomShapeUsingMetadata()
     {
         for (auto& entry : rotatableDihedrals_)
         {
-            entry.SetRandomAngleEntryUsingMetadata(true);
+            entry.SetRandomAngleEntryUsingMetadata();
         }
     }
     else if (rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("conformer") == 0)
