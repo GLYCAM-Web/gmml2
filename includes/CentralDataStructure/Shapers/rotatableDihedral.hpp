@@ -83,7 +83,6 @@ namespace cds
             return previous_dihedral_angle_;
         }
 
-        std::vector<double> GetAllPossibleAngleValues(const int interval = 5) const;
         //////////////////////////////////////////////////////////
         //                  PRIVATE MUTATORS                    //
         //////////////////////////////////////////////////////////
@@ -122,11 +121,10 @@ namespace cds
         //                                  int angleIncrement, double lowerBound, double
         //                                  upperBound);
         AngleOverlap WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                     std::vector<cds::Atom*>& overlapAtomSet2, double defaultAngle,
-                                                     int angleIncrement, double lowerBound, double upperBound);
+                                                     std::vector<cds::Atom*>& overlapAtomSet2,
+                                                     std::vector<double> angles, double defaultAngle);
         AngleOverlap WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
-                                                     double defaultAngle, int angleIncrement, double lowerBound,
-                                                     double upperBound);
+                                                     std::vector<double> angles, double defaultAngle);
 
         inline std::vector<cds::Coordinate*>& GetCoordinatesThatMove()
         {
