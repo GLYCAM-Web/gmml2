@@ -379,11 +379,6 @@ std::vector<cds::Residue*>& ResidueLinkage::GetReducingOverlapResidues()
     return reducingOverlapResidues_;
 }
 
-unsigned long int ResidueLinkage::GetNumberOfRotatableDihedrals() const
-{
-    return rotatableDihedrals_.size();
-}
-
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
@@ -441,45 +436,12 @@ void ResidueLinkage::SetSpecificShape(std::string dihedralName, std::string sele
     throw std::runtime_error(errorMessage);
 }
 
-void ResidueLinkage::SetCustomDihedralAngles(std::vector<double> dihedral_angles)
-{
-    if (dihedral_angles.size() == rotatableDihedrals_.size())
-    {
-        std::vector<double>::iterator dihedral_angle_iterator = dihedral_angles.begin();
-        for (auto& RotatableDihedral : rotatableDihedrals_)
-        {
-            RotatableDihedral.SetDihedralAngle(*dihedral_angle_iterator);
-            ++dihedral_angle_iterator;
-        }
-    }
-    else
-    {
-        std::stringstream ss;
-        ss << "ERROR attempted to set " << dihedral_angles.size() << " dihedrals for a residue linkage with "
-           << rotatableDihedrals_.size()
-           << " rotatable dihedrals\n These numbers need to match for this function to work\nSomething has gone wrong.";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    return;
-}
-
 void ResidueLinkage::SetShapeToPrevious()
 {
     for (typename std::vector<RotatableDihedral>::iterator RotatableDihedral = rotatableDihedrals_.begin();
          RotatableDihedral != rotatableDihedrals_.end(); ++RotatableDihedral)
     {
         RotatableDihedral->SetDihedralAngleToPrevious();
-    }
-    return;
-}
-
-void ResidueLinkage::SetRandomDihedralAngles()
-{
-    for (typename std::vector<RotatableDihedral>::iterator RotatableDihedral = rotatableDihedrals_.begin();
-         RotatableDihedral != rotatableDihedrals_.end(); ++RotatableDihedral)
-    {
-        RotatableDihedral->RandomizeDihedralAngle();
     }
     return;
 }

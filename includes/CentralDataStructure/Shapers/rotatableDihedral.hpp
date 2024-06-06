@@ -29,6 +29,12 @@ namespace cds
         unsigned int overlaps;
     };
 
+    struct AngleWithMetadata
+    {
+        double angle;
+        const DihedralAngleData* metadata;
+    };
+
     class RotatableDihedral
     {
       public:
@@ -51,12 +57,9 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
-        void DetermineAtomsThatMove(); // Based on connectivities, this figures out which atoms will move when the
-                                       // dihedral is rotated.
-        void SetDihedralAngle(double dihedral_angle); // Sets the dihedral angle by rotating the bond between atom2 and
-                                                      // atom3, moving atom4 and connected.
-        void SetDihedralAngleToPrevious();            // Sets the dihedral to previous dihedral angle
-        double RandomizeDihedralAngle();              // Randomly sets dihedral angle values between 0 and 360
+        void DetermineAtomsThatMove();     // Based on connectivities, this figures out which atoms will move when the
+                                           // dihedral is rotated.
+        void SetDihedralAngleToPrevious(); // Sets the dihedral to previous dihedral angle
 
         void SetRandomAngleEntryUsingMetadata();
         void SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
@@ -78,18 +81,20 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                  PRIVATE ACCESSORS                   //
         //////////////////////////////////////////////////////////
-        inline double GetPreviousDihedralAngle() const
+        inline AngleWithMetadata GetPreviousState() const
         {
-            return previous_dihedral_angle_;
+            return previousState_;
         }
 
         //////////////////////////////////////////////////////////
         //                  PRIVATE MUTATORS                    //
         //////////////////////////////////////////////////////////
         void SetAtomsThatMove(std::vector<cds::Atom*>& atoms);
-        double RandomizeDihedralAngleWithinRange(double min,
-                                                 double max); // Randomly sets dihedral angle to a value within the
-                                                              // given range. E.g. Between 25 and 30 degrees.
+        void SetDihedralAngle(
+            double dihedral_angle,
+            const DihedralAngleData* metadata); // Sets the dihedral angle by rotating the bond between atom2 and
+        double RandomizeDihedralAngleWithinMetadataRange(
+            const DihedralAngleData* entry); // Randomly sets dihedral angle to a value allowed by the metadata
 
         //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
@@ -97,9 +102,9 @@ namespace cds
 
         std::array<Coordinate*, 4> dihedralCoordinates() const;
 
-        inline void RecordPreviousDihedralAngle(double d)
+        inline void RecordPreviousState(double d, const DihedralAngleData* metadata)
         {
-            previous_dihedral_angle_ = d;
+            previousState_ = {d, metadata};
         }
 
         inline void SetWasEverRotated(bool b)
@@ -107,9 +112,9 @@ namespace cds
             wasEverRotated_ = b;
         }
 
-        inline void SetCurrentMetaData(const DihedralAngleData& d)
+        inline void SetCurrentMetaData(const DihedralAngleData* d)
         {
-            currentMetadata_ = &d;
+            currentMetadata_ = d;
         }
 
         inline const DihedralAngleData* GetCurrentMetaData()
@@ -117,13 +122,12 @@ namespace cds
             return currentMetadata_;
         }
 
-        // double WiggleWithinRanges(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-        //                                  int angleIncrement, double lowerBound, double
-        //                                  upperBound);
         std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
                                                                        std::vector<cds::Atom*>& overlapAtomSet2,
+                                                                       const DihedralAngleData* metadata,
                                                                        std::vector<double> angles);
         std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
+                                                                       const DihedralAngleData* metadata,
                                                                        std::vector<double> angles);
 
         inline std::vector<cds::Coordinate*>& GetCoordinatesThatMove()
@@ -141,8 +145,9 @@ namespace cds
         //    std::vector<cds::Atom*> atoms_that_move_;
         //    std::vector<cds::Atom*> extra_atoms_that_move_;
         std::vector<cds::Coordinate*> coordinatesThatMove_;
-        double previous_dihedral_angle_ = constants::dNotSet; // I often want to reset a dihedral angle after rotating
-                                                              // it, so recording the previous angle makes this easy.
+        AngleWithMetadata previousState_ = {constants::dNotSet,
+                                            nullptr}; // I often want to reset a dihedral angle after rotating
+                                                      // it, so recording the previous angle makes this easy.
         DihedralAngleDataVector assigned_metadata_;
         const DihedralAngleData* currentMetadata_ = nullptr;
         bool wasEverRotated_                      = false; // Need this, as it might add a H atom for psi

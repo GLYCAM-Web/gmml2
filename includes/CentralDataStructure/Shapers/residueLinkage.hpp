@@ -48,7 +48,6 @@ namespace cds
         std::vector<RotatableDihedral>& GetRotatableDihedralsRef();
         std::vector<RotatableDihedral> GetRotatableDihedrals() const;
         std::vector<RotatableDihedral> GetRotatableDihedralsWithMultipleRotamers() const;
-        unsigned long int GetNumberOfRotatableDihedrals() const;
         int GetNumberOfShapes(const bool likelyShapesOnly = false) const;
 
         inline cds::Residue* GetFromThisResidue1() const
@@ -89,9 +88,7 @@ namespace cds
         void SetRandomShapeUsingMetadata();
         void SetSpecificShapeUsingMetadata(int shapeNumber);
         void SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
-        void SetCustomDihedralAngles(std::vector<double> dihedral_angles);
         void SetShapeToPrevious();
-        void SetRandomDihedralAngles();
         void DetermineAtomsThatMove();
         void SimpleWiggle(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
                           const int angleIncrement = 5);
