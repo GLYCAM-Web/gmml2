@@ -120,11 +120,11 @@ namespace cds
         // double WiggleWithinRanges(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
         //                                  int angleIncrement, double lowerBound, double
         //                                  upperBound);
-        AngleOverlap WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                     std::vector<cds::Atom*>& overlapAtomSet2,
-                                                     std::vector<double> angles, double defaultAngle);
-        AngleOverlap WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
-                                                     std::vector<double> angles, double defaultAngle);
+        std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
+                                                                       std::vector<cds::Atom*>& overlapAtomSet2,
+                                                                       std::vector<double> angles);
+        std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
+                                                                       std::vector<double> angles);
 
         inline std::vector<cds::Coordinate*>& GetCoordinatesThatMove()
         {
