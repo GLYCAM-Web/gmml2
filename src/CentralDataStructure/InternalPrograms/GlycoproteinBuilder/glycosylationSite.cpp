@@ -281,7 +281,7 @@ unsigned int GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
 unsigned int GlycosylationSite::CountOverlaps(const std::vector<Residue*>& residuesA,
                                               const std::vector<Residue*>& residuesB)
 {
-    auto input = cds::toResidueAtomOverlapInput(residuesA, residuesB);
+    auto input = cds::toResidueAtomOverlapInput(residuesA, residuesB, false);
     return cds::CountOverlappingAtoms(input.first, input.second);
 }
 

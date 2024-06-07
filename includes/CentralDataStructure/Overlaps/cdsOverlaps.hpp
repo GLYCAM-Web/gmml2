@@ -11,6 +11,7 @@ namespace cds
 {
     struct ResidueAtomOverlapInput
     {
+        bool isFixed;
         bool isPartOfDihedral;
         Coordinate geometricCenter;
         std::vector<Coordinate*> coordinates;
@@ -20,8 +21,10 @@ namespace cds
         ResidueAtomOverlapInputPair;
 
     void setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair);
+
     ResidueAtomOverlapInputPair toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
-                                                          const std::vector<Residue*>& residuesB);
+                                                          const std::vector<Residue*>& residuesB,
+                                                          bool assumeFirstSetStaysFixed);
 
     double CalculateAtomicOverlaps(Atom* atomA, Atom* atomB, double radiusA = 0.0, double radiusB = 0.0);
     double CalculateAtomicOverlaps(std::vector<Atom*> atomsA, std::vector<Atom*> atomsB, bool print = false);

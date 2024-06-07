@@ -90,8 +90,6 @@ namespace cds
         void SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         void SetShapeToPrevious();
         void DetermineAtomsThatMove();
-        void SimpleWiggle(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-                          const int angleIncrement = 5);
         void SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
                                          std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement = 5);
         void SimpleWiggleCurrentRotamers(std::vector<cds::Residue*>& overlapSet1,

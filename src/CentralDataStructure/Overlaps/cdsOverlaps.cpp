@@ -14,18 +14,25 @@ namespace
     {
         for (auto& a : residues)
         {
-            a.geometricCenter = cds::calculateGeometricCenter(a.coordinates);
+            if (!a.isFixed)
+            {
+                a.geometricCenter = cds::calculateGeometricCenter(a.coordinates);
+            }
         }
     }
 
-    std::vector<cds::ResidueAtomOverlapInput> toResidueOverlapInput(const std::vector<cds::Residue*>& residues)
+    std::vector<cds::ResidueAtomOverlapInput> toResidueOverlapInput(bool mostlyFixed,
+                                                                    const std::vector<cds::Residue*>& residues)
     {
         std::vector<cds::ResidueAtomOverlapInput> res;
         res.reserve(residues.size());
         for (auto& a : residues)
         {
-            res.emplace_back(cds::ResidueAtomOverlapInput {false, cds::Coordinate(0.0, 0.0, 0.0), a->getCoordinates()});
+            auto& entry = res.emplace_back(
+                cds::ResidueAtomOverlapInput {mostlyFixed, false, cds::Coordinate(0.0, 0.0, 0.0), a->getCoordinates()});
+            entry.geometricCenter = cds::calculateGeometricCenter(entry.coordinates);
         }
+        res[0].isFixed = false;
         return res;
     }
 
@@ -57,11 +64,12 @@ void cds::setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair)
 }
 
 cds::ResidueAtomOverlapInputPair cds::toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
-                                                                const std::vector<Residue*>& residuesB)
+                                                                const std::vector<Residue*>& residuesB,
+                                                                bool assumeFirstSetStaysFixed)
 {
-    cds::ResidueAtomOverlapInputPair res {toResidueOverlapInput(residuesA), toResidueOverlapInput(residuesB)};
+    cds::ResidueAtomOverlapInputPair res {toResidueOverlapInput(assumeFirstSetStaysFixed, residuesA),
+                                          toResidueOverlapInput(false, residuesB)};
     setNeighbors(residuesA, residuesB, res.first, res.second);
-    setGeometricCenters(res);
     return res;
 }
 
