@@ -243,29 +243,6 @@ void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Residue*>& overl
     this->SetDihedralAngle(bestDihedral, bestMetadata);
 }
 
-void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
-                                               std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
-{
-    const DihedralAngleData* bestMetadata = this->GetCurrentMetaData();
-    double bestDihedral                   = this->CalculateDihedralAngle();
-    unsigned int lowestOverlap            = cds::CountOverlappingAtoms(overlapAtomSet1, overlapAtomSet2);
-
-    for (auto& metadata : this->GetMetadata())
-    {
-        Bounds bounds     = angleBounds(metadata);
-        auto results      = this->WiggleWithinRangesDistanceCheck(overlapAtomSet1, overlapAtomSet2, &metadata,
-                                                                  wiggleAngles(bounds, angleIncrement));
-        AngleOverlap best = bestOverlapResult(results, metadata.default_angle_value_);
-        if (lowestOverlap > best.overlaps)
-        {
-            lowestOverlap = best.overlaps;
-            bestDihedral  = best.angle;
-            bestMetadata  = &metadata;
-        }
-    }
-    this->SetDihedralAngle(bestDihedral, bestMetadata);
-}
-
 // User requested gg, this prevents flipping into gt like the above would do. i.e. cb won't want a flip, gp would.
 void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
                                                    std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)

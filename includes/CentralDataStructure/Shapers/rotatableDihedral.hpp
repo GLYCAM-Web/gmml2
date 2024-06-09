@@ -68,8 +68,6 @@ namespace cds
                                         std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
         void WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapResidueSet1,
                                         std::vector<cds::Residue*>& overlapResidueSet2, int angleIncrement);
-        void WiggleUsingAllRotamers(std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-                                    int angleIncrement);
         void WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapAtomSet1,
                                     std::vector<cds::Residue*>& overlapAtomSet2, int angleIncrement);
         //////////////////////////////////////////////////////////

@@ -26,11 +26,6 @@ namespace cds
                                                           const std::vector<Residue*>& residuesB,
                                                           bool assumeFirstSetStaysFixed);
 
-    double CalculateAtomicOverlaps(Atom* atomA, Atom* atomB, double radiusA = 0.0, double radiusB = 0.0);
-    double CalculateAtomicOverlaps(std::vector<Atom*> atomsA, std::vector<Atom*> atomsB, bool print = false);
-    double CalculateAtomicOverlapsBetweenNonBondedAtoms(std::vector<Atom*>& atomsA, std::vector<Atom*>& atomsB);
-    unsigned int CountOverlappingResidues(const std::vector<Residue*>& residuesA,
-                                          const std::vector<Residue*>& residuesB);
     unsigned int CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
     unsigned int CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInput>& residuesA,
                                        const std::vector<ResidueAtomOverlapInput>& residuesB);
