@@ -20,7 +20,7 @@ namespace
         int col = 0; // Column index for matrix
         for (auto& coordinate : coordinates)
         {
-            coordinate->set({matrix(0, col), matrix(1, col), matrix(2, col)});
+            *coordinate = {matrix(0, col), matrix(1, col), matrix(2, col)};
             ++col;
         }
     }

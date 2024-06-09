@@ -72,7 +72,7 @@ void cds::FindAtomsToMoveSetDistance(cds::Atom* parentAtom, cds::Atom* childAtom
     for (auto& atom : atomsToRotate)
     {
         Coordinate* coord = atom->getCoordinate();
-        coord->set(*coord + cToParent);
+        *coord            = *coord + cToParent;
         //        ss << "Moved " << atom->getName() << "_" << atom->getIndex() << " to new position:\n";
         //        atom->getCoordinate()->Print(ss);
         //        ss << "\n";

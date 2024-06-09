@@ -32,11 +32,6 @@ namespace cds
             return nth(2);
         }
 
-        void set(const Coordinate& a)
-        {
-            operator=(a);
-        }
-
         inline Coordinate operator+(const Coordinate& a) const
         {
             auto add = [&](int n)

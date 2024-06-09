@@ -16,7 +16,7 @@ void RotationMatrix::rotateCoordinates(std::vector<Coordinate*> coords)
     };
     for (auto& coord : coords)
     {
-        coord->set({col(*coord, 0), col(*coord, 1), col(*coord, 2)});
+        *coord = {col(*coord, 0), col(*coord, 1), col(*coord, 2)};
     }
 }
 
