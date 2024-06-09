@@ -9,14 +9,9 @@ using cds::RotationMatrix;
 // Functions
 void RotationMatrix::rotateCoordinates(std::vector<Coordinate*> coords)
 {
-    auto col = [&](const Coordinate& coord, int n)
-    {
-        auto& m = matrix_[n];
-        return dotProduct(coord, {m[0], m[1], m[2]}) + m[3];
-    };
     for (auto& coord : coords)
     {
-        *coord = {col(*coord, 0), col(*coord, 1), col(*coord, 2)};
+        *coord = (*this) * (*coord);
     }
 }
 
