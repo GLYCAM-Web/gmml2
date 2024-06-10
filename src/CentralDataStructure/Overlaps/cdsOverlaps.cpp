@@ -32,28 +32,9 @@ namespace
                 cds::ResidueAtomOverlapInput {mostlyFixed, false, cds::Coordinate(0.0, 0.0, 0.0), a->getCoordinates()});
             entry.geometricCenter = cds::calculateGeometricCenter(entry.coordinates);
         }
-        res[0].isFixed = false;
+        res[0].isPartOfDihedral = true;
+        res[0].isFixed          = false;
         return res;
-    }
-
-    void setNeighbors(const std::vector<cds::Residue*>& residuesA, const std::vector<cds::Residue*>& residuesB,
-                      std::vector<cds::ResidueAtomOverlapInput>& inputA,
-                      std::vector<cds::ResidueAtomOverlapInput>& inputB)
-    {
-        int neighborCount = 0;
-        for (size_t n = 0; n < residuesA.size(); n++)
-        {
-            for (size_t k = 0; k < residuesB.size(); k++)
-            {
-                if (cdsSelections::areNeighbors(residuesA[n], residuesB[k]))
-                {
-                    inputA[n].isPartOfDihedral = true;
-                    inputB[k].isPartOfDihedral = true;
-                    neighborCount++;
-                }
-            }
-        }
-        assert(neighborCount <= 1);
     }
 } // namespace
 
@@ -69,7 +50,6 @@ cds::ResidueAtomOverlapInputPair cds::toResidueAtomOverlapInput(const std::vecto
 {
     cds::ResidueAtomOverlapInputPair res {toResidueOverlapInput(assumeFirstSetStaysFixed, residuesA),
                                           toResidueOverlapInput(false, residuesB)};
-    setNeighbors(residuesA, residuesB, res.first, res.second);
     return res;
 }
 
