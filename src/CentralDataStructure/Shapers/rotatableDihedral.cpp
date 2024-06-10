@@ -113,6 +113,7 @@ void RotatableDihedral::DetermineAtomsThatMove()
     std::vector<cds::Atom*> atoms_that_move;
     atoms_that_move.push_back(atoms_[2]);
     cdsSelections::FindConnectedAtoms(atoms_that_move, atoms_[1]);
+    atoms_that_move.erase(atoms_that_move.begin());
     this->SetAtomsThatMove(atoms_that_move);
 }
 
