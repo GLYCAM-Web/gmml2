@@ -116,18 +116,6 @@ std::vector<Residue*> cdsSelections::selectNClosestResidues(std::vector<Residue*
     return inputResidues;
 }
 
-bool cdsSelections::areNeighbors(Residue* a, Residue* b)
-{
-    for (auto& neighbor : a->getNeighbors())
-    {
-        if (neighbor == b)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 std::vector<Residue*> cdsSelections::selectResiduesWithinDistanceN(std::vector<Residue*> inputResidues,
                                                                    Residue* queryResidue, double queryDistance)
 {
