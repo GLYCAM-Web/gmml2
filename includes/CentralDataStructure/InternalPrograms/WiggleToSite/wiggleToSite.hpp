@@ -91,7 +91,7 @@ namespace gmmlPrograms
         std::vector<Coordinate*> coordsToAvoids_;
         std::vector<Coordinate*> wiggleMeCoordinates_;
         std::vector<Coordinate*> wiggleTargetCoordinates_;
-        unsigned int currentOverlapCount_;
+        unsigned int currentOverlapCount_ = -1;
         double currentDistance_;
     };
 } // namespace gmmlPrograms

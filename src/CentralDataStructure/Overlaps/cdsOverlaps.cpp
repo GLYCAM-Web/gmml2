@@ -55,7 +55,7 @@ cds::ResidueAtomOverlapInputPair cds::toResidueAtomOverlapInput(const std::vecto
 
 unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
-    unsigned int overlapCount = 1;
+    unsigned int overlapCount = 0;
     for (auto& atomA : atomsA)
     {
         for (auto& atomB : atomsB)
@@ -69,7 +69,7 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, c
 unsigned int cds::CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInput>& residuesA,
                                         const std::vector<ResidueAtomOverlapInput>& residuesB)
 {
-    unsigned int overlapCount = 1;
+    unsigned int overlapCount = 0;
     for (auto& residueA : residuesA)
     {
         for (auto& residueB : residuesB)
@@ -88,7 +88,7 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInpu
 unsigned int cds::CountOverlappingCoordinates(const std::vector<cds::Coordinate*>& coordsA,
                                               const std::vector<cds::Coordinate*>& coordsB)
 {
-    unsigned int overlapCount = 1;
+    unsigned int overlapCount = 0;
     for (auto& coordA : coordsA)
     {
         for (auto& coordB : coordsB)
