@@ -13,10 +13,10 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc != 2)
+    if (argc != 3)
     {
-        std::cout << "Usage: " << argv[0] << " inputFile.pdb\n";
-        std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb\n";
+        std::cout << "Usage: " << argv[0] << " inputFile.pdb outfileName\n";
+        std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb 030.outputPdbFile.pdb\n";
         std::exit(EXIT_FAILURE);
     }
     pdb::PdbFile pdbFile(argv[1]);
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
         }
     }
     std::ofstream outFileStream;
-    outFileStream.open("030.outputPdbFile.pdb");
+    outFileStream.open(argv[2]);
     cds::writeAssemblyToPdb(outFileStream, firstModel->getMolecules());
     // for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in
     // Ensemble.

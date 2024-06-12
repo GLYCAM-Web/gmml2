@@ -13,7 +13,7 @@ g++ -std=c++17 -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMM
 shopt -s nullglob
 for filepath in tests/inputs/030.*.pdb; do
     file=$(basename "${filepath}")
-    ./gmPreProcessor.exe tests/inputs/"${file}" >030.output.txt
+    ./gmPreProcessor.exe tests/inputs/"${file}" 030.outputPdbFile.pdb >030.output.txt
     if ! cmp 030.output.txt tests/correct_outputs/"${file}"-output.txt >/dev/null 2>&1; then
         echo -e "Test FAILED!. 030.output.txt different from tests/correct_outputs/${file}-output.txt\n Compare using diff\n"
         echo "Exit Code: 1"
