@@ -23,8 +23,7 @@ namespace cds
     void setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair);
 
     ResidueAtomOverlapInputPair toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
-                                                          const std::vector<Residue*>& residuesB,
-                                                          bool assumeFirstSetStaysFixed);
+                                                          const std::vector<Residue*>& residuesB);
 
     unsigned int CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
     unsigned int CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInput>& residuesA,

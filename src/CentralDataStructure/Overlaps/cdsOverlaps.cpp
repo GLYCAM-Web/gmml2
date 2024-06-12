@@ -45,12 +45,9 @@ void cds::setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair)
 }
 
 cds::ResidueAtomOverlapInputPair cds::toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
-                                                                const std::vector<Residue*>& residuesB,
-                                                                bool assumeFirstSetStaysFixed)
+                                                                const std::vector<Residue*>& residuesB)
 {
-    cds::ResidueAtomOverlapInputPair res {toResidueOverlapInput(assumeFirstSetStaysFixed, residuesA),
-                                          toResidueOverlapInput(false, residuesB)};
-    return res;
+    return {toResidueOverlapInput(true, residuesA), toResidueOverlapInput(false, residuesB)};
 }
 
 unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)

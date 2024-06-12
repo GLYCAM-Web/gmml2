@@ -28,7 +28,12 @@ namespace cds
         std::pair<std::string, std::string> atoms;
     };
 
-    typedef std::array<cds::Atom*, 4> DihedralAtoms;
+    struct DihedralAtoms
+    {
+        bool isBranching;
+        std::array<cds::Atom*, 4> atoms;
+    };
+
     typedef std::vector<gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector> DihedralAngleMetadata;
 
     ResidueLink findResidueLink(std::pair<cds::Residue*, cds::Residue*> residues);

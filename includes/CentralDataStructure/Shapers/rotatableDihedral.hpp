@@ -38,8 +38,9 @@ namespace cds
     class RotatableDihedral
     {
       public:
-        RotatableDihedral(const std::array<Atom*, 4>& atoms, const std::vector<DihedralAngleData>& metadata)
-            : atoms_(atoms), assigned_metadata_(metadata) {};
+        RotatableDihedral(bool isBranching, const std::array<Atom*, 4>& atoms,
+                          const std::vector<DihedralAngleData>& metadata)
+            : isBranching_(isBranching), atoms_(atoms), assigned_metadata_(metadata) {};
 
         ////////////////////////////////////////////
         //////////////
@@ -136,6 +137,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
+        bool isBranching_;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
         std::array<cds::Atom*, 4> atoms_;
         // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond

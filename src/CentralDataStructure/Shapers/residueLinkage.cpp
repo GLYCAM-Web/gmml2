@@ -36,7 +36,8 @@ namespace
     }
 
     //  This function splits that list into groups of 4 and creates RotatableDihedral objects
-    std::vector<cds::DihedralAtoms> SplitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms)
+    std::vector<cds::DihedralAtoms> SplitAtomVectorIntoRotatableDihedrals(bool isBranching,
+                                                                          const std::vector<cds::Atom*>& atoms)
     {
         // Ok looking for sets of four atoms, but shifting along vector by one atom for each dihedral.
         //  So four atoms will make one rotatable bond, five will make two bonds, six will make three etc.
@@ -59,7 +60,9 @@ namespace
             std::vector<cds::DihedralAtoms> dihedrals;
             for (size_t n = 0; n < atoms.size() - 3; n++)
             {
-                dihedrals.emplace_back(std::array<cds::Atom*, 4> {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]});
+                dihedrals.emplace_back(cds::DihedralAtoms {
+                    isBranching, {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]}
+                });
             }
             return dihedrals;
         }
@@ -126,7 +129,7 @@ namespace
                                         foundPath, branch.GetRoot(), link.residues.second);
                                     foundPath.push_back(neighbor);
                                     std::vector<cds::DihedralAtoms> temp =
-                                        SplitAtomVectorIntoRotatableDihedrals(foundPath);
+                                        SplitAtomVectorIntoRotatableDihedrals(true, foundPath);
                                     rotatableDihedralsInBranches.insert(rotatableDihedralsInBranches.end(),
                                                                         temp.begin(), temp.end());
                                 }
@@ -164,7 +167,8 @@ namespace
         auto branchResult = findRotatableDihedralsinBranchesConnectingResidues(link, firstResidueCyclePoints);
         std::vector<cds::DihedralAtoms>& rotatableDihedralsInBranches = std::get<0>(branchResult);
         std::vector<cds::Atom*>& connectingAtoms                      = std::get<1>(branchResult);
-        std::vector<cds::DihedralAtoms> RotatableDihedrals = SplitAtomVectorIntoRotatableDihedrals(connectingAtoms);
+        std::vector<cds::DihedralAtoms> RotatableDihedrals =
+            SplitAtomVectorIntoRotatableDihedrals(false, connectingAtoms);
         // Add any linkage branches (in 2-7 and 2-8) to the rest.
         RotatableDihedrals.insert(RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(),
                                   rotatableDihedralsInBranches.end());
@@ -230,7 +234,8 @@ namespace
             auto& currentMetadata = metadata[n];
             if (!currentMetadata.empty())
             {
-                rotatableDihedrals.emplace_back(cds::RotatableDihedral {dihedralAtoms[n], currentMetadata});
+                rotatableDihedrals.emplace_back(
+                    cds::RotatableDihedral {dihedralAtoms[n].isBranching, dihedralAtoms[n].atoms, currentMetadata});
             }
             else
             {
@@ -542,11 +547,11 @@ void ResidueLinkage::CreateHydrogenForPsiAngles(std::vector<DihedralAtoms>& dihe
         {
             if (entry.dihedral_angle_name_ == "Psi" && entry.atom4_.at(0) == 'H')
             { // If it's a psi angle and is supposed to be defined by a H...
-                Atom* atom     = dihedralAtoms[n][2];
+                Atom* atom     = dihedralAtoms[n].atoms[2];
                 Atom* hydrogen = findHydrogenForPsiAngle(atom);
                 if (hydrogen != nullptr)
                 {
-                    dihedralAtoms[n][3] = hydrogen;
+                    dihedralAtoms[n].atoms[3] = hydrogen;
                 }
                 else
                 {
