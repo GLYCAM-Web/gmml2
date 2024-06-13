@@ -114,6 +114,14 @@ std::vector<Coordinate*> Residue::getCoordinates() const
     return cds::getCoordinatesFromAtoms(this->getAtoms());
 }
 
+void Residue::insertCoordinatesInto(std::vector<Coordinate>& coordinates) const
+{
+    for (auto& a : atoms_)
+    {
+        coordinates.push_back(*a.get()->getCoordinate());
+    }
+}
+
 const Coordinate* Residue::getGeometricCenter()
 {
     if (geometricCenter_.GetX() == constants::dNotSet)

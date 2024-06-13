@@ -106,20 +106,25 @@ namespace
     cds::dihedralRotationData toRotationData(const std::vector<Atom*> movingAtoms,
                                              const std::vector<cds::Residue*> residues)
     {
+        size_t atomCount = 0;
+        for (auto res : residues)
+        {
+            atomCount += res->atomCount();
+        }
         std::vector<Coordinate> coordinates;
+        coordinates.reserve(atomCount);
         std::vector<std::pair<size_t, size_t>> residueAtoms;
+        residueAtoms.reserve(residues.size());
         size_t currentAtom = 0;
         for (auto& res : residues)
         {
             size_t startAtom = currentAtom;
-            for (auto& a : res->getCoordinates())
-            {
-                coordinates.push_back(*a);
-                currentAtom++;
-            }
+            res->insertCoordinatesInto(coordinates);
+            currentAtom += res->atomCount();
             residueAtoms.push_back({startAtom, currentAtom});
         }
         std::vector<Coordinate> geometricCenters;
+        geometricCenters.reserve(residues.size());
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
             auto range = residueAtoms[n];

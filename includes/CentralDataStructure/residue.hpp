@@ -57,6 +57,7 @@ namespace cds
         std::vector<std::string> getAtomNames() const;
         std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
         std::vector<Coordinate*> getCoordinates() const;
+        void insertCoordinatesInto(std::vector<Coordinate>& coordinates) const;
         const Coordinate* getGeometricCenter();
 
         inline ResidueType GetType() const
@@ -102,6 +103,11 @@ namespace cds
         inline void setNumber(int i)
         {
             number_ = i;
+        }
+
+        inline size_t atomCount() const
+        {
+            return atoms_.size();
         }
 
         //////////////////////////////////////////////////////////
