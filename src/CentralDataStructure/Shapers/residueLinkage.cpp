@@ -35,7 +35,7 @@ namespace
         return linkageName.str();
     }
 
-    //  This function splits that list into groups of 4 and creates RotatableDihedral objects
+    //  This function splits that list into groups of 4 and creates RotatableDihedral object
     std::vector<cds::DihedralAtoms> SplitAtomVectorIntoRotatableDihedrals(bool isBranching,
                                                                           const std::vector<cds::Atom*>& atoms)
     {

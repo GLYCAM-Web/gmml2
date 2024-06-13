@@ -11,23 +11,23 @@ namespace cds
 {
     struct ResidueAtomOverlapInput
     {
-        bool isFixed;
-        bool isPartOfDihedral;
-        Coordinate geometricCenter;
-        std::vector<Coordinate*> coordinates;
+        std::vector<Coordinate> atomCoordinates;
+        std::vector<Coordinate> geometricCenters;
+        const std::vector<std::pair<size_t, size_t>> residueAtoms;
     };
 
-    typedef std::pair<std::vector<ResidueAtomOverlapInput>, std::vector<ResidueAtomOverlapInput>>
-        ResidueAtomOverlapInputPair;
+    struct ResidueAtomOverlapInputReference
+    {
+        std::vector<Coordinate>& atomCoordinates;
+        std::vector<Coordinate>& geometricCenters;
+        const std::vector<std::pair<size_t, size_t>>& residueAtoms;
+    };
 
-    void setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair);
-
-    ResidueAtomOverlapInputPair toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
-                                                          const std::vector<Residue*>& residuesB);
-
+    ResidueAtomOverlapInput toOverlapInput(const std::vector<Residue*>& residues);
     unsigned int CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    unsigned int CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInput>& residuesA,
-                                       const std::vector<ResidueAtomOverlapInput>& residuesB);
+    unsigned int CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
+                                       const ResidueAtomOverlapInputReference& moving);
+    unsigned int CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
     unsigned int CountOverlappingCoordinates(const std::vector<Coordinate*>& coordsA,
                                              const std::vector<Coordinate*>& coordsB);
 } // namespace cds

@@ -1,13 +1,12 @@
 #ifndef GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_ROTATABLE_DIHEDRAL_HPP
 #define GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_ROTATABLE_DIHEDRAL_HPP
 
-#include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/logging.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
-#include "includes/CentralDataStructure/Overlaps/cdsOverlaps.hpp"
 
 #include <random>
 
@@ -26,6 +25,7 @@ namespace cds
     struct AngleOverlap
     {
         double angle;
+        const DihedralAngleData* metadata;
         unsigned int overlaps;
     };
 
@@ -35,12 +35,24 @@ namespace cds
         const DihedralAngleData* metadata;
     };
 
+    struct dihedralRotationData
+    {
+        std::vector<Coordinate> coordinates;
+        std::vector<Coordinate> geometricCenters;
+        std::vector<std::pair<size_t, size_t>> residueAtoms;
+        std::vector<bool> firstResidueCoordinateMoving;
+    };
+
+    std::array<dihedralRotationData, 2> dihedralRotationInputData(bool branched, const std::array<Atom*, 4>& dihedral,
+                                                                  const std::vector<Coordinate*>& movingCoordinates,
+                                                                  const std::array<std::vector<Residue*>, 2>& residues);
+
     class RotatableDihedral
     {
       public:
-        RotatableDihedral(bool isBranching, const std::array<Atom*, 4>& atoms,
+        RotatableDihedral(bool isBranchingLinkage, const std::array<Atom*, 4>& atoms,
                           const std::vector<DihedralAngleData>& metadata)
-            : isBranching_(isBranching), atoms_(atoms), assigned_metadata_(metadata) {};
+            : isBranchingLinkage_(isBranchingLinkage), atoms_(atoms), assigned_metadata_(metadata) {};
 
         ////////////////////////////////////////////
         //////////////
@@ -67,8 +79,8 @@ namespace cds
         bool SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         void WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
                                         std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
-        void WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapResidueSet1,
-                                        std::vector<cds::Residue*>& overlapResidueSet2, int angleIncrement);
+        void WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapSet1,
+                                        std::vector<cds::Residue*>& overlapSet2, int angleIncrement);
         void WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapAtomSet1,
                                     std::vector<cds::Residue*>& overlapAtomSet2, int angleIncrement);
         //////////////////////////////////////////////////////////
@@ -125,7 +137,8 @@ namespace cds
                                                                        std::vector<cds::Atom*>& overlapAtomSet2,
                                                                        const DihedralAngleData* metadata,
                                                                        std::vector<double> angles);
-        std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(cds::ResidueAtomOverlapInputPair& overlapInput,
+        std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(const dihedralRotationData& fixedInput,
+                                                                       const dihedralRotationData& movingInput,
                                                                        const DihedralAngleData* metadata,
                                                                        std::vector<double> angles);
 
@@ -137,7 +150,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
-        bool isBranching_;
+        bool isBranchingLinkage_;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
         std::array<cds::Atom*, 4> atoms_;
         // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond

@@ -1,53 +1,52 @@
 #include "includes/CentralDataStructure/Overlaps/cdsOverlaps.hpp"
 #include "includes/CodeUtils/constants.hpp" // maxcutoff
-#include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-
-#include <sstream>
-#include <iostream>
-#include <cassert>
 
 namespace
 {
-    void setResidueGeometricCenter(std::vector<cds::ResidueAtomOverlapInput>& residues)
+    unsigned int coordinateOverlaps(const std::vector<cds::Coordinate>& coordsA,
+                                    const std::vector<cds::Coordinate>& coordsB, const std::pair<size_t, size_t> rangeA,
+                                    const std::pair<size_t, size_t> rangeB)
     {
-        for (auto& a : residues)
+        unsigned int count = 0;
+        for (size_t n = rangeA.first; n < rangeA.second; n++)
         {
-            if (!a.isFixed)
+            for (size_t k = rangeB.first; k < rangeB.second; k++)
             {
-                a.geometricCenter = cds::calculateGeometricCenter(a.coordinates);
+                count += cds::withinDistance(constants::maxCutOff, coordsA[n], coordsB[k]);
             }
         }
-    }
-
-    std::vector<cds::ResidueAtomOverlapInput> toResidueOverlapInput(bool mostlyFixed,
-                                                                    const std::vector<cds::Residue*>& residues)
-    {
-        std::vector<cds::ResidueAtomOverlapInput> res;
-        res.reserve(residues.size());
-        for (auto& a : residues)
-        {
-            auto& entry = res.emplace_back(
-                cds::ResidueAtomOverlapInput {mostlyFixed, false, cds::Coordinate(0.0, 0.0, 0.0), a->getCoordinates()});
-            entry.geometricCenter = cds::calculateGeometricCenter(entry.coordinates);
-        }
-        res[0].isPartOfDihedral = true;
-        res[0].isFixed          = false;
-        return res;
+        return count;
     }
 } // namespace
 
-void cds::setGeometricCenters(cds::ResidueAtomOverlapInputPair& pair)
+cds::ResidueAtomOverlapInput cds::toOverlapInput(const std::vector<Residue*>& residues)
 {
-    setResidueGeometricCenter(pair.first);
-    setResidueGeometricCenter(pair.second);
-}
-
-cds::ResidueAtomOverlapInputPair cds::toResidueAtomOverlapInput(const std::vector<Residue*>& residuesA,
-                                                                const std::vector<Residue*>& residuesB)
-{
-    return {toResidueOverlapInput(true, residuesA), toResidueOverlapInput(false, residuesB)};
+    std::vector<Coordinate> coordinates;
+    std::vector<std::pair<size_t, size_t>> residueAtoms;
+    size_t currentAtom = 0;
+    for (auto& res : residues)
+    {
+        size_t startAtom = currentAtom;
+        for (auto& a : res->getCoordinates())
+        {
+            coordinates.push_back(*a);
+            currentAtom++;
+        }
+        residueAtoms.push_back({startAtom, currentAtom});
+    }
+    std::vector<Coordinate> geometricCenters;
+    for (size_t n = 0; n < residueAtoms.size(); n++)
+    {
+        auto range = residueAtoms[n];
+        Coordinate coord(0.0, 0.0, 0.0);
+        for (size_t k = range.first; k < range.second; k++)
+        {
+            coord = coord + coordinates[k];
+        }
+        geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), coord));
+    }
+    return {coordinates, geometricCenters, residueAtoms};
 }
 
 unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
@@ -63,23 +62,32 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, c
     return overlapCount;
 }
 
-unsigned int cds::CountOverlappingAtoms(const std::vector<ResidueAtomOverlapInput>& residuesA,
-                                        const std::vector<ResidueAtomOverlapInput>& residuesB)
+unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
+                                        const ResidueAtomOverlapInputReference& moving)
 {
     unsigned int overlapCount = 0;
-    for (auto& residueA : residuesA)
+    for (size_t n = 0; n < mostlyFixed.geometricCenters.size(); n++)
     {
-        for (auto& residueB : residuesB)
+        for (size_t k = 0; k < moving.geometricCenters.size(); k++)
         {
-            if (!(residueA.isPartOfDihedral && residueB.isPartOfDihedral) &&
-                cds::withinDistance(constants::residueDistanceOverlapCutoff, residueA.geometricCenter,
-                                    residueB.geometricCenter))
+            if ((n > 0 || k > 0) && cds::withinDistance(constants::residueDistanceOverlapCutoff,
+                                                        mostlyFixed.geometricCenters[n], moving.geometricCenters[k]))
             {
-                overlapCount += cds::CountOverlappingCoordinates(residueA.coordinates, residueB.coordinates);
+                overlapCount += coordinateOverlaps(mostlyFixed.atomCoordinates, moving.atomCoordinates,
+                                                   mostlyFixed.residueAtoms[n], moving.residueAtoms[k]);
             }
         }
     }
     return overlapCount;
+}
+
+unsigned int cds::CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB)
+{
+    auto inputA = toOverlapInput(residuesA);
+    auto inputB = toOverlapInput(residuesB);
+
+    return CountOverlappingAtoms({inputA.atomCoordinates, inputA.geometricCenters, inputA.residueAtoms},
+                                 {inputB.atomCoordinates, inputB.geometricCenters, inputB.residueAtoms});
 }
 
 unsigned int cds::CountOverlappingCoordinates(const std::vector<cds::Coordinate*>& coordsA,

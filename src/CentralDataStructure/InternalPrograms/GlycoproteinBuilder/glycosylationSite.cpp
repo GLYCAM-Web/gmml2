@@ -13,6 +13,7 @@
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //cdsSelections
+#include "includes/CentralDataStructure/Overlaps/cdsOverlaps.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
@@ -281,8 +282,7 @@ unsigned int GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
 unsigned int GlycosylationSite::CountOverlaps(const std::vector<Residue*>& residuesA,
                                               const std::vector<Residue*>& residuesB)
 {
-    auto input = cds::toResidueAtomOverlapInput(residuesA, residuesB);
-    return cds::CountOverlappingAtoms(input.first, input.second);
+    return cds::CountOverlappingAtoms(residuesA, residuesB);
 }
 
 void GlycosylationSite::PrintOverlaps()

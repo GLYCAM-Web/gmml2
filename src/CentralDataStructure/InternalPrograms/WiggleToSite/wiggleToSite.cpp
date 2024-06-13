@@ -8,6 +8,7 @@
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateGeometricCenter
+#include "includes/CentralDataStructure/Overlaps/cdsOverlaps.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
 using gmmlPrograms::WiggleToSite;
