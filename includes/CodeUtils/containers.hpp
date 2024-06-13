@@ -15,5 +15,13 @@ namespace codeUtils
         return std::find(vector.begin(), vector.end(), element) != vector.end();
     }
 
+    template<class T> std::vector<T> vectorAppend(const std::vector<T> vecA, const std::vector<T> vecB)
+    {
+        std::vector<T> result;
+        result.insert(result.end(), vecA.begin(), vecA.end());
+        result.insert(result.end(), vecB.begin(), vecB.end());
+        return result;
+    }
+
 } // namespace codeUtils
 #endif // GMML_INCLUDES_CODEUTILS_CONTAINERS_HPP
