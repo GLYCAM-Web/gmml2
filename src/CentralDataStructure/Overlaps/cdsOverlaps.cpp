@@ -2,6 +2,8 @@
 #include "includes/CodeUtils/constants.hpp" // maxcutoff
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 
+#include <numeric>
+
 namespace
 {
     unsigned int coordinateOverlaps(const std::vector<cds::Coordinate>& coordsA,
@@ -43,13 +45,10 @@ cds::ResidueAtomOverlapInput cds::toOverlapInput(const std::vector<Residue*>& re
     geometricCenters.reserve(residues.size());
     for (size_t n = 0; n < residueAtoms.size(); n++)
     {
-        auto range = residueAtoms[n];
-        Coordinate coord(0.0, 0.0, 0.0);
-        for (size_t k = range.first; k < range.second; k++)
-        {
-            coord = coord + coordinates[k];
-        }
-        geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), coord));
+        auto range        = residueAtoms[n];
+        Coordinate center = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
+                                            Coordinate(0.0, 0.0, 0.0));
+        geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), center));
     }
     return {coordinates, geometricCenters, residueAtoms};
 }

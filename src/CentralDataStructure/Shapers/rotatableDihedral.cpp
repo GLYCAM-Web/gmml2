@@ -7,6 +7,7 @@
 #include "includes/CodeUtils/containers.hpp"
 
 #include <algorithm>
+#include <numeric>
 #include <sstream>
 
 namespace
@@ -127,13 +128,10 @@ namespace
         geometricCenters.reserve(residues.size());
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
-            auto range = residueAtoms[n];
-            Coordinate coord(0.0, 0.0, 0.0);
-            for (size_t k = range.first; k < range.second; k++)
-            {
-                coord = coord + coordinates[k];
-            }
-            geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), coord));
+            auto range        = residueAtoms[n];
+            Coordinate center = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
+                                                Coordinate(0.0, 0.0, 0.0));
+            geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), center));
         }
         const auto& firstAtoms   = residues[0]->getAtoms();
         std::vector<bool> moving = movingAtomsWithinResidue(movingAtoms, firstAtoms);
@@ -436,14 +434,14 @@ RotatableDihedral::WiggleWithinRangesDistanceCheck(const cds::dihedralRotationDa
                                      std::vector<Coordinate>& coordinates, std::vector<Coordinate>& centers)
     {
         auto range = input.residueAtoms[0];
-        Coordinate center(0.0, 0.0, 0.0);
         for (size_t n = range.first; n < range.second; n++)
         {
             coordinates[n] =
                 input.firstResidueCoordinateMoving[n] ? matrix * input.coordinates[n] : input.coordinates[n];
-            center = center + coordinates[n];
         }
-        centers[0] = scaleBy(1.0 / (range.second - range.first), center);
+        Coordinate center = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
+                                            Coordinate(0.0, 0.0, 0.0));
+        centers[0]        = scaleBy(1.0 / (range.second - range.first), center);
     };
     const auto dihedral                       = dihedralCoordinates();
     // copies of input vectors used for updates during looping
