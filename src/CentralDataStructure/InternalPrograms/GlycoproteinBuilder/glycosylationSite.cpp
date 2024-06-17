@@ -13,7 +13,7 @@
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //cdsSelections
-#include "includes/CentralDataStructure/Overlaps/cdsOverlaps.hpp"
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
