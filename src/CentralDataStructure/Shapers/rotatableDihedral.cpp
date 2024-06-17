@@ -163,6 +163,52 @@ namespace
         }
         return {newSetA, newSetB};
     }
+
+    std::vector<cds::AngleOverlap> WiggleAnglesOverlaps(const std::array<Coordinate*, 4> dihedral,
+                                                        const cds::dihedralRotationData& fixedInput,
+                                                        const cds::dihedralRotationData& movingInput,
+                                                        const DihedralAngleData* metadata, std::vector<double> angles)
+    {
+        auto moveFirstResidueCoords = [](const cds::RotationMatrix matrix, const cds::dihedralRotationData& input,
+                                         std::vector<Coordinate>& coordinates, std::vector<Coordinate>& centers)
+        {
+            auto range = input.residueAtoms[0];
+            for (size_t n = range.first; n < range.second; n++)
+            {
+                coordinates[n] =
+                    input.firstResidueCoordinateMoving[n] ? matrix * input.coordinates[n] : input.coordinates[n];
+            }
+            Coordinate center = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
+                                                Coordinate(0.0, 0.0, 0.0));
+            centers[0]        = scaleBy(1.0 / (range.second - range.first), center);
+        };
+        // copies of input vectors used for updates during looping
+        std::vector<Coordinate> fixedCoordinates  = fixedInput.coordinates;
+        std::vector<Coordinate> fixedCenters      = fixedInput.geometricCenters;
+        std::vector<Coordinate> movingCoordinates = movingInput.coordinates;
+        std::vector<Coordinate> movingCenters     = movingInput.geometricCenters;
+        std::vector<cds::AngleOverlap> results;
+        for (double angle : angles)
+        {
+            auto matrix = cds::dihedralToMatrix(dihedral, angle);
+            moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedCenters);
+            moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingCenters);
+            for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)
+            {
+                movingCoordinates[n] = matrix * movingInput.coordinates[n];
+            }
+            for (size_t n = 1; n < movingCenters.size(); n++)
+            {
+                movingCenters[n] = matrix * movingInput.geometricCenters[n];
+            }
+            unsigned int overlaps =
+                cds::CountOverlappingAtoms({fixedCoordinates, fixedCenters, fixedInput.residueAtoms},
+                                           {movingCoordinates, movingCenters, movingInput.residueAtoms});
+
+            results.push_back({angle, metadata, overlaps});
+        }
+        return results;
+    }
 } // namespace
 
 using cds::RotatableDihedral;
@@ -362,8 +408,8 @@ void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Residue*>& overl
     {
         auto& metadata = metadataVec[n];
         Bounds bounds  = angleBounds(metadata);
-        results[n] =
-            WiggleWithinRangesDistanceCheck(fixedInput, movingInput, &metadata, wiggleAngles(bounds, angleIncrement));
+        results[n]     = WiggleAnglesOverlaps(dihedralCoordinates(), fixedInput, movingInput, &metadata,
+                                              wiggleAngles(bounds, angleIncrement));
     }
 
     for (auto& result : results)
@@ -403,8 +449,8 @@ void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& o
         dihedralRotationInputData(isBranchingLinkage_, atoms_, coordinatesThatMove_, {overlapSet1, overlapSet2});
     auto& fixedInput  = input[0];
     auto& movingInput = input[1];
-    auto results =
-        this->WiggleWithinRangesDistanceCheck(fixedInput, movingInput, metadata, wiggleAngles(bounds, angleIncrement));
+    auto results      = WiggleAnglesOverlaps(dihedralCoordinates(), fixedInput, movingInput, metadata,
+                                             wiggleAngles(bounds, angleIncrement));
     AngleOverlap best = bestOverlapResult(results);
     this->SetDihedralAngle(best.angle, best.metadata);
 }
@@ -419,52 +465,6 @@ RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& over
     {
         this->SetDihedralAngle(angle, metadata);
         unsigned int overlaps = cds::CountOverlappingAtoms(overlapAtomSet1, overlapAtomSet2);
-
-        results.push_back({angle, metadata, overlaps});
-    }
-    return results;
-}
-
-std::vector<cds::AngleOverlap>
-RotatableDihedral::WiggleWithinRangesDistanceCheck(const cds::dihedralRotationData& fixedInput,
-                                                   const cds::dihedralRotationData& movingInput,
-                                                   const DihedralAngleData* metadata, std::vector<double> angles)
-{
-    auto moveFirstResidueCoords = [](const RotationMatrix matrix, const dihedralRotationData& input,
-                                     std::vector<Coordinate>& coordinates, std::vector<Coordinate>& centers)
-    {
-        auto range = input.residueAtoms[0];
-        for (size_t n = range.first; n < range.second; n++)
-        {
-            coordinates[n] =
-                input.firstResidueCoordinateMoving[n] ? matrix * input.coordinates[n] : input.coordinates[n];
-        }
-        Coordinate center = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
-                                            Coordinate(0.0, 0.0, 0.0));
-        centers[0]        = scaleBy(1.0 / (range.second - range.first), center);
-    };
-    const auto dihedral                       = dihedralCoordinates();
-    // copies of input vectors used for updates during looping
-    std::vector<Coordinate> fixedCoordinates  = fixedInput.coordinates;
-    std::vector<Coordinate> fixedCenters      = fixedInput.geometricCenters;
-    std::vector<Coordinate> movingCoordinates = movingInput.coordinates;
-    std::vector<Coordinate> movingCenters     = movingInput.geometricCenters;
-    std::vector<cds::AngleOverlap> results;
-    for (double angle : angles)
-    {
-        auto matrix = cds::dihedralToMatrix(dihedral, angle);
-        moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedCenters);
-        moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingCenters);
-        for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)
-        {
-            movingCoordinates[n] = matrix * movingInput.coordinates[n];
-        }
-        for (size_t n = 1; n < movingCenters.size(); n++)
-        {
-            movingCenters[n] = matrix * movingInput.geometricCenters[n];
-        }
-        unsigned int overlaps = CountOverlappingAtoms({fixedCoordinates, fixedCenters, fixedInput.residueAtoms},
-                                                      {movingCoordinates, movingCenters, movingInput.residueAtoms});
 
         results.push_back({angle, metadata, overlaps});
     }
