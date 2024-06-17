@@ -16,6 +16,7 @@
 ./src/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.cpp
 ./src/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.cpp
 ./src/CentralDataStructure/Measurements/measurements.cpp
+./src/CentralDataStructure/Overlaps/binaryPartitionGrid.cpp
 ./src/CentralDataStructure/Overlaps/cdsOverlaps.cpp
 ./src/CentralDataStructure/Parameters/parameterManager.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryAtom.cpp
