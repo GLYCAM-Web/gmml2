@@ -74,7 +74,7 @@ unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
     {
         for (size_t k = 0; k < moving.geometricCenters.size(); k++)
         {
-            if ((n > 0 || k > 0) && cds::withinDistance(constants::residueDistanceOverlapCutoff,
+            if ((n > 0 || k > 0) && cds::withinDistance(constants::residueDistanceOverlapCutoff + constants::maxCutOff,
                                                         mostlyFixed.geometricCenters[n], moving.geometricCenters[k]))
             {
                 overlapCount += coordinateOverlaps(mostlyFixed.atomCoordinates, moving.atomCoordinates,

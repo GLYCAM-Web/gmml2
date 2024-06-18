@@ -194,7 +194,7 @@ void cds::bondAtomsAndResiduesByDistance(std::vector<cds::Residue*> residues)
             cds::Residue* res2                = *it2;
             std::vector<cds::Atom*> res2Atoms = res2->getAtoms();
             double residueDistance            = res1Atoms.at(0)->calculateDistance(res2Atoms.at(0));
-            if (residueDistance < constants::residueDistanceOverlapCutoff * 1.2)
+            if (residueDistance < constants::residueDistanceOverlapCutoff)
             {
                 cds::bondAtomsAndResiduesByDistance(res1, res2);
             }
@@ -221,7 +221,7 @@ void cds::distanceBondInter(std::vector<cds::Residue*> residues)
             cds::Residue* res2                = *it2;
             std::vector<cds::Atom*> res2Atoms = res2->getAtoms();
             double residueDistance            = res1Atoms.at(0)->calculateDistance(res2Atoms.at(0));
-            if (residueDistance < constants::residueDistanceOverlapCutoff * 1.2)
+            if (residueDistance < constants::residueDistanceOverlapCutoff)
             {
                 cds::bondAtomsAndResiduesByDistance(res1, res2);
             }
