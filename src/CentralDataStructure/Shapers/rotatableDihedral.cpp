@@ -104,7 +104,8 @@ namespace
         return result;
     }
 
-    cds::dihedralRotationData toRotationData(const std::vector<Atom*> movingAtoms,
+    cds::dihedralRotationData toRotationData(double cutoffDistance, const cds::Coordinate cutoffPoint,
+                                             const std::vector<cds::Atom*> movingAtoms,
                                              const std::vector<cds::Residue*> residues)
     {
         size_t atomCount = 0;
@@ -133,9 +134,22 @@ namespace
                                                 Coordinate(0.0, 0.0, 0.0));
             geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), center));
         }
+        std::vector<std::pair<size_t, size_t>> withinRangeResidueAtoms;
+        withinRangeResidueAtoms.reserve(residues.size());
+        std::vector<Coordinate> withinRangeCenters;
+        withinRangeCenters.reserve(residues.size());
+        for (size_t n = 0; n < geometricCenters.size(); n++)
+        {
+            if (cds::withinDistance(cutoffDistance, cutoffPoint, geometricCenters[n]))
+            {
+                withinRangeCenters.push_back(geometricCenters[n]);
+                withinRangeResidueAtoms.push_back(residueAtoms[n]);
+            }
+        }
+
         const auto& firstAtoms   = residues[0]->getAtoms();
         std::vector<bool> moving = movingAtomsWithinResidue(movingAtoms, firstAtoms);
-        return {coordinates, geometricCenters, residueAtoms, moving};
+        return {coordinates, withinRangeCenters, withinRangeResidueAtoms, moving};
     }
 
     std::array<std::vector<cds::Residue*>, 2> branchedResidueSets(const std::vector<Coordinate*>& movingCoordinates,
@@ -210,6 +224,16 @@ namespace
         }
         return results;
     }
+
+    double maxDistanceFrom(const Coordinate& pt, std::vector<cds::Atom*>& atoms)
+    {
+        double maxSquare = 0.0;
+        for (auto& a : atoms)
+        {
+            maxSquare = std::max(maxSquare, squaredDistance(pt, *a->getCoordinate()));
+        }
+        return std::sqrt(maxSquare);
+    }
 } // namespace
 
 using cds::RotatableDihedral;
@@ -222,9 +246,13 @@ cds::dihedralRotationInputData(bool branching, const std::array<Atom*, 4>& dihed
     auto dihedralResiduesMovingAtoms = movingAtomsWithinSet(
         dihedral[2], dihedral[1], codeUtils::vectorAppend(residues[0][0]->getAtoms(), residues[1][0]->getAtoms()));
 
+    auto centerPoint      = *dihedral[1]->getCoordinate();
+    double maxDistance    = maxDistanceFrom(centerPoint, dihedralResiduesMovingAtoms);
+    double cutoffDistance = maxDistance + constants::maxAtomDistanceFromResidueCenter + constants::maxCutOff;
+
     auto rotationData = [&](const std::vector<Residue*>& set)
     {
-        return toRotationData(dihedralResiduesMovingAtoms, set);
+        return toRotationData(cutoffDistance, centerPoint, dihedralResiduesMovingAtoms, set);
     };
 
     auto inputSets = branching ? branchedResidueSets(movingCoordinates, residues) : residues;
