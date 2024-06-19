@@ -470,12 +470,13 @@ void ResidueLinkage::SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overla
     }
 }
 
-void ResidueLinkage::SimpleWiggleCurrentRotamers(std::vector<cds::Residue*>& overlapSet1,
-                                                 std::vector<cds::Residue*>& overlapSet2, const int angleIncrement)
+void ResidueLinkage::SimpleWiggleCurrentRotamers(const std::array<std::vector<cds::Residue*>, 2>& residues,
+                                                 const int angleIncrement)
 {
-    for (auto& RotatableDihedral : this->GetRotatableDihedrals())
+    for (auto& dihedral : this->GetRotatableDihedrals())
     {
-        RotatableDihedral.WiggleWithinCurrentRotamer(overlapSet1, overlapSet2, angleIncrement);
+        const DihedralAngleDataVector rotamer {*dihedral.GetCurrentMetaData()};
+        dihedral.WiggleUsingRotamers(rotamer, angleIncrement, residues);
     }
 }
 

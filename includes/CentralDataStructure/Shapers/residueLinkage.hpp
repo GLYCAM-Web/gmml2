@@ -11,6 +11,7 @@
 #include "includes/CodeUtils/logging.hpp"
 
 #include <string>
+#include <array>
 #include <vector>
 #include <utility>
 
@@ -97,8 +98,8 @@ namespace cds
         void DetermineAtomsThatMove();
         void SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
                                          std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement = 5);
-        void SimpleWiggleCurrentRotamers(std::vector<cds::Residue*>& overlapSet1,
-                                         std::vector<cds::Residue*>& overlapSet2, const int angleIncrement = 5);
+        void SimpleWiggleCurrentRotamers(const std::array<std::vector<cds::Residue*>, 2>& residues,
+                                         const int angleIncrement = 5);
 
         inline void SetIndex(unsigned long long index)
         {

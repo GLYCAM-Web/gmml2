@@ -514,8 +514,8 @@ void Carbohydrate::ResolveOverlaps()
     for (auto& linkage : glycosidicLinkages_)
     {
         std::vector<cds::Residue*> carbResidues = this->getResidues();
-        linkage.SimpleWiggleCurrentRotamers(linkage.GetNonReducingOverlapResidues(),
-                                            linkage.GetReducingOverlapResidues(), 5);
+        linkage.SimpleWiggleCurrentRotamers(
+            {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()}, 5);
     }
     return;
 }

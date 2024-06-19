@@ -416,25 +416,17 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
     //  Asn outwards
     std::vector<RotatableDihedral> reversed_rotatable_bond_vector = linkage.GetRotatableDihedralsRef();
     std::reverse(reversed_rotatable_bond_vector.begin(), reversed_rotatable_bond_vector.end());
-    for (auto& rotatable_dihedral : reversed_rotatable_bond_vector)
+    for (auto& dihedral : reversed_rotatable_bond_vector)
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF,
-        //                  "About to wiggle all the rotamers of " + rotatable_dihedral.GetName() +
-        //                      " in this linkage: " + linkage.GetName());
+        const auto& rotamers = dihedral.GetMetadata();
         if (useAllResiduesForOverlap)
         {
-            rotatable_dihedral.WiggleUsingAllRotamers(overlapResidues, linkage.GetReducingOverlapResidues(), interval);
-            //            gmml::log(__LINE__, __FILE__, gmml::INF, "Triggered All. Checking " +
-            //            std::to_string(overlapResidues.size()) + " against " +
-            //            std::to_string(linkage.GetReducingOverlapResidues().size()) + " in " + linkage.GetName());
+            dihedral.WiggleUsingRotamers(rotamers, interval, {overlapResidues, linkage.GetReducingOverlapResidues()});
         }
         else
         {
-            //            gmml::log(__LINE__, __FILE__, gmml::INF, "Triggered Some. Checking " +
-            //            std::to_string(linkage.GetNonReducingOverlapResidues().size()) + " against " +
-            //            std::to_string(linkage.GetReducingOverlapResidues().size()) + " in " + linkage.GetName());
-            rotatable_dihedral.WiggleUsingAllRotamers(linkage.GetNonReducingOverlapResidues(),
-                                                      linkage.GetReducingOverlapResidues(), interval);
+            dihedral.WiggleUsingRotamers(
+                rotamers, interval, {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()});
         }
     }
     return;

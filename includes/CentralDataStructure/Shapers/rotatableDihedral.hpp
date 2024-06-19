@@ -63,6 +63,11 @@ namespace cds
             return assigned_metadata_;
         }
 
+        inline const DihedralAngleData* GetCurrentMetaData()
+        {
+            return currentMetadata_;
+        }
+
         DihedralAngleDataVector GetLikelyMetadata() const;
         int GetNumberOfRotamers(bool likelyShapesOnly = false) const;
         std::string GetName() const;
@@ -79,10 +84,8 @@ namespace cds
         bool SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         void WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
                                         std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
-        void WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapSet1,
-                                        std::vector<cds::Residue*>& overlapSet2, int angleIncrement);
-        void WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapAtomSet1,
-                                    std::vector<cds::Residue*>& overlapAtomSet2, int angleIncrement);
+        void WiggleUsingRotamers(const DihedralAngleDataVector& rotamers, int angleIncrement,
+                                 const std::array<std::vector<cds::Residue*>, 2>& residues);
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
@@ -126,11 +129,6 @@ namespace cds
         inline void SetCurrentMetaData(const DihedralAngleData* d)
         {
             currentMetadata_ = d;
-        }
-
-        inline const DihedralAngleData* GetCurrentMetaData()
-        {
-            return currentMetadata_;
         }
 
         cds::AngleOverlap WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,

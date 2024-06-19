@@ -417,56 +417,6 @@ bool RotatableDihedral::SetSpecificShape(std::string dihedralName, std::string s
     return false;
 }
 
-void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Residue*>& overlapSet1,
-                                               std::vector<cds::Residue*>& overlapSet2, int angleIncrement)
-{
-    auto input =
-        dihedralRotationInputData(isBranchingLinkage_, atoms_, coordinatesThatMove_, {overlapSet1, overlapSet2});
-    auto& fixedInput  = input[0];
-    auto& movingInput = input[1];
-    std::vector<AngleOverlap> results;
-    auto metadataVec = this->GetMetadata();
-    for (size_t n = 0; n < metadataVec.size(); n++)
-    {
-        auto& metadata           = metadataVec[n];
-        Bounds bounds            = angleBounds(metadata);
-        AngleOverlap rotamerBest = WiggleAnglesOverlaps(dihedralCoordinates(), fixedInput, movingInput, &metadata,
-                                                        wiggleAngles(bounds, angleIncrement));
-        results.push_back(rotamerBest);
-    }
-
-    auto best = bestOverlapResult(results);
-    this->SetDihedralAngle(best.angle, best.metadata);
-}
-
-// User requested gg, this prevents flipping into gt like the above would do. i.e. cb won't want a flip, gp would.
-void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                   std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
-{
-    auto metadata     = GetCurrentMetaData();
-    Bounds bounds     = angleBounds(*metadata);
-    // Set to lowest deviation, work through to highest. Set best value and return it for reference.
-    AngleOverlap best = WiggleWithinRangesDistanceCheck(overlapAtomSet1, overlapAtomSet2, metadata,
-                                                        wiggleAngles(bounds, angleIncrement));
-    this->SetDihedralAngle(best.angle, best.metadata);
-}
-
-// User requested gg, this prevents flipping into gt like the above would do.
-void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Residue*>& overlapSet1,
-                                                   std::vector<cds::Residue*>& overlapSet2, int angleIncrement)
-{
-    auto metadata = GetCurrentMetaData();
-    Bounds bounds = angleBounds(*metadata);
-    // Set to lowest deviation, work through to highest. Set best value and return it for reference.
-    auto input =
-        dihedralRotationInputData(isBranchingLinkage_, atoms_, coordinatesThatMove_, {overlapSet1, overlapSet2});
-    auto& fixedInput  = input[0];
-    auto& movingInput = input[1];
-    AngleOverlap best = WiggleAnglesOverlaps(dihedralCoordinates(), fixedInput, movingInput, metadata,
-                                             wiggleAngles(bounds, angleIncrement));
-    this->SetDihedralAngle(best.angle, best.metadata);
-}
-
 cds::AngleOverlap RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
                                                                      std::vector<cds::Atom*>& overlapAtomSet2,
                                                                      const DihedralAngleData* metadata,
@@ -481,6 +431,38 @@ cds::AngleOverlap RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector
         results.push_back({angle, metadata, overlaps});
     }
     return bestOverlapResult(results);
+}
+
+// User requested gg, this prevents flipping into gt like the above would do. i.e. cb won't want a flip, gp would.
+void RotatableDihedral::WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
+                                                   std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
+{
+    auto metadata     = GetCurrentMetaData();
+    Bounds bounds     = angleBounds(*metadata);
+    // Set to lowest deviation, work through to highest. Set best value and return it for reference.
+    AngleOverlap best = WiggleWithinRangesDistanceCheck(overlapAtomSet1, overlapAtomSet2, metadata,
+                                                        wiggleAngles(bounds, angleIncrement));
+    this->SetDihedralAngle(best.angle, best.metadata);
+}
+
+void RotatableDihedral::WiggleUsingRotamers(const DihedralAngleDataVector& rotamers, int angleIncrement,
+                                            const std::array<std::vector<cds::Residue*>, 2>& residues)
+{
+    auto input        = dihedralRotationInputData(isBranchingLinkage_, atoms_, coordinatesThatMove_, residues);
+    auto& fixedInput  = input[0];
+    auto& movingInput = input[1];
+    std::vector<AngleOverlap> results;
+    for (size_t n = 0; n < rotamers.size(); n++)
+    {
+        const auto& rotamer      = rotamers[n];
+        Bounds bounds            = angleBounds(rotamer);
+        AngleOverlap rotamerBest = WiggleAnglesOverlaps(dihedralCoordinates(), fixedInput, movingInput, &rotamer,
+                                                        wiggleAngles(bounds, angleIncrement));
+        results.push_back(rotamerBest);
+    }
+
+    auto best = bestOverlapResult(results);
+    this->SetDihedralAngle(best.angle, best.metadata);
 }
 
 std::string RotatableDihedral::Print() const
