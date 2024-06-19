@@ -133,10 +133,10 @@ namespace cds
             return currentMetadata_;
         }
 
-        std::vector<cds::AngleOverlap> WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
-                                                                       std::vector<cds::Atom*>& overlapAtomSet2,
-                                                                       const DihedralAngleData* metadata,
-                                                                       std::vector<double> angles);
+        cds::AngleOverlap WiggleWithinRangesDistanceCheck(std::vector<cds::Atom*>& overlapAtomSet1,
+                                                          std::vector<cds::Atom*>& overlapAtomSet2,
+                                                          const DihedralAngleData* metadata,
+                                                          std::vector<double> angles);
 
         inline std::vector<cds::Coordinate*>& GetCoordinatesThatMove()
         {
