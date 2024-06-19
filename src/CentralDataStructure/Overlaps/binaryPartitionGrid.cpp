@@ -80,13 +80,12 @@ cds::BinaryPartitionGridBounds cds::binaryPartitionGridBounds(size_t subdivision
     return BinaryPartitionGridBounds {subdivisions, strides, limits};
 }
 
-void cds::initBinaryPartitionGrid(BinaryPartitionGrid& grid, const BinaryPartitionGridBounds bounds,
-                                  const std::vector<Coordinate>& coordinates)
+void cds::BinaryPartitionGrid::init(const BinaryPartitionGridBounds bounds, const std::vector<Coordinate>& coordinates)
 {
-    grid.bounds       = bounds;
+    this->bounds_     = bounds;
     auto subdivisions = bounds.subdivisions;
     size_t size       = gridSize(subdivisions);
-    auto& result      = grid.grid;
+    auto& result      = this->grid_;
     result.resize(size);
     // special case to keep subdivision 0 relatively low-cost
     if (size == 1)
@@ -107,7 +106,7 @@ void cds::initBinaryPartitionGrid(BinaryPartitionGrid& grid, const BinaryPartiti
         {
             indices.push_back(gridIndex(bounds, a));
         }
-        auto& intermediate = grid.intermediate;
+        auto& intermediate = this->intermediate_;
         intermediate.resize(size);
         for (auto& a : intermediate)
         {

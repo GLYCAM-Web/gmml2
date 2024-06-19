@@ -25,13 +25,6 @@ namespace cds
         GridBoundsAxes limits;
     };
 
-    struct BinaryPartitionGrid
-    {
-        BinaryPartitionGridBounds bounds;
-        std::vector<std::vector<size_t>> intermediate;
-        std::vector<std::vector<size_t>> grid;
-    };
-
     inline size_t gridIndexPosition(size_t subdivisions, const BinaryPartitionGridAxisLimits& limits, double x)
     {
         size_t index  = 0;
@@ -56,13 +49,28 @@ namespace cds
         return at(0) + at(1) + at(2);
     }
 
-    inline const std::vector<size_t>& gridAt(const BinaryPartitionGrid& grid, const cds::Coordinate& coord)
+    class BinaryPartitionGrid
     {
-        return grid.grid[gridIndex(grid.bounds, coord)];
-    }
+      public:
+        BinaryPartitionGrid()
+        {
+            // subdivisions 0 in combination with grid of size 1 should make this behave well by default
+            bounds_.subdivisions = 0;
+        };
+
+        inline const std::vector<size_t>& at(const cds::Coordinate& coord) const
+        {
+            return grid_[gridIndex(bounds_, coord)];
+        };
+
+        void init(const BinaryPartitionGridBounds bounds, const std::vector<Coordinate>& coordinates);
+
+      private:
+        BinaryPartitionGridBounds bounds_;
+        std::vector<std::vector<size_t>> intermediate_;
+        std::vector<std::vector<size_t>> grid_ = std::vector<std::vector<size_t>> {{}};
+    };
 
     BinaryPartitionGridBounds binaryPartitionGridBounds(size_t subdivisions, double distance, const Coordinate& coord);
-    void initBinaryPartitionGrid(BinaryPartitionGrid& grid, const BinaryPartitionGridBounds bounds,
-                                 const std::vector<Coordinate>& coordinates);
 } // namespace cds
 #endif
