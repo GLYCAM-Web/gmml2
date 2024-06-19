@@ -422,16 +422,9 @@ void RotatableDihedral::WiggleUsingAllRotamers(std::vector<cds::Residue*>& overl
 {
     auto input =
         dihedralRotationInputData(isBranchingLinkage_, atoms_, coordinatesThatMove_, {overlapSet1, overlapSet2});
-    auto& fixedInput                         = input[0];
-    auto& movingInput                        = input[1];
-    const DihedralAngleData* currentMetadata = this->GetCurrentMetaData();
-    double currentAngle                      = this->CalculateDihedralAngle();
-    unsigned int currentOverlap =
-        cds::CountOverlappingAtoms({fixedInput.coordinates, fixedInput.geometricCenters, fixedInput.residueAtoms},
-                                   {movingInput.coordinates, movingInput.geometricCenters, movingInput.residueAtoms});
+    auto& fixedInput  = input[0];
+    auto& movingInput = input[1];
     std::vector<AngleOverlap> results;
-    results.push_back(AngleOverlap {currentAngle, currentMetadata, currentOverlap});
-
     auto metadataVec = this->GetMetadata();
     for (size_t n = 0; n < metadataVec.size(); n++)
     {
