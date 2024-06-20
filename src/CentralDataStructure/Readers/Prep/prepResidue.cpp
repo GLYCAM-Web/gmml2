@@ -460,7 +460,7 @@ void PrepResidue::SetConnectivities()
 void PrepResidue::Generate3dStructure()
 { // Travel up the first incoming edge of each atom to traverse the atoms that define bond, angle and dihedral.
     // Each atoms position is defined by these connecting atoms. I set the first dummy atom position to 0,0,0.
-    if ((this->getAtoms().size() > 4) && (this->getAtoms().at(2)->getName() == "DUMM"))
+    if ((this->getAtoms().size() > 3) && (this->getAtoms().at(2)->getName() == "DUMM"))
     {
         // Set dummy atoms
         this->getAtoms().at(0)->setCoordinate(cds::Coordinate(0, 0, 0));
