@@ -1,8 +1,11 @@
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06PrepToSugarDetail.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" //calculateCoordinateFromInternalCoords
+// #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include <fstream>
 
 void residueCombinator::removeHydroxyHydrogen(cds::Residue& queryResidue, const std::string hydrogenNumber)
 {
@@ -150,6 +153,20 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     // Find all positions that can be substituted, ignore the anomer.
     std::vector<std::string> atomNumbers =
         residueCombinator::selectAllAtomsThatCanBeSubstituted(residueWithoutAnomericOxygen);
+    // Extra stuff for getting Residue metadata for website that can be turned off:
+    // std::ofstream outFileStream;
+    // std::string fileName = "latest.pdb";
+    // outFileStream.open(fileName.c_str());
+    // cds::writeResidueToPdb(outFileStream, starterResidue);
+    GlycamMetadata::residueMetadata residueInfo = GlycamMetadata::Glycam06PrepNameToDetails(starterResidue->getName());
+    std::cout << "Found name is: " << residueInfo.toString() << "\n";
+    std::cout << "Anomer: " << anomerNumber << "\n";
+    for (auto& atomNumber : atomNumbers)
+    {
+        std::cout << atomNumber << ",";
+    }
+    std::cout << "\n";
+    // End Extra Stuff.
     // Create the combinations of the numbers
     std::vector<std::vector<std::string>> numberCombinations = residueCombinator::getCombinations(atomNumbers);
     // Create a residue for each of the combinations, copying and modifying the original.
