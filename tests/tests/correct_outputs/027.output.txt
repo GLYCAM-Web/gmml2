@@ -1,6 +1,13 @@
 Generating those combos from 0AA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is A
+So far for 0AA we think isomer ringtype config is D_p_a
+Finding name for code: A
+Found name is: D_Ara_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TAA
 4,3: WAA
 4,2: YAA
@@ -13,6 +20,13 @@ Added 0AA
 Generating those combos from 0AB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is A
+So far for 0AB we think isomer ringtype config is D_p_b
+Finding name for code: A
+Found name is: D_Ara_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TAB
 4,3: WAB
 4,2: YAB
@@ -25,6 +39,13 @@ Added 0AB
 Generating those combos from 0AD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is A
+So far for 0AD we think isomer ringtype config is D_f_a
+Finding name for code: A
+Found name is: D_Ara_f__a
+Anomer: 1
+5,3,2,
 5,3,2: nAD
 5,3: tAD
 5,2: uAD
@@ -37,6 +58,13 @@ Added 0AD
 Generating those combos from 0AU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is A
+So far for 0AU we think isomer ringtype config is D_f_b
+Finding name for code: A
+Found name is: D_Ara_f__b
+Anomer: 1
+5,3,2,
 5,3,2: nAU
 5,3: tAU
 5,2: uAU
@@ -49,6 +77,13 @@ Added 0AU
 Generating those combos from 0BA
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is A
+glycamCode is B
+So far for 0BA we think isomer ringtype config is D_p_a
+Finding name for code: B
+Found name is: D_Sor_p__a
+Anomer: 2
+1,5,4,3,
 1,5,4,3: yBA
 1,5,4: vBA
 1,5,3: nBA
@@ -69,6 +104,13 @@ Added 0BA
 Generating those combos from 0BB
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is B
+glycamCode is B
+So far for 0BB we think isomer ringtype config is D_p_b
+Finding name for code: B
+Found name is: D_Sor_p__b
+Anomer: 2
+5,4,3,1,
 5,4,3,1: yBB
 5,4,3: xBB
 5,4,1: vBB
@@ -89,12 +131,26 @@ Added 0BB
 Generating those combos from 0BC
 No Anomeric Oxygen Found in Template
 O3
+LastLetter is C
+glycamCode is B
+So far for 0BC we think isomer ringtype config is D_p_a
+Finding name for code: BC
+Found name is: D_Bacpa_p__a
+Anomer: 1
+3,
 3: 3BC
 Added 1BC
 Added 0BC
 Generating those combos from 0BD
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is D
+glycamCode is B
+So far for 0BD we think isomer ringtype config is D_f_a
+Finding name for code: B
+Found name is: D_Sor_f__a
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PBD
 1,6,4: RBD
 1,6,3: SBD
@@ -115,6 +171,13 @@ Added 0BD
 Generating those combos from 0BU
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is U
+glycamCode is B
+So far for 0BU we think isomer ringtype config is D_f_b
+Finding name for code: B
+Found name is: D_Sor_f__b
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PBU
 6,4,3: QBU
 6,4,1: RBU
@@ -135,6 +198,13 @@ Added 0BU
 Generating those combos from 0CA
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is A
+glycamCode is C
+So far for 0CA we think isomer ringtype config is D_p_a
+Finding name for code: C
+Found name is: D_Fru_p__a
+Anomer: 2
+1,5,4,3,
 1,5,4,3: yCA
 1,5,4: vCA
 1,5,3: nCA
@@ -155,6 +225,13 @@ Added 0CA
 Generating those combos from 0CB
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is B
+glycamCode is C
+So far for 0CB we think isomer ringtype config is D_p_b
+Finding name for code: C
+Found name is: D_Fru_p__b
+Anomer: 2
+5,4,3,1,
 5,4,3,1: yCB
 5,4,3: xCB
 5,4,1: vCB
@@ -175,6 +252,13 @@ Added 0CB
 Generating those combos from 0CD
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is D
+glycamCode is C
+So far for 0CD we think isomer ringtype config is D_f_a
+Finding name for code: C
+Found name is: D_Fru_f__a
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PCD
 1,6,4: RCD
 1,6,3: SCD
@@ -195,6 +279,13 @@ Added 0CD
 Generating those combos from 0CU
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is U
+glycamCode is C
+So far for 0CU we think isomer ringtype config is D_f_b
+Finding name for code: C
+Found name is: D_Fru_f__b
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PCU
 6,4,3: QCU
 6,4,1: RCU
@@ -215,6 +306,13 @@ Added 0CU
 Generating those combos from 0DA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is D
+So far for 0DA we think isomer ringtype config is D_p_a
+Finding name for code: D
+Found name is: D_Lyx_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TDA
 4,3: WDA
 4,2: YDA
@@ -227,6 +325,13 @@ Added 0DA
 Generating those combos from 0DB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is D
+So far for 0DB we think isomer ringtype config is D_p_b
+Finding name for code: D
+Found name is: D_Lyx_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TDB
 4,3: WDB
 4,2: YDB
@@ -239,6 +344,13 @@ Added 0DB
 Generating those combos from 0DD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is D
+So far for 0DD we think isomer ringtype config is D_f_a
+Finding name for code: D
+Found name is: D_Lyx_f__a
+Anomer: 1
+5,3,2,
 5,3,2: nDD
 5,3: tDD
 5,2: uDD
@@ -251,6 +363,13 @@ Added 0DD
 Generating those combos from 0DU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is D
+So far for 0DU we think isomer ringtype config is D_f_b
+Finding name for code: D
+Found name is: D_Lyx_f__b
+Anomer: 1
+5,3,2,
 5,3,2: nDU
 5,3: tDU
 5,2: uDU
@@ -263,6 +382,13 @@ Added 0DU
 Generating those combos from 0EA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is E
+So far for 0EA we think isomer ringtype config is D_p_a
+Finding name for code: E
+Found name is: D_Alt_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PEA
 6,4,3: QEA
 6,4,2: REA
@@ -283,6 +409,13 @@ Added 0EA
 Generating those combos from 0EB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is E
+So far for 0EB we think isomer ringtype config is D_p_b
+Finding name for code: E
+Found name is: D_Alt_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PEB
 6,4,3: QEB
 6,4,2: REB
@@ -303,6 +436,13 @@ Added 0EB
 Generating those combos from 0FA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is F
+So far for 0FA we think isomer ringtype config is D_p_a
+Finding name for code: F
+Found name is: D_Fuc_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TFA
 4,3: WFA
 4,2: YFA
@@ -315,6 +455,13 @@ Added 0FA
 Generating those combos from 0FB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is F
+So far for 0FB we think isomer ringtype config is D_p_b
+Finding name for code: F
+Found name is: D_Fuc_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TFB
 4,3: WFB
 4,2: YFB
@@ -327,6 +474,13 @@ Added 0FB
 Generating those combos from 0GA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is G
+So far for 0GA we think isomer ringtype config is D_p_a
+Finding name for code: G
+Found name is: D_Glc_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PGA
 6,4,3: QGA
 6,4,2: RGA
@@ -347,6 +501,13 @@ Added 0GA
 Generating those combos from 0GB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is G
+So far for 0GB we think isomer ringtype config is D_p_b
+Finding name for code: G
+Found name is: D_Glc_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PGB
 6,4,3: QGB
 6,4,2: RGB
@@ -367,6 +528,13 @@ Added 0GB
 Generating those combos from 0GL
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O4
+LastLetter is L
+glycamCode is G
+So far for 0GL we think isomer ringtype config is D_p_a
+Finding name for code: GL
+Found name is: D_Neup5Gca_p__a
+Anomer: 2
+9,8,7,4,
 9,8,7,4: AGL
 9,8,7: BGL
 9,8,4: CGL
@@ -387,6 +555,13 @@ Added 0GL
 Generating those combos from 0HA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is H
+So far for 0HA we think isomer ringtype config is D_p_a
+Finding name for code: H
+Found name is: D_Rha_p__a
+Anomer: 1
+4,3,2,
 4,3,2: THA
 4,3: WHA
 4,2: YHA
@@ -399,6 +574,13 @@ Added 0HA
 Generating those combos from 0HB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is H
+So far for 0HB we think isomer ringtype config is D_p_b
+Finding name for code: H
+Found name is: D_Rha_p__b
+Anomer: 1
+4,3,2,
 4,3,2: THB
 4,3: WHB
 4,2: YHB
@@ -411,6 +593,13 @@ Added 0HB
 Generating those combos from 0JA
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is A
+glycamCode is J
+So far for 0JA we think isomer ringtype config is D_p_a
+Finding name for code: J
+Found name is: D_Tag_p__a
+Anomer: 2
+1,5,4,3,
 1,5,4,3: yJA
 1,5,4: vJA
 1,5,3: nJA
@@ -431,6 +620,13 @@ Added 0JA
 Generating those combos from 0JB
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is B
+glycamCode is J
+So far for 0JB we think isomer ringtype config is D_p_b
+Finding name for code: J
+Found name is: D_Tag_p__b
+Anomer: 2
+5,4,3,1,
 5,4,3,1: yJB
 5,4,3: xJB
 5,4,1: vJB
@@ -451,6 +647,13 @@ Added 0JB
 Generating those combos from 0JD
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is D
+glycamCode is J
+So far for 0JD we think isomer ringtype config is D_f_a
+Finding name for code: J
+Found name is: D_Tag_f__a
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PJD
 1,6,4: RJD
 1,6,3: SJD
@@ -471,6 +674,13 @@ Added 0JD
 Generating those combos from 0JU
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is U
+glycamCode is J
+So far for 0JU we think isomer ringtype config is D_f_b
+Finding name for code: J
+Found name is: D_Tag_f__b
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PJU
 6,4,3: QJU
 6,4,1: RJU
@@ -491,6 +701,13 @@ Added 0JU
 Generating those combos from 0KA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is K
+So far for 0KA we think isomer ringtype config is D_p_a
+Finding name for code: K
+Found name is: D_Gul_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PKA
 6,4,3: QKA
 6,4,2: RKA
@@ -511,6 +728,13 @@ Added 0KA
 Generating those combos from 0KB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is K
+So far for 0KB we think isomer ringtype config is D_p_b
+Finding name for code: K
+Found name is: D_Gul_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PKB
 6,4,3: QKB
 6,4,2: RKB
@@ -531,6 +755,13 @@ Added 0KB
 Generating those combos from 0LA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is L
+So far for 0LA we think isomer ringtype config is D_p_a
+Finding name for code: L
+Found name is: D_Gal_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PLA
 6,4,3: QLA
 6,4,2: RLA
@@ -551,6 +782,13 @@ Added 0LA
 Generating those combos from 0LB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is L
+So far for 0LB we think isomer ringtype config is D_p_b
+Finding name for code: L
+Found name is: D_Gal_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PLB
 6,4,3: QLB
 6,4,2: RLB
@@ -571,6 +809,13 @@ Added 0LB
 Generating those combos from 0MA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is M
+So far for 0MA we think isomer ringtype config is D_p_a
+Finding name for code: M
+Found name is: D_Man_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PMA
 6,4,3: QMA
 6,4,2: RMA
@@ -591,6 +836,13 @@ Added 0MA
 Generating those combos from 0MB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is M
+So far for 0MB we think isomer ringtype config is D_p_b
+Finding name for code: M
+Found name is: D_Man_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PMB
 6,4,3: QMB
 6,4,2: RMB
@@ -611,6 +863,13 @@ Added 0MB
 Generating those combos from 0NA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is N
+So far for 0NA we think isomer ringtype config is D_p_a
+Finding name for code: N
+Found name is: D_All_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PNA
 6,4,3: QNA
 6,4,2: RNA
@@ -631,6 +890,13 @@ Added 0NA
 Generating those combos from 0NB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is N
+So far for 0NB we think isomer ringtype config is D_p_b
+Finding name for code: N
+Found name is: D_All_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PNB
 6,4,3: QNB
 6,4,2: RNB
@@ -651,6 +917,13 @@ Added 0NB
 Generating those combos from 0OA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is O
+So far for 0OA we think isomer ringtype config is D_p_a
+Finding name for code: O
+Found name is: D_GalA_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TOA
 4,3: WOA
 4,2: YOA
@@ -663,6 +936,13 @@ Added 0OA
 Generating those combos from 0OB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is O
+So far for 0OB we think isomer ringtype config is D_p_b
+Finding name for code: O
+Found name is: D_GalA_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TOB
 4,3: WOB
 4,2: YOB
@@ -675,6 +955,13 @@ Added 0OB
 Generating those combos from 0PA
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is A
+glycamCode is P
+So far for 0PA we think isomer ringtype config is D_p_a
+Finding name for code: P
+Found name is: D_Psi_p__a
+Anomer: 2
+1,5,4,3,
 1,5,4,3: yPA
 1,5,4: vPA
 1,5,3: nPA
@@ -695,6 +982,13 @@ Added 0PA
 Generating those combos from 0PB
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is B
+glycamCode is P
+So far for 0PB we think isomer ringtype config is D_p_b
+Finding name for code: P
+Found name is: D_Psi_p__b
+Anomer: 2
+5,4,3,1,
 5,4,3,1: yPB
 5,4,3: xPB
 5,4,1: vPB
@@ -715,6 +1009,13 @@ Added 0PB
 Generating those combos from 0PD
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is D
+glycamCode is P
+So far for 0PD we think isomer ringtype config is D_f_a
+Finding name for code: P
+Found name is: D_Psi_f__a
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PPD
 1,6,4: RPD
 1,6,3: SPD
@@ -735,6 +1036,13 @@ Added 0PD
 Generating those combos from 0PU
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is U
+glycamCode is P
+So far for 0PU we think isomer ringtype config is D_f_b
+Finding name for code: P
+Found name is: D_Psi_f__b
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PPU
 6,4,3: QPU
 6,4,1: RPU
@@ -755,6 +1063,13 @@ Added 0PU
 Generating those combos from 0QA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is Q
+So far for 0QA we think isomer ringtype config is D_p_a
+Finding name for code: Q
+Found name is: D_Qui_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TQA
 4,3: WQA
 4,2: YQA
@@ -767,6 +1082,13 @@ Added 0QA
 Generating those combos from 0QB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is Q
+So far for 0QB we think isomer ringtype config is D_p_b
+Finding name for code: Q
+Found name is: D_Qui_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TQB
 4,3: WQB
 4,2: YQB
@@ -779,6 +1101,13 @@ Added 0QB
 Generating those combos from 0RA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is R
+So far for 0RA we think isomer ringtype config is D_p_a
+Finding name for code: R
+Found name is: D_Rib_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TRA
 4,3: WRA
 4,2: YRA
@@ -791,6 +1120,13 @@ Added 0RA
 Generating those combos from 0RB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is R
+So far for 0RB we think isomer ringtype config is D_p_b
+Finding name for code: R
+Found name is: D_Rib_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TRB
 4,3: WRB
 4,2: YRB
@@ -803,6 +1139,13 @@ Added 0RB
 Generating those combos from 0RD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is R
+So far for 0RD we think isomer ringtype config is D_f_a
+Finding name for code: R
+Found name is: D_Rib_f__a
+Anomer: 1
+5,3,2,
 5,3,2: nRD
 5,3: tRD
 5,2: uRD
@@ -815,6 +1158,13 @@ Added 0RD
 Generating those combos from 0RU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is R
+So far for 0RU we think isomer ringtype config is D_f_b
+Finding name for code: R
+Found name is: D_Rib_f__b
+Anomer: 1
+5,3,2,
 5,3,2: nRU
 5,3: tRU
 5,2: uRU
@@ -827,6 +1177,13 @@ Added 0RU
 Generating those combos from 0SA
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O4
+LastLetter is A
+glycamCode is S
+So far for 0SA we think isomer ringtype config is D_p_a
+Finding name for code: S
+Found name is: D_Neu5Ac_p__a
+Anomer: 2
+9,8,7,4,
 9,8,7,4: ASA
 9,8,7: BSA
 9,8,4: CSA
@@ -847,6 +1204,13 @@ Added 0SA
 Generating those combos from 0SB
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O4
+LastLetter is B
+glycamCode is S
+So far for 0SB we think isomer ringtype config is D_p_b
+Finding name for code: S
+Found name is: D_Neu5Ac_p__b
+Anomer: 2
+7,8,9,4,
 7,8,9,4: ASB
 7,8,9: BSB
 7,8,4: ESB
@@ -867,6 +1231,13 @@ Added 0SB
 Generating those combos from 0TA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is T
+So far for 0TA we think isomer ringtype config is D_p_a
+Finding name for code: T
+Found name is: D_Tal_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PTA
 6,4,3: QTA
 6,4,2: RTA
@@ -887,6 +1258,13 @@ Added 0TA
 Generating those combos from 0TB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is T
+So far for 0TB we think isomer ringtype config is D_p_b
+Finding name for code: T
+Found name is: D_Tal_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PTB
 6,4,3: QTB
 6,4,2: RTB
@@ -907,6 +1285,13 @@ Added 0TB
 Generating those combos from 0TV
 No Anomeric Oxygen Found in Template
 O4,O2
+LastLetter is V
+glycamCode is T
+So far for 0TV we think isomer ringtype config is D_p_a
+Finding name for code: TV
+Found name is: D_Tyvpa_p__a
+Anomer: 1
+4,2,
 4,2: YTV
 4: 4TV
 2: 2TV
@@ -915,6 +1300,13 @@ Added 0TV
 Generating those combos from 0Tv
 No Anomeric Oxygen Found in Template
 O4,O2
+LastLetter is v
+glycamCode is T
+So far for 0Tv we think isomer ringtype config is D_p_b
+Finding name for code: TV
+Found name is: D_Tyvpa_p__b
+Anomer: 1
+4,2,
 4,2: YTv
 4: 4Tv
 2: 2Tv
@@ -923,6 +1315,13 @@ Added 0Tv
 Generating those combos from 0UA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is U
+So far for 0UA we think isomer ringtype config is D_p_a
+Finding name for code: U
+Found name is: D_IdoA_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TUA
 4,3: WUA
 4,2: YUA
@@ -935,6 +1334,13 @@ Added 0UA
 Generating those combos from 0UB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is U
+So far for 0UB we think isomer ringtype config is D_p_b
+Finding name for code: U
+Found name is: D_IdoA_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TUB
 4,3: WUB
 4,2: YUB
@@ -947,6 +1353,13 @@ Added 0UB
 Generating those combos from 0VA
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is A
+glycamCode is V
+So far for 0VA we think isomer ringtype config is D_p_a
+Finding name for code: V
+Found name is: D_GalNAc_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QVA
 6,4: UVA
 6,3: VVA
@@ -959,6 +1372,13 @@ Added 0VA
 Generating those combos from 0VB
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is B
+glycamCode is V
+So far for 0VB we think isomer ringtype config is D_p_b
+Finding name for code: V
+Found name is: D_GalNAc_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QVB
 6,4: UVB
 6,3: VVB
@@ -971,6 +1391,13 @@ Added 0VB
 Generating those combos from 0WA
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is A
+glycamCode is W
+So far for 0WA we think isomer ringtype config is D_p_a
+Finding name for code: W
+Found name is: D_ManNAc_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QWA
 6,4: UWA
 6,3: VWA
@@ -983,6 +1410,13 @@ Added 0WA
 Generating those combos from 0WB
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is B
+glycamCode is W
+So far for 0WB we think isomer ringtype config is D_p_b
+Finding name for code: W
+Found name is: D_ManNAc_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QWB
 6,4: UWB
 6,3: VWB
@@ -995,6 +1429,13 @@ Added 0WB
 Generating those combos from 0XA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is X
+So far for 0XA we think isomer ringtype config is D_p_a
+Finding name for code: X
+Found name is: D_Xyl_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TXA
 4,3: WXA
 4,2: YXA
@@ -1007,6 +1448,13 @@ Added 0XA
 Generating those combos from 0XB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is X
+So far for 0XB we think isomer ringtype config is D_p_b
+Finding name for code: X
+Found name is: D_Xyl_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TXB
 4,3: WXB
 4,2: YXB
@@ -1019,6 +1467,13 @@ Added 0XB
 Generating those combos from 0XD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is X
+So far for 0XD we think isomer ringtype config is D_f_a
+Finding name for code: X
+Found name is: D_Xyl_f__a
+Anomer: 1
+5,3,2,
 5,3,2: nXD
 5,3: tXD
 5,2: uXD
@@ -1031,6 +1486,13 @@ Added 0XD
 Generating those combos from 0XU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is X
+So far for 0XU we think isomer ringtype config is D_f_b
+Finding name for code: X
+Found name is: D_Xyl_f__b
+Anomer: 1
+5,3,2,
 5,3,2: nXU
 5,3: tXU
 5,2: uXU
@@ -1043,6 +1505,13 @@ Added 0XU
 Generating those combos from 0YA
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is A
+glycamCode is Y
+So far for 0YA we think isomer ringtype config is D_p_a
+Finding name for code: Y
+Found name is: D_GlcNAc_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QYA
 6,4: UYA
 6,3: VYA
@@ -1055,6 +1524,13 @@ Added 0YA
 Generating those combos from 0YB
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is B
+glycamCode is Y
+So far for 0YB we think isomer ringtype config is D_p_b
+Finding name for code: Y
+Found name is: D_GlcNAc_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QYB
 6,4: UYB
 6,3: VYB
@@ -1067,6 +1543,13 @@ Added 0YB
 Generating those combos from 0ZA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is Z
+So far for 0ZA we think isomer ringtype config is D_p_a
+Finding name for code: Z
+Found name is: D_GlcA_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TZA
 4,3: WZA
 4,2: YZA
@@ -1079,6 +1562,13 @@ Added 0ZA
 Generating those combos from 0ZB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is Z
+So far for 0ZB we think isomer ringtype config is D_p_b
+Finding name for code: Z
+Found name is: D_GlcA_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TZB
 4,3: WZB
 4,2: YZB
@@ -1091,6 +1581,13 @@ Added 0ZB
 Generating those combos from 0aA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is A
+So far for 0aA we think isomer ringtype config is L_p_a
+Finding name for code: A
+Found name is: L_Ara_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TaA
 4,3: WaA
 4,2: YaA
@@ -1103,6 +1600,13 @@ Added 0aA
 Generating those combos from 0aB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is A
+So far for 0aB we think isomer ringtype config is L_p_b
+Finding name for code: A
+Found name is: L_Ara_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TaB
 4,3: WaB
 4,2: YaB
@@ -1115,6 +1619,13 @@ Added 0aB
 Generating those combos from 0aD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is A
+So far for 0aD we think isomer ringtype config is L_f_a
+Finding name for code: A
+Found name is: L_Ara_f__a
+Anomer: 1
+5,3,2,
 5,3,2: naD
 5,3: taD
 5,2: uaD
@@ -1127,6 +1638,13 @@ Added 0aD
 Generating those combos from 0aU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is A
+So far for 0aU we think isomer ringtype config is L_f_b
+Finding name for code: A
+Found name is: L_Ara_f__b
+Anomer: 1
+5,3,2,
 5,3,2: naU
 5,3: taU
 5,2: uaU
@@ -1139,6 +1657,13 @@ Added 0aU
 Generating those combos from 0bA
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is A
+glycamCode is B
+So far for 0bA we think isomer ringtype config is L_p_a
+Finding name for code: B
+Found name is: L_Sor_p__a
+Anomer: 2
+5,4,3,1,
 5,4,3,1: ybA
 5,4,3: xbA
 5,4,1: vbA
@@ -1159,6 +1684,13 @@ Added 0bA
 Generating those combos from 0bB
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is B
+glycamCode is B
+So far for 0bB we think isomer ringtype config is L_p_b
+Finding name for code: B
+Found name is: L_Sor_p__b
+Anomer: 2
+1,5,4,3,
 1,5,4,3: ybB
 1,5,4: vbB
 1,5,3: nbB
@@ -1179,12 +1711,26 @@ Added 0bB
 Generating those combos from 0bC
 No Anomeric Oxygen Found in Template
 O3
+LastLetter is C
+glycamCode is B
+So far for 0bC we think isomer ringtype config is L_p_a
+Finding name for code: BC
+Found name is: L_Bacpa_p__a
+Anomer: 1
+3,
 3: 3bC
 Added 1bC
 Added 0bC
 Generating those combos from 0bD
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is D
+glycamCode is B
+So far for 0bD we think isomer ringtype config is L_f_a
+Finding name for code: B
+Found name is: L_Sor_f__a
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PbD
 6,4,3: QbD
 6,4,1: RbD
@@ -1205,6 +1751,13 @@ Added 0bD
 Generating those combos from 0bU
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is U
+glycamCode is B
+So far for 0bU we think isomer ringtype config is L_f_b
+Finding name for code: B
+Found name is: L_Sor_f__b
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PbU
 1,6,4: RbU
 1,6,3: SbU
@@ -1225,6 +1778,13 @@ Added 0bU
 Generating those combos from 0cA
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is A
+glycamCode is C
+So far for 0cA we think isomer ringtype config is L_p_a
+Finding name for code: C
+Found name is: L_Fru_p__a
+Anomer: 2
+5,4,3,1,
 5,4,3,1: ycA
 5,4,3: xcA
 5,4,1: vcA
@@ -1245,6 +1805,13 @@ Added 0cA
 Generating those combos from 0cB
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is B
+glycamCode is C
+So far for 0cB we think isomer ringtype config is L_p_b
+Finding name for code: C
+Found name is: L_Fru_p__b
+Anomer: 2
+1,5,4,3,
 1,5,4,3: ycB
 1,5,4: vcB
 1,5,3: ncB
@@ -1265,6 +1832,13 @@ Added 0cB
 Generating those combos from 0cD
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is D
+glycamCode is C
+So far for 0cD we think isomer ringtype config is L_f_a
+Finding name for code: C
+Found name is: L_Fru_f__a
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PcD
 6,4,3: QcD
 6,4,1: RcD
@@ -1285,6 +1859,13 @@ Added 0cD
 Generating those combos from 0cU
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is U
+glycamCode is C
+So far for 0cU we think isomer ringtype config is L_f_b
+Finding name for code: C
+Found name is: L_Fru_f__b
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PcU
 1,6,4: RcU
 1,6,3: ScU
@@ -1305,6 +1886,13 @@ Added 0cU
 Generating those combos from 0dA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is D
+So far for 0dA we think isomer ringtype config is L_p_a
+Finding name for code: D
+Found name is: L_Lyx_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TdA
 4,3: WdA
 4,2: YdA
@@ -1317,6 +1905,13 @@ Added 0dA
 Generating those combos from 0dB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is D
+So far for 0dB we think isomer ringtype config is L_p_b
+Finding name for code: D
+Found name is: L_Lyx_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TdB
 4,3: WdB
 4,2: YdB
@@ -1329,6 +1924,13 @@ Added 0dB
 Generating those combos from 0dD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is D
+So far for 0dD we think isomer ringtype config is L_f_a
+Finding name for code: D
+Found name is: L_Lyx_f__a
+Anomer: 1
+5,3,2,
 5,3,2: ndD
 5,3: tdD
 5,2: udD
@@ -1341,6 +1943,13 @@ Added 0dD
 Generating those combos from 0dU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is D
+So far for 0dU we think isomer ringtype config is L_f_b
+Finding name for code: D
+Found name is: L_Lyx_f__b
+Anomer: 1
+5,3,2,
 5,3,2: ndU
 5,3: tdU
 5,2: udU
@@ -1353,6 +1962,13 @@ Added 0dU
 Generating those combos from 0eA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is E
+So far for 0eA we think isomer ringtype config is L_p_a
+Finding name for code: E
+Found name is: L_Alt_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PeA
 6,4,3: QeA
 6,4,2: ReA
@@ -1373,6 +1989,13 @@ Added 0eA
 Generating those combos from 0eB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is E
+So far for 0eB we think isomer ringtype config is L_p_b
+Finding name for code: E
+Found name is: L_Alt_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PeB
 6,4,3: QeB
 6,4,2: ReB
@@ -1393,6 +2016,13 @@ Added 0eB
 Generating those combos from 0fA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is F
+So far for 0fA we think isomer ringtype config is L_p_a
+Finding name for code: F
+Found name is: L_Fuc_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TfA
 4,3: WfA
 4,2: YfA
@@ -1405,6 +2035,13 @@ Added 0fA
 Generating those combos from 0fB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is F
+So far for 0fB we think isomer ringtype config is L_p_b
+Finding name for code: F
+Found name is: L_Fuc_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TfB
 4,3: WfB
 4,2: YfB
@@ -1417,6 +2054,13 @@ Added 0fB
 Generating those combos from 0gA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is G
+So far for 0gA we think isomer ringtype config is L_p_a
+Finding name for code: G
+Found name is: L_Glc_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PgA
 6,4,3: QgA
 6,4,2: RgA
@@ -1437,6 +2081,13 @@ Added 0gA
 Generating those combos from 0gB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is G
+So far for 0gB we think isomer ringtype config is L_p_b
+Finding name for code: G
+Found name is: L_Glc_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PgB
 6,4,3: QgB
 6,4,2: RgB
@@ -1457,6 +2108,13 @@ Added 0gB
 Generating those combos from 0gL
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O4
+LastLetter is L
+glycamCode is G
+So far for 0gL we think isomer ringtype config is L_p_a
+Finding name for code: GL
+Found name is: L_Neup5Gca_p__a
+Anomer: 2
+7,8,9,4,
 7,8,9,4: AgL
 7,8,9: BgL
 7,8,4: EgL
@@ -1477,6 +2135,13 @@ Added 0gL
 Generating those combos from 0hA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is H
+So far for 0hA we think isomer ringtype config is L_p_a
+Finding name for code: H
+Found name is: L_Rha_p__a
+Anomer: 1
+4,3,2,
 4,3,2: ThA
 4,3: WhA
 4,2: YhA
@@ -1489,6 +2154,13 @@ Added 0hA
 Generating those combos from 0hB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is H
+So far for 0hB we think isomer ringtype config is L_p_b
+Finding name for code: H
+Found name is: L_Rha_p__b
+Anomer: 1
+4,3,2,
 4,3,2: ThB
 4,3: WhB
 4,2: YhB
@@ -1501,6 +2173,13 @@ Added 0hB
 Generating those combos from 0jA
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is A
+glycamCode is J
+So far for 0jA we think isomer ringtype config is L_p_a
+Finding name for code: J
+Found name is: L_Tag_p__a
+Anomer: 2
+5,4,3,1,
 5,4,3,1: yjA
 5,4,3: xjA
 5,4,1: vjA
@@ -1521,6 +2200,13 @@ Added 0jA
 Generating those combos from 0jB
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is B
+glycamCode is J
+So far for 0jB we think isomer ringtype config is L_p_b
+Finding name for code: J
+Found name is: L_Tag_p__b
+Anomer: 2
+1,5,4,3,
 1,5,4,3: yjB
 1,5,4: vjB
 1,5,3: njB
@@ -1541,6 +2227,13 @@ Added 0jB
 Generating those combos from 0jD
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is D
+glycamCode is J
+So far for 0jD we think isomer ringtype config is L_f_a
+Finding name for code: J
+Found name is: L_Tag_f__a
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PjD
 6,4,3: QjD
 6,4,1: RjD
@@ -1561,6 +2254,13 @@ Added 0jD
 Generating those combos from 0jU
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is U
+glycamCode is J
+So far for 0jU we think isomer ringtype config is L_f_b
+Finding name for code: J
+Found name is: L_Tag_f__b
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PjU
 1,6,4: RjU
 1,6,3: SjU
@@ -1581,6 +2281,13 @@ Added 0jU
 Generating those combos from 0kA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is K
+So far for 0kA we think isomer ringtype config is L_p_a
+Finding name for code: K
+Found name is: L_Gul_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PkA
 6,4,3: QkA
 6,4,2: RkA
@@ -1601,6 +2308,13 @@ Added 0kA
 Generating those combos from 0kB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is K
+So far for 0kB we think isomer ringtype config is L_p_b
+Finding name for code: K
+Found name is: L_Gul_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PkB
 6,4,3: QkB
 6,4,2: RkB
@@ -1621,6 +2335,13 @@ Added 0kB
 Generating those combos from 0lA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is L
+So far for 0lA we think isomer ringtype config is L_p_a
+Finding name for code: L
+Found name is: L_Gal_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PlA
 6,4,3: QlA
 6,4,2: RlA
@@ -1641,6 +2362,13 @@ Added 0lA
 Generating those combos from 0lB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is L
+So far for 0lB we think isomer ringtype config is L_p_b
+Finding name for code: L
+Found name is: L_Gal_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PlB
 6,4,3: QlB
 6,4,2: RlB
@@ -1661,6 +2389,13 @@ Added 0lB
 Generating those combos from 0mA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is M
+So far for 0mA we think isomer ringtype config is L_p_a
+Finding name for code: M
+Found name is: L_Man_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PmA
 6,4,3: QmA
 6,4,2: RmA
@@ -1681,6 +2416,13 @@ Added 0mA
 Generating those combos from 0mB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is M
+So far for 0mB we think isomer ringtype config is L_p_b
+Finding name for code: M
+Found name is: L_Man_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PmB
 6,4,3: QmB
 6,4,2: RmB
@@ -1701,6 +2443,13 @@ Added 0mB
 Generating those combos from 0nA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is N
+So far for 0nA we think isomer ringtype config is L_p_a
+Finding name for code: N
+Found name is: L_All_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PnA
 6,4,3: QnA
 6,4,2: RnA
@@ -1721,6 +2470,13 @@ Added 0nA
 Generating those combos from 0nB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is N
+So far for 0nB we think isomer ringtype config is L_p_b
+Finding name for code: N
+Found name is: L_All_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PnB
 6,4,3: QnB
 6,4,2: RnB
@@ -1741,6 +2497,13 @@ Added 0nB
 Generating those combos from 0oA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is O
+So far for 0oA we think isomer ringtype config is L_p_a
+Finding name for code: O
+Found name is: L_GalA_p__a
+Anomer: 1
+4,3,2,
 4,3,2: ToA
 4,3: WoA
 4,2: YoA
@@ -1753,6 +2516,13 @@ Added 0oA
 Generating those combos from 0oB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is O
+So far for 0oB we think isomer ringtype config is L_p_b
+Finding name for code: O
+Found name is: L_GalA_p__b
+Anomer: 1
+4,3,2,
 4,3,2: ToB
 4,3: WoB
 4,2: YoB
@@ -1765,6 +2535,13 @@ Added 0oB
 Generating those combos from 0pA
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
+LastLetter is A
+glycamCode is P
+So far for 0pA we think isomer ringtype config is L_p_a
+Finding name for code: P
+Found name is: L_Psi_p__a
+Anomer: 2
+5,4,3,1,
 5,4,3,1: ypA
 5,4,3: xpA
 5,4,1: vpA
@@ -1785,6 +2562,13 @@ Added 0pA
 Generating those combos from 0pB
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
+LastLetter is B
+glycamCode is P
+So far for 0pB we think isomer ringtype config is L_p_b
+Finding name for code: P
+Found name is: L_Psi_p__b
+Anomer: 2
+1,5,4,3,
 1,5,4,3: ypB
 1,5,4: vpB
 1,5,3: npB
@@ -1805,6 +2589,13 @@ Added 0pB
 Generating those combos from 0pD
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
+LastLetter is D
+glycamCode is P
+So far for 0pD we think isomer ringtype config is L_f_a
+Finding name for code: P
+Found name is: L_Psi_f__a
+Anomer: 2
+6,4,3,1,
 6,4,3,1: PpD
 6,4,3: QpD
 6,4,1: RpD
@@ -1825,6 +2616,13 @@ Added 0pD
 Generating those combos from 0pU
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
+LastLetter is U
+glycamCode is P
+So far for 0pU we think isomer ringtype config is L_f_b
+Finding name for code: P
+Found name is: L_Psi_f__b
+Anomer: 2
+1,6,4,3,
 1,6,4,3: PpU
 1,6,4: RpU
 1,6,3: SpU
@@ -1845,6 +2643,13 @@ Added 0pU
 Generating those combos from 0qA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is Q
+So far for 0qA we think isomer ringtype config is L_p_a
+Finding name for code: Q
+Found name is: L_Qui_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TqA
 4,3: WqA
 4,2: YqA
@@ -1857,6 +2662,13 @@ Added 0qA
 Generating those combos from 0qB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is Q
+So far for 0qB we think isomer ringtype config is L_p_b
+Finding name for code: Q
+Found name is: L_Qui_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TqB
 4,3: WqB
 4,2: YqB
@@ -1869,6 +2681,13 @@ Added 0qB
 Generating those combos from 0rA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is R
+So far for 0rA we think isomer ringtype config is L_p_a
+Finding name for code: R
+Found name is: L_Rib_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TrA
 4,3: WrA
 4,2: YrA
@@ -1881,6 +2700,13 @@ Added 0rA
 Generating those combos from 0rB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is R
+So far for 0rB we think isomer ringtype config is L_p_b
+Finding name for code: R
+Found name is: L_Rib_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TrB
 4,3: WrB
 4,2: YrB
@@ -1893,6 +2719,13 @@ Added 0rB
 Generating those combos from 0rD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is R
+So far for 0rD we think isomer ringtype config is L_f_a
+Finding name for code: R
+Found name is: L_Rib_f__a
+Anomer: 1
+5,3,2,
 5,3,2: nrD
 5,3: trD
 5,2: urD
@@ -1905,6 +2738,13 @@ Added 0rD
 Generating those combos from 0rU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is R
+So far for 0rU we think isomer ringtype config is L_f_b
+Finding name for code: R
+Found name is: L_Rib_f__b
+Anomer: 1
+5,3,2,
 5,3,2: nrU
 5,3: trU
 5,2: urU
@@ -1917,6 +2757,13 @@ Added 0rU
 Generating those combos from 0sA
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O4
+LastLetter is A
+glycamCode is S
+So far for 0sA we think isomer ringtype config is L_p_a
+Finding name for code: S
+Found name is: L_Neu5Ac_p__a
+Anomer: 2
+7,8,9,4,
 7,8,9,4: AsA
 7,8,9: BsA
 7,8,4: EsA
@@ -1937,6 +2784,13 @@ Added 0sA
 Generating those combos from 0sB
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O4
+LastLetter is B
+glycamCode is S
+So far for 0sB we think isomer ringtype config is L_p_b
+Finding name for code: S
+Found name is: L_Neu5Ac_p__b
+Anomer: 2
+9,8,7,4,
 9,8,7,4: AsB
 9,8,7: BsB
 9,8,4: CsB
@@ -1957,6 +2811,13 @@ Added 0sB
 Generating those combos from 0tA
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is A
+glycamCode is T
+So far for 0tA we think isomer ringtype config is L_p_a
+Finding name for code: T
+Found name is: L_Tal_p__a
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PtA
 6,4,3: QtA
 6,4,2: RtA
@@ -1977,6 +2838,13 @@ Added 0tA
 Generating those combos from 0tB
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
+LastLetter is B
+glycamCode is T
+So far for 0tB we think isomer ringtype config is L_p_b
+Finding name for code: T
+Found name is: L_Tal_p__b
+Anomer: 1
+6,4,3,2,
 6,4,3,2: PtB
 6,4,3: QtB
 6,4,2: RtB
@@ -1997,6 +2865,13 @@ Added 0tB
 Generating those combos from 0tV
 No Anomeric Oxygen Found in Template
 O4,O2
+LastLetter is V
+glycamCode is T
+So far for 0tV we think isomer ringtype config is L_p_a
+Finding name for code: TV
+Found name is: L_Tyvpa_p__a
+Anomer: 1
+4,2,
 4,2: YtV
 4: 4tV
 2: 2tV
@@ -2005,6 +2880,13 @@ Added 0tV
 Generating those combos from 0tv
 No Anomeric Oxygen Found in Template
 O4,O2
+LastLetter is v
+glycamCode is T
+So far for 0tv we think isomer ringtype config is L_p_b
+Finding name for code: TV
+Found name is: L_Tyvpa_p__b
+Anomer: 1
+4,2,
 4,2: Ytv
 4: 4tv
 2: 2tv
@@ -2013,6 +2895,13 @@ Added 0tv
 Generating those combos from 0uA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is U
+So far for 0uA we think isomer ringtype config is L_p_a
+Finding name for code: U
+Found name is: L_IdoA_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TuA
 4,3: WuA
 4,2: YuA
@@ -2025,6 +2914,13 @@ Added 0uA
 Generating those combos from 0uB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is U
+So far for 0uB we think isomer ringtype config is L_p_b
+Finding name for code: U
+Found name is: L_IdoA_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TuB
 4,3: WuB
 4,2: YuB
@@ -2037,6 +2933,13 @@ Added 0uB
 Generating those combos from 0vA
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is A
+glycamCode is V
+So far for 0vA we think isomer ringtype config is L_p_a
+Finding name for code: V
+Found name is: L_GalNAc_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QvA
 6,4: UvA
 6,3: VvA
@@ -2049,6 +2952,13 @@ Added 0vA
 Generating those combos from 0vB
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is B
+glycamCode is V
+So far for 0vB we think isomer ringtype config is L_p_b
+Finding name for code: V
+Found name is: L_GalNAc_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QvB
 6,4: UvB
 6,3: VvB
@@ -2061,6 +2971,13 @@ Added 0vB
 Generating those combos from 0wA
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is A
+glycamCode is W
+So far for 0wA we think isomer ringtype config is L_p_a
+Finding name for code: W
+Found name is: L_ManNAc_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QwA
 6,4: UwA
 6,3: VwA
@@ -2073,6 +2990,13 @@ Added 0wA
 Generating those combos from 0wB
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is B
+glycamCode is W
+So far for 0wB we think isomer ringtype config is L_p_b
+Finding name for code: W
+Found name is: L_ManNAc_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QwB
 6,4: UwB
 6,3: VwB
@@ -2085,6 +3009,13 @@ Added 0wB
 Generating those combos from 0xA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is X
+So far for 0xA we think isomer ringtype config is L_p_a
+Finding name for code: X
+Found name is: L_Xyl_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TxA
 4,3: WxA
 4,2: YxA
@@ -2097,6 +3028,13 @@ Added 0xA
 Generating those combos from 0xB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is X
+So far for 0xB we think isomer ringtype config is L_p_b
+Finding name for code: X
+Found name is: L_Xyl_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TxB
 4,3: WxB
 4,2: YxB
@@ -2109,6 +3047,13 @@ Added 0xB
 Generating those combos from 0xD
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is D
+glycamCode is X
+So far for 0xD we think isomer ringtype config is L_f_a
+Finding name for code: X
+Found name is: L_Xyl_f__a
+Anomer: 1
+5,3,2,
 5,3,2: nxD
 5,3: txD
 5,2: uxD
@@ -2121,6 +3066,13 @@ Added 0xD
 Generating those combos from 0xU
 No Anomeric Oxygen Found in Template
 O5,O3,O2
+LastLetter is U
+glycamCode is X
+So far for 0xU we think isomer ringtype config is L_f_b
+Finding name for code: X
+Found name is: L_Xyl_f__b
+Anomer: 1
+5,3,2,
 5,3,2: nxU
 5,3: txU
 5,2: uxU
@@ -2133,6 +3085,13 @@ Added 0xU
 Generating those combos from 0yA
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is A
+glycamCode is Y
+So far for 0yA we think isomer ringtype config is L_p_a
+Finding name for code: Y
+Found name is: L_GlcNAc_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QyA
 6,4: UyA
 6,3: VyA
@@ -2145,6 +3104,13 @@ Added 0yA
 Generating those combos from 0yB
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is B
+glycamCode is Y
+So far for 0yB we think isomer ringtype config is L_p_b
+Finding name for code: Y
+Found name is: L_GlcNAc_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QyB
 6,4: UyB
 6,3: VyB
@@ -2157,6 +3123,13 @@ Added 0yB
 Generating those combos from 0zA
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is A
+glycamCode is Z
+So far for 0zA we think isomer ringtype config is L_p_a
+Finding name for code: Z
+Found name is: L_GlcA_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TzA
 4,3: WzA
 4,2: YzA
@@ -2169,6 +3142,13 @@ Added 0zA
 Generating those combos from 0zB
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is B
+glycamCode is Z
+So far for 0zB we think isomer ringtype config is L_p_b
+Finding name for code: Z
+Found name is: L_GlcA_p__b
+Anomer: 1
+4,3,2,
 4,3,2: TzB
 4,3: WzB
 4,2: YzB
@@ -2181,22 +3161,43 @@ Added 0zB
 Generating those combos from 0AE
 No Anomeric Oxygen Found in Template
 O2,O4
+LastLetter is E
+glycamCode is A
+So far for 0AE we think isomer ringtype config is D_p_a
+Finding name for code: AE
+Found name is: D_Abepa_p__a
+Anomer: 1
+2,4,
 2,4: YAE
 2: 2AE
 4: 4AE
 Added 1AE
 Added 0AE
-Generating those combos from 0AF
+Generating those combos from 0Ae
 No Anomeric Oxygen Found in Template
 O4,O2
-4,2: YAF
-4: 4AF
-2: 2AF
-Added 1AF
-Added 0AF
+LastLetter is e
+glycamCode is A
+So far for 0Ae we think isomer ringtype config is D_p_b
+Finding name for code: AE
+Found name is: D_Abepa_p__b
+Anomer: 1
+4,2,
+4,2: YAe
+4: 4Ae
+2: 2Ae
+Added 1Ae
+Added 0Ae
 Generating those combos from 0dR
 No Anomeric Oxygen Found in Template
 O4,O3
+LastLetter is R
+glycamCode is D
+So far for 0dR we think isomer ringtype config is L_p_a
+Finding name for code: DR
+Found name is: L_Olip_p__a
+Anomer: 1
+4,3,
 4,3: WdR
 4: 4dR
 3: 3dR
@@ -2205,6 +3206,13 @@ Added 0dR
 Generating those combos from 045
 No Anomeric Oxygen Found in Template
 O3,O2
+LastLetter is 5
+glycamCode is 4
+So far for 045 we think isomer ringtype config is D_p_a
+Finding name for code: 45
+Found name is: D_dUA_p__a
+Anomer: 1
+3,2,
 3,2: Z45
 3: 345
 2: 245
@@ -2213,6 +3221,13 @@ Added 045
 Generating those combos from 0ZBP
 No Anomeric Oxygen Found in Template
 O4,O3,O2
+LastLetter is P
+glycamCode is BP
+So far for 0ZBP we think isomer ringtype config is D_p_a
+Finding name for code: BP
+Found name is: D_GlcpA+_p__a
+Anomer: 1
+4,3,2,
 4,3,2: TZBP
 4,3: WZBP
 4,2: YZBP
@@ -2225,6 +3240,13 @@ Added 0ZBP
 Generating those combos from 0YN
 No Anomeric Oxygen Found in Template
 O3,O4,O6
+LastLetter is N
+glycamCode is Y
+So far for 0YN we think isomer ringtype config is D_p_a
+Finding name for code: YN
+Found name is: D_GlcpNa_p__a
+Anomer: 1
+3,4,6,
 3,4,6: QYN
 3,4: WYN
 3,6: VYN
@@ -2237,6 +3259,13 @@ Added 0YN
 Generating those combos from 0Yn
 No Anomeric Oxygen Found in Template
 O3,O6,O4
+LastLetter is n
+glycamCode is Y
+So far for 0Yn we think isomer ringtype config is D_p_b
+Finding name for code: YN
+Found name is: D_GlcpNa_p__b
+Anomer: 1
+3,6,4,
 3,6,4: QYn
 3,6: VYn
 3,4: WYn
@@ -2249,6 +3278,13 @@ Added 0Yn
 Generating those combos from 0YNP
 No Anomeric Oxygen Found in Template
 O3,O4,O6
+LastLetter is P
+glycamCode is NP
+So far for 0YNP we think isomer ringtype config is D_p_a
+Finding name for code: NP
+Found name is: D_GlcpNPa_p__a
+Anomer: 1
+3,4,6,
 3,4,6: QYNP
 3,4: WYNP
 3,6: VYNP
@@ -2261,6 +3297,13 @@ Added 0YNP
 Generating those combos from 0YnP
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is P
+glycamCode is NP
+So far for 0YnP we think isomer ringtype config is L_p_a
+Finding name for code: NP
+Found name is: D_GlcpNPb_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QYnP
 6,4: UYnP
 6,3: VYnP
@@ -2273,6 +3316,13 @@ Added 0YnP
 Generating those combos from 0YS
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is S
+glycamCode is Y
+So far for 0YS we think isomer ringtype config is D_p_a
+Finding name for code: YS
+Found name is: D_GlcpNSa_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QYS
 6,4: UYS
 6,3: VYS
@@ -2285,6 +3335,13 @@ Added 0YS
 Generating those combos from 0Ys
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is s
+glycamCode is Y
+So far for 0Ys we think isomer ringtype config is D_p_b
+Finding name for code: YS
+Found name is: D_GlcpNSa_p__b
+Anomer: 1
+6,4,3,
 6,4,3: QYs
 6,4: UYs
 6,3: VYs
@@ -2297,6 +3354,13 @@ Added 0Ys
 Generating those combos from 0yS
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is S
+glycamCode is Y
+So far for 0yS we think isomer ringtype config is L_p_a
+Finding name for code: YS
+Found name is: L_GlcpNSa_p__a
+Anomer: 1
+6,4,3,
 6,4,3: QyS
 6,4: UyS
 6,3: VyS
@@ -2309,6 +3373,13 @@ Added 0yS
 Generating those combos from 0ys
 No Anomeric Oxygen Found in Template
 O6,O4,O3
+LastLetter is s
+glycamCode is Y
+So far for 0ys we think isomer ringtype config is L_p_b
+Finding name for code: YS
+Found name is: L_GlcpNSa_p__b
+Anomer: 1
+6,4,3,
 6,4,3: Qys
 6,4: Uys
 6,3: Vys
@@ -2321,6 +3392,13 @@ Added 0ys
 Generating those combos from 0Kn
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O5,O4
+LastLetter is n
+glycamCode is K
+So far for 0Kn we think isomer ringtype config is D_p_b
+Finding name for code: KN
+Found name is: D_KDNpa_p__b
+Anomer: 2
+7,8,9,5,4,
 7,8,9,5,4: aKn
 7,8,9,5: bKn
 7,8,9,4: AKn
@@ -2357,6 +3435,13 @@ Added 0Kn
 Generating those combos from 0Ko
 No Anomeric Oxygen Found in Template
 O7,O8,O5,O4
+LastLetter is o
+glycamCode is K
+So far for 0Ko we think isomer ringtype config is D_p_b
+Finding name for code: KO
+Found name is: D_KDOpa_p__b
+Anomer: 2
+7,8,5,4,
 7,8,5,4: dKo
 7,8,5: hKo
 7,8,4: EKo
@@ -2377,6 +3462,13 @@ Added 0Ko
 Generating those combos from 0KN
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O5,O4
+LastLetter is N
+glycamCode is K
+So far for 0KN we think isomer ringtype config is D_p_a
+Finding name for code: KN
+Found name is: D_KDNpa_p__a
+Anomer: 2
+9,8,7,5,4,
 9,8,7,5,4: aKN
 9,8,7,5: bKN
 9,8,7,4: AKN
@@ -2413,6 +3505,13 @@ Added 0KN
 Generating those combos from 0KO
 No Anomeric Oxygen Found in Template
 O4,O5,O7,O8
+LastLetter is O
+glycamCode is K
+So far for 0KO we think isomer ringtype config is D_p_a
+Finding name for code: KO
+Found name is: D_KDOpa_p__a
+Anomer: 2
+4,5,7,8,
 4,5,7,8: dKO
 4,5,7: kKO
 4,5,8: jKO
@@ -2760,7 +3859,7 @@ txU is new in lib file
 uxU is new in lib file
 YAE is new in lib file
 1AE is new in lib file
-1AF is new in lib file
+1Ae is new in lib file
 1dR is new in lib file
 Z45 is new in lib file
 345 is new in lib file

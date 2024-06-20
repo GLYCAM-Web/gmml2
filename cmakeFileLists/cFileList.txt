@@ -70,6 +70,7 @@
 ./src/MolecularMetadata/GLYCAM/dihedralangledata.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06Functions.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.cpp
+./src/MolecularMetadata/GLYCAM/glycam06prepToSugarDetail.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06residueinfo.cpp
 ./src/MolecularMetadata/atomicBonds.cpp
 ./src/MolecularMetadata/glycoprotein.cpp

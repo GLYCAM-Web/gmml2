@@ -93,4 +93,4 @@ std::string GlycamMetadata::Glycam06ResidueNameGenerator(std::string linkages, s
     // gmml::log(__LINE__, __FILE__, gmml::INF,
     //          ("Returning: " + linkCode + residueCode + configurationCode + "\n"));
     return (linkCode + residueCode + configurationCode);
-} // namespace
+}
