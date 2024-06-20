@@ -225,12 +225,12 @@ namespace
         return bestOverlapResult(results);
     }
 
-    double maxDistanceFrom(const Coordinate& pt, std::vector<cds::Atom*>& atoms)
+    double maxDistanceFrom(const Coordinate& pt, const std::vector<cds::Coordinate*>& coords)
     {
         double maxSquare = 0.0;
-        for (auto& a : atoms)
+        for (auto& a : coords)
         {
-            maxSquare = std::max(maxSquare, squaredDistance(pt, *a->getCoordinate()));
+            maxSquare = std::max(maxSquare, squaredDistance(pt, *a));
         }
         return std::sqrt(maxSquare);
     }
@@ -247,7 +247,7 @@ cds::dihedralRotationInputData(bool branching, const std::array<Atom*, 4>& dihed
         dihedral[2], dihedral[1], codeUtils::vectorAppend(residues[0][0]->getAtoms(), residues[1][0]->getAtoms()));
 
     auto centerPoint      = *dihedral[1]->getCoordinate();
-    double maxDistance    = maxDistanceFrom(centerPoint, dihedralResiduesMovingAtoms);
+    double maxDistance    = maxDistanceFrom(centerPoint, movingCoordinates);
     double cutoffDistance = maxDistance + constants::maxAtomDistanceFromResidueCenter + constants::maxCutOff;
 
     auto rotationData = [&](const std::vector<Residue*>& set)
