@@ -2186,14 +2186,14 @@ O2,O4
 4: 4AE
 Added 1AE
 Added 0AE
-Generating those combos from 0AF
+Generating those combos from 0Ae
 No Anomeric Oxygen Found in Template
 O4,O2
-4,2: YAF
-4: 4AF
-2: 2AF
-Added 1AF
-Added 0AF
+4,2: YAe
+4: 4Ae
+2: 2Ae
+Added 1Ae
+Added 0Ae
 Generating those combos from 0dR
 No Anomeric Oxygen Found in Template
 O4,O3
@@ -2760,7 +2760,7 @@ txU is new in lib file
 uxU is new in lib file
 YAE is new in lib file
 1AE is new in lib file
-1AF is new in lib file
+1Ae is new in lib file
 1dR is new in lib file
 Z45 is new in lib file
 345 is new in lib file

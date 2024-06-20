@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     if (argc != 2)
     {
         std::cout << "Usage: " << argv[0] << " inputPrepFile\n";
-        std::cout << "Exmpl: " << argv[0] << " ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep\n";
+        std::cout << "Exmpl: " << argv[0] << " ../dat/prep/GLYCAM_06j-1_GAGS_KDN_ABE.prep\n";
         std::exit(1);
     }
     std::string inputFile                           = argv[1];
@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         {"0oA"}, {"0oB"}, {"0pA"}, {"0pB"}, {"0pD"}, {"0pU"}, {"0qA"}, {"0qB"}, {"0rA"}, {"0rB"}, {"0rD"},  {"0rU"},
         {"0sA"}, {"0sB"}, {"0tA"}, {"0tB"}, {"0tV"}, {"0tv"}, {"0uA"}, {"0uB"}, {"0vA"}, {"0vB"}, {"0wA"},  {"0wB"},
         {"0xA"}, {"0xB"}, {"0xD"}, {"0xU"}, {"0yA"}, {"0yB"}, {"0zA"}, {"0zB"}, {"0dR"}, {"045"}, {"0Yn"},  {"0YN"},
-        {"0YS"}, {"0Ys"}, {"0yS"}, {"0ys"}, {"0Kn"}, {"0Ko"}, {"0KN"}, {"0KO"}, {"0AE"}, {"0AF"}, {"0YnP"}, {"0YNP"},
+        {"0YS"}, {"0Ys"}, {"0yS"}, {"0ys"}, {"0Kn"}, {"0Ko"}, {"0KN"}, {"0KO"}, {"0AE"}, {"0Ae"}, {"0YnP"}, {"0YNP"},
         {"0ZBP"}};
     prep::PrepFile glycamPrepFile(inputFile, residuesToLoadFromPrep);
     std::vector<cds::Residue*> allTheResidues;
