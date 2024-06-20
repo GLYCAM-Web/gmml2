@@ -48,11 +48,6 @@ class GlycoproteinBuilder : public Abstract::absBuilder
         return glycosites_;
     }
 
-    inline std::vector<GlycosylationSite>& GetGlycosylationSites()
-    {
-        return glycosites_;
-    }
-
     inline unsigned int GetOverlapTolerance() const
     {
         return overlapTolerance_;
@@ -81,8 +76,6 @@ class GlycoproteinBuilder : public Abstract::absBuilder
     //////////////////////////////////////////////////////////
     //                  PRIVATE MUTATORS                    //
     //////////////////////////////////////////////////////////
-    void SetWorkingDirectory(const std::string workingDirectory);
-    void SetPrepFileLocation(const std::string prepFileLocation);
 
     inline void SetPersistCycles(const int i)
     {
@@ -135,7 +128,6 @@ class GlycoproteinBuilder : public Abstract::absBuilder
     //                                                            int tolerance);
     void SetOtherGlycosites();
     void AddOtherGlycositesToLinkageOverlapAtoms();
-    void UpdateAllOverlapAtomsInGlycosites(unsigned int maxProteinResidues = 20);
     //////////////////////////////////////////////////////////
     //                       ATTRIBUTES                     //
     //////////////////////////////////////////////////////////
