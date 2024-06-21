@@ -121,11 +121,6 @@ namespace cds
             previousState_ = {d, metadata};
         }
 
-        inline void SetWasEverRotated(bool b)
-        {
-            wasEverRotated_ = b;
-        }
-
         inline void SetCurrentMetaData(const DihedralAngleData* d)
         {
             currentMetadata_ = d;
@@ -157,7 +152,6 @@ namespace cds
                                                       // it, so recording the previous angle makes this easy.
         DihedralAngleDataVector assigned_metadata_;
         const DihedralAngleData* currentMetadata_ = nullptr;
-        bool wasEverRotated_                      = false; // Need this, as it might add a H atom for psi
     };
 
 } // namespace cds

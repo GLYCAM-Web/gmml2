@@ -333,11 +333,6 @@ std::array<Coordinate*, 4> RotatableDihedral::dihedralCoordinates() const
 
 void RotatableDihedral::SetDihedralAngle(double dihedral_angle, const DihedralAngleData* metadata)
 {
-    if (!this->wasEverRotated_)
-    {
-        this->SetWasEverRotated(true);
-        this->DetermineAtomsThatMove();
-    }
     this->RecordPreviousState(this->CalculateDihedralAngle(), this->GetCurrentMetaData());
     auto matrix = cds::dihedralToMatrix(dihedralCoordinates(), dihedral_angle);
     matrix.rotateCoordinates(this->GetCoordinatesThatMove());

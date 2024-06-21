@@ -453,10 +453,9 @@ void ResidueLinkage::SetShapeToPrevious()
 
 void ResidueLinkage::DetermineAtomsThatMove()
 {
-    for (typename std::vector<RotatableDihedral>::iterator RotatableDihedral = rotatableDihedrals_.begin();
-         RotatableDihedral != rotatableDihedrals_.end(); ++RotatableDihedral)
+    for (auto& dihedral : rotatableDihedrals_)
     {
-        RotatableDihedral->DetermineAtomsThatMove();
+        dihedral.DetermineAtomsThatMove();
     }
     return;
 }
@@ -534,6 +533,7 @@ void ResidueLinkage::InitializeClass()
     }
     this->CreateHydrogenForPsiAngles(dihedralAtoms, metadata);
     rotatableDihedrals_ = CreateRotatableDihedrals(this->GetName(), dihedralAtoms, metadata);
+    DetermineAtomsThatMove();
     this->SetIndex(this->GenerateIndex());
     this->DetermineResiduesForOverlapCheck(); // speedup overlap calcs
     return;
