@@ -15,9 +15,14 @@ namespace codeUtils
         return std::find(vector.begin(), vector.end(), element) != vector.end();
     }
 
-    template<class T> std::vector<T> withoutNth(size_t n, std::vector<T> vec)
+    template<class T> void eraseNth(size_t n, std::vector<T>& vec)
     {
         vec.erase(vec.begin() + n);
+    }
+
+    template<class T> std::vector<T> withoutNth(size_t n, std::vector<T> vec)
+    {
+        eraseNth(n, vec);
         return vec;
     }
 
