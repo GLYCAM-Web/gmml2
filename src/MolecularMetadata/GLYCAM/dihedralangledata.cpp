@@ -18,6 +18,8 @@ DihedralAngleDataContainer::GetEntriesForLinkage(const std::string atom1Name, co
 {
     DihedralAngleDataVector matching_entries;
     Glycam06NamesToTypesLookupContainer metadata_residueNamesToTypes;
+    std::vector<std::string> residue1_types = metadata_residueNamesToTypes.GetTypesForResidue(residue1Name);
+    std::vector<std::string> residue2_types = metadata_residueNamesToTypes.GetTypesForResidue(residue2Name);
     // Go through each entry in the metadata
     for (const auto& entry : dihedralAngleDataVector_)
     {
@@ -32,8 +34,6 @@ DihedralAngleDataContainer::GetEntriesForLinkage(const std::string atom1Name, co
             // Some entries have conditions for the residue, that they have certain tags. Make sure any conditions are
             // met:
             // std::cout << "Matched. Checking if conditions apply.\n";
-            std::vector<std::string> residue1_types = metadata_residueNamesToTypes.GetTypesForResidue(residue1Name);
-            std::vector<std::string> residue2_types = metadata_residueNamesToTypes.GetTypesForResidue(residue2Name);
             if ((checkIfResidueConditionsAreSatisfied(residue1_types, entry.residue1_conditions_)) &&
                 (checkIfResidueConditionsAreSatisfied(residue2_types, entry.residue2_conditions_)))
             {
