@@ -77,13 +77,13 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
 //////////////////////////////////////////////////////////
 void Carbohydrate::deleteResidue(cds::Residue* byeBye)
 { // ToDo Have to do this because ResidueLInkages are not Edges!!! Oliver just make them Edges already.
-    for (cds::ResidueLinkage& linkage : glycosidicLinkages_)
-    {
-        if (linkage.GetFromThisResidue1() == byeBye || linkage.GetToThisResidue2() == byeBye)
-        {
-            this->deleteLinkage(&linkage);
-        }
-    }
+    auto removedEnd =
+        std::remove_if(glycosidicLinkages_.begin(), glycosidicLinkages_.end(),
+                       [&](auto& linkage)
+                       {
+                           return (linkage.GetFromThisResidue1() == byeBye || linkage.GetToThisResidue2() == byeBye);
+                       });
+    glycosidicLinkages_.erase(removedEnd, glycosidicLinkages_.end());
     cds::Molecule::deleteResidue(byeBye);
 }
 
@@ -225,15 +225,6 @@ cds::Residue* Carbohydrate::GetAglycone()
 cds::Atom* Carbohydrate::GetAnomericAtom()
 {
     return cdsSelections::guessAnomericAtomByForeignNeighbor(this->GetReducingResidue());
-}
-
-//////////////////////////////////////////////////////////
-//                  PRIVATE MUTATOR                     //
-//////////////////////////////////////////////////////////
-void Carbohydrate::deleteLinkage(cds::ResidueLinkage* linkage)
-{
-    glycosidicLinkages_.erase(std::remove(glycosidicLinkages_.begin(), glycosidicLinkages_.end(), *linkage),
-                              glycosidicLinkages_.end());
 }
 
 //////////////////////////////////////////////////////////
