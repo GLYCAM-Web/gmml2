@@ -7,6 +7,33 @@
 // #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include <fstream>
 
+void residueCombinator::removeOMeMethyl(cds::Residue& queryResidue, cds::Atom* OMeOxygen,
+                                        const std::string& anomericAtomNumber)
+{
+    cds::Atom* ch3 = queryResidue.FindAtom("CH3");
+    cds::Atom* h31 = queryResidue.FindAtom("H31");
+    cds::Atom* h32 = queryResidue.FindAtom("H32");
+    cds::Atom* h33 = queryResidue.FindAtom("H33");
+    std::cout << "In here OMeOxygen name: " << OMeOxygen->getName() << "\n";
+    if (ch3 == nullptr || h31 == nullptr || h32 == nullptr || h33 == nullptr)
+    {
+        std::string message = "Found methyl oxygen but not the other appropriately named atoms in residue. Glycam "
+                              "combinations cannot be created. This happened for OMeOxygen " +
+                              OMeOxygen->getName() + " in residue: " + queryResidue.getName();
+        throw std::runtime_error(message);
+    }
+    double chargeBeingDeleted = ch3->getCharge() + h31->getCharge() + h32->getCharge() + h33->getCharge();
+    OMeOxygen->setCharge(OMeOxygen->getCharge() + chargeBeingDeleted - 0.194);
+    queryResidue.deleteAtom(ch3);
+    queryResidue.deleteAtom(h31);
+    queryResidue.deleteAtom(h32);
+    queryResidue.deleteAtom(h33);
+    OMeOxygen->setType("Os");
+    OMeOxygen->setName("O" + anomericAtomNumber);
+    std::cout << "All done here no issues" << std::endl;
+    return;
+}
+
 void residueCombinator::removeHydroxyHydrogen(cds::Residue& queryResidue, const std::string hydrogenNumber)
 {
     cds::Atom* hydrogen = queryResidue.FindAtom("H" + hydrogenNumber + "O");
@@ -24,6 +51,7 @@ void residueCombinator::removeHydroxyHydrogen(cds::Residue& queryResidue, const 
     oxygen->setCharge(oxygen->getCharge() + hydrogen->getCharge() - 0.194);
     queryResidue.deleteAtom(hydrogen);
     oxygen->setType("Os");
+    return;
 }
 
 std::vector<std::string> residueCombinator::selectAllAtomsThatCanBeSubstituted(const cds::Residue& queryResidue)
@@ -116,27 +144,55 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
                                                     const cds::Residue* starterResidue)
 {
     // First generate both versions of the residue; with and without anomeric oxygen.
+    // One of these gets edited, depending on what's passed in (we don't know yet, need to figure it out in the next
+    // steps) Yes this should be two functions. ToDo.
+    std::cout << "Copying the input residue " << std::endl;
     cds::Residue residueWithoutAnomericOxygen = *starterResidue;
     cds::Residue residueWithAnomericOxygen    = *starterResidue;
-    Atom* anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithAnomericOxygen.getAtoms());
+    std::cout << "Guessing anomeric oxygen" << std::endl;
+    Atom* anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithoutAnomericOxygen.getAtoms());
     std::string anomerNumber           = std::to_string(anomer->getNumberFromName());
     std::vector<Atom*> anomerNeighbors = anomer->getNeighbors();
-    auto isTypeHydroxy                 = [](Atom*& a) // Lamda function for the  std::find;
+    std::cout << "Names and types of neighbors:" << std::endl;
+    for (auto& neighbor : anomerNeighbors)
+    {
+        std::cout << neighbor->getName() << "_" << neighbor->getType() << std::endl;
+    }
+    // Lamda functions for the  std::find;
+    auto isTypeHydroxy = [](Atom*& a)
     {
         return (a->getType() == "Oh");
     };
+    auto isTypeOMe = [](Atom*& a)
+    {
+        return (a->getType() == "Os" && a->getName() == "O");
+    };
     const auto anomericOxygen = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeHydroxy);
+    const auto OMeOxygen      = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeOMe);
     if (anomericOxygen != anomerNeighbors.end())
     {
         std::cout << "Anomeric Oxygen Found\n";
-        residueCombinator::removeHydroxyHydrogen(residueWithAnomericOxygen, anomerNumber);
-        residueWithoutAnomericOxygen = residueWithAnomericOxygen;
+        residueCombinator::removeHydroxyHydrogen(residueWithoutAnomericOxygen, anomerNumber);
+        std::cout << "Copying" << std::endl;
+        residueWithAnomericOxygen = residueWithoutAnomericOxygen;
+        std::cout << "Deleting" << std::endl;
         residueWithoutAnomericOxygen.deleteAtom(*anomericOxygen);
-        // ToDo CHARGE?
+        std::cout << "Continuing" << std::endl;
     }
-    else // Ok then grow the anomeric oxygen for the residueWithAnomericOxygen
+    else if (OMeOxygen != anomerNeighbors.end())
     {
+        std::cout << "OMe Oxygen Found\n";
+        residueCombinator::removeOMeMethyl(residueWithoutAnomericOxygen, (*OMeOxygen), anomerNumber);
+        std::cout << "Copying" << std::endl;
+        residueWithAnomericOxygen = residueWithoutAnomericOxygen;
+        std::cout << "Deleting " << (*OMeOxygen)->getName() << std::endl;
+        residueWithoutAnomericOxygen.deleteAtom(*OMeOxygen);
+        std::cout << "Continuing" << std::endl;
+    }
+    else
+    { // Ok then grow the anomeric oxygen for the residueWithAnomericOxygen
         std::cout << "No Anomeric Oxygen Found in Template\n";
+        anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithAnomericOxygen.getAtoms());
         std::vector<Coordinate*> threeNeighbors;
         for (auto& neighbor : anomer->getNeighbors())
         {
@@ -177,7 +233,8 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
         // combination.push_back(anomerNumber);
         // generateResidueCombination(glycamResidueCombinations, combination, residueWithAnomericOxygen);
     }
-    // Handle the anomeric position separately. No combinations allowed with this position.
+    // Handle the anomeric position separately. No combinations allowed with this position due to limitations with
+    // residue naming system.
     cds::Residue* newResidue = glycamResidueCombinations.emplace_back(new cds::Residue(residueWithAnomericOxygen));
     std::string residueName  = anomerNumber;
     residueName              += starterResidue->getName().substr(1);

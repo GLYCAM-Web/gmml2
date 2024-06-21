@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     }
     std::string inputFile                           = argv[1];
     // std::cout << "Test 027 Input file is " << inputFile << "\n";
-    //    std::vector<std::string> residuesToLoadFromPrep = { {"0BB"}, {"0BA"}};
+    // std::vector<std::string> residuesToLoadFromPrep = {{"0LD"}, {"0LU"}};
     std::vector<std::string> residuesToLoadFromPrep = {
         {"0AA"}, {"0AB"}, {"0AD"}, {"0AU"}, {"0BA"}, {"0BB"}, {"0BC"}, {"0BD"}, {"0BU"}, {"0CA"}, {"0CB"},  {"0CD"},
         {"0CU"}, {"0DA"}, {"0DB"}, {"0DD"}, {"0DU"}, {"0EA"}, {"0EB"}, {"0FA"}, {"0FB"}, {"0GA"}, {"0GB"},  {"0GL"},
@@ -33,19 +33,23 @@ int main(int argc, char* argv[])
         {"0ZBP"}};
     prep::PrepFile glycamPrepFile(inputFile, residuesToLoadFromPrep);
     std::vector<cds::Residue*> allTheResidues;
-    allTheResidues.reserve(residuesToLoadFromPrep.size() * 20);
+    // allTheResidues.reserve(residuesToLoadFromPrep.size() * 20);
     for (auto& residue : glycamPrepFile.getResidues())
     {
+        std::ofstream outFileStream;
+        std::string fileName = residue->getName() + "_original.pdb";
+        outFileStream.open(fileName.c_str());
+        cds::writeResidueToPdb(outFileStream, residue);
+        outFileStream.close();
         std::cout << "Generating those combos from " << residue->getName() << std::endl;
         residueCombinator::generateResidueCombinations(allTheResidues, residue);
-        //        for(auto & combiRes : newResidues)
-        //        {
-        //            std::ofstream outFileStream;
-        //            std::string fileName = combiRes->getName() + ".pdb";
-        //            outFileStream.open(fileName.c_str());
-        //            cds::writeResidueToPdb(outFileStream, combiRes);
-        //            outFileStream.close();
-        //        }
+        for (auto& combiRes : allTheResidues)
+        {
+            std::string fileName = combiRes->getName() + ".pdb";
+            outFileStream.open(fileName.c_str());
+            cds::writeResidueToPdb(outFileStream, combiRes);
+            outFileStream.close();
+        }
     }
     // Note "CA2" was in the prep file, but Rob said delete. "Perhaps we had it before Amber did"
     // "4YP" is the same as 4YnP, which I'll generate from 0YnP anyway

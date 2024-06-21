@@ -1,4 +1,10 @@
 Generating those combos from 0AA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -18,6 +24,12 @@ Anomer: 1
 Added 1AA
 Added 0AA
 Generating those combos from 0AB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -37,6 +49,12 @@ Anomer: 1
 Added 1AB
 Added 0AB
 Generating those combos from 0AD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -56,6 +74,12 @@ Anomer: 1
 Added 1AD
 Added 0AD
 Generating those combos from 0AU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -75,6 +99,12 @@ Anomer: 1
 Added 1AU
 Added 0AU
 Generating those combos from 0BA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is A
@@ -102,6 +132,12 @@ Anomer: 2
 Added 2BA
 Added 0BA
 Generating those combos from 0BB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is B
@@ -129,6 +165,12 @@ Anomer: 2
 Added 2BB
 Added 0BB
 Generating those combos from 0BC
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O3
 LastLetter is C
@@ -142,6 +184,12 @@ Anomer: 1
 Added 1BC
 Added 0BC
 Generating those combos from 0BD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is D
@@ -169,6 +217,12 @@ Anomer: 2
 Added 2BD
 Added 0BD
 Generating those combos from 0BU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is U
@@ -196,6 +250,12 @@ Anomer: 2
 Added 2BU
 Added 0BU
 Generating those combos from 0CA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is A
@@ -223,6 +283,12 @@ Anomer: 2
 Added 2CA
 Added 0CA
 Generating those combos from 0CB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is B
@@ -250,6 +316,12 @@ Anomer: 2
 Added 2CB
 Added 0CB
 Generating those combos from 0CD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is D
@@ -277,6 +349,12 @@ Anomer: 2
 Added 2CD
 Added 0CD
 Generating those combos from 0CU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is U
@@ -304,6 +382,12 @@ Anomer: 2
 Added 2CU
 Added 0CU
 Generating those combos from 0DA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -323,6 +407,12 @@ Anomer: 1
 Added 1DA
 Added 0DA
 Generating those combos from 0DB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -342,6 +432,12 @@ Anomer: 1
 Added 1DB
 Added 0DB
 Generating those combos from 0DD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -361,6 +457,12 @@ Anomer: 1
 Added 1DD
 Added 0DD
 Generating those combos from 0DU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -380,6 +482,12 @@ Anomer: 1
 Added 1DU
 Added 0DU
 Generating those combos from 0EA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -407,6 +515,12 @@ Anomer: 1
 Added 1EA
 Added 0EA
 Generating those combos from 0EB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -434,6 +548,12 @@ Anomer: 1
 Added 1EB
 Added 0EB
 Generating those combos from 0FA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -453,6 +573,12 @@ Anomer: 1
 Added 1FA
 Added 0FA
 Generating those combos from 0FB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -472,6 +598,12 @@ Anomer: 1
 Added 1FB
 Added 0FB
 Generating those combos from 0GA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -499,6 +631,12 @@ Anomer: 1
 Added 1GA
 Added 0GA
 Generating those combos from 0GB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -526,6 +664,12 @@ Anomer: 1
 Added 1GB
 Added 0GB
 Generating those combos from 0GL
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Oy
+C1_C
+C3_Cg
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O4
 LastLetter is L
@@ -553,6 +697,12 @@ Anomer: 2
 Added 2GL
 Added 0GL
 Generating those combos from 0HA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -572,6 +722,12 @@ Anomer: 1
 Added 1HA
 Added 0HA
 Generating those combos from 0HB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -591,6 +747,12 @@ Anomer: 1
 Added 1HB
 Added 0HB
 Generating those combos from 0JA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is A
@@ -618,6 +780,12 @@ Anomer: 2
 Added 2JA
 Added 0JA
 Generating those combos from 0JB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is B
@@ -645,6 +813,12 @@ Anomer: 2
 Added 2JB
 Added 0JB
 Generating those combos from 0JD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is D
@@ -672,6 +846,12 @@ Anomer: 2
 Added 2JD
 Added 0JD
 Generating those combos from 0JU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is U
@@ -699,6 +879,12 @@ Anomer: 2
 Added 2JU
 Added 0JU
 Generating those combos from 0KA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -726,6 +912,12 @@ Anomer: 1
 Added 1KA
 Added 0KA
 Generating those combos from 0KB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -753,6 +945,12 @@ Anomer: 1
 Added 1KB
 Added 0KB
 Generating those combos from 0LA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -780,6 +978,12 @@ Anomer: 1
 Added 1LA
 Added 0LA
 Generating those combos from 0LB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -807,6 +1011,12 @@ Anomer: 1
 Added 1LB
 Added 0LB
 Generating those combos from 0MA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -834,6 +1044,12 @@ Anomer: 1
 Added 1MA
 Added 0MA
 Generating those combos from 0MB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -861,6 +1077,12 @@ Anomer: 1
 Added 1MB
 Added 0MB
 Generating those combos from 0NA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -888,6 +1110,12 @@ Anomer: 1
 Added 1NA
 Added 0NA
 Generating those combos from 0NB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -915,6 +1143,12 @@ Anomer: 1
 Added 1NB
 Added 0NB
 Generating those combos from 0OA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -934,6 +1168,12 @@ Anomer: 1
 Added 1OA
 Added 0OA
 Generating those combos from 0OB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -953,6 +1193,12 @@ Anomer: 1
 Added 1OB
 Added 0OB
 Generating those combos from 0PA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is A
@@ -980,6 +1226,12 @@ Anomer: 2
 Added 2PA
 Added 0PA
 Generating those combos from 0PB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is B
@@ -1007,6 +1259,12 @@ Anomer: 2
 Added 2PB
 Added 0PB
 Generating those combos from 0PD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is D
@@ -1034,6 +1292,12 @@ Anomer: 2
 Added 2PD
 Added 0PD
 Generating those combos from 0PU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is U
@@ -1061,6 +1325,12 @@ Anomer: 2
 Added 2PU
 Added 0PU
 Generating those combos from 0QA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1080,6 +1350,12 @@ Anomer: 1
 Added 1QA
 Added 0QA
 Generating those combos from 0QB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1099,6 +1375,12 @@ Anomer: 1
 Added 1QB
 Added 0QB
 Generating those combos from 0RA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1118,6 +1400,12 @@ Anomer: 1
 Added 1RA
 Added 0RA
 Generating those combos from 0RB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1137,6 +1425,12 @@ Anomer: 1
 Added 1RB
 Added 0RB
 Generating those combos from 0RD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -1156,6 +1450,12 @@ Anomer: 1
 Added 1RD
 Added 0RD
 Generating those combos from 0RU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -1175,6 +1475,12 @@ Anomer: 1
 Added 1RU
 Added 0RU
 Generating those combos from 0SA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Oy
+C1_C
+C3_Cg
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O4
 LastLetter is A
@@ -1202,6 +1508,12 @@ Anomer: 2
 Added 2SA
 Added 0SA
 Generating those combos from 0SB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Oy
+C1_C
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O4
 LastLetter is B
@@ -1229,6 +1541,12 @@ Anomer: 2
 Added 2SB
 Added 0SB
 Generating those combos from 0TA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -1256,6 +1574,12 @@ Anomer: 1
 Added 1TA
 Added 0TA
 Generating those combos from 0TB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -1283,6 +1607,12 @@ Anomer: 1
 Added 1TB
 Added 0TB
 Generating those combos from 0TV
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O2
 LastLetter is V
@@ -1298,6 +1628,12 @@ Anomer: 1
 Added 1TV
 Added 0TV
 Generating those combos from 0Tv
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O2
 LastLetter is v
@@ -1313,6 +1649,12 @@ Anomer: 1
 Added 1Tv
 Added 0Tv
 Generating those combos from 0UA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1332,6 +1674,12 @@ Anomer: 1
 Added 1UA
 Added 0UA
 Generating those combos from 0UB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1351,6 +1699,12 @@ Anomer: 1
 Added 1UB
 Added 0UB
 Generating those combos from 0VA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is A
@@ -1370,6 +1724,12 @@ Anomer: 1
 Added 1VA
 Added 0VA
 Generating those combos from 0VB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is B
@@ -1389,6 +1749,12 @@ Anomer: 1
 Added 1VB
 Added 0VB
 Generating those combos from 0WA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is A
@@ -1408,6 +1774,12 @@ Anomer: 1
 Added 1WA
 Added 0WA
 Generating those combos from 0WB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is B
@@ -1427,6 +1799,12 @@ Anomer: 1
 Added 1WB
 Added 0WB
 Generating those combos from 0XA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1446,6 +1824,12 @@ Anomer: 1
 Added 1XA
 Added 0XA
 Generating those combos from 0XB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1465,6 +1849,12 @@ Anomer: 1
 Added 1XB
 Added 0XB
 Generating those combos from 0XD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -1484,6 +1874,12 @@ Anomer: 1
 Added 1XD
 Added 0XD
 Generating those combos from 0XU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -1503,6 +1899,12 @@ Anomer: 1
 Added 1XU
 Added 0XU
 Generating those combos from 0YA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is A
@@ -1522,6 +1924,12 @@ Anomer: 1
 Added 1YA
 Added 0YA
 Generating those combos from 0YB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is B
@@ -1541,6 +1949,12 @@ Anomer: 1
 Added 1YB
 Added 0YB
 Generating those combos from 0ZA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1560,6 +1974,12 @@ Anomer: 1
 Added 1ZA
 Added 0ZA
 Generating those combos from 0ZB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1579,6 +1999,12 @@ Anomer: 1
 Added 1ZB
 Added 0ZB
 Generating those combos from 0aA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1598,6 +2024,12 @@ Anomer: 1
 Added 1aA
 Added 0aA
 Generating those combos from 0aB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1617,6 +2049,12 @@ Anomer: 1
 Added 1aB
 Added 0aB
 Generating those combos from 0aD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -1636,6 +2074,12 @@ Anomer: 1
 Added 1aD
 Added 0aD
 Generating those combos from 0aU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -1655,6 +2099,12 @@ Anomer: 1
 Added 1aU
 Added 0aU
 Generating those combos from 0bA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is A
@@ -1682,6 +2132,12 @@ Anomer: 2
 Added 2bA
 Added 0bA
 Generating those combos from 0bB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is B
@@ -1709,6 +2165,12 @@ Anomer: 2
 Added 2bB
 Added 0bB
 Generating those combos from 0bC
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O3
 LastLetter is C
@@ -1722,6 +2184,12 @@ Anomer: 1
 Added 1bC
 Added 0bC
 Generating those combos from 0bD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is D
@@ -1749,6 +2217,12 @@ Anomer: 2
 Added 2bD
 Added 0bD
 Generating those combos from 0bU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is U
@@ -1776,6 +2250,12 @@ Anomer: 2
 Added 2bU
 Added 0bU
 Generating those combos from 0cA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is A
@@ -1803,6 +2283,12 @@ Anomer: 2
 Added 2cA
 Added 0cA
 Generating those combos from 0cB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is B
@@ -1830,6 +2316,12 @@ Anomer: 2
 Added 2cB
 Added 0cB
 Generating those combos from 0cD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is D
@@ -1857,6 +2349,12 @@ Anomer: 2
 Added 2cD
 Added 0cD
 Generating those combos from 0cU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is U
@@ -1884,6 +2382,12 @@ Anomer: 2
 Added 2cU
 Added 0cU
 Generating those combos from 0dA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -1903,6 +2407,12 @@ Anomer: 1
 Added 1dA
 Added 0dA
 Generating those combos from 0dB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -1922,6 +2432,12 @@ Anomer: 1
 Added 1dB
 Added 0dB
 Generating those combos from 0dD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -1941,6 +2457,12 @@ Anomer: 1
 Added 1dD
 Added 0dD
 Generating those combos from 0dU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -1960,6 +2482,12 @@ Anomer: 1
 Added 1dU
 Added 0dU
 Generating those combos from 0eA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -1987,6 +2515,12 @@ Anomer: 1
 Added 1eA
 Added 0eA
 Generating those combos from 0eB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2014,6 +2548,12 @@ Anomer: 1
 Added 1eB
 Added 0eB
 Generating those combos from 0fA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -2033,6 +2573,12 @@ Anomer: 1
 Added 1fA
 Added 0fA
 Generating those combos from 0fB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -2052,6 +2598,12 @@ Anomer: 1
 Added 1fB
 Added 0fB
 Generating those combos from 0gA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -2079,6 +2631,12 @@ Anomer: 1
 Added 1gA
 Added 0gA
 Generating those combos from 0gB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2106,6 +2664,12 @@ Anomer: 1
 Added 1gB
 Added 0gB
 Generating those combos from 0gL
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Oy
+C1_C
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O4
 LastLetter is L
@@ -2133,6 +2697,12 @@ Anomer: 2
 Added 2gL
 Added 0gL
 Generating those combos from 0hA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -2152,6 +2722,12 @@ Anomer: 1
 Added 1hA
 Added 0hA
 Generating those combos from 0hB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -2171,6 +2747,12 @@ Anomer: 1
 Added 1hB
 Added 0hB
 Generating those combos from 0jA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is A
@@ -2198,6 +2780,12 @@ Anomer: 2
 Added 2jA
 Added 0jA
 Generating those combos from 0jB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is B
@@ -2225,6 +2813,12 @@ Anomer: 2
 Added 2jB
 Added 0jB
 Generating those combos from 0jD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is D
@@ -2252,6 +2846,12 @@ Anomer: 2
 Added 2jD
 Added 0jD
 Generating those combos from 0jU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is U
@@ -2279,6 +2879,12 @@ Anomer: 2
 Added 2jU
 Added 0jU
 Generating those combos from 0kA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -2306,6 +2912,12 @@ Anomer: 1
 Added 1kA
 Added 0kA
 Generating those combos from 0kB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2333,6 +2945,12 @@ Anomer: 1
 Added 1kB
 Added 0kB
 Generating those combos from 0lA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -2360,6 +2978,12 @@ Anomer: 1
 Added 1lA
 Added 0lA
 Generating those combos from 0lB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2387,6 +3011,12 @@ Anomer: 1
 Added 1lB
 Added 0lB
 Generating those combos from 0mA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -2414,6 +3044,12 @@ Anomer: 1
 Added 1mA
 Added 0mA
 Generating those combos from 0mB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2441,6 +3077,12 @@ Anomer: 1
 Added 1mB
 Added 0mB
 Generating those combos from 0nA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -2468,6 +3110,12 @@ Anomer: 1
 Added 1nA
 Added 0nA
 Generating those combos from 0nB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2495,6 +3143,12 @@ Anomer: 1
 Added 1nB
 Added 0nB
 Generating those combos from 0oA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -2514,6 +3168,12 @@ Anomer: 1
 Added 1oA
 Added 0oA
 Generating those combos from 0oB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -2533,6 +3193,12 @@ Anomer: 1
 Added 1oB
 Added 0oB
 Generating those combos from 0pA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O5,O4,O3,O1
 LastLetter is A
@@ -2560,6 +3226,12 @@ Anomer: 2
 Added 2pA
 Added 0pA
 Generating those combos from 0pB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O5,O4,O3
 LastLetter is B
@@ -2587,6 +3259,12 @@ Anomer: 2
 Added 2pB
 Added 0pB
 Generating those combos from 0pD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O5_Os
+C1_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O1
 LastLetter is D
@@ -2614,6 +3292,12 @@ Anomer: 2
 Added 2pD
 Added 0pD
 Generating those combos from 0pU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+C1_Cg
+C3_Cg
 No Anomeric Oxygen Found in Template
 O1,O6,O4,O3
 LastLetter is U
@@ -2641,6 +3325,12 @@ Anomer: 2
 Added 2pU
 Added 0pU
 Generating those combos from 0qA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -2660,6 +3350,12 @@ Anomer: 1
 Added 1qA
 Added 0qA
 Generating those combos from 0qB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -2679,6 +3375,12 @@ Anomer: 1
 Added 1qB
 Added 0qB
 Generating those combos from 0rA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -2698,6 +3400,12 @@ Anomer: 1
 Added 1rA
 Added 0rA
 Generating those combos from 0rB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -2717,6 +3425,12 @@ Anomer: 1
 Added 1rB
 Added 0rB
 Generating those combos from 0rD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -2736,6 +3450,12 @@ Anomer: 1
 Added 1rD
 Added 0rD
 Generating those combos from 0rU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -2755,6 +3475,12 @@ Anomer: 1
 Added 1rU
 Added 0rU
 Generating those combos from 0sA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Oy
+C1_C
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O4
 LastLetter is A
@@ -2782,6 +3508,12 @@ Anomer: 2
 Added 2sA
 Added 0sA
 Generating those combos from 0sB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Oy
+C1_C
+C3_Cg
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O4
 LastLetter is B
@@ -2809,6 +3541,12 @@ Anomer: 2
 Added 2sB
 Added 0sB
 Generating those combos from 0tA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is A
@@ -2836,6 +3574,12 @@ Anomer: 1
 Added 1tA
 Added 0tA
 Generating those combos from 0tB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3,O2
 LastLetter is B
@@ -2863,6 +3607,12 @@ Anomer: 1
 Added 1tB
 Added 0tB
 Generating those combos from 0tV
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O2
 LastLetter is V
@@ -2878,6 +3628,12 @@ Anomer: 1
 Added 1tV
 Added 0tV
 Generating those combos from 0tv
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H1
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O2
 LastLetter is v
@@ -2893,6 +3649,12 @@ Anomer: 1
 Added 1tv
 Added 0tv
 Generating those combos from 0uA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -2912,6 +3674,12 @@ Anomer: 1
 Added 1uA
 Added 0uA
 Generating those combos from 0uB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -2931,6 +3699,12 @@ Anomer: 1
 Added 1uB
 Added 0uB
 Generating those combos from 0vA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is A
@@ -2950,6 +3724,12 @@ Anomer: 1
 Added 1vA
 Added 0vA
 Generating those combos from 0vB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is B
@@ -2969,6 +3749,12 @@ Anomer: 1
 Added 1vB
 Added 0vB
 Generating those combos from 0wA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is A
@@ -2988,6 +3774,12 @@ Anomer: 1
 Added 1wA
 Added 0wA
 Generating those combos from 0wB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is B
@@ -3007,6 +3799,12 @@ Anomer: 1
 Added 1wB
 Added 0wB
 Generating those combos from 0xA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -3026,6 +3824,12 @@ Anomer: 1
 Added 1xA
 Added 0xA
 Generating those combos from 0xB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -3045,6 +3849,12 @@ Anomer: 1
 Added 1xB
 Added 0xB
 Generating those combos from 0xD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H1
+O4_Os
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is D
@@ -3064,6 +3874,12 @@ Anomer: 1
 Added 1xD
 Added 0xD
 Generating those combos from 0xU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O5,O3,O2
 LastLetter is U
@@ -3083,6 +3899,12 @@ Anomer: 1
 Added 1xU
 Added 0xU
 Generating those combos from 0yA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is A
@@ -3102,6 +3924,12 @@ Anomer: 1
 Added 1yA
 Added 0yA
 Generating those combos from 0yB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is B
@@ -3121,6 +3949,12 @@ Anomer: 1
 Added 1yB
 Added 0yB
 Generating those combos from 0zA
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is A
@@ -3140,6 +3974,12 @@ Anomer: 1
 Added 1zA
 Added 0zA
 Generating those combos from 0zB
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is B
@@ -3159,6 +3999,12 @@ Anomer: 1
 Added 1zB
 Added 0zB
 Generating those combos from 0AE
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O2,O4
 LastLetter is E
@@ -3174,6 +4020,12 @@ Anomer: 1
 Added 1AE
 Added 0AE
 Generating those combos from 0Ae
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O2
 LastLetter is e
@@ -3189,6 +4041,12 @@ Anomer: 1
 Added 1Ae
 Added 0Ae
 Generating those combos from 0dR
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3
 LastLetter is R
@@ -3204,6 +4062,12 @@ Anomer: 1
 Added 1dR
 Added 0dR
 Generating those combos from 045
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O3,O2
 LastLetter is 5
@@ -3219,6 +4083,12 @@ Anomer: 1
 Added 145
 Added 045
 Generating those combos from 0ZBP
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O4,O3,O2
 LastLetter is P
@@ -3238,6 +4108,12 @@ Anomer: 1
 Added 1ZBP
 Added 0ZBP
 Generating those combos from 0YN
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+H1_H2
+O5_Os
+C2_Cg
 No Anomeric Oxygen Found in Template
 O3,O4,O6
 LastLetter is N
@@ -3257,6 +4133,12 @@ Anomer: 1
 Added 1YN
 Added 0YN
 Generating those combos from 0Yn
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O3,O6,O4
 LastLetter is n
@@ -3276,6 +4158,12 @@ Anomer: 1
 Added 1Yn
 Added 0Yn
 Generating those combos from 0YNP
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O3,O4,O6
 LastLetter is P
@@ -3295,6 +4183,12 @@ Anomer: 1
 Added 1YNP
 Added 0YNP
 Generating those combos from 0YnP
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is P
@@ -3314,6 +4208,12 @@ Anomer: 1
 Added 1YnP
 Added 0YnP
 Generating those combos from 0YS
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is S
@@ -3333,6 +4233,12 @@ Anomer: 1
 Added 1YS
 Added 0YS
 Generating those combos from 0Ys
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is s
@@ -3352,6 +4258,12 @@ Anomer: 1
 Added 1Ys
 Added 0Ys
 Generating those combos from 0yS
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C2_Cg
+H1_H2
+O5_Os
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is S
@@ -3371,6 +4283,12 @@ Anomer: 1
 Added 1yS
 Added 0yS
 Generating those combos from 0ys
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+H1_H2
+C2_Cg
 No Anomeric Oxygen Found in Template
 O6,O4,O3
 LastLetter is s
@@ -3390,6 +4308,12 @@ Anomer: 1
 Added 1ys
 Added 0ys
 Generating those combos from 0Kn
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Oy
+C1_C
 No Anomeric Oxygen Found in Template
 O7,O8,O9,O5,O4
 LastLetter is n
@@ -3433,6 +4357,12 @@ Anomer: 2
 Added 2Kn
 Added 0Kn
 Generating those combos from 0Ko
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C3_Cg
+O6_Oy
+C1_C
 No Anomeric Oxygen Found in Template
 O7,O8,O5,O4
 LastLetter is o
@@ -3460,6 +4390,12 @@ Anomer: 2
 Added 2Ko
 Added 0Ko
 Generating those combos from 0KN
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Oy
+C1_C
+C3_Cg
 No Anomeric Oxygen Found in Template
 O9,O8,O7,O5,O4
 LastLetter is N
@@ -3503,6 +4439,12 @@ Anomer: 2
 Added 2KN
 Added 0KN
 Generating those combos from 0KO
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Oy
+C1_C
+C3_Cg
 No Anomeric Oxygen Found in Template
 O4,O5,O7,O8
 LastLetter is O
