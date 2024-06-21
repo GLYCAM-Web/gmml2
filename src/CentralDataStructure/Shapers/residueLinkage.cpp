@@ -463,9 +463,10 @@ void ResidueLinkage::DetermineAtomsThatMove()
 void ResidueLinkage::SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
                                                  std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement)
 {
-    for (auto& RotatableDihedral : this->GetRotatableDihedrals())
+    for (auto& dihedral : this->GetRotatableDihedrals())
     {
-        RotatableDihedral.WiggleWithinCurrentRotamer(overlapAtomSet1, overlapAtomSet2, angleIncrement);
+        auto best = dihedral.WiggleWithinCurrentRotamer(overlapAtomSet1, overlapAtomSet2, angleIncrement);
+        dihedral.SetDihedralAngle(best.angle);
     }
 }
 
@@ -475,7 +476,8 @@ void ResidueLinkage::SimpleWiggleCurrentRotamers(const std::array<std::vector<cd
     for (auto& dihedral : this->GetRotatableDihedrals())
     {
         const DihedralAngleDataVector rotamer {*dihedral.GetCurrentMetaData()};
-        dihedral.WiggleUsingRotamers(rotamer, angleIncrement, residues);
+        auto best = dihedral.WiggleUsingRotamers(rotamer, angleIncrement, residues);
+        dihedral.SetDihedralAngle(best.angle);
     }
 }
 

@@ -353,12 +353,15 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
         const auto& rotamers = dihedral.GetMetadata();
         if (useAllResiduesForOverlap)
         {
-            dihedral.WiggleUsingRotamers(rotamers, interval, {overlapResidues, linkage.GetReducingOverlapResidues()});
+            auto best = dihedral.WiggleUsingRotamers(rotamers, interval,
+                                                     {overlapResidues, linkage.GetReducingOverlapResidues()});
+            dihedral.SetDihedralAngle(best.angle);
         }
         else
         {
-            dihedral.WiggleUsingRotamers(
+            auto best = dihedral.WiggleUsingRotamers(
                 rotamers, interval, {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()});
+            dihedral.SetDihedralAngle(best.angle);
         }
     }
     return;

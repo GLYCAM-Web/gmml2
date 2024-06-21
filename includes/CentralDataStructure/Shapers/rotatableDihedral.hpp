@@ -22,17 +22,16 @@ static pcg32
 // and, if moved, the previous dihedral angle, which allows me to reset easily.
 namespace cds
 {
-    struct AngleOverlap
-    {
-        double angle;
-        const DihedralAngleData* metadata;
-        unsigned int overlaps;
-    };
-
     struct AngleWithMetadata
     {
-        double angle;
+        double value;
         const DihedralAngleData* metadata;
+    };
+
+    struct AngleOverlap
+    {
+        unsigned int overlaps;
+        AngleWithMetadata angle;
     };
 
     struct dihedralRotationData
@@ -75,17 +74,19 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
-        void DetermineAtomsThatMove();     // Based on connectivities, this figures out which atoms will move when the
-                                           // dihedral is rotated.
-        void SetDihedralAngleToPrevious(); // Sets the dihedral to previous dihedral angle
+        void DetermineAtomsThatMove(); // Based on connectivities, this figures out which atoms will move when the
+                                       // dihedral is rotated.
+        void
+        SetDihedralAngle(AngleWithMetadata angle); // Sets the dihedral angle by rotating the bond between atom2 and
+        void SetDihedralAngleToPrevious();         // Sets the dihedral to previous dihedral angle
 
         void SetRandomAngleEntryUsingMetadata();
         void SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
         bool SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
-        void WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
-                                        std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
-        void WiggleUsingRotamers(const DihedralAngleDataVector& rotamers, int angleIncrement,
-                                 const std::array<std::vector<cds::Residue*>, 2>& residues);
+        AngleOverlap WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
+                                                std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
+        AngleOverlap WiggleUsingRotamers(const DihedralAngleDataVector& rotamers, int angleIncrement,
+                                         const std::array<std::vector<cds::Residue*>, 2>& residues);
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
@@ -104,9 +105,6 @@ namespace cds
         //                  PRIVATE MUTATORS                    //
         //////////////////////////////////////////////////////////
         void SetAtomsThatMove(std::vector<cds::Atom*>& atoms);
-        void SetDihedralAngle(
-            double dihedral_angle,
-            const DihedralAngleData* metadata); // Sets the dihedral angle by rotating the bond between atom2 and
         double RandomizeDihedralAngleWithinMetadataRange(
             const DihedralAngleData* entry); // Randomly sets dihedral angle to a value allowed by the metadata
 
