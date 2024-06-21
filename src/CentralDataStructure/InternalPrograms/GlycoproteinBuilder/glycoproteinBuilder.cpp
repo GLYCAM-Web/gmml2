@@ -7,6 +7,7 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/strings.hpp" // split
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
@@ -335,11 +336,12 @@ Residue* GlycoproteinBuilder::SelectResidueFromInput(const std::string userSelec
 
 void GlycoproteinBuilder::SetOtherGlycosites()
 {
-    for (auto& glycosite : this->GetGlycosites())
+    std::vector<GlycosylationSite>& glycosites    = this->GetGlycosites();
+    std::vector<GlycosylationSite*> glycositePtrs = codeUtils::pointerVector(glycosites);
+    for (size_t n = 0; n < glycosites.size(); n++)
     {
-        glycosite.SetOtherGlycosites(this->GetGlycosites());
+        glycosites[n].SetOtherGlycosites(codeUtils::withoutNth(n, glycositePtrs));
     }
-    return;
 }
 
 void GlycoproteinBuilder::AddOtherGlycositesToLinkageOverlapAtoms()

@@ -38,7 +38,11 @@ class GlycosylationSite
     //////////////////////////////////////////////////////////
     //                       MUTATOR                        //
     //////////////////////////////////////////////////////////
-    void SetOtherGlycosites(std::vector<GlycosylationSite>& glycosites);
+    inline void SetOtherGlycosites(std::vector<GlycosylationSite*> glycosites)
+    {
+        other_glycosites_ = glycosites;
+    }
+
     //////////////////////////////////////////////////////////
     //                       FUNCTIONS                      //
     //////////////////////////////////////////////////////////

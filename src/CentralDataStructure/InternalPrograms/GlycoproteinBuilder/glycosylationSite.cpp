@@ -298,19 +298,6 @@ void GlycosylationSite::ResetDihedralAngles()
     return;
 }
 
-void GlycosylationSite::SetOtherGlycosites(std::vector<GlycosylationSite>& glycosites)
-{
-    other_glycosites_.clear();
-    for (auto& glycosite : glycosites)
-    {
-        if (this != &glycosite)
-        {
-            other_glycosites_.push_back(&glycosite);
-        }
-    }
-    return;
-}
-
 //////////////////////////////////////////////////////////
 //                       DISPLAY FUNCTION               //
 //////////////////////////////////////////////////////////
