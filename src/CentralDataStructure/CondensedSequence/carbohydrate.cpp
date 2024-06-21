@@ -56,13 +56,9 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "Determining what moves in linkages of " + inputSequence);
     for (auto& linkage : glycosidicLinkages_) // These will exist on the vector in order of edge connectivity set above.
     { // Greedy first means the atoms-to-move needs to be updated for every linkage:
         linkage.SetIndex(linkageIndex++);
-        //        std::stringstream ss;
-        //  ss << linkage.GetName() << " linkage index in ctor is " << linkage.GetIndex();
-        //       gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
         linkage.DetermineAtomsThatMove();
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Final carbohydrate overlap resolution starting.");
@@ -181,15 +177,11 @@ cds::Residue* Carbohydrate::GetReducingResidue()
     { // Return the first sugar residue that isn't an Aglycone
         if (residue->GetType() != ResidueType::Aglycone && residue->GetType() == ResidueType::Sugar)
         {
-            // gmml::log(__LINE__, __FILE__, gmml::INF, "Assuming that reducing residue is " + residue->getStringId());
             return residue;
         }
     }
     if (this->GetResidueCount() > 1)
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF,
-        //                  "No ResidueType's assigned, so assuming that reducing residue is " +
-        //                      this->getResidues().at(1)->getStringId());
         return this->getResidues().at(1);
     }
     std::string message = "Reducing residue requested for Carbohydrate with name " + this->getName() +
@@ -210,10 +202,6 @@ cds::Residue* Carbohydrate::GetAglycone()
     }
     if (this->GetResidueCount() > 0)
     {
-
-        //        gmml::log(__LINE__, __FILE__, gmml::INF,
-        //                  "A ResidueType::Aglycone residue was not present, so assuming that aglycone residue is " +
-        //                      this->getResidues().front()->getStringId());
         return this->getResidues().front();
     }
     std::string message = "Aglycone residue requested for Carbohydrate with name " + this->getName() +
@@ -232,7 +220,6 @@ cds::Atom* Carbohydrate::GetAnomericAtom()
 //////////////////////////////////////////////////////////
 void Carbohydrate::ApplyDeoxy(ParsedResidue* deoxyResidue)
 {
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "Dealing with deoxy for " + deoxyResidue->getName());
     ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
     residueToBeDeoxified->MakeDeoxy(deoxyResidue->GetLink());
     this->deleteResidue(deoxyResidue); // Remove the deoxy derivative now.
@@ -256,7 +243,6 @@ void Carbohydrate::MoveAtomsFromPrepResidueToParsedResidue(prep::PrepFile& prepR
                                                           // objects are left in a valid but unspecified state"
     prepResidues.deleteResidue(prepResidue); // Death to the prepResidue, if there are repeats with the same name, the
                                              // next search would find the one without atoms.
-    // std::cout << "Finished moving atoms from prepResidue to parsed Residue. Adventure awaits! Huzzah!" << std::endl;
     return;
 }
 
@@ -264,26 +250,14 @@ void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
 {
     std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
     adjustAtomName             += parsedResidue->GetLinkageName().substr(0, 1);
-    // parsedResidue->getInEdges().at(0)->getLabel().substr(0, 1);
 
     cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
     atomToAdjust->setCharge(atomToAdjust->getCharge() + GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
-    // Log it:
-    //    std::stringstream ss;
-    //    ss << "Charge Adjustment.\n"
-    //       << "    Derivative is " << parsedResidue->getName() << ". Adjusting charge on " << atomToAdjust->getName()
-    //       << "\n";
-    //    ss << "    Adjusting by: " << lookup.GetAdjustmentCharge(parsedResidue->getName()) << "\n";
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     return;
 }
 
 void Carbohydrate::EnsureIntegralCharge(double charge)
 {
-    //    std::stringstream ss;
-    //    ss << std::fixed;
-    //    ss << "Total charge is: " << std::setprecision(5) << charge << std::endl;
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     double difference = std::fabs(charge - (std::round(charge)));
     if (difference > 0.00001 && difference < 0.99999)
     {
@@ -300,9 +274,6 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     using cds::Atom;
     using cds::ResidueType;
     std::string linkageLabel = static_cast<ParsedResidue*>(childResidue)->GetLinkageName();
-    //    gmml::log(__LINE__, __FILE__, gmml::INF,
-    //              "Here with child " + childResidue->getStringId() + " and parent: " + parentResidue->getStringId() +
-    //                  " and linkageLabel: " + linkageLabel);
     // This is using the new Node<Residue> functionality and the old AtomNode
     // Now go figure out how which Atoms to bond to each other in the residues.
     // Rule: Can't ever have a child aglycone or a parent derivative.
@@ -336,7 +307,6 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
         }
         parentAtom =
             cdsSelections::getNonCarbonHeavyAtomNumbered(parentResidue->getAtoms(), linkageLabel.substr(linkPosition));
-        // std::cout << "Parent atom is " << parentAtom->getName() << std::endl;
     }
     else
     {
@@ -391,16 +361,6 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     {
         if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
         {
-            //            std::stringstream ss;
-            //            ss << "Setting angle between\nparentNeighbor " << parentAtomNeighbor->getName() << " "
-            //               << parentAtomNeighbor->getCoordinate()->ToString() << "\nparent " << parentAtom->getName()
-            //               << "_"
-            //               << parentAtom->getIndex() << " " << parentAtom->getCoordinate()->ToString() << "\nand child
-            //               "
-            //               << childAtom->getName() << "_" << childAtom->getIndex() << " " <<
-            //               childAtom->getCoordinate()->ToString()
-            //               << "\nchild residue " << childResidue->getName() << " will move\n";
-            //            gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
             auto matrix = cds::angleToMatrix(
                 {parentAtomNeighbor->getCoordinate(), parentAtom->getCoordinate(), childAtom->getCoordinate()},
                 constants::DEFAULT_ANGLE);
@@ -441,11 +401,6 @@ void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentPar
     // End Breath first code
     for (auto& child : currentParent->getChildren())
     {
-        // glycosidicLinkages_.emplace_back(neighbor, to_this_residue2); // Depth first. For Breath first remove this
-        // line, and comment out above.
-        //        std::cout << "Setting connection between " << child->getName() << " and its parent " <<
-        //        currentParent->getName() << ", the connection has linkageLabel: "
-        //         << static_cast<ParsedResidue*>(child)->GetLinkageName() << "\n";
         this->ConnectAndSetGeometry(child, currentParent);
         this->DepthFirstSetConnectivityAndGeometry(child);
     }
@@ -455,16 +410,13 @@ void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentPar
 std::vector<std::string> Carbohydrate::GetGlycamNamesOfResidues() const
 {
     std::vector<std::string> names(this->getResidues().size()); // set size of vec for speed.
-                                                                //    std::cout << "Glycam names are: ";
     for (auto& residue : this->getResidues())
     {
         if (residue->GetType() != cds::ResidueType::Deoxy)
         {
             names.push_back(this->GetGlycamResidueName(static_cast<ParsedResidue*>(residue)));
-            //            std::cout << names.back() << ", ";
         }
     }
-    //    std::cout << "\n";
     return names;
 }
 
@@ -481,8 +433,6 @@ std::string Carbohydrate::GetGlycamResidueName(ParsedResidue* residue) const
     std::string linkages = "";
     if (residue->GetType() == cds::ResidueType::Sugar)
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF,
-        //                  "Checking for glycosidic linkages that connect to " + residue->GetResidueName());
         linkages = residue->GetChildLinkagesForGlycamResidueNaming();
     }
     std::string code = GlycamMetadata::Glycam06ResidueNameGenerator(
