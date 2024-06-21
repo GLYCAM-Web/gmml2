@@ -67,7 +67,7 @@ namespace cds
             chainId_ = s;
         }
 
-        void swapResiduePosition(Residue* queryResidue, int newPosition);
+        void swapResiduePosition(Residue* queryResidue, size_t newPosition);
         //////////////////////////////////////////////////////////
         //                    FUNCTIONS                         //
         //////////////////////////////////////////////////////////
