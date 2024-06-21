@@ -60,29 +60,6 @@ class GlycosylationSite
     void PrintOverlaps();
     void Print(std::string type = "All");
 
-    //////////////////////////////////////////////////////////
-    //                       OPERATORS                      //
-    //////////////////////////////////////////////////////////
-    inline bool operator==(const GlycosylationSite& rhs) const
-    {
-        return rhs.residue_->getStringId() == residue_->getStringId();
-    }
-
-    inline bool operator!=(const GlycosylationSite& rhs) const
-    {
-        return residue_->getStringId() != rhs.residue_->getStringId();
-    }
-
-    inline bool operator<(const GlycosylationSite& rhs) const
-    {
-        return residue_->getStringId() < rhs.residue_->getStringId();
-    }
-
-    inline bool operator>(const GlycosylationSite& rhs) const
-    {
-        return residue_->getStringId() > rhs.residue_->getStringId();
-    }
-
   private:
     //////////////////////////////////////////////////////////
     //                  PRIVATE ACCESSOR                    //
