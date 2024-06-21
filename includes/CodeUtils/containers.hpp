@@ -15,11 +15,28 @@ namespace codeUtils
         return std::find(vector.begin(), vector.end(), element) != vector.end();
     }
 
+    template<class T> std::vector<T> withoutNth(size_t n, std::vector<T> vec)
+    {
+        vec.erase(vec.begin() + n);
+        return vec;
+    }
+
     template<class T> std::vector<T> vectorAppend(const std::vector<T> vecA, const std::vector<T> vecB)
     {
         std::vector<T> result;
         result.insert(result.end(), vecA.begin(), vecA.end());
         result.insert(result.end(), vecB.begin(), vecB.end());
+        return result;
+    }
+
+    template<class T> std::vector<T*> pointerVector(std::vector<T>& vec)
+    {
+        std::vector<T*> result;
+        result.reserve(vec.size());
+        for (auto& a : vec)
+        {
+            result.push_back(&a);
+        }
         return result;
     }
 
