@@ -23,3 +23,5 @@ lib/
 .cproject
 .project
 .settings/
+.vscode/
+.cache/
