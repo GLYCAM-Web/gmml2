@@ -392,7 +392,8 @@ void ResidueLinkage::SetDefaultShapeUsingMetadata()
 {
     for (auto& entry : rotatableDihedrals_)
     {
-        entry.SetSpecificAngleEntryUsingMetadata(false, 0); // Default is first entry
+        auto angle = entry.SpecificAngleEntryUsingMetadata(false, 0); // Default is first entry
+        entry.SetDihedralAngle(angle);
     }
 }
 
@@ -402,7 +403,8 @@ void ResidueLinkage::SetRandomShapeUsingMetadata()
     {
         for (auto& entry : rotatableDihedrals_)
         {
-            entry.SetRandomAngleEntryUsingMetadata();
+            auto angle = entry.RandomAngleEntryUsingMetadata();
+            entry.SetDihedralAngle(angle);
         }
     }
     else if (rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("conformer") == 0)
@@ -412,7 +414,8 @@ void ResidueLinkage::SetRandomShapeUsingMetadata()
         int randomlySelectedConformerNumber = distr(rng);
         for (auto& entry : rotatableDihedrals_)
         {
-            entry.SetSpecificAngleEntryUsingMetadata(true, randomlySelectedConformerNumber);
+            auto angle = entry.SpecificAngleEntryUsingMetadata(true, randomlySelectedConformerNumber);
+            entry.SetDihedralAngle(angle);
         }
     }
 }
@@ -421,7 +424,8 @@ void ResidueLinkage::SetSpecificShapeUsingMetadata(int shapeNumber)
 {
     for (auto& entry : rotatableDihedrals_)
     {
-        entry.SetSpecificAngleEntryUsingMetadata(false, shapeNumber);
+        auto angle = entry.SpecificAngleEntryUsingMetadata(false, shapeNumber);
+        entry.SetDihedralAngle(angle);
     }
 }
 
@@ -443,10 +447,9 @@ void ResidueLinkage::SetSpecificShape(std::string dihedralName, std::string sele
 
 void ResidueLinkage::SetShapeToPrevious()
 {
-    for (typename std::vector<RotatableDihedral>::iterator RotatableDihedral = rotatableDihedrals_.begin();
-         RotatableDihedral != rotatableDihedrals_.end(); ++RotatableDihedral)
+    for (auto& dihedral : rotatableDihedrals_)
     {
-        RotatableDihedral->SetDihedralAngleToPrevious();
+        dihedral.SetDihedralAngle(dihedral.GetPreviousState());
     }
     return;
 }

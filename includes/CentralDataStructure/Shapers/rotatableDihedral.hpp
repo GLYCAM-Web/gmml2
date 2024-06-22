@@ -67,6 +67,11 @@ namespace cds
             return currentMetadata_;
         }
 
+        inline AngleWithMetadata GetPreviousState() const
+        {
+            return previousState_;
+        }
+
         DihedralAngleDataVector GetLikelyMetadata() const;
         int GetNumberOfRotamers(bool likelyShapesOnly = false) const;
         std::string GetName() const;
@@ -78,10 +83,9 @@ namespace cds
                                        // dihedral is rotated.
         void
         SetDihedralAngle(AngleWithMetadata angle); // Sets the dihedral angle by rotating the bond between atom2 and
-        void SetDihedralAngleToPrevious();         // Sets the dihedral to previous dihedral angle
 
-        void SetRandomAngleEntryUsingMetadata();
-        void SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
+        AngleWithMetadata RandomAngleEntryUsingMetadata();
+        AngleWithMetadata SpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
         bool SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
         AngleOverlap WiggleWithinCurrentRotamer(std::vector<cds::Atom*>& overlapAtomSet1,
                                                 std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
@@ -94,29 +98,14 @@ namespace cds
 
       private:
         //////////////////////////////////////////////////////////
-        //                  PRIVATE ACCESSORS                   //
-        //////////////////////////////////////////////////////////
-        inline AngleWithMetadata GetPreviousState() const
-        {
-            return previousState_;
-        }
-
-        //////////////////////////////////////////////////////////
-        //                  PRIVATE MUTATORS                    //
-        //////////////////////////////////////////////////////////
-        void SetAtomsThatMove(std::vector<cds::Atom*>& atoms);
-        double RandomizeDihedralAngleWithinMetadataRange(
-            const DihedralAngleData* entry); // Randomly sets dihedral angle to a value allowed by the metadata
-
-        //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
         //////////////////////////////////////////////////////////
 
         std::array<Coordinate*, 4> dihedralCoordinates() const;
 
-        inline void RecordPreviousState(double d, const DihedralAngleData* metadata)
+        inline void RecordPreviousState(AngleWithMetadata angle)
         {
-            previousState_ = {d, metadata};
+            previousState_ = angle;
         }
 
         inline void SetCurrentMetaData(const DihedralAngleData* d)

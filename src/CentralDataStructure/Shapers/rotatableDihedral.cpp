@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
 #include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
@@ -28,6 +29,14 @@ namespace
     {
         double defaultAngle = metadata.default_angle_value_;
         return {defaultAngle - metadata.lower_deviation_, defaultAngle + metadata.upper_deviation_};
+    }
+
+    cds::AngleWithMetadata randomDihedralAngleWithinMetadataRange(const DihedralAngleData* entry)
+    {
+        Bounds bounds = angleBounds(*entry);
+        std::uniform_real_distribution<> angle_distribution(bounds.lower, bounds.upper); // define the range
+        double random_angle = angle_distribution(rng);
+        return {random_angle, entry};
     }
 
     std::vector<double> wiggleAngles(Bounds bounds, int approximateIncrement)
@@ -268,17 +277,7 @@ double RotatableDihedral::CalculateDihedralAngle() const
 
 int RotatableDihedral::GetNumberOfRotamers(bool likelyShapesOnly) const
 {
-    int count = 0;
-    for (auto& entry : this->GetMetadata())
-    {
-        if ((entry.weight_ < 0.01) && (likelyShapesOnly)) // I'm hardcoding it, I don't care.
-        {}                                                // Do nought.
-        else
-        {
-            count++;
-        }
-    }
-    return count;
+    return likelyShapesOnly ? GetLikelyMetadata().size() : GetMetadata().size();
 }
 
 DihedralAngleDataVector RotatableDihedral::GetLikelyMetadata() const
@@ -315,16 +314,7 @@ void RotatableDihedral::DetermineAtomsThatMove()
     atoms_that_move.push_back(atoms_[2]);
     cdsSelections::FindConnectedAtoms(atoms_that_move, atoms_[1]);
     atoms_that_move.erase(atoms_that_move.begin());
-    this->SetAtomsThatMove(atoms_that_move);
-}
-
-void RotatableDihedral::SetAtomsThatMove(std::vector<cds::Atom*>& atoms)
-{
-    coordinatesThatMove_.clear();
-    for (auto& atom : atoms)
-    {
-        coordinatesThatMove_.push_back(atom->getCoordinate());
-    }
+    coordinatesThatMove_ = getCoordinatesFromAtoms(atoms_that_move);
 }
 
 std::array<Coordinate*, 4> RotatableDihedral::dihedralCoordinates() const
@@ -335,45 +325,22 @@ std::array<Coordinate*, 4> RotatableDihedral::dihedralCoordinates() const
 
 void RotatableDihedral::SetDihedralAngle(AngleWithMetadata angle)
 {
-    this->RecordPreviousState(this->CalculateDihedralAngle(), this->GetCurrentMetaData());
+    this->RecordPreviousState({CalculateDihedralAngle(), GetCurrentMetaData()});
     auto matrix = cds::dihedralToMatrix(dihedralCoordinates(), angle.value);
     matrix.rotateCoordinates(this->GetCoordinatesThatMove());
     this->SetCurrentMetaData(angle.metadata);
 }
 
-void RotatableDihedral::SetDihedralAngleToPrevious()
-{
-    auto previous = this->GetPreviousState();
-    this->SetDihedralAngle(previous);
-}
-
-double RotatableDihedral::RandomizeDihedralAngleWithinMetadataRange(const DihedralAngleData* entry)
-{
-    Bounds bounds = angleBounds(*entry);
-    std::uniform_real_distribution<> angle_distribution(bounds.lower, bounds.upper); // define the range
-    double random_angle = angle_distribution(rng);
-    /*******************************************/
-    /*               IMPORTANT                 */
-    /*******************************************/
-
-    this->SetDihedralAngle({random_angle, entry}); // THIS IS IMPORTANT!!! THIS SHOULD BE SEPARATED?!?! The two other
-                                                   // functions call this one. Seems fragile.
-
-    /*******************************************/
-    /*               IMPORTANT                 */
-    /*******************************************/
-    return random_angle;
-}
-
-void RotatableDihedral::SetRandomAngleEntryUsingMetadata()
+cds::AngleWithMetadata RotatableDihedral::RandomAngleEntryUsingMetadata()
 {
     // first randomly pick one of the meta data entries. If there is only one entry, it will randomly always be it.
     std::uniform_int_distribution<> distr(0, (assigned_metadata_.size() - 1)); // define the range
     DihedralAngleData* entry = &assigned_metadata_.at(distr(rng));
-    this->RandomizeDihedralAngleWithinMetadataRange(entry);
+    return randomDihedralAngleWithinMetadataRange(entry);
 }
 
-void RotatableDihedral::SetSpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber)
+cds::AngleWithMetadata RotatableDihedral::SpecificAngleEntryUsingMetadata(bool useRanges,
+                                                                          long unsigned int angleEntryNumber)
 {
     if (assigned_metadata_.size() <= angleEntryNumber)
     {
@@ -383,18 +350,9 @@ void RotatableDihedral::SetSpecificAngleEntryUsingMetadata(bool useRanges, long 
         gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
         throw std::runtime_error(ss.str());
     }
-    else
-    {
-        DihedralAngleData* entry = &assigned_metadata_.at(angleEntryNumber);
-        if (useRanges)
-        {
-            this->RandomizeDihedralAngleWithinMetadataRange(entry);
-        }
-        else
-        {
-            this->SetDihedralAngle({entry->default_angle_value_, entry});
-        }
-    }
+    DihedralAngleData* entry = &assigned_metadata_.at(angleEntryNumber);
+    return useRanges ? randomDihedralAngleWithinMetadataRange(entry)
+                     : AngleWithMetadata {entry->default_angle_value_, entry};
 }
 
 bool RotatableDihedral::SetSpecificShape(std::string dihedralName, std::string selectedRotamer)
