@@ -71,7 +71,7 @@ namespace glygraph
 
     template<class T>
     inline Edge<T>::Edge(std::string name_t, T* const& sourceNode_t, T* const& targetNode_t)
-        : GenericGraphObject(name_t)
+        : GenericGraphObject(name_t, {name_t}, ConnectivityType::UNKNOWN)
     {
         this->targetNode_m = targetNode_t;
         this->sourceNode_m = sourceNode_t;
@@ -80,7 +80,7 @@ namespace glygraph
     template<class T>
     inline Edge<T>::Edge(std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t,
                          T* const& targetNode_t)
-        : GenericGraphObject(name_t, labels_t)
+        : GenericGraphObject(name_t, labels_t, ConnectivityType::UNKNOWN)
     {
         this->targetNode_m = targetNode_t;
         this->sourceNode_m = sourceNode_t;

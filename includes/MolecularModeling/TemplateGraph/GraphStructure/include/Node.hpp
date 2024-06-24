@@ -153,16 +153,16 @@ namespace glygraph
         friend class Edge<T>;
     };
 
-    template<class T> inline Node<T>::Node() : GenericGraphObject("INVALID NODE") {};
+    template<class T> inline Node<T>::Node() : GenericGraphObject("INVALID NODE", {}) {};
 
-    template<class T> inline Node<T>::Node(std::string name_t) : GenericGraphObject(name_t)
+    template<class T> inline Node<T>::Node(std::string name_t) : GenericGraphObject(name_t, {name_t})
     {
         // lazyInfo(__LINE__, __func__,
         //		"Created node with name <" + this->getName() + ">");
     }
 
     template<class T>
-    inline Node<T>::Node(std::string name_t, std::string label_t) : GenericGraphObject(name_t, label_t)
+    inline Node<T>::Node(std::string name_t, std::string label_t) : GenericGraphObject(name_t, {label_t})
     {
         // lazyInfo(__LINE__, __func__,
         //		"Created node with name <" + this->getName()
