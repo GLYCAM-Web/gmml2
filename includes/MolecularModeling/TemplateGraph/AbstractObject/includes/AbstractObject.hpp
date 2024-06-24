@@ -26,45 +26,9 @@ namespace abstrab
         inline AbstractObject(std::string name, std::string label) : Labels(name, label), Index()
         {}
 
-        inline AbstractObject(std::string name, unsigned int index) : Labels(name), Index(index)
-        {}
-
         inline AbstractObject(std::string name, std::vector<std::string> labels) : Labels(name, labels), Index()
         {}
-
-        // copy constructor
-        inline AbstractObject(const AbstractObject& rhs) : Labels(rhs.getName(), rhs.getLabels()), Index(rhs.getIndex())
-        {}
-
-        // move constructor
-        inline AbstractObject(AbstractObject&& rhs) : Labels(rhs.getName(), rhs.getLabels()), Index(rhs.getIndex())
-        {}
-
-        // copy assignment
-        inline AbstractObject& operator=(const AbstractObject& rhs)
-        {
-            return *this = AbstractObject(rhs);
-        }
-
-        // move assignment
-        inline AbstractObject& operator=(AbstractObject&& rhs)
-        {
-            this->setName(rhs.getName());
-            this->setLabels(rhs.getLabels());
-            this->setIndex(rhs.getIndex());
-            return *this;
-        }
-
-        virtual ~AbstractObject();
-
-      private:
-        /************************************************
-         *  ATTRIBUTES
-         ***********************************************/
     };
-
-    inline AbstractObject::~AbstractObject()
-    {}
 
 } // namespace abstrab
 #endif // ABSTRACT_OBJECT_HPP

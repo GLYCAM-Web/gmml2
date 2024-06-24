@@ -28,33 +28,6 @@ namespace abstrab
         inline Labels(std::string name_t, std::vector<std::string> labels_t) : name_m(name_t), labels_m(labels_t)
         {}
 
-        inline ~Labels()
-        {}
-
-        // copy constructor
-        inline Labels(const Labels& rhs) : name_m(rhs.name_m), labels_m(rhs.labels_m)
-        {}
-
-        // move constructor
-        inline Labels(Labels&& rhs) : name_m(rhs.name_m), labels_m(rhs.labels_m)
-        {}
-
-        // copy assignment
-        inline Labels& operator=(const Labels& rhs)
-        {
-            // this->name_m = rhs.name_m;
-            // this->labels_m = rhs.labels_m;
-            return *this = Labels(rhs);
-        }
-
-        // move assignment
-        Labels& operator=(Labels&& rhs)
-        {
-            this->name_m   = rhs.name_m;
-            this->labels_m = rhs.labels_m;
-            return *this;
-        }
-
         /************************************************
          *  GETTER/SETTER
          ***********************************************/
