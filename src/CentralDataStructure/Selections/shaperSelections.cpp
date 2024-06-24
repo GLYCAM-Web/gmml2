@@ -78,7 +78,7 @@ bool cdsSelections::FindCyclePoint(cds::Atom* previous_atom, cds::Residue* resid
     if (current_atom->getElement() != "H")
     {
         // Need this to explore everything. It will find same cycle point more than once, but that doesn't matter.
-        current_atom->setLabels("VisitedByFindCyclePoint");
+        current_atom->setLabels({"VisitedByFindCyclePoint"});
         //   std::cout << "Checking neighbors of " << current_atom->getName() << "\n";
         //   std::cout << "Found cycle points is currently: " << std::boolalpha << *found_cycle_point << std::endl;
         atom_path->push_back(current_atom);
@@ -139,7 +139,7 @@ bool cdsSelections::FindPathBetweenTwoAtoms(cds::Atom* current_atom, cds::Residu
                                             std::vector<cds::Atom*>* atom_path, bool* found)
 {
     // atom_path->push_back(current_atom);
-    current_atom->setLabels("VistedByFindPathBetweenTwoAtoms");
+    current_atom->setLabels({"VistedByFindPathBetweenTwoAtoms"});
     std::vector<cds::Atom*> neighbors = current_atom->getNeighbors();
     for (std::vector<cds::Atom*>::iterator it1 = neighbors.begin(); it1 != neighbors.end(); ++it1)
     {
@@ -176,7 +176,7 @@ void cdsSelections::FindAtomsConnectingResidues(cds::Atom* current_atom, const c
                                                 const cds::Residue* otherResidue,
                                                 std::vector<cds::Atom*>* connecting_atoms, bool* found_neighbor)
 {
-    current_atom->setLabels("VisitedByFindAtomsConnectingResidues");
+    current_atom->setLabels({"VisitedByFindAtomsConnectingResidues"});
     // std::cout << "Checking neighbors of " << current_atom->getName() << " in " << currentResidue->getId() << "\n";
     for (auto& neighbor : current_atom->getNeighbors())
     {
@@ -305,7 +305,7 @@ void cdsSelections::FindEndsOfBranchesFromLinkageAtom(cds::Atom* currentAtom, cd
                                                       cds::Residue* residue, Branch* branch)
 {
     branch->ChangeDepth(1);
-    currentAtom->setLabels("VistedByFindEndsOfBranchesFromLinkageAtom");
+    currentAtom->setLabels({"VistedByFindEndsOfBranchesFromLinkageAtom"});
     bool deadEndAtom              = true;
     bool connectsToAnotherResidue = false;
     for (auto& neighbor : currentAtom->getNeighbors())

@@ -1,6 +1,7 @@
 #ifndef ABSTRACTOBJECT_INCLUDES_LABELS_HPP
 #define ABSTRACTOBJECT_INCLUDES_LABELS_HPP
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -13,7 +14,8 @@ namespace abstrab
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        inline Labels(std::string name_t, std::vector<std::string> labels_t) : name_m(name_t), labels_m(labels_t)
+        inline Labels(const std::string name_t, const std::vector<std::string> labels_t)
+            : name_m(name_t), labels_m(labels_t)
         {}
 
         /************************************************
@@ -21,55 +23,41 @@ namespace abstrab
          ***********************************************/
         inline std::string getName() const
         {
-            return this->name_m;
+            return name_m;
         }
 
         inline std::string getLabel() const
         {
-            if (this->labels_m.empty())
-            {
-                return "";
-            }
-            return this->labels_m.back();
+            return labels_m.empty() ? "" : labels_m.back();
         }
 
         inline std::vector<std::string> getLabels() const
         {
-            return this->labels_m;
-        }
-
-        inline void setName(std::string name_t)
-        {
-            this->name_m = name_t;
-        }
-
-        inline void setLabels(std::string label_t)
-        {
-            this->labels_m.clear();
-            this->addLabel(label_t);
-        }
-
-        inline void setLabels(std::vector<std::string> labels_t)
-        {
-            this->labels_m = labels_t;
-        }
-
-        inline void clearLabels()
-        {
-            this->labels_m.clear();
+            return labels_m;
         }
 
         /************************************************
          *  MUTATORS
          ***********************************************/
-        inline void addLabel(std::string label_t)
+
+        inline void setName(std::string name_t)
         {
-            this->labels_m.push_back(label_t);
+            name_m = name_t;
         }
 
-        inline void addLabels(std::vector<std::string> labels)
+        inline void clearLabels()
         {
-            this->labels_m.insert(this->labels_m.end(), labels.begin(), labels.end());
+            labels_m.clear();
+        }
+
+        inline void setLabels(std::vector<std::string> labels_t)
+        {
+            labels_m = labels_t;
+        }
+
+        inline void addLabel(std::string label_t)
+        {
+            labels_m.push_back(label_t);
         }
 
         /************************************************
@@ -77,15 +65,7 @@ namespace abstrab
          ***********************************************/
         inline bool containsLabel(const std::string query) const
         {
-            for (std::string currLabel : this->labels_m)
-            {
-                // TODO: Why was regex used in your version?
-                if (currLabel == query)
-                {
-                    return true;
-                }
-            }
-            return false;
+            return std::find(labels_m.begin(), labels_m.end(), query) != labels_m.end();
         }
 
       private:
