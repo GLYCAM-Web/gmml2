@@ -72,14 +72,11 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
 void Carbohydrate::deleteResidue(cds::Residue* byeBye)
-{ // ToDo Have to do this because ResidueLInkages are not Edges!!! Oliver just make them Edges already.
-    auto removedEnd =
-        std::remove_if(glycosidicLinkages_.begin(), glycosidicLinkages_.end(),
-                       [&](auto& linkage)
-                       {
-                           return (linkage.GetFromThisResidue1() == byeBye || linkage.GetToThisResidue2() == byeBye);
-                       });
-    glycosidicLinkages_.erase(removedEnd, glycosidicLinkages_.end());
+{
+    if (!glycosidicLinkages_.empty())
+    {
+        throw std::runtime_error("linkages should not have been created at this point");
+    }
     cds::Molecule::deleteResidue(byeBye);
 }
 
