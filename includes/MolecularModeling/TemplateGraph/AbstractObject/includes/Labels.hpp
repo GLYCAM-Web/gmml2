@@ -13,18 +13,6 @@ namespace abstrab
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        inline Labels() : name_m(""), labels_m({""})
-        {}
-
-        inline Labels(std::string name_t) : name_m(name_t), labels_m({name_t})
-        {}
-
-        inline Labels(std::vector<std::string> labels_t) : name_m(""), labels_m(labels_t)
-        {}
-
-        inline Labels(std::string name_t, std::string label_t) : name_m(name_t), labels_m({label_t})
-        {}
-
         inline Labels(std::string name_t, std::vector<std::string> labels_t) : name_m(name_t), labels_m(labels_t)
         {}
 

@@ -60,11 +60,11 @@ namespace glygraph
 
       public:
         // constructor
-        inline GenericGraphObject(const std::string name_t) : abstrab::AbstractObject(name_t)
+        inline GenericGraphObject(const std::string name_t) : abstrab::AbstractObject(name_t, {name_t})
         {}
 
         inline GenericGraphObject(const std::string name_t, const std::string label_t)
-            : abstrab::AbstractObject(name_t, label_t)
+            : abstrab::AbstractObject(name_t, {label_t})
         {}
 
         inline GenericGraphObject(const std::string name_t, const std::vector<std::string> labels_t)

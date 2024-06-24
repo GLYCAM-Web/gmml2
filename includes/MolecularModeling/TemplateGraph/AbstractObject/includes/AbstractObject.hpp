@@ -19,13 +19,6 @@ namespace abstrab
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-
-        inline AbstractObject(std::string name) : Labels(name), Index()
-        {}
-
-        inline AbstractObject(std::string name, std::string label) : Labels(name, label), Index()
-        {}
-
         inline AbstractObject(std::string name, std::vector<std::string> labels) : Labels(name, labels), Index()
         {}
     };
