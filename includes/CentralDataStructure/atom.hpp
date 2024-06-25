@@ -28,7 +28,6 @@ namespace cds
         friend void swap(Atom& lhs, Atom& rhs) noexcept
         {
             using std::swap;
-            swap(static_cast<glygraph::Node<cds::Atom>&>(lhs), static_cast<glygraph::Node<cds::Atom>&>(rhs));
             swap(lhs.currentCoordinate_, rhs.currentCoordinate_);
             swap(lhs.allCoordinates_, rhs.allCoordinates_);
             swap(lhs.charge_, rhs.charge_);

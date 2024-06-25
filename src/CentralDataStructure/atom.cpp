@@ -21,7 +21,7 @@ Atom::Atom(const std::string name, const Coordinate& coord)
 }
 
 // Move Ctor
-Atom::Atom(Atom&& other) noexcept : Atom()
+Atom::Atom(Atom&& other) noexcept : Node<Atom>(other)
 {
     swap(*this, other);
 }
@@ -43,6 +43,7 @@ Atom::Atom(const Atom& other) noexcept
 // Move and Copy assignment operator
 Atom& Atom::operator=(Atom other) noexcept
 {
+    this->Node<Atom>::operator=(other);
     swap(*this, other);
     currentCoordinate_ = allCoordinates_.at(0).get();
     return *this;

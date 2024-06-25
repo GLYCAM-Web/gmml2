@@ -23,7 +23,7 @@ Residue::Residue(const std::string& residueName, const Residue* referenceResidue
 }
 
 // Move Ctor.
-Residue::Residue(Residue&& other) noexcept : Residue()
+Residue::Residue(Residue&& other) noexcept : Node<Residue>(other)
 {
     swap(*this, other);
 }
@@ -59,6 +59,7 @@ Residue::Residue(const Residue& other)
 
 Residue& Residue::operator=(Residue other)
 {
+    this->Node<Residue>::operator=(other);
     swap(*this, other);
     return *this;
 }
