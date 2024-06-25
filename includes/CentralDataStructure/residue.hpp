@@ -32,8 +32,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Residue()
-        {} //{std::cout << "Residue default ctor\n";}
+        Residue() : Node<Residue>(glygraph::invalid, {}) {};
 
         Residue(const std::string& residueName, const Residue* referenceResidue);
         Residue(Residue&& other) noexcept; // Move Ctor

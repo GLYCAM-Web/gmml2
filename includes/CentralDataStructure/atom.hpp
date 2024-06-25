@@ -18,7 +18,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
-        Atom()          = default;
+        Atom() : Node<Atom>(glygraph::invalid, {}) {};
         virtual ~Atom() = default;
         Atom(const std::string name, const Coordinate& coord);
         Atom(Atom&& other) noexcept;               // Move Ctor

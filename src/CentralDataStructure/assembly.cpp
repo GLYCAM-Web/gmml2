@@ -14,7 +14,7 @@ using cds::Residue;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTORS                   //
 //////////////////////////////////////////////////////////
-Assembly::Assembly(std::vector<Residue*>& residues)
+Assembly::Assembly(std::vector<Residue*>& residues) : Node<Assembly>(glygraph::invalid, {})
 {
     this->addMolecule(std::make_unique<Molecule>(residues));
 }

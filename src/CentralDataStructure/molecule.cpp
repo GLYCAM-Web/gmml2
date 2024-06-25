@@ -13,10 +13,10 @@ using cds::Residue;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTORS                   //
 //////////////////////////////////////////////////////////
-Molecule::Molecule(const std::string chainID) : number_(0), chainId_(chainID)
+Molecule::Molecule(const std::string chainID) : Node<Molecule>(glygraph::invalid, {}), number_(0), chainId_(chainID)
 {}
 
-Molecule::Molecule(std::vector<Residue*>& residues) : number_(0)
+Molecule::Molecule(std::vector<Residue*>& residues) : Node<Molecule>(glygraph::invalid, {}), number_(0)
 {
     for (auto& residue : residues)
     {

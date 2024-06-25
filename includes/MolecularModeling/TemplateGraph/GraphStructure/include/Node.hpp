@@ -11,14 +11,14 @@
 
 namespace glygraph
 {
+    const std::string invalid = "INVALID NODE";
+
     template<class T> class Node : public GenericGraphObject
     {
       public:
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        Node();
-        Node(std::string name_t);
         Node(std::string name_t, std::string label_t);
 
         // copy constructor
@@ -152,14 +152,6 @@ namespace glygraph
 
         friend class Edge<T>;
     };
-
-    template<class T> inline Node<T>::Node() : GenericGraphObject("INVALID NODE", {}) {};
-
-    template<class T> inline Node<T>::Node(std::string name_t) : GenericGraphObject(name_t, {name_t})
-    {
-        // lazyInfo(__LINE__, __func__,
-        //		"Created node with name <" + this->getName() + ">");
-    }
 
     template<class T>
     inline Node<T>::Node(std::string name_t, std::string label_t) : GenericGraphObject(name_t, {label_t})
@@ -305,7 +297,7 @@ namespace glygraph
         else
         {
             auto& edge = this->outEdges_m.emplace_back(
-                std::unique_ptr<Edge<T>>(new Edge<T>(edgeName_t, this->getDeriviedClass(), childNode_t)));
+                std::unique_ptr<Edge<T>>(new Edge<T>(edgeName_t, {edgeName_t}, this->getDeriviedClass(), childNode_t)));
             childNode_t->inEdges_m.push_back(edge.get());
         }
     }

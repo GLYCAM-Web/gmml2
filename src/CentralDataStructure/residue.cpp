@@ -15,7 +15,7 @@ using cds::Residue;
 //////////////////////////////////////////////////////////
 //                    CONSTRUCTOR                       //
 //////////////////////////////////////////////////////////
-Residue::Residue(const std::string& residueName, const Residue* referenceResidue)
+Residue::Residue(const std::string& residueName, const Residue* referenceResidue) : Node<Residue>(glygraph::invalid, {})
 {
     this->setName(residueName);
     this->setNumber(referenceResidue->getNumber() + 1);

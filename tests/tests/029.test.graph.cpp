@@ -41,7 +41,7 @@ class Atom : public Node<Atom>
     }
 
     // move constructor
-    inline Atom(Atom&& rhs)
+    inline Atom(Atom&& rhs) : Node(rhs)
     {
         lazyInfo(__LINE__, __func__, "Calling atom move constructor");
     }

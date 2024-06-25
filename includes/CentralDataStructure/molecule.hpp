@@ -15,10 +15,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Molecule() : number_(0)
-        {
-            this->setName("cdsMoleculeDefault");
-        } // std::cout << "Molecule default ctor\n";}
+        Molecule() : Node<Molecule>("cdsMoleculeDefault", {}), number_(0) {};
 
         Molecule(std::vector<Residue*>& residues);
         Molecule(const std::string chainId);

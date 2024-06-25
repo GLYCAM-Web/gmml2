@@ -13,10 +13,9 @@ using cds::Atom;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTORS                   //
 //////////////////////////////////////////////////////////
-Atom::Atom(const std::string name, const Coordinate& coord)
+Atom::Atom(const std::string name, const Coordinate& coord) : Node<Atom>(name, {})
 {
     this->setCoordinate(coord);
-    this->setName(name);
     this->setNumber(1); // Seems like a fine default?
 }
 

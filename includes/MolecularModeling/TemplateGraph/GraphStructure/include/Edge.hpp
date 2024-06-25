@@ -14,8 +14,6 @@ namespace glygraph
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        Edge();
-        Edge(std::string name_t, T* const& sourceNode_t, T* const& targetNode_t);
         Edge(std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t, T* const& targetNode_t);
 
         // copy constructor
@@ -61,21 +59,6 @@ namespace glygraph
         // NOTE: Sink node = the node that has a raw pointer to this edge
         T* targetNode_m;
     };
-
-    template<class T> inline Edge<T>::Edge()
-    {
-        // badBehavior(__LINE__, __func__, "Warning calling default constructor");
-        this->targetNode_m = nullptr;
-        this->sourceNode_m = nullptr;
-    }
-
-    template<class T>
-    inline Edge<T>::Edge(std::string name_t, T* const& sourceNode_t, T* const& targetNode_t)
-        : GenericGraphObject(name_t, {name_t}, ConnectivityType::UNKNOWN)
-    {
-        this->targetNode_m = targetNode_t;
-        this->sourceNode_m = sourceNode_t;
-    }
 
     template<class T>
     inline Edge<T>::Edge(std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t,

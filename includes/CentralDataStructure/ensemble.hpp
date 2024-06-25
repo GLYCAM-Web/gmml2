@@ -15,8 +15,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Ensemble()
-        {}
+        Ensemble() : Node<Ensemble>(glygraph::invalid, {}) {};
 
         Ensemble(Ensemble&& other) noexcept; // Move Ctor
         Ensemble(const Ensemble& other);     // Copy Ctor

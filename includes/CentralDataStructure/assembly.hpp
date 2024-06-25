@@ -16,8 +16,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Assembly()
-        {}
+        Assembly() : Node<Assembly>(glygraph::invalid, {}) {};
 
         Assembly(std::vector<Residue*>& residues);
         Assembly(Assembly&& other) noexcept; // Move Ctor
