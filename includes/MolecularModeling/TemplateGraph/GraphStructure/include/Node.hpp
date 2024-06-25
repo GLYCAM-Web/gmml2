@@ -304,11 +304,9 @@ namespace glygraph
         }
         else
         {
-            std::unique_ptr<Edge<T>> tempEdge(new Edge<T>(edgeName_t, this->getDeriviedClass(), childNode_t));
-
-            childNode_t->inEdges_m.push_back(tempEdge.get());
-
-            this->outEdges_m.push_back(std::move(tempEdge));
+            auto& edge = this->outEdges_m.emplace_back(
+                std::unique_ptr<Edge<T>>(new Edge<T>(edgeName_t, this->getDeriviedClass(), childNode_t)));
+            childNode_t->inEdges_m.push_back(edge.get());
         }
     }
 
