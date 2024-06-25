@@ -19,7 +19,7 @@ namespace glygraph
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        Node(std::string name_t, std::string label_t);
+        Node(std::string name_t, std::vector<std::string> labels_t);
 
         // copy constructor
         // Node(const Node<T> &rhs);
@@ -154,7 +154,8 @@ namespace glygraph
     };
 
     template<class T>
-    inline Node<T>::Node(std::string name_t, std::string label_t) : GenericGraphObject(name_t, {label_t})
+    inline Node<T>::Node(std::string name_t, std::vector<std::string> labels_t)
+        : GenericGraphObject(name_t, labels_t, glygraph::ConnectivityType::UNKNOWN)
     {
         // lazyInfo(__LINE__, __func__,
         //		"Created node with name <" + this->getName()
@@ -206,8 +207,7 @@ namespace glygraph
     // move constructor
     template<class T>
     inline Node<T>::Node(Node<T>&& rhs)
-        : GenericGraphObject(rhs.getName(), rhs.getLabels(), rhs.getConnectivityTypeIdentifier()),
-          outEdges_m(std::move(rhs.outEdges_m)), inEdges_m(std::move(rhs.inEdges_m))
+        : GenericGraphObject(rhs), outEdges_m(std::move(rhs.outEdges_m)), inEdges_m(std::move(rhs.inEdges_m))
     {
         // lazyInfo(__LINE__, __func__, "Calling node move constructor");
         this->edgeConnectionUpdate();

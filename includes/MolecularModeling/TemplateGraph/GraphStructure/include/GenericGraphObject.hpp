@@ -61,7 +61,7 @@ namespace glygraph
       public:
         // constructor
         inline GenericGraphObject(const std::string name_t, const std::vector<std::string> labels_t,
-                                  ConnectivityType connType_t = ConnectivityType::UNKNOWN)
+                                  ConnectivityType connType_t)
             : abstrab::AbstractObject(name_t, labels_t), connTypeIdentifier_m(connType_t)
         {}
 

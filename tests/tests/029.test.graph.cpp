@@ -21,7 +21,7 @@ using namespace glygraph;
 class Atom : public Node<Atom>
 {
   public:
-    inline Atom(std::string inName) : Node(inName) //, atomNodePtr_(std::shared_ptr<Atom>(this))
+    inline Atom(std::string inName) : Node(inName, {inName}) //, atomNodePtr_(std::shared_ptr<Atom>(this))
     {}
 
     virtual ~Atom()

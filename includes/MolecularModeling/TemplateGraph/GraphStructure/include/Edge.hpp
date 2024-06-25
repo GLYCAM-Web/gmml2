@@ -84,8 +84,7 @@ namespace glygraph
     // copy constructor
     template<class T>
     inline Edge<T>::Edge(const Edge<T>& rhs)
-        : GenericGraphObject(rhs.getName(), rhs.getLabels(), rhs.getConnectivityTypeIdentifier()),
-          sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
+        : GenericGraphObject(rhs), sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
     {
         // lazyInfo(__LINE__, __func__,
         //		"Calling copy constructor on " + this->getName());
@@ -94,8 +93,7 @@ namespace glygraph
     // move constructor
     template<class T>
     inline Edge<T>::Edge(Edge<T>&& rhs)
-        : GenericGraphObject(rhs.getName(), rhs.getLabels(), rhs.getConnectivityTypeIdentifier()),
-          sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
+        : GenericGraphObject(rhs), sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
     {
         // wanted data has been yoinked so we go ahead and delete this edge that we dont care about
         //	anymore. As stated in move assignment we dont care what state we leave our rhs in after a move
