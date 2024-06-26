@@ -7,18 +7,32 @@
 namespace
 {
     unsigned int coordinateOverlaps(const std::vector<cds::Coordinate>& coordsA,
-                                    const std::vector<cds::Coordinate>& coordsB, const std::pair<size_t, size_t> rangeA,
-                                    const std::pair<size_t, size_t> rangeB)
+                                    const std::vector<cds::Coordinate>& coordsB)
     {
         unsigned int count = 0;
-        for (size_t n = rangeA.first; n < rangeA.second; n++)
+        for (auto& a : coordsA)
         {
-            for (size_t k = rangeB.first; k < rangeB.second; k++)
+            for (auto& b : coordsB)
             {
-                count += cds::withinDistance(constants::maxCutOff, coordsA[n], coordsB[k]);
+                count += cds::withinDistance(constants::maxCutOff, a, b);
             }
         }
         return count;
+    }
+
+    void insertCoordinatesWithinDistance(std::vector<cds::Coordinate>& result, double distance,
+                                         const cds::Coordinate& pt, const std::vector<cds::Coordinate>& coords,
+                                         const std::pair<size_t, size_t>& range)
+    {
+        result.clear();
+        for (size_t n = range.first; n < range.second; n++)
+        {
+            auto& a = coords[n];
+            if (cds::withinDistance(distance, pt, a))
+            {
+                result.push_back(a);
+            }
+        }
     }
 } // namespace
 
@@ -69,16 +83,24 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, c
 unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
                                         const ResidueAtomOverlapInputReference& moving)
 {
+    std::vector<Coordinate> coordsA;
+    std::vector<Coordinate> coordsB;
+    double residueCutoff      = constants::residueDistanceOverlapCutoff + constants::maxCutOff;
+    double radialCutoff       = 0.5 * constants::residueDistanceOverlapCutoff + constants::maxCutOff;
     unsigned int overlapCount = 0;
     for (size_t n = 0; n < mostlyFixed.geometricCenters.size(); n++)
     {
+        auto& centerFixed = mostlyFixed.geometricCenters[n];
         for (size_t k = 0; k < moving.geometricCenters.size(); k++)
         {
-            if ((n > 0 || k > 0) && cds::withinDistance(constants::residueDistanceOverlapCutoff + constants::maxCutOff,
-                                                        mostlyFixed.geometricCenters[n], moving.geometricCenters[k]))
+            auto& centerMoving = moving.geometricCenters[k];
+            if ((n > 0 || k > 0) && cds::withinDistance(residueCutoff, centerFixed, centerMoving))
             {
-                overlapCount += coordinateOverlaps(mostlyFixed.atomCoordinates, moving.atomCoordinates,
-                                                   mostlyFixed.residueAtoms[n], moving.residueAtoms[k]);
+                insertCoordinatesWithinDistance(coordsA, radialCutoff, centerMoving, mostlyFixed.atomCoordinates,
+                                                mostlyFixed.residueAtoms[n]);
+                insertCoordinatesWithinDistance(coordsB, radialCutoff, centerFixed, moving.atomCoordinates,
+                                                moving.residueAtoms[k]);
+                overlapCount += coordinateOverlaps(coordsA, coordsB);
             }
         }
     }
