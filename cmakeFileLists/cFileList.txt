@@ -56,6 +56,7 @@
 ./src/CentralDataStructure/cdsFunctions/cdsFunctions.cpp
 ./src/CentralDataStructure/coordinate.cpp
 ./src/CentralDataStructure/ensemble.cpp
+./src/CentralDataStructure/geometry.cpp
 ./src/CentralDataStructure/molecule.cpp
 ./src/CentralDataStructure/residue.cpp
 ./src/CodeUtils/codetests.cc
