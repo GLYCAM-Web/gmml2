@@ -42,23 +42,23 @@ int main(int argc, char* argv[])
         // allTheResidues.reserve(residuesToLoadFromPrep.size() * 20);
         for (auto& residue : glycamPrepFile.getResidues())
         {
-            // std::ofstream outFileStream;
-            // std::string fileName = residue->getName() + "_original.pdb";
-            // outFileStream.open(fileName.c_str());
-            // cds::writeResidueToPdb(outFileStream, residue);
-            // outFileStream.close();
+            std::ofstream outFileStream;
+            std::string fileName = residue->getName() + "_original.pdb";
+            outFileStream.open(fileName.c_str());
+            cds::writeResidueToPdb(outFileStream, residue);
+            outFileStream.close();
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
             residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
         }
     }
-    // for (auto& combiRes : allGeneratedResidues)
-    // {
-    //     std::ofstream outFileStream;
-    //     std::string fileName = combiRes->getName() + ".pdb";
-    //     outFileStream.open(fileName.c_str());
-    //     cds::writeResidueToPdb(outFileStream, combiRes);
-    //     outFileStream.close();
-    // }
+    for (auto& combiRes : allGeneratedResidues)
+    {
+        std::ofstream outFileStream;
+        std::string fileName = combiRes->getName() + ".pdb";
+        outFileStream.open(fileName.c_str());
+        cds::writeResidueToPdb(outFileStream, combiRes);
+        outFileStream.close();
+    }
 
     // Note "CA2" was in the prep file, but Rob said delete. "Perhaps we had it before Amber did"
     // "4YP" is the same as 4YnP, which I'll generate from 0YnP anyway
