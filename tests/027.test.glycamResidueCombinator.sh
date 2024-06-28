@@ -11,7 +11,7 @@ fi
 
 g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/027.test.glycamResidueCombinator.cpp -lgmml2 -pthread -o 027.glycamResiduecombinator.exe
 outputFile=027.output.txt
-./027.glycamResiduecombinator.exe ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep tests/inputs/027.0LD.prep tests/inputs/027.0LU.prep > $outputFile
+./027.glycamResiduecombinator.exe ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep tests/inputs/027.BacterialPrep/0an_beta_final.prep tests/inputs/027.BacterialPrep/0ec_beta_final.prep tests/inputs/027.BacterialPrep/0LG_alfa_final.prep tests/inputs/027.BacterialPrep/0LU.prep tests/inputs/027.BacterialPrep/0DH_alfa_final.prep tests/inputs/027.BacterialPrep/0gf_beta_final.prep tests/inputs/027.BacterialPrep/0Lg_beta_final.prep tests/inputs/027.BacterialPrep/0mP_alfa_final.prep tests/inputs/027.BacterialPrep/0Dh_beta_final.prep tests/inputs/027.BacterialPrep/0KX_alfa_final.prep tests/inputs/027.BacterialPrep/0LH_alfa_final.prep tests/inputs/027.BacterialPrep/0mp_beta_final.prep tests/inputs/027.BacterialPrep/0eC_alfa_final.prep tests/inputs/027.BacterialPrep/0LD.prep tests/inputs/027.BacterialPrep/0Lh_beta_final.prep tests/inputs/027.BacterialPrep/0Mr_beta_final.prep > $outputFile
 file="GLYCAM_06k.lib"
 if [ ! -f "${file}" ]; then
     echo -e "Test FAILED!\n ${file} does not exist\n"
