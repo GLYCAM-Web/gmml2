@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CodeUtils/constants.hpp" // maxcutoff
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/geometry.hpp"
 
 #include <numeric>
 
@@ -20,15 +21,15 @@ namespace
         return count;
     }
 
-    void insertCoordinatesWithinDistance(std::vector<cds::Coordinate>& result, double distance,
-                                         const cds::Coordinate& pt, const std::vector<cds::Coordinate>& coords,
-                                         const std::pair<size_t, size_t>& range)
+    void insertCoordinatesWithinSphere(std::vector<cds::Coordinate>& result, cds::Sphere sphere,
+                                       const std::vector<cds::Coordinate>& coords,
+                                       const std::pair<size_t, size_t>& range)
     {
         result.clear();
         for (size_t n = range.first; n < range.second; n++)
         {
             auto& a = coords[n];
-            if (cds::withinDistance(distance, pt, a))
+            if (cds::withinSphere(sphere, a))
             {
                 result.push_back(a);
             }
@@ -55,16 +56,18 @@ cds::ResidueAtomOverlapInput cds::toOverlapInput(const std::vector<Residue*>& re
         currentAtom += res->atomCount();
         residueAtoms.push_back({startAtom, currentAtom});
     }
-    std::vector<Coordinate> geometricCenters;
-    geometricCenters.reserve(residues.size());
+    std::vector<Sphere> boundingSpheres;
+    boundingSpheres.reserve(residues.size());
+    std::vector<Coordinate> residuePoints;
     for (size_t n = 0; n < residueAtoms.size(); n++)
     {
         auto range        = residueAtoms[n];
-        Coordinate center = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
+        Coordinate accum  = std::accumulate(coordinates.begin() + range.first, coordinates.begin() + range.second,
                                             Coordinate(0.0, 0.0, 0.0));
-        geometricCenters.push_back(scaleBy(1.0 / (range.second - range.first), center));
+        Coordinate center = scaleBy(1.0 / (range.second - range.first), accum);
+        boundingSpheres.push_back(Sphere {constants::maxAtomDistanceFromResidueCenter, center});
     }
-    return {coordinates, geometricCenters, residueAtoms};
+    return {coordinates, boundingSpheres, residueAtoms};
 }
 
 unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
@@ -85,21 +88,20 @@ unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
 {
     std::vector<Coordinate> coordsA;
     std::vector<Coordinate> coordsB;
-    double residueCutoff      = constants::residueDistanceOverlapCutoff + constants::maxCutOff;
-    double radialCutoff       = 0.5 * constants::residueDistanceOverlapCutoff + constants::maxCutOff;
     unsigned int overlapCount = 0;
-    for (size_t n = 0; n < mostlyFixed.geometricCenters.size(); n++)
+    for (size_t n = 0; n < mostlyFixed.boundingSpheres.size(); n++)
     {
-        auto& centerFixed = mostlyFixed.geometricCenters[n];
-        for (size_t k = 0; k < moving.geometricCenters.size(); k++)
+        auto& sphereA = mostlyFixed.boundingSpheres[n];
+        for (size_t k = 0; k < moving.boundingSpheres.size(); k++)
         {
-            auto& centerMoving = moving.geometricCenters[k];
-            if ((n > 0 || k > 0) && cds::withinDistance(residueCutoff, centerFixed, centerMoving))
+            auto& sphereB = moving.boundingSpheres[k];
+            if ((n > 0 || k > 0) && cds::withinDistance(constants::maxCutOff + sphereA.radius + sphereB.radius,
+                                                        sphereA.center, sphereB.center))
             {
-                insertCoordinatesWithinDistance(coordsA, radialCutoff, centerMoving, mostlyFixed.atomCoordinates,
-                                                mostlyFixed.residueAtoms[n]);
-                insertCoordinatesWithinDistance(coordsB, radialCutoff, centerFixed, moving.atomCoordinates,
-                                                moving.residueAtoms[k]);
+                insertCoordinatesWithinSphere(coordsA, Sphere {sphereB.radius + constants::maxCutOff, sphereB.center},
+                                              mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[n]);
+                insertCoordinatesWithinSphere(coordsB, Sphere {sphereA.radius + constants::maxCutOff, sphereA.center},
+                                              moving.atomCoordinates, moving.residueAtoms[k]);
                 overlapCount += coordinateOverlaps(coordsA, coordsB);
             }
         }
@@ -112,8 +114,8 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<Residue*>& residuesA, 
     auto inputA = toOverlapInput(residuesA);
     auto inputB = toOverlapInput(residuesB);
 
-    return CountOverlappingAtoms({inputA.atomCoordinates, inputA.geometricCenters, inputA.residueAtoms},
-                                 {inputB.atomCoordinates, inputB.geometricCenters, inputB.residueAtoms});
+    return CountOverlappingAtoms({inputA.atomCoordinates, inputA.boundingSpheres, inputA.residueAtoms},
+                                 {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms});
 }
 
 unsigned int cds::CountOverlappingCoordinates(const std::vector<cds::Coordinate*>& coordsA,

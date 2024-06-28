@@ -1,6 +1,7 @@
 #ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 #define GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 
+#include "includes/CentralDataStructure/geometry.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 
@@ -12,14 +13,14 @@ namespace cds
     struct ResidueAtomOverlapInput
     {
         std::vector<Coordinate> atomCoordinates;
-        std::vector<Coordinate> geometricCenters;
+        std::vector<Sphere> boundingSpheres;
         const std::vector<std::pair<size_t, size_t>> residueAtoms;
     };
 
     struct ResidueAtomOverlapInputReference
     {
         std::vector<Coordinate>& atomCoordinates;
-        std::vector<Coordinate>& geometricCenters;
+        std::vector<Sphere> boundingSpheres;
         const std::vector<std::pair<size_t, size_t>>& residueAtoms;
     };
 

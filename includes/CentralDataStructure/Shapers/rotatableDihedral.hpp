@@ -2,6 +2,7 @@
 #define GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_ROTATABLE_DIHEDRAL_HPP
 
 #include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/geometry.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
@@ -37,7 +38,7 @@ namespace cds
     struct dihedralRotationData
     {
         std::vector<Coordinate> coordinates;
-        std::vector<Coordinate> geometricCenters;
+        std::vector<Sphere> boundingSpheres;
         std::vector<std::pair<size_t, size_t>> residueAtoms;
         std::vector<bool> firstResidueCoordinateMoving;
     };
