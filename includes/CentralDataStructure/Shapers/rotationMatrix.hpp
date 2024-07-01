@@ -30,7 +30,7 @@ namespace cds
         RotationMatrixInternals matrix_;
     };
 
-    RotationMatrix axisAnglePositionToMatrix(Coordinate axis, double angle, const Coordinate& position);
+    RotationMatrix rotationAroundPoint(const Coordinate point, const Coordinate axis, double angle);
     RotationMatrix dihedralToMatrix(const std::array<Coordinate*, 4> dihedral, const double dihedral_angle);
     RotationMatrix angleToMatrix(const std::array<Coordinate*, 3> coords, const double angle);
 
