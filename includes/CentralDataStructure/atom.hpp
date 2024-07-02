@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_CDSATOM_HPP
 
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CodeUtils/constants.hpp" // dNotSet
 
 #include <string>

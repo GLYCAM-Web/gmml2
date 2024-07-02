@@ -1,7 +1,7 @@
 #ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_BINARYPARTITIONGRID_HPP
 #define GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_BINARYPARTITIONGRID_HPP
 
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <array>
 #include <vector>

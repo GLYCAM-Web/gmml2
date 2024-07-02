@@ -6,10 +6,10 @@
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/orientation.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp" // serializeAtomNumbers
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"

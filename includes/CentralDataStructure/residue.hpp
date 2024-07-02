@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
 
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // getId
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 #include "includes/CodeUtils/constants.hpp" // iNotSet

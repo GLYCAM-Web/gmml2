@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_MEASUREMENTS_MEASUREMENTS_HPP_
 #define INCLUDES_CENTRALDATASTRUCTURE_MEASUREMENTS_MEASUREMENTS_HPP_
 
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <array>
 #include <vector>

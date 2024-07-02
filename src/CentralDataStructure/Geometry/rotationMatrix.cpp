@@ -1,5 +1,5 @@
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <vector>
 #include <cmath>

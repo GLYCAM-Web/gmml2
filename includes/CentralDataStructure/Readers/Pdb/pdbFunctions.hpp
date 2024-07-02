@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFUNCTIONS_HPP_
 
 #include <string>
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 namespace pdb
 {

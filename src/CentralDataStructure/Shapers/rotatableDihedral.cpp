@@ -1,12 +1,12 @@
 #include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
-#include "includes/CentralDataStructure/orientation.hpp"
-#include "includes/CentralDataStructure/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 

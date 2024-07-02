@@ -1,9 +1,9 @@
 #ifndef GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_ROTATABLE_DIHEDRAL_HPP
 #define GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_ROTATABLE_DIHEDRAL_HPP
 
-#include "includes/CentralDataStructure/coordinate.hpp"
-#include "includes/CentralDataStructure/orientation.hpp"
-#include "includes/CentralDataStructure/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"

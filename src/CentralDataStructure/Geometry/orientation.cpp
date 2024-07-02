@@ -1,6 +1,6 @@
-#include "includes/CentralDataStructure/orientation.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CodeUtils/constants.hpp"
 
 #include <cmath>

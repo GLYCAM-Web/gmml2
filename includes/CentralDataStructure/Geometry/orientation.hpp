@@ -1,8 +1,8 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_ORIENTATION_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_ORIENTATION_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_ORIENTATION_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_ORIENTATION_HPP
 
-#include "includes/CentralDataStructure/coordinate.hpp"
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 
 #include <array>
 
