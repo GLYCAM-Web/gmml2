@@ -1,8 +1,6 @@
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/orientation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/bondlengthbytypepair.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -38,18 +36,6 @@ cds::Coordinate cds::GuessMissingCoordinateForAtom(cds::Atom* centralAtom, const
     }
     return cds::CreateCoordinateForCenterAwayFromNeighbors(*centralAtom->getCoordinate(), threeNeighborCoords,
                                                            distance);
-}
-
-void cds::FindAtomsToMoveAndSetAngle(cds::Atom* a, cds::Atom* b, cds::Atom* c, const double angle)
-{
-    std::vector<cds::Atom*> atomsToMove;
-    atomsToMove.push_back(b);
-    cdsSelections::FindConnectedAtoms(atomsToMove, c);
-    atomsToMove.erase(atomsToMove.begin()); // this is expensive
-    std::vector<Coordinate*> coordsToMove = cds::getCoordinatesFromAtoms(atomsToMove);
-    auto matrix = rotationTo(std::array<Coordinate, 3> {*a->getCoordinate(), *b->getCoordinate(), *c->getCoordinate()},
-                             constants::degree2Radian(angle));
-    matrix.rotateCoordinates(coordsToMove);
 }
 
 // parentAtom (e.g. O of OME), childAtom (e.g. C1 of Gal1-, S1 of SO3)

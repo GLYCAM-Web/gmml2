@@ -11,6 +11,7 @@
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
+using cds::Atom;
 using gmmlPrograms::WiggleToSite;
 
 //////////////////////////////////////////////////////////
