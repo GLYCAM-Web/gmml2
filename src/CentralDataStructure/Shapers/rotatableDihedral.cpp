@@ -221,7 +221,7 @@ namespace
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
-            auto matrix = cds::dihedralToMatrix(dihedral, angle);
+            auto matrix = cds::dihedralToMatrix(dihedral, constants::degree2Radian(angle));
             moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedSpheres);
             moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingSpheres);
             for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)
@@ -333,7 +333,7 @@ std::array<Coordinate*, 4> RotatableDihedral::dihedralCoordinates() const
 void RotatableDihedral::SetDihedralAngle(AngleWithMetadata angle)
 {
     this->RecordPreviousState({CalculateDihedralAngle(), GetCurrentMetaData()});
-    auto matrix = cds::dihedralToMatrix(dihedralCoordinates(), angle.value);
+    auto matrix = cds::dihedralToMatrix(dihedralCoordinates(), constants::degree2Radian(angle.value));
     matrix.rotateCoordinates(this->GetCoordinatesThatMove());
     this->SetCurrentMetaData(angle.metadata);
 }

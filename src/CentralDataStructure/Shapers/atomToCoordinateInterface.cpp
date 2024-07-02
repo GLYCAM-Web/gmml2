@@ -46,7 +46,8 @@ void cds::FindAtomsToMoveAndSetAngle(cds::Atom* a, cds::Atom* b, cds::Atom* c, c
     cdsSelections::FindConnectedAtoms(atomsToMove, c);
     atomsToMove.erase(atomsToMove.begin()); // this is expensive
     std::vector<Coordinate*> coordsToMove = cds::getCoordinatesFromAtoms(atomsToMove);
-    auto matrix = angleToMatrix({a->getCoordinate(), b->getCoordinate(), c->getCoordinate()}, angle);
+    auto matrix =
+        angleToMatrix({a->getCoordinate(), b->getCoordinate(), c->getCoordinate()}, constants::degree2Radian(angle));
     matrix.rotateCoordinates(coordsToMove);
 }
 

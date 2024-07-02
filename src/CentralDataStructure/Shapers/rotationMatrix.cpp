@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CodeUtils/constants.hpp"
 
 #include <cmath>
 
@@ -49,16 +48,16 @@ RotationMatrix cds::rotationAroundPoint(const Coordinate point, const Coordinate
 
 RotationMatrix cds::dihedralToMatrix(const std::array<Coordinate*, 4> dihedral, const double dihedral_angle)
 {
-    double current_dihedral = CalculateDihedralAngle(dihedral, true);
+    double current_dihedral = CalculateDihedralAngle(dihedral);
     Coordinate axis         = normal(*dihedral[1] - *dihedral[2]);
-    double angle            = current_dihedral - constants::degree2Radian(dihedral_angle);
+    double angle            = current_dihedral - dihedral_angle;
     return rotationAroundPoint(*dihedral[1], axis, angle);
 }
 
 RotationMatrix cds::angleToMatrix(const std::array<Coordinate*, 3> coords, const double angle)
 {
-    double current_angle  = cds::CalculateAngle(coords, true);
-    double rotation_angle = constants::degree2Radian(angle) - current_angle;
+    double current_angle  = cds::CalculateAngle(coords);
+    double rotation_angle = angle - current_angle;
     Coordinate axis       = normal(crossProduct(*coords[0] - *coords[1], *coords[2] - *coords[1]));
     return rotationAroundPoint(*coords[1], axis, rotation_angle);
 }
