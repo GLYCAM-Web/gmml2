@@ -31,8 +31,5 @@ namespace cds
     };
 
     RotationMatrix rotationAroundPoint(const Coordinate point, const Coordinate axis, double angle);
-    RotationMatrix dihedralToMatrix(const std::array<Coordinate*, 4> dihedral, const double dihedral_angle);
-    RotationMatrix angleToMatrix(const std::array<Coordinate*, 3> coords, const double angle);
-
 } // namespace cds
 #endif /* INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_ROTATIONMATRIX_HPP_ */

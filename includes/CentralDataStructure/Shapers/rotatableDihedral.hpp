@@ -2,6 +2,7 @@
 #define GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_ROTATABLE_DIHEDRAL_HPP
 
 #include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/orientation.hpp"
 #include "includes/CentralDataStructure/geometry.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
@@ -76,14 +77,13 @@ namespace cds
         DihedralAngleDataVector GetLikelyMetadata() const;
         int GetNumberOfRotamers(bool likelyShapesOnly = false) const;
         std::string GetName() const;
-        double CalculateDihedralAngle() const;
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
         void DetermineAtomsThatMove(); // Based on connectivities, this figures out which atoms will move when the
                                        // dihedral is rotated.
         void
-        SetDihedralAngle(AngleWithMetadata angle); // Sets the dihedral angle by rotating the bond between atom2 and
+        SetDihedralAngle(AngleWithMetadata target); // Sets the dihedral angle by rotating the bond between atom2 and
 
         AngleWithMetadata RandomAngleEntryUsingMetadata();
         AngleWithMetadata SpecificAngleEntryUsingMetadata(bool useRanges, long unsigned int angleEntryNumber);
@@ -102,7 +102,7 @@ namespace cds
         //                  PRIVATE FUNCTIONS                   //
         //////////////////////////////////////////////////////////
 
-        std::array<Coordinate*, 4> dihedralCoordinates() const;
+        DihedralCoordinates dihedralCoordinates() const;
 
         inline void RecordPreviousState(AngleWithMetadata angle)
         {

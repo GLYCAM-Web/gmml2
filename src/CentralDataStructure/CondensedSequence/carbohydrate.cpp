@@ -6,6 +6,7 @@
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/orientation.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
@@ -358,9 +359,10 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     {
         if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
         {
-            auto matrix = cds::angleToMatrix(
-                {parentAtomNeighbor->getCoordinate(), parentAtom->getCoordinate(), childAtom->getCoordinate()},
-                constants::degree2Radian(constants::DEFAULT_ANGLE));
+            auto matrix =
+                cds::rotationTo(std::array<Coordinate, 3> {*parentAtomNeighbor->getCoordinate(),
+                                                           *parentAtom->getCoordinate(), *childAtom->getCoordinate()},
+                                constants::degree2Radian(constants::DEFAULT_ANGLE));
             matrix.rotateCoordinates(childResidue->getCoordinates());
             break;
         }

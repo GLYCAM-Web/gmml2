@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/orientation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/bondlengthbytypepair.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -46,8 +47,8 @@ void cds::FindAtomsToMoveAndSetAngle(cds::Atom* a, cds::Atom* b, cds::Atom* c, c
     cdsSelections::FindConnectedAtoms(atomsToMove, c);
     atomsToMove.erase(atomsToMove.begin()); // this is expensive
     std::vector<Coordinate*> coordsToMove = cds::getCoordinatesFromAtoms(atomsToMove);
-    auto matrix =
-        angleToMatrix({a->getCoordinate(), b->getCoordinate(), c->getCoordinate()}, constants::degree2Radian(angle));
+    auto matrix = rotationTo(std::array<Coordinate, 3> {*a->getCoordinate(), *b->getCoordinate(), *c->getCoordinate()},
+                             constants::degree2Radian(angle));
     matrix.rotateCoordinates(coordsToMove);
 }
 

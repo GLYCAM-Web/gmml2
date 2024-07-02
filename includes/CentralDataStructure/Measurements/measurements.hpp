@@ -9,8 +9,6 @@
 namespace cds
 {
     Coordinate calculateGeometricCenter(const std::vector<Coordinate*>& coords);
-    double CalculateAngle(const std::array<Coordinate*, 3>& coords);
-    double CalculateDihedralAngle(const std::array<Coordinate*, 4>& coords);
     Coordinate CreateCoordinateForCenterAwayFromNeighbors(const Coordinate& centralCoord,
                                                           const std::vector<Coordinate*>& threeNeighbors,
                                                           const double distance = 1.0);
