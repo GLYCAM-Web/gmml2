@@ -158,7 +158,8 @@ std::string Atom::getId() const
 
 bool Atom::isWithinBondingDistance(const Atom* otherAtom) const
 {
-    double maxLength = atomicBonds::getMaxBondLengthByAtomType(this->getElement(), otherAtom->getElement());
+    double maxLength = atomicBonds::getMaxBondLengthByAtomType(atomicBonds::toElement(this->getElement()),
+                                                               atomicBonds::toElement(otherAtom->getElement()));
     return withinDistance(maxLength, *this->getCoordinate(), *otherAtom->getCoordinate());
 }
 
