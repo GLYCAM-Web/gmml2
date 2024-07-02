@@ -51,12 +51,12 @@
 ./src/CentralDataStructure/Writers/pdbWriter.cpp
 ./src/CentralDataStructure/assembly.cpp
 ./src/CentralDataStructure/atom.cpp
+./src/CentralDataStructure/boundingSphere.cpp
 ./src/CentralDataStructure/cdsFunctions/atomicConnectivity.cpp
 ./src/CentralDataStructure/cdsFunctions/bondByDistance.cpp
 ./src/CentralDataStructure/cdsFunctions/cdsFunctions.cpp
 ./src/CentralDataStructure/coordinate.cpp
 ./src/CentralDataStructure/ensemble.cpp
-./src/CentralDataStructure/geometry.cpp
 ./src/CentralDataStructure/molecule.cpp
 ./src/CentralDataStructure/orientation.cpp
 ./src/CentralDataStructure/residue.cpp

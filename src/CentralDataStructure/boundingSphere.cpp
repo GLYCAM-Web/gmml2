@@ -1,4 +1,4 @@
-#include "includes/CentralDataStructure/geometry.hpp"
+#include "includes/CentralDataStructure/boundingSphere.hpp"
 
 #include "includes/CentralDataStructure/coordinate.hpp"
 

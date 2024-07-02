@@ -6,7 +6,7 @@
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CentralDataStructure/coordinate.hpp"
 #include "includes/CentralDataStructure/orientation.hpp"
-#include "includes/CentralDataStructure/geometry.hpp"
+#include "includes/CentralDataStructure/boundingSphere.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 

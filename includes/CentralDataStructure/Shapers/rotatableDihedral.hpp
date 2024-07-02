@@ -3,7 +3,7 @@
 
 #include "includes/CentralDataStructure/coordinate.hpp"
 #include "includes/CentralDataStructure/orientation.hpp"
-#include "includes/CentralDataStructure/geometry.hpp"
+#include "includes/CentralDataStructure/boundingSphere.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"

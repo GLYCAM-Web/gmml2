@@ -1,7 +1,7 @@
 #ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 #define GMML_INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 
-#include "includes/CentralDataStructure/geometry.hpp"
+#include "includes/CentralDataStructure/boundingSphere.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 
