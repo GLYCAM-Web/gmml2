@@ -1,4 +1,4 @@
-#include "includes/CentralDataStructure/Overlaps/binaryPartitionGrid.hpp"
+#include "includes/CentralDataStructure/Geometry/binaryPartitionGrid.hpp"
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <array>

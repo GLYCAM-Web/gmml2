@@ -6,6 +6,7 @@
 ./src/CentralDataStructure/Editors/amberMdPrep.cpp
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Editors/superimposition.cpp
+./src/CentralDataStructure/Geometry/binaryPartitionGrid.cpp
 ./src/CentralDataStructure/Geometry/boundingSphere.cpp
 ./src/CentralDataStructure/Geometry/coordinate.cpp
 ./src/CentralDataStructure/Geometry/orientation.cpp
@@ -20,7 +21,6 @@
 ./src/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.cpp
 ./src/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.cpp
 ./src/CentralDataStructure/Measurements/measurements.cpp
-./src/CentralDataStructure/Overlaps/binaryPartitionGrid.cpp
 ./src/CentralDataStructure/Overlaps/overlaps.cpp
 ./src/CentralDataStructure/Parameters/parameterManager.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryAtom.cpp
