@@ -40,7 +40,11 @@ void residueCombinator::removeOMeMethyl(cds::Residue& queryResidue, cds::Atom* O
 void residueCombinator::removeHydroxyHydrogen(cds::Residue& queryResidue, const std::string hydrogenNumber)
 {
     cds::Atom* hydrogen = queryResidue.FindAtom("H" + hydrogenNumber + "O");
-    cds::Atom* oxygen   = queryResidue.FindAtom("O" + hydrogenNumber);
+    if (hydrogen == nullptr)
+    { // In ROH and some input prep files it's HO1. Otherwise H1O. Fun.
+        hydrogen = queryResidue.FindAtom("HO" + hydrogenNumber);
+    }
+    cds::Atom* oxygen = queryResidue.FindAtom("O" + hydrogenNumber);
     if (hydrogen == nullptr || oxygen == nullptr)
     {
         std::string message =
@@ -197,7 +201,7 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
         std::cout << "No Anomeric Oxygen Found in Template\n";
         anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithAnomericOxygen.getAtoms());
         std::vector<Coordinate*> threeNeighbors;
-        for (auto& neighbor : anomer->getNeighbors())
+        for (auto& neighbor : thisAnomer->getNeighbors())
         {
             threeNeighbors.push_back(neighbor->getCoordinate());
         }
@@ -207,7 +211,7 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
             std::make_unique<cds::Atom>("O" + anomerNumber, newOxygenCoordinate));
         newAnomericOxygen->setCharge(-0.388);
         newAnomericOxygen->setType("Os");
-        newAnomericOxygen->addBond(anomer);
+        newAnomericOxygen->addBond(thisAnomer);
     }
     // Find all positions that can be substituted, ignore the anomer.
     std::vector<std::string> atomNumbers =
