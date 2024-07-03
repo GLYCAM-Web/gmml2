@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_RESIDUE_LINKAGE_HPP
-#define GMML_INCLUDES_CENTRAL_DATA_STRUCTURE_SHAPERS_RESIDUE_LINKAGE_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_RESIDUELINKAGE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_RESIDUELINKAGE_HPP
 /*
  * This class figures out the rotatable bonds between two residues
  * Starts/ends at the CA atoms in proteins. Looks for cycles (as they aren't rotatable).
@@ -152,4 +152,4 @@ namespace cds
         std::vector<cds::Residue*> reducingOverlapResidues_;    // overlap speedups
     };
 } // namespace cds
-#endif // GMML_INCLUDES_GEOMETRYTOPOLOGY_RESIDUELINKAGES_RESIDUE_LINKAGE_HPP
+#endif

@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_INPUTSET_PDBFILE_PDBRESIDUE_HPP
-#define GMML_INCLUDES_INPUTSET_PDBFILE_PDBRESIDUE_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBRESIDUE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBRESIDUE_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
@@ -92,4 +92,4 @@ namespace pdb
         bool hasTerCard_           = false;
     };
 } // namespace pdb
-#endif // GMML_INCLUDES_INPUTSET_PDBFILE_PDBRESIDUE_HPP
+#endif

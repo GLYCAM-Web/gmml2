@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP
 
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
@@ -55,4 +55,4 @@ namespace prep
         //////////////////////////////////////////////////////////
     };
 } // namespace prep
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP_ */
+#endif

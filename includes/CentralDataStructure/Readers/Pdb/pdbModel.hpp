@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_INPUTSET_PDBFILE_PDBMODEL_HPP
-#define GMML_INCLUDES_INPUTSET_PDBFILE_PDBMODEL_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBMODEL_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBMODEL_HPP
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/conectRecord.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
@@ -63,4 +63,4 @@ namespace pdb
         std::vector<ConectRecord> conectRecords_;
     };
 } // namespace pdb
-#endif // GMML_INCLUDES_INPUTSET_PDBFILE_PDBMODEL_HPP
+#endif

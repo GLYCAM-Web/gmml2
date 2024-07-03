@@ -38,4 +38,4 @@ namespace atomicBonds
 
 } // namespace atomicBonds
 
-#endif /* INCLUDES_MOLECULARMETADATA_ATOMICBONDS_HPP_ */
+#endif

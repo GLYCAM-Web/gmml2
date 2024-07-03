@@ -15,4 +15,4 @@ namespace cds
     // void TestFind3DAffineTransform();
 } // namespace cds
 
-#endif // SUPERIMPOSITION_HPP
+#endif

@@ -1,5 +1,5 @@
-#ifndef GLYCAM06_RESIDUE_NAMES_TYPES_META_HPP
-#define GLYCAM06_RESIDUE_NAMES_TYPES_META_HPP
+#ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06RESIDUEINFO_HPP
+#define INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06RESIDUEINFO_HPP
 
 /** \file:  includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp
  * GLYCAM06 metadata for residues
@@ -84,4 +84,4 @@ namespace gmml
     }     // namespace MolecularMetadata
 } // namespace gmml
 
-#endif // GLYCAM06_RESIDUE_NAMES_TYPES_META_HPP
+#endif

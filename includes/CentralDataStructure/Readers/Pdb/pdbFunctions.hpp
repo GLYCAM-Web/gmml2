@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFUNCTIONS_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFUNCTIONS_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFUNCTIONS_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFUNCTIONS_HPP
 
 #include <string>
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
@@ -10,5 +10,5 @@ namespace pdb
     int checkSecondShiftFromResidueNumberOverrun(const std::string& line, const int shift = 0);
     cds::Coordinate checkShiftsAndExtractCoordinate(const std::string& line);
 
-};     // namespace pdb
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFUNCTIONS_HPP_ */
+}; // namespace pdb
+#endif

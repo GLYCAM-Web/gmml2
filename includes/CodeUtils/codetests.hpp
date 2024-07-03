@@ -1,5 +1,5 @@
-#ifndef CODE_UTILS_HPP
-#define CODE_UTILS_HPP
+#ifndef INCLUDES_CODEUTILS_CODETESTS_HPP
+#define INCLUDES_CODEUTILS_CODETESTS_HPP
 // ToDo This belongs in gmml/tests, doesn't need to include common and can be a function instead of a class.
 #include <vector>
 #include <string>
@@ -49,4 +49,4 @@ namespace CodeUtils
     };
 } // namespace CodeUtils
 
-#endif // CODE_UTILS_HPP
+#endif

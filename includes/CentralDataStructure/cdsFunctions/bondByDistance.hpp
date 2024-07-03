@@ -13,4 +13,4 @@ namespace cds
     void distanceBondIntra(std::vector<cds::Residue*> residues);
     void distanceBondInter(std::vector<cds::Residue*> residues);
 } // namespace cds
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_BONDBYDISTANCE_HPP */
+#endif

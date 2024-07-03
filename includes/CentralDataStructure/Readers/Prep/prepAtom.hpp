@@ -1,5 +1,5 @@
-#ifndef INCLUDES_PARAMETERSET_PREPFILE_PREPFILEATOM_HPP
-#define INCLUDES_PARAMETERSET_PREPFILE_PREPFILEATOM_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPATOM_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPATOM_HPP
 
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
@@ -121,4 +121,4 @@ namespace prep
         /*!< Sample line of the atom section of a prep file: 4 H1   H1  M  3  2  1  1.000    90.0     180.0     0.0 */
     };
 } // namespace prep
-#endif // INCLUDES_PARAMETERSET_PREPFILE_PREPFILEATOM_HPP
+#endif

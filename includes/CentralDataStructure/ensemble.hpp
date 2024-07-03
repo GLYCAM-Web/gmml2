@@ -55,4 +55,4 @@ namespace cds
         std::vector<std::unique_ptr<Assembly>> assemblies_;
     };
 } // namespace cds
-#endif // INCLUDES_CENTRALDATASTRUCTURE_ENSEMBLE_HPP
+#endif

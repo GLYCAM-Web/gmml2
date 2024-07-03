@@ -175,4 +175,4 @@ namespace cds
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
     };
 } // namespace cds
-#endif // INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
+#endif
