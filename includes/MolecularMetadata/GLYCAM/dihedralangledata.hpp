@@ -1,5 +1,5 @@
-#ifndef CARBOHYDRATE_DIHEDRAL_ANGLE_PREFERENCE_HPP
-#define CARBOHYDRATE_DIHEDRAL_ANGLE_PREFERENCE_HPP
+#ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
+#define INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 #include <string>
 #include <vector>
 
@@ -87,4 +87,4 @@ namespace gmml
         } // namespace GLYCAM
     }     // namespace MolecularMetadata
 } // namespace gmml
-#endif // CARBOHYDRATE_DIHEDRAL_ANGLES_HPP
+#endif

@@ -1,7 +1,7 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_BOUNDINGSPHERE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_BOUNDINGSPHERE_HPP
 
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <array>
 #include <vector>

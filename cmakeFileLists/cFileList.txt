@@ -6,6 +6,11 @@
 ./src/CentralDataStructure/Editors/amberMdPrep.cpp
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Editors/superimposition.cpp
+./src/CentralDataStructure/Geometry/binaryPartitionGrid.cpp
+./src/CentralDataStructure/Geometry/boundingSphere.cpp
+./src/CentralDataStructure/Geometry/coordinate.cpp
+./src/CentralDataStructure/Geometry/orientation.cpp
+./src/CentralDataStructure/Geometry/rotationMatrix.cpp
 ./src/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.cpp
 ./src/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.cpp
@@ -16,7 +21,6 @@
 ./src/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.cpp
 ./src/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.cpp
 ./src/CentralDataStructure/Measurements/measurements.cpp
-./src/CentralDataStructure/Overlaps/binaryPartitionGrid.cpp
 ./src/CentralDataStructure/Overlaps/overlaps.cpp
 ./src/CentralDataStructure/Parameters/parameterManager.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryAtom.cpp
@@ -46,7 +50,6 @@
 ./src/CentralDataStructure/Shapers/atomToCoordinateInterface.cpp
 ./src/CentralDataStructure/Shapers/residueLinkage.cpp
 ./src/CentralDataStructure/Shapers/rotatableDihedral.cpp
-./src/CentralDataStructure/Shapers/rotationMatrix.cpp
 ./src/CentralDataStructure/Writers/offWriter.cpp
 ./src/CentralDataStructure/Writers/pdbWriter.cpp
 ./src/CentralDataStructure/assembly.cpp
@@ -54,9 +57,7 @@
 ./src/CentralDataStructure/cdsFunctions/atomicConnectivity.cpp
 ./src/CentralDataStructure/cdsFunctions/bondByDistance.cpp
 ./src/CentralDataStructure/cdsFunctions/cdsFunctions.cpp
-./src/CentralDataStructure/coordinate.cpp
 ./src/CentralDataStructure/ensemble.cpp
-./src/CentralDataStructure/geometry.cpp
 ./src/CentralDataStructure/molecule.cpp
 ./src/CentralDataStructure/residue.cpp
 ./src/CodeUtils/codetests.cc

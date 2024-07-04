@@ -1,6 +1,5 @@
-#include "includes/CentralDataStructure/geometry.hpp"
-
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <cmath>
 #include <array>

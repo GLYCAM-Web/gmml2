@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CODEUTILS_STRINGS_HPP
-#define GMML_INCLUDES_CODEUTILS_STRINGS_HPP
+#ifndef INCLUDES_CODEUTILS_STRINGS_HPP
+#define INCLUDES_CODEUTILS_STRINGS_HPP
 
 #include <string>
 #include <vector>
@@ -43,4 +43,4 @@ namespace codeUtils
     }
 
 } // namespace codeUtils
-#endif // GMML_INCLUDES_CODEUTILS_STRINGS_HPP
+#endif

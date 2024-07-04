@@ -1,8 +1,8 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_CDSATOM_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_CDSATOM_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
 
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CodeUtils/constants.hpp" // dNotSet
 
 #include <string>
@@ -113,4 +113,4 @@ namespace cds
         int number_           = constants::iNotSet;
     };
 } // namespace cds
-#endif // CDSATOM_HPP
+#endif

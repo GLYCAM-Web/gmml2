@@ -1,5 +1,5 @@
-#ifndef INCLUDES_MOLECULARMETADATA_PROTEINBONDING_HPP_
-#define INCLUDES_MOLECULARMETADATA_PROTEINBONDING_HPP_
+#ifndef INCLUDES_MOLECULARMETADATA_PROTEINBONDING_HPP
+#define INCLUDES_MOLECULARMETADATA_PROTEINBONDING_HPP
 
 #include <string>
 #include <vector>
@@ -11,4 +11,4 @@ namespace biology
     const std::string equivalentResidueNameLookup(const std::string queryResidueName);
 } // namespace biology
 
-#endif /* INCLUDES_MOLECULARMETADATA_PROTEINBONDING_HPP_ */
+#endif

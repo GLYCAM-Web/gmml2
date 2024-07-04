@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CODEUTILS_FILES_HPP
-#define GMML_INCLUDES_CODEUTILS_FILES_HPP
+#ifndef INCLUDES_CODEUTILS_FILES_HPP
+#define INCLUDES_CODEUTILS_FILES_HPP
 
 #include <string>
 
@@ -9,4 +9,4 @@ namespace codeUtils
     void ensureFileExists(const std::string& fileName);
     std::string SplitFilename(const std::string& str);
 } // namespace codeUtils
-#endif // GMML_INCLUDES_CODEUTILS_FILES_HPP
+#endif

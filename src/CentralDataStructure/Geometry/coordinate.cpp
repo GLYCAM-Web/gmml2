@@ -1,4 +1,4 @@
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 

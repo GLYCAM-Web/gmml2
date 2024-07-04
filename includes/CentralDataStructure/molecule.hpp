@@ -94,4 +94,4 @@ namespace cds
         std::string chainId_ = "?";
     };
 } // namespace cds
-#endif // INCLUDES_CENTRALDATASTRUCTURE_MOLECULE_HPP
+#endif

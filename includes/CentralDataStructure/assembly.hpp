@@ -73,4 +73,4 @@ namespace cds
         int number_ = 0;
     };
 } // namespace cds
-#endif // ASSEMBLY_HPP
+#endif

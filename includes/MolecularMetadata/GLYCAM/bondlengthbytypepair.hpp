@@ -6,4 +6,4 @@ namespace GlycamMetadata
 {
     double GetBondLengthForAtomTypes(std::string query1, std::string query2);
 }
-#endif // INCLUDES_MOLECULARMETADATA_GLYCAM_BONDLENGTHBYTYPEPAIR_HPP
+#endif

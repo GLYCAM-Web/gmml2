@@ -1,11 +1,12 @@
 #include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
-#include "includes/CentralDataStructure/Shapers/rotationMatrix.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
-#include "includes/CentralDataStructure/geometry.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -208,7 +209,7 @@ namespace
         spheres[0] = cds::boundingSphere(firstCoords);
     }
 
-    cds::AngleOverlap WiggleAnglesOverlaps(const std::array<Coordinate*, 4> dihedral,
+    cds::AngleOverlap WiggleAnglesOverlaps(const cds::DihedralCoordinates dihedral,
                                            const cds::dihedralRotationData& fixedInput,
                                            const cds::dihedralRotationData& movingInput,
                                            const DihedralAngleData* metadata, std::vector<double> angles)
@@ -221,7 +222,7 @@ namespace
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
-            auto matrix = cds::dihedralToMatrix(dihedral, angle);
+            auto matrix = rotationTo(dihedral, constants::degree2Radian(angle));
             moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedSpheres);
             moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingSpheres);
             for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)
@@ -277,11 +278,6 @@ cds::dihedralRotationInputData(bool branching, const std::array<Atom*, 4>& dihed
     return {rotationData(inputSets[0]), rotationData(inputSets[1])};
 }
 
-double RotatableDihedral::CalculateDihedralAngle() const
-{
-    return cds::CalculateDihedralAngle(dihedralCoordinates());
-}
-
 int RotatableDihedral::GetNumberOfRotamers(bool likelyShapesOnly) const
 {
     return likelyShapesOnly ? GetLikelyMetadata().size() : GetMetadata().size();
@@ -324,18 +320,19 @@ void RotatableDihedral::DetermineAtomsThatMove()
     coordinatesThatMove_ = getCoordinatesFromAtoms(atoms_that_move);
 }
 
-std::array<Coordinate*, 4> RotatableDihedral::dihedralCoordinates() const
+cds::DihedralCoordinates RotatableDihedral::dihedralCoordinates() const
 {
-    return {atoms_[3]->getCoordinate(), atoms_[2]->getCoordinate(), atoms_[1]->getCoordinate(),
-            atoms_[0]->getCoordinate()};
+    std::array<Coordinate*, 4> coords = {atoms_[3]->getCoordinate(), atoms_[2]->getCoordinate(),
+                                         atoms_[1]->getCoordinate(), atoms_[0]->getCoordinate()};
+    return DihedralCoordinates {*coords[0], *coords[1], *coords[2], *coords[3]};
 }
 
-void RotatableDihedral::SetDihedralAngle(AngleWithMetadata angle)
+void RotatableDihedral::SetDihedralAngle(AngleWithMetadata target)
 {
-    this->RecordPreviousState({CalculateDihedralAngle(), GetCurrentMetaData()});
-    auto matrix = cds::dihedralToMatrix(dihedralCoordinates(), angle.value);
+    this->RecordPreviousState({cds::angle(dihedralCoordinates()), GetCurrentMetaData()});
+    auto matrix = rotationTo(dihedralCoordinates(), constants::degree2Radian(target.value));
     matrix.rotateCoordinates(this->GetCoordinatesThatMove());
-    this->SetCurrentMetaData(angle.metadata);
+    this->SetCurrentMetaData(target.metadata);
 }
 
 cds::AngleWithMetadata RotatableDihedral::RandomAngleEntryUsingMetadata()
@@ -384,7 +381,7 @@ cds::AngleOverlap RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector
                                                                      const DihedralAngleData* metadata,
                                                                      std::vector<double> angles)
 {
-    AngleWithMetadata initial = {CalculateDihedralAngle(), GetCurrentMetaData()};
+    AngleWithMetadata initial = {cds::angle(dihedralCoordinates()), GetCurrentMetaData()};
     std::vector<cds::AngleOverlap> results;
     for (double angle : angles)
     {
@@ -435,7 +432,7 @@ std::string RotatableDihedral::Print() const
 {
     std::stringstream ss;
     ss << atoms_[0]->getName() << ", " << atoms_[1]->getName() << ", " << atoms_[2]->getName() << ", "
-       << atoms_[3]->getName() << ": " << this->CalculateDihedralAngle() << ".\n";
+       << atoms_[3]->getName() << ": " << cds::angle(dihedralCoordinates()) << ".\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     return ss.str();
 }

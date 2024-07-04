@@ -19,28 +19,6 @@ Coordinate cds::calculateGeometricCenter(const std::vector<Coordinate*>& coords)
     return scaleBy(1.0 / coords.size(), center);
 }
 
-double cds::CalculateAngle(const std::array<Coordinate*, 3>& coords, bool returnRadians)
-{ // returns Degrees by default, must set bool returnRadians to true for radians.
-    Coordinate b1 = *coords[0] - *coords[1];
-    Coordinate b2 = *coords[2] - *coords[1];
-    double angle  = std::acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + constants::DIST_EPSILON));
-    return angle * (returnRadians ? 1.0 : (180 / constants::PI_RADIAN));
-}
-
-double cds::CalculateDihedralAngle(const std::array<Coordinate*, 4>& coords, bool returnRadians)
-{ // returns Degrees by default, must set bool returnRadians to true for radians.
-    Coordinate b1 = *coords[1] - *coords[0];
-    Coordinate b2 = *coords[2] - *coords[1];
-    Coordinate b3 = *coords[3] - *coords[2];
-
-    Coordinate b2xb3    = crossProduct(b2, b3);
-    Coordinate b1_m_b2n = scaleBy(length(b2), b1);
-    Coordinate b1xb2    = crossProduct(b1, b2);
-
-    double angle = std::atan2(dotProduct(b1_m_b2n, b2xb3), dotProduct(b1xb2, b2xb3));
-    return angle * (returnRadians ? 1.0 : (180 / constants::PI_RADIAN));
-}
-
 Coordinate cds::CreateCoordinateForCenterAwayFromNeighbors(const Coordinate& centralCoord,
                                                            const std::vector<Coordinate*>& threeNeighbors,
                                                            const double distance)

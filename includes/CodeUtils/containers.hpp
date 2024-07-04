@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CODEUTILS_CONTAINERS_HPP
-#define GMML_INCLUDES_CODEUTILS_CONTAINERS_HPP
+#ifndef INCLUDES_CODEUTILS_CONTAINERS_HPP
+#define INCLUDES_CODEUTILS_CONTAINERS_HPP
 
 #include <algorithm>
 #include <string>
@@ -46,4 +46,4 @@ namespace codeUtils
     }
 
 } // namespace codeUtils
-#endif // GMML_INCLUDES_CODEUTILS_CONTAINERS_HPP
+#endif

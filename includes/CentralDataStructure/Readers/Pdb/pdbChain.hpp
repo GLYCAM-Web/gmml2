@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_INPUTSET_PDBFILE_PDBCHAIN_HPP
-#define GMML_INCLUDES_INPUTSET_PDBFILE_PDBCHAIN_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBCHAIN_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBCHAIN_HPP
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include <string>
@@ -57,4 +57,4 @@ namespace pdb
         // std::string chainId_;
     };
 } // namespace pdb
-#endif // GMML_INCLUDES_INPUTSET_PDBFILE_PDBCHAIN_HPP
+#endif
