@@ -49676,9 +49676,9 @@ LOOP
 C2 C1
 
 IMPROPER
- C5  O6A  C6   O6B
+C5  O6A  C6   O6B
 
-DONE 
+DONE
 Protonated Alpha-L-Iduronic acid (1C4)
 
 YuAP  INT 0
