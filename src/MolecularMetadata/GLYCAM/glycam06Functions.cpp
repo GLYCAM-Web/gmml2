@@ -177,7 +177,7 @@ namespace
         {   "DDManHep",  "DH", "Saccharide"}, // Bacterial Ferran.
         {        "Aci",  "EC", "Saccharide"}, // Bacterial Ferran.
         {        "Fus",  "GF", "Saccharide"}, // Bacterial Ferran.
-        {         "KO",  "KO", "Saccharide"}, // Bacterial Ferran.
+        {         "KO",  "KX", "Saccharide"}, // Bacterial Ferran.
         {        "Leg",  "LG", "Saccharide"}, // Bacterial Ferran.
         {   "LDManHep",  "LH", "Saccharide"}, // Bacterial Ferran.
         {        "Pse",  "MP", "Saccharide"}, // Bacterial Ferran.
