@@ -173,6 +173,15 @@ namespace
         {      "Abepa",  "AE", "Saccharide"},
         {       "Olip",  "DR", "Saccharide"},
         {     "GlcpA+", "ZBP", "Saccharide"},
+        {       "AraN",  "AN", "Saccharide"}, // Bacterial Ferran.
+        {   "DDManHep",  "DH", "Saccharide"}, // Bacterial Ferran.
+        {        "Aci",  "EC", "Saccharide"}, // Bacterial Ferran.
+        {        "Fus",  "GF", "Saccharide"}, // Bacterial Ferran.
+        {         "KO",  "KO", "Saccharide"}, // Bacterial Ferran.
+        {        "Leg",  "LG", "Saccharide"}, // Bacterial Ferran.
+        {   "LDManHep",  "LH", "Saccharide"}, // Bacterial Ferran.
+        {        "Pse",  "MP", "Saccharide"}, // Bacterial Ferran.
+        {     "MurNAc",  "MR", "Saccharide"}, // Bacterial Ferran.
         {        "ROH", "ROH",   "Aglycone"},
         {         "OH", "ROH",   "Aglycone"},
         {        "OME", "OME",   "Aglycone"},
