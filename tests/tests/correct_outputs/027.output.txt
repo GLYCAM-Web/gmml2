@@ -4473,7 +4473,61 @@ Anomer: 2
 Added 2KO
 Added 0KO
 Loading tests/inputs/027.BacterialPrep/0an_beta_final.prep
+Generating those combos from 0an
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O_Os
+C2_Cg
+H1_H2
+O5_Os
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O3,O2
+LastLetter is n
+glycamCode is A
+So far for 0an we think isomer ringtype config is L_p_b
+Finding name for code: AN
+Found name is: L_AraN_p__b
+Anomer: 1
+3,2,
+3,2: Zan
+3: 3an
+2: 2an
+Added 1an
+Added 0an
 Loading tests/inputs/027.BacterialPrep/0ec_beta_final.prep
+Generating those combos from 0ec
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O4
+LastLetter is c
+glycamCode is E
+So far for 0ec we think isomer ringtype config is L_p_b
+Finding name for code: EC
+Found name is: L_Aci_p__b
+Anomer: 2
+8,4,
+8,4: Jec
+8: 8ec
+4: 4ec
+Added 2ec
+Added 0ec
 Loading tests/inputs/027.BacterialPrep/0LG_alfa_final.prep
 Loading tests/inputs/027.BacterialPrep/0LU.prep
 Generating those combos from 0LU
@@ -4515,15 +4569,359 @@ Anomer: 1
 3: 3LU
 Added 1LU
 Added 0LU
+Generating those combos from 0LU
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O6,O5,O2,O3
+LastLetter is U
+glycamCode is L
+So far for 0LU we think isomer ringtype config is D_f_b
+Finding name for code: L
+Found name is: D_Gal_f__b
+Anomer: 1
+6,5,2,3,
+6,5,2,3: eLU
+6,5,2: mLU
+6,5,3: lLU
+6,5: rLU
+6,2,3: SLU
+6,2: XLU
+6,3: VLU
+6: 6LU
+5,2,3: nLU
+5,2: uLU
+5,3: tLU
+5: 5LU
+2,3: ZLU
+2: 2LU
+3: 3LU
+Added 1LU
+Added 0LU
 Loading tests/inputs/027.BacterialPrep/0DH_alfa_final.prep
+Generating those combos from 0DH
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O7,O6,O2,O3,O4
+LastLetter is H
+glycamCode is D
+So far for 0DH we think isomer ringtype config is D_p_a
+Finding name for code: DH
+Found name is: D_DDManHep_p__a
+Anomer: 1
+7,6,2,3,4,
+7,4: KDH
+7: 7DH
+6,2,3,4: PDH
+6,2,3: SDH
+6,2,4: RDH
+6,2: XDH
+6,3,4: QDH
+6,3: VDH
+6,4: UDH
+6: 6DH
+2,3,4: TDH
+2,3: ZDH
+2,4: YDH
+2: 2DH
+3,4: WDH
+3: 3DH
+4: 4DH
+Added 1DH
+Added 0DH
 Loading tests/inputs/027.BacterialPrep/0gf_beta_final.prep
+Generating those combos from 0gf
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O7,O4
+LastLetter is f
+glycamCode is G
+So far for 0gf we think isomer ringtype config is L_p_b
+Finding name for code: GF
+Found name is: L_Fus_p__b
+Anomer: 2
+8,7,4,
+8,7,4: Egf
+8,7: Hgf
+8,4: Jgf
+8: 8gf
+7,4: Kgf
+7: 7gf
+4: 4gf
+Added 2gf
+Added 0gf
 Loading tests/inputs/027.BacterialPrep/0Lg_beta_final.prep
+Generating those combos from 0Lg
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O4
+LastLetter is g
+glycamCode is L
+So far for 0Lg we think isomer ringtype config is D_p_b
+Finding name for code: LG
+Found name is: D_Leg_p__b
+Anomer: 2
+8,4,
+8,4: JLg
+8: 8Lg
+4: 4Lg
+Added 2Lg
+Added 0Lg
 Loading tests/inputs/027.BacterialPrep/0mP_alfa_final.prep
+Generating those combos from 0mP
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O4
+LastLetter is P
+glycamCode is M
+So far for 0mP we think isomer ringtype config is L_p_a
+Finding name for code: MP
+Found name is: L_Pse_p__a
+Anomer: 2
+8,4,
+8,4: JmP
+8: 8mP
+4: 4mP
+Added 2mP
+Added 0mP
 Loading tests/inputs/027.BacterialPrep/0Dh_beta_final.prep
+Generating those combos from 0Dh
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O7,O6,O2,O3,O4
+LastLetter is h
+glycamCode is D
+So far for 0Dh we think isomer ringtype config is D_p_b
+Finding name for code: DH
+Found name is: D_DDManHep_p__b
+Anomer: 1
+7,6,2,3,4,
+7,4: KDh
+7: 7Dh
+6,2,3,4: PDh
+6,2,3: SDh
+6,2,4: RDh
+6,2: XDh
+6,3,4: QDh
+6,3: VDh
+6,4: UDh
+6: 6Dh
+2,3,4: TDh
+2,3: ZDh
+2,4: YDh
+2: 2Dh
+3,4: WDh
+3: 3Dh
+4: 4Dh
+Added 1Dh
+Added 0Dh
 Loading tests/inputs/027.BacterialPrep/0KX_alfa_final.prep
+Generating those combos from 0KX
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O7,O3,O4,O5
+LastLetter is X
+glycamCode is K
+So far for 0KX we think isomer ringtype config is D_p_a
+Finding name for code: KX
+Found name is: D_KO_p__a
+Anomer: 2
+8,7,3,4,5,
+8,7,4,5: dKX
+8,7,4: EKX
+8,7,5: hKX
+8,7: HKX
+8,4,5: jKX
+8,4: JKX
+8,5: pKX
+8: 8KX
+7,4,5: kKX
+7,4: KKX
+7,5: qKX
+7: 7KX
+3,4,5: xKX
+3,4: WKX
+3,5: tKX
+3: 3KX
+4,5: sKX
+4: 4KX
+5: 5KX
+Added 2KX
+Added 0KX
 Loading tests/inputs/027.BacterialPrep/0LH_alfa_final.prep
+Generating those combos from 0LH
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O7,O6,O2,O3,O4
+LastLetter is H
+glycamCode is L
+So far for 0LH we think isomer ringtype config is D_p_a
+Finding name for code: LH
+Found name is: D_LDManHep_p__a
+Anomer: 1
+7,6,2,3,4,
+7,4: KLH
+7: 7LH
+6,2,3,4: PLH
+6,2,3: SLH
+6,2,4: RLH
+6,2: XLH
+6,3,4: QLH
+6,3: VLH
+6,4: ULH
+6: 6LH
+2,3,4: TLH
+2,3: ZLH
+2,4: YLH
+2: 2LH
+3,4: WLH
+3: 3LH
+4: 4LH
+Added 1LH
+Added 0LH
 Loading tests/inputs/027.BacterialPrep/0mp_beta_final.prep
+Generating those combos from 0mp
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O4
+LastLetter is p
+glycamCode is M
+So far for 0mp we think isomer ringtype config is L_p_b
+Finding name for code: MP
+Found name is: L_Pse_p__b
+Anomer: 2
+8,4,
+8,4: Jmp
+8: 8mp
+4: 4mp
+Added 2mp
+Added 0mp
 Loading tests/inputs/027.BacterialPrep/0eC_alfa_final.prep
+Generating those combos from 0eC
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O4
+LastLetter is C
+glycamCode is E
+So far for 0eC we think isomer ringtype config is L_p_a
+Finding name for code: EC
+Found name is: L_Aci_p__a
+Anomer: 2
+8,4,
+8,4: JeC
+8: 8eC
+4: 4eC
+Added 2eC
+Added 0eC
 Loading tests/inputs/027.BacterialPrep/0LD.prep
 Generating those combos from 0LD
 Copying the input residue 
@@ -4564,8 +4962,115 @@ Anomer: 1
 3: 3LD
 Added 1LD
 Added 0LD
+Generating those combos from 0LD
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O4_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O6,O5,O2,O3
+LastLetter is D
+glycamCode is L
+So far for 0LD we think isomer ringtype config is D_f_a
+Finding name for code: L
+Found name is: D_Gal_f__a
+Anomer: 1
+6,5,2,3,
+6,5,2,3: eLD
+6,5,2: mLD
+6,5,3: lLD
+6,5: rLD
+6,2,3: SLD
+6,2: XLD
+6,3: VLD
+6: 6LD
+5,2,3: nLD
+5,2: uLD
+5,3: tLD
+5: 5LD
+2,3: ZLD
+2: 2LD
+3: 3LD
+Added 1LD
+Added 0LD
 Loading tests/inputs/027.BacterialPrep/0Lh_beta_final.prep
+Generating those combos from 0Lh
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O7,O6,O2,O3,O4
+LastLetter is h
+glycamCode is L
+So far for 0Lh we think isomer ringtype config is D_p_b
+Finding name for code: LH
+Found name is: D_LDManHep_p__b
+Anomer: 1
+7,6,2,3,4,
+7,4: KLh
+7: 7Lh
+6,2,3,4: PLh
+6,2,3: SLh
+6,2,4: RLh
+6,2: XLh
+6,3,4: QLh
+6,3: VLh
+6,4: ULh
+6: 6Lh
+2,3,4: TLh
+2,3: ZLh
+2,4: YLh
+2: 2Lh
+3,4: WLh
+3: 3Lh
+4: 4Lh
+Added 1Lh
+Added 0Lh
 Loading tests/inputs/027.BacterialPrep/0Mr_beta_final.prep
+Generating those combos from 0MR
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O5_Os
+O_Os
+H1_H2
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O4,O6
+LastLetter is R
+glycamCode is M
+So far for 0MR we think isomer ringtype config is D_p_a
+Finding name for code: MR
+Found name is: D_MurNAc_p__a
+Anomer: 1
+4,6,
+4,6: UMR
+4: 4MR
+6: 6MR
+Added 1MR
+Added 0MR
 nAD is new in lib file
 tAD is new in lib file
 uAD is new in lib file
@@ -5003,6 +5508,16 @@ hKO is new in lib file
 qKO is new in lib file
 pKO is new in lib file
 2KO is new in lib file
+Zan is new in lib file
+3an is new in lib file
+2an is new in lib file
+1an is new in lib file
+0an is new in lib file
+Jec is new in lib file
+8ec is new in lib file
+4ec is new in lib file
+2ec is new in lib file
+0ec is new in lib file
 eLU is new in lib file
 mLU is new in lib file
 lLU is new in lib file
@@ -5020,6 +5535,130 @@ ZLU is new in lib file
 3LU is new in lib file
 1LU is new in lib file
 0LU is new in lib file
+eLU is new in lib file
+mLU is new in lib file
+lLU is new in lib file
+rLU is new in lib file
+SLU is new in lib file
+XLU is new in lib file
+VLU is new in lib file
+6LU is new in lib file
+nLU is new in lib file
+uLU is new in lib file
+tLU is new in lib file
+5LU is new in lib file
+ZLU is new in lib file
+2LU is new in lib file
+3LU is new in lib file
+1LU is new in lib file
+0LU is new in lib file
+KDH is new in lib file
+7DH is new in lib file
+PDH is new in lib file
+SDH is new in lib file
+RDH is new in lib file
+XDH is new in lib file
+QDH is new in lib file
+VDH is new in lib file
+UDH is new in lib file
+6DH is new in lib file
+TDH is new in lib file
+ZDH is new in lib file
+YDH is new in lib file
+2DH is new in lib file
+WDH is new in lib file
+3DH is new in lib file
+4DH is new in lib file
+1DH is new in lib file
+0DH is new in lib file
+Egf is new in lib file
+Hgf is new in lib file
+Jgf is new in lib file
+8gf is new in lib file
+Kgf is new in lib file
+7gf is new in lib file
+4gf is new in lib file
+2gf is new in lib file
+0gf is new in lib file
+JLg is new in lib file
+8Lg is new in lib file
+4Lg is new in lib file
+2Lg is new in lib file
+0Lg is new in lib file
+JmP is new in lib file
+8mP is new in lib file
+4mP is new in lib file
+2mP is new in lib file
+0mP is new in lib file
+KDh is new in lib file
+7Dh is new in lib file
+PDh is new in lib file
+SDh is new in lib file
+RDh is new in lib file
+XDh is new in lib file
+QDh is new in lib file
+VDh is new in lib file
+UDh is new in lib file
+6Dh is new in lib file
+TDh is new in lib file
+ZDh is new in lib file
+YDh is new in lib file
+2Dh is new in lib file
+WDh is new in lib file
+3Dh is new in lib file
+4Dh is new in lib file
+1Dh is new in lib file
+0Dh is new in lib file
+dKX is new in lib file
+EKX is new in lib file
+hKX is new in lib file
+HKX is new in lib file
+jKX is new in lib file
+JKX is new in lib file
+pKX is new in lib file
+8KX is new in lib file
+kKX is new in lib file
+KKX is new in lib file
+qKX is new in lib file
+7KX is new in lib file
+xKX is new in lib file
+WKX is new in lib file
+tKX is new in lib file
+3KX is new in lib file
+sKX is new in lib file
+4KX is new in lib file
+5KX is new in lib file
+2KX is new in lib file
+0KX is new in lib file
+KLH is new in lib file
+7LH is new in lib file
+PLH is new in lib file
+SLH is new in lib file
+RLH is new in lib file
+XLH is new in lib file
+QLH is new in lib file
+VLH is new in lib file
+ULH is new in lib file
+6LH is new in lib file
+TLH is new in lib file
+ZLH is new in lib file
+YLH is new in lib file
+2LH is new in lib file
+WLH is new in lib file
+3LH is new in lib file
+4LH is new in lib file
+1LH is new in lib file
+0LH is new in lib file
+Jmp is new in lib file
+8mp is new in lib file
+4mp is new in lib file
+2mp is new in lib file
+0mp is new in lib file
+JeC is new in lib file
+8eC is new in lib file
+4eC is new in lib file
+2eC is new in lib file
+0eC is new in lib file
 eLD is new in lib file
 mLD is new in lib file
 lLD is new in lib file
@@ -5037,6 +5676,47 @@ ZLD is new in lib file
 3LD is new in lib file
 1LD is new in lib file
 0LD is new in lib file
+eLD is new in lib file
+mLD is new in lib file
+lLD is new in lib file
+rLD is new in lib file
+SLD is new in lib file
+XLD is new in lib file
+VLD is new in lib file
+6LD is new in lib file
+nLD is new in lib file
+uLD is new in lib file
+tLD is new in lib file
+5LD is new in lib file
+ZLD is new in lib file
+2LD is new in lib file
+3LD is new in lib file
+1LD is new in lib file
+0LD is new in lib file
+KLh is new in lib file
+7Lh is new in lib file
+PLh is new in lib file
+SLh is new in lib file
+RLh is new in lib file
+XLh is new in lib file
+QLh is new in lib file
+VLh is new in lib file
+ULh is new in lib file
+6Lh is new in lib file
+TLh is new in lib file
+ZLh is new in lib file
+YLh is new in lib file
+2Lh is new in lib file
+WLh is new in lib file
+3Lh is new in lib file
+4Lh is new in lib file
+1Lh is new in lib file
+0Lh is new in lib file
+UMR is new in lib file
+4MR is new in lib file
+6MR is new in lib file
+1MR is new in lib file
+0MR is new in lib file
 CA2 not found in lib file
 4YP not found in lib file
 LKn not found in lib file
