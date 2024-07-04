@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
         {"0sA"},  {"0sB"}, {"0tA"}, {"0tB"}, {"0tV"}, {"0tv"}, {"0uA"}, {"0uB"}, {"0vA"}, {"0vB"}, {"0wA"},  {"0wB"},
         {"0xA"},  {"0xB"}, {"0xD"}, {"0xU"}, {"0yA"}, {"0yB"}, {"0zA"}, {"0zB"}, {"0dR"}, {"045"}, {"0Yn"},  {"0YN"},
         {"0YS"},  {"0Ys"}, {"0yS"}, {"0ys"}, {"0Kn"}, {"0Ko"}, {"0KN"}, {"0KO"}, {"0AE"}, {"0Ae"}, {"0YnP"}, {"0YNP"},
-        {"0ZBP"}, {"0LD"}, {"0LU"}};
+        {"0ZBP"}, {"0LU"}, {"0LD"}};
 
     std::vector<cds::Residue*> allGeneratedResidues;
 
