@@ -193,7 +193,7 @@ if (NOT ${DEBUG_NO_WRAP})
     swig_add_library(${PROJECT_NAME}_wrapped LANGUAGE python SOURCES gmml.i)
     #makes sure the actual module produced by swig for wrapping is good, cmake 3.14
     #forward renames the module to whatever the target name is i.e. gmml_wrapped
-    set_target_properties(${PROJECT_NAME}_wrapped PROPERTIES OUTPUT_NAME gmml)
+    set_target_properties(${PROJECT_NAME}_wrapped PROPERTIES OUTPUT_NAME gmml2)
     #add the python headers so we can actually use them and wrap gmml in python
     target_include_directories(${PROJECT_NAME}_wrapped PUBLIC ${Python3_INCLUDE_DIRS})
 
