@@ -1,7 +1,6 @@
 #include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //FindConnectedAtoms
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"

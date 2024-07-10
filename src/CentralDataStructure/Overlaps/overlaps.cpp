@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CodeUtils/constants.hpp" // maxcutoff
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 
 #include <numeric>

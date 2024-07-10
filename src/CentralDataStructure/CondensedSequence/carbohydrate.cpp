@@ -352,7 +352,7 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
         throw std::runtime_error(message);
     }
     // Geometry
-    cds::FindAtomsToMoveSetDistance(parentAtom, childAtom);
+    cds::moveConnectedAtomsAccordingToBondLength(parentAtom, childAtom);
     //   Now bond the atoms. This could also set distance?, and angle? if passed to function?
     childAtom->addBond(parentAtom); // parentAtom also connected to childAtom. Fancy.
     for (auto& parentAtomNeighbor : parentAtom->getNeighbors())
