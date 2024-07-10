@@ -1,4 +1,3 @@
-./src/Abstract/absResidue.cpp
 ./src/CentralDataStructure/CondensedSequence/carbohydrate.cpp
 ./src/CentralDataStructure/CondensedSequence/parsedResidue.cpp
 ./src/CentralDataStructure/CondensedSequence/sequenceManipulator.cpp
