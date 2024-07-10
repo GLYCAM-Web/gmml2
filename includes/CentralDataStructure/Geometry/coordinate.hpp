@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_COORDINATE_HPP
 
 #include <array>
+#include <vector>
 #include <iostream>
 
 namespace cds
@@ -91,6 +92,8 @@ namespace cds
     Coordinate scaleBy(double factor, const Coordinate& a);
     Coordinate normal(const Coordinate& a);
     Coordinate crossProduct(const Coordinate& a, const Coordinate& b);
+
+    Coordinate coordinateMean(const std::vector<Coordinate*>& coords);
 
     Coordinate coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z);
 } // namespace cds

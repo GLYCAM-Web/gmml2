@@ -3,6 +3,8 @@
 #include "includes/CodeUtils/logging.hpp"
 
 #include <cmath>
+#include <array>
+#include <vector>
 #include <iomanip> // setw
 
 using cds::Coordinate;
@@ -38,6 +40,16 @@ Coordinate cds::crossProduct(const Coordinate& a, const Coordinate& b)
         return a.nth(n) * b.nth(k) - a.nth(k) * b.nth(n);
     };
     return {cross(1, 2), cross(2, 0), cross(0, 1)};
+}
+
+Coordinate cds::coordinateMean(const std::vector<Coordinate*>& coords)
+{
+    Coordinate center(0.0, 0.0, 0.0);
+    for (auto& coord : coords)
+    {
+        center = center + *coord;
+    }
+    return scaleBy(1.0 / coords.size(), center);
 }
 
 void Coordinate::Print(std::ostream& out) const
