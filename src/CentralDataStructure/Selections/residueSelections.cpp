@@ -85,37 +85,6 @@ void cdsSelections::FindConnectedResidues(std::vector<Residue*>& visitedList, Re
     return;
 }
 
-std::vector<Residue*> cdsSelections::selectNClosestResidues(std::vector<Residue*> inputResidues, Residue* query,
-                                                            const unsigned int n)
-{
-    const Coordinate* queryResidueCenter = query->calculateGeometricCenter();
-
-    // For the sort function
-    struct myComparatorClass
-    {
-        myComparatorClass(const Coordinate* reference) : reference_(reference)
-        {}
-
-        bool operator()(Residue* i, Residue* j)
-        {
-            return (squaredDistance(*reference_, *i->getGeometricCenter()) <
-                    squaredDistance(*reference_, *j->getGeometricCenter()));
-        }
-
-        const Coordinate* reference_;
-    };
-
-    myComparatorClass myComparatorObject(queryResidueCenter);
-    // End for the sort function
-    std::sort(inputResidues.begin(), inputResidues.end(), myComparatorObject);
-    if (n > inputResidues.size())
-    {
-        return inputResidues;
-    }
-    inputResidues.resize(n);
-    return inputResidues;
-}
-
 std::vector<Residue*> cdsSelections::selectResiduesWithinDistanceN(std::vector<Residue*> inputResidues,
                                                                    Residue* queryResidue, double queryDistance)
 {

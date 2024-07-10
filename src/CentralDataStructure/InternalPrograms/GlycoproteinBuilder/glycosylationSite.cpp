@@ -32,9 +32,7 @@ GlycosylationSite::GlycosylationSite(Residue* residue, Carbohydrate* carbohydrat
     for (auto& linkage : carbohydrate->GetGlycosidicLinkages())
     {
         linkage.DetermineResiduesForOverlapCheck(); // Now that the protein residue is attached.
-        std::vector<Residue*> closestProteinResidues =
-            cdsSelections::selectNClosestResidues(otherProteinResidues, linkage.GetFromThisResidue1(), 20);
-        linkage.AddNonReducingOverlapResidues(closestProteinResidues);
+        linkage.AddNonReducingOverlapResidues(otherProteinResidues);
     }
 }
 
