@@ -3,7 +3,6 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 
 using cds::Atom;

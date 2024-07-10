@@ -189,3 +189,14 @@ void Atom::Print(std::ostream& out) const
     out << this->getName() << ", ";
     return;
 }
+
+std::vector<Coordinate*> cds::getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms)
+{
+    std::vector<Coordinate*> coordinates;
+    coordinates.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        coordinates.push_back(atom->getCoordinate());
+    }
+    return coordinates;
+}

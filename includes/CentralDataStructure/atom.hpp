@@ -112,5 +112,7 @@ namespace cds
         std::string atomType_ = " ";
         int number_           = constants::iNotSet;
     };
+
+    std::vector<Coordinate*> getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms);
 } // namespace cds
 #endif

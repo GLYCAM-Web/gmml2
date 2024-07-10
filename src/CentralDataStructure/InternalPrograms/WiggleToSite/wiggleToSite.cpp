@@ -5,7 +5,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp" //select
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 

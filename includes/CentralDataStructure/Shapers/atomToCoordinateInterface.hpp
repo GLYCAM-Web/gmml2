@@ -12,7 +12,6 @@ using cds::Coordinate;
 
 namespace cds
 {
-    std::vector<Coordinate*> getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms);
     Coordinate GuessMissingCoordinateForAtom(cds::Atom* centralAtom, const double distance = 1.0);
     void FindAtomsToMoveSetDistance(cds::Atom* a, cds::Atom* b);
 } // namespace cds

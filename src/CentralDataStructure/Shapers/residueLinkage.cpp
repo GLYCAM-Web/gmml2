@@ -2,7 +2,6 @@
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp" //FindConnectedResidues()
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp" // For GetDescriptiveNameForGlycamResidueName in GetName function
 
 #include <algorithm>

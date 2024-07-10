@@ -5,7 +5,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/biology.hpp"
 
 using cds::Atom;
