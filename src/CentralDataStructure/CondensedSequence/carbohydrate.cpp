@@ -224,26 +224,6 @@ void Carbohydrate::ApplyDeoxy(ParsedResidue* deoxyResidue)
     return;
 }
 
-void Carbohydrate::MoveAtomsFromPrepResidueToParsedResidue(prep::PrepFile& prepResidues, ParsedResidue* parsedResidue)
-{
-    cds::Residue* prepResidue = prepResidues.getResidue(this->GetGlycamResidueName(parsedResidue));
-    if (prepResidue == nullptr)
-    {
-        std::string message = "Did not find prep entry for " + parsedResidue->getName() +
-                              " with glycam residue code: " + this->GetGlycamResidueName(parsedResidue);
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw(std::runtime_error(message));
-    }
-    parsedResidue->setName(
-        prepResidue->getName()); // Need parsedResidue to be called e.g. 0MA and not DManpa1-4. I can see this being an
-                                 // issue now. Perhaps need a "GlycamName" variable?
-    parsedResidue->setAtoms(prepResidue->extractAtoms()); // This moves the atoms, i.e. for prepResidue "Moved from
-                                                          // objects are left in a valid but unspecified state"
-    prepResidues.deleteResidue(prepResidue); // Death to the prepResidue, if there are repeats with the same name, the
-                                             // next search would find the one without atoms.
-    return;
-}
-
 void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
 {
     std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
@@ -251,19 +231,6 @@ void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
 
     cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
     atomToAdjust->setCharge(atomToAdjust->getCharge() + GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
-    return;
-}
-
-void Carbohydrate::EnsureIntegralCharge(double charge)
-{
-    double difference = std::fabs(charge - (std::round(charge)));
-    if (difference > 0.00001 && difference < 0.99999)
-    {
-        std::stringstream errorMessage;
-        errorMessage << "Non-integral charge (" << charge << "). You cannot run MD with this.\n";
-        std::cerr << errorMessage.str();
-        throw errorMessage.str();
-    }
     return;
 }
 

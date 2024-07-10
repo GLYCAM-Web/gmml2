@@ -1,16 +1,11 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 
-#include "includes/CentralDataStructure/atom.hpp"
 #include <vector>
 
 namespace cds
 {
 
-    double getCharge(std::vector<cds::Atom*> atoms);
-    void EnsureIntegralCharge(std::vector<cds::Atom*> atoms);
-
-    // Templated functions
     template<typename T> void serializeNumbers(std::vector<T*> elements)
     {
         unsigned int i = 0;

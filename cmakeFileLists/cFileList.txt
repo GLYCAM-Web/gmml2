@@ -56,7 +56,6 @@
 ./src/CentralDataStructure/atom.cpp
 ./src/CentralDataStructure/cdsFunctions/atomicConnectivity.cpp
 ./src/CentralDataStructure/cdsFunctions/bondByDistance.cpp
-./src/CentralDataStructure/cdsFunctions/cdsFunctions.cpp
 ./src/CentralDataStructure/ensemble.cpp
 ./src/CentralDataStructure/molecule.cpp
 ./src/CentralDataStructure/residue.cpp
