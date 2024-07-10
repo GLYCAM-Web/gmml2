@@ -5,20 +5,6 @@
 
 using cds::Coordinate;
 
-Coordinate cds::calculateGeometricCenter(const std::vector<Coordinate*>& coords)
-{
-    if (coords.size() == 0)
-    {
-        throw std::runtime_error("Oliver what were you thinking in cds::calculateGeometricCenter?");
-    }
-    Coordinate center(0.0, 0.0, 0.0);
-    for (auto& coord : coords)
-    {
-        center = center + *coord;
-    }
-    return scaleBy(1.0 / coords.size(), center);
-}
-
 Coordinate cds::CreateCoordinateForCenterAwayFromNeighbors(const Coordinate& centralCoord,
                                                            const std::vector<Coordinate*>& threeNeighbors,
                                                            const double distance)

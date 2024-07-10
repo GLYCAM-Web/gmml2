@@ -7,7 +7,6 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
-#include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateGeometricCenter
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
@@ -152,13 +151,6 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
 double WiggleToSite::calculateDistance()
 {
     return distance(*wiggleTargetCoordinates_.at(0), *wiggleMeCoordinates_.at(0));
-    //    double totalDistance = 0.0;
-    //    totalDistance += wiggleTargetCoordinates_.at(0)->Distance(wiggleMeCoordinates_.at(0));
-    //    totalDistance += wiggleTargetCoordinates_.at(1)->Distance(wiggleMeCoordinates_.at(1));
-    //    totalDistance += wiggleTargetCoordinates_.at(2)->Distance(wiggleMeCoordinates_.at(2));
-    //    return totalDistance;
-    //    //return
-    //    cds::calculateGeometricCenter(wiggleTargetCoordinates_).Distance(&cds::calculateGeometricCenter(wiggleMeCoordinates_));
 }
 
 bool WiggleToSite::acceptOverlaps()

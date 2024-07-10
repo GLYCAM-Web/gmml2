@@ -57,7 +57,6 @@ namespace cds
         std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
         std::vector<Coordinate*> getCoordinates() const;
         void insertCoordinatesInto(std::vector<Coordinate>& coordinates) const;
-        const Coordinate* getGeometricCenter();
 
         inline ResidueType GetType() const
         {
@@ -120,7 +119,6 @@ namespace cds
         void findAtomPairsConnectedToOtherResidues(std::vector<std::pair<const Atom*, const Atom*>>& foundAtoms) const;
         //        std::vector<std::pair<const Atom*, const Atom*>> getAtomPairsConnectedToOtherResidues() const;
         void MakeDeoxy(const std::string oxygenNumber);
-        const Coordinate* calculateGeometricCenter();
         ResidueType determineType(const std::string& residueName);
         //////////////////////////////////////////////////////////
         //                    DISPLAY                           //
@@ -158,7 +156,6 @@ namespace cds
             using std::swap;
             swap(lhs.atoms_, rhs.atoms_);
             swap(lhs.name_, rhs.name_);
-            swap(lhs.geometricCenter_, rhs.geometricCenter_);
             swap(lhs.type_, rhs.type_);
             swap(lhs.number_, rhs.number_);
         }
@@ -168,9 +165,8 @@ namespace cds
         //                    ATTRIBUTES                        //
         //////////////////////////////////////////////////////////
         std::vector<std::unique_ptr<Atom>> atoms_;
-        std::string name_           = "   ";
-        Coordinate geometricCenter_ = {constants::dNotSet, constants::dNotSet, constants::dNotSet};
-        ResidueType type_           = Undefined; // enum Type. See enum above.
+        std::string name_ = "   ";
+        ResidueType type_ = Undefined; // enum Type. See enum above.
         int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
     };

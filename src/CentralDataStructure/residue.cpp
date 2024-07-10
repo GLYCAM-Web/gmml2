@@ -5,7 +5,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/biology.hpp"
 
@@ -30,8 +29,7 @@ Residue::Residue(Residue&& other) noexcept : Node<Residue>(other)
 
 // Copy Ctor. Using copy-swap idiom. Call the base class copy ctor.
 Residue::Residue(const Residue& other)
-    : glygraph::Node<cds::Residue>(other), name_(other.name_), geometricCenter_(other.geometricCenter_),
-      type_(other.type_), number_(other.number_)
+    : glygraph::Node<cds::Residue>(other), name_(other.name_), type_(other.type_), number_(other.number_)
 {
     std::vector<cds::Atom*> otherAtoms = other.getAtoms();
     for (auto& atom : otherAtoms)
@@ -121,15 +119,6 @@ void Residue::insertCoordinatesInto(std::vector<Coordinate>& coordinates) const
     {
         coordinates.push_back(*a.get()->getCoordinate());
     }
-}
-
-const Coordinate* Residue::getGeometricCenter()
-{
-    if (geometricCenter_.GetX() == constants::dNotSet)
-    {
-        return this->calculateGeometricCenter();
-    }
-    return &geometricCenter_;
 }
 
 pdb::ResidueId Residue::getId() const
@@ -276,12 +265,6 @@ void Residue::MakeDeoxy(const std::string oxygenNumber)
     oxygenAtom->setType("H1");
     oxygenAtom->setCharge(0.0000);
     gmml::log(__LINE__, __FILE__, gmml::INF, "Completed MakeDeoxy\n");
-}
-
-const Coordinate* Residue::calculateGeometricCenter()
-{
-    geometricCenter_ = cds::calculateGeometricCenter(this->getCoordinates());
-    return &geometricCenter_;
 }
 
 cds::ResidueType Residue::determineType(const std::string& residueName)

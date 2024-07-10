@@ -8,7 +8,6 @@
 
 namespace cds
 {
-    Coordinate calculateGeometricCenter(const std::vector<Coordinate*>& coords);
     Coordinate CreateCoordinateForCenterAwayFromNeighbors(const Coordinate& centralCoord,
                                                           const std::vector<Coordinate*>& threeNeighbors,
                                                           const double distance = 1.0);
