@@ -8,9 +8,8 @@
 
 namespace cds
 {
-    Coordinate CreateCoordinateForCenterAwayFromNeighbors(const Coordinate& centralCoord,
-                                                          const std::vector<Coordinate*>& threeNeighbors,
-                                                          const double distance = 1.0);
+    Coordinate coordinateOppositeToNeighborAverage(const Coordinate& centralCoord,
+                                                   const std::vector<Coordinate*>& neighbors, const double distance);
     Coordinate calculateCoordinateFromInternalCoords(const Coordinate& a, const Coordinate& b, const Coordinate& c,
                                                      double angle_Degrees, double dihedral_Degrees,
                                                      double distance_Angstrom);

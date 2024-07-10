@@ -560,9 +560,8 @@ void ResidueLinkage::CreateHydrogenForPsiAngles(std::vector<DihedralAtoms>& dihe
                 }
                 else
                 {
-                    auto neighborsCoords = getCoordinatesFromAtoms(atom->getNeighbors());
-                    Coordinate newCoord =
-                        cds::CreateCoordinateForCenterAwayFromNeighbors(*atom->getCoordinate(), neighborsCoords);
+                    Coordinate newCoord = cds::coordinateOppositeToNeighborAverage(
+                        *atom->getCoordinate(), getCoordinatesFromAtoms(atom->getNeighbors()), 1.0);
                     std::unique_ptr<Atom> newAtom = std::make_unique<cds::Atom>("HHH", newCoord);
                     atom->addBond(newAtom.get());
                     link_.residues.second->addAtom(std::move(newAtom));

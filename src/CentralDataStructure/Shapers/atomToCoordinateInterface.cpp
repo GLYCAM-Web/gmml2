@@ -16,15 +16,8 @@ cds::Coordinate cds::GuessMissingCoordinateForAtom(cds::Atom* centralAtom, const
         gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
         throw std::runtime_error(ss.str());
     }
-    std::vector<Coordinate*> threeNeighborCoords;
-    std::vector<Atom*> neighbors = centralAtom->getNeighbors();
-    for (auto& neighbor : neighbors)
-    {
-        //        std::cout << neighbor->getName() << ", " << neighbor->getCoordinate()->ToString() << "\n";
-        threeNeighborCoords.push_back(neighbor->getCoordinate());
-    }
-    return cds::CreateCoordinateForCenterAwayFromNeighbors(*centralAtom->getCoordinate(), threeNeighborCoords,
-                                                           distance);
+    return cds::coordinateOppositeToNeighborAverage(*centralAtom->getCoordinate(),
+                                                    getCoordinatesFromAtoms(centralAtom->getNeighbors()), distance);
 }
 
 // parentAtom (e.g. O of OME), childAtom (e.g. C1 of Gal1-, S1 of SO3)

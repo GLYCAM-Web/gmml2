@@ -73,7 +73,7 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
     // Sialic acid. ToDo Ok so I reckon the below is just assuming alpha or beta depending on the concext. Need to fix a
     // lot, but need to reproduce functionality after refactor first.
     //    Atom* anomericAtom = cdsSelections::guessAnomericAtom(reducing_Residue);
-    //   This won't work as sometimes want alpha, sometimes beta. i.e. a CreateCoordinateForCenterAwayFromNeighbors
+    //   This won't work as sometimes want alpha, sometimes beta. i.e. a coordinateOppositeToNeighborAverage
     //   function
     // This needs to be abstracted so it works for C2 reducing residues:
     Coordinate* coordC5       = reducing_Residue->FindAtom("C5")->getCoordinate();

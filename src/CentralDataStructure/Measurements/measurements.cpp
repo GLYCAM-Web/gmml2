@@ -5,17 +5,16 @@
 
 using cds::Coordinate;
 
-Coordinate cds::CreateCoordinateForCenterAwayFromNeighbors(const Coordinate& centralCoord,
-                                                           const std::vector<Coordinate*>& threeNeighbors,
-                                                           const double distance)
+Coordinate cds::coordinateOppositeToNeighborAverage(const Coordinate& centralCoord,
+                                                    const std::vector<Coordinate*>& neighbors, const double distance)
 {
     Coordinate combinedVs(0.0, 0.0, 0.0);
-    for (auto& neighbor : threeNeighbors)
+    for (auto& neighbor : neighbors)
     {
         // normalize so that a small bond length in a H doesn't create a wonky tetrahedral
         combinedVs = combinedVs + normal(centralCoord - *neighbor);
     }
-    return centralCoord + scaleBy(distance, combinedVs);
+    return centralCoord + scaleBy(distance, normal(combinedVs));
 }
 
 Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const Coordinate& b, const Coordinate& c,
