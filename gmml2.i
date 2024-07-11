@@ -1,4 +1,4 @@
-/* File: gmml.i */
+/* File: gmml2.i */
 %module gmml2
 %include <std_string.i>
 %include <std_iostream.i>
@@ -6,7 +6,6 @@
 %include<std_vector.i>
 
 // #https://www.swig.org/Doc1.3/Customization.html#exception
-// This is super bloaty, better to be specific for each class. Tidy up what actually needs to be wrapped first, then come back to this.
 %include exception.i
 %exception
 {
@@ -33,7 +32,6 @@ try	{
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-//#include "includes/CodeUtils/constants.hpp"
 
 %}
 

@@ -199,7 +199,7 @@ CLEAN="0"
 CMAKE_BUILD_TYPE_FLAG="-DCMAKE_BUILD_TYPE=Release"
 #target gmml_wrapped = swig wrapped gmml
 #target gmml = just gmml with no wrap
-MAKE_TARGET="gmml"
+MAKE_TARGET="gmml2"
 #this is just to hold if we want to create a makefile that doesnt have
 #the ability to swig wrap. This is good for debugging purposes and
 #making linter checks much much faster
@@ -297,7 +297,7 @@ while getopts "j:o:cwhd:" option; do
             } || {
                 optionsBorked "${option}" "notArg"
             }
-            MAKE_TARGET="gmml_wrapped"
+            MAKE_TARGET="gmml2_wrapped"
             ;;
         h)
             printHelp
@@ -393,7 +393,7 @@ cd ..
 
 STUPID_WRAPPED_MSG=""
 #Wrapping is handled by cmake
-if [ "${MAKE_TARGET}" == "gmml_wrapped" ]; then
+if [ "${MAKE_TARGET}" == "gmml2_wrapped" ]; then
     STUPID_WRAPPED_MSG=" and wrapping"
 fi
 echo -e "${PASSED_STYLE}
