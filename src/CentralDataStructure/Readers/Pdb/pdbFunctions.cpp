@@ -1,6 +1,12 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+
+#include <string>
+#include <iostream>
+#include <iomanip>
 
 int pdb::checkShiftFromSerialNumberOverrun(const std::string& line)
 {
@@ -32,7 +38,39 @@ cds::Coordinate pdb::checkShiftsAndExtractCoordinate(const std::string& line)
     { // Combine the shifts, but ignore the first shift in residue sequence number.
         shift += (secondShift - 1);
     }
-    return cds::coordinateFromStrings(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
+    return pdb::coordinateFromStrings(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
                                       codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
                                       codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8)));
+}
+
+cds::Coordinate pdb::coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z)
+{
+    try
+    {
+        return {std::stod(x), std::stod(y), std::stod(z)};
+    }
+    catch (...)
+    {
+        gmml::log(__LINE__, __FILE__, gmml::ERR,
+                  "Could not convert these strings to doubles: " + x + ", " + y + ", " + z + ", ");
+        throw;
+    }
+}
+
+void pdb::expandLine(std::string& line, int length)
+{
+    int l = line.length();
+    if (l < length)
+    {
+        int space = length - l;
+        std::stringstream ss;
+        ss << line << std::setw(space) << " ";
+        line = ss.str();
+    }
+}
+
+void pdb::print(const cds::Coordinate& coord, std::ostream& out)
+{
+    out << std::setw(10) << coord.GetX() << ", " << std::setw(10) << coord.GetY() << ", " << std::setw(10)
+        << coord.GetZ();
 }

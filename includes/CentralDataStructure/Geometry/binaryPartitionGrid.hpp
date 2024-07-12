@@ -6,6 +6,8 @@
 #include <array>
 #include <vector>
 
+using std::size_t;
+
 namespace cds
 {
     struct BinaryPartitionGridAxisLimits

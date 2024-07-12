@@ -2,7 +2,6 @@
 
 #include <sstream>
 #include <algorithm>
-#include <iomanip> // std::setw
 #include <ctype.h> // isdigit
 
 bool codeUtils::startsWith(std::string bigString, std::string smallString)
@@ -26,24 +25,6 @@ void codeUtils::RemoveSpaces(std::string& str)
 void codeUtils::RemoveQuotes(std::string& str)
 {
     str.erase(std::remove(str.begin(), str.end(), '\"'), str.end());
-}
-
-void codeUtils::ExpandLine(std::string& line, int length)
-{
-    int l = line.length();
-    if (l >= length)
-    {
-        return;
-    }
-    else
-    {
-        int space = length - l;
-        std::stringstream ss;
-        ss << line << std::setw(space) << " ";
-        line = ss.str();
-        return;
-    }
-    return;
 }
 
 int codeUtils::GetSizeOfIntInString(const std::string str)

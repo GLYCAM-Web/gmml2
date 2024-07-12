@@ -3,7 +3,6 @@
 
 #include <array>
 #include <vector>
-#include <iostream>
 
 namespace cds
 {
@@ -51,9 +50,6 @@ namespace cds
             return {sub(0), sub(1), sub(2)};
         }
 
-        void Print(std::ostream& out = std::cerr) const;
-        std::string ToString() const;
-
       private:
         std::array<double, 3> values_;
     };
@@ -92,9 +88,6 @@ namespace cds
     Coordinate scaleBy(double factor, const Coordinate& a);
     Coordinate normal(const Coordinate& a);
     Coordinate crossProduct(const Coordinate& a, const Coordinate& b);
-
     Coordinate coordinateMean(const std::vector<Coordinate*>& coords);
-
-    Coordinate coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z);
 } // namespace cds
 #endif

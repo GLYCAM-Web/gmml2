@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CodeUtils/files.hpp"
@@ -37,7 +38,7 @@ void PdbFile::ParseInFileStream(std::ifstream& pdbFileStream, const InputType pd
     for (std::string line; std::getline(pdbFileStream, line);)
     {
         // std::cout << "Parsing the line: " << line << "\n";
-        codeUtils::ExpandLine(line, pdb::iPdbLineLength);
+        pdb::expandLine(line, pdb::iPdbLineLength);
         std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER", "HETATM"};
         if (pdbFileType == modelsAsCoordinates)
@@ -134,13 +135,13 @@ std::stringstream PdbFile::ExtractHomogenousRecordSection(std::ifstream& pdbFile
                                                           std::string recordName)
 {
     std::stringstream recordSection;
-    codeUtils::ExpandLine(line, pdb::iPdbLineLength);
+    pdb::expandLine(line, pdb::iPdbLineLength);
     recordSection << line << std::endl;
     std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
     std::string previousName            = recordName;
     while ((std::getline(pdbFileStream, line)))
     {
-        codeUtils::ExpandLine(line, pdb::iPdbLineLength);
+        pdb::expandLine(line, pdb::iPdbLineLength);
         recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         if (recordName != "ANISOU") // Do nothing for ANISOU
         {

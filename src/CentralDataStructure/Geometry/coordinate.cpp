@@ -1,11 +1,7 @@
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/logging.hpp"
 
 #include <cmath>
-#include <array>
 #include <vector>
-#include <iomanip> // setw
 
 using cds::Coordinate;
 
@@ -50,39 +46,4 @@ Coordinate cds::coordinateMean(const std::vector<Coordinate*>& coords)
         center = center + *coord;
     }
     return scaleBy(1.0 / coords.size(), center);
-}
-
-void Coordinate::Print(std::ostream& out) const
-{
-    if (this->GetX() == constants::dNotSet || this->GetY() == constants::dNotSet || this->GetZ() == constants::dNotSet)
-    {
-        out << std::setw(10) << " "
-            << ", " << std::setw(10) << " "
-            << ", " << std::setw(10) << " ";
-    }
-    else
-    {
-        out << std::setw(10) << GetX() << ", " << std::setw(10) << GetY() << ", " << std::setw(10) << GetZ();
-    }
-}
-
-std::string Coordinate::ToString() const
-{
-    std::stringstream ss;
-    this->Print(ss);
-    return ss.str();
-}
-
-Coordinate cds::coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z)
-{
-    try
-    {
-        return {std::stod(x), std::stod(y), std::stod(z)};
-    }
-    catch (...)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::ERR,
-                  "Could not convert these strings to doubles: " + x + ", " + y + ", " + z + ", ");
-        throw;
-    }
 }
