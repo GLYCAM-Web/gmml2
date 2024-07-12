@@ -163,12 +163,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
     "${EXHDIRECTORIES}"
     )
-	
-#Specifies the header file we are gonna make into a shared object file,
-#since our gmml.hpp is a god file we just include that
-set_target_properties(${PROJECT_NAME} PROPERTIES
-	PUBLIC_HEADER "includes/gmml.hpp")
-    
+
 #for the project object value this passes -fpic which is needed
 #to make our files into a shared libary
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -W)

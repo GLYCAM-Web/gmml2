@@ -2,7 +2,6 @@
 
 #include "../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/numbers.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 
 using cds::Assembly;

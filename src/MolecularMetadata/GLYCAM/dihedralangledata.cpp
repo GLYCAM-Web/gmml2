@@ -134,7 +134,7 @@ bool DihedralAngleDataContainer::checkIfResidueConditionsAreSatisfied(std::vecto
 
 // clang-format off
 DihedralAngleDataContainer::DihedralAngleDataContainer()
-{ // const AmberAtomTypeInfo Glycam06j1AtomTypes[] =
+{
     dihedralAngleDataVector_ =
       { // Regex1  , Regex2   , Name   , Angle  , Upper  , Lower  , Weight, Entry Type    , Name , B , I , Res1 Condition , Res2 Conditions           , Atom names                                                               // Atom names this applies to
           { "C1"   , "O[1-9]" , "Phi"  , 180.0  ,  25.0  ,  25.0  , 1.0   , "permutation" , "g"  , 1 , 1 , {"aldose"}     , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
