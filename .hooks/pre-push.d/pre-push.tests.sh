@@ -261,11 +261,16 @@ cd "${GEMS_DIR}" || {
 }
 
 #Add these removes so the tests don't pass on an old version of the library
-rm -f "${GMML_DIR}/gmml.py" "${GMML_DIR}/_gmml.so"
+#This below is commented out. I need to ensure that GEMs doesnt do anything funky with the generated files like move
+#them within the gmml directory. End goal for gmml2 is that all generated files should remain where they are
+#generated and ref to correct location. Maybe just delete the cmakeBuild dir unsure...
+#rm -f "${GMML_DIR}/gmml.py" "${GMML_DIR}/_gmml.so"
 rm -rf "${GMML_DIR:?}/lib"
 if [ -d "${GMML_DIR}/cmakeBuild" ]; then
     echo "Removing the libgmml.so from our cmakeBuild directory"
-    rm "${GMML_DIR}/cmakeBuild/libgmml.so"
+    rm "${GMML_DIR}/cmakeBuild/libgmml2.so"
+    rm "${GMML_DIR}/cmakeBuild/_gmml2.so"
+    rm "${GMML_DIR}/cmakeBuild/gmml2.py"
 fi
 
 echo "Compiling gmml using GEMS ./make.sh, no wrap flag cause it auto wraps"
