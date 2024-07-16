@@ -9,31 +9,54 @@ namespace
 {
     using cds::Coordinate;
 
-    cds::Sphere boundingSphereInitialEstimate(const std::vector<Coordinate>& points)
+    double radius(const Coordinate&)
     {
-        const Coordinate& init = points[0];
-        double x               = init.nth(0);
-        double y               = init.nth(1);
-        double z               = init.nth(2);
-        std::array<double, 3> minValue {x, y, z};
-        std::array<double, 3> maxValue {x, y, z};
+        return 0.0;
+    }
+
+    double radius(const cds::Sphere& sphere)
+    {
+        return sphere.radius;
+    }
+
+    Coordinate center(const Coordinate& coord)
+    {
+        return coord;
+    }
+
+    Coordinate center(const cds::Sphere& sphere)
+    {
+        return sphere.center;
+    }
+
+    template<class T> cds::Sphere boundingSphereInitialEstimate(const std::vector<T>& points)
+    {
+        const Coordinate init = center(points[0]);
+        double d              = radius(points[0]);
+        double x              = init.nth(0);
+        double y              = init.nth(1);
+        double z              = init.nth(2);
+        std::array<double, 3> minValue {x - d, y - d, z - d};
+        std::array<double, 3> maxValue {x + d, y + d, z + d};
         std::array<size_t, 3> minId {0, 0, 0};
         std::array<size_t, 3> maxId {0, 0, 0};
 
         for (size_t k = 1; k < points.size(); k++)
         {
-            auto& a = points[k];
+            auto& a       = points[k];
+            Coordinate pt = center(a);
+            double r      = radius(a);
             for (size_t n = 0; n < 3; n++)
             {
-                double nth = a.nth(n);
-                if (nth < minValue[n])
+                double nth = pt.nth(n);
+                if (nth - r < minValue[n])
                 {
-                    minValue[n] = nth;
+                    minValue[n] = nth - r;
                     minId[n]    = k;
                 }
-                if (nth > maxValue[n])
+                if (nth + r > maxValue[n])
                 {
-                    maxValue[n] = nth;
+                    maxValue[n] = nth + r;
                     maxId[n]    = k;
                 }
             }
@@ -42,7 +65,9 @@ namespace
         double maxSpan  = 0.0;
         for (size_t n = 0; n < 3; n++)
         {
-            double span = cds::squaredDistance(points[minId[n]], points[maxId[n]]);
+            auto& minp  = points[minId[n]];
+            auto& maxp  = points[maxId[n]];
+            double span = cds::distance(center(minp), center(maxp)) + radius(minp) + radius(maxp);
             if (span > maxSpan)
             {
                 maxSpan  = span;
@@ -50,8 +75,8 @@ namespace
             }
         }
 
-        return cds::Sphere {0.5 * std::sqrt(maxSpan),
-                            cds::scaleBy(0.5, points[minId[maxSpanN]] + points[maxId[maxSpanN]])};
+        return cds::Sphere {0.5 * maxSpan,
+                            cds::scaleBy(0.5, center(points[minId[maxSpanN]]) + center(points[maxId[maxSpanN]]))};
     }
 
     cds::Sphere boundingSphereIncludingAllPoints(cds::Sphere sphere, const std::vector<Coordinate>& points)
@@ -70,19 +95,33 @@ namespace
         }
         return sphere;
     }
+
+    cds::Sphere boundingSphereIncludingAllSpheres(cds::Sphere sphere, const std::vector<cds::Sphere>& spheres)
+    {
+        for (auto& a : spheres)
+        {
+            Coordinate diff   = center(a) - sphere.center;
+            double diffLength = length(diff);
+            double dist       = diffLength + radius(a);
+            if (dist > sphere.radius)
+            {
+                double newRadius     = 0.5 * (sphere.radius + dist);
+                Coordinate newCenter = sphere.center + cds::scaleBy((dist - sphere.radius) / (2.0 * diffLength), diff);
+                sphere               = cds::Sphere {newRadius, newCenter};
+            }
+        }
+        return sphere;
+    }
 } // namespace
 
 cds::Sphere cds::boundingSphere(const std::vector<Coordinate>& points)
 {
-    if (points.empty())
-    {
-        return Sphere {
-            0.0, {0.0, 0.0, 0.0}
-        };
-    }
-    else
-    {
-        Sphere sphere = boundingSphereInitialEstimate(points);
-        return boundingSphereIncludingAllPoints(sphere, points);
-    }
+    Sphere sphere = boundingSphereInitialEstimate(points);
+    return boundingSphereIncludingAllPoints(sphere, points);
+}
+
+cds::Sphere cds::boundingSphere(const std::vector<Sphere>& spheres)
+{
+    Sphere sphere = boundingSphereInitialEstimate(spheres);
+    return boundingSphereIncludingAllSpheres(sphere, spheres);
 }

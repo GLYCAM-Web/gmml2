@@ -20,6 +20,7 @@ namespace cds
     }
 
     Sphere boundingSphere(const std::vector<Coordinate>& points);
+    Sphere boundingSphere(const std::vector<Sphere>& spheres);
 } // namespace cds
 
 #endif
