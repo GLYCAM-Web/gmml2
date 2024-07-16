@@ -1,23 +1,24 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)
 {
-    std::vector<atomicBonds::AtomicElement> elements;
+    std::vector<MolecularMetadata::Element> elements;
     elements.reserve(atoms.size());
     std::vector<Coordinate*> coordinates;
     coordinates.reserve(atoms.size());
     for (auto& a : atoms)
     {
-        elements.push_back(atomicBonds::toElement(a->getElement()));
+        elements.push_back(MolecularMetadata::toElement(a->getElement()));
         coordinates.push_back(a->getCoordinate());
     }
     for (size_t n = 0; n < atoms.size(); n++)
     {
         for (size_t k = n + 1; k < atoms.size(); k++)
         {
-            double maxLength = atomicBonds::getMaxBondLengthByAtomType(elements[n], elements[k]);
+            double maxLength = MolecularMetadata::getMaxBondLengthByAtomType(elements[n], elements[k]);
             if (withinDistance(maxLength, *coordinates[n], *coordinates[k]))
             {
                 atoms[n]->addBond(atoms[k]);
@@ -33,7 +34,7 @@ void cds::bondAtomsAndResiduesByDistance(cds::Residue* residueA, cds::Residue* r
     {
         for (auto& atomB : residueB->getAtoms())
         {
-            if (atomicBonds::bondAtomsIfClose(atomA, atomB))
+            if (MolecularMetadata::bondAtomsIfClose(atomA, atomB))
             {
                 residuesAreConnected = true; // only needs to be true once to connect residues.
             }

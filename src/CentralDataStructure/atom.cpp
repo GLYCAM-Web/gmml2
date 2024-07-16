@@ -1,8 +1,8 @@
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 
 #include <ctype.h> // isalpha
@@ -158,8 +158,8 @@ std::string Atom::getId() const
 
 bool Atom::isWithinBondingDistance(const Atom* otherAtom) const
 {
-    double maxLength = atomicBonds::getMaxBondLengthByAtomType(atomicBonds::toElement(this->getElement()),
-                                                               atomicBonds::toElement(otherAtom->getElement()));
+    double maxLength = MolecularMetadata::getMaxBondLengthByAtomType(
+        MolecularMetadata::toElement(this->getElement()), MolecularMetadata::toElement(otherAtom->getElement()));
     return withinDistance(maxLength, *this->getCoordinate(), *otherAtom->getCoordinate());
 }
 
