@@ -130,6 +130,7 @@ namespace MolecularMetadata
     };
 
     Element toElement(const std::string& str);
+    double vanDerWaalsRadius(Element element);
     Element findElementAtomicNumber(const std::string& queryElement);
 } // namespace MolecularMetadata
 #endif

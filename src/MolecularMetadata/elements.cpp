@@ -130,12 +130,57 @@ namespace
         {"Ts", Element::Ts},
         {"Og", Element::Og}
     };
+
+    struct radius
+    {
+        double value;
+        bool valid = false;
+    };
+
+    std::vector<radius> vanDerWaalsRadii()
+    {
+        std::vector<radius> result;
+        result.resize(Element::ElementCount);
+
+        auto setRadius = [&](Element element, double value)
+        {
+            result[element] = {value, true};
+        };
+
+        // taken from the worst-case of chimera's united or all atom radii, whichever is larger
+        setRadius(Element::C, 1.88);
+        setRadius(Element::N, 1.64);
+        setRadius(Element::O, 1.5);
+        setRadius(Element::S, 1.782);
+        setRadius(Element::H, 1.0);
+        setRadius(Element::P, 1.871);
+        setRadius(Element::F, 1.560);
+        setRadius(Element::Cl, 1.735);
+        setRadius(Element::Br, 1.978);
+        setRadius(Element::I, 2.094);
+
+        return result;
+    }
+
+    std::vector<radius> atomRadii = vanDerWaalsRadii();
 } // namespace
 
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
 {
     const auto& it = elementsByName.find(str);
     return (it != elementsByName.end()) ? it->second : Element::Unknown;
+}
+
+double MolecularMetadata::vanDerWaalsRadius(Element element)
+{
+    auto& result = atomRadii[element];
+    if (!result.valid)
+    {
+        std::string message = "No valid radius for element: " + std::to_string(element);
+        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+        throw std::runtime_error(message);
+    }
+    return result.value;
 }
 
 MolecularMetadata::Element MolecularMetadata::findElementAtomicNumber(const std::string& queryElement)
