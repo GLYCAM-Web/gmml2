@@ -111,14 +111,6 @@ std::vector<Coordinate*> Residue::getCoordinates() const
     return cds::getCoordinatesFromAtoms(this->getAtoms());
 }
 
-void Residue::insertCoordinatesInto(std::vector<Coordinate>& coordinates) const
-{
-    for (auto& a : atoms_)
-    {
-        coordinates.push_back(*a.get()->getCoordinate());
-    }
-}
-
 pdb::ResidueId Residue::getId() const
 {
     pdb::ResidueId temp(this->getName(), std::to_string(this->getNumber()), constants::sNotSet, constants::sNotSet);

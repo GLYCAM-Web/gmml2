@@ -12,15 +12,15 @@ namespace cds
 {
     struct ResidueAtomOverlapInput
     {
-        std::vector<Coordinate> atomCoordinates;
+        std::vector<Sphere> atomCoordinates;
         std::vector<Sphere> boundingSpheres;
         const std::vector<std::pair<size_t, size_t>> residueAtoms;
     };
 
     struct ResidueAtomOverlapInputReference
     {
-        std::vector<Coordinate>& atomCoordinates;
-        std::vector<Sphere> boundingSpheres;
+        std::vector<Sphere>& atomCoordinates;
+        std::vector<Sphere>& boundingSpheres;
         const std::vector<std::pair<size_t, size_t>>& residueAtoms;
     };
 
@@ -29,7 +29,5 @@ namespace cds
     unsigned int CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
                                        const ResidueAtomOverlapInputReference& moving);
     unsigned int CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
-    unsigned int CountOverlappingCoordinates(const std::vector<Coordinate*>& coordsA,
-                                             const std::vector<Coordinate*>& coordsB);
 } // namespace cds
 #endif

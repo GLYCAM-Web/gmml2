@@ -2,7 +2,9 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
 
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/constants.hpp" // dNotSet
 
 #include <string>
@@ -89,6 +91,7 @@ namespace cds
         void bondIfClose(Atom* otherAtom);
         bool isWithinBondingDistance(const Atom* otherAtom) const;
         std::string getElement() const;
+        MolecularMetadata::Element cachedElement();
         int getAtomicNumber() const;
         virtual std::string getId() const;
         double calculateDistance(const Atom* otherAtom) const;
@@ -108,11 +111,15 @@ namespace cds
         //////////////////////////////////////////////////////////
         Coordinate* currentCoordinate_ = nullptr;
         std::vector<std::unique_ptr<Coordinate>> allCoordinates_;
-        double charge_        = constants::dNotSet;
-        std::string atomType_ = " ";
-        int number_           = constants::iNotSet;
+        double charge_                      = constants::dNotSet;
+        std::string atomType_               = " ";
+        int number_                         = constants::iNotSet;
+        MolecularMetadata::Element element_ = MolecularMetadata::Element::Unknown;
+        bool gotElement_                    = false;
     };
 
-    std::vector<Coordinate*> getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms);
+    Sphere coordinateWithRadius(Atom* atom);
+    std::vector<Coordinate*> getCoordinatesFromAtoms(std::vector<Atom*> atoms);
+    std::vector<Sphere> getCoordinatesWithRadiiFromAtoms(std::vector<Atom*> atoms);
 } // namespace cds
 #endif

@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
+#include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -122,7 +124,7 @@ namespace
         {
             atomCount += res->atomCount();
         }
-        std::vector<Coordinate> coordinates;
+        std::vector<cds::Sphere> coordinates;
         coordinates.reserve(atomCount);
         std::vector<std::pair<size_t, size_t>> residueAtoms;
         residueAtoms.reserve(residues.size());
@@ -130,7 +132,10 @@ namespace
         for (auto& res : residues)
         {
             size_t startAtom = currentAtom;
-            res->insertCoordinatesInto(coordinates);
+            for (const auto& atomPtr : res->getAtomsReference())
+            {
+                coordinates.push_back(coordinateWithRadius(atomPtr.get()));
+            }
             currentAtom += res->atomCount();
             residueAtoms.push_back({startAtom, currentAtom});
         }
@@ -138,14 +143,14 @@ namespace
         withinRangeResidueAtoms.reserve(residues.size());
         std::vector<cds::Sphere> withinRangeSpheres;
         withinRangeSpheres.reserve(residues.size());
-        std::vector<Coordinate> residuePoints;
+        std::vector<cds::Sphere> residuePoints;
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
             auto range  = residueAtoms[n];
             bool within = false;
             for (size_t k = range.first; k < range.second; k++)
             {
-                within = cds::withinSphere(bounds, coordinates[k]);
+                within = cds::spheresOverlap(constants::overlapTolerance, bounds, coordinates[k]);
                 if (within)
                 {
                     break;
@@ -193,15 +198,15 @@ namespace
     }
 
     void moveFirstResidueCoords(const cds::RotationMatrix matrix, const cds::dihedralRotationData& input,
-                                std::vector<Coordinate>& coordinates, std::vector<cds::Sphere>& spheres)
+                                std::vector<cds::Sphere>& coordinates, std::vector<cds::Sphere>& spheres)
     {
-        std::vector<cds::Coordinate> firstCoords;
+        std::vector<cds::Sphere> firstCoords;
         auto range = input.residueAtoms[0];
         firstCoords.reserve(range.second - range.first);
         for (size_t n = range.first; n < range.second; n++)
         {
-            coordinates[n] =
-                input.firstResidueCoordinateMoving[n] ? matrix * input.coordinates[n] : input.coordinates[n];
+            auto& center          = input.coordinates[n].center;
+            coordinates[n].center = input.firstResidueCoordinateMoving[n] ? matrix * center : center;
             firstCoords.push_back(coordinates[n]);
         }
         spheres[0] = cds::boundingSphere(firstCoords);
@@ -213,10 +218,10 @@ namespace
                                            const DihedralAngleData* metadata, std::vector<double> angles)
     {
         // copies of input vectors used for updates during looping
-        std::vector<Coordinate> fixedCoordinates  = fixedInput.coordinates;
-        std::vector<cds::Sphere> fixedSpheres     = fixedInput.boundingSpheres;
-        std::vector<Coordinate> movingCoordinates = movingInput.coordinates;
-        std::vector<cds::Sphere> movingSpheres    = movingInput.boundingSpheres;
+        std::vector<cds::Sphere> fixedCoordinates  = fixedInput.coordinates;
+        std::vector<cds::Sphere> fixedSpheres      = fixedInput.boundingSpheres;
+        std::vector<cds::Sphere> movingCoordinates = movingInput.coordinates;
+        std::vector<cds::Sphere> movingSpheres     = movingInput.boundingSpheres;
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
@@ -225,7 +230,7 @@ namespace
             moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingSpheres);
             for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)
             {
-                movingCoordinates[n] = matrix * movingInput.coordinates[n];
+                movingCoordinates[n].center = matrix * movingInput.coordinates[n].center;
             }
             for (size_t n = 1; n < movingSpheres.size(); n++)
             {
@@ -265,7 +270,7 @@ cds::dihedralRotationInputData(bool branching, const std::array<Atom*, 4>& dihed
 
     auto centerPoint      = *dihedral[1]->getCoordinate();
     double maxDistance    = maxDistanceFrom(centerPoint, movingCoordinates);
-    double cutoffDistance = maxDistance + constants::maxAtomDistanceFromResidueCenter + constants::maxCutOff;
+    double cutoffDistance = maxDistance + constants::maxCutOff;
 
     auto rotationData = [&](const std::vector<Residue*>& set)
     {

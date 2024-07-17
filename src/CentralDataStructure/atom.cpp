@@ -146,6 +146,16 @@ std::string Atom::getElement() const // derived classes should overwrite if more
     return "";
 }
 
+MolecularMetadata::Element Atom::cachedElement()
+{
+    if (!gotElement_)
+    {
+        element_    = MolecularMetadata::toElement(getElement());
+        gotElement_ = true;
+    }
+    return element_;
+}
+
 int Atom::getAtomicNumber() const
 {
     return MolecularMetadata::findElementAtomicNumber(this->getElement());
@@ -190,6 +200,12 @@ void Atom::Print(std::ostream& out) const
     return;
 }
 
+cds::Sphere cds::coordinateWithRadius(Atom* atom)
+{
+    auto element = atom->cachedElement();
+    return {MolecularMetadata::vanDerWaalsRadius(element), *atom->getCoordinate()};
+}
+
 std::vector<Coordinate*> cds::getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms)
 {
     std::vector<Coordinate*> coordinates;
@@ -197,6 +213,17 @@ std::vector<Coordinate*> cds::getCoordinatesFromAtoms(std::vector<cds::Atom*> at
     for (auto& atom : atoms)
     {
         coordinates.push_back(atom->getCoordinate());
+    }
+    return coordinates;
+}
+
+std::vector<cds::Sphere> cds::getCoordinatesWithRadiiFromAtoms(std::vector<cds::Atom*> atoms)
+{
+    std::vector<cds::Sphere> coordinates;
+    coordinates.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        coordinates.push_back(coordinateWithRadius(atom));
     }
     return coordinates;
 }

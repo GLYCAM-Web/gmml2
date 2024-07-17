@@ -19,6 +19,11 @@ namespace cds
         return withinDistance(sphere.radius, sphere.center, point);
     }
 
+    inline bool spheresOverlap(double tolerance, const Sphere& a, const Sphere& b)
+    {
+        return withinDistance(a.radius + b.radius - tolerance, a.center, b.center);
+    }
+
     Sphere boundingSphere(const std::vector<Coordinate>& points);
     Sphere boundingSphere(const std::vector<Sphere>& spheres);
 } // namespace cds

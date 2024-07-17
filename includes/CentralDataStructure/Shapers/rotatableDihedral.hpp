@@ -38,7 +38,7 @@ namespace cds
 
     struct dihedralRotationData
     {
-        std::vector<Coordinate> coordinates;
+        std::vector<Sphere> coordinates;
         std::vector<Sphere> boundingSpheres;
         std::vector<std::pair<size_t, size_t>> residueAtoms;
         std::vector<bool> firstResidueCoordinateMoving;

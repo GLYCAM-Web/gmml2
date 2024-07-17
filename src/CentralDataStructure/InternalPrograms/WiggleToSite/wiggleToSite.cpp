@@ -42,13 +42,12 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
     this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed");
     this->determineWiggleLinkages(superimposeMe, wiggleMe);
-    std::vector<Atom*> substrateWithoutSuperimpositionAtoms =
+    std::vector<cds::Atom*> substrateWithoutSuperimpositionAtoms =
         codeUtils::findElementsNotInVector(this->getSubstrate().getAtoms(), superimpositionTarget->getAtoms());
-    std::vector<Atom*> substrateAtomsToAvoidOverlappingWith =
+    std::vector<cds::Atom*> substrateAtomsToAvoidOverlappingWith =
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
-    this->coordsToAvoids_ = cds::getCoordinatesFromAtoms(substrateAtomsToAvoidOverlappingWith);
-    this->setCurrentOverlapCount(
-        cds::CountOverlappingCoordinates(this->getCoordsToAvoid(), this->getCarbohydrate().getCoordinates()));
+    this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
+    this->setCurrentOverlapCount(cds::CountOverlappingAtoms(atomsToAvoid_, this->getCarbohydrate().getAtoms()));
     // call below function.
     //    std::cout << "Finished reading and ready to rock captain" << std::endl;
     this->wiggleMeCoordinates_ = {wiggleMe->FindAtom("C1")->getCoordinate(), wiggleMe->FindAtom("C3")->getCoordinate(),
@@ -154,8 +153,7 @@ double WiggleToSite::calculateDistance()
 
 bool WiggleToSite::acceptOverlaps()
 {
-    unsigned int overlapCount =
-        cds::CountOverlappingCoordinates(this->getCoordsToAvoid(), this->getCarbohydrate().getCoordinates());
+    unsigned int overlapCount = cds::CountOverlappingAtoms(atomsToAvoid_, getCarbohydrate().getAtoms());
     if (overlapCount > this->getCurrentOverlapCount())
     {
         return false;

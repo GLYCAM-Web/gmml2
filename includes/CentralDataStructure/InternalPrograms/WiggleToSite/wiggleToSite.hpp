@@ -42,9 +42,9 @@ namespace gmmlPrograms
             return substrate_;
         }
 
-        std::vector<Coordinate*> getCoordsToAvoid()
+        std::vector<cds::Atom*> getAtomsToAvoid()
         {
-            return coordsToAvoids_;
+            return atomsToAvoid_;
         }
 
         unsigned int getCurrentOverlapCount()
@@ -88,7 +88,7 @@ namespace gmmlPrograms
         pdb::PdbFile substrate_;
         cdsCondensedSequence::Carbohydrate carbohydrate_;
         std::vector<cds::ResidueLinkage> wiggleLinkages_;
-        std::vector<Coordinate*> coordsToAvoids_;
+        std::vector<cds::Atom*> atomsToAvoid_;
         std::vector<Coordinate*> wiggleMeCoordinates_;
         std::vector<Coordinate*> wiggleTargetCoordinates_;
         unsigned int currentOverlapCount_ = -1;
