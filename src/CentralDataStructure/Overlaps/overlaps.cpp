@@ -85,7 +85,7 @@ unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
         for (size_t k = 0; k < moving.boundingSpheres.size(); k++)
         {
             auto& sphereB = moving.boundingSpheres[k];
-            if ((n > 0 || k > 0) && cds::spheresOverlap(constants::overlapTolerance, sphereA, sphereB))
+            if (cds::spheresOverlap(constants::overlapTolerance, sphereA, sphereB))
             {
                 setIntersectingCoordinates(coordsA, sphereB, mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[n]);
                 setIntersectingCoordinates(coordsB, sphereA, moving.atomCoordinates, moving.residueAtoms[k]);
