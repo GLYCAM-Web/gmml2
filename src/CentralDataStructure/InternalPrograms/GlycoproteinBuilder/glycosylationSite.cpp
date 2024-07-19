@@ -13,6 +13,9 @@
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //cdsSelections
+#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
@@ -339,19 +342,14 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
     std::reverse(reversed_rotatable_bond_vector.begin(), reversed_rotatable_bond_vector.end());
     for (auto& dihedral : reversed_rotatable_bond_vector)
     {
-        const auto& rotamers = dihedral.GetMetadata();
-        if (useAllResiduesForOverlap)
-        {
-            auto best = dihedral.WiggleUsingRotamers(rotamers, interval,
-                                                     {overlapResidues, linkage.GetReducingOverlapResidues()});
-            dihedral.SetDihedralAngle(best.angle);
-        }
-        else
-        {
-            auto best = dihedral.WiggleUsingRotamers(
-                rotamers, interval, {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()});
-            dihedral.SetDihedralAngle(best.angle);
-        }
+        auto coordinates = dihedralCoordinates(dihedral);
+        auto input =
+            useAllResiduesForOverlap
+                ? cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.GetReducingOverlapResidues()})
+                : cds::dihedralRotationInputData(
+                      dihedral, {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()});
+        auto best = wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
+        setDihedralAngle(dihedral, best.angle);
     }
     return;
 }

@@ -47,6 +47,8 @@
 ./src/CentralDataStructure/Selections/residueSelections.cpp
 ./src/CentralDataStructure/Selections/shaperSelections.cpp
 ./src/CentralDataStructure/Shapers/atomToCoordinateInterface.cpp
+./src/CentralDataStructure/Shapers/dihedralAngleSearch.cpp
+./src/CentralDataStructure/Shapers/dihedralAngles.cpp
 ./src/CentralDataStructure/Shapers/residueLinkage.cpp
 ./src/CentralDataStructure/Shapers/rotatableDihedral.cpp
 ./src/CentralDataStructure/Writers/offWriter.cpp

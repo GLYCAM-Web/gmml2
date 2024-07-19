@@ -385,9 +385,6 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
                 std::vector<cds::RotatableDihedral> temp = {rotatableDihedral};
                 splitLinkage.SetRotatableDihedrals(temp);
                 sortedLinkages.push_back(splitLinkage);
-                // std::cout << "Split out " << splitLinkage.GetFromThisResidue1()->GetId() << "-" <<
-                // splitLinkage.GetToThisResidue2()->GetId() << " rotamer with number of shapes: " <<
-                // rotatableDihedral.GetNumberOfRotamers() << "\n";
             }
         }
     }

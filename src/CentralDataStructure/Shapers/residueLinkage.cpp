@@ -1,7 +1,13 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp" //FindConnectedResidues()
+#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp" // For GetDescriptiveNameForGlycamResidueName in GetName function
 
 #include <algorithm>
@@ -279,7 +285,7 @@ std::vector<RotatableDihedral> ResidueLinkage::GetRotatableDihedralsWithMultiple
     std::vector<RotatableDihedral> returningDihedrals;
     for (auto& entry : this->GetRotatableDihedrals())
     {
-        if (entry.GetNumberOfRotamers() > 1)
+        if (entry.metadataVector.size() > 1)
         {
             returningDihedrals.push_back(entry);
         }
@@ -316,25 +322,38 @@ std::vector<RotatableDihedral> ResidueLinkage::GetRotatableDihedrals() const
 int ResidueLinkage::GetNumberOfShapes(
     const bool likelyShapesOnly) const // Can have conformers (sets of rotamers) or permutations of rotamers
 {
-    int numberOfShapes = 1;
-    if ((rotatableDihedrals_.empty()) || (rotatableDihedrals_.at(0).GetMetadata().empty()))
+    if (rotatableDihedrals_.empty() || rotatableDihedrals_[0].metadataVector.empty())
     {
-        return numberOfShapes;
+        return 1;
     }
-    if (rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("permutation") == 0)
+    else
     {
-        for (auto& entry : rotatableDihedrals_)
+        auto& dihedral   = rotatableDihedrals_[0];
+        auto rotamerType = dihedral.metadataVector[0].rotamer_type_;
+        if (rotamerType.compare("permutation") == 0)
         {
-            numberOfShapes = (numberOfShapes * entry.GetNumberOfRotamers(likelyShapesOnly));
+            int numberOfShapes = 1;
+            for (auto& entry : rotatableDihedrals_)
+            {
+                int number =
+                    likelyShapesOnly ? likelyMetadata(entry.metadataVector).size() : entry.metadataVector.size();
+                numberOfShapes *= number;
+            }
+            return numberOfShapes;
+        }
+        else if (rotamerType.compare("conformer") == 0)
+        { // Conformer should mean that each dihedral will have the same number of metadata entries.
+            // numberOfShapes = RotatableDihedrals_.size(); // This was correct for ASN for the wrong reason. 4
+            // conformers and 4 dihedrals...
+            return likelyShapesOnly ? likelyMetadata(dihedral.metadataVector).size() : dihedral.metadataVector.size();
+        }
+        else
+        {
+            std::string str = "Error: Unknown rotamer type: " + rotamerType;
+            gmml::log(__LINE__, __FILE__, gmml::ERR, str);
+            throw std::runtime_error(str);
         }
     }
-    else if (rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("conformer") == 0)
-    { // Conformer should mean that each dihedral will have the same number of metadata entries.
-        // numberOfShapes = RotatableDihedrals_.size(); // This was correct for ASN for the wrong reason. 4 conformers
-        // and 4 dihedrals...
-        numberOfShapes = rotatableDihedrals_.at(0).GetNumberOfRotamers(likelyShapesOnly);
-    }
-    return numberOfShapes;
 }
 
 bool ResidueLinkage::CheckIfConformer() const
@@ -345,7 +364,7 @@ bool ResidueLinkage::CheckIfConformer() const
         gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
         throw std::runtime_error(errorMessage);
     }
-    else if (rotatableDihedrals_.at(0).GetMetadata().empty())
+    else if (rotatableDihedrals_.at(0).metadataVector.empty())
     {
         std::string errorMessage =
             "Error in ResidueLinkage::checkIfConformer as RotatableDihedrals_.at(0).GetMetadata().empty()\n";
@@ -354,7 +373,7 @@ bool ResidueLinkage::CheckIfConformer() const
     }
     else
     {
-        return (!(rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("permutation") == 0));
+        return (!(rotatableDihedrals_.at(0).metadataVector.at(0).rotamer_type_.compare("permutation") == 0));
     }
     return false; // Default to shut up the compiler. Shut up compiler gawd.
 }
@@ -388,9 +407,9 @@ std::vector<cds::AngleWithMetadata> ResidueLinkage::currentShape() const
     std::vector<AngleWithMetadata> result;
     result.reserve(rotatableDihedrals_.size());
 
-    for (auto& a : rotatableDihedrals_)
+    for (auto& dihedral : rotatableDihedrals_)
     {
-        result.push_back(a.currentAngle());
+        result.push_back({cds::angle(dihedralCoordinates(dihedral)), dihedral.currentMetadata});
     }
 
     return result;
@@ -400,7 +419,7 @@ void ResidueLinkage::setShape(const std::vector<AngleWithMetadata>& angles)
 {
     for (size_t n = 0; n < angles.size(); n++)
     {
-        rotatableDihedrals_[n].SetDihedralAngle(angles[n]);
+        setDihedralAngle(rotatableDihedrals_[n], angles[n]);
     }
 }
 
@@ -410,32 +429,31 @@ void ResidueLinkage::setShape(const std::vector<AngleWithMetadata>& angles)
 
 void ResidueLinkage::SetDefaultShapeUsingMetadata()
 {
-    for (auto& entry : rotatableDihedrals_)
+    for (auto& dihedral : rotatableDihedrals_)
     {
-        auto angle = entry.SpecificAngleEntryUsingMetadata(false, 0); // Default is first entry
-        entry.SetDihedralAngle(angle);
+        setDihedralAngle(dihedral, defaultAngle(dihedral.metadataVector[0]));
     }
 }
 
 void ResidueLinkage::SetRandomShapeUsingMetadata()
 {
-    if (rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("permutation") == 0)
+    if (rotatableDihedrals_.at(0).metadataVector.at(0).rotamer_type_.compare("permutation") == 0)
     {
         for (auto& entry : rotatableDihedrals_)
         {
-            auto angle = entry.RandomAngleEntryUsingMetadata();
-            entry.SetDihedralAngle(angle);
+            auto angle = randomAngleEntryUsingMetadata(entry.metadataVector);
+            setDihedralAngle(entry, angle);
         }
     }
-    else if (rotatableDihedrals_.at(0).GetMetadata().at(0).rotamer_type_.compare("conformer") == 0)
+    else if (rotatableDihedrals_.at(0).metadataVector.at(0).rotamer_type_.compare("conformer") == 0)
     {
-        int numberOfConformers = rotatableDihedrals_.at(0).GetMetadata().size();
+        int numberOfConformers = rotatableDihedrals_.at(0).metadataVector.size();
         std::uniform_int_distribution<> distr(0, (numberOfConformers - 1)); // define the range
         int randomlySelectedConformerNumber = distr(rng);
         for (auto& entry : rotatableDihedrals_)
         {
-            auto angle = entry.SpecificAngleEntryUsingMetadata(true, randomlySelectedConformerNumber);
-            entry.SetDihedralAngle(angle);
+            auto angle = randomDihedralAngleWithinMetadataRange(entry.metadataVector[randomlySelectedConformerNumber]);
+            setDihedralAngle(entry, angle);
         }
     }
 }
@@ -444,17 +462,16 @@ void ResidueLinkage::SetSpecificShapeUsingMetadata(int shapeNumber)
 {
     for (auto& entry : rotatableDihedrals_)
     {
-        auto angle = entry.SpecificAngleEntryUsingMetadata(false, shapeNumber);
-        entry.SetDihedralAngle(angle);
+        setDihedralAngle(entry, defaultAngle(entry.metadataVector[shapeNumber]));
     }
 }
 
 void ResidueLinkage::SetSpecificShape(std::string dihedralName, std::string selectedRotamer)
 {
-    for (auto& RotatableDihedral : rotatableDihedrals_)
+    for (auto& rotatableDihedral : rotatableDihedrals_)
     {
         // This will call RotatableDihedrals that don't have dihedralName (phi,psi), and nothing will happen. Hmmm.
-        if (RotatableDihedral.SetSpecificShape(dihedralName, selectedRotamer))
+        if (setSpecificShape(rotatableDihedral, dihedralName, selectedRotamer))
         {
             return; // Return once you manage to set a shape.
         }
@@ -469,7 +486,12 @@ void ResidueLinkage::DetermineAtomsThatMove()
 {
     for (auto& dihedral : rotatableDihedrals_)
     {
-        dihedral.DetermineAtomsThatMove();
+        auto& atoms = dihedral.atoms;
+        std::vector<cds::Atom*> atoms_that_move;
+        atoms_that_move.push_back(atoms[2]);
+        cdsSelections::FindConnectedAtoms(atoms_that_move, atoms[1]);
+        atoms_that_move.erase(atoms_that_move.begin());
+        dihedral.movingCoordinates = getCoordinatesFromAtoms(atoms_that_move);
     }
     return;
 }
@@ -479,8 +501,8 @@ void ResidueLinkage::SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overla
 {
     for (auto& dihedral : this->GetRotatableDihedrals())
     {
-        auto best = dihedral.WiggleWithinCurrentRotamer(overlapAtomSet1, overlapAtomSet2, angleIncrement);
-        dihedral.SetDihedralAngle(best.angle);
+        auto best = wiggleWithinCurrentRotamer(dihedral, overlapAtomSet1, overlapAtomSet2, angleIncrement);
+        setDihedralAngle(dihedral, best.angle);
     }
 }
 
@@ -489,9 +511,11 @@ void ResidueLinkage::SimpleWiggleCurrentRotamers(const std::array<std::vector<cd
 {
     for (auto& dihedral : this->GetRotatableDihedrals())
     {
-        const DihedralAngleDataVector rotamer {*dihedral.GetCurrentMetaData()};
-        auto best = dihedral.WiggleUsingRotamers(rotamer, angleIncrement, residues);
-        dihedral.SetDihedralAngle(best.angle);
+        const DihedralAngleDataVector rotamer {dihedral.currentMetadata};
+        auto coordinates = dihedralCoordinates(dihedral);
+        auto input       = dihedralRotationInputData(dihedral, residues);
+        auto best        = wiggleUsingRotamers(coordinates, rotamer, angleIncrement, input);
+        setDihedralAngle(dihedral, best.angle);
     }
 }
 
@@ -505,7 +529,7 @@ std::string ResidueLinkage::Print() const
     gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     for (auto& rotatableDihedral : this->GetRotatableDihedrals())
     {
-        ss << rotatableDihedral.Print();
+        ss << print(rotatableDihedral);
     }
     return ss.str();
 }

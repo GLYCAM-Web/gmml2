@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
+#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <vector>
@@ -136,17 +138,18 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
         std::vector<std::string> buffer;
         for (auto& rotatableDihedral : linkage.GetRotatableDihedralsWithMultipleRotamers())
         {
-            for (auto& metadata : rotatableDihedral.GetMetadata())
+            for (auto& metadata : rotatableDihedral.metadataVector)
             {
                 buffer.push_back(metadata.rotamer_name_);
             }
-            possibleRotamers.emplace_back(rotatableDihedral.GetName(), buffer);
+            std::string dihedralName = cds::likelyName(rotatableDihedral.metadataVector);
+            possibleRotamers.emplace_back(dihedralName, buffer);
             buffer.clear();
-            for (auto& metadata : rotatableDihedral.GetLikelyMetadata())
+            for (auto& metadata : cds::likelyMetadata(rotatableDihedral.metadataVector))
             {
                 buffer.push_back(metadata.rotamer_name_);
             }
-            likelyRotamers.emplace_back(rotatableDihedral.GetName(), buffer);
+            likelyRotamers.emplace_back(dihedralName, buffer);
             buffer.clear();
         }
         // If there are multiple rotamers for this linkage
