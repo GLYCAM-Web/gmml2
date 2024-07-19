@@ -7,9 +7,44 @@
 
 #include <vector>
 #include <utility>
+#include <cmath>
 
 namespace cds
 {
+    struct Overlap
+    {
+        uint count;
+        double weight;
+
+        inline Overlap operator+(const Overlap& a) const
+        {
+            return {count + a.count, weight + a.weight};
+        }
+
+        inline Overlap operator*(uint a) const
+        {
+            return {count * a, weight * a};
+        }
+
+        inline Overlap& operator+=(const Overlap& a)
+        {
+            *this = (*this + a);
+            return *this;
+        }
+    };
+
+    inline int compareOverlaps(const Overlap& a, const Overlap& b)
+    {
+        if (a.count == b.count)
+        {
+            return (std::fabs(a.weight - b.weight) <= 1e-10) ? 0 : ((a.weight > b.weight) ? 1 : -1);
+        }
+        else
+        {
+            return a.count - b.count;
+        }
+    }
+
     struct ResidueAtomOverlapInput
     {
         std::vector<Sphere> atomCoordinates;
@@ -25,9 +60,9 @@ namespace cds
     };
 
     ResidueAtomOverlapInput toOverlapInput(const std::vector<Residue*>& residues);
-    unsigned int CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    unsigned int CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
-                                       const ResidueAtomOverlapInputReference& moving);
-    unsigned int CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
+    Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
+    Overlap CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
+                                  const ResidueAtomOverlapInputReference& moving);
+    Overlap CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
 } // namespace cds
 #endif

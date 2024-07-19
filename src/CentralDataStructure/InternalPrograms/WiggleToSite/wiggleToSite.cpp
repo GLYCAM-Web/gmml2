@@ -153,8 +153,8 @@ double WiggleToSite::calculateDistance()
 
 bool WiggleToSite::acceptOverlaps()
 {
-    unsigned int overlapCount = cds::CountOverlappingAtoms(atomsToAvoid_, getCarbohydrate().getAtoms());
-    if (overlapCount > this->getCurrentOverlapCount())
+    cds::Overlap overlapCount = cds::CountOverlappingAtoms(atomsToAvoid_, getCarbohydrate().getAtoms());
+    if (cds::compareOverlaps(overlapCount, this->getCurrentOverlapCount()) > 0)
     {
         return false;
     }

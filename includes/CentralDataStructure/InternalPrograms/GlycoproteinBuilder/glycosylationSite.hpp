@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 
 enum MoleculeType
 {
@@ -46,8 +47,8 @@ class GlycosylationSite
     //////////////////////////////////////////////////////////
     //                       FUNCTIONS                      //
     //////////////////////////////////////////////////////////
-    unsigned int CountOverlaps(MoleculeType moleculeType = MoleculeType::ALL);
-    unsigned int CountOverlapsFast();
+    cds::Overlap CountOverlaps(MoleculeType moleculeType = MoleculeType::ALL);
+    cds::Overlap CountOverlapsFast();
     //    void StashCoordinates();
     //    void SetStashedCoordinates();
     void Wiggle(bool firstLinkageOnly = false, int interval = 5, bool useAllResiduesForOverlap = false);
@@ -99,7 +100,7 @@ class GlycosylationSite
     void Rename_Protein_Residue_To_GLYCAM_Nomenclature();
     Atom* GetConnectingProteinAtom(const std::string residue_name) const;
     void WiggleOneLinkage(ResidueLinkage& linkage, int interval = 5, bool useAllResiduesForOverlap = false);
-    unsigned int CountOverlaps(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
+    cds::Overlap CountOverlaps(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
     //////////////////////////////////////////////////////////
     //                       ATTRIBUTES                     //
     //////////////////////////////////////////////////////////

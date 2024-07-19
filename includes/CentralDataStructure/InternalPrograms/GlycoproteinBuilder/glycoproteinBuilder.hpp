@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include <string>
 // #include <dirent.h>
 // #include <sys/stat.h>
@@ -115,14 +116,14 @@ class GlycoproteinBuilder
     Residue* SelectResidueFromInput(const std::string userSelection);
     // Overlap Resolution
     void ResolveOverlapsWithWiggler();
-    unsigned int Wiggle(int persistCycles = 10, bool firstLinkageOnly = false, int interval = 5,
+    cds::Overlap Wiggle(int persistCycles = 10, bool firstLinkageOnly = false, int interval = 5,
                         bool useAllResiduesForOverlap = false);
-    unsigned int RandomDescent(int persistCycles, bool monte_carlo);
+    cds::Overlap RandomDescent(int persistCycles, bool monte_carlo);
     void SetRandomDihedralAnglesUsingMetadata();
     bool DumbRandomWalk(int maxCycles = 10);
     // I/O
     // Overlap Calculation
-    unsigned int CountOverlaps(MoleculeType moleculeType = ALL);
+    cds::Overlap CountOverlaps(MoleculeType moleculeType = ALL);
     std::vector<GlycosylationSite*> DetermineSitesWithOverlap(MoleculeType moleculeType = ALL);
     // void DeleteSitesIterativelyWithAtomicOverlapAboveTolerance(std::vector<GlycosylationSite>& glycosites,
     //                                                            int tolerance);

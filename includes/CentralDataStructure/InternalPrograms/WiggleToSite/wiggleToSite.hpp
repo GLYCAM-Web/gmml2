@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 
 namespace gmmlPrograms
 {
@@ -47,7 +48,7 @@ namespace gmmlPrograms
             return atomsToAvoid_;
         }
 
-        unsigned int getCurrentOverlapCount()
+        cds::Overlap getCurrentOverlapCount()
         {
             return currentOverlapCount_;
         }
@@ -60,7 +61,7 @@ namespace gmmlPrograms
         //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
         //////////////////////////////////////////////////////////
-        void setCurrentOverlapCount(unsigned int i)
+        void setCurrentOverlapCount(cds::Overlap i)
         {
             currentOverlapCount_ = i;
         }
@@ -91,7 +92,7 @@ namespace gmmlPrograms
         std::vector<cds::Atom*> atomsToAvoid_;
         std::vector<Coordinate*> wiggleMeCoordinates_;
         std::vector<Coordinate*> wiggleTargetCoordinates_;
-        unsigned int currentOverlapCount_ = -1;
+        cds::Overlap currentOverlapCount_ = cds::Overlap {0, 0.0};
         double currentDistance_;
     };
 } // namespace gmmlPrograms

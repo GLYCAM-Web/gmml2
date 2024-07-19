@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
@@ -32,7 +33,7 @@ namespace cds
 
     struct AngleOverlap
     {
-        unsigned int overlaps;
+        cds::Overlap overlaps;
         AngleWithMetadata angle;
     };
 

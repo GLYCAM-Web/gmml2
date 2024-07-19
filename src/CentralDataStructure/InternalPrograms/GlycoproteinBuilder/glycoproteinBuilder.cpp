@@ -127,32 +127,29 @@ void GlycoproteinBuilder::ResolveOverlapsWithWiggler()
     bool useMonteCarlo            = true;
     bool wiggleFirstLinkageOnly   = true; // Only happens when passed to Wiggle function.
     bool useAllResiduesForOverlap = true; // Only happens when passed to Wiggle function.
-    unsigned int currentOverlap   = this->Wiggle(this->GetPersistCycles(), wiggleFirstLinkageOnly);
-    gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentOverlap));
+    cds::Overlap currentOverlap   = this->Wiggle(this->GetPersistCycles(), wiggleFirstLinkageOnly);
+    gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentOverlap.count));
     if (randomize)
     {
         currentOverlap = this->RandomDescent(this->GetPersistCycles(), useMonteCarlo);
-        gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentOverlap));
+        gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentOverlap.count));
     }
     currentOverlap = this->Wiggle(this->GetPersistCycles());
-    gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap));
+    gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap.count));
     currentOverlap = this->Wiggle(this->GetPersistCycles(), wiggleFirstLinkageOnly, 5, useAllResiduesForOverlap);
-    gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap));
+    gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap.count));
     this->PrintDihedralAnglesAndOverlapOfGlycosites();
     return;
 }
 
-unsigned int GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_carlo)
+cds::Overlap GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_carlo)
 {
     std::stringstream logss;
     logss << "Random Decent, persisting for " << persistCycles << " cycles and monte carlo is set as " << std::boolalpha
           << monte_carlo << ".\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-    int cycle = 1;
-    unsigned int previous_glycan_overlap, new_glycan_overlap, previous_protein_overlap, new_protein_overlap;
-    unsigned int lowest_global_overlap = this->CountOverlaps(ALL);
-    unsigned int new_global_overlap;
-    int overlap_difference                              = 0;
+    int cycle                                           = 1;
+    cds::Overlap lowest_global_overlap                  = this->CountOverlaps(ALL);
     std::vector<GlycosylationSite*> sites_with_overlaps = this->DetermineSitesWithOverlap(ALL);
     if (sites_with_overlaps.size() == 0)
     {
@@ -170,14 +167,14 @@ unsigned int GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
         std::shuffle(sites_with_overlaps.begin(), sites_with_overlaps.end(), rng_engine);
         for (auto& current_glycosite : sites_with_overlaps)
         {
-            previous_glycan_overlap  = current_glycosite->CountOverlaps(GLYCAN);
-            previous_protein_overlap = current_glycosite->CountOverlaps(PROTEIN);
+            cds::Overlap previous_glycan_overlap  = current_glycosite->CountOverlaps(GLYCAN);
+            cds::Overlap previous_protein_overlap = current_glycosite->CountOverlaps(PROTEIN);
             current_glycosite->SetRandomDihedralAnglesUsingMetadata();
             // logss << "Site: " << current_glycosite->GetResidueNumber() << "\n";
-            new_glycan_overlap  = current_glycosite->CountOverlaps(GLYCAN);
-            new_protein_overlap = current_glycosite->CountOverlaps(PROTEIN);
-            overlap_difference  = (new_glycan_overlap + (new_protein_overlap * 5)) -
-                                 (previous_glycan_overlap + (previous_protein_overlap * 5));
+            cds::Overlap new_glycan_overlap  = current_glycosite->CountOverlaps(GLYCAN);
+            cds::Overlap new_protein_overlap = current_glycosite->CountOverlaps(PROTEIN);
+            int overlap_difference           = (new_glycan_overlap + (new_protein_overlap * 5)).count -
+                                     (previous_glycan_overlap + (previous_protein_overlap * 5)).count;
             if (overlap_difference >= 0) // if the change made it worse
             {
                 current_glycosite->ResetDihedralAngles();
@@ -192,7 +189,7 @@ unsigned int GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
                           "RandomDescent accepted a change of " + std::to_string(overlap_difference));
             }
         }
-        new_global_overlap = this->CountOverlaps(ALL);
+        cds::Overlap new_global_overlap = this->CountOverlaps(ALL);
         sites_with_overlaps =
             this->DetermineSitesWithOverlap(ALL); // Moved glycans may clash with other glycans. Need to check.
         if (sites_with_overlaps.size() == 0)
@@ -200,7 +197,7 @@ unsigned int GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
             gmml::log(__LINE__, __FILE__, gmml::INF, "Stopping RandomDesent with all overlaps resolved.");
             return new_global_overlap;
         }
-        if (lowest_global_overlap > new_global_overlap + 1)
+        if (cds::compareOverlaps(lowest_global_overlap, new_global_overlap) > 0)
         {
             lowest_global_overlap = new_global_overlap;
             cycle                 = 1;
@@ -209,18 +206,18 @@ unsigned int GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
     return lowest_global_overlap;
 }
 
-unsigned int GlycoproteinBuilder::Wiggle(int persistCycles, bool firstLinkageOnly, int interval,
+cds::Overlap GlycoproteinBuilder::Wiggle(int persistCycles, bool firstLinkageOnly, int interval,
                                          bool useAllResiduesForOverlap)
 {
     std::vector<GlycosylationSite*> sites_with_overlaps;
     int cycle            = 0;
-    unsigned int overlap = this->CountOverlaps(ALL);
+    cds::Overlap overlap = this->CountOverlaps(ALL);
     while (cycle < persistCycles)
     {
         ++cycle;
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles) +
-                      ". Overlap: " + std::to_string(overlap));
+                      ". Overlap: " + std::to_string(overlap.count));
         sites_with_overlaps = this->DetermineSitesWithOverlap(ALL);
         if (sites_with_overlaps.size() == 0)
         {
@@ -231,8 +228,8 @@ unsigned int GlycoproteinBuilder::Wiggle(int persistCycles, bool firstLinkageOnl
         {
             glycosite->Wiggle(firstLinkageOnly, interval, useAllResiduesForOverlap);
         }
-        unsigned int newOverlap = this->CountOverlaps(ALL);
-        if (overlap > newOverlap)
+        cds::Overlap newOverlap = this->CountOverlaps(ALL);
+        if (cds::compareOverlaps(overlap, newOverlap) > 0)
         {
             overlap = newOverlap;
             cycle   = 1;
@@ -374,9 +371,9 @@ void GlycoproteinBuilder::SetRandomDihedralAnglesUsingMetadata()
     return;
 }
 
-unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType)
+cds::Overlap GlycoproteinBuilder::CountOverlaps(MoleculeType)
 {
-    unsigned int overlap = 0;
+    cds::Overlap overlap {0, 0.0};
     for (auto& glycosite : this->GetGlycosites())
     {
         overlap += glycosite.CountOverlapsFast();
@@ -387,11 +384,11 @@ unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType)
 std::vector<GlycosylationSite*> GlycoproteinBuilder::DetermineSitesWithOverlap(MoleculeType)
 {
     std::vector<GlycosylationSite*> sites_to_return;
-    unsigned int overlap = 0;
+    cds::Overlap overlap {0, 0.0};
     for (auto& glycosite : this->GetGlycosites())
     {
         overlap = glycosite.CountOverlapsFast();
-        if (overlap > this->GetOverlapTolerance())
+        if (overlap.count > this->GetOverlapTolerance())
         {
             sites_to_return.push_back(&glycosite);
         }

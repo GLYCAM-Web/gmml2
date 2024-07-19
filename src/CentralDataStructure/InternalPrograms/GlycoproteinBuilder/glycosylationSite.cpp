@@ -205,19 +205,19 @@ void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
     return;
 }
 
-unsigned int GlycosylationSite::CountOverlapsFast()
+cds::Overlap GlycosylationSite::CountOverlapsFast()
 {
     return this->CountOverlaps(this->GetProteinGlycanLinkage().GetNonReducingOverlapResidues(),
                                this->GetProteinGlycanLinkage().GetReducingOverlapResidues());
 }
 
-unsigned int GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
+cds::Overlap GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
 {
-    unsigned int overlap = 0;
+    cds::Overlap overlap {0, 0.0};
     if (moleculeType == ALL)
     {
-        unsigned int proteinOverlap = this->CountOverlaps(MoleculeType::PROTEIN);
-        unsigned int glycanOverlap  = this->CountOverlaps(MoleculeType::GLYCAN);
+        cds::Overlap proteinOverlap = this->CountOverlaps(MoleculeType::PROTEIN);
+        cds::Overlap glycanOverlap  = this->CountOverlaps(MoleculeType::GLYCAN);
         return (proteinOverlap + glycanOverlap);
     }
     if (moleculeType == PROTEIN)
@@ -225,7 +225,7 @@ unsigned int GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
         // This should not be necessary, either return a ref for the get, or accept a value in the function.
         std::vector<Residue*> proteinResidues = this->GetOtherProteinResidues();
         std::vector<Residue*> glycanResidues  = this->GetGlycan()->getResidues();
-        unsigned int numberOfOverlaps         = this->CountOverlaps(proteinResidues, glycanResidues);
+        cds::Overlap numberOfOverlaps         = this->CountOverlaps(proteinResidues, glycanResidues);
         return numberOfOverlaps;
     }
     if (moleculeType == GLYCAN)
@@ -240,7 +240,7 @@ unsigned int GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
     return overlap;
 }
 
-unsigned int GlycosylationSite::CountOverlaps(const std::vector<Residue*>& residuesA,
+cds::Overlap GlycosylationSite::CountOverlaps(const std::vector<Residue*>& residuesA,
                                               const std::vector<Residue*>& residuesB)
 {
     return cds::CountOverlappingAtoms(residuesA, residuesB);
@@ -250,7 +250,7 @@ void GlycosylationSite::PrintOverlaps()
 {
     std::stringstream logss;
     logss << std::fixed << std::setprecision(2) << std::setw(17) << this->GetResidue()->getStringId() << " | "
-          << std::setw(6) << this->CountOverlaps() << std::endl;
+          << std::setw(6) << this->CountOverlaps().count << std::endl;
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 }
 
@@ -304,7 +304,7 @@ void GlycosylationSite::Print(std::string type)
     std::stringstream logss;
     if (type.compare("All") == 0)
     {
-        logss << "Residue ID: " << this->GetResidue()->getStringId() << ", overlap: " << this->CountOverlaps();
+        logss << "Residue ID: " << this->GetResidue()->getStringId() << ", overlap: " << this->CountOverlaps().count;
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
     }
 }

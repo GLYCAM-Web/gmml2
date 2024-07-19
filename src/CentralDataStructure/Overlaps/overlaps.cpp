@@ -8,18 +8,32 @@
 
 namespace
 {
-
-    unsigned int coordinateOverlaps(const std::vector<cds::Sphere>& coordsA, const std::vector<cds::Sphere>& coordsB)
+    cds::Overlap sphereOverlap(double tolerance, const cds::Sphere& a, const cds::Sphere& b)
     {
-        unsigned int count = 0;
+        double cutoff = a.radius + b.radius - tolerance;
+        double sqDist = cds::squaredDistance(a.center, b.center);
+        double base   = constants::clashWeightBase;
+        if (sqDist < cutoff * cutoff)
+        {
+            return cds::Overlap {1, base / (base + sqDist)};
+        }
+        else
+        {
+            return cds::Overlap {0, 0.0};
+        }
+    }
+
+    cds::Overlap coordinateOverlaps(const std::vector<cds::Sphere>& coordsA, const std::vector<cds::Sphere>& coordsB)
+    {
+        cds::Overlap overlap {0, 0.0};
         for (auto& a : coordsA)
         {
             for (auto& b : coordsB)
             {
-                count += cds::spheresOverlap(constants::overlapTolerance, a, b);
+                overlap += sphereOverlap(constants::overlapTolerance, a, b);
             }
         }
-        return count;
+        return overlap;
     }
 
     void setIntersectingCoordinates(std::vector<cds::Sphere>& result, cds::Sphere sphere,
@@ -73,12 +87,12 @@ cds::ResidueAtomOverlapInput cds::toOverlapInput(const std::vector<Residue*>& re
     return {coordinates, boundingSpheres, residueAtoms};
 }
 
-unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
+cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
                                         const ResidueAtomOverlapInputReference& moving)
 {
     std::vector<Sphere> coordsA;
     std::vector<Sphere> coordsB;
-    unsigned int overlapCount = 0;
+    Overlap overlap {0, 0.0};
     for (size_t n = 0; n < mostlyFixed.boundingSpheres.size(); n++)
     {
         auto& sphereA = mostlyFixed.boundingSpheres[n];
@@ -89,14 +103,14 @@ unsigned int cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
             {
                 setIntersectingCoordinates(coordsA, sphereB, mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[n]);
                 setIntersectingCoordinates(coordsB, sphereA, moving.atomCoordinates, moving.residueAtoms[k]);
-                overlapCount += coordinateOverlaps(coordsA, coordsB);
+                overlap += coordinateOverlaps(coordsA, coordsB);
             }
         }
     }
-    return overlapCount;
+    return overlap;
 }
 
-unsigned int cds::CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB)
+cds::Overlap cds::CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB)
 {
     auto inputA = toOverlapInput(residuesA);
     auto inputB = toOverlapInput(residuesB);
@@ -105,18 +119,18 @@ unsigned int cds::CountOverlappingAtoms(const std::vector<Residue*>& residuesA, 
                                  {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms});
 }
 
-unsigned int cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
+cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
     auto coordsA = getCoordinatesWithRadiiFromAtoms(atomsA);
     auto coordsB = getCoordinatesWithRadiiFromAtoms(atomsB);
 
-    unsigned int overlapCount = 0;
+    Overlap overlap {0, 0.0};
     for (auto& coordA : coordsA)
     {
         for (auto& coordB : coordsB)
         {
-            overlapCount += cds::spheresOverlap(constants::overlapTolerance, coordA, coordB);
+            overlap += sphereOverlap(constants::overlapTolerance, coordA, coordB);
         }
     }
-    return overlapCount;
+    return overlap;
 }

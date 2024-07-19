@@ -65,10 +65,10 @@ namespace
         int best = 0;
         for (size_t n = 1; n < results.size(); n++)
         {
-            auto a = results[n];
-            auto b = results[best];
-            if ((a.overlaps < b.overlaps) ||
-                ((a.overlaps == b.overlaps) && differenceFromDefault(a) < differenceFromDefault(b)))
+            auto a   = results[n];
+            auto b   = results[best];
+            int comp = cds::compareOverlaps(a.overlaps, b.overlaps);
+            if ((comp < 0) || ((comp == 0) && differenceFromDefault(a) < differenceFromDefault(b)))
             {
                 best = n;
             }
@@ -236,7 +236,7 @@ namespace
             {
                 movingSpheres[n].center = matrix * movingInput.boundingSpheres[n].center;
             }
-            unsigned int overlaps =
+            cds::Overlap overlaps =
                 cds::CountOverlappingAtoms({fixedCoordinates, fixedSpheres, fixedInput.residueAtoms},
                                            {movingCoordinates, movingSpheres, movingInput.residueAtoms});
 
@@ -389,7 +389,7 @@ cds::AngleOverlap RotatableDihedral::WiggleWithinRangesDistanceCheck(std::vector
     for (double angle : angles)
     {
         SetDihedralAngle({angle, metadata});
-        unsigned int overlaps = cds::CountOverlappingAtoms(overlapAtomSet1, overlapAtomSet2);
+        cds::Overlap overlaps = cds::CountOverlappingAtoms(overlapAtomSet1, overlapAtomSet2);
 
         results.push_back({
             overlaps, AngleWithMetadata {angle, metadata}

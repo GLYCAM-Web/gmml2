@@ -9,6 +9,7 @@ namespace constants
     const double residueDistanceOverlapCutoff     = 2.0 * maxAtomDistanceFromResidueCenter;
     const double maxCutOff                        = 2.0; // roughly the radius of the common largest atoms
     const double overlapTolerance                 = 0.6; // chimera default
+    const double clashWeightBase                  = 0.2;
     const double DEFAULT_ANGLE =
         116.8; // Glycam06 J Comput Chem. 2008 Mar; 29(4): 622–655. Used for C-O-C in glycosidic linkages.
     const double CARBON_SURFACE_AREA  = 36.31681103;
