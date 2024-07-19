@@ -78,6 +78,7 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         this->randomizeLinkageOrder();
         for (auto& linkage : this->getWiggleLinkages())
         {
+            auto recordedShape = linkage.currentShape();
             linkage.SetRandomShapeUsingMetadata();
             if (this->acceptDistance(useMonteCarlo) && this->acceptOverlaps())
             {
@@ -90,7 +91,7 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
             }
             else
             {
-                linkage.SetShapeToPrevious();
+                linkage.setShape(recordedShape);
             }
         }
         //        if (structureCount > 500)

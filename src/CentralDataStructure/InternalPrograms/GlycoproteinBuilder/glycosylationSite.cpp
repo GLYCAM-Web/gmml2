@@ -287,15 +287,6 @@ void GlycosylationSite::SetRandomDihedralAnglesUsingMetadata()
     return;
 }
 
-void GlycosylationSite::ResetDihedralAngles()
-{
-    for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
-    {
-        linkage.SetShapeToPrevious();
-    }
-    return;
-}
-
 //////////////////////////////////////////////////////////
 //                       DISPLAY FUNCTION               //
 //////////////////////////////////////////////////////////

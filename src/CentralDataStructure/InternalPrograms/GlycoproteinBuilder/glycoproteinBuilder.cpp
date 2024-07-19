@@ -167,6 +167,8 @@ cds::Overlap GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
         std::shuffle(sites_with_overlaps.begin(), sites_with_overlaps.end(), rng_engine);
         for (auto& current_glycosite : sites_with_overlaps)
         {
+            auto& linkages                        = current_glycosite->GetGlycan()->GetGlycosidicLinkages();
+            auto recordedShape                    = cds::currentShape(linkages);
             cds::Overlap previous_glycan_overlap  = current_glycosite->CountOverlaps(GLYCAN);
             cds::Overlap previous_protein_overlap = current_glycosite->CountOverlaps(PROTEIN);
             current_glycosite->SetRandomDihedralAnglesUsingMetadata();
@@ -177,11 +179,11 @@ cds::Overlap GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
                                      (previous_glycan_overlap + (previous_protein_overlap * 5)).count;
             if (overlap_difference >= 0) // if the change made it worse
             {
-                current_glycosite->ResetDihedralAngles();
+                cds::setShape(linkages, recordedShape);
             }
             else if ((monte_carlo) && (!monte_carlo::accept_via_metropolis_criterion(overlap_difference)))
             {
-                current_glycosite->ResetDihedralAngles();
+                cds::setShape(linkages, recordedShape);
             }
             else
             {

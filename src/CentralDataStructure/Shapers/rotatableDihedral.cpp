@@ -330,9 +330,13 @@ cds::DihedralCoordinates RotatableDihedral::dihedralCoordinates() const
     return DihedralCoordinates {*coords[0], *coords[1], *coords[2], *coords[3]};
 }
 
+cds::AngleWithMetadata RotatableDihedral::currentAngle() const
+{
+    return {cds::angle(dihedralCoordinates()), GetCurrentMetaData()};
+}
+
 void RotatableDihedral::SetDihedralAngle(AngleWithMetadata target)
 {
-    this->RecordPreviousState({cds::angle(dihedralCoordinates()), GetCurrentMetaData()});
     auto matrix = rotationTo(dihedralCoordinates(), constants::degree2Radian(target.value));
     matrix.rotateCoordinates(this->GetCoordinatesThatMove());
     this->SetCurrentMetaData(target.metadata);

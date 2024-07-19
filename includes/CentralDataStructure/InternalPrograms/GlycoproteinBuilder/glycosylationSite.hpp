@@ -36,6 +36,11 @@ class GlycosylationSite
         return this->GetResidue()->getStringId();
     }
 
+    inline Carbohydrate* GetGlycan()
+    {
+        return glycan_;
+    }
+
     //////////////////////////////////////////////////////////
     //                       MUTATOR                        //
     //////////////////////////////////////////////////////////
@@ -53,7 +58,6 @@ class GlycosylationSite
     //    void SetStashedCoordinates();
     void Wiggle(bool firstLinkageOnly = false, int interval = 5, bool useAllResiduesForOverlap = false);
     void SetRandomDihedralAnglesUsingMetadata();
-    void ResetDihedralAngles();
     void AddOtherGlycositesToLinkageOverlapAtoms();
     //////////////////////////////////////////////////////////
     //                       DISPLAY FUNCTION               //
@@ -73,11 +77,6 @@ class GlycosylationSite
     inline std::vector<Residue*>& GetOtherProteinResidues()
     {
         return otherProteinResidues_;
-    }
-
-    inline Carbohydrate* GetGlycan()
-    {
-        return glycan_;
     }
 
     inline Residue* GetResidue() const

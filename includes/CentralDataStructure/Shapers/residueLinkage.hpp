@@ -90,11 +90,12 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
+        std::vector<AngleWithMetadata> currentShape() const;
+        void setShape(const std::vector<AngleWithMetadata>& angles);
         void SetDefaultShapeUsingMetadata();
         void SetRandomShapeUsingMetadata();
         void SetSpecificShapeUsingMetadata(int shapeNumber);
         void SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
-        void SetShapeToPrevious();
         void DetermineAtomsThatMove();
         void SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
                                          std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement = 5);
@@ -151,5 +152,9 @@ namespace cds
         std::vector<cds::Residue*> nonReducingOverlapResidues_; // overlap speedups
         std::vector<cds::Residue*> reducingOverlapResidues_;    // overlap speedups
     };
+
+    std::vector<std::vector<AngleWithMetadata>> currentShape(const std::vector<ResidueLinkage>& linkages);
+    void setShape(std::vector<ResidueLinkage>& linkages, const std::vector<std::vector<AngleWithMetadata>>& angles);
+
 } // namespace cds
 #endif

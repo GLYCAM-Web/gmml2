@@ -383,6 +383,27 @@ std::vector<cds::Residue*>& ResidueLinkage::GetReducingOverlapResidues()
     return reducingOverlapResidues_;
 }
 
+std::vector<cds::AngleWithMetadata> ResidueLinkage::currentShape() const
+{
+    std::vector<AngleWithMetadata> result;
+    result.reserve(rotatableDihedrals_.size());
+
+    for (auto& a : rotatableDihedrals_)
+    {
+        result.push_back(a.currentAngle());
+    }
+
+    return result;
+}
+
+void ResidueLinkage::setShape(const std::vector<AngleWithMetadata>& angles)
+{
+    for (size_t n = 0; n < angles.size(); n++)
+    {
+        rotatableDihedrals_[n].SetDihedralAngle(angles[n]);
+    }
+}
+
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
@@ -442,15 +463,6 @@ void ResidueLinkage::SetSpecificShape(std::string dihedralName, std::string sele
                                " as requested in ResidueLinkage::SetSpecificShape()";
     gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
     throw std::runtime_error(errorMessage);
-}
-
-void ResidueLinkage::SetShapeToPrevious()
-{
-    for (auto& dihedral : rotatableDihedrals_)
-    {
-        dihedral.SetDihedralAngle(dihedral.GetPreviousState());
-    }
-    return;
 }
 
 void ResidueLinkage::DetermineAtomsThatMove()
@@ -597,5 +609,26 @@ void ResidueLinkage::DetermineResiduesForOverlapCheck()
         {
             cdsSelections::FindConnectedResidues(nonReducingOverlapResidues_, neighbor);
         }
+    }
+}
+
+std::vector<std::vector<cds::AngleWithMetadata>> cds::currentShape(const std::vector<ResidueLinkage>& linkages)
+{
+    std::vector<std::vector<cds::AngleWithMetadata>> result;
+    result.reserve(linkages.size());
+
+    for (auto& a : linkages)
+    {
+        result.push_back(a.currentShape());
+    }
+
+    return result;
+}
+
+void cds::setShape(std::vector<ResidueLinkage>& linkages, const std::vector<std::vector<AngleWithMetadata>>& angles)
+{
+    for (size_t n = 0; n < linkages.size(); n++)
+    {
+        linkages[n].setShape(angles[n]);
     }
 }

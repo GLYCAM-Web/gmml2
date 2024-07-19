@@ -65,14 +65,9 @@ namespace cds
             return assigned_metadata_;
         }
 
-        inline const DihedralAngleData* GetCurrentMetaData()
+        inline const DihedralAngleData* GetCurrentMetaData() const
         {
             return currentMetadata_;
-        }
-
-        inline AngleWithMetadata GetPreviousState() const
-        {
-            return previousState_;
         }
 
         DihedralAngleDataVector GetLikelyMetadata() const;
@@ -83,6 +78,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         void DetermineAtomsThatMove(); // Based on connectivities, this figures out which atoms will move when the
                                        // dihedral is rotated.
+        AngleWithMetadata currentAngle() const;
         void
         SetDihedralAngle(AngleWithMetadata target); // Sets the dihedral angle by rotating the bond between atom2 and
 
@@ -104,11 +100,6 @@ namespace cds
         //////////////////////////////////////////////////////////
 
         DihedralCoordinates dihedralCoordinates() const;
-
-        inline void RecordPreviousState(AngleWithMetadata angle)
-        {
-            previousState_ = angle;
-        }
 
         inline void SetCurrentMetaData(const DihedralAngleData* d)
         {
@@ -136,9 +127,6 @@ namespace cds
         //    std::vector<cds::Atom*> atoms_that_move_;
         //    std::vector<cds::Atom*> extra_atoms_that_move_;
         std::vector<cds::Coordinate*> coordinatesThatMove_;
-        AngleWithMetadata previousState_ = {constants::dNotSet,
-                                            nullptr}; // I often want to reset a dihedral angle after rotating
-                                                      // it, so recording the previous angle makes this easy.
         DihedralAngleDataVector assigned_metadata_;
         const DihedralAngleData* currentMetadata_ = nullptr;
     };
