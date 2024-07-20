@@ -5,8 +5,10 @@
  * Starts/ends at the CA atoms in proteins. Looks for cycles (as they aren't rotatable).
  * Stores each rotatable bond as a RotatableDihedral object.
  */
-#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -17,6 +19,9 @@
 
 namespace cds
 {
+    using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
+    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+
     struct ResidueLink
     {
         std::pair<cds::Residue*, cds::Residue*> residues;
@@ -35,126 +40,48 @@ namespace cds
         std::array<cds::Atom*, 4> atoms;
     };
 
-    typedef std::vector<gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector> DihedralAngleMetadata;
-
-    ResidueLink findResidueLink(std::pair<cds::Residue*, cds::Residue*> residues);
-
-    class ResidueLinkage
+    struct RotatableDihedral
     {
-      public:
-        //////////////////////////////////////////////////////////
-        //                       CONSTRUCTOR                    //
-        //////////////////////////////////////////////////////////
-        ResidueLinkage(ResidueLink link);
-        //~ResidueLinkage() {std::cout << "Linkage dtor for " << this->GetFromThisResidue1()->getId() << " -Link- "  <<
-        // this->GetToThisResidue2()->getId() << "\n";}
-        //////////////////////////////////////////////////////////
-        //                       ACCESSOR                       //
-        //////////////////////////////////////////////////////////
-        std::vector<RotatableDihedral>& GetRotatableDihedralsRef();
-        std::vector<RotatableDihedral> GetRotatableDihedrals() const;
-        std::vector<RotatableDihedral> GetRotatableDihedralsWithMultipleRotamers() const;
-        int GetNumberOfShapes(const bool likelyShapesOnly = false) const;
+        RotatableDihedral(bool isBranchingLinkage, const std::array<Atom*, 4>& atoms_,
+                          const std::vector<DihedralAngleData>& metadata)
+            : isBranchingLinkage(isBranchingLinkage), atoms(atoms_), metadataVector(metadata) {};
 
-        inline cds::Residue* GetFromThisResidue1() const
-        {
-            return link_.residues.first;
-        }
-
-        inline cds::Residue* GetToThisResidue2() const
-        {
-            return link_.residues.second;
-        }
-
-        bool CheckIfConformer() const;
-
-        inline unsigned long long GetIndex() const
-        {
-            return index_;
-        }
-
-        std::string GetName() const;
-
-        void AddNonReducingOverlapResidues(std::vector<cds::Residue*> extraResidues);
-        std::vector<cds::Residue*>& GetNonReducingOverlapResidues();
-        std::vector<cds::Residue*>& GetReducingOverlapResidues();
-
-        //////////////////////////////////////////////////////////
-        //                       MUTATOR                        //
-        //////////////////////////////////////////////////////////
-        inline void SetRotatableDihedrals(std::vector<RotatableDihedral> rotatableDihedrals)
-        {
-            rotatableDihedrals_ = rotatableDihedrals;
-        }
-
-        //////////////////////////////////////////////////////////
-        //                       FUNCTIONS                      //
-        //////////////////////////////////////////////////////////
-        std::vector<AngleWithMetadata> currentShape() const;
-        void setShape(const std::vector<AngleWithMetadata>& angles);
-        void SetDefaultShapeUsingMetadata();
-        void SetRandomShapeUsingMetadata();
-        void SetSpecificShapeUsingMetadata(int shapeNumber);
-        void SetSpecificShape(std::string dihedralName, std::string selectedRotamer);
-        void DetermineAtomsThatMove();
-        void SimpleWiggleCurrentRotamers(std::vector<cds::Atom*>& overlapAtomSet1,
-                                         std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement = 5);
-        void SimpleWiggleCurrentRotamers(const std::array<std::vector<cds::Residue*>, 2>& residues,
-                                         const int angleIncrement = 5);
-
-        inline void SetIndex(unsigned long long index)
-        {
-            index_ = index;
-        }
-
-        // void AddResiduesForOverlapCheck(std::vector<cds::Residue*> extraResidues, bool reducingSide = true);
-        void DetermineResiduesForOverlapCheck();
-        //////////////////////////////////////////////////////////
-        //                       DISPLAY FUNCTION               //
-        //////////////////////////////////////////////////////////
-        std::string Print() const;
-
-        //////////////////////////////////////////////////////////
-        //                  OPERATOR OVERLOADING                //
-        //////////////////////////////////////////////////////////
-        bool operator==(const ResidueLinkage& rhs) const
-        {
-            return (this->GetIndex() == rhs.GetIndex());
-        }
-
-        bool operator!=(const ResidueLinkage& rhs) const
-        {
-            return (this->GetIndex() != rhs.GetIndex());
-        }
-
-      private:
-        //////////////////////////////////////////////////////////
-        //                    PRIVATE FUNCTIONS                 //
-        //////////////////////////////////////////////////////////
-
-        void InitializeClass();
-        void CreateHydrogenForPsiAngles(std::vector<DihedralAtoms>& dihedralAtoms,
-                                        const DihedralAngleMetadata& metadata);
-        unsigned long long GenerateIndex();
-
-        inline void SetName(std::string name)
-        {
-            name_ = name;
-        }
-
-        //////////////////////////////////////////////////////////
-        //                       ATTRIBUTES                     //
-        //////////////////////////////////////////////////////////
-        ResidueLink link_;
-        std::vector<RotatableDihedral> rotatableDihedrals_;
-        unsigned long long index_ = 0;
-        std::string name_         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
-        std::vector<cds::Residue*> nonReducingOverlapResidues_; // overlap speedups
-        std::vector<cds::Residue*> reducingOverlapResidues_;    // overlap speedups
+        bool isBranchingLinkage;
+        // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
+        std::array<cds::Atom*, 4> atoms;
+        // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond
+        // is rotated.
+        std::vector<cds::Coordinate*> movingCoordinates;
+        DihedralAngleDataVector metadataVector;
+        DihedralAngleData currentMetadata;
     };
 
-    std::vector<std::vector<AngleWithMetadata>> currentShape(const std::vector<ResidueLinkage>& linkages);
-    void setShape(std::vector<ResidueLinkage>& linkages, const std::vector<std::vector<AngleWithMetadata>>& angles);
+    typedef std::vector<gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector> DihedralAngleMetadata;
+
+    struct ResidueLinkage
+    {
+        ResidueLinkage(ResidueLink link_, std::vector<RotatableDihedral> dihedrals, unsigned long long index_,
+                       std::string name_, std::vector<Residue*> reducingOverlapResidues_,
+                       std::vector<Residue*> nonReducingOverlapResidues_)
+            : link(link_), rotatableDihedrals(dihedrals), index(index_), name(name_),
+              reducingOverlapResidues(reducingOverlapResidues_),
+              nonReducingOverlapResidues(nonReducingOverlapResidues_) {};
+
+        ResidueLink link;
+        std::vector<RotatableDihedral> rotatableDihedrals;
+        unsigned long long index = 0;
+        std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
+        std::vector<cds::Residue*> reducingOverlapResidues;
+        std::vector<cds::Residue*> nonReducingOverlapResidues;
+    };
+
+    std::vector<RotatableDihedral>
+    rotatableDihedralsWithMultipleRotamers(const std::vector<RotatableDihedral>& dihedrals);
+    int numberOfShapes(const std::vector<RotatableDihedral>& dihedrals);
+    int numberOfLikelyShapes(const std::vector<RotatableDihedral>& dihedrals);
+    DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
+    std::string print(const ResidueLinkage& linkage);
+    std::string print(const RotatableDihedral& dihedral);
 
 } // namespace cds
 #endif

@@ -14,9 +14,11 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //cdsSelections
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
@@ -34,8 +36,9 @@ GlycosylationSite::GlycosylationSite(Residue* residue, Carbohydrate* carbohydrat
     cdsSelections::ClearAtomLabels(this->GetResidue());
     for (auto& linkage : carbohydrate->GetGlycosidicLinkages())
     {
-        linkage.DetermineResiduesForOverlapCheck(); // Now that the protein residue is attached.
-        linkage.AddNonReducingOverlapResidues(otherProteinResidues);
+        cds::determineResiduesForOverlapCheck(linkage); // Now that the protein residue is attached.
+        linkage.nonReducingOverlapResidues =
+            codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, otherProteinResidues);
     }
 }
 
@@ -203,15 +206,16 @@ void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
     }
     for (auto& glycoLinkage : this->GetGlycan()->GetGlycosidicLinkages())
     {
-        glycoLinkage.AddNonReducingOverlapResidues(allOtherGlycanResidues);
+        glycoLinkage.nonReducingOverlapResidues =
+            codeUtils::vectorAppend(glycoLinkage.nonReducingOverlapResidues, allOtherGlycanResidues);
     }
     return;
 }
 
 cds::Overlap GlycosylationSite::CountOverlapsFast()
 {
-    return this->CountOverlaps(this->GetProteinGlycanLinkage().GetNonReducingOverlapResidues(),
-                               this->GetProteinGlycanLinkage().GetReducingOverlapResidues());
+    return this->CountOverlaps(this->GetProteinGlycanLinkage().nonReducingOverlapResidues,
+                               this->GetProteinGlycanLinkage().reducingOverlapResidues);
 }
 
 cds::Overlap GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
@@ -285,7 +289,7 @@ void GlycosylationSite::SetRandomDihedralAnglesUsingMetadata()
     }
     for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
     {
-        linkage.SetRandomShapeUsingMetadata();
+        cds::setRandomShapeUsingMetadata(linkage.rotatableDihedrals);
     }
     return;
 }
@@ -327,7 +331,7 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
     std::vector<Residue*> overlapResidues;
     if (useAllResiduesForOverlap)
     {
-        overlapResidues = linkage.GetNonReducingOverlapResidues();
+        overlapResidues = linkage.nonReducingOverlapResidues;
         overlapResidues.insert(overlapResidues.end(), this->GetOtherProteinResidues().begin(),
                                this->GetOtherProteinResidues().end());
         for (auto& other_glycosite : this->GetOtherGlycosites())
@@ -338,17 +342,16 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
     }
     //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first rotatable bond in
     //  Asn outwards
-    std::vector<RotatableDihedral> reversed_rotatable_bond_vector = linkage.GetRotatableDihedralsRef();
+    std::vector<RotatableDihedral> reversed_rotatable_bond_vector = linkage.rotatableDihedrals;
     std::reverse(reversed_rotatable_bond_vector.begin(), reversed_rotatable_bond_vector.end());
     for (auto& dihedral : reversed_rotatable_bond_vector)
     {
         auto coordinates = dihedralCoordinates(dihedral);
-        auto input =
-            useAllResiduesForOverlap
-                ? cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.GetReducingOverlapResidues()})
-                : cds::dihedralRotationInputData(
-                      dihedral, {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()});
-        auto best = wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
+        auto input       = useAllResiduesForOverlap
+                               ? cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.reducingOverlapResidues})
+                               : cds::dihedralRotationInputData(
+                               dihedral, {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues});
+        auto best        = wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
         setDihedralAngle(dihedral, best.angle);
     }
     return;

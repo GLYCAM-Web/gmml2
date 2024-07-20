@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
-#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -71,7 +72,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
         cds::ResidueLinkage* currentLinkage =
             cdsSelections::selectLinkageWithIndex(this->carbohydrate_.GetGlycosidicLinkages(), currentLinkageIndex);
         std::string standardDihedralName = this->convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
-        currentLinkage->SetSpecificShape(standardDihedralName, rotamerInfo.selectedRotamer);
+        cds::setSpecificShape(currentLinkage->rotatableDihedrals, standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
     this->carbohydrate_.ResolveOverlaps();
@@ -83,39 +84,6 @@ std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly) const
 {
     return this->carbohydrate_.GetNumberOfShapes(likelyShapesOnly);
 }
-
-// std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly)
-//{
-//	if ( this->GetGlycosidicLinkages().size() > 32 )
-//	{
-//		return ">2^32";
-//	}
-//	unsigned long long int numberOfShapes = 1;
-//     try
-//     {
-//         for(auto &linkage : this->GetGlycosidicLinkages())
-//         {
-//             numberOfShapes = (numberOfShapes * linkage.GetNumberOfShapes(likelyShapesOnly));
-//         }
-//     }   // Better to throw once I figure out how to catch it in gems. This setting status thing and checking it is a
-//     bad pattern. catch(const std::string &exceptionMessage)
-//     {
-//         gmml::log(__LINE__, __FILE__, gmml::ERR, "carbohydrateBuilder class caught this exception message: " +
-//         exceptionMessage); this->SetStatus("ERROR", exceptionMessage);
-//     }
-//     catch (const std::runtime_error &error)
-//     {
-//         gmml::log(__LINE__, __FILE__, gmml::ERR, error.what());
-//         this->SetStatus("ERROR", error.what());
-//     }
-//     catch (...)
-//     {
-//         gmml::log(__LINE__, __FILE__, gmml::ERR, "carbohydrateBuilder class caught a throw that was not anticipated.
-//         Curious. Death cometh?"); this->SetStatus("ERROR", "carbohydrateBuilder caught a throw type that was not
-//         anticipated. Pretty please report how you got to this to glycam@gmail.com.");
-//     }
-//     return std::to_string(numberOfShapes);
-// }
 
 // Commenting out for as not being used, and will be confusing later. The front-end calls a differnt function that will
 // build a single, specific rotamer.
@@ -136,7 +104,8 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
         // std::cout << "linko nameo: " << linkage.GetName() << std::endl;
         cdsCondensedSequence::DihedralOptionsVector possibleRotamers, likelyRotamers;
         std::vector<std::string> buffer;
-        for (auto& rotatableDihedral : linkage.GetRotatableDihedralsWithMultipleRotamers())
+        auto multipleRotamerDihedrals = cds::rotatableDihedralsWithMultipleRotamers(linkage.rotatableDihedrals);
+        for (auto& rotatableDihedral : multipleRotamerDihedrals)
         {
             for (auto& metadata : rotatableDihedral.metadataVector)
             {
@@ -153,12 +122,12 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
             buffer.clear();
         }
         // If there are multiple rotamers for this linkage
-        if (!linkage.GetRotatableDihedralsWithMultipleRotamers().empty())
+        if (!multipleRotamerDihedrals.empty())
         { // Build struct in vector with emplace_back via constructor in struct
-            userOptionsForSequence.emplace_back(linkage.GetName(), std::to_string(linkage.GetIndex()),
-                                                std::to_string(linkage.GetFromThisResidue1()->getNumber()),
-                                                std::to_string(linkage.GetToThisResidue2()->getNumber()),
-                                                likelyRotamers, possibleRotamers);
+            auto& linkageResidues = linkage.link.residues;
+            userOptionsForSequence.emplace_back(
+                linkage.name, std::to_string(linkage.index), std::to_string(linkageResidues.first->getNumber()),
+                std::to_string(linkageResidues.second->getNumber()), likelyRotamers, possibleRotamers);
         }
     }
     return userOptionsForSequence;
@@ -173,15 +142,12 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
                                                                  std::vector<cds::ResidueLinkage>::iterator end,
                                                                  int maxRotamers, int rotamerCount)
 {
-    for (int shapeNumber = 0; shapeNumber < linkage->GetNumberOfShapes(); ++shapeNumber)
+    for (int shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotatableDihedrals); ++shapeNumber)
     {
         ++rotamerCount;
         if (rotamerCount <= maxRotamers)
         {
-            linkage->SetSpecificShapeUsingMetadata(shapeNumber);
-            //            std::cout << linkage->GetFromThisResidue1()->getStringId() << "-" <<
-            //            linkage->GetToThisResidue2()->getStringId() << ": " << (shapeNumber + 1) << " of " <<
-            //            linkage->GetNumberOfShapes() <<  "\n";
+            cds::setSpecificShapeUsingMetadata(linkage->rotatableDihedrals, shapeNumber);
             if (std::next(linkage) != end)
             {
                 this->generateLinkagePermutationsRecursively(std::next(linkage), end, maxRotamers, rotamerCount);

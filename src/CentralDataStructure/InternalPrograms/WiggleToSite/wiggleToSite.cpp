@@ -7,6 +7,9 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
 using cds::Atom;
@@ -78,8 +81,8 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         this->randomizeLinkageOrder();
         for (auto& linkage : this->getWiggleLinkages())
         {
-            auto recordedShape = linkage.currentShape();
-            linkage.SetRandomShapeUsingMetadata();
+            auto recordedShape = cds::currentShape(linkage.rotatableDihedrals);
+            cds::setRandomShapeUsingMetadata(linkage.rotatableDihedrals);
             if (this->acceptDistance(useMonteCarlo) && this->acceptOverlaps())
             {
                 cycle = 0; // reset when it improves
@@ -91,7 +94,7 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
             }
             else
             {
-                linkage.setShape(recordedShape);
+                cds::setShape(linkage.rotatableDihedrals, recordedShape);
             }
         }
         //        if (structureCount > 500)
@@ -135,14 +138,14 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
         if (previousResidue != nullptr)
         {
             cds::ResidueLink link = cds::findResidueLink({previousResidue, residue});
-            wiggleLinkages_.emplace_back(link);
+            wiggleLinkages_.emplace_back(cds::createResidueLinkage(link));
         }
         previousResidue = residue;
     }
     std::cout << "\nLinkages I behold:\n" << std::endl;
     for (auto& linkage : this->getWiggleLinkages())
     {
-        std::cout << linkage.GetName() << ": " << linkage.GetNumberOfShapes() << std::endl;
+        std::cout << linkage.name << ": " << cds::numberOfShapes(linkage.rotatableDihedrals) << std::endl;
     }
     return this->getWiggleLinkages();
 }

@@ -1,6 +1,32 @@
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 
 #include <sstream>
+#include <vector>
+
+namespace
+{
+    bool checkIfConformer(const std::vector<cds::RotatableDihedral>& dihedrals)
+    {
+        if (dihedrals.empty())
+        {
+            std::string errorMessage = "Error in ResidueLinkage::checkIfConformer as dihedrals.empty()\n";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
+            throw std::runtime_error(errorMessage);
+        }
+        else if (dihedrals.at(0).metadataVector.empty())
+        {
+            std::string errorMessage =
+                "Error in ResidueLinkage::checkIfConformer as dihedrals.at(0).metadataVector.empty()\n";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
+            throw std::runtime_error(errorMessage);
+        }
+        else
+        {
+            return (!(dihedrals.at(0).metadataVector.at(0).rotamer_type_.compare("permutation") == 0));
+        }
+        return false; // Default to shut up the compiler. Shut up compiler gawd.
+    }
+} // namespace
 
 /* Below has following flaws:
   1) fail to find inner rotatable bonds here:
@@ -346,7 +372,7 @@ cds::ResidueLinkage* cdsSelections::selectLinkageWithIndex(std::vector<cds::Resi
 {
     for (auto& linkage : inputLinkages)
     {
-        if (linkage.GetIndex() == indexQuery)
+        if (linkage.index == indexQuery)
         {
             return &linkage;
         }
@@ -369,21 +395,19 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
     std::vector<cds::ResidueLinkage> sortedLinkages;
     for (auto& linkage : inputLinkages)
     {
-        if (linkage.CheckIfConformer())
+        if (checkIfConformer(linkage.rotatableDihedrals))
         {
             sortedLinkages.push_back(linkage);
         }
         else // if not a conformer
         {
-            std::vector<cds::RotatableDihedral> rotatableDihedrals =
-                linkage
-                    .GetRotatableDihedralsWithMultipleRotamers(); // only want the rotatabe dihedrals within a linkage
-                                                                  // that have multiple rotamers. Some bonds won't.
+            std::vector<cds::RotatableDihedral> rotatableDihedrals = cds::rotatableDihedralsWithMultipleRotamers(
+                linkage.rotatableDihedrals); // only want the rotatabe dihedrals within a linkage
+                                             // that have multiple rotamers. Some bonds won't.
             for (auto& rotatableDihedral : rotatableDihedrals)
             {
-                cds::ResidueLinkage splitLinkage         = linkage; // Copy it to get correct info into class
-                std::vector<cds::RotatableDihedral> temp = {rotatableDihedral};
-                splitLinkage.SetRotatableDihedrals(temp);
+                cds::ResidueLinkage splitLinkage = linkage; // Copy it to get correct info into class
+                splitLinkage.rotatableDihedrals  = {rotatableDihedral};
                 sortedLinkages.push_back(splitLinkage);
             }
         }

@@ -4,7 +4,7 @@
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
@@ -39,5 +39,11 @@ namespace cds
                                             std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
     AngleOverlap wiggleUsingRotamers(const DihedralCoordinates coordinates, const DihedralAngleDataVector& rotamers,
                                      int angleIncrement, const std::array<DihedralRotationData, 2>& input);
+    void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                     std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
+                                     const int angleIncrement = 5);
+    void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                     const std::array<std::vector<cds::Residue*>, 2>& residues,
+                                     const int angleIncrement = 5);
 } // namespace cds
 #endif

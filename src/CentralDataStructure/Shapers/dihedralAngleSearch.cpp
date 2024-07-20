@@ -5,7 +5,7 @@
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
-#include "includes/CentralDataStructure/Shapers/rotatableDihedral.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
@@ -308,4 +308,29 @@ cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordi
     }
 
     return bestOverlapResult(results);
+}
+
+void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                      std::vector<cds::Atom*>& overlapAtomSet1,
+                                      std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement)
+{
+    for (auto& dihedral : dihedrals)
+    {
+        auto best = wiggleWithinCurrentRotamer(dihedral, overlapAtomSet1, overlapAtomSet2, angleIncrement);
+        setDihedralAngle(dihedral, best.angle);
+    }
+}
+
+void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                      const std::array<std::vector<cds::Residue*>, 2>& residues,
+                                      const int angleIncrement)
+{
+    for (auto& dihedral : dihedrals)
+    {
+        const DihedralAngleDataVector rotamer {dihedral.currentMetadata};
+        auto coordinates = dihedralCoordinates(dihedral);
+        auto input       = dihedralRotationInputData(dihedral, residues);
+        auto best        = wiggleUsingRotamers(coordinates, rotamer, angleIncrement, input);
+        setDihedralAngle(dihedral, best.angle);
+    }
 }
