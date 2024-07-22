@@ -41,9 +41,8 @@ namespace cds
                                      int angleIncrement, const std::array<DihedralRotationData, 2>& input);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                      std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-                                     const int angleIncrement = 5);
+                                     int angleIncrement);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
-                                     const std::array<std::vector<cds::Residue*>, 2>& residues,
-                                     const int angleIncrement = 5);
+                                     const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement);
 } // namespace cds
 #endif

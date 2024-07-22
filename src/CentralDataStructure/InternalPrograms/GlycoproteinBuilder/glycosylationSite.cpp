@@ -257,7 +257,7 @@ void GlycosylationSite::PrintOverlaps()
 {
     std::stringstream logss;
     logss << std::fixed << std::setprecision(2) << std::setw(17) << this->GetResidue()->getStringId() << " | "
-          << std::setw(6) << this->CountOverlaps().count << std::endl;
+          << std::setw(6) << this->CountOverlaps(MoleculeType::ALL).count << std::endl;
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 }
 
@@ -302,7 +302,8 @@ void GlycosylationSite::Print(std::string type)
     std::stringstream logss;
     if (type.compare("All") == 0)
     {
-        logss << "Residue ID: " << this->GetResidue()->getStringId() << ", overlap: " << this->CountOverlaps().count;
+        logss << "Residue ID: " << this->GetResidue()->getStringId()
+              << ", overlap: " << this->CountOverlaps(MoleculeType::ALL).count;
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
     }
 }

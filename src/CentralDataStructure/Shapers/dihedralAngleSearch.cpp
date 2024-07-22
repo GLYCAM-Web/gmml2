@@ -311,7 +311,7 @@ cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordi
 
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                       std::vector<cds::Atom*>& overlapAtomSet1,
-                                      std::vector<cds::Atom*>& overlapAtomSet2, const int angleIncrement)
+                                      std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
     for (auto& dihedral : dihedrals)
     {
@@ -321,8 +321,7 @@ void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
 }
 
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
-                                      const std::array<std::vector<cds::Residue*>, 2>& residues,
-                                      const int angleIncrement)
+                                      const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement)
 {
     for (auto& dihedral : dihedrals)
     {

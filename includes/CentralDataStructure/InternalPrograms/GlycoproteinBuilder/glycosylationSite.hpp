@@ -52,11 +52,11 @@ class GlycosylationSite
     //////////////////////////////////////////////////////////
     //                       FUNCTIONS                      //
     //////////////////////////////////////////////////////////
-    cds::Overlap CountOverlaps(MoleculeType moleculeType = MoleculeType::ALL);
+    cds::Overlap CountOverlaps(MoleculeType moleculeType);
     cds::Overlap CountOverlapsFast();
     //    void StashCoordinates();
     //    void SetStashedCoordinates();
-    void Wiggle(bool firstLinkageOnly = false, int interval = 5, bool useAllResiduesForOverlap = false);
+    void Wiggle(bool firstLinkageOnly, int interval, bool useAllResiduesForOverlap);
     void SetRandomDihedralAnglesUsingMetadata();
     void AddOtherGlycositesToLinkageOverlapAtoms();
     //////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ class GlycosylationSite
     void Superimpose_Glycan_To_Glycosite(Residue* glycosite_residue);
     void Rename_Protein_Residue_To_GLYCAM_Nomenclature();
     Atom* GetConnectingProteinAtom(const std::string residue_name) const;
-    void WiggleOneLinkage(ResidueLinkage& linkage, int interval = 5, bool useAllResiduesForOverlap = false);
+    void WiggleOneLinkage(ResidueLinkage& linkage, int interval, bool useAllResiduesForOverlap);
     cds::Overlap CountOverlaps(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
     //////////////////////////////////////////////////////////
     //                       ATTRIBUTES                     //
