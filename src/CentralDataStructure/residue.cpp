@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/biology.hpp"
 
 using cds::Atom;
@@ -212,7 +213,7 @@ std::vector<const Atom*> Residue::getAtomsConnectedToOtherResidues() const
     {
         for (auto& neighbor : atom->getNeighbors())
         { // check if neighbor is not one of the atoms in this residue.
-            if (std::find(residueAtoms.begin(), residueAtoms.end(), neighbor) == residueAtoms.end())
+            if (!codeUtils::contains(residueAtoms, neighbor))
             {
                 foundAtoms.push_back(atom);
             }
@@ -229,7 +230,7 @@ void Residue::findAtomPairsConnectedToOtherResidues(std::vector<std::pair<const 
     { // only "child" neighbors or we find same pair twice
         for (auto& neighbor : atom->getChildren())
         { // check if neighbor is not one of the atoms in this residue.
-            if (std::find(residueAtoms.begin(), residueAtoms.end(), neighbor) == residueAtoms.end())
+            if (!codeUtils::contains(residueAtoms, neighbor))
             {
                 foundAtoms.push_back({atom, neighbor});
             }
@@ -259,8 +260,7 @@ void Residue::MakeDeoxy(const std::string oxygenNumber)
 
 cds::ResidueType Residue::determineType(const std::string& residueName)
 {
-    if (std::find(biology::proteinResidueNames.begin(), biology::proteinResidueNames.end(), residueName) !=
-        biology::proteinResidueNames.end())
+    if (codeUtils::contains(biology::proteinResidueNames, residueName))
     {
         this->SetType(ResidueType::Protein);
         return ResidueType::Protein;

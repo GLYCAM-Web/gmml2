@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 #include <string>
@@ -175,11 +176,7 @@ std::string carbohydrateBuilder::convertIncomingRotamerNamesToStandard(std::stri
 { // Lamda function to see if string is in the passed in vector
     auto isAinList = [](std::vector<std::string> names, std::string query)
     {
-        if (std::find(names.begin(), names.end(), query) != names.end())
-        {
-            return true;
-        }
-        return false;
+        return codeUtils::contains(names, query);
     }; // Thought about converting incomingName to lowercase first.
     if (isAinList({"Omega", "omega", "Omg", "omg", "OMG", "omga", "omg1", "Omg1", "o"}, incomingName))
     {

@@ -14,7 +14,6 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
-#include <algorithm>
 #include <numeric>
 #include <vector>
 

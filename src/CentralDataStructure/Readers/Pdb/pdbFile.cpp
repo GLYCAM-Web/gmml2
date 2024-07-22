@@ -3,10 +3,10 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
-#include <fstream>   // std::ifstream
-#include <algorithm> // std::find
+#include <fstream> // std::ifstream
 
 using pdb::PdbFile;
 
@@ -46,7 +46,7 @@ void PdbFile::ParseInFileStream(std::ifstream& pdbFileStream, const InputType pd
             coordSectionCards.push_back("ENDMDL");
         }
         std::vector<std::string> databaseCards {"DBREF", "DBREF1", "DBREF2"};
-        if (std::find(coordSectionCards.begin(), coordSectionCards.end(), recordName) != coordSectionCards.end())
+        if (codeUtils::contains(coordSectionCards, recordName))
         {
             std::stringstream recordSection =
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
@@ -77,7 +77,7 @@ void PdbFile::ParseInFileStream(std::ifstream& pdbFileStream, const InputType pd
             std::stringstream recordSection = this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
             remarkRecord_                   = RemarkRecord(recordSection);
         }
-        else if ((std::find(databaseCards.begin(), databaseCards.end(), recordName) != databaseCards.end()))
+        else if (codeUtils::contains(databaseCards, recordName))
         {
             std::stringstream databaseSection =
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, databaseCards);
@@ -106,7 +106,7 @@ std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::ifstream& pdbFi
     std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
     std::stringstream recordSection;
     std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
-    while (std::find(recordNames.begin(), recordNames.end(), recordName) != recordNames.end())
+    while (codeUtils::contains(recordNames, recordName))
     {
         if (recordName != "ANISOU") // Do nothing for ANISOU
         {

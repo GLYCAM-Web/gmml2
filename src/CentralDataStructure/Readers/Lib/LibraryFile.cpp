@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp" // RemoveSpaces/Quotes
 #include <fstream>                        // std::ifstream
@@ -111,7 +112,7 @@ namespace lib
             std::stringstream residueStream;
             residueStream = this->ExtractUnitSection(inputFileStream, residueName);
             // std::cout << "Residue stream is:\n" << residueStream.str() << "\n fin. " << std::endl;
-            if (std::find(queryNames.begin(), queryNames.end(), residueName) != queryNames.end())
+            if (codeUtils::contains(queryNames, residueName))
             {
                 this->addResidue(std::make_unique<LibraryResidue>(residueStream, residueName));
             }

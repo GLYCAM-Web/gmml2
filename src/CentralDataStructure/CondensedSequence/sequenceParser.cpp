@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include <algorithm> // Reverse function.
 #include <sstream>
 #include <cctype> // isdigit()
 

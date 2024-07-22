@@ -1,6 +1,8 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-#include "includes/CodeUtils/logging.hpp"
+
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 using cds::Residue;
 
@@ -16,8 +18,8 @@ std::vector<Residue*> cdsSelections::selectResiduesByType(std::vector<Residue*> 
     std::vector<Residue*> selectedResidues;
     for (auto& residue : inputResidues)
     {
-        auto findResult = std::find(queryTypes.begin(), queryTypes.end(), residue->GetType());
-        if ((findResult != queryTypes.end() && !invert) || (findResult == queryTypes.end() && invert))
+        bool contains = codeUtils::contains(queryTypes, residue->GetType());
+        if ((contains && !invert) || (!contains && invert))
         {
             selectedResidues.push_back(residue);
         }
@@ -76,7 +78,7 @@ void cdsSelections::FindConnectedResidues(std::vector<Residue*>& visitedList, Re
     visitedList.push_back(current);
     for (auto& neighbor : current->getNeighbors())
     {
-        if (std::find(visitedList.begin(), visitedList.end(), neighbor) == visitedList.end())
+        if (!codeUtils::contains(visitedList, neighbor))
         {                                                                // Keep looking if neighbor wasn't yet visited.
             cdsSelections::FindConnectedResidues(visitedList, neighbor); // recursive function call
         }

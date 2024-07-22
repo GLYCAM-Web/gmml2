@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include "includes/CodeUtils/files.hpp"   // ensureFileExists
 #include "includes/CodeUtils/strings.hpp" // split
+#include "includes/CodeUtils/containers.hpp"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -141,7 +142,7 @@ void PrepFile::ReadQueryResidues(std::ifstream& in_file, const std::vector<std::
         getline(in_file, line);                                                 // blank line
         getline(in_file, line);                                                 // residue name appears here
         std::vector<std::string> residueNameLine = codeUtils::split(line, ' '); // front() string will be name
-        if (std::find(queryNames.begin(), queryNames.end(), residueNameLine.front()) != queryNames.end())
+        if (codeUtils::contains(queryNames, residueNameLine.front()))
         {
             int numberOfTimesToReadInResidue =
                 std::count(queryNames.begin(), queryNames.end(), residueNameLine.front());

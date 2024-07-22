@@ -1,8 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP
 
+#include "includes/CodeUtils/containers.hpp"
+
 #include <vector>
-#include <algorithm> // find
 
 // ToDo move this to CentralDataStructure/Selections and rename the namespace.
 namespace codeUtils
@@ -13,7 +14,7 @@ namespace codeUtils
         std::vector<T*> results;
         for (auto& element : inputVector)
         {
-            if (std::find(queryNames.begin(), queryNames.end(), element->getName()) != queryNames.end())
+            if (codeUtils::contains(queryNames, element->getName()))
             {
                 results.push_back(element);
             }
@@ -51,7 +52,7 @@ namespace codeUtils
         std::vector<T> elementsInInputVectorButNotInQueryElements;
         for (auto element : inputVector)
         { // if element is not in the exclude list
-            if (std::find(excludeElements.begin(), excludeElements.end(), element) == excludeElements.end())
+            if (!codeUtils::contains(excludeElements, element))
             {
                 elementsInInputVectorButNotInQueryElements.push_back(element);
             }
@@ -72,7 +73,7 @@ namespace codeUtils
         visited.push_back(current);
         for (auto& neighbor : current->getNeighbors())
         {
-            if ((std::find(visited.begin(), visited.end(), neighbor) == visited.end()) && (!targetFound))
+            if (!(targetFound || codeUtils::contains(visited, neighbor)))
             {
                 findPathBetweenElementsInGraph(neighbor, target, visited, path, targetFound);
             }

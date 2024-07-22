@@ -6,7 +6,6 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include <vector>
 #include <string>
-#include <algorithm> //find
 
 using cds::Atom;
 using cds::Residue;

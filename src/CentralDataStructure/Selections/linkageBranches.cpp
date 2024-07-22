@@ -5,10 +5,10 @@
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 #include "includes/CentralDataStructure/Selections/cyclePoints.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 #include <tuple>
-#include <algorithm>
 #include <sstream>
 
 // After getting connection atoms between two residues, we have the linear path between them e.g.:
@@ -97,8 +97,7 @@ cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::Res
                 {
                     for (auto& neighbor : connectionAtom->getNeighbors()) // Need an interator
                     {
-                        if (std::find(connectingAtoms.begin(), connectingAtoms.end(), neighbor) ==
-                            connectingAtoms.end()) // if not in the vector
+                        if (!codeUtils::contains(connectingAtoms, neighbor)) // if not in the vector
                         {
                             cdsSelections::Branch branch(connectionAtom);
                             cdsSelections::FindEndsOfBranchesFromLinkageAtom(neighbor, connectionAtom,

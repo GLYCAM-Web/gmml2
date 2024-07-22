@@ -2,6 +2,7 @@
 
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
 
 Atom* cdsSelections::getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, const std::string queryNumber)
@@ -26,7 +27,7 @@ void cdsSelections::FindConnectedAtoms(std::vector<Atom*>& visitedAtoms, Atom* c
     visitedAtoms.push_back(currentAtom);
     for (auto& neighbor : currentAtom->getNeighbors())
     {
-        if (std::find(visitedAtoms.begin(), visitedAtoms.end(), neighbor) == visitedAtoms.end())
+        if (!codeUtils::contains(visitedAtoms, neighbor))
         {                                                              // Keep looking if neighbor wasn't yet visited.
             cdsSelections::FindConnectedAtoms(visitedAtoms, neighbor); // recursive function call
         }
@@ -134,7 +135,7 @@ Atom* cdsSelections::selectNeighborNotInAtomVector(const Atom* atomWithNeighbors
 {
     for (auto& neighbor : atomWithNeighbors->getNeighbors())
     {
-        if (std::find(queryAtoms.begin(), queryAtoms.end(), neighbor) == queryAtoms.end())
+        if (!codeUtils::contains(queryAtoms, neighbor))
         {
             return neighbor;
         }
@@ -173,7 +174,7 @@ std::vector<Atom*> cdsSelections::FindHeavyAtoms(std::vector<Atom*> queryAtoms)
     std::vector<std::string> heavyList = {"C", "O", "N", "S", "P"};
     for (auto& atom : queryAtoms)
     {
-        if (std::find(heavyList.begin(), heavyList.end(), atom->getElement()) != heavyList.end())
+        if (codeUtils::contains(heavyList, atom->getElement()))
         {
             foundAtoms.push_back(atom);
         }

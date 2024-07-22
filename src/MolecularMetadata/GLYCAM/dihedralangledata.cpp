@@ -1,6 +1,8 @@
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/containers.hpp"
+
 #include <regex>
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
@@ -81,19 +83,15 @@ bool DihedralAngleDataContainer::checkIfResidueConditionsAreSatisfied(std::vecto
     for (const auto& entry_condition : entry_conditions)
     { // If no condition, return true. If can't find the condition in the list return false, otherwise, having found the
       // condition(s), return true.
-        // gmml::log(__LINE__,__FILE__,gmml::INF, "Entry condition: " + entry_condition);
         if (entry_condition == "none")
         {
-            // gmml::log(__LINE__,__FILE__,gmml::INF, "Returning true as conditions are none");
             return true;
         }
-        if (!(std::find(residue_types.begin(), residue_types.end(), entry_condition) != residue_types.end()))
+        if (!codeUtils::contains(residue_types, entry_condition))
         {
-            // gmml::log(__LINE__,__FILE__,gmml::INF, "Returning false as did not find the condition in residue tags");
             return false; // If any condition isn't satisified. return false.
         }
     }
-    // gmml::log(__LINE__,__FILE__,gmml::INF, "All residue conditions are satisfied");
     return true;
 }
 

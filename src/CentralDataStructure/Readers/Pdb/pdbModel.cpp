@@ -4,13 +4,13 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Editors/amberMdPrep.hpp" //all preprocessing should move to here.
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include <algorithm> // std::find
-#include <iomanip>   // setprecision setw
+#include <iomanip> // setprecision setw
 
 using pdb::PdbModel;
 
@@ -343,7 +343,7 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
             std::vector<std::string> pdbAtomNames  = residue->getAtomNames();
             for (auto& parmHeavyAtomName : parmHeavyAtomNames) // What heavy atoms are missing from the pdb residue?
             {
-                if (std::find(pdbAtomNames.begin(), pdbAtomNames.end(), parmHeavyAtomName) == pdbAtomNames.end())
+                if (!codeUtils::contains(pdbAtomNames, parmHeavyAtomName))
                 { // Residue missing a heavy atom.
                     gmml::log(__LINE__, __FILE__, gmml::INF,
                               "Atom named " + parmHeavyAtomName + " missing from " + residue->printId());
@@ -352,7 +352,7 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
             }
             for (auto& pdbAtomName : pdbAtomNames) // What atoms in the pdb residue are unrecognized?
             {
-                if (std::find(parmAtomNames.begin(), parmAtomNames.end(), pdbAtomName) == parmAtomNames.end())
+                if (!codeUtils::contains(parmAtomNames, pdbAtomName))
                 {
                     // Residue contains unrecognized atom.
                     gmml::log(__LINE__, __FILE__, gmml::INF,

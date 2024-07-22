@@ -1,7 +1,8 @@
 #ifndef ABSTRACTOBJECT_INCLUDES_LABELS_HPP
 #define ABSTRACTOBJECT_INCLUDES_LABELS_HPP
 
-#include <algorithm>
+#include "includes/CodeUtils/containers.hpp"
+
 #include <string>
 #include <vector>
 
@@ -65,7 +66,7 @@ namespace abstrab
          ***********************************************/
         inline bool containsLabel(const std::string query) const
         {
-            return std::find(labels_m.begin(), labels_m.end(), query) != labels_m.end();
+            return codeUtils::contains(labels_m, query);
         }
 
       private:

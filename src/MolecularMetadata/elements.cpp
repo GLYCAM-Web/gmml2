@@ -5,7 +5,6 @@
 #include <vector>
 #include <map>
 #include <utility>
-#include <algorithm>
 
 namespace
 {

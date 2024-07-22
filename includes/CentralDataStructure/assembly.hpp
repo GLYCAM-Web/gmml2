@@ -5,8 +5,7 @@
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 #include <string>
 #include <vector>
-#include <memory>    // unique_ptr
-#include <algorithm> // std::find
+#include <memory> // unique_ptr
 
 namespace cds
 {

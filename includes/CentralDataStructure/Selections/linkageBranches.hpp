@@ -6,7 +6,6 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 
 #include <vector>
-#include <algorithm>
 
 namespace cdsSelections
 {
