@@ -81,7 +81,8 @@ void cds::setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihe
 
 void cds::setRandomShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals)
 {
-    if (dihedrals.at(0).metadataVector.at(0).rotamer_type_.compare("permutation") == 0)
+    auto rotamerType = dihedrals.at(0).metadataVector.at(0).rotamer_type_;
+    if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
     {
         for (auto& entry : dihedrals)
         {
@@ -89,7 +90,7 @@ void cds::setRandomShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals)
             setDihedralAngle(entry, angle);
         }
     }
-    else if (dihedrals.at(0).metadataVector.at(0).rotamer_type_.compare("conformer") == 0)
+    else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
     {
         int numberOfConformers = dihedrals.at(0).metadataVector.size();
         std::uniform_int_distribution<> distr(0, (numberOfConformers - 1)); // define the range

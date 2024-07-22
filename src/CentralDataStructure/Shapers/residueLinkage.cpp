@@ -25,7 +25,7 @@ namespace
         {
             auto& dihedral   = dihedrals[0];
             auto rotamerType = dihedral.metadataVector[0].rotamer_type_;
-            if (rotamerType.compare("permutation") == 0)
+            if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
             {
                 int numberOfShapes = 1;
                 for (auto& entry : dihedrals)
@@ -34,7 +34,7 @@ namespace
                 }
                 return numberOfShapes;
             }
-            else if (rotamerType.compare("conformer") == 0)
+            else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
             { // Conformer should mean that each dihedral will have the same number of metadata entries.
                 // numberOfShapes = RotatableDihedrals_.size(); // This was correct for ASN for the wrong reason. 4
                 // conformers and 4 dihedrals...
@@ -42,7 +42,10 @@ namespace
             }
             else
             {
-                std::string str = "Error: Unknown rotamer type: " + rotamerType;
+                std::string str =
+                    "Error: Unknown rotamer type: " +
+                    std::to_string(
+                        static_cast<std::underlying_type_t<gmml::MolecularMetadata::GLYCAM::RotamerType>>(rotamerType));
                 gmml::log(__LINE__, __FILE__, gmml::ERR, str);
                 throw std::runtime_error(str);
             }

@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Selections/linkageBranches.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <sstream>
 #include <vector>
@@ -27,7 +28,8 @@ namespace
         }
         else
         {
-            return (!(dihedrals.at(0).metadataVector.at(0).rotamer_type_.compare("permutation") == 0));
+            return (dihedrals.at(0).metadataVector.at(0).rotamer_type_ ==
+                    gmml::MolecularMetadata::GLYCAM::RotamerType::conformer);
         }
         return false; // Default to shut up the compiler. Shut up compiler gawd.
     }

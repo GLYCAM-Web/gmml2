@@ -9,6 +9,12 @@ namespace gmml
     {
         namespace GLYCAM
         {
+            enum class RotamerType
+            {
+                conformer,
+                permutation
+            };
+
             struct DihedralAngleData
             {
                 std::string linking_atom1_;
@@ -18,7 +24,7 @@ namespace gmml
                 double lower_deviation_;
                 double upper_deviation_;
                 double weight_;
-                std::string rotamer_type_; // permutation or conformer
+                RotamerType rotamer_type_; // permutation or conformer
                 std::string rotamer_name_;
                 unsigned int number_of_bonds_from_anomeric_carbon_;
                 int index_; // Used to indicate whether multiple entries are meant to overwrite each other or generate
