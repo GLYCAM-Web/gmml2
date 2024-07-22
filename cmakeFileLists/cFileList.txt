@@ -44,12 +44,15 @@
 ./src/CentralDataStructure/Readers/Prep/prepFile.cpp
 ./src/CentralDataStructure/Readers/Prep/prepResidue.cpp
 ./src/CentralDataStructure/Selections/atomSelections.cpp
+./src/CentralDataStructure/Selections/cyclePoints.cpp
+./src/CentralDataStructure/Selections/linkageBranches.cpp
 ./src/CentralDataStructure/Selections/residueSelections.cpp
 ./src/CentralDataStructure/Selections/shaperSelections.cpp
 ./src/CentralDataStructure/Shapers/atomToCoordinateInterface.cpp
 ./src/CentralDataStructure/Shapers/dihedralAngleSearch.cpp
 ./src/CentralDataStructure/Shapers/dihedralAngles.cpp
 ./src/CentralDataStructure/Shapers/dihedralShape.cpp
+./src/CentralDataStructure/Shapers/psiAngleHydrogen.cpp
 ./src/CentralDataStructure/Shapers/residueLinkage.cpp
 ./src/CentralDataStructure/Shapers/residueLinkageCreation.cpp
 ./src/CentralDataStructure/Writers/offWriter.cpp

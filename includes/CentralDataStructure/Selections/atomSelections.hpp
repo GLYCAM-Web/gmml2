@@ -7,7 +7,6 @@
 #include <vector>
 #include <string>
 #include <algorithm> //find
-#include "templatedSelections.hpp"
 
 using cds::Atom;
 using cds::Residue;

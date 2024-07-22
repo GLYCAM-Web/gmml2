@@ -46,8 +46,7 @@ namespace gmml
 
                 inline bool operator!=(const DihedralAngleData& other)
                 {
-                    return (this->index_ != other.index_ ||
-                            this->number_of_bonds_from_anomeric_carbon_ != other.number_of_bonds_from_anomeric_carbon_);
+                    return !(operator==(other));
                 }
             };
 

@@ -1,4 +1,6 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
 
