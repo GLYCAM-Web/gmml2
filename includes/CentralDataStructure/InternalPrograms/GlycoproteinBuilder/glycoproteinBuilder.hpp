@@ -116,11 +116,10 @@ class GlycoproteinBuilder
     Residue* SelectResidueFromInput(const std::string userSelection);
     // Overlap Resolution
     void ResolveOverlapsWithWiggler();
-    cds::Overlap Wiggle(int persistCycles = 10, bool firstLinkageOnly = false, int interval = 5,
-                        bool useAllResiduesForOverlap = false);
+    cds::Overlap Wiggle(int persistCycles, bool firstLinkageOnly, int interval);
     cds::Overlap RandomDescent(int persistCycles, bool monte_carlo);
     void SetRandomDihedralAnglesUsingMetadata();
-    bool DumbRandomWalk(int maxCycles = 10);
+    bool DumbRandomWalk(int maxCycles);
     // I/O
     // Overlap Calculation
     cds::Overlap CountOverlaps(MoleculeType moleculeType = ALL);

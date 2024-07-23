@@ -261,14 +261,14 @@ void GlycosylationSite::PrintOverlaps()
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 }
 
-void GlycosylationSite::Wiggle(bool firstLinkageOnly, int interval, bool useAllResiduesForOverlap)
+void GlycosylationSite::Wiggle(bool firstLinkageOnly, int interval)
 { // I want to find the lowest overlap as close to each bonds default as possible. So code is a bit more complicated.
-    this->WiggleOneLinkage(this->GetProteinGlycanLinkage(), interval, useAllResiduesForOverlap);
+    this->WiggleOneLinkage(this->GetProteinGlycanLinkage(), interval);
     if (!firstLinkageOnly)
     {
         for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
         {
-            this->WiggleOneLinkage(linkage, interval, useAllResiduesForOverlap);
+            this->WiggleOneLinkage(linkage, interval);
         }
     }
     return;
@@ -326,20 +326,14 @@ Atom* GlycosylationSite::GetConnectingProteinAtom(const std::string residue_name
     return this->GetResidue()->FindAtom(connectionAtomName);
 }
 
-void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, bool useAllResiduesForOverlap)
+void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval)
 {
     // Figure out which residues to check overlaps against
-    std::vector<Residue*> overlapResidues;
-    if (useAllResiduesForOverlap)
+    std::vector<Residue*> overlapResidues = linkage.nonReducingOverlapResidues;
+    for (auto& other_glycosite : this->GetOtherGlycosites())
     {
-        overlapResidues = linkage.nonReducingOverlapResidues;
-        overlapResidues.insert(overlapResidues.end(), this->GetOtherProteinResidues().begin(),
-                               this->GetOtherProteinResidues().end());
-        for (auto& other_glycosite : this->GetOtherGlycosites())
-        {
-            std::vector<cds::Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
-            overlapResidues.insert(overlapResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
-        }
+        std::vector<cds::Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
+        overlapResidues.insert(overlapResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
     }
     //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first rotatable bond in
     //  Asn outwards
@@ -348,10 +342,7 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
     for (auto& dihedral : reversed_rotatable_bond_vector)
     {
         auto coordinates = dihedralCoordinates(dihedral);
-        auto input       = useAllResiduesForOverlap
-                               ? cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.reducingOverlapResidues})
-                               : cds::dihedralRotationInputData(
-                               dihedral, {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues});
+        auto input       = cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.reducingOverlapResidues});
         auto best        = wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
         setDihedralAngle(dihedral, best.angle);
     }
