@@ -115,8 +115,7 @@ cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::Res
                                 foundPath.push_back(neighbor);
                                 std::vector<cds::DihedralAtoms> temp =
                                     splitAtomVectorIntoRotatableDihedrals(true, foundPath);
-                                rotatableDihedralsInBranches.insert(rotatableDihedralsInBranches.end(), temp.begin(),
-                                                                    temp.end());
+                                codeUtils::insertInto(rotatableDihedralsInBranches, temp);
                             }
                         }
                     }

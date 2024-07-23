@@ -42,7 +42,7 @@ namespace
         // Tags based on residue name only:
         std::string conjugationResidueCode     = glycoproteinMetadata::LookupCodeForAminoAcidName(residue->getName());
         std::vector<std::string> nameBasedTags = GetTagsForSequence(conjugationResidueCode, "", "");
-        tags.insert(tags.end(), nameBasedTags.begin(), nameBasedTags.end());
+        codeUtils::insertInto(tags, nameBasedTags);
         // Now look for context around residue via atom connectivity.
         std::string precedingContext         = "";
         cds::Residue* firstPrecedingNeighbor = cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(residue, "N");
@@ -76,7 +76,7 @@ namespace
                 followingContext += lastResCode;
                 std::vector<std::string> contextTags =
                     GetTagsForSequence(conjugationResidueCode, midResCode, lastResCode);
-                tags.insert(tags.end(), contextTags.begin(), contextTags.end());
+                codeUtils::insertInto(tags, contextTags);
             }
         }
         std::string context = precedingContext + "_" + conjugationResidueCode + "_" + followingContext;

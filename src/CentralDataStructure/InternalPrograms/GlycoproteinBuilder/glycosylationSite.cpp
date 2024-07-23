@@ -202,7 +202,7 @@ void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
     for (auto& other_glycosite : this->GetOtherGlycosites())
     {
         std::vector<Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
-        allOtherGlycanResidues.insert(allOtherGlycanResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
+        codeUtils::insertInto(allOtherGlycanResidues, otherSiteResidues);
     }
     for (auto& glycoLinkage : this->GetGlycan()->GetGlycosidicLinkages())
     {
@@ -333,13 +333,11 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval)
     for (auto& other_glycosite : this->GetOtherGlycosites())
     {
         std::vector<cds::Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
-        overlapResidues.insert(overlapResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
+        codeUtils::insertInto(overlapResidues, otherSiteResidues);
     }
     //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first rotatable bond in
     //  Asn outwards
-    std::vector<RotatableDihedral> reversed_rotatable_bond_vector = linkage.rotatableDihedrals;
-    std::reverse(reversed_rotatable_bond_vector.begin(), reversed_rotatable_bond_vector.end());
-    for (auto& dihedral : reversed_rotatable_bond_vector)
+    for (auto& dihedral : codeUtils::reverse(linkage.rotatableDihedrals))
     {
         auto coordinates = dihedralCoordinates(dihedral);
         auto input       = cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.reducingOverlapResidues});

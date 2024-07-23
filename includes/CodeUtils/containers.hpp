@@ -26,11 +26,22 @@ namespace codeUtils
         return vec;
     }
 
+    template<class T> std::vector<T> reverse(std::vector<T> vec)
+    {
+        std::reverse(vec.begin(), vec.end());
+        return vec;
+    }
+
+    template<class T> void insertInto(std::vector<T>& into, const std::vector<T>& other)
+    {
+        into.insert(into.end(), other.begin(), other.end());
+    }
+
     template<class T> std::vector<T> vectorAppend(const std::vector<T> vecA, const std::vector<T> vecB)
     {
         std::vector<T> result;
-        result.insert(result.end(), vecA.begin(), vecA.end());
-        result.insert(result.end(), vecB.begin(), vecB.end());
+        insertInto(result, vecA);
+        insertInto(result, vecB);
         return result;
     }
 
