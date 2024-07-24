@@ -24,6 +24,7 @@ namespace cds
     void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles);
     void setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihedrals);
     void setRandomShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals);
+    void setRandomShapeUsingMetadata(std::vector<ResidueLinkage>& linkages);
     void setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, int shapeNumber);
     void setSpecificShape(std::vector<RotatableDihedral>& dihedrals, std::string dihedralName,
                           std::string selectedRotamer);

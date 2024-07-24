@@ -103,6 +103,14 @@ void cds::setRandomShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals)
     }
 }
 
+void cds::setRandomShapeUsingMetadata(std::vector<ResidueLinkage>& linkages)
+{
+    for (auto& linkage : linkages)
+    {
+        setRandomShapeUsingMetadata(linkage.rotatableDihedrals);
+    }
+}
+
 void cds::setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, int shapeNumber)
 {
     for (auto& entry : dihedrals)

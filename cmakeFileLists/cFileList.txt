@@ -13,6 +13,7 @@
 ./src/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.cpp
 ./src/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.cpp
+./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinOverlapResolution.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.cpp
 ./src/CentralDataStructure/InternalPrograms/Sequence/sequence.cpp

@@ -10,36 +10,24 @@
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateCoordinateFromInternalCoords
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // For the ClearAtomLabels sillyness.
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-#include "includes/CentralDataStructure/Selections/atomSelections.hpp" //cdsSelections
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
-#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
-#include "includes/CodeUtils/containers.hpp"
+#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
 
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
 GlycosylationSite::GlycosylationSite(Residue* residue, Carbohydrate* carbohydrate,
-                                     std::vector<Residue*> otherProteinResidues, unsigned int glycanStartResidueNumber)
-    : residue_(residue), glycan_(carbohydrate), otherProteinResidues_(otherProteinResidues)
+                                     unsigned int glycanStartResidueNumber)
+    : residue_(residue), glycan_(carbohydrate)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching glycan!");
     this->AttachGlycan(glycanStartResidueNumber);
     cdsSelections::ClearAtomLabels(carbohydrate->GetReducingResidue()); // jfc
     cdsSelections::ClearAtomLabels(this->GetResidue());
-    for (auto& linkage : carbohydrate->GetGlycosidicLinkages())
-    {
-        cds::determineResiduesForOverlapCheck(linkage); // Now that the protein residue is attached.
-        linkage.nonReducingOverlapResidues =
-            codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, otherProteinResidues);
-    }
 }
 
 //////////////////////////////////////////////////////////
@@ -196,118 +184,6 @@ void GlycosylationSite::Rename_Protein_Residue_To_GLYCAM_Nomenclature()
     this->GetResidue()->setName(glycoproteinMetadata::ConvertGlycosylatedResidueName(this->GetResidue()->getName()));
 }
 
-void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
-{ // Why not store these as a residue vector??? Glycosite deletion, which requires updating everything btw.
-    std::vector<cds::Residue*> allOtherGlycanResidues;
-    for (auto& other_glycosite : this->GetOtherGlycosites())
-    {
-        std::vector<Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
-        codeUtils::insertInto(allOtherGlycanResidues, otherSiteResidues);
-    }
-    for (auto& glycoLinkage : this->GetGlycan()->GetGlycosidicLinkages())
-    {
-        glycoLinkage.nonReducingOverlapResidues =
-            codeUtils::vectorAppend(glycoLinkage.nonReducingOverlapResidues, allOtherGlycanResidues);
-    }
-    return;
-}
-
-cds::Overlap GlycosylationSite::CountOverlapsFast()
-{
-    return this->CountOverlaps(this->GetProteinGlycanLinkage().nonReducingOverlapResidues,
-                               this->GetProteinGlycanLinkage().reducingOverlapResidues);
-}
-
-cds::Overlap GlycosylationSite::CountOverlaps(MoleculeType moleculeType)
-{
-    cds::Overlap overlap {0, 0.0};
-    if (moleculeType == ALL)
-    {
-        cds::Overlap proteinOverlap = this->CountOverlaps(MoleculeType::PROTEIN);
-        cds::Overlap glycanOverlap  = this->CountOverlaps(MoleculeType::GLYCAN);
-        return (proteinOverlap + glycanOverlap);
-    }
-    if (moleculeType == PROTEIN)
-    {
-        // This should not be necessary, either return a ref for the get, or accept a value in the function.
-        std::vector<Residue*> proteinResidues = this->GetOtherProteinResidues();
-        std::vector<Residue*> glycanResidues  = this->GetGlycan()->getResidues();
-        cds::Overlap numberOfOverlaps         = this->CountOverlaps(proteinResidues, glycanResidues);
-        return numberOfOverlaps;
-    }
-    if (moleculeType == GLYCAN)
-    {
-        std::vector<Residue*> glycanResidues = this->GetGlycan()->getResidues();
-        for (auto& other_glycosite : other_glycosites_)
-        {
-            std::vector<Residue*> otherGlycanResidues = other_glycosite->GetGlycan()->getResidues();
-            overlap                                   += this->CountOverlaps(otherGlycanResidues, glycanResidues);
-        }
-    }
-    return overlap;
-}
-
-cds::Overlap GlycosylationSite::CountOverlaps(const std::vector<Residue*>& residuesA,
-                                              const std::vector<Residue*>& residuesB)
-{
-    return cds::CountOverlappingAtoms(residuesA, residuesB);
-}
-
-void GlycosylationSite::PrintOverlaps()
-{
-    std::stringstream logss;
-    logss << std::fixed << std::setprecision(2) << std::setw(17) << this->GetResidue()->getStringId() << " | "
-          << std::setw(6) << this->CountOverlaps(MoleculeType::ALL).count << std::endl;
-    gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-}
-
-void GlycosylationSite::Wiggle(bool firstLinkageOnly, int interval)
-{ // I want to find the lowest overlap as close to each bonds default as possible. So code is a bit more complicated.
-    this->WiggleOneLinkage(this->GetProteinGlycanLinkage(), interval);
-    if (!firstLinkageOnly)
-    {
-        for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
-        {
-            this->WiggleOneLinkage(linkage, interval);
-        }
-    }
-    return;
-}
-
-//////////////////////////////////////////////////////////
-//                       MUTATOR                        //
-//////////////////////////////////////////////////////////
-
-void GlycosylationSite::SetRandomDihedralAnglesUsingMetadata()
-{
-    if (this->GetGlycan()->GetGlycosidicLinkages().empty())
-    {
-        std::string message =
-            "Asked to set a dihedral for glycosite with no glycosidic linkages; " + this->GetResidueId();
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
-    for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
-    {
-        cds::setRandomShapeUsingMetadata(linkage.rotatableDihedrals);
-    }
-    return;
-}
-
-//////////////////////////////////////////////////////////
-//                       DISPLAY FUNCTION               //
-//////////////////////////////////////////////////////////
-void GlycosylationSite::Print(std::string type)
-{
-    std::stringstream logss;
-    if (type.compare("All") == 0)
-    {
-        logss << "Residue ID: " << this->GetResidue()->getStringId()
-              << ", overlap: " << this->CountOverlaps(MoleculeType::ALL).count;
-        gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-    }
-}
-
 //////////////////////////////////////////////////////////
 //                   PRIVATE FUNCTIONS                 //
 //////////////////////////////////////////////////////////
@@ -324,25 +200,4 @@ Atom* GlycosylationSite::GetConnectingProteinAtom(const std::string residue_name
         throw std::runtime_error(message);
     }
     return this->GetResidue()->FindAtom(connectionAtomName);
-}
-
-void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval)
-{
-    // Figure out which residues to check overlaps against
-    std::vector<Residue*> overlapResidues = linkage.nonReducingOverlapResidues;
-    for (auto& other_glycosite : this->GetOtherGlycosites())
-    {
-        std::vector<cds::Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
-        codeUtils::insertInto(overlapResidues, otherSiteResidues);
-    }
-    //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first rotatable bond in
-    //  Asn outwards
-    for (auto& dihedral : codeUtils::reverse(linkage.rotatableDihedrals))
-    {
-        auto coordinates = dihedralCoordinates(dihedral);
-        auto input       = cds::dihedralRotationInputData(dihedral, {overlapResidues, linkage.reducingOverlapResidues});
-        auto best        = wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
-        setDihedralAngle(dihedral, best.angle);
-    }
-    return;
 }
