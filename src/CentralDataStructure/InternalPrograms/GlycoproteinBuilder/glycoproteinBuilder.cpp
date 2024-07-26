@@ -7,6 +7,7 @@
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/strings.hpp" // split
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/random.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
@@ -125,25 +126,69 @@ void GlycoproteinBuilder::ResolveOverlaps()
     }
     overlapResidues_ = overlapResidues;
 
-    bool random          = !GetIsDeterministic();
     int persistCycles    = GetPersistCycles();
     int overlapTolerance = GetOverlapTolerance();
 
+    uint64_t seed = GetIsDeterministic() ? 0 : codeUtils::generateRandomSeed();
+    pcg32 rng(seed);
+
+    auto randomMetadata = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadataVector)
+    {
+        return codeUtils::uniformRandomVectorIndex(rng, metadataVector);
+    };
+    auto randomAngle = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    {
+        auto range = cds::angleBounds(metadata);
+        return codeUtils::uniformRandomDoubleWithinRange(rng, range.lower, range.upper);
+    };
+    auto randomizeShape = [&randomMetadata, &randomAngle](std::vector<cds::ResidueLinkage> linkages)
+    {
+        cds::setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkages);
+    };
+
+    auto resolveOverlapsWithWiggler = [&](std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
+                                          const ResiduesByType& overlapResidues,
+                                          const std::vector<std::vector<Residue*>>& glycositeResidues)
+    {
+        // First try a very fast/cheap approach
+        if (dumbRandomWalk(randomizeShape, overlapTolerance, 10, glycosidicLinkages, overlapResidues.all,
+                           glycositeResidues)) // returns true if it fully resolves overlaps.
+        {
+            return;
+        }
+        bool useMonteCarlo          = true;
+        bool wiggleFirstLinkageOnly = true;
+        int angleIncrement          = 5;
+        cds::Overlap currentOverlap =
+            wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
+                                    glycosidicLinkages, overlapResidues.all, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentOverlap.count));
+        currentOverlap = randomDescent(rng, randomizeShape, useMonteCarlo, persistCycles, overlapTolerance,
+                                       glycosidicLinkages, overlapResidues, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentOverlap.count));
+        currentOverlap = wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, false, angleIncrement,
+                                                 glycosidicLinkages, overlapResidues.all, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap.count));
+        currentOverlap =
+            wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
+                                    glycosidicLinkages, overlapResidues.all, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap.count));
+    };
+
     this->WritePdbFile("glycoprotein_initial");
-    resolveOverlapsWithWiggler(random, persistCycles, overlapTolerance, glycosidicLinkages, overlapResidues,
-                               glycositeResidues);
+    resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues, glycositeResidues);
     this->PrintDihedralAnglesAndOverlapOfGlycosites();
     this->WritePdbFile("glycoprotein");
     this->WriteOffFile("glycoprotein");
     this->WritePdbFile("glycoprotein_serialized");
+
     while (this->GetNumberOfOuputtedStructures() < this->GetNumberOfStructuresToOutput())
     {
         for (auto& linkages : glycosidicLinkages)
         {
-            cds::setRandomShapeUsingMetadata(linkages);
+            cds::setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkages);
         }
-        resolveOverlapsWithWiggler(random, persistCycles, overlapTolerance, glycosidicLinkages, overlapResidues,
-                                   glycositeResidues);
+        resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues, glycositeResidues);
         this->PrintDihedralAnglesAndOverlapOfGlycosites();
         std::stringstream prefix;
         prefix << this->GetNumberOfOuputtedStructures() << "_glycoprotein";

@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/random.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
@@ -26,7 +27,7 @@ cds::Overlap countTotalOverlaps(const std::vector<std::vector<Residue*>>& overla
     return overlap;
 }
 
-std::vector<size_t> determineSitesWithOverlap(int overlapTolerance,
+std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
                                               const std::vector<std::vector<Residue*>>& overlapResidues,
                                               const std::vector<std::vector<Residue*>>& glycositeResidues)
 {
@@ -43,8 +44,8 @@ std::vector<size_t> determineSitesWithOverlap(int overlapTolerance,
     return indices;
 }
 
-cds::Overlap wiggleSitesWithOverlaps(int overlapTolerance, int persistCycles, bool firstLinkageOnly, int interval,
-                                     std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
+cds::Overlap wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly,
+                                     int interval, std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                      const std::vector<std::vector<Residue*>>& overlapResidues,
                                      const std::vector<std::vector<Residue*>>& glycositeResidues)
 {
@@ -62,8 +63,7 @@ cds::Overlap wiggleSitesWithOverlaps(int overlapTolerance, int persistCycles, bo
         {
             return overlap;
         }
-        std::random_shuffle(sites_with_overlaps.begin(), sites_with_overlaps.end());
-        for (auto& glycosite : sites_with_overlaps)
+        for (auto& glycosite : codeUtils::shuffleVector(rng, sites_with_overlaps))
         {
             auto& linkages = glycosidicLinkages[glycosite];
             for (size_t n = 0; (n == 0 || !firstLinkageOnly) && (n < linkages.size()); n++)
@@ -93,8 +93,8 @@ cds::Overlap wiggleSitesWithOverlaps(int overlapTolerance, int persistCycles, bo
     return overlap;
 }
 
-cds::Overlap randomDescent(bool monte_carlo, int persistCycles, int overlapTolerance,
-                           std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
+cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bool monte_carlo, int persistCycles,
+                           uint overlapTolerance, std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                            const ResiduesByType& overlapResidues,
                            const std::vector<std::vector<Residue*>>& glycositeResidues)
 {
@@ -102,6 +102,12 @@ cds::Overlap randomDescent(bool monte_carlo, int persistCycles, int overlapToler
     logss << "Random Decent, persisting for " << persistCycles << " cycles and monte carlo is set as " << std::boolalpha
           << monte_carlo << ".\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
+    auto acceptViaMetropolisCriterion = [&rng](int difference)
+    {
+        double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
+        return monte_carlo::accept_via_metropolis_criterion(acceptance, difference);
+    };
+
     int cycle                          = 1;
     cds::Overlap lowest_global_overlap = countTotalOverlaps(overlapResidues.all, glycositeResidues);
     std::vector<size_t> sites_with_overlaps =
@@ -111,16 +117,12 @@ cds::Overlap randomDescent(bool monte_carlo, int persistCycles, int overlapToler
         gmml::log(__LINE__, __FILE__, gmml::INF, "Stopping RandomDesent with all overlaps resolved.");
         return lowest_global_overlap;
     }
-    // Make a random number engine for std::shuffle;
-    pcg_extras::seed_seq_from<std::random_device> metropolis_seed_source;
-    pcg32 rng_engine(metropolis_seed_source);
     while (cycle < persistCycles)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles));
         ++cycle;
-        std::shuffle(sites_with_overlaps.begin(), sites_with_overlaps.end(), rng_engine);
-        for (auto& current_glycosite : sites_with_overlaps)
+        for (auto& current_glycosite : codeUtils::shuffleVector(rng, sites_with_overlaps))
         {
             auto siteResidues                     = glycositeResidues[current_glycosite];
             auto& otherGlycanResidues             = overlapResidues.glycan[current_glycosite];
@@ -129,8 +131,7 @@ cds::Overlap randomDescent(bool monte_carlo, int persistCycles, int overlapToler
             auto recordedShape                    = cds::currentShape(linkages);
             cds::Overlap previous_glycan_overlap  = countGlycositeOverlaps(otherGlycanResidues, siteResidues);
             cds::Overlap previous_protein_overlap = countGlycositeOverlaps(otherProteinResidues, siteResidues);
-            cds::setRandomShapeUsingMetadata(linkages);
-            // logss << "Site: " << current_glycosite->GetResidueNumber() << "\n";
+            randomizeShape(linkages);
             cds::Overlap new_glycan_overlap  = countGlycositeOverlaps(otherGlycanResidues, siteResidues);
             cds::Overlap new_protein_overlap = countGlycositeOverlaps(otherProteinResidues, siteResidues);
             int overlap_difference           = (new_glycan_overlap + (new_protein_overlap * 5)).count -
@@ -139,7 +140,7 @@ cds::Overlap randomDescent(bool monte_carlo, int persistCycles, int overlapToler
             {
                 cds::setShape(linkages, recordedShape);
             }
-            else if ((monte_carlo) && (!monte_carlo::accept_via_metropolis_criterion(overlap_difference)))
+            else if (monte_carlo && !acceptViaMetropolisCriterion(overlap_difference))
             {
                 cds::setShape(linkages, recordedShape);
             }
@@ -165,7 +166,7 @@ cds::Overlap randomDescent(bool monte_carlo, int persistCycles, int overlapToler
     return lowest_global_overlap;
 }
 
-bool dumbRandomWalk(int overlapTolerance, int maxCycles,
+bool dumbRandomWalk(LinkageShapeRandomizer randomizeShape, uint overlapTolerance, int maxCycles,
                     std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                     const std::vector<std::vector<Residue*>>& overlapResidues,
                     const std::vector<std::vector<Residue*>>& glycositeResidues)
@@ -179,7 +180,7 @@ bool dumbRandomWalk(int overlapTolerance, int maxCycles,
         ++cycle;
         for (auto& currentGlycosite : sites_with_overlaps)
         {
-            cds::setRandomShapeUsingMetadata(glycosidicLinkages[currentGlycosite]);
+            randomizeShape(glycosidicLinkages[currentGlycosite]);
         }
         gmml::log(__LINE__, __FILE__, gmml::INF, "Updating list of sites with overlaps.");
         sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
@@ -191,38 +192,4 @@ bool dumbRandomWalk(int overlapTolerance, int maxCycles,
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "DumbRandomWalk did not resolve the overlaps.");
     return false;
-}
-
-void resolveOverlapsWithWiggler(bool randomize, int persistCycles, int overlapTolerance,
-                                std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                                const ResiduesByType& overlapResidues,
-                                const std::vector<std::vector<Residue*>>& glycositeResidues)
-{
-    if (randomize)
-    { // First try a very fast/cheap approach
-        if (dumbRandomWalk(overlapTolerance, 10, glycosidicLinkages, overlapResidues.all,
-                           glycositeResidues)) // returns true if it fully resolves overlaps.
-        {
-            return;
-        }
-    }
-    bool useMonteCarlo          = true;
-    bool wiggleFirstLinkageOnly = true; // Only happens when passed to Wiggle function.
-    int angleIncrement          = 5;
-    cds::Overlap currentOverlap =
-        wiggleSitesWithOverlaps(overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
-                                glycosidicLinkages, overlapResidues.all, glycositeResidues);
-    gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentOverlap.count));
-    if (randomize)
-    {
-        currentOverlap = randomDescent(useMonteCarlo, persistCycles, overlapTolerance, glycosidicLinkages,
-                                       overlapResidues, glycositeResidues);
-        gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentOverlap.count));
-    }
-    currentOverlap = wiggleSitesWithOverlaps(overlapTolerance, persistCycles, false, angleIncrement, glycosidicLinkages,
-                                             overlapResidues.all, glycositeResidues);
-    gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap.count));
-    currentOverlap = wiggleSitesWithOverlaps(overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
-                                             glycosidicLinkages, overlapResidues.all, glycositeResidues);
-    gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap.count));
 }

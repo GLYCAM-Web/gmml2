@@ -79,35 +79,41 @@ void cds::setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihe
     }
 }
 
-void cds::setRandomShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals)
+void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
+                                      std::vector<RotatableDihedral>& dihedrals)
 {
+    auto randomAngleWithMetadata = [&](const DihedralAngleData& metadata)
+    {
+        double angle = randomAngle(metadata);
+        return AngleWithMetadata {angle, metadata};
+    };
+
     auto rotamerType = dihedrals.at(0).metadataVector.at(0).rotamer_type_;
     if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
     {
         for (auto& entry : dihedrals)
         {
-            auto angle = randomAngleEntryUsingMetadata(entry.metadataVector);
-            setDihedralAngle(entry, angle);
+            auto metadata = entry.metadataVector[randomMetadata(entry.metadataVector)];
+            setDihedralAngle(entry, randomAngleWithMetadata(metadata));
         }
     }
     else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
     {
-        int numberOfConformers = dihedrals.at(0).metadataVector.size();
-        std::uniform_int_distribution<> distr(0, (numberOfConformers - 1)); // define the range
-        int randomlySelectedConformerNumber = distr(rng);
+        int conformerIndex = randomMetadata(dihedrals.at(0).metadataVector);
         for (auto& entry : dihedrals)
         {
-            auto angle = randomDihedralAngleWithinMetadataRange(entry.metadataVector[randomlySelectedConformerNumber]);
-            setDihedralAngle(entry, angle);
+            auto metadata = entry.metadataVector[conformerIndex];
+            setDihedralAngle(entry, randomAngleWithMetadata(metadata));
         }
     }
 }
 
-void cds::setRandomShapeUsingMetadata(std::vector<ResidueLinkage>& linkages)
+void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
+                                      std::vector<ResidueLinkage>& linkages)
 {
     for (auto& linkage : linkages)
     {
-        setRandomShapeUsingMetadata(linkage.rotatableDihedrals);
+        setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotatableDihedrals);
     }
 }
 

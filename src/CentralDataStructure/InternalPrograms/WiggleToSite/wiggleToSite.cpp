@@ -1,15 +1,17 @@
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
 
-#include "../../../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp" //select
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
+#include "includes/CodeUtils/random.hpp"
 #include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/External_Libraries/PCG/pcg_random.h"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
 using cds::Atom;
@@ -70,39 +72,40 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
 
 int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int structureCount)
 {
-    //    std::cout << "Starting to wiggle!" << std::endl;
+    uint64_t seed = codeUtils::generateRandomSeed();
+    pcg32 rng(seed);
+    auto randomMetadata = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadataVector)
+    {
+        return codeUtils::uniformRandomVectorIndex(rng, metadataVector);
+    };
+    auto randomAngle = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    {
+        auto range = cds::angleBounds(metadata);
+        return codeUtils::uniformRandomDoubleWithinRange(rng, range.lower, range.upper);
+    };
+
     int cycle = 0;
-    while ((cycle < persistCycles))
+    while (cycle < persistCycles)
     {
         ++cycle;
         std::stringstream ss;
         ss << "Cycle " << cycle << "/" << persistCycles << "\n";
         gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
-        this->randomizeLinkageOrder();
-        for (auto& linkage : this->getWiggleLinkages())
+        for (auto& linkage : codeUtils::shuffleVector(rng, this->getWiggleLinkages()))
         {
             auto recordedShape = cds::currentShape(linkage.rotatableDihedrals);
-            cds::setRandomShapeUsingMetadata(linkage.rotatableDihedrals);
-            if (this->acceptDistance(useMonteCarlo) && this->acceptOverlaps())
+            cds::setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotatableDihedrals);
+            double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
+            if (this->acceptDistance(useMonteCarlo, acceptance) && this->acceptOverlaps())
             {
                 cycle = 0; // reset when it improves
-                           //                std::cout << "Improved distance: " << this->getCurrentDistance() << "\n";
-                           //                std::stringstream fileName;
-                           //                fileName << std::setfill('0') << std::setw(6) << ++structureCount << "_" <<
-                //                this->getCurrentDistance(); this->getCarbohydrate().Generate3DStructureFiles("./",
-                //                "best" + fileName.str());
             }
             else
             {
                 cds::setShape(linkage.rotatableDihedrals, recordedShape);
             }
         }
-        //        if (structureCount > 500)
-        //        {
-        //            return structureCount;
-        //        }
     }
-    //    std::cout << "ALL DONE HON\n";
     return structureCount;
 }
 
@@ -166,11 +169,12 @@ bool WiggleToSite::acceptOverlaps()
     return true;
 }
 
-bool WiggleToSite::acceptDistance(bool useMonteCarlo)
+bool WiggleToSite::acceptDistance(bool useMonteCarlo, double acceptance)
 {
     double distance = this->calculateDistance();
     if (distance < this->getCurrentDistance() ||
-        (useMonteCarlo && monte_carlo::accept_via_metropolis_criterion(distance - this->getCurrentDistance())))
+        (useMonteCarlo &&
+         monte_carlo::accept_via_metropolis_criterion(acceptance, distance - this->getCurrentDistance())))
     {
         this->setCurrentDistance(distance);
         return true;

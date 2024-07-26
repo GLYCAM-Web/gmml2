@@ -8,12 +8,15 @@
 #include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
-// This class stores the four atoms that define a dihedral angle, the atoms that move when it is rotated
-// and, if moved, the previous dihedral angle, which allows me to reset easily.
+#include <functional>
+
 namespace cds
 {
     using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
     using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+
+    typedef std::function<int(DihedralAngleDataVector)> MetadataDistribution;
+    typedef std::function<double(DihedralAngleData)> AngleDistribution;
 
     void setDihedralAngle(RotatableDihedral& dihedral, AngleWithMetadata target);
     bool setSpecificShape(RotatableDihedral& dihedral, std::string dihedralName, std::string selectedRotamer);
@@ -23,8 +26,10 @@ namespace cds
 
     void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles);
     void setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihedrals);
-    void setRandomShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals);
-    void setRandomShapeUsingMetadata(std::vector<ResidueLinkage>& linkages);
+    void setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
+                                     std::vector<RotatableDihedral>& dihedrals);
+    void setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
+                                     std::vector<ResidueLinkage>& linkages);
     void setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, int shapeNumber);
     void setSpecificShape(std::vector<RotatableDihedral>& dihedrals, std::string dihedralName,
                           std::string selectedRotamer);

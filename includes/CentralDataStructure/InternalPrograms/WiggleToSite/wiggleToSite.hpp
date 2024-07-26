@@ -75,14 +75,9 @@ namespace gmmlPrograms
                          Residue* superimposeMe);
         std::vector<cds::ResidueLinkage>& determineWiggleLinkages(Residue* startResidue, Residue* endResidue);
 
-        void randomizeLinkageOrder()
-        {
-            std::random_shuffle(wiggleLinkages_.begin(), wiggleLinkages_.end());
-        }
-
         double calculateDistance();
         bool acceptOverlaps();
-        bool acceptDistance(bool useMonteCarlo = true);
+        bool acceptDistance(bool useMonteCarlo, double acceptance);
         //////////////////////////////////////////////////////////
         //                 PRIVATE MEMBERS                      //
         //////////////////////////////////////////////////////////
