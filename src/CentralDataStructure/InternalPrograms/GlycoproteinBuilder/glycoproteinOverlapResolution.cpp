@@ -10,6 +10,77 @@
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
+namespace
+{
+    using gmml::MolecularMetadata::GLYCAM::RotamerType;
+
+    void wigglePermutationLinkage(int interval, std::vector<cds::RotatableDihedral>& dihedrals,
+                                  std::array<std::vector<Residue*>, 2>& overlapInput)
+    {
+        for (auto& dihedral : dihedrals)
+        {
+            auto coordinates = cds::dihedralCoordinates(dihedral);
+            auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
+            auto best        = cds::wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
+            cds::setDihedralAngle(dihedral, best.angle);
+        }
+    }
+
+    void wiggleConformerLinkage(int interval, std::vector<cds::RotatableDihedral>& dihedrals,
+                                std::array<std::vector<Residue*>, 2>& overlapInput)
+    {
+        size_t numberOfMetadata = dihedrals[0].metadataVector.size();
+        std::vector<std::vector<cds::AngleWithMetadata>> results;
+        results.resize(numberOfMetadata);
+        std::vector<cds::AngleOverlap> bestOverlaps;
+        bestOverlaps.resize(numberOfMetadata);
+        auto initialShape = cds::currentShape(dihedrals);
+        for (size_t n = 0; n < numberOfMetadata; n++)
+        {
+            // reset shape between trying out each conformer
+            if (n > 0)
+            {
+                cds::setShape(dihedrals, initialShape);
+            }
+            for (auto& dihedral : dihedrals)
+            {
+                auto coordinates = cds::dihedralCoordinates(dihedral);
+                auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
+                auto best        = cds::wiggleUsingRotamers(coordinates, {dihedral.metadataVector[n]}, interval, input);
+                results[n].push_back(best.angle);
+                bestOverlaps[n] = best;
+                cds::setDihedralAngle(dihedral, best.angle);
+            }
+        }
+        size_t bestIndex = cds::bestOverlapResultIndex(bestOverlaps);
+        for (size_t k = 0; k < dihedrals.size(); k++)
+        {
+            cds::setDihedralAngle(dihedrals[k], results[bestIndex][k]);
+        }
+    }
+
+    void wiggleLinkage(int interval, cds::ResidueLinkage& linkage, const std::vector<Residue*>& overlapResidues)
+    {
+        std::array<std::vector<Residue*>, 2> overlapInput = {
+            codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, overlapResidues),
+            linkage.reducingOverlapResidues};
+        auto firstMetadataVector = linkage.rotatableDihedrals[0].metadataVector;
+        auto rotamerType         = firstMetadataVector[0].rotamer_type_;
+        //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
+        //  rotatable bond in Asn outwards
+        auto dihedrals           = codeUtils::reverse(linkage.rotatableDihedrals);
+        switch (rotamerType)
+        {
+            case RotamerType::permutation:
+                wigglePermutationLinkage(interval, dihedrals, overlapInput);
+                return;
+            case RotamerType::conformer:
+                wiggleConformerLinkage(interval, dihedrals, overlapInput);
+                return;
+        }
+    }
+} // namespace
+
 cds::Overlap countGlycositeOverlaps(const std::vector<Residue*>& overlapResidues,
                                     const std::vector<Residue*>& glycositeResidues)
 {
@@ -68,19 +139,7 @@ cds::Overlap wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int pers
             auto& linkages = glycosidicLinkages[glycosite];
             for (size_t n = 0; (n == 0 || !firstLinkageOnly) && (n < linkages.size()); n++)
             {
-                auto& linkage                                     = linkages[n];
-                std::array<std::vector<Residue*>, 2> overlapInput = {
-                    codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, overlapResidues[glycosite]),
-                    linkage.reducingOverlapResidues};
-                //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
-                //  rotatable bond in Asn outwards
-                for (auto& dihedral : codeUtils::reverse(linkage.rotatableDihedrals))
-                {
-                    auto coordinates = cds::dihedralCoordinates(dihedral);
-                    auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
-                    auto best        = cds::wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
-                    setDihedralAngle(dihedral, best.angle);
-                }
+                wiggleLinkage(interval, linkages[n], overlapResidues[glycosite]);
             }
         }
         cds::Overlap newOverlap = countTotalOverlaps(overlapResidues, glycositeResidues);

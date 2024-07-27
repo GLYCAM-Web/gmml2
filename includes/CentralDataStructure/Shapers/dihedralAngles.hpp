@@ -19,7 +19,7 @@ namespace cds
     struct AngleWithMetadata
     {
         double value;
-        const DihedralAngleData metadata;
+        DihedralAngleData metadata;
     };
 
     Bounds angleBounds(const DihedralAngleData& metadata);

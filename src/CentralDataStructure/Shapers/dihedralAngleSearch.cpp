@@ -167,26 +167,6 @@ namespace
         return result;
     }
 
-    cds::AngleOverlap bestOverlapResult(const std::vector<cds::AngleOverlap>& results)
-    {
-        auto differenceFromDefault = [](cds::AngleOverlap& a)
-        {
-            return std::abs(a.angle.value - a.angle.metadata.default_angle_value_);
-        };
-        int best = 0;
-        for (size_t n = 1; n < results.size(); n++)
-        {
-            auto a   = results[n];
-            auto b   = results[best];
-            int comp = cds::compareOverlaps(a.overlaps, b.overlaps);
-            if ((comp < 0) || ((comp == 0) && differenceFromDefault(a) < differenceFromDefault(b)))
-            {
-                best = n;
-            }
-        }
-        return results[best];
-    }
-
     void moveFirstResidueCoords(const cds::RotationMatrix matrix, const cds::DihedralRotationData& input,
                                 std::vector<cds::Sphere>& coordinates, std::vector<cds::Sphere>& spheres)
     {
@@ -238,6 +218,31 @@ namespace
         return bestOverlapResult(results);
     }
 } // namespace
+
+size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
+{
+    auto differenceFromDefault = [](AngleOverlap& a)
+    {
+        return std::abs(a.angle.value - a.angle.metadata.default_angle_value_);
+    };
+    size_t bestIndex = 0;
+    for (size_t n = 1; n < results.size(); n++)
+    {
+        auto a   = results[n];
+        auto b   = results[bestIndex];
+        int comp = compareOverlaps(a.overlaps, b.overlaps);
+        if ((comp < 0) || ((comp == 0) && differenceFromDefault(a) < differenceFromDefault(b)))
+        {
+            bestIndex = n;
+        }
+    }
+    return bestIndex;
+}
+
+cds::AngleOverlap cds::bestOverlapResult(const std::vector<AngleOverlap>& results)
+{
+    return results[bestOverlapResultIndex(results)];
+}
 
 std::array<cds::DihedralRotationData, 2>
 cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<std::vector<Residue*>, 2>& residues)

@@ -30,6 +30,8 @@ namespace cds
         std::vector<bool> firstResidueCoordinateMoving;
     };
 
+    size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
+    AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
     std::array<DihedralRotationData, 2> dihedralRotationInputData(RotatableDihedral& dihedral,
                                                                   const std::array<std::vector<Residue*>, 2>& residues);
     AngleOverlap wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral, std::vector<cds::Atom*>& overlapAtomSet1,
