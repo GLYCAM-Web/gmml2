@@ -167,8 +167,10 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
     unsigned long long int numberOfShapes = 1;
     for (auto& linkage : glycosidicLinkages_)
     {
-        auto& dihedrals = linkage.rotatableDihedrals;
-        numberOfShapes  *= (likelyShapesOnly ? cds::numberOfLikelyShapes(dihedrals) : cds::numberOfShapes(dihedrals));
+        auto rotamerType = linkage.rotamerType;
+        auto& dihedrals  = linkage.rotatableDihedrals;
+        numberOfShapes   *= (likelyShapesOnly ? cds::numberOfLikelyShapes(rotamerType, dihedrals)
+                                              : cds::numberOfShapes(rotamerType, dihedrals));
     }
     return numberOfShapes;
 }

@@ -15,7 +15,7 @@ namespace cds
     using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
     using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
 
-    typedef std::function<int(DihedralAngleDataVector)> MetadataDistribution;
+    typedef std::function<size_t(DihedralAngleDataVector)> MetadataDistribution;
     typedef std::function<double(DihedralAngleData)> AngleDistribution;
 
     void setDihedralAngle(RotatableDihedral& dihedral, AngleWithMetadata target);
@@ -27,6 +27,7 @@ namespace cds
     void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles);
     void setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihedrals);
     void setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
+                                     gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
                                      std::vector<RotatableDihedral>& dihedrals);
     void setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
                                      std::vector<ResidueLinkage>& linkages);

@@ -9,32 +9,6 @@
 #include <sstream>
 #include <vector>
 
-namespace
-{
-    bool checkIfConformer(const std::vector<cds::RotatableDihedral>& dihedrals)
-    {
-        if (dihedrals.empty())
-        {
-            std::string errorMessage = "Error in ResidueLinkage::checkIfConformer as dihedrals.empty()\n";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
-            throw std::runtime_error(errorMessage);
-        }
-        else if (dihedrals.at(0).metadataVector.empty())
-        {
-            std::string errorMessage =
-                "Error in ResidueLinkage::checkIfConformer as dihedrals.at(0).metadataVector.empty()\n";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
-            throw std::runtime_error(errorMessage);
-        }
-        else
-        {
-            return (dihedrals.at(0).metadataVector.at(0).rotamer_type_ ==
-                    gmml::MolecularMetadata::GLYCAM::RotamerType::conformer);
-        }
-        return false; // Default to shut up the compiler. Shut up compiler gawd.
-    }
-} // namespace
-
 bool cdsSelections::FindPathBetweenTwoAtoms(cds::Atom* current_atom, cds::Residue* currentResidue,
                                             cds::Atom* target_atom, cds::Residue* targetResidue,
                                             std::vector<cds::Atom*>* atom_path, bool* found)
@@ -127,7 +101,7 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
     std::vector<cds::ResidueLinkage> sortedLinkages;
     for (auto& linkage : inputLinkages)
     {
-        if (checkIfConformer(linkage.rotatableDihedrals))
+        if (linkage.rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
         {
             sortedLinkages.push_back(linkage);
         }

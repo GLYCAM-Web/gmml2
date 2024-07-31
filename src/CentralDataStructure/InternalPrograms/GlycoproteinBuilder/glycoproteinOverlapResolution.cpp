@@ -64,12 +64,10 @@ namespace
         std::array<std::vector<Residue*>, 2> overlapInput = {
             codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, overlapResidues),
             linkage.reducingOverlapResidues};
-        auto firstMetadataVector = linkage.rotatableDihedrals[0].metadataVector;
-        auto rotamerType         = firstMetadataVector[0].rotamer_type_;
         //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
         //  rotatable bond in Asn outwards
-        auto dihedrals           = codeUtils::reverse(linkage.rotatableDihedrals);
-        switch (rotamerType)
+        auto dihedrals = codeUtils::reverse(linkage.rotatableDihedrals);
+        switch (linkage.rotamerType)
         {
             case RotamerType::permutation:
                 wigglePermutationLinkage(interval, dihedrals, overlapInput);

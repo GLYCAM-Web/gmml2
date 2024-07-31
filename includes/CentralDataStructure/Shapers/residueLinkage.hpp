@@ -60,15 +60,17 @@ namespace cds
 
     struct ResidueLinkage
     {
-        ResidueLinkage(ResidueLink link_, std::vector<RotatableDihedral> dihedrals, unsigned long long index_,
+        ResidueLinkage(ResidueLink link_, std::vector<RotatableDihedral> dihedrals,
+                       gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType_, unsigned long long index_,
                        std::string name_, std::vector<Residue*> reducingOverlapResidues_,
                        std::vector<Residue*> nonReducingOverlapResidues_)
-            : link(link_), rotatableDihedrals(dihedrals), index(index_), name(name_),
+            : link(link_), rotatableDihedrals(dihedrals), rotamerType(rotamerType_), index(index_), name(name_),
               reducingOverlapResidues(reducingOverlapResidues_),
               nonReducingOverlapResidues(nonReducingOverlapResidues_) {};
 
         ResidueLink link;
         std::vector<RotatableDihedral> rotatableDihedrals;
+        gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType;
         unsigned long long index = 0;
         std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
         std::vector<cds::Residue*> reducingOverlapResidues;
@@ -77,8 +79,10 @@ namespace cds
 
     std::vector<RotatableDihedral>
     rotatableDihedralsWithMultipleRotamers(const std::vector<RotatableDihedral>& dihedrals);
-    int numberOfShapes(const std::vector<RotatableDihedral>& dihedrals);
-    int numberOfLikelyShapes(const std::vector<RotatableDihedral>& dihedrals);
+    int numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+                       const std::vector<RotatableDihedral>& dihedrals);
+    int numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+                             const std::vector<RotatableDihedral>& dihedrals);
     DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
     std::string print(const ResidueLinkage& linkage);
     std::string print(const RotatableDihedral& dihedral);

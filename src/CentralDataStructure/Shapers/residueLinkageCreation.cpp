@@ -199,5 +199,23 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
     auto reducingOverlapResidues    = connectedResidues(residues.first, residues.second);
     auto nonReducingOverlapResidues = connectedResidues(residues.second, residues.first);
 
-    return ResidueLinkage(link, dihedrals, index, name, reducingOverlapResidues, nonReducingOverlapResidues);
+    if (dihedrals.empty() || dihedrals[0].metadataVector.empty())
+    {
+        throw std::runtime_error("missing dihedrals or metadata in residue linkage");
+    }
+
+    auto rotamerType = dihedrals[0].metadataVector[0].rotamer_type_;
+    for (auto& dihedral : dihedrals)
+    {
+        for (auto& metadata : dihedral.metadataVector)
+        {
+            if (metadata.rotamer_type_ != rotamerType)
+            {
+                throw std::runtime_error("mismatching rotamer types in residue linkage");
+            }
+        }
+    }
+
+    return ResidueLinkage(link, dihedrals, rotamerType, index, name, reducingOverlapResidues,
+                          nonReducingOverlapResidues);
 }
