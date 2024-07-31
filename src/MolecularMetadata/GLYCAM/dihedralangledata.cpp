@@ -4,136 +4,46 @@
 #include "includes/CodeUtils/containers.hpp"
 
 #include <regex>
-//////////////////////////////////////////////////////////
-//                       CONSTRUCTOR                    //
-//////////////////////////////////////////////////////////
-using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataContainer;
+
 using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
 
-//////////////////////////////////////////////////////////
-//                      QUERY FUNCTIONS                 //
-//////////////////////////////////////////////////////////
-// Pass in the two atoms on either side the residue-residue linkage
-std::vector<DihedralAngleDataVector>
-DihedralAngleDataContainer::GetEntriesForLinkage(const std::string atom1Name, const std::string residue1Name,
-                                                 const std::string atom2Name, const std::string residue2Name) const
+namespace
 {
-    DihedralAngleDataVector matching_entries;
-    Glycam06NamesToTypesLookupContainer metadata_residueNamesToTypes;
-    std::vector<std::string> residue1_types = metadata_residueNamesToTypes.GetTypesForResidue(residue1Name);
-    std::vector<std::string> residue2_types = metadata_residueNamesToTypes.GetTypesForResidue(residue2Name);
-    // Go through each entry in the metadata
-    for (const auto& entry : dihedralAngleDataVector_)
-    {
-        // Create a regex of each entry's linking_atom1_ and 2_. These are regex queries.
-        // std::cout << "Compare entry " << entry.linking_atom1_ << "-" << entry.linking_atom2_ << " : " <<
-        // linking_atom1->GetName() << "-" << linking_atom2->GetName() <<"\n";
-        std::regex regex1(entry.linking_atom1_, std::regex_constants::ECMAScript);
-        std::regex regex2(entry.linking_atom2_, std::regex_constants::ECMAScript);
-        // If metadata entry matches (regex query) to the two linking atom names
-        if ((std::regex_match(atom1Name, regex1)) && (std::regex_match(atom2Name, regex2)))
-        {
-            // Some entries have conditions for the residue, that they have certain tags. Make sure any conditions are
-            // met:
-            // std::cout << "Matched. Checking if conditions apply.\n";
-            if ((checkIfResidueConditionsAreSatisfied(residue1_types, entry.residue1_conditions_)) &&
-                (checkIfResidueConditionsAreSatisfied(residue2_types, entry.residue2_conditions_)))
-            {
-                // std::cout << "Found a match: " << entry.linking_atom1_ << "-" << entry.linking_atom2_ << ", " <<
-                // entry.dihedral_angle_name_ << "\n"; Always add a later entry, but remove earlier match if
-                // number_of_bonds_from_anomeric_carbon_ AND index number are the same.
-                //  I've overloaded the == and != operators in the DihedralAngleData struct to evaluate those.
-                //  This next line removes any elements of matching_entries that match "entry", then the line after adds
-                //  entry.
-                matching_entries.erase(std::remove(matching_entries.begin(), matching_entries.end(), entry),
-                                       matching_entries.end());
-                matching_entries.push_back(entry);
-            }
-        }
-    }
+    using gmml::MolecularMetadata::GLYCAM::RotamerType;
 
-    unsigned int maxMetadataDihedral = 0;
-    for (auto& entry : matching_entries)
-    {
-        maxMetadataDihedral = std::max(maxMetadataDihedral, entry.number_of_bonds_from_anomeric_carbon_);
-    }
-    std::vector<DihedralAngleDataVector> orderedEntries;
-    orderedEntries.resize(maxMetadataDihedral);
-    for (size_t n = 0; n < maxMetadataDihedral; n++)
-    {
-        std::copy_if(matching_entries.begin(), matching_entries.end(), std::back_inserter(orderedEntries[n]),
-                     [&](auto& entry)
-                     {
-                         return entry.number_of_bonds_from_anomeric_carbon_ - 1 == n;
-                     });
-    }
-    return orderedEntries;
-}
+    // Struct is copied here for reference.
+    // struct DihedralAngleData
+    //{
+    //    std::string linking_atom1_ ;
+    //    std::string linking_atom2_ ;
+    //    std::string dihedral_angle_name_ ;
+    //    double default_angle_value_ ;
+    //    double lower_deviation_ ;
+    //    double upper_deviation_ ;
+    //    double weight_;
+    //    std::string rotamer_type_ ; // permutation or conformer
+    //    std::string rotamer_name_ ;
+    //    int number_of_bonds_from_anomeric_carbon_;
+    //    int index_ ; // Used to indicate whether multiple entries are meant to overwrite each other or generate an
+    //    additional angle StringVector residue1_conditions_ ; StringVector residue2_conditions_ ; std::string atom1_ ;
+    //    std::string atom2_ ;
+    //    std::string atom3_ ;
+    //    std::string atom4_ ;
+    //} ;
 
-//////////////////////////////////////////////////////////
-//                    PRIVATE FUNCTIONS                 //
-//////////////////////////////////////////////////////////
-// Some entries have conditions for the first or second residue to have a particular type (aka tag).
-// Most entries have "none" for condition. This checks first if condition is "none", and therefore satisfied.
-// Otherwise (else if) it checks if any of the residue_types match the condition for the entry, e.g.
-// gauche_effect=galacto.
-bool DihedralAngleDataContainer::checkIfResidueConditionsAreSatisfied(std::vector<std::string> residue_types,
-                                                                      std::vector<std::string> entry_conditions) const
-{
-    for (const auto& entry_condition : entry_conditions)
-    { // If no condition, return true. If can't find the condition in the list return false, otherwise, having found the
-      // condition(s), return true.
-        if (entry_condition == "none")
-        {
-            return true;
-        }
-        if (!codeUtils::contains(residue_types, entry_condition))
-        {
-            return false; // If any condition isn't satisified. return false.
-        }
-    }
-    return true;
-}
+    /*
+     * A note on index_.
+     * number_of_bonds_from_anomeric_carbon_. So Phi is 1, Psi is 2, Omg is 3.
+     * The index refers the rotamer number. If there are two Phi rotamers, they will have an index of 1 and 2.
+     * Chi angle index numbering varies depending on side chain length, so in ASN the Chi1 is 4 bonds away from the
+     * sugar, so would be 4 If two entries have matching regex and have the same index_ number (e.g. 1), the first will
+     * be overwritten. If two entries have matching regex and different index_ numbers (e.g. 1,2,3) they will all be
+     * used to create multiple rotamers/conformers If two entries have different regex, but apply to the same dihedral
+     * angle (e.g. Phi), give them the same index_ number (e.g. 1).
+     */
 
-//////////////////////////////////////////////////////////
-//                    INITIALIZER                       //
-//////////////////////////////////////////////////////////
-
-// Struct is copied here for reference.
-// struct DihedralAngleData
-//{
-//    std::string linking_atom1_ ;
-//    std::string linking_atom2_ ;
-//    std::string dihedral_angle_name_ ;
-//    double default_angle_value_ ;
-//    double lower_deviation_ ;
-//    double upper_deviation_ ;
-//    double weight_;
-//    std::string rotamer_type_ ; // permutation or conformer
-//    std::string rotamer_name_ ;
-//    int number_of_bonds_from_anomeric_carbon_;
-//    int index_ ; // Used to indicate whether multiple entries are meant to overwrite each other or generate an
-//    additional angle StringVector residue1_conditions_ ; StringVector residue2_conditions_ ; std::string atom1_ ;
-//    std::string atom2_ ;
-//    std::string atom3_ ;
-//    std::string atom4_ ;
-//} ;
-
-/*
- * A note on index_.
- * number_of_bonds_from_anomeric_carbon_. So Phi is 1, Psi is 2, Omg is 3.
- * The index refers the rotamer number. If there are two Phi rotamers, they will have an index of 1 and 2.
- * Chi angle index numbering varies depending on side chain length, so in ASN the Chi1 is 4 bonds away from the sugar,
- * so would be 4 If two entries have matching regex and have the same index_ number (e.g. 1), the first will be
- * overwritten. If two entries have matching regex and different index_ numbers (e.g. 1,2,3) they will all be used to
- * create multiple rotamers/conformers If two entries have different regex, but apply to the same dihedral angle (e.g.
- * Phi), give them the same index_ number (e.g. 1).
- */
-
-// clang-format off
-DihedralAngleDataContainer::DihedralAngleDataContainer()
-{
-    dihedralAngleDataVector_ =
+    // clang-format off
+    DihedralAngleDataVector dihedralAngleDataVector_ {
       { // Regex1  , Regex2   , Name   , Angle  , Upper  , Lower  , Weight, Entry Type               , Name , B , I , Res1 Condition , Res2 Conditions           , Atom names                                                               // Atom names this applies to
           { "C1"   , "O[1-9]" , "Phi"  , 180.0  ,  25.0  ,  25.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"aldose"}     , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
           { "C2"   , "O[1-9]" , "Phi"  , -60.0  ,  25.0  ,  25.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"n-carbon=6", "ketose", "alpha"}     , {"monosaccharide"}            , "C1" , "C2" , "O." , "C."  }, // Phi is defined by C1-C2(ano)-Ox-Cx for ketoses like Fru
@@ -297,11 +207,85 @@ DihedralAngleDataContainer::DihedralAngleDataContainer()
           { "C1"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
           { "C2"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
           { "C1"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
-          { "C2"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
-      };
-}
+          { "C2"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  }}};
 
-// clang-format on
-//    Statistical analysis of the protein environment of N-glycosylation sites: implications for occupancy, structure,
-//    and folding Andrei-J. Petrescu  Adina-L. Milac  Stefana M. Petrescu  Raymond A. Dwek Mark R. Wormald Glycobiology,
-//    Volume 14, Issue 2, 1 February 2004, Pages 103–114,
+    // clang-format on
+
+    //    Statistical analysis of the protein environment of N-glycosylation sites: implications for occupancy,
+    //    structure, and folding Andrei-J. Petrescu  Adina-L. Milac  Stefana M. Petrescu  Raymond A. Dwek Mark R.
+    //    Wormald Glycobiology, Volume 14, Issue 2, 1 February 2004, Pages 103–114,
+
+    // Some entries have conditions for the first or second residue to have a particular type (aka tag).
+    // Most entries have "none" for condition. This checks first if condition is "none", and therefore satisfied.
+    // Otherwise (else if) it checks if any of the residue_types match the condition for the entry, e.g.
+    // gauche_effect=galacto.
+    bool checkIfResidueConditionsAreSatisfied(const std::vector<std::string> residue_types,
+                                              const std::vector<std::string> entry_conditions)
+    {
+        for (const auto& entry_condition : entry_conditions)
+        { // If no condition, return true. If can't find the condition in the list return false, otherwise, having found
+          // the
+            // condition(s), return true.
+            if (entry_condition == "none")
+            {
+                return true;
+            }
+            if (!codeUtils::contains(residue_types, entry_condition))
+            {
+                return false; // If any condition isn't satisified. return false.
+            }
+        }
+        return true;
+    }
+} // namespace
+
+// Pass in the two atoms on either side the residue-residue linkage
+std::vector<DihedralAngleDataVector> gmml::MolecularMetadata::GLYCAM::getDihedralAngleDataEntriesForLinkage(
+    const std::string atom1Name, const std::string residue1Name, const std::string atom2Name,
+    const std::string residue2Name)
+{
+    DihedralAngleDataVector matching_entries;
+    Glycam06NamesToTypesLookupContainer metadata_residueNamesToTypes;
+    std::vector<std::string> residue1_types = metadata_residueNamesToTypes.GetTypesForResidue(residue1Name);
+    std::vector<std::string> residue2_types = metadata_residueNamesToTypes.GetTypesForResidue(residue2Name);
+    // Go through each entry in the metadata
+    for (const auto& entry : dihedralAngleDataVector_)
+    {
+        // Create a regex of each entry's linking_atom1_ and 2_. These are regex queries.
+        std::regex regex1(entry.linking_atom1_, std::regex_constants::ECMAScript);
+        std::regex regex2(entry.linking_atom2_, std::regex_constants::ECMAScript);
+        // If metadata entry matches (regex query) to the two linking atom names
+        if ((std::regex_match(atom1Name, regex1)) && (std::regex_match(atom2Name, regex2)))
+        {
+            // Some entries have conditions for the residue, that they have certain tags. Make sure any conditions are
+            // met:
+            if ((checkIfResidueConditionsAreSatisfied(residue1_types, entry.residue1_conditions_)) &&
+                (checkIfResidueConditionsAreSatisfied(residue2_types, entry.residue2_conditions_)))
+            {
+                // Always add a later entry, but remove earlier match if number_of_bonds_from_anomeric_carbon_ AND index
+                // number are the same. I've overloaded the == and != operators in the DihedralAngleData struct to
+                // evaluate those.
+                matching_entries.erase(std::remove(matching_entries.begin(), matching_entries.end(), entry),
+                                       matching_entries.end());
+                matching_entries.push_back(entry);
+            }
+        }
+    }
+
+    unsigned int maxMetadataDihedral = 0;
+    for (auto& entry : matching_entries)
+    {
+        maxMetadataDihedral = std::max(maxMetadataDihedral, entry.number_of_bonds_from_anomeric_carbon_);
+    }
+    std::vector<DihedralAngleDataVector> orderedEntries;
+    orderedEntries.resize(maxMetadataDihedral);
+    for (size_t n = 0; n < maxMetadataDihedral; n++)
+    {
+        std::copy_if(matching_entries.begin(), matching_entries.end(), std::back_inserter(orderedEntries[n]),
+                     [&](auto& entry)
+                     {
+                         return entry.number_of_bonds_from_anomeric_carbon_ - 1 == n;
+                     });
+    }
+    return orderedEntries;
+}

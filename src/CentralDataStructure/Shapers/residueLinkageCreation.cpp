@@ -49,13 +49,13 @@ namespace
         std::string secondAtom    = link.atoms.second;
         std::string firstResidue  = link.residues.first;
         std::string secondResidue = link.residues.second;
-        gmml::MolecularMetadata::GLYCAM::DihedralAngleDataContainer DihedralAngleMetadata;
         cds::DihedralAngleMetadata matching_entries =
-            DihedralAngleMetadata.GetEntriesForLinkage(firstAtom, firstResidue, secondAtom, secondResidue);
+            gmml::MolecularMetadata::GLYCAM::getDihedralAngleDataEntriesForLinkage(firstAtom, firstResidue, secondAtom,
+                                                                                   secondResidue);
         if (matching_entries.empty())
         {
-            matching_entries =
-                DihedralAngleMetadata.GetEntriesForLinkage(secondAtom, secondResidue, firstAtom, firstResidue);
+            matching_entries = gmml::MolecularMetadata::GLYCAM::getDihedralAngleDataEntriesForLinkage(
+                secondAtom, secondResidue, firstAtom, firstResidue);
         }
         if (matching_entries.empty())
         {

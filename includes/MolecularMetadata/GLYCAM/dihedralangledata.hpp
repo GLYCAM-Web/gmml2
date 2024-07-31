@@ -58,37 +58,11 @@ namespace gmml
 
             typedef std::vector<DihedralAngleData> DihedralAngleDataVector;
 
-            class DihedralAngleDataContainer
-            {
-              public:
-                //////////////////////////////////////////////////////////
-                //                       CONSTRUCTOR                    //
-                //////////////////////////////////////////////////////////
-                DihedralAngleDataContainer();
-                //////////////////////////////////////////////////////////
-                //                      QUERY FUNCTIONS                 //
-                //////////////////////////////////////////////////////////
-                // Pass in the two atoms on either side the residue-residue linkage
-                std::vector<DihedralAngleDataVector> GetEntriesForLinkage(const std::string atom1Name,
-                                                                          const std::string residue1Name,
-                                                                          const std::string atom2Name,
-                                                                          const std::string residue2Name) const;
-
-              private:
-                //////////////////////////////////////////////////////////
-                //                    PRIVATE FUNCTIONS                 //
-                //////////////////////////////////////////////////////////
-                // Some entries have conditions for the first or second residue to have a particular type (aka tag).
-                // Most entries have "none" for condition. This checks first if condition is "none", and therefore
-                // satisfied. Otherwise (else if) it checks if any of the residue_types match the condition for the
-                // entry, e.g. gauche_effect=galacto.
-                bool checkIfResidueConditionsAreSatisfied(std::vector<std::string> residue_types,
-                                                          std::vector<std::string> entry_conditions) const;
-                //////////////////////////////////////////////////////////
-                //                       ATTRIBUTES                     //
-                //////////////////////////////////////////////////////////
-                DihedralAngleDataVector dihedralAngleDataVector_;
-            };
+            // Pass in the two atoms on either side the residue-residue linkage
+            std::vector<DihedralAngleDataVector> getDihedralAngleDataEntriesForLinkage(const std::string atom1Name,
+                                                                                       const std::string residue1Name,
+                                                                                       const std::string atom2Name,
+                                                                                       const std::string residue2Name);
         } // namespace GLYCAM
     }     // namespace MolecularMetadata
 } // namespace gmml
