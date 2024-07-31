@@ -34,8 +34,3 @@ std::string cds::likelyName(const DihedralAngleDataVector& entries)
     auto likely = likelyMetadata(entries);
     return likely.empty() ? "Boo" : likely[0].dihedral_angle_name_;
 }
-
-cds::AngleWithMetadata cds::defaultAngle(const DihedralAngleData& entry)
-{
-    return {entry.default_angle_value_, entry};
-}

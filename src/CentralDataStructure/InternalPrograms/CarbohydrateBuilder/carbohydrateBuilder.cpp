@@ -143,7 +143,7 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
                                                                  std::vector<cds::ResidueLinkage>::iterator end,
                                                                  int maxRotamers, int rotamerCount)
 {
-    for (int shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->rotatableDihedrals);
+    for (size_t shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->rotatableDihedrals);
          ++shapeNumber)
     {
         ++rotamerCount;

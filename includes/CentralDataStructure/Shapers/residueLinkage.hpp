@@ -44,7 +44,8 @@ namespace cds
     {
         RotatableDihedral(bool isBranchingLinkage, const std::array<Atom*, 4>& atoms_,
                           const std::vector<DihedralAngleData>& metadata)
-            : isBranchingLinkage(isBranchingLinkage), atoms(atoms_), metadataVector(metadata) {};
+            : isBranchingLinkage(isBranchingLinkage), atoms(atoms_), metadataVector(metadata),
+              currentMetadataIndex(0) {};
 
         bool isBranchingLinkage;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
@@ -53,7 +54,7 @@ namespace cds
         // is rotated.
         std::vector<cds::Coordinate*> movingCoordinates;
         DihedralAngleDataVector metadataVector;
-        DihedralAngleData currentMetadata;
+        size_t currentMetadataIndex;
     };
 
     typedef std::vector<gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector> DihedralAngleMetadata;
@@ -79,10 +80,10 @@ namespace cds
 
     std::vector<RotatableDihedral>
     rotatableDihedralsWithMultipleRotamers(const std::vector<RotatableDihedral>& dihedrals);
-    int numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                       const std::vector<RotatableDihedral>& dihedrals);
-    int numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                             const std::vector<RotatableDihedral>& dihedrals);
+    size_t numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+                          const std::vector<RotatableDihedral>& dihedrals);
+    size_t numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+                                const std::vector<RotatableDihedral>& dihedrals);
     DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
     std::string print(const ResidueLinkage& linkage);
     std::string print(const RotatableDihedral& dihedral);

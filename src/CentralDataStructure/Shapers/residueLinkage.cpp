@@ -58,8 +58,8 @@ cds::rotatableDihedralsWithMultipleRotamers(const std::vector<RotatableDihedral>
     return returningDihedrals;
 }
 
-int cds::numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                        const std::vector<RotatableDihedral>& dihedrals)
+size_t cds::numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+                           const std::vector<RotatableDihedral>& dihedrals)
 {
     auto selectMetadata = [](const DihedralAngleDataVector& data)
     {
@@ -68,8 +68,8 @@ int cds::numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType
     return getNumberOfShapesBase(selectMetadata, rotamerType, dihedrals);
 }
 
-int cds::numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                              const std::vector<RotatableDihedral>& dihedrals)
+size_t cds::numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+                                 const std::vector<RotatableDihedral>& dihedrals)
 {
     return getNumberOfShapesBase(likelyMetadata, rotamerType, dihedrals);
 }

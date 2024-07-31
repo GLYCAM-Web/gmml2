@@ -18,7 +18,7 @@ namespace cds
     typedef std::function<size_t(DihedralAngleDataVector)> MetadataDistribution;
     typedef std::function<double(DihedralAngleData)> AngleDistribution;
 
-    void setDihedralAngle(RotatableDihedral& dihedral, AngleWithMetadata target);
+    void setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata target);
     bool setSpecificShape(RotatableDihedral& dihedral, std::string dihedralName, std::string selectedRotamer);
     std::vector<AngleWithMetadata> currentShape(const std::vector<RotatableDihedral>& dihedrals);
     std::vector<std::vector<AngleWithMetadata>> currentShape(const std::vector<ResidueLinkage>& linkages);
@@ -31,7 +31,7 @@ namespace cds
                                      std::vector<RotatableDihedral>& dihedrals);
     void setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
                                      std::vector<ResidueLinkage>& linkages);
-    void setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, int shapeNumber);
+    void setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, size_t shapeNumber);
     void setSpecificShape(std::vector<RotatableDihedral>& dihedrals, std::string dihedralName,
                           std::string selectedRotamer);
 

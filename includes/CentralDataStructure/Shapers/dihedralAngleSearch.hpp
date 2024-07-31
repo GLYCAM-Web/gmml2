@@ -35,12 +35,13 @@ namespace cds
     std::array<DihedralRotationData, 2> dihedralRotationInputData(RotatableDihedral& dihedral,
                                                                   const std::array<std::vector<Residue*>, 2>& residues);
     AngleOverlap wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral, std::vector<cds::Atom*>& overlapAtomSet1,
-                                                 std::vector<cds::Atom*>& overlapAtomSet2,
+                                                 std::vector<cds::Atom*>& overlapAtomSet2, size_t metadataIndex,
                                                  const DihedralAngleData& metadata, std::vector<double> angles);
     AngleOverlap wiggleWithinCurrentRotamer(RotatableDihedral& dihedral, std::vector<cds::Atom*>& overlapAtomSet1,
                                             std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
-    AngleOverlap wiggleUsingRotamers(const DihedralCoordinates coordinates, const DihedralAngleDataVector& rotamers,
-                                     int angleIncrement, const std::array<DihedralRotationData, 2>& input);
+    AngleOverlap wiggleUsingRotamers(const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
+                                     const DihedralAngleDataVector& rotamers, int angleIncrement,
+                                     const std::array<DihedralRotationData, 2>& input);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                      std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
                                      int angleIncrement);

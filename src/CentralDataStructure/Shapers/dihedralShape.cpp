@@ -9,7 +9,7 @@ void cds::setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata t
 {
     auto matrix = rotationTo(dihedralCoordinates(dihedral), constants::degree2Radian(target.value));
     matrix.rotateCoordinates(dihedral.movingCoordinates);
-    dihedral.currentMetadata = target.metadata;
+    dihedral.currentMetadataIndex = target.metadataIndex;
 }
 
 bool cds::setSpecificShape(RotatableDihedral& dihedral, std::string dihedralName, std::string selectedRotamer)
@@ -17,11 +17,12 @@ bool cds::setSpecificShape(RotatableDihedral& dihedral, std::string dihedralName
     auto& metadataVector = dihedral.metadataVector;
     if (dihedralName == metadataVector[0].dihedral_angle_name_)
     {
-        for (auto& metadata : metadataVector)
+        for (size_t n = 0; n < metadataVector.size(); n++)
         {
+            auto& metadata = metadataVector[n];
             if (metadata.rotamer_name_ == selectedRotamer)
             {
-                setDihedralAngle(dihedral, {metadata.default_angle_value_, metadata});
+                setDihedralAngle(dihedral, {metadata.default_angle_value_, metadata.default_angle_value_, n});
                 return true;
             }
         }
@@ -36,7 +37,10 @@ std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<Rotatabl
 
     for (auto& dihedral : dihedrals)
     {
-        result.push_back({cds::angle(dihedralCoordinates(dihedral)), dihedral.currentMetadata});
+        auto& metadataIndex   = dihedral.currentMetadataIndex;
+        auto& currentMetadata = dihedral.metadataVector[metadataIndex];
+        result.push_back(
+            {cds::angle(dihedralCoordinates(dihedral)), currentMetadata.default_angle_value_, metadataIndex});
     }
 
     return result;
@@ -75,7 +79,8 @@ void cds::setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihe
 {
     for (auto& dihedral : dihedrals)
     {
-        setDihedralAngle(dihedral, defaultAngle(dihedral.metadataVector[0]));
+        double defaultAngle = dihedral.metadataVector[0].default_angle_value_;
+        setDihedralAngle(dihedral, {defaultAngle, defaultAngle, 0});
     }
 }
 
@@ -83,18 +88,19 @@ void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, Angle
                                       gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
                                       std::vector<RotatableDihedral>& dihedrals)
 {
-    auto randomAngleWithMetadata = [&](const DihedralAngleData& metadata)
+    auto randomAngleWithMetadata = [&](size_t index, const DihedralAngleData& metadata)
     {
         double angle = randomAngle(metadata);
-        return AngleWithMetadata {angle, metadata};
+        return AngleWithMetadata {angle, metadata.default_angle_value_, index};
     };
 
     if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
     {
         for (auto& entry : dihedrals)
         {
-            auto metadata = entry.metadataVector[randomMetadata(entry.metadataVector)];
-            setDihedralAngle(entry, randomAngleWithMetadata(metadata));
+            size_t index  = randomMetadata(entry.metadataVector);
+            auto metadata = entry.metadataVector[index];
+            setDihedralAngle(entry, randomAngleWithMetadata(index, metadata));
         }
     }
     else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
@@ -103,7 +109,7 @@ void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, Angle
         for (auto& entry : dihedrals)
         {
             auto metadata = entry.metadataVector[conformerIndex];
-            setDihedralAngle(entry, randomAngleWithMetadata(metadata));
+            setDihedralAngle(entry, randomAngleWithMetadata(conformerIndex, metadata));
         }
     }
 }
@@ -117,11 +123,12 @@ void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, Angle
     }
 }
 
-void cds::setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, int shapeNumber)
+void cds::setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, size_t shapeNumber)
 {
     for (auto& entry : dihedrals)
     {
-        setDihedralAngle(entry, defaultAngle(entry.metadataVector[shapeNumber]));
+        auto& metadata = entry.metadataVector[shapeNumber];
+        setDihedralAngle(entry, {metadata.default_angle_value_, metadata.default_angle_value_, shapeNumber});
     }
 }
 

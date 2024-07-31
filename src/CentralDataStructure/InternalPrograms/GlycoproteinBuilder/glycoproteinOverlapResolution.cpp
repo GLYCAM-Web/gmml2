@@ -19,9 +19,11 @@ namespace
     {
         for (auto& dihedral : dihedrals)
         {
-            auto coordinates = cds::dihedralCoordinates(dihedral);
-            auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
-            auto best        = cds::wiggleUsingRotamers(coordinates, dihedral.metadataVector, interval, input);
+            auto coordinates     = cds::dihedralCoordinates(dihedral);
+            auto input           = cds::dihedralRotationInputData(dihedral, overlapInput);
+            auto& metadataVector = dihedral.metadataVector;
+            auto best = cds::wiggleUsingRotamers(coordinates, codeUtils::indexVector(metadataVector), metadataVector,
+                                                 interval, input);
             cds::setDihedralAngle(dihedral, best.angle);
         }
     }
@@ -46,7 +48,7 @@ namespace
             {
                 auto coordinates = cds::dihedralCoordinates(dihedral);
                 auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
-                auto best        = cds::wiggleUsingRotamers(coordinates, {dihedral.metadataVector[n]}, interval, input);
+                auto best = cds::wiggleUsingRotamers(coordinates, {n}, {dihedral.metadataVector[n]}, interval, input);
                 results[n].push_back(best.angle);
                 bestOverlaps[n] = best;
                 cds::setDihedralAngle(dihedral, best.angle);

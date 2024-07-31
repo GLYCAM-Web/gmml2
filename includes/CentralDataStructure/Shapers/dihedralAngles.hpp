@@ -19,12 +19,12 @@ namespace cds
     struct AngleWithMetadata
     {
         double value;
-        DihedralAngleData metadata;
+        double defaultAngle;
+        size_t metadataIndex;
     };
 
     Bounds angleBounds(const DihedralAngleData& metadata);
     DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
     std::string likelyName(const DihedralAngleDataVector& entries);
-    AngleWithMetadata defaultAngle(const DihedralAngleData& entry);
 } // namespace cds
 #endif
