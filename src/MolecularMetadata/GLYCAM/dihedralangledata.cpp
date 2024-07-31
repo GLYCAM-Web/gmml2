@@ -55,27 +55,27 @@ namespace
           { "C."   , "O[1-5]" , "Psi"  ,   0.0  ,  40.0  ,  40.0  , 1.0   , RotamerType::permutation , "ap" , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "H."  }, // Psi should be C(ano)-Ox-Cx-Hx, if Cx is ring, otherwise, C(ano)-Ox-Cx-C(x-1)
           { "C."   , "O[6-9]" , "Psi"  , 180.0  ,  40.0  ,  40.0  , 1.0   , RotamerType::permutation , "t"  , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "C."  },
           // Omega angle in x-6 linkages.
-          { "C.*"  , "O6"     , "Omg"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {"none"}       , {"monosaccharide"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
-          { "C.*"  , "O6"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {"none"}       , {"monosaccharide"}                  , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {"none"}       , {"gauche-effect=galacto"} , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  ,  20.0  ,  20.0  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {"none"}       , {"gauche-effect=gluco"}   , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"monosaccharide"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
+          { "C.*"  , "O6"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"monosaccharide"}                  , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=galacto"} , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  ,  20.0  ,  20.0  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=gluco"}   , "O6" , "C6" , "C5" , "O5"  },
           // Omega angle in x-5 linkages.
-          { "C.*"  , "O5"     , "Omg"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {"none"}       , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
-          { "C.*"  , "O5"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {"none"}       , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
+          { "C.*"  , "O5"     , "Omg"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
+          { "C.*"  , "O5"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
           // Omega angle in x-1 linkages in ketose, furanoses
-          { "C.*"  , "O1"     , "Omg"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {"none"}       , {"furanose", "ketose"}        , "O1" , "C1" , "C2" , "O6"  },
-          { "C.*"  , "O1"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {"none"}       , {"furanose", "ketose"}        , "O1" , "C1" , "C2" , "O6"  },
+          { "C.*"  , "O1"     , "Omg"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose", "ketose"}        , "O1" , "C1" , "C2" , "O6"  },
+          { "C.*"  , "O1"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose", "ketose"}        , "O1" , "C1" , "C2" , "O6"  },
           // 2-7 linkages copied from GlycamWeb Jan 2021. Branching in the linkage causes oddities with the bond number and which atoms are chosen for the torsion.
           { "C2"   , "O7"     , "Phi"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate", "alpha"}  , {"ulosonate"}    , "C3" , "C2" , "O." , "C."  },
           { "C2"   , "O7"     , "Psi"  ,   0.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "c"  , 2 , 1 , {"ulosonate", "alpha"}  , {"ulosonate"}    , "C." , "O." , "C." , "H."  },
-          { "C.*"  , "O7"     , "Omg7" ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 3 , 1 , {"none"}                , {"ulosonate"}    , "O7" , "C7" , "C6" , "O6"  },
-          { "C.*"  , "O7"     , "Omg9" , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "t"  , 4 , 1 , {"none"}                , {"ulosonate"}    , "O9" , "C9" , "C8" , "C7"  },
-          { "C.*"  , "O7"     , "Omg8" ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 5 , 1 , {"none"}                , {"ulosonate"}    , "C9" , "C8" , "C7" , "O7"  },
+          { "C.*"  , "O7"     , "Omg7" ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 3 , 1 , {}                      , {"ulosonate"}    , "O7" , "C7" , "C6" , "O6"  },
+          { "C.*"  , "O7"     , "Omg9" , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "t"  , 4 , 1 , {}                      , {"ulosonate"}    , "O9" , "C9" , "C8" , "C7"  },
+          { "C.*"  , "O7"     , "Omg8" ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 5 , 1 , {}                      , {"ulosonate"}    , "C9" , "C8" , "C7" , "O7"  },
           // 2-9 linkages copied from GlycamWeb Jan 2021.
           { "C2"   , "O9"     , "Phi"  , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate", "alpha"}  , {"ulosonate"}    , "C3" , "C2" , "O." , "C."  },
-          { "C.*"  , "O9"     , "Omg9" , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "t"  , 3 , 1 , {"none"}                , {"ulosonate"}    , "O9" , "C9" , "C8" , "C7"  },
-          { "C.*"  , "O9"     , "Omg8" , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "t"  , 4 , 1 , {"none"}                , {"ulosonate"}    , "C9" , "C8" , "C7" , "C6"  },
-          { "C.*"  , "O9"     , "Omg7" , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "-g" , 5 , 1 , {"none"}                , {"ulosonate"}    , "O7" , "C7" , "C6" , "O6"  },
+          { "C.*"  , "O9"     , "Omg9" , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "t"  , 3 , 1 , {}                      , {"ulosonate"}    , "O9" , "C9" , "C8" , "C7"  },
+          { "C.*"  , "O9"     , "Omg8" , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "t"  , 4 , 1 , {}                      , {"ulosonate"}    , "C9" , "C8" , "C7" , "C6"  },
+          { "C.*"  , "O9"     , "Omg7" , -60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "-g" , 5 , 1 , {}                      , {"ulosonate"}    , "O7" , "C7" , "C6" , "O6"  },
            // Generic x-8 linkages. Values copied from external conformer A below. Arbitrary, but I have no data for them.
           { "C.*"   , "O8"     , "Phi"  , -79.5  ,  20.0  ,  20.0  , 0.42  , RotamerType::conformer   , "A"  , 1 , 1 , {"monosaccharide"}  , {"ulosonate"}    , "C1" , "C2" , "O8" , "C8"  },
           { "C.*"   , "O8"     , "Psi"  ,  88.1  ,  20.0  ,  20.0  , 0.42  , RotamerType::conformer   , "A"  , 2 , 1 , {"monosaccharide"}  , {"ulosonate"}    , "C2" , "O8" , "C8" , "C7"  },
@@ -140,9 +140,9 @@ namespace
           { "C2"   , "O1"     , "Phi"  ,  80.0  ,  10.0  ,  10.0  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {"furanose", "ketose"}    , {"pyranose", "aldose"}         , "C1" , "C2" , "O1" , "C1" },
           { "C2"   , "O1"     , "Psi"  ,-135.0  ,   5.0  ,   5.0  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {"furanose", "ketose"}    , {"pyranose", "aldose"}         , "C2" , "O1" , "C1" , "C2" },
           // Ketose 1-1 linkages. Copied from old GLYCAM-Web builder.
-          { "C1"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {"none"}       , {"ketose"}                , "C2" , "C1" , "O1" , "C1" },
-          { "C1"   , "O1"     , "Psi"  ,-150.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {"none"}       , {"ketose"}                , "C1" , "O1" , "C1" , "C2" },
-          { "C1"   , "O1"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 3 , 1 , {"none"}       , {"ketose"}                , "O1" , "C1" , "C2" , "O5" },
+          { "C1"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {}             , {"ketose"}                , "C2" , "C1" , "O1" , "C1" },
+          { "C1"   , "O1"     , "Psi"  ,-150.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {}             , {"ketose"}                , "C1" , "O1" , "C1" , "C2" },
+          { "C1"   , "O1"     , "Omg"  ,  60.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 3 , 1 , {}             , {"ketose"}                , "O1" , "C1" , "C2" , "O5" },
         // Common sugar derivatives
         // Phosphate/sulfate
           { "[SP]1", "N[2]"   , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {"derivative"}       , {"monosaccharide"}                  , "O." , ".1" , "N." , "C."  },
@@ -168,46 +168,46 @@ namespace
           { ".*"   , "O8"     , "Omg9" ,  73.4  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , ""   , 5 , 1 , {"derivative"}                        , {"ulosonate"}    , "O9" , "C9" , "C8" , "O8"  },
           // Protein linkages
           // ASN // Values are from Petrescu et al 2004.
-          { "C."   , "ND2"    , "Chi1" , 191.6  ,  14.4  ,  14.4  , 0.497 , RotamerType::conformer   , "A"  , 4 , 1 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "ND2"    , "Chi2" , 177.6  ,  43.0  ,  43.0  , 0.497 , RotamerType::conformer   , "A"  , 3 , 1 , {"none"}       , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 177.3  ,  12.3  ,  12.3  , 0.497 , RotamerType::conformer   , "A"  , 2 , 1 , {"none"}       , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
-          { "C1"   , "ND2"    , "Phi"  , 261.0  ,  21.3  ,  21.3  , 0.497 , RotamerType::conformer   , "A"  , 1 , 1 , {"none"}       , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
-          { "C."   , "ND2"    , "Chi1" ,  63.6  ,   8.9  ,   8.9  , 0.178 , RotamerType::conformer   , "B"  , 4 , 2 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "ND2"    , "Chi2" , 191.1  ,  31.6  ,  31.6  , 0.178 , RotamerType::conformer   , "B"  , 3 , 2 , {"none"}       , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 178.5  ,  13.9  ,  13.9  , 0.178 , RotamerType::conformer   , "B"  , 2 , 2 , {"none"}       , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
-          { "C1"   , "ND2"    , "Phi"  , 253.7  ,  21.5  ,  21.5  , 0.178 , RotamerType::conformer   , "B"  , 1 , 2 , {"none"}       , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
-          { "C."   , "ND2"    , "Chi1" , 290.6  ,  12.7  ,  12.7  , 0.235 , RotamerType::conformer   , "C"  , 4 , 3 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "ND2"    , "Chi2" , 152.9  ,  23.9  ,  23.9  , 0.235 , RotamerType::conformer   , "C"  , 3 , 3 , {"none"}       , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 173.1  ,  12.2  ,  12.2  , 0.235 , RotamerType::conformer   , "C"  , 2 , 3 , {"none"}       , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
-          { "C1"   , "ND2"    , "Phi"  , 268.0  ,  20.3  ,  20.3  , 0.235 , RotamerType::conformer   , "C"  , 1 , 3 , {"none"}       , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
-          { "C."   , "ND2"    , "Chi1" , 302.3  ,  11.5  ,  11.5  , 0.090 , RotamerType::conformer   , "D"  , 4 , 4 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "ND2"    , "Chi2" , 255.0  ,  28.8  ,  28.8  , 0.090 , RotamerType::conformer   , "D"  , 3 , 4 , {"none"}       , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 178.1  ,  11.5  ,  11.5  , 0.090 , RotamerType::conformer   , "D"  , 2 , 4 , {"none"}       , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
-          { "C1"   , "ND2"    , "Phi"  , 267.5  ,  23.9  ,  23.9  , 0.090 , RotamerType::conformer   , "D"  , 1 , 4 , {"none"}       , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
+          { "C."   , "ND2"    , "Chi1" , 191.6  ,  14.4  ,  14.4  , 0.497 , RotamerType::conformer   , "A"  , 4 , 1 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "ND2"    , "Chi2" , 177.6  ,  43.0  ,  43.0  , 0.497 , RotamerType::conformer   , "A"  , 3 , 1 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
+          { "C."   , "ND2"    , "Psi"  , 177.3  ,  12.3  ,  12.3  , 0.497 , RotamerType::conformer   , "A"  , 2 , 1 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C1"   , "ND2"    , "Phi"  , 261.0  ,  21.3  ,  21.3  , 0.497 , RotamerType::conformer   , "A"  , 1 , 1 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
+          { "C."   , "ND2"    , "Chi1" ,  63.6  ,   8.9  ,   8.9  , 0.178 , RotamerType::conformer   , "B"  , 4 , 2 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "ND2"    , "Chi2" , 191.1  ,  31.6  ,  31.6  , 0.178 , RotamerType::conformer   , "B"  , 3 , 2 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
+          { "C."   , "ND2"    , "Psi"  , 178.5  ,  13.9  ,  13.9  , 0.178 , RotamerType::conformer   , "B"  , 2 , 2 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C1"   , "ND2"    , "Phi"  , 253.7  ,  21.5  ,  21.5  , 0.178 , RotamerType::conformer   , "B"  , 1 , 2 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
+          { "C."   , "ND2"    , "Chi1" , 290.6  ,  12.7  ,  12.7  , 0.235 , RotamerType::conformer   , "C"  , 4 , 3 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "ND2"    , "Chi2" , 152.9  ,  23.9  ,  23.9  , 0.235 , RotamerType::conformer   , "C"  , 3 , 3 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
+          { "C."   , "ND2"    , "Psi"  , 173.1  ,  12.2  ,  12.2  , 0.235 , RotamerType::conformer   , "C"  , 2 , 3 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C1"   , "ND2"    , "Phi"  , 268.0  ,  20.3  ,  20.3  , 0.235 , RotamerType::conformer   , "C"  , 1 , 3 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
+          { "C."   , "ND2"    , "Chi1" , 302.3  ,  11.5  ,  11.5  , 0.090 , RotamerType::conformer   , "D"  , 4 , 4 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "ND2"    , "Chi2" , 255.0  ,  28.8  ,  28.8  , 0.090 , RotamerType::conformer   , "D"  , 3 , 4 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
+          { "C."   , "ND2"    , "Psi"  , 178.1  ,  11.5  ,  11.5  , 0.090 , RotamerType::conformer   , "D"  , 2 , 4 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C1"   , "ND2"    , "Phi"  , 267.5  ,  23.9  ,  23.9  , 0.090 , RotamerType::conformer   , "D"  , 1 , 4 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
           // THR // Values are from Lovell et al "PENULTIMATE ROTAMER LIBRARY"
-          { "C."   , "OG1"    , "Chi1" ,  59.0  ,  10.0  ,  10.0  , 0.49  , RotamerType::permutation , "g"  , 3 , 1 , {"none"}       , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
-          { "C."   , "OG1"    , "Chi1" ,-171.0  ,   6.0  ,   6.0  , 0.07  , RotamerType::permutation , "t"  , 3 , 2 , {"none"}       , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
-          { "C."   , "OG1"    , "Chi1" , -61.0  ,   7.0  ,   7.0  , 0.43  , RotamerType::permutation , "-g" , 3 , 3 , {"none"}       , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
-          { "C."   , "OG1"    , "Psi"  , -60.0  ,  60.0  ,  60.0  , 1.000 , RotamerType::permutation , "-g" , 2 , 1 , {"none"}       , {"amino-acid"}            , "C." , "OG1", "CB" , "CA"  },
-          { "C."   , "OG1"    , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 1 , 1 , {"none"}       , {"amino-acid"}            , "C." , "C." , "OG1", "CB"  },
+          { "C."   , "OG1"    , "Chi1" ,  59.0  ,  10.0  ,  10.0  , 0.49  , RotamerType::permutation , "g"  , 3 , 1 , {}             , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
+          { "C."   , "OG1"    , "Chi1" ,-171.0  ,   6.0  ,   6.0  , 0.07  , RotamerType::permutation , "t"  , 3 , 2 , {}             , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
+          { "C."   , "OG1"    , "Chi1" , -61.0  ,   7.0  ,   7.0  , 0.43  , RotamerType::permutation , "-g" , 3 , 3 , {}             , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
+          { "C."   , "OG1"    , "Psi"  , -60.0  ,  60.0  ,  60.0  , 1.000 , RotamerType::permutation , "-g" , 2 , 1 , {}             , {"amino-acid"}            , "C." , "OG1", "CB" , "CA"  },
+          { "C."   , "OG1"    , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 1 , 1 , {}             , {"amino-acid"}            , "C." , "C." , "OG1", "CB"  },
            // SER // Values not checked
-          { "C."   , "OG"     , "Chi1" ,  64.0  ,  10.0  ,  10.0  , 0.48  , RotamerType::permutation , "g"  , 3 , 1 , {"none"}       , {"amino-acid"}            , "OG" , "CB" , "CA" , "N"   },
-          { "C."   , "OG"     , "Chi1" , 178.0  ,  11.0  ,  11.0  , 0.22  , RotamerType::permutation , "t"  , 3 , 2 , {"none"}       , {"amino-acid"}            , "OG" , "CB" , "CA" , "N"   },
-          { "C."   , "OG"     , "Chi1" , -65.0  ,   9.0  ,   9.0  , 0.29  , RotamerType::permutation , "-g" , 3 , 3 , {"none"}       , {"amino-acid"}            , "OG" , "CB" , "CA" , "N"   },
-          { "C."   , "OG"     , "Psi"  , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 2 , 1 , {"none"}       , {"amino-acid"}            , "C." , "OG" , "CB" , "CA"  },
-          { "C."   , "OG"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 1 , 1 , {"none"}       , {"amino-acid"}            , "C." , "C." , "OG1", "CB"  },
+          { "C."   , "OG"     , "Chi1" ,  64.0  ,  10.0  ,  10.0  , 0.48  , RotamerType::permutation , "g"  , 3 , 1 , {}             , {"amino-acid"}            , "OG" , "CB" , "CA" , "N"   },
+          { "C."   , "OG"     , "Chi1" , 178.0  ,  11.0  ,  11.0  , 0.22  , RotamerType::permutation , "t"  , 3 , 2 , {}             , {"amino-acid"}            , "OG" , "CB" , "CA" , "N"   },
+          { "C."   , "OG"     , "Chi1" , -65.0  ,   9.0  ,   9.0  , 0.29  , RotamerType::permutation , "-g" , 3 , 3 , {}             , {"amino-acid"}            , "OG" , "CB" , "CA" , "N"   },
+          { "C."   , "OG"     , "Psi"  , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 2 , 1 , {}             , {"amino-acid"}            , "C." , "OG" , "CB" , "CA"  },
+          { "C."   , "OG"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 1 , 1 , {}             , {"amino-acid"}            , "C." , "C." , "OG1", "CB"  },
            // TYR // Values not checked
-          { "C."   , "OH"     , "Chi1" , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 7 , 1 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "OH"     , "Chi1" ,  60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "g"  , 7 , 2 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "OH"     , "Chi1" , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 7 , 3 , {"none"}       , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
-          { "C."   , "OH"     , "Chi2" , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 6 , 1 , {"none"}       , {"amino-acid"}            , "CD1", "CG" , "CB" , "CA"  },
-          { "C."   , "OH"     , "Psi"  , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 2 , 1 , {"none"}       , {"amino-acid"}            , "C." , "OH" , "CZ" , "CE1" },
-          { "C."   , "OH"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 1 , 1 , {"none"}       , {"amino-acid"}            , "C." , "C." , "OH ", "CZ"  },
+          { "C."   , "OH"     , "Chi1" , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 7 , 1 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "OH"     , "Chi1" ,  60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "g"  , 7 , 2 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "OH"     , "Chi1" , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 7 , 3 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
+          { "C."   , "OH"     , "Chi2" , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 6 , 1 , {}             , {"amino-acid"}            , "CD1", "CG" , "CB" , "CA"  },
+          { "C."   , "OH"     , "Psi"  , -60.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "-g" , 2 , 1 , {}             , {"amino-acid"}            , "C." , "OH" , "CZ" , "CE1" },
+          { "C."   , "OH"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.000 , RotamerType::permutation , "t"  , 1 , 1 , {}             , {"amino-acid"}            , "C." , "C." , "OH ", "CZ"  },
           // ROH
-          { "C1"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
-          { "C2"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
-          { "C1"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
-          { "C2"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"none"}     , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  }}};
+          { "C1"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {}           , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
+          { "C2"   , "O1"     , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {}           , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
+          { "C1"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {}           , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  },
+          { "C2"   , "O"      , "Phi"  , 180.0  ,  20.0  ,  20.0  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {}           , {"aglycon"}               , "C2" , "C1" , "O1" , "H1"  }}};
 
     // clang-format on
 
@@ -222,17 +222,11 @@ namespace
     bool checkIfResidueConditionsAreSatisfied(const std::vector<std::string> residue_types,
                                               const std::vector<std::string> entry_conditions)
     {
-        for (const auto& entry_condition : entry_conditions)
-        { // If no condition, return true. If can't find the condition in the list return false, otherwise, having found
-          // the
-            // condition(s), return true.
-            if (entry_condition == "none")
-            {
-                return true;
-            }
+        for (auto& entry_condition : entry_conditions)
+        {
             if (!codeUtils::contains(residue_types, entry_condition))
             {
-                return false; // If any condition isn't satisified. return false.
+                return false;
             }
         }
         return true;
