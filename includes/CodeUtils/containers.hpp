@@ -56,5 +56,16 @@ namespace codeUtils
         return result;
     }
 
+    template<class T> std::vector<size_t> indexVector(const std::vector<T>& vec)
+    {
+        std::vector<size_t> result;
+        result.reserve(vec.size());
+        for (size_t n = 0; n < vec.size(); n++)
+        {
+            result.push_back(n);
+        }
+        return result;
+    }
+
 } // namespace codeUtils
 #endif
