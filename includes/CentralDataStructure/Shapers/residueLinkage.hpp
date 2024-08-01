@@ -85,8 +85,9 @@ namespace cds
     size_t numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
                                 const std::vector<RotatableDihedral>& dihedrals);
     DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
-    std::string print(const ResidueLinkage& linkage);
+    std::string print(const ResidueLink& link);
     std::string print(const RotatableDihedral& dihedral);
+    std::string print(const ResidueLinkage& linkage);
 
 } // namespace cds
 #endif

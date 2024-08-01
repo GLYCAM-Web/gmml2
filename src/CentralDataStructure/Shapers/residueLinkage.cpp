@@ -82,19 +82,12 @@ cds::DihedralCoordinates cds::dihedralCoordinates(const cds::RotatableDihedral& 
     return DihedralCoordinates {*coords[0], *coords[1], *coords[2], *coords[3]};
 }
 
-std::string cds::print(const ResidueLinkage& linkage)
+std::string cds::print(const ResidueLink& link)
 {
     std::stringstream ss;
-    auto& linkageResidues = linkage.link.residues;
-    ss << "ResidueLinkage Index: " << linkage.index << ", Name: " << linkage.name
-       << ", NumberOfShapes: " << numberOfShapes(linkage.rotamerType, linkage.rotatableDihedrals)
-       << ", ids: " << linkageResidues.first->getStringId() << "@" << linkage.link.atoms.first->getName() << " -- "
-       << linkageResidues.second->getStringId() << "@" << linkage.link.atoms.second->getName() << "\n";
-    gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
-    for (auto& rotatableDihedral : linkage.rotatableDihedrals)
-    {
-        ss << print(rotatableDihedral);
-    }
+    auto& linkageResidues = link.residues;
+    ss << "ids: " << linkageResidues.first->getStringId() << "@" << link.atoms.first->getName() << " -- "
+       << linkageResidues.second->getStringId() << "@" << link.atoms.second->getName() << "\n";
     return ss.str();
 }
 
@@ -105,5 +98,19 @@ std::string cds::print(const RotatableDihedral& dihedral)
     ss << atoms[0]->getName() << ", " << atoms[1]->getName() << ", " << atoms[2]->getName() << ", "
        << atoms[3]->getName() << ": " << cds::angle(dihedralCoordinates(dihedral)) << ".\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
+    return ss.str();
+}
+
+std::string cds::print(const ResidueLinkage& linkage)
+{
+    std::stringstream ss;
+    ss << "ResidueLinkage Index: " << linkage.index << ", Name: " << linkage.name
+       << ", NumberOfShapes: " << numberOfShapes(linkage.rotamerType, linkage.rotatableDihedrals) << ", "
+       << print(linkage.link);
+    gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
+    for (auto& rotatableDihedral : linkage.rotatableDihedrals)
+    {
+        ss << print(rotatableDihedral);
+    }
     return ss.str();
 }

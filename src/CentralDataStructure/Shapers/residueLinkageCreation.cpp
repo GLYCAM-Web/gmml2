@@ -10,6 +10,7 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 
+#include <cmath>
 #include <sstream>
 
 namespace
@@ -106,6 +107,46 @@ namespace
         }
         return rotatableDihedrals;
     }
+
+    void validateRotamerTypes(const cds::ResidueLinkage& linkage)
+    {
+        for (auto& dihedral : linkage.rotatableDihedrals)
+        {
+            for (auto& metadata : dihedral.metadataVector)
+            {
+                if (metadata.rotamer_type_ != linkage.rotamerType)
+                {
+                    throw std::runtime_error("mismatching rotamer types in residue linkage: " + print(linkage));
+                }
+            }
+        }
+    }
+
+    void validateConformerMetadata(const cds::ResidueLinkage& linkage)
+    {
+        auto& dihedrals       = linkage.rotatableDihedrals;
+        size_t conformerCount = dihedrals[0].metadataVector.size();
+        for (size_t n = 1; n < dihedrals.size(); n++)
+        {
+            if (dihedrals[n].metadataVector.size() != conformerCount)
+            {
+                throw std::runtime_error("error: different number of conformers in linkage: " + cds::print(linkage));
+            }
+        }
+
+        for (size_t conformer = 0; conformer < conformerCount; conformer++)
+        {
+            double weight = dihedrals[0].metadataVector[conformer].weight_;
+            for (size_t n = 1; n < dihedrals.size(); n++)
+            {
+                if (std::fabs(weight - dihedrals[n].metadataVector[conformer].weight_) >= 1e-10)
+                {
+                    throw std::runtime_error("error: conformers have different weight in linkage: " +
+                                             cds::print(linkage));
+                }
+            }
+        }
+    }
 } // namespace
 
 unsigned long long cds::generateResidueLinkageIndex()
@@ -201,21 +242,18 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
 
     if (dihedrals.empty() || dihedrals[0].metadataVector.empty())
     {
-        throw std::runtime_error("missing dihedrals or metadata in residue linkage");
+        throw std::runtime_error("missing dihedrals or metadata in residue linkage: " + print(link));
     }
 
     auto rotamerType = dihedrals[0].metadataVector[0].rotamer_type_;
-    for (auto& dihedral : dihedrals)
+    ResidueLinkage linkage(link, dihedrals, rotamerType, index, name, reducingOverlapResidues,
+                           nonReducingOverlapResidues);
+
+    validateRotamerTypes(linkage);
+    if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
     {
-        for (auto& metadata : dihedral.metadataVector)
-        {
-            if (metadata.rotamer_type_ != rotamerType)
-            {
-                throw std::runtime_error("mismatching rotamer types in residue linkage");
-            }
-        }
+        validateConformerMetadata(linkage);
     }
 
-    return ResidueLinkage(link, dihedrals, rotamerType, index, name, reducingOverlapResidues,
-                          nonReducingOverlapResidues);
+    return linkage;
 }
