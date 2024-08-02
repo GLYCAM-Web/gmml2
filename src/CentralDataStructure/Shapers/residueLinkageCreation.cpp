@@ -75,15 +75,6 @@ namespace
                                                                  const std::vector<cds::DihedralAtoms>& dihedralAtoms,
                                                                  const cds::DihedralAngleMetadata& metadata)
     {
-        if (metadata.size() > dihedralAtoms.size())
-        {
-            std::string message =
-                "Found metadata for rotatable bonds that do not exist.\nCheck both dihedralangledata metadata "
-                "and ResidueLinkage::FindRotatableDihedralsConnectingResidues.\nNote this is normal for a sialic acid "
-                "with multiple 2-7, 2-8 and or 2-9 linkages and this warning can be ignored\n";
-            gmml::log(__LINE__, __FILE__, gmml::WAR, message);
-        }
-
         std::vector<cds::RotatableDihedral> rotatableDihedrals;
         rotatableDihedrals.reserve(dihedralAtoms.size());
         for (size_t n = 0; n < dihedralAtoms.size(); n++)
@@ -92,7 +83,7 @@ namespace
             if (!currentMetadata.empty())
             {
                 rotatableDihedrals.emplace_back(
-                    cds::RotatableDihedral {dihedralAtoms[n].isBranching, dihedralAtoms[n].atoms, currentMetadata});
+                    cds::RotatableDihedral {dihedralAtoms[n].isBranching, dihedralAtoms[n].atoms});
             }
             else
             {
@@ -110,9 +101,9 @@ namespace
 
     void validateRotamerTypes(const cds::ResidueLinkage& linkage)
     {
-        for (auto& dihedral : linkage.rotatableDihedrals)
+        for (auto& metadataVector : linkage.dihedralMetadata)
         {
-            for (auto& metadata : dihedral.metadataVector)
+            for (auto& metadata : metadataVector)
             {
                 if (metadata.rotamer_type_ != linkage.rotamerType)
                 {
@@ -125,10 +116,11 @@ namespace
     void validateConformerMetadata(const cds::ResidueLinkage& linkage)
     {
         auto& dihedrals       = linkage.rotatableDihedrals;
-        size_t conformerCount = dihedrals[0].metadataVector.size();
+        auto& metadata        = linkage.dihedralMetadata;
+        size_t conformerCount = metadata[0].size();
         for (size_t n = 1; n < dihedrals.size(); n++)
         {
-            if (dihedrals[n].metadataVector.size() != conformerCount)
+            if (metadata[n].size() != conformerCount)
             {
                 throw std::runtime_error("error: different number of conformers in linkage: " + cds::print(linkage));
             }
@@ -136,10 +128,10 @@ namespace
 
         for (size_t conformer = 0; conformer < conformerCount; conformer++)
         {
-            double weight = dihedrals[0].metadataVector[conformer].weight_;
+            double weight = metadata[0][conformer].weight_;
             for (size_t n = 1; n < dihedrals.size(); n++)
             {
-                if (std::fabs(weight - dihedrals[n].metadataVector[conformer].weight_) >= 1e-10)
+                if (std::fabs(weight - metadata[n][conformer].weight_) >= 1e-10)
                 {
                     throw std::runtime_error("error: conformers have different weight in linkage: " +
                                              cds::print(linkage));
@@ -230,6 +222,17 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
             }
         }
     }
+    if (metadata.size() > dihedralAtoms.size())
+    {
+        std::string message =
+            "Found metadata for rotatable bonds that do not exist.\nCheck both dihedralangledata metadata "
+            "and ResidueLinkage::FindRotatableDihedralsConnectingResidues.\nNote this is normal for a sialic acid "
+            "with multiple 2-7, 2-8 and or 2-9 linkages and this warning can be ignored\n";
+        gmml::log(__LINE__, __FILE__, gmml::WAR, message);
+    }
+    // ensure that metadata and dihedral atoms have the same dimensions
+    metadata.erase(metadata.begin() + dihedralAtoms.size(), metadata.end());
+
     auto& residues = link.residues;
     createHydrogenForPsiAngles(residues.second, dihedralAtoms, metadata);
     std::string name                         = determineLinkageNameFromResidueNames(toNames(link));
@@ -240,13 +243,13 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
     auto reducingOverlapResidues    = connectedResidues(residues.first, residues.second);
     auto nonReducingOverlapResidues = connectedResidues(residues.second, residues.first);
 
-    if (dihedrals.empty() || dihedrals[0].metadataVector.empty())
+    if (dihedrals.empty() || metadata[0].empty())
     {
         throw std::runtime_error("missing dihedrals or metadata in residue linkage: " + print(link));
     }
 
-    auto rotamerType = dihedrals[0].metadataVector[0].rotamer_type_;
-    ResidueLinkage linkage(link, dihedrals, rotamerType, index, name, reducingOverlapResidues,
+    auto rotamerType = metadata[0][0].rotamer_type_;
+    ResidueLinkage linkage(link, dihedrals, metadata, rotamerType, index, name, reducingOverlapResidues,
                            nonReducingOverlapResidues);
 
     validateRotamerTypes(linkage);

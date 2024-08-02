@@ -15,14 +15,14 @@ namespace
     int
     getNumberOfShapesBase(std::function<const DihedralAngleDataVector(const DihedralAngleDataVector&)> selectedMetadata,
                           gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                          const std::vector<RotatableDihedral>& dihedrals)
+                          const std::vector<DihedralAngleDataVector>& metadata)
     {
         if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
         {
             int numberOfShapes = 1;
-            for (auto& entry : dihedrals)
+            for (auto& entry : metadata)
             {
-                numberOfShapes *= selectedMetadata(entry.metadataVector).size();
+                numberOfShapes *= selectedMetadata(entry).size();
             }
             return numberOfShapes;
         }
@@ -30,7 +30,7 @@ namespace
         { // Conformer should mean that each dihedral will have the same number of metadata entries.
             // numberOfShapes = RotatableDihedrals_.size(); // This was correct for ASN for the wrong reason. 4
             // conformers and 4 dihedrals...
-            return selectedMetadata(dihedrals[0].metadataVector).size();
+            return selectedMetadata(metadata[0]).size();
         }
         else
         {
@@ -44,34 +44,33 @@ namespace
     }
 } // namespace
 
-std::vector<RotatableDihedral>
-cds::rotatableDihedralsWithMultipleRotamers(const std::vector<RotatableDihedral>& dihedrals)
+std::vector<size_t> cds::rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata)
 {
-    std::vector<RotatableDihedral> returningDihedrals;
-    for (auto& entry : dihedrals)
+    std::vector<size_t> indices;
+    for (size_t n = 0; n < metadata.size(); n++)
     {
-        if (entry.metadataVector.size() > 1)
+        if (metadata[n].size() > 1)
         {
-            returningDihedrals.push_back(entry);
+            indices.push_back(n);
         }
     }
-    return returningDihedrals;
+    return indices;
 }
 
 size_t cds::numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                           const std::vector<RotatableDihedral>& dihedrals)
+                           const std::vector<DihedralAngleDataVector>& metadata)
 {
     auto selectMetadata = [](const DihedralAngleDataVector& data)
     {
         return data;
     };
-    return getNumberOfShapesBase(selectMetadata, rotamerType, dihedrals);
+    return getNumberOfShapesBase(selectMetadata, rotamerType, metadata);
 }
 
 size_t cds::numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                                 const std::vector<RotatableDihedral>& dihedrals)
+                                 const std::vector<DihedralAngleDataVector>& metadata)
 {
-    return getNumberOfShapesBase(likelyMetadata, rotamerType, dihedrals);
+    return getNumberOfShapesBase(likelyMetadata, rotamerType, metadata);
 }
 
 cds::DihedralCoordinates cds::dihedralCoordinates(const cds::RotatableDihedral& dihedral)
@@ -105,7 +104,7 @@ std::string cds::print(const ResidueLinkage& linkage)
 {
     std::stringstream ss;
     ss << "ResidueLinkage Index: " << linkage.index << ", Name: " << linkage.name
-       << ", NumberOfShapes: " << numberOfShapes(linkage.rotamerType, linkage.rotatableDihedrals) << ", "
+       << ", NumberOfShapes: " << numberOfShapes(linkage.rotamerType, linkage.dihedralMetadata) << ", "
        << print(linkage.link);
     gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     for (auto& rotatableDihedral : linkage.rotatableDihedrals)

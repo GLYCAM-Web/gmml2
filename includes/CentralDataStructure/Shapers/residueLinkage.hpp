@@ -42,10 +42,8 @@ namespace cds
 
     struct RotatableDihedral
     {
-        RotatableDihedral(bool isBranchingLinkage, const std::array<Atom*, 4>& atoms_,
-                          const std::vector<DihedralAngleData>& metadata)
-            : isBranchingLinkage(isBranchingLinkage), atoms(atoms_), metadataVector(metadata),
-              currentMetadataIndex(0) {};
+        RotatableDihedral(bool isBranchingLinkage, const std::array<Atom*, 4>& atoms_)
+            : isBranchingLinkage(isBranchingLinkage), atoms(atoms_), currentMetadataIndex(0) {};
 
         bool isBranchingLinkage;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
@@ -53,7 +51,6 @@ namespace cds
         // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond
         // is rotated.
         std::vector<cds::Coordinate*> movingCoordinates;
-        DihedralAngleDataVector metadataVector;
         size_t currentMetadataIndex;
     };
 
@@ -61,16 +58,18 @@ namespace cds
 
     struct ResidueLinkage
     {
-        ResidueLinkage(ResidueLink link_, std::vector<RotatableDihedral> dihedrals,
+        ResidueLinkage(ResidueLink& link_, std::vector<RotatableDihedral>& dihedrals,
+                       std::vector<DihedralAngleDataVector>& metadata,
                        gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType_, unsigned long long index_,
                        std::string name_, std::vector<Residue*> reducingOverlapResidues_,
                        std::vector<Residue*> nonReducingOverlapResidues_)
-            : link(link_), rotatableDihedrals(dihedrals), rotamerType(rotamerType_), index(index_), name(name_),
-              reducingOverlapResidues(reducingOverlapResidues_),
+            : link(link_), rotatableDihedrals(dihedrals), dihedralMetadata(metadata), rotamerType(rotamerType_),
+              index(index_), name(name_), reducingOverlapResidues(reducingOverlapResidues_),
               nonReducingOverlapResidues(nonReducingOverlapResidues_) {};
 
         ResidueLink link;
         std::vector<RotatableDihedral> rotatableDihedrals;
+        std::vector<DihedralAngleDataVector> dihedralMetadata;
         gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType;
         unsigned long long index = 0;
         std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
@@ -78,12 +77,11 @@ namespace cds
         std::vector<cds::Residue*> nonReducingOverlapResidues;
     };
 
-    std::vector<RotatableDihedral>
-    rotatableDihedralsWithMultipleRotamers(const std::vector<RotatableDihedral>& dihedrals);
+    std::vector<size_t> rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata);
     size_t numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                          const std::vector<RotatableDihedral>& dihedrals);
+                          const std::vector<DihedralAngleDataVector>& metadata);
     size_t numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                                const std::vector<RotatableDihedral>& dihedrals);
+                                const std::vector<DihedralAngleDataVector>& metadata);
     DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
     std::string print(const ResidueLink& link);
     std::string print(const RotatableDihedral& dihedral);

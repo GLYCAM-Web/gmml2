@@ -12,9 +12,9 @@ void cds::setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata t
     dihedral.currentMetadataIndex = target.metadataIndex;
 }
 
-bool cds::setSpecificShape(RotatableDihedral& dihedral, std::string dihedralName, std::string selectedRotamer)
+bool cds::setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
+                           std::string dihedralName, std::string selectedRotamer)
 {
-    auto& metadataVector = dihedral.metadataVector;
     if (dihedralName == metadataVector[0].dihedral_angle_name_)
     {
         for (size_t n = 0; n < metadataVector.size(); n++)
@@ -30,15 +30,17 @@ bool cds::setSpecificShape(RotatableDihedral& dihedral, std::string dihedralName
     return false;
 }
 
-std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<RotatableDihedral>& dihedrals)
+std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<RotatableDihedral>& dihedrals,
+                                                      const std::vector<DihedralAngleDataVector>& metadata)
 {
     std::vector<AngleWithMetadata> result;
     result.reserve(dihedrals.size());
 
-    for (auto& dihedral : dihedrals)
+    for (size_t n = 0; n < dihedrals.size(); n++)
     {
+        auto& dihedral        = dihedrals[n];
         auto& metadataIndex   = dihedral.currentMetadataIndex;
-        auto& currentMetadata = dihedral.metadataVector[metadataIndex];
+        auto& currentMetadata = metadata[n][metadataIndex];
         result.push_back(
             {cds::angle(dihedralCoordinates(dihedral)), currentMetadata.default_angle_value_, metadataIndex});
     }
@@ -53,7 +55,7 @@ std::vector<std::vector<cds::AngleWithMetadata>> cds::currentShape(const std::ve
 
     for (auto& a : linkages)
     {
-        result.push_back(currentShape(a.rotatableDihedrals));
+        result.push_back(currentShape(a.rotatableDihedrals, a.dihedralMetadata));
     }
 
     return result;
@@ -75,41 +77,42 @@ void cds::setShape(std::vector<cds::RotatableDihedral>& dihedrals, const std::ve
     }
 }
 
-void cds::setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihedrals)
+void cds::setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihedrals,
+                                       const std::vector<DihedralAngleDataVector>& metadata)
 {
-    for (auto& dihedral : dihedrals)
+    for (size_t n = 0; n < dihedrals.size(); n++)
     {
-        double defaultAngle = dihedral.metadataVector[0].default_angle_value_;
-        setDihedralAngle(dihedral, {defaultAngle, defaultAngle, 0});
+        double defaultAngle = metadata[n][0].default_angle_value_;
+        setDihedralAngle(dihedrals[n], {defaultAngle, defaultAngle, 0});
     }
 }
 
 void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
                                       gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                                      std::vector<RotatableDihedral>& dihedrals)
+                                      std::vector<RotatableDihedral>& dihedrals,
+                                      const std::vector<DihedralAngleDataVector>& metadata)
 {
-    auto randomAngleWithMetadata = [&](size_t index, const DihedralAngleData& metadata)
+    auto randomAngleWithMetadata = [&](size_t index, const DihedralAngleDataVector& metadataVector)
     {
-        double angle = randomAngle(metadata);
+        auto& metadata = metadataVector[index];
+        double angle   = randomAngle(metadata);
         return AngleWithMetadata {angle, metadata.default_angle_value_, index};
     };
 
     if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
     {
-        for (auto& entry : dihedrals)
+        for (size_t n = 0; n < dihedrals.size(); n++)
         {
-            size_t index  = randomMetadata(entry.metadataVector);
-            auto metadata = entry.metadataVector[index];
-            setDihedralAngle(entry, randomAngleWithMetadata(index, metadata));
+            size_t index = randomMetadata(metadata[n]);
+            setDihedralAngle(dihedrals[n], randomAngleWithMetadata(index, metadata[n]));
         }
     }
     else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
     {
-        size_t conformerIndex = randomMetadata(dihedrals.at(0).metadataVector);
-        for (auto& entry : dihedrals)
+        size_t conformerIndex = randomMetadata(metadata[0]);
+        for (size_t n = 0; n < dihedrals.size(); n++)
         {
-            auto metadata = entry.metadataVector[conformerIndex];
-            setDihedralAngle(entry, randomAngleWithMetadata(conformerIndex, metadata));
+            setDihedralAngle(dihedrals[n], randomAngleWithMetadata(conformerIndex, metadata[n]));
         }
     }
 }
@@ -119,26 +122,29 @@ void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, Angle
 {
     for (auto& linkage : linkages)
     {
-        setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotamerType, linkage.rotatableDihedrals);
+        setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotamerType, linkage.rotatableDihedrals,
+                                    linkage.dihedralMetadata);
     }
 }
 
-void cds::setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals, size_t shapeNumber)
+void cds::setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals,
+                                        const std::vector<DihedralAngleDataVector>& metadata, size_t shapeNumber)
 {
-    for (auto& entry : dihedrals)
+    for (size_t n = 0; n < dihedrals.size(); n++)
     {
-        auto& metadata = entry.metadataVector[shapeNumber];
-        setDihedralAngle(entry, {metadata.default_angle_value_, metadata.default_angle_value_, shapeNumber});
+        double defaultAngle = metadata[n][shapeNumber].default_angle_value_;
+        setDihedralAngle(dihedrals[n], {defaultAngle, defaultAngle, shapeNumber});
     }
 }
 
-void cds::setSpecificShape(std::vector<RotatableDihedral>& dihedrals, std::string dihedralName,
+void cds::setSpecificShape(std::vector<RotatableDihedral>& dihedrals,
+                           const std::vector<DihedralAngleDataVector>& metadata, std::string dihedralName,
                            std::string selectedRotamer)
 {
-    for (auto& rotatableDihedral : dihedrals)
+    for (size_t n = 0; n < dihedrals.size(); n++)
     {
         // This will call RotatableDihedrals that don't have dihedralName (phi,psi), and nothing will happen. Hmmm.
-        if (setSpecificShape(rotatableDihedral, dihedralName, selectedRotamer))
+        if (setSpecificShape(dihedrals[n], metadata[n], dihedralName, selectedRotamer))
         {
             return; // Return once you manage to set a shape.
         }

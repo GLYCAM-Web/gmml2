@@ -107,13 +107,14 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
         }
         else // if not a conformer
         {
-            std::vector<cds::RotatableDihedral> rotatableDihedrals = cds::rotatableDihedralsWithMultipleRotamers(
-                linkage.rotatableDihedrals); // only want the rotatabe dihedrals within a linkage
-                                             // that have multiple rotamers. Some bonds won't.
-            for (auto& rotatableDihedral : rotatableDihedrals)
+            std::vector<size_t> rotatableDihedralIndices = cds::rotatableDihedralsWithMultipleRotamers(
+                linkage.dihedralMetadata); // only want the rotatabe dihedrals within a linkage
+                                           // that have multiple rotamers. Some bonds won't.
+            for (size_t index : rotatableDihedralIndices)
             {
                 cds::ResidueLinkage splitLinkage = linkage; // Copy it to get correct info into class
-                splitLinkage.rotatableDihedrals  = {rotatableDihedral};
+                splitLinkage.rotatableDihedrals  = {linkage.rotatableDihedrals[index]};
+                splitLinkage.dihedralMetadata    = {linkage.dihedralMetadata[index]};
                 sortedLinkages.push_back(splitLinkage);
             }
         }

@@ -12,16 +12,20 @@
 
 namespace
 {
+    using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
+    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
     using gmml::MolecularMetadata::GLYCAM::RotamerType;
 
     void wigglePermutationLinkage(int interval, std::vector<cds::RotatableDihedral>& dihedrals,
+                                  const std::vector<DihedralAngleDataVector>& metadata,
                                   std::array<std::vector<Residue*>, 2>& overlapInput)
     {
-        for (auto& dihedral : dihedrals)
+        for (size_t n = 0; n < dihedrals.size(); n++)
         {
+            auto& dihedral       = dihedrals[n];
             auto coordinates     = cds::dihedralCoordinates(dihedral);
             auto input           = cds::dihedralRotationInputData(dihedral, overlapInput);
-            auto& metadataVector = dihedral.metadataVector;
+            auto& metadataVector = metadata[n];
             auto best = cds::wiggleUsingRotamers(coordinates, codeUtils::indexVector(metadataVector), metadataVector,
                                                  interval, input);
             cds::setDihedralAngle(dihedral, best.angle);
@@ -29,14 +33,15 @@ namespace
     }
 
     void wiggleConformerLinkage(int interval, std::vector<cds::RotatableDihedral>& dihedrals,
+                                const std::vector<DihedralAngleDataVector>& metadata,
                                 std::array<std::vector<Residue*>, 2>& overlapInput)
     {
-        size_t numberOfMetadata = dihedrals[0].metadataVector.size();
+        size_t numberOfMetadata = metadata[0].size();
         std::vector<std::vector<cds::AngleWithMetadata>> results;
         results.resize(numberOfMetadata);
         std::vector<cds::AngleOverlap> bestOverlaps;
         bestOverlaps.resize(numberOfMetadata);
-        auto initialShape = cds::currentShape(dihedrals);
+        auto initialShape = cds::currentShape(dihedrals, metadata);
         for (size_t n = 0; n < numberOfMetadata; n++)
         {
             // reset shape between trying out each conformer
@@ -44,11 +49,12 @@ namespace
             {
                 cds::setShape(dihedrals, initialShape);
             }
-            for (auto& dihedral : dihedrals)
+            for (size_t k = 0; k < dihedrals.size(); k++)
             {
+                auto& dihedral   = dihedrals[k];
                 auto coordinates = cds::dihedralCoordinates(dihedral);
                 auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
-                auto best = cds::wiggleUsingRotamers(coordinates, {n}, {dihedral.metadataVector[n]}, interval, input);
+                auto best        = cds::wiggleUsingRotamers(coordinates, {n}, {metadata[k][n]}, interval, input);
                 results[n].push_back(best.angle);
                 bestOverlaps[n] = best;
                 cds::setDihedralAngle(dihedral, best.angle);
@@ -69,13 +75,14 @@ namespace
         //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
         //  rotatable bond in Asn outwards
         auto dihedrals = codeUtils::reverse(linkage.rotatableDihedrals);
+        auto metadata  = codeUtils::reverse(linkage.dihedralMetadata);
         switch (linkage.rotamerType)
         {
             case RotamerType::permutation:
-                wigglePermutationLinkage(interval, dihedrals, overlapInput);
+                wigglePermutationLinkage(interval, dihedrals, metadata, overlapInput);
                 return;
             case RotamerType::conformer:
-                wiggleConformerLinkage(interval, dihedrals, overlapInput);
+                wiggleConformerLinkage(interval, dihedrals, metadata, overlapInput);
                 return;
         }
     }

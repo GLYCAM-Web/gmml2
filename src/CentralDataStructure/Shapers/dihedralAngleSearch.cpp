@@ -266,12 +266,13 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<std
 }
 
 cds::AngleOverlap cds::wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral,
+                                                       const DihedralAngleDataVector& metadataVector,
                                                        std::vector<cds::Atom*>& overlapAtomSet1,
                                                        std::vector<cds::Atom*>& overlapAtomSet2, size_t metadataIndex,
                                                        const DihedralAngleData& metadata, std::vector<double> angles)
 {
     size_t currentMetadataIndex = dihedral.currentMetadataIndex;
-    auto& currentMetadata       = dihedral.metadataVector[currentMetadataIndex];
+    auto& currentMetadata       = metadataVector[currentMetadataIndex];
     AngleWithMetadata initial   = {cds::angle(dihedralCoordinates(dihedral)), currentMetadata.default_angle_value_,
                                    currentMetadataIndex};
     std::vector<cds::AngleOverlap> results;
@@ -290,15 +291,16 @@ cds::AngleOverlap cds::wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedr
 
 // User requested gg, this prevents flipping into gt like the above would do. i.e. cb won't want a flip, gp would.
 cds::AngleOverlap cds::wiggleWithinCurrentRotamer(cds::RotatableDihedral& dihedral,
+                                                  const DihedralAngleDataVector& metadataVector,
                                                   std::vector<cds::Atom*>& overlapAtomSet1,
                                                   std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
     size_t currentMetadataIndex = dihedral.currentMetadataIndex;
-    auto& metadata              = dihedral.metadataVector[currentMetadataIndex];
+    auto& metadata              = metadataVector[currentMetadataIndex];
     Bounds bounds               = angleBounds(metadata);
     // Set to lowest deviation, work through to highest. Set best value and return it for reference.
-    return wiggleWithinRangesDistanceCheck(dihedral, overlapAtomSet1, overlapAtomSet2, currentMetadataIndex, metadata,
-                                           wiggleAngles(bounds, angleIncrement));
+    return wiggleWithinRangesDistanceCheck(dihedral, metadataVector, overlapAtomSet1, overlapAtomSet2,
+                                           currentMetadataIndex, metadata, wiggleAngles(bounds, angleIncrement));
 }
 
 cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordinates,
@@ -319,22 +321,26 @@ cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordi
 }
 
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                      const std::vector<DihedralAngleDataVector>& metadata,
                                       std::vector<cds::Atom*>& overlapAtomSet1,
                                       std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
-    for (auto& dihedral : dihedrals)
+    for (size_t n = 0; n < dihedrals.size(); n++)
     {
-        auto best = wiggleWithinCurrentRotamer(dihedral, overlapAtomSet1, overlapAtomSet2, angleIncrement);
+        auto& dihedral = dihedrals[n];
+        auto best = wiggleWithinCurrentRotamer(dihedral, metadata[n], overlapAtomSet1, overlapAtomSet2, angleIncrement);
         setDihedralAngle(dihedral, best.angle);
     }
 }
 
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                      const std::vector<DihedralAngleDataVector>& metadata,
                                       const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement)
 {
-    for (auto& dihedral : dihedrals)
+    for (size_t n = 0; n < dihedrals.size(); n++)
     {
-        const DihedralAngleDataVector rotamer {dihedral.metadataVector[dihedral.currentMetadataIndex]};
+        auto& dihedral = dihedrals[n];
+        const DihedralAngleDataVector rotamer {metadata[n][dihedral.currentMetadataIndex]};
         std::vector<size_t> index {dihedral.currentMetadataIndex};
         auto coordinates = dihedralCoordinates(dihedral);
         auto input       = dihedralRotationInputData(dihedral, residues);

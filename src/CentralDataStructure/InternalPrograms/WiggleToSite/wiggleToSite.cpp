@@ -93,9 +93,9 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
         for (auto& linkage : codeUtils::shuffleVector(rng, this->getWiggleLinkages()))
         {
-            auto recordedShape = cds::currentShape(linkage.rotatableDihedrals);
+            auto recordedShape = cds::currentShape(linkage.rotatableDihedrals, linkage.dihedralMetadata);
             cds::setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotamerType,
-                                             linkage.rotatableDihedrals);
+                                             linkage.rotatableDihedrals, linkage.dihedralMetadata);
             double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
             if (this->acceptDistance(useMonteCarlo, acceptance) && this->acceptOverlaps())
             {
@@ -149,7 +149,7 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
     std::cout << "\nLinkages I behold:\n" << std::endl;
     for (auto& linkage : this->getWiggleLinkages())
     {
-        std::cout << linkage.name << ": " << cds::numberOfShapes(linkage.rotamerType, linkage.rotatableDihedrals)
+        std::cout << linkage.name << ": " << cds::numberOfShapes(linkage.rotamerType, linkage.dihedralMetadata)
                   << std::endl;
     }
     return this->getWiggleLinkages();

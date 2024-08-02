@@ -25,6 +25,5 @@ namespace cds
 
     Bounds angleBounds(const DihedralAngleData& metadata);
     DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
-    std::string likelyName(const DihedralAngleDataVector& entries);
 } // namespace cds
 #endif

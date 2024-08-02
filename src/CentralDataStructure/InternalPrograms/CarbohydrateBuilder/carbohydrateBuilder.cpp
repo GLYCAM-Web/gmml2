@@ -73,7 +73,8 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
         cds::ResidueLinkage* currentLinkage =
             cdsSelections::selectLinkageWithIndex(this->carbohydrate_.GetGlycosidicLinkages(), currentLinkageIndex);
         std::string standardDihedralName = this->convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
-        cds::setSpecificShape(currentLinkage->rotatableDihedrals, standardDihedralName, rotamerInfo.selectedRotamer);
+        cds::setSpecificShape(currentLinkage->rotatableDihedrals, currentLinkage->dihedralMetadata,
+                              standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
     this->carbohydrate_.ResolveOverlaps();
@@ -105,17 +106,20 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
         // std::cout << "linko nameo: " << linkage.GetName() << std::endl;
         cdsCondensedSequence::DihedralOptionsVector possibleRotamers, likelyRotamers;
         std::vector<std::string> buffer;
-        auto multipleRotamerDihedrals = cds::rotatableDihedralsWithMultipleRotamers(linkage.rotatableDihedrals);
-        for (auto& rotatableDihedral : multipleRotamerDihedrals)
+        std::vector<size_t> multipleRotamerDihedralIndices =
+            cds::rotatableDihedralsWithMultipleRotamers(linkage.dihedralMetadata);
+        for (size_t index : multipleRotamerDihedralIndices)
         {
-            for (auto& metadata : rotatableDihedral.metadataVector)
+            auto& metadataVector = linkage.dihedralMetadata[index];
+            for (auto& metadata : metadataVector)
             {
                 buffer.push_back(metadata.rotamer_name_);
             }
-            std::string dihedralName = cds::likelyName(rotatableDihedral.metadataVector);
+            auto likely              = cds::likelyMetadata(metadataVector);
+            std::string dihedralName = likely.empty() ? "Boo" : likely[0].dihedral_angle_name_;
             possibleRotamers.emplace_back(dihedralName, buffer);
             buffer.clear();
-            for (auto& metadata : cds::likelyMetadata(rotatableDihedral.metadataVector))
+            for (auto& metadata : likely)
             {
                 buffer.push_back(metadata.rotamer_name_);
             }
@@ -123,7 +127,7 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
             buffer.clear();
         }
         // If there are multiple rotamers for this linkage
-        if (!multipleRotamerDihedrals.empty())
+        if (!multipleRotamerDihedralIndices.empty())
         { // Build struct in vector with emplace_back via constructor in struct
             auto& linkageResidues = linkage.link.residues;
             userOptionsForSequence.emplace_back(
@@ -143,13 +147,13 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
                                                                  std::vector<cds::ResidueLinkage>::iterator end,
                                                                  int maxRotamers, int rotamerCount)
 {
-    for (size_t shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->rotatableDihedrals);
+    for (size_t shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->dihedralMetadata);
          ++shapeNumber)
     {
         ++rotamerCount;
         if (rotamerCount <= maxRotamers)
         {
-            cds::setSpecificShapeUsingMetadata(linkage->rotatableDihedrals, shapeNumber);
+            cds::setSpecificShapeUsingMetadata(linkage->rotatableDihedrals, linkage->dihedralMetadata, shapeNumber);
             if (std::next(linkage) != end)
             {
                 this->generateLinkagePermutationsRecursively(std::next(linkage), end, maxRotamers, rotamerCount);

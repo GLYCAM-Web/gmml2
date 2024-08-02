@@ -96,7 +96,7 @@ void Carbohydrate::replaceAglycone(cds::Residue* newAglycone)
                                      this->GetReducingResidue());
             cds::ResidueLink link = cds::findResidueLink({this->GetReducingResidue(), newAglycone});
             linkage               = cds::createResidueLinkage(link);
-            cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals);
+            cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals, linkage.dihedralMetadata);
             return;
         }
     }
@@ -168,9 +168,9 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
     for (auto& linkage : glycosidicLinkages_)
     {
         auto rotamerType = linkage.rotamerType;
-        auto& dihedrals  = linkage.rotatableDihedrals;
-        numberOfShapes   *= (likelyShapesOnly ? cds::numberOfLikelyShapes(rotamerType, dihedrals)
-                                              : cds::numberOfShapes(rotamerType, dihedrals));
+        auto& metadata   = linkage.dihedralMetadata;
+        numberOfShapes   *= (likelyShapesOnly ? cds::numberOfLikelyShapes(rotamerType, metadata)
+                                              : cds::numberOfShapes(rotamerType, metadata));
     }
     return numberOfShapes;
 }
@@ -345,10 +345,10 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // residues are added.
     cds::ResidueLink link        = cds::findResidueLink({childResidue, parentResidue});
     cds::ResidueLinkage& linkage = glycosidicLinkages_.emplace_back(cds::createResidueLinkage(link));
-    cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals);
+    cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals, linkage.dihedralMetadata);
     std::vector<cds::Atom*> childAtoms  = childResidue->getAtoms();  // keeps them alive in memory
     std::vector<cds::Atom*> parentAtoms = parentResidue->getAtoms(); // keeps them alive in memory
-    cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, childAtoms, parentAtoms, 5);
+    cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata, childAtoms, parentAtoms, 5);
     return;
 }
 
@@ -418,7 +418,7 @@ void Carbohydrate::SetDefaultShapeUsingMetadata()
 {
     for (auto& linkage : glycosidicLinkages_)
     {
-        cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals);
+        cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals, linkage.dihedralMetadata);
     }
     return;
 }
@@ -427,7 +427,7 @@ void Carbohydrate::ResolveOverlaps()
 {
     for (auto& linkage : glycosidicLinkages_)
     {
-        cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals,
+        cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata,
                                          {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues}, 5);
     }
     return;

@@ -34,18 +34,23 @@ namespace cds
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
     std::array<DihedralRotationData, 2> dihedralRotationInputData(RotatableDihedral& dihedral,
                                                                   const std::array<std::vector<Residue*>, 2>& residues);
-    AngleOverlap wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral, std::vector<cds::Atom*>& overlapAtomSet1,
+    AngleOverlap wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral,
+                                                 const DihedralAngleDataVector& metadataVector,
+                                                 std::vector<cds::Atom*>& overlapAtomSet1,
                                                  std::vector<cds::Atom*>& overlapAtomSet2, size_t metadataIndex,
                                                  const DihedralAngleData& metadata, std::vector<double> angles);
-    AngleOverlap wiggleWithinCurrentRotamer(RotatableDihedral& dihedral, std::vector<cds::Atom*>& overlapAtomSet1,
+    AngleOverlap wiggleWithinCurrentRotamer(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
+                                            std::vector<cds::Atom*>& overlapAtomSet1,
                                             std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
     AngleOverlap wiggleUsingRotamers(const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
                                      const DihedralAngleDataVector& rotamers, int angleIncrement,
                                      const std::array<DihedralRotationData, 2>& input);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                     const std::vector<DihedralAngleDataVector>& metadata,
                                      std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
                                      int angleIncrement);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                     const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement);
 } // namespace cds
 #endif
