@@ -69,6 +69,7 @@
 ./src/CodeUtils/directories.cpp
 ./src/CodeUtils/files.cpp
 ./src/CodeUtils/logging.cpp
+./src/CodeUtils/random.cpp
 ./src/CodeUtils/strings.cpp
 ./src/CodeUtils/threads.cpp
 ./src/MolecularMetadata/GLYCAM/bondlengthbytypepair.cpp

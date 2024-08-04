@@ -37,5 +37,7 @@ namespace codeUtils
         std::shuffle(vec.begin(), vec.end(), rng);
         return vec;
     }
+
+    std::vector<size_t> weightedRandomOrder(pcg32& rng, std::vector<double> weights);
 } // namespace codeUtils
 #endif
