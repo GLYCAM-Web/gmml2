@@ -63,6 +63,7 @@ namespace gmml
                                                                                        const std::string residue1Name,
                                                                                        const std::string atom2Name,
                                                                                        const std::string residue2Name);
+            std::vector<double> dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector);
         } // namespace GLYCAM
     }     // namespace MolecularMetadata
 } // namespace gmml

@@ -134,7 +134,8 @@ void GlycoproteinBuilder::ResolveOverlaps()
 
     auto randomMetadata = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadataVector)
     {
-        return codeUtils::uniformRandomVectorIndex(rng, metadataVector);
+        auto weights = gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(metadataVector);
+        return codeUtils::weightedRandomOrder(rng, weights);
     };
     auto randomAngle = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
     {

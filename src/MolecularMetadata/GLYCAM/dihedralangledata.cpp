@@ -283,3 +283,16 @@ std::vector<DihedralAngleDataVector> gmml::MolecularMetadata::GLYCAM::getDihedra
     }
     return orderedEntries;
 }
+
+std::vector<double>
+gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector)
+{
+    auto metadataWeight = [](const DihedralAngleData& a)
+    {
+        return a.weight_;
+    };
+
+    std::vector<double> weights;
+    std::transform(metadataVector.begin(), metadataVector.end(), std::back_inserter(weights), metadataWeight);
+    return weights;
+}

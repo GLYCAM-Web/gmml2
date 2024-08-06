@@ -103,13 +103,13 @@ void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, Angle
     {
         for (size_t n = 0; n < dihedrals.size(); n++)
         {
-            size_t index = randomMetadata(metadata[n]);
+            size_t index = randomMetadata(metadata[n])[0];
             setDihedralAngle(dihedrals[n], randomAngleWithMetadata(index, metadata[n]));
         }
     }
     else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
     {
-        size_t conformerIndex = randomMetadata(metadata[0]);
+        size_t conformerIndex = randomMetadata(metadata[0])[0];
         for (size_t n = 0; n < dihedrals.size(); n++)
         {
             setDihedralAngle(dihedrals[n], randomAngleWithMetadata(conformerIndex, metadata[n]));
