@@ -19,7 +19,7 @@ namespace cds
     struct AngleWithMetadata
     {
         double value;
-        double defaultAngle;
+        double preference;
         size_t metadataIndex;
     };
 

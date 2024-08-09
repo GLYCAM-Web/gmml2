@@ -183,7 +183,7 @@ namespace
     }
 
     cds::AngleOverlap WiggleAnglesOverlaps(const cds::DihedralCoordinates dihedral, size_t metadataIndex,
-                                           const DihedralAngleData& metadata, std::vector<double> angles,
+                                           double anglePreference, std::vector<double> angles,
                                            const std::array<cds::DihedralRotationData, 2>& input)
     {
         auto& fixedInput                           = input[0];
@@ -212,7 +212,7 @@ namespace
                                            {movingCoordinates, movingSpheres, movingInput.residueAtoms});
 
             results.push_back({
-                overlaps, cds::AngleWithMetadata {angle, metadata.default_angle_value_, metadataIndex}
+                overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
             });
         }
         return bestOverlapResult(results);
@@ -221,9 +221,9 @@ namespace
 
 size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
 {
-    auto differenceFromDefault = [](AngleOverlap& a)
+    auto differenceFromPreference = [](AngleOverlap& a)
     {
-        return std::abs(a.angle.value - a.angle.defaultAngle);
+        return std::abs(a.angle.value - a.angle.preference);
     };
     size_t bestIndex = 0;
     for (size_t n = 1; n < results.size(); n++)
@@ -231,7 +231,7 @@ size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
         auto a   = results[n];
         auto b   = results[bestIndex];
         int comp = compareOverlaps(a.overlaps, b.overlaps);
-        if ((comp < 0) || ((comp == 0) && differenceFromDefault(a) < differenceFromDefault(b)))
+        if ((comp < 0) || ((comp == 0) && differenceFromPreference(a) < differenceFromPreference(b)))
         {
             bestIndex = n;
         }
@@ -266,25 +266,23 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<std
 }
 
 cds::AngleOverlap cds::wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral,
-                                                       const DihedralAngleDataVector& metadataVector,
+                                                       const AngleSearchPreference& preference,
                                                        std::vector<cds::Atom*>& overlapAtomSet1,
                                                        std::vector<cds::Atom*>& overlapAtomSet2, size_t metadataIndex,
-                                                       const DihedralAngleData& metadata, std::vector<double> angles)
+                                                       std::vector<double> angles)
 {
     size_t currentMetadataIndex = dihedral.currentMetadataIndex;
-    auto& currentMetadata       = metadataVector[currentMetadataIndex];
-    AngleWithMetadata initial   = {cds::angle(dihedralCoordinates(dihedral)), currentMetadata.default_angle_value_,
+    AngleWithMetadata initial   = {cds::angle(dihedralCoordinates(dihedral)), preference.angles[currentMetadataIndex],
                                    currentMetadataIndex};
     std::vector<cds::AngleOverlap> results;
     for (double angle : angles)
     {
-        AngleWithMetadata angleWithMetadata = {angle, metadata.default_angle_value_, metadataIndex};
+        AngleWithMetadata angleWithMetadata = {angle, preference.angles[metadataIndex], metadataIndex};
         setDihedralAngle(dihedral, angleWithMetadata);
         cds::Overlap overlaps = cds::CountOverlappingAtoms(overlapAtomSet1, overlapAtomSet2);
 
         results.push_back({overlaps, angleWithMetadata});
     }
-    // reset to initial state until this function can be made stateless
     setDihedralAngle(dihedral, initial);
     return bestOverlapResult(results);
 }
@@ -292,28 +290,32 @@ cds::AngleOverlap cds::wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedr
 // User requested gg, this prevents flipping into gt like the above would do. i.e. cb won't want a flip, gp would.
 cds::AngleOverlap cds::wiggleWithinCurrentRotamer(cds::RotatableDihedral& dihedral,
                                                   const DihedralAngleDataVector& metadataVector,
+                                                  const AngleSearchPreference& preference,
                                                   std::vector<cds::Atom*>& overlapAtomSet1,
                                                   std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
     size_t currentMetadataIndex = dihedral.currentMetadataIndex;
-    auto& metadata              = metadataVector[currentMetadataIndex];
-    Bounds bounds               = angleBounds(metadata);
+    if (preference.metadataOrder.size() != 1 || preference.metadataOrder[0] != currentMetadataIndex)
+    {
+        throw std::runtime_error("wrong preference for current rotamer");
+    }
+    Bounds bounds = angleBounds(metadataVector[currentMetadataIndex]);
     // Set to lowest deviation, work through to highest. Set best value and return it for reference.
-    return wiggleWithinRangesDistanceCheck(dihedral, metadataVector, overlapAtomSet1, overlapAtomSet2,
-                                           currentMetadataIndex, metadata, wiggleAngles(bounds, angleIncrement));
+    return wiggleWithinRangesDistanceCheck(dihedral, preference, overlapAtomSet1, overlapAtomSet2, currentMetadataIndex,
+                                           wiggleAngles(bounds, angleIncrement));
 }
 
 cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordinates,
                                            const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
-                                           int angleIncrement, const std::array<cds::DihedralRotationData, 2>& input)
+                                           const AngleSearchPreference& preference, int angleIncrement,
+                                           const std::array<cds::DihedralRotationData, 2>& input)
 {
     std::vector<AngleOverlap> results;
-    for (size_t n = 0; n < rotamers.size(); n++)
+    for (size_t n : preference.metadataOrder)
     {
-        const auto& rotamer = rotamers[n];
-        Bounds bounds       = angleBounds(rotamer);
-        AngleOverlap best =
-            WiggleAnglesOverlaps(coordinates, indices[n], rotamer, wiggleAngles(bounds, angleIncrement), input);
+        Bounds bounds     = angleBounds(rotamers[n]);
+        AngleOverlap best = WiggleAnglesOverlaps(coordinates, indices[n], preference.angles[n],
+                                                 wiggleAngles(bounds, angleIncrement), input);
         results.push_back(best);
     }
 
@@ -322,29 +324,79 @@ cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordi
 
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
+                                      const std::vector<AngleSearchPreference>& preferences,
                                       std::vector<cds::Atom*>& overlapAtomSet1,
                                       std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
         auto& dihedral = dihedrals[n];
-        auto best = wiggleWithinCurrentRotamer(dihedral, metadata[n], overlapAtomSet1, overlapAtomSet2, angleIncrement);
+        auto best = wiggleWithinCurrentRotamer(dihedral, metadata[n], preferences[n], overlapAtomSet1, overlapAtomSet2,
+                                               angleIncrement);
         setDihedralAngle(dihedral, best.angle);
     }
 }
 
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
+                                      const std::vector<AngleSearchPreference>& preference,
                                       const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
         auto& dihedral = dihedrals[n];
-        const DihedralAngleDataVector rotamer {metadata[n][dihedral.currentMetadataIndex]};
         std::vector<size_t> index {dihedral.currentMetadataIndex};
         auto coordinates = dihedralCoordinates(dihedral);
         auto input       = dihedralRotationInputData(dihedral, residues);
-        auto best        = wiggleUsingRotamers(coordinates, index, rotamer, angleIncrement, input);
+        auto best        = wiggleUsingRotamers(coordinates, index, metadata[n], preference[n], angleIncrement, input);
         setDihedralAngle(dihedral, best.angle);
     }
+}
+
+std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(const ResidueLinkageShapePreference& preference)
+{
+    if (std::holds_alternative<ConformerShapePreference>(preference))
+    {
+        auto pref = std::get<ConformerShapePreference>(preference);
+        if (pref.metadataOrder.size() != 1)
+        {
+            throw std::runtime_error(
+                "cannot construct search preference for conformer with multiple available rotamers");
+        }
+        std::vector<AngleSearchPreference> result;
+        result.reserve(pref.angles.size());
+        for (auto& a : pref.angles)
+        {
+            result.push_back({a, pref.metadataOrder});
+        }
+        return result;
+    }
+    else if (std::holds_alternative<PermutationShapePreference>(preference))
+    {
+
+        auto pref = std::get<PermutationShapePreference>(preference);
+        std::vector<AngleSearchPreference> result;
+        result.reserve(pref.angles.size());
+        for (size_t n = 0; n < pref.angles.size(); n++)
+        {
+            result.push_back({pref.angles[n], pref.metadataOrder[n]});
+        }
+        return result;
+    }
+    else
+    {
+        throw std::runtime_error("unhandled linkage shape preference in cds::angleSearchPreference");
+    }
+}
+
+std::vector<std::vector<cds::AngleSearchPreference>>
+cds::angleSearchPreference(const std::vector<ResidueLinkageShapePreference>& preferences)
+{
+    std::vector<std::vector<AngleSearchPreference>> result;
+    result.reserve(preferences.size());
+    for (auto& a : preferences)
+    {
+        result.push_back(angleSearchPreference(a));
+    }
+    return result;
 }

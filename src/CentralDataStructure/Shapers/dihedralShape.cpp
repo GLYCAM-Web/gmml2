@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 
+#include <variant>
+
 using cds::RotatableDihedral;
 
 void cds::setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata target)
@@ -28,6 +30,24 @@ bool cds::setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataV
         }
     }
     return false;
+}
+
+void cds::setSpecificShape(std::vector<RotatableDihedral>& dihedrals,
+                           const std::vector<DihedralAngleDataVector>& metadata, std::string dihedralName,
+                           std::string selectedRotamer)
+{
+    for (size_t n = 0; n < dihedrals.size(); n++)
+    {
+        // This will call RotatableDihedrals that don't have dihedralName (phi,psi), and nothing will happen. Hmmm.
+        if (setSpecificShape(dihedrals[n], metadata[n], dihedralName, selectedRotamer))
+        {
+            return; // Return once you manage to set a shape.
+        }
+    }
+    std::string errorMessage = "Did not set " + dihedralName + " to " + selectedRotamer +
+                               " as requested in ResidueLinkage::SetSpecificShape()";
+    gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
+    throw std::runtime_error(errorMessage);
 }
 
 std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<RotatableDihedral>& dihedrals,
@@ -77,80 +97,185 @@ void cds::setShape(std::vector<cds::RotatableDihedral>& dihedrals, const std::ve
     }
 }
 
-void cds::setDefaultShapeUsingMetadata(std::vector<cds::RotatableDihedral>& dihedrals,
-                                       const std::vector<DihedralAngleDataVector>& metadata)
+void cds::setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference)
 {
-    for (size_t n = 0; n < dihedrals.size(); n++)
+    auto& dihedrals = linkage.rotatableDihedrals;
+    if (linkage.rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
     {
-        double defaultAngle = metadata[n][0].default_angle_value_;
-        setDihedralAngle(dihedrals[n], {defaultAngle, defaultAngle, 0});
+        if (!std::holds_alternative<ConformerShapePreference>(preference))
+        {
+            throw std::runtime_error("expected but did not receive ConformerShapePreference for conformer linkage");
+        }
+        ConformerShapePreference pref = std::get<ConformerShapePreference>(preference);
+        size_t metadataIndex          = pref.metadataOrder[0];
+        for (size_t n = 0; n < dihedrals.size(); n++)
+        {
+            double angle = pref.angles[n][metadataIndex];
+            setDihedralAngle(dihedrals[n], {angle, angle, metadataIndex});
+        }
+    }
+    else
+    {
+        if (!std::holds_alternative<PermutationShapePreference>(preference))
+        {
+            throw std::runtime_error("expected but did not receive PermutationShapePreference for permutation linkage");
+        }
+        PermutationShapePreference pref = std::get<PermutationShapePreference>(preference);
+        for (size_t n = 0; n < dihedrals.size(); n++)
+        {
+            size_t metadataIndex = pref.metadataOrder[n][0];
+            double angle         = pref.angles[n][metadataIndex];
+            setDihedralAngle(dihedrals[n], {angle, angle, metadataIndex});
+        }
     }
 }
 
-void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
-                                      gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                                      std::vector<RotatableDihedral>& dihedrals,
-                                      const std::vector<DihedralAngleDataVector>& metadata)
+void cds::setShapeToPreference(std::vector<ResidueLinkage>& linkages,
+                               const std::vector<ResidueLinkageShapePreference>& preferences)
 {
-    auto randomAngleWithMetadata = [&](size_t index, const DihedralAngleDataVector& metadataVector)
+    for (size_t n = 0; n < linkages.size(); n++)
     {
-        auto& metadata = metadataVector[index];
-        double angle   = randomAngle(metadata);
-        return AngleWithMetadata {angle, metadata.default_angle_value_, index};
+        setShapeToPreference(linkages[n], preferences[n]);
+    }
+}
+
+cds::ResidueLinkageShapePreference cds::linkageShapePreference(MetadataDistribution metadataDistribution,
+                                                               AngleDistribution angleDistribution,
+                                                               const ResidueLinkage& linkage)
+{
+    std::vector<std::vector<double>> angles;
+    angles.resize(linkage.dihedralMetadata.size());
+    for (size_t n = 0; n < linkage.dihedralMetadata.size(); n++)
+    {
+        for (auto& metadata : linkage.dihedralMetadata[n])
+        {
+            angles[n].push_back(angleDistribution(metadata));
+        }
+    }
+    if (linkage.rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+    {
+        auto order = metadataDistribution(linkage.dihedralMetadata[0]);
+        return ConformerShapePreference {angles, order};
+    }
+    else
+    {
+        std::vector<std::vector<size_t>> order;
+        order.reserve(linkage.dihedralMetadata.size());
+        for (auto& metadataVector : linkage.dihedralMetadata)
+        {
+            order.push_back(metadataDistribution(metadataVector));
+        }
+        return PermutationShapePreference {angles, order};
+    }
+}
+
+cds::ResidueLinkageShapePreference cds::defaultShapePreference(const ResidueLinkage& linkage)
+{
+    auto metadataOrder = [](const DihedralAngleDataVector metadataVector)
+    {
+        return codeUtils::indexVector(metadataVector);
     };
+    auto defaultAngle = [](const DihedralAngleData metadata)
+    {
+        return metadata.default_angle_value_;
+    };
+    return linkageShapePreference(metadataOrder, defaultAngle, linkage);
+}
 
-    if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
+cds::ResidueLinkageShapePreference cds::selectedRotamersOnly(MetadataPreferenceSelection metadataSelection,
+                                                             const ResidueLinkage& linkage,
+                                                             const ResidueLinkageShapePreference& preference)
+{
+    if (std::holds_alternative<ConformerShapePreference>(preference))
     {
-        for (size_t n = 0; n < dihedrals.size(); n++)
-        {
-            size_t index = randomMetadata(metadata[n])[0];
-            setDihedralAngle(dihedrals[n], randomAngleWithMetadata(index, metadata[n]));
-        }
+        auto pref = std::get<ConformerShapePreference>(preference);
+        return ConformerShapePreference {pref.angles,
+                                         metadataSelection(pref.metadataOrder, linkage.rotatableDihedrals[0])};
     }
-    else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+    else if (std::holds_alternative<PermutationShapePreference>(preference))
     {
-        size_t conformerIndex = randomMetadata(metadata[0])[0];
-        for (size_t n = 0; n < dihedrals.size(); n++)
+        auto pref  = std::get<PermutationShapePreference>(preference);
+        auto order = pref.metadataOrder;
+        std::vector<std::vector<size_t>> selected;
+        selected.reserve(order.size());
+        for (size_t n = 0; n < order.size(); n++)
         {
-            setDihedralAngle(dihedrals[n], randomAngleWithMetadata(conformerIndex, metadata[n]));
+            selected.push_back(metadataSelection(order[n], linkage.rotatableDihedrals[n]));
         }
+        return PermutationShapePreference {pref.angles, selected};
+    }
+    else
+    {
+        throw std::runtime_error("unhandled linkage shape preference in cds::selectedRotamersOnly");
     }
 }
 
-void cds::setRandomShapeUsingMetadata(MetadataDistribution randomMetadata, AngleDistribution randomAngle,
-                                      std::vector<ResidueLinkage>& linkages)
+cds::ResidueLinkageShapePreference cds::firstRotamerOnly(const ResidueLinkage& linkage,
+                                                         const ResidueLinkageShapePreference& preference)
 {
+    auto first = [](std::vector<size_t> order, const RotatableDihedral&)
+    {
+        return std::vector<size_t> {order[0]};
+    };
+    return selectedRotamersOnly(first, linkage, preference);
+}
+
+cds::ResidueLinkageShapePreference cds::currentRotamerOnly(const ResidueLinkage& linkage,
+                                                           const ResidueLinkageShapePreference& preference)
+{
+    auto current = [](std::vector<size_t>, const RotatableDihedral& dihedral)
+    {
+        return std::vector<size_t> {dihedral.currentMetadataIndex};
+    };
+    return selectedRotamersOnly(current, linkage, preference);
+}
+
+std::vector<cds::ResidueLinkageShapePreference> cds::linkageShapePreference(MetadataDistribution metadataDistribution,
+                                                                            AngleDistribution angleDistribution,
+                                                                            const std::vector<ResidueLinkage>& linkages)
+{
+    std::vector<ResidueLinkageShapePreference> result;
+    result.reserve(linkages.size());
     for (auto& linkage : linkages)
     {
-        setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotamerType, linkage.rotatableDihedrals,
-                                    linkage.dihedralMetadata);
+        result.push_back(linkageShapePreference(metadataDistribution, angleDistribution, linkage));
     }
+    return result;
 }
 
-void cds::setSpecificShapeUsingMetadata(std::vector<RotatableDihedral>& dihedrals,
-                                        const std::vector<DihedralAngleDataVector>& metadata, size_t shapeNumber)
+std::vector<cds::ResidueLinkageShapePreference> cds::defaultShapePreference(const std::vector<ResidueLinkage>& linkages)
 {
-    for (size_t n = 0; n < dihedrals.size(); n++)
+    std::vector<ResidueLinkageShapePreference> result;
+    result.reserve(linkages.size());
+    for (auto& linkage : linkages)
     {
-        double defaultAngle = metadata[n][shapeNumber].default_angle_value_;
-        setDihedralAngle(dihedrals[n], {defaultAngle, defaultAngle, shapeNumber});
+        result.push_back(defaultShapePreference(linkage));
     }
+    return result;
 }
 
-void cds::setSpecificShape(std::vector<RotatableDihedral>& dihedrals,
-                           const std::vector<DihedralAngleDataVector>& metadata, std::string dihedralName,
-                           std::string selectedRotamer)
+std::vector<cds::ResidueLinkageShapePreference>
+cds::firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
+                      const std::vector<ResidueLinkageShapePreference>& preferences)
 {
-    for (size_t n = 0; n < dihedrals.size(); n++)
+    std::vector<ResidueLinkageShapePreference> result;
+    result.reserve(preferences.size());
+    for (size_t n = 0; n < preferences.size(); n++)
     {
-        // This will call RotatableDihedrals that don't have dihedralName (phi,psi), and nothing will happen. Hmmm.
-        if (setSpecificShape(dihedrals[n], metadata[n], dihedralName, selectedRotamer))
-        {
-            return; // Return once you manage to set a shape.
-        }
+        result.push_back(firstRotamerOnly(linkages[n], preferences[n]));
     }
-    std::string errorMessage = "Did not set " + dihedralName + " to " + selectedRotamer +
-                               " as requested in ResidueLinkage::SetSpecificShape()";
-    gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
-    throw std::runtime_error(errorMessage);
+    return result;
+}
+
+std::vector<cds::ResidueLinkageShapePreference>
+cds::currentRotamerOnly(const std::vector<ResidueLinkage>& linkages,
+                        const std::vector<ResidueLinkageShapePreference>& preferences)
+{
+    std::vector<ResidueLinkageShapePreference> result;
+    result.reserve(preferences.size());
+    for (size_t n = 0; n < preferences.size(); n++)
+    {
+        result.push_back(currentRotamerOnly(linkages[n], preferences[n]));
+    }
+    return result;
 }

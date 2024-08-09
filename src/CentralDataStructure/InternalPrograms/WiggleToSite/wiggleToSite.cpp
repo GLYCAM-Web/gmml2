@@ -95,8 +95,7 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         for (auto& linkage : codeUtils::shuffleVector(rng, this->getWiggleLinkages()))
         {
             auto recordedShape = cds::currentShape(linkage.rotatableDihedrals, linkage.dihedralMetadata);
-            cds::setRandomShapeUsingMetadata(randomMetadata, randomAngle, linkage.rotamerType,
-                                             linkage.rotatableDihedrals, linkage.dihedralMetadata);
+            cds::setShapeToPreference(linkage, cds::linkageShapePreference(randomMetadata, randomAngle, linkage));
             double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
             if (this->acceptDistance(useMonteCarlo, acceptance) && this->acceptOverlaps())
             {

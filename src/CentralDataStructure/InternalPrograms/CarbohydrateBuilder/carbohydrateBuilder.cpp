@@ -147,13 +147,22 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
                                                                  std::vector<cds::ResidueLinkage>::iterator end,
                                                                  int maxRotamers, int rotamerCount)
 {
+    auto defaultAngle = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    {
+        return metadata.default_angle_value_;
+    };
+
     for (size_t shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->dihedralMetadata);
          ++shapeNumber)
     {
         ++rotamerCount;
         if (rotamerCount <= maxRotamers)
         {
-            cds::setSpecificShapeUsingMetadata(linkage->rotatableDihedrals, linkage->dihedralMetadata, shapeNumber);
+            auto specificShape = [&shapeNumber](const gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector)
+            {
+                return std::vector<size_t> {shapeNumber};
+            };
+            cds::setShapeToPreference(*linkage, cds::linkageShapePreference(specificShape, defaultAngle, *linkage));
             if (std::next(linkage) != end)
             {
                 this->generateLinkagePermutationsRecursively(std::next(linkage), end, maxRotamers, rotamerCount);

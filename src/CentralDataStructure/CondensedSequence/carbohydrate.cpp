@@ -96,7 +96,7 @@ void Carbohydrate::replaceAglycone(cds::Residue* newAglycone)
                                      this->GetReducingResidue());
             cds::ResidueLink link = cds::findResidueLink({this->GetReducingResidue(), newAglycone});
             linkage               = cds::createResidueLinkage(link);
-            cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals, linkage.dihedralMetadata);
+            cds::setShapeToPreference(linkage, cds::defaultShapePreference(linkage));
             return;
         }
     }
@@ -345,10 +345,13 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // residues are added.
     cds::ResidueLink link        = cds::findResidueLink({childResidue, parentResidue});
     cds::ResidueLinkage& linkage = glycosidicLinkages_.emplace_back(cds::createResidueLinkage(link));
-    cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals, linkage.dihedralMetadata);
+    auto shapePreference         = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
+    cds::setShapeToPreference(linkage, shapePreference);
     std::vector<cds::Atom*> childAtoms  = childResidue->getAtoms();  // keeps them alive in memory
     std::vector<cds::Atom*> parentAtoms = parentResidue->getAtoms(); // keeps them alive in memory
-    cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata, childAtoms, parentAtoms, 5);
+    auto searchPreference               = cds::angleSearchPreference(shapePreference);
+    cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, childAtoms,
+                                     parentAtoms, 5);
     return;
 }
 
@@ -418,7 +421,7 @@ void Carbohydrate::SetDefaultShapeUsingMetadata()
 {
     for (auto& linkage : glycosidicLinkages_)
     {
-        cds::setDefaultShapeUsingMetadata(linkage.rotatableDihedrals, linkage.dihedralMetadata);
+        cds::setShapeToPreference(linkage, cds::defaultShapePreference(linkage));
     }
     return;
 }
@@ -427,7 +430,9 @@ void Carbohydrate::ResolveOverlaps()
 {
     for (auto& linkage : glycosidicLinkages_)
     {
-        cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata,
+        auto preference =
+            cds::angleSearchPreference(cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
+        cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
                                          {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues}, 5);
     }
     return;
