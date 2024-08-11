@@ -61,8 +61,8 @@ std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<Rotatabl
         auto& dihedral        = dihedrals[n];
         auto& metadataIndex   = dihedral.currentMetadataIndex;
         auto& currentMetadata = metadata[n][metadataIndex];
-        result.push_back(
-            {cds::angle(dihedralCoordinates(dihedral)), currentMetadata.default_angle_value_, metadataIndex});
+        result.push_back({constants::toDegrees(cds::angle(dihedralCoordinates(dihedral))),
+                          currentMetadata.default_angle_value_, metadataIndex});
     }
 
     return result;
