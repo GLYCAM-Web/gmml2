@@ -13,7 +13,7 @@ namespace cds
 {
     struct Overlap
     {
-        uint count;
+        double count;
         double weight;
 
         inline Overlap operator+(const Overlap& a) const
@@ -21,7 +21,7 @@ namespace cds
             return {count + a.count, weight + a.weight};
         }
 
-        inline Overlap operator*(uint a) const
+        inline Overlap operator*(double a) const
         {
             return {count * a, weight * a};
         }
@@ -45,11 +45,18 @@ namespace cds
         }
     }
 
+    struct ResiduesWithOverlapWeight
+    {
+        std::vector<Residue*> residues;
+        std::vector<double> weights;
+    };
+
     struct ResidueAtomOverlapInput
     {
         std::vector<Sphere> atomCoordinates;
         std::vector<Sphere> boundingSpheres;
         const std::vector<std::pair<size_t, size_t>> residueAtoms;
+        const std::vector<double> residueWeights;
     };
 
     struct ResidueAtomOverlapInputReference
@@ -57,12 +64,14 @@ namespace cds
         std::vector<Sphere>& atomCoordinates;
         std::vector<Sphere>& boundingSpheres;
         const std::vector<std::pair<size_t, size_t>>& residueAtoms;
+        const std::vector<double>& residueWeights;
     };
 
-    ResidueAtomOverlapInput toOverlapInput(const std::vector<Residue*>& residues);
+    ResidueAtomOverlapInput toOverlapInput(const ResiduesWithOverlapWeight& input);
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
     Overlap CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
                                   const ResidueAtomOverlapInputReference& moving);
-    Overlap CountOverlappingAtoms(const std::vector<Residue*>& residuesA, const std::vector<Residue*>& residuesB);
+    Overlap CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
+                                  const ResiduesWithOverlapWeight& residuesB);
 } // namespace cds
 #endif

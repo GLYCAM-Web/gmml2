@@ -18,7 +18,7 @@ namespace
 
     void wigglePermutationLinkage(double interval, cds::ResidueLinkage& linkage,
                                   const cds::PermutationShapePreference& shapePreference,
-                                  std::array<std::vector<Residue*>, 2>& overlapInput)
+                                  std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals = linkage.rotatableDihedrals;
         auto& metadata  = linkage.dihedralMetadata;
@@ -40,7 +40,7 @@ namespace
 
     void wiggleConformerLinkage(double interval, cds::ResidueLinkage& linkage,
                                 const cds::ConformerShapePreference& shapePreference,
-                                std::array<std::vector<Residue*>, 2>& overlapInput)
+                                std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals         = linkage.rotatableDihedrals;
         auto& metadata          = linkage.dihedralMetadata;
@@ -80,11 +80,18 @@ namespace
 
     void wiggleLinkage(double interval, cds::ResidueLinkage& linkage,
                        const cds::ResidueLinkageShapePreference& shapePreference,
-                       const std::vector<Residue*>& overlapResidues)
+                       const cds::ResiduesWithOverlapWeight& overlapResidues)
     {
-        std::array<std::vector<Residue*>, 2> overlapInput = {
-            codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, overlapResidues),
-            linkage.reducingOverlapResidues};
+        auto& nonReducing = linkage.nonReducingOverlapResidues;
+        std::vector<double> nonReducingWeight(nonReducing.size(), 1.0);
+        auto& reducing = linkage.reducingOverlapResidues;
+        std::vector<double> reducingWeight(reducing.size(), 1.0);
+        std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput = {
+            cds::ResiduesWithOverlapWeight {
+                                            codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, overlapResidues.residues),
+                                            codeUtils::vectorAppend(nonReducingWeight, overlapResidues.weights)},
+            cds::ResiduesWithOverlapWeight {reducing, reducingWeight}
+        };
         switch (linkage.rotamerType)
         {
             case RotamerType::permutation:
@@ -103,32 +110,26 @@ namespace
     }
 } // namespace
 
-cds::Overlap countGlycositeOverlaps(const std::vector<Residue*>& overlapResidues,
-                                    const std::vector<Residue*>& glycositeResidues)
-{
-    return cds::CountOverlappingAtoms(overlapResidues, glycositeResidues);
-}
-
-cds::Overlap countTotalOverlaps(const std::vector<std::vector<Residue*>>& overlapResidues,
-                                const std::vector<std::vector<Residue*>>& glycositeResidues)
+cds::Overlap countTotalOverlaps(const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     cds::Overlap overlap {0, 0.0};
     for (size_t n = 0; n < overlapResidues.size(); n++)
     {
-        overlap += countGlycositeOverlaps(overlapResidues[n], glycositeResidues[n]);
+        overlap += cds::CountOverlappingAtoms(overlapResidues[n], glycositeResidues[n]);
     }
     return overlap;
 }
 
 std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
-                                              const std::vector<std::vector<Residue*>>& overlapResidues,
-                                              const std::vector<std::vector<Residue*>>& glycositeResidues)
+                                              const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                              const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     std::vector<size_t> indices;
     cds::Overlap overlap {0, 0.0};
     for (size_t n = 0; n < overlapResidues.size(); n++)
     {
-        overlap = countGlycositeOverlaps(overlapResidues[n], glycositeResidues[n]);
+        overlap = cds::CountOverlappingAtoms(overlapResidues[n], glycositeResidues[n]);
         if (overlap.count > overlapTolerance)
         {
             indices.push_back(n);
@@ -141,8 +142,8 @@ cds::Overlap
 wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly, double interval,
                         std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                         const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                        const std::vector<std::vector<Residue*>>& overlapResidues,
-                        const std::vector<std::vector<Residue*>>& glycositeResidues)
+                        const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                        const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     int cycle            = 0;
     cds::Overlap overlap = countTotalOverlaps(overlapResidues, glycositeResidues);
@@ -179,8 +180,8 @@ wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bo
 cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bool monte_carlo, int persistCycles,
                            uint overlapTolerance, std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                            std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                           const ResiduesByType& overlapResidues,
-                           const std::vector<std::vector<Residue*>>& glycositeResidues)
+                           const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     std::stringstream logss;
     logss << "Random Decent, persisting for " << persistCycles << " cycles and monte carlo is set as " << std::boolalpha
@@ -193,9 +194,9 @@ cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bo
     };
 
     int cycle                          = 1;
-    cds::Overlap lowest_global_overlap = countTotalOverlaps(overlapResidues.all, glycositeResidues);
+    cds::Overlap lowest_global_overlap = countTotalOverlaps(overlapResidues, glycositeResidues);
     std::vector<size_t> sites_with_overlaps =
-        determineSitesWithOverlap(overlapTolerance, overlapResidues.all, glycositeResidues);
+        determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
     if (sites_with_overlaps.size() == 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Stopping RandomDesent with all overlaps resolved.");
@@ -208,36 +209,27 @@ cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bo
         ++cycle;
         for (auto& currentGlycosite : codeUtils::shuffleVector(rng, sites_with_overlaps))
         {
-            auto siteResidues                     = glycositeResidues[currentGlycosite];
-            auto& otherGlycanResidues             = overlapResidues.glycan[currentGlycosite];
-            auto& otherProteinResidues            = overlapResidues.protein[currentGlycosite];
-            auto& linkages                        = glycosidicLinkages[currentGlycosite];
-            auto recordedShape                    = cds::currentShape(linkages);
-            cds::Overlap previous_glycan_overlap  = countGlycositeOverlaps(otherGlycanResidues, siteResidues);
-            cds::Overlap previous_protein_overlap = countGlycositeOverlaps(otherProteinResidues, siteResidues);
-            auto preferences                      = randomizeShape(linkages);
+            auto siteResidues            = glycositeResidues[currentGlycosite];
+            auto& linkages               = glycosidicLinkages[currentGlycosite];
+            auto recordedShape           = cds::currentShape(linkages);
+            cds::Overlap previousOverlap = cds::CountOverlappingAtoms(overlapResidues[currentGlycosite], siteResidues);
+            auto preferences             = randomizeShape(linkages);
             cds::setShapeToPreference(linkages, preferences);
-            cds::Overlap new_glycan_overlap  = countGlycositeOverlaps(otherGlycanResidues, siteResidues);
-            cds::Overlap new_protein_overlap = countGlycositeOverlaps(otherProteinResidues, siteResidues);
-            int overlap_difference           = (new_glycan_overlap + (new_protein_overlap * 5)).count -
-                                     (previous_glycan_overlap + (previous_protein_overlap * 5)).count;
-            if (overlap_difference >= 0) // if the change made it worse
-            {
-                cds::setShape(linkages, recordedShape);
-            }
-            else if (monte_carlo && !acceptViaMetropolisCriterion(overlap_difference))
+            cds::Overlap newOverlap = cds::CountOverlappingAtoms(overlapResidues[currentGlycosite], siteResidues);
+            double diff             = newOverlap.count - previousOverlap.count;
+            bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+            if (isWorse || (monte_carlo && !acceptViaMetropolisCriterion(diff)))
             {
                 cds::setShape(linkages, recordedShape);
             }
             else
             {
                 glycositePreferences[currentGlycosite] = preferences;
-                gmml::log(__LINE__, __FILE__, gmml::INF,
-                          "RandomDescent accepted a change of " + std::to_string(overlap_difference));
+                gmml::log(__LINE__, __FILE__, gmml::INF, "RandomDescent accepted a change of " + std::to_string(diff));
             }
         }
-        cds::Overlap new_global_overlap = countTotalOverlaps(overlapResidues.all, glycositeResidues);
-        sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues.all, glycositeResidues);
+        cds::Overlap new_global_overlap = countTotalOverlaps(overlapResidues, glycositeResidues);
+        sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
         if (sites_with_overlaps.size() == 0)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Stopping RandomDesent with all overlaps resolved.");
@@ -255,8 +247,8 @@ cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bo
 bool dumbRandomWalk(LinkageShapeRandomizer randomizeShape, uint overlapTolerance, int maxCycles,
                     std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                     std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                    const std::vector<std::vector<Residue*>>& overlapResidues,
-                    const std::vector<std::vector<Residue*>>& glycositeResidues)
+                    const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                    const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Starting DumbRandomWalk.");
     int cycle = 1;

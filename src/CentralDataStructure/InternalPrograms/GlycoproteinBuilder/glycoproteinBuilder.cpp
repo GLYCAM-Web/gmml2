@@ -108,7 +108,16 @@ void GlycoproteinBuilder::ResolveOverlaps()
         glycositeResidues.push_back(glycan->getResidues());
     }
 
-    ResiduesByType overlapResidues;
+    std::vector<cds::ResiduesWithOverlapWeight> glycositeResiduesWithWeights;
+    for (auto& a : glycositeResidues)
+    {
+        glycositeResiduesWithWeights.push_back({a, std::vector<double>(a.size(), 1.0)});
+    }
+
+    double proteinOverlapWeight = 5.0;
+    double glycanOverlapWeight  = 1.0;
+
+    overlapResidues_.clear();
     for (size_t n = 0; n < glycosites_.size(); n++)
     {
         std::vector<Residue*> protein = proteinResidues_;
@@ -120,11 +129,12 @@ void GlycoproteinBuilder::ResolveOverlaps()
             codeUtils::insertInto(glycan, otherSite);
         }
 
-        overlapResidues.protein.push_back(protein);
-        overlapResidues.glycan.push_back(glycan);
-        overlapResidues.all.push_back(codeUtils::vectorAppend(protein, glycan));
+        std::vector<double> proteinWeight(protein.size(), proteinOverlapWeight);
+        std::vector<double> glycanWeight(glycan.size(), glycanOverlapWeight);
+
+        overlapResidues_.push_back(
+            {codeUtils::vectorAppend(protein, glycan), codeUtils::vectorAppend(proteinWeight, glycanWeight)});
     }
-    overlapResidues_ = overlapResidues;
 
     int persistCycles    = GetPersistCycles();
     int overlapTolerance = GetOverlapTolerance();
@@ -148,8 +158,8 @@ void GlycoproteinBuilder::ResolveOverlaps()
     };
 
     auto resolveOverlapsWithWiggler = [&](std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                                          const ResiduesByType& overlapResidues,
-                                          const std::vector<std::vector<Residue*>>& glycositeResidues)
+                                          const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                          const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
     {
         std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
         for (auto& linkages : glycosidicLinkages)
@@ -160,7 +170,7 @@ void GlycoproteinBuilder::ResolveOverlaps()
         }
         // First try a very fast/cheap approach
         if (dumbRandomWalk(randomizeShape, overlapTolerance, 10, glycosidicLinkages, glycositePreferences,
-                           overlapResidues.all,
+                           overlapResidues,
                            glycositeResidues)) // returns true if it fully resolves overlaps.
         {
             return;
@@ -170,23 +180,23 @@ void GlycoproteinBuilder::ResolveOverlaps()
         double angleIncrement       = 5;
         cds::Overlap currentOverlap =
             wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
-                                    glycosidicLinkages, glycositePreferences, overlapResidues.all, glycositeResidues);
+                                    glycosidicLinkages, glycositePreferences, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentOverlap.count));
         currentOverlap = randomDescent(rng, randomizeShape, useMonteCarlo, persistCycles, overlapTolerance,
                                        glycosidicLinkages, glycositePreferences, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentOverlap.count));
         currentOverlap =
             wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, false, angleIncrement, glycosidicLinkages,
-                                    glycositePreferences, overlapResidues.all, glycositeResidues);
+                                    glycositePreferences, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap.count));
         currentOverlap =
             wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
-                                    glycosidicLinkages, glycositePreferences, overlapResidues.all, glycositeResidues);
+                                    glycosidicLinkages, glycositePreferences, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap.count));
     };
 
     this->WritePdbFile("glycoprotein_initial");
-    resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues, glycositeResidues);
+    resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues_, glycositeResiduesWithWeights);
     this->PrintDihedralAnglesAndOverlapOfGlycosites();
     this->WritePdbFile("glycoprotein");
     this->WriteOffFile("glycoprotein");
@@ -194,7 +204,7 @@ void GlycoproteinBuilder::ResolveOverlaps()
 
     while (this->GetNumberOfOuputtedStructures() < this->GetNumberOfStructuresToOutput())
     {
-        resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues, glycositeResidues);
+        resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues_, glycositeResiduesWithWeights);
         this->PrintDihedralAnglesAndOverlapOfGlycosites();
         std::stringstream prefix;
         prefix << this->GetNumberOfOuputtedStructures() << "_glycoprotein";
@@ -277,9 +287,12 @@ void GlycoproteinBuilder::PrintDihedralAnglesAndOverlapOfGlycosites()
     std::stringstream logss;
     for (size_t n = 0; n < glycosites_.size(); n++)
     {
-        auto& glycosite = glycosites_[n];
-        logss << "Residue ID: " << glycosite.GetResidue()->getStringId() << ", overlap: "
-              << countGlycositeOverlaps(overlapResidues_.all[n], glycosite.GetGlycan()->getResidues()).count;
+        auto& glycosite     = glycosites_[n];
+        auto glycanResidues = glycosite.GetGlycan()->getResidues();
+        cds::ResiduesWithOverlapWeight glycanResiduesWithWeight {glycanResidues,
+                                                                 std::vector<double>(glycanResidues.size(), 1.0)};
+        logss << "Residue ID: " << glycosite.GetResidue()->getStringId()
+              << ", overlap: " << cds::CountOverlappingAtoms(overlapResidues_[n], glycanResiduesWithWeight).count;
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
     }
     return;

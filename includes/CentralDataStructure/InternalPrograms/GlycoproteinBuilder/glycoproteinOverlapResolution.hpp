@@ -9,37 +9,28 @@
 
 #include <functional>
 
-struct ResiduesByType
-{
-    std::vector<std::vector<cds::Residue*>> protein;
-    std::vector<std::vector<cds::Residue*>> glycan;
-    std::vector<std::vector<cds::Residue*>> all;
-};
-
 typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(std::vector<cds::ResidueLinkage>)>
     LinkageShapeRandomizer;
 
-cds::Overlap countGlycositeOverlaps(const std::vector<Residue*>& overlapResidues,
-                                    const std::vector<Residue*>& glycositeResidues);
-cds::Overlap countTotalOverlaps(const std::vector<std::vector<Residue*>>& overlapResidues,
-                                const std::vector<std::vector<Residue*>>& glycositeResidues);
+cds::Overlap countTotalOverlaps(const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
-                                              const std::vector<std::vector<Residue*>>& overlapResidues,
-                                              const std::vector<std::vector<Residue*>>& glycositeResidues);
+                                              const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                              const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 cds::Overlap
 wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly, double interval,
                         std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                         const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                        const std::vector<std::vector<Residue*>>& overlapResidues,
-                        const std::vector<std::vector<Residue*>>& glycositeResidues);
+                        const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                        const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bool monte_carlo, int persistCycles,
                            uint overlapTolerance, std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                            std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                           const ResiduesByType& overlapResidues,
-                           const std::vector<std::vector<Residue*>>& glycositeResidues);
+                           const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 bool dumbRandomWalk(LinkageShapeRandomizer randomizeShape, uint overlapTolerance, int maxCycles,
                     std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                     std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                    const std::vector<std::vector<Residue*>>& overlapResidues,
-                    const std::vector<std::vector<Residue*>>& glycositeResidues);
+                    const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                    const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 #endif

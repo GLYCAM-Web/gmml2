@@ -61,35 +61,44 @@ namespace
         return result;
     }
 
-    std::array<std::vector<cds::Residue*>, 2>
+    std::array<cds::ResiduesWithOverlapWeight, 2>
     branchedResidueSets(const std::vector<Coordinate*>& movingCoordinates,
-                        const std::array<std::vector<cds::Residue*>, 2>& residues)
+                        const std::array<cds::ResiduesWithOverlapWeight, 2>& input)
     {
         auto residueContainsMovingAtom = [&](cds::Residue* res)
         {
             return codeUtils::contains(movingCoordinates, res->getAtoms()[0]->getCoordinate());
         };
-        auto& setA                         = residues[0];
-        auto& setB                         = residues[1];
-        std::vector<cds::Residue*> newSetA = setB;
-        std::vector<cds::Residue*> newSetB {setA[0]};
-        for (size_t n = 1; n < setA.size(); n++)
+        auto& setA                         = input[0];
+        auto& setB                         = input[1];
+        std::vector<cds::Residue*> newSetA = setB.residues;
+        std::vector<cds::Residue*> newSetB {setA.residues[0]};
+        std::vector<double> newWeightsA = input[1].weights;
+        std::vector<double> newWeightsB {input[0].weights[0]};
+        for (size_t n = 1; n < setA.residues.size(); n++)
         {
-            auto res = setA[n];
+            auto res    = setA.residues[n];
+            uint weight = setA.weights[n];
             if (residueContainsMovingAtom(res))
             {
                 newSetB.push_back(res);
+                newWeightsB.push_back(weight);
             }
             else
             {
                 newSetA.push_back(res);
+                newWeightsB.push_back(weight);
             }
         }
-        return {newSetA, newSetB};
+        return {
+            cds::ResiduesWithOverlapWeight {newSetA, newWeightsA},
+            cds::ResiduesWithOverlapWeight {newSetB, newWeightsB}
+        };
     }
 
-    cds::DihedralRotationData toRotationData(const cds::Sphere bounds, const std::vector<cds::Atom*> movingAtoms,
-                                             const std::vector<cds::Residue*> residues)
+    cds::DihedralRotationData toRotationData(const cds::Sphere bounds, const std::vector<cds::Atom*>& movingAtoms,
+                                             const std::vector<cds::Residue*>& residues,
+                                             const std::vector<double>& residueWeights)
     {
         size_t atomCount = 0;
         for (auto res : residues)
@@ -115,6 +124,8 @@ namespace
         withinRangeResidueAtoms.reserve(residues.size());
         std::vector<cds::Sphere> withinRangeSpheres;
         withinRangeSpheres.reserve(residues.size());
+        std::vector<double> withinRangeWeights;
+        withinRangeWeights.reserve(residues.size());
         std::vector<cds::Sphere> residuePoints;
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
@@ -134,13 +145,14 @@ namespace
                 residuePoints.insert(residuePoints.end(), coordinates.begin() + range.first,
                                      coordinates.begin() + range.second);
                 withinRangeSpheres.push_back(boundingSphere(residuePoints));
+                withinRangeWeights.push_back(residueWeights[n]);
                 withinRangeResidueAtoms.push_back(range);
             }
         }
 
         const auto& firstAtoms   = residues[0]->getAtoms();
         std::vector<bool> moving = movingAtomsWithinResidue(movingAtoms, firstAtoms);
-        return {coordinates, withinRangeSpheres, withinRangeResidueAtoms, moving};
+        return {coordinates, withinRangeSpheres, withinRangeResidueAtoms, withinRangeWeights, moving};
     }
 
     double maxDistanceFrom(const Coordinate& pt, const std::vector<cds::Coordinate*>& coords)
@@ -207,9 +219,9 @@ namespace
             {
                 movingSpheres[n].center = matrix * movingInput.boundingSpheres[n].center;
             }
-            cds::Overlap overlaps =
-                cds::CountOverlappingAtoms({fixedCoordinates, fixedSpheres, fixedInput.residueAtoms},
-                                           {movingCoordinates, movingSpheres, movingInput.residueAtoms});
+            cds::Overlap overlaps = cds::CountOverlappingAtoms(
+                {fixedCoordinates, fixedSpheres, fixedInput.residueAtoms, fixedInput.residueWeights},
+                {movingCoordinates, movingSpheres, movingInput.residueAtoms, movingInput.residueWeights});
 
             results.push_back({
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -245,20 +257,22 @@ cds::AngleOverlap cds::bestOverlapResult(const std::vector<AngleOverlap>& result
 }
 
 std::array<cds::DihedralRotationData, 2>
-cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<std::vector<Residue*>, 2>& residues)
+cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues)
 {
     auto& atoms                      = dihedral.atoms;
     auto& movingCoordinates          = dihedral.movingCoordinates;
     auto dihedralResiduesMovingAtoms = movingAtomsWithinSet(
-        atoms[2], atoms[1], codeUtils::vectorAppend(residues[0][0]->getAtoms(), residues[1][0]->getAtoms()));
+        atoms[2], atoms[1],
+        codeUtils::vectorAppend(residues[0].residues[0]->getAtoms(), residues[1].residues[0]->getAtoms()));
 
     auto centerPoint      = *atoms[1]->getCoordinate();
     double maxDistance    = maxDistanceFrom(centerPoint, movingCoordinates);
     double cutoffDistance = maxDistance + constants::maxCutOff;
 
-    auto rotationData = [&](const std::vector<Residue*>& set)
+    auto rotationData = [&](const cds::ResiduesWithOverlapWeight& set)
     {
-        return toRotationData(Sphere {cutoffDistance, centerPoint}, dihedralResiduesMovingAtoms, set);
+        return toRotationData(Sphere {cutoffDistance, centerPoint}, dihedralResiduesMovingAtoms, set.residues,
+                              set.weights);
     };
 
     auto inputSets = dihedral.isBranchingLinkage ? branchedResidueSets(movingCoordinates, residues) : residues;
@@ -340,7 +354,7 @@ void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
                                       const std::vector<AngleSearchPreference>& preference,
-                                      const std::array<std::vector<cds::Residue*>, 2>& residues, double angleIncrement)
+                                      const std::array<ResiduesWithOverlapWeight, 2>& residues, double angleIncrement)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
     {

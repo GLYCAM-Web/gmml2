@@ -430,10 +430,16 @@ void Carbohydrate::ResolveOverlaps()
 {
     for (auto& linkage : glycosidicLinkages_)
     {
+        auto withWeight = [](const std::vector<Residue*> residues)
+        {
+            return cds::ResiduesWithOverlapWeight {residues, std::vector<double>(residues.size(), 1.0)};
+        };
+
         auto preference =
             cds::angleSearchPreference(cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
-        cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
-                                         {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues}, 5);
+        cds::simpleWiggleCurrentRotamers(
+            linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+            {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)}, 5);
     }
     return;
 }
