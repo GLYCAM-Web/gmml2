@@ -240,10 +240,11 @@ size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
     size_t bestIndex = 0;
     for (size_t n = 1; n < results.size(); n++)
     {
-        auto a   = results[n];
-        auto b   = results[bestIndex];
-        int comp = compareOverlaps(a.overlaps, b.overlaps);
-        if ((comp < 0) || ((comp == 0) && differenceFromPreference(a) < differenceFromPreference(b)))
+        auto a            = results[n];
+        auto b            = results[bestIndex];
+        int comp          = compareOverlaps(a.overlaps, b.overlaps);
+        bool sameMetadata = (a.angle.metadataIndex == b.angle.metadataIndex);
+        if ((comp < 0) || (sameMetadata && (comp == 0) && differenceFromPreference(a) < differenceFromPreference(b)))
         {
             bestIndex = n;
         }
