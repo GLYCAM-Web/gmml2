@@ -336,7 +336,7 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
             auto matrix =
                 cds::rotationTo(std::array<Coordinate, 3> {*parentAtomNeighbor->getCoordinate(),
                                                            *parentAtom->getCoordinate(), *childAtom->getCoordinate()},
-                                constants::degree2Radian(constants::DEFAULT_ANGLE));
+                                constants::toRadians(constants::DEFAULT_ANGLE));
             matrix.rotateCoordinates(childResidue->getCoordinates());
             break;
         }

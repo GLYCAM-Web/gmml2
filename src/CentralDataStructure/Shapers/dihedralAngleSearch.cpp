@@ -196,7 +196,7 @@ namespace
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
-            auto matrix = rotationTo(dihedral, constants::degree2Radian(angle));
+            auto matrix = rotationTo(dihedral, constants::toRadians(angle));
             moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedSpheres);
             moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingSpheres);
             for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)

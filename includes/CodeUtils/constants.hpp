@@ -22,9 +22,14 @@ namespace constants
     const double dSulfurCutoff        = 3.0;
     const double defaultBondLength    = 1.4;
 
-    inline double degree2Radian(double d)
+    inline double toRadians(double d)
     {
-        return d / PI_DEGREE * PI_RADIAN;
+        return (d / PI_DEGREE) * PI_RADIAN;
+    }
+
+    inline double toDegrees(double d)
+    {
+        return (d / PI_RADIAN) * PI_DEGREE;
     }
 
     const double DIST_EPSILON =

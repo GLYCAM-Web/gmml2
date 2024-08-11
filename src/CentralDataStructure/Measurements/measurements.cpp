@@ -21,8 +21,8 @@ Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const
                                                       double angle_Degrees, double dihedral_Degrees,
                                                       double distanceAngstrom)
 {
-    double theta_Radians = constants::degree2Radian(angle_Degrees);
-    double phi_Radians   = constants::degree2Radian(dihedral_Degrees);
+    double theta_Radians = constants::toRadians(angle_Degrees);
+    double phi_Radians   = constants::toRadians(dihedral_Degrees);
 
     Coordinate lmn_y = normal(crossProduct(a - b, b - c));
     Coordinate lmn_z = normal(b - c);

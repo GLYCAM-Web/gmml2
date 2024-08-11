@@ -9,7 +9,7 @@ using cds::RotatableDihedral;
 
 void cds::setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata target)
 {
-    auto matrix = rotationTo(dihedralCoordinates(dihedral), constants::degree2Radian(target.value));
+    auto matrix = rotationTo(dihedralCoordinates(dihedral), constants::toRadians(target.value));
     matrix.rotateCoordinates(dihedral.movingCoordinates);
     dihedral.currentMetadataIndex = target.metadataIndex;
 }
