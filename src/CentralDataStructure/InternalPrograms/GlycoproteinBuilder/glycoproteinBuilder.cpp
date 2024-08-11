@@ -162,30 +162,33 @@ void GlycoproteinBuilder::ResolveOverlaps()
                                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
     {
         std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
+        std::vector<std::vector<std::vector<cds::AngleWithMetadata>>> glycositeShape;
         for (auto& linkages : glycosidicLinkages)
         {
             auto preference = randomizeShape(linkages);
             cds::setShapeToPreference(linkages, preference);
             glycositePreferences.push_back(preference);
+            glycositeShape.push_back(cds::currentShape(linkages));
         }
         bool useMonteCarlo          = true;
         bool wiggleFirstLinkageOnly = true;
         double angleIncrement       = 5;
-        cds::Overlap currentOverlap =
+        cds::Overlap initialOverlap = countTotalOverlaps(overlapResidues, glycositeResidues);
+        auto initialState           = GlycoproteinState {initialOverlap, glycositePreferences, glycositeShape};
+        GlycoproteinState currentState =
             wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
-                                    glycosidicLinkages, glycositePreferences, overlapResidues, glycositeResidues);
-        gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentOverlap.count));
-        currentOverlap = randomDescent(rng, randomizeShape, useMonteCarlo, persistCycles, overlapTolerance,
-                                       glycosidicLinkages, glycositePreferences, overlapResidues, glycositeResidues);
-        gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentOverlap.count));
-        currentOverlap =
-            wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, false, angleIncrement, glycosidicLinkages,
-                                    glycositePreferences, overlapResidues, glycositeResidues);
-        gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap.count));
-        currentOverlap =
+                                    glycosidicLinkages, initialState, overlapResidues, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentState.overlap.count));
+        currentState = randomDescent(rng, randomizeShape, useMonteCarlo, persistCycles, overlapTolerance,
+                                     glycosidicLinkages, currentState, overlapResidues, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentState.overlap.count));
+        currentState = wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, false, angleIncrement,
+                                               glycosidicLinkages, currentState, overlapResidues, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentState.overlap.count));
+        currentState =
             wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
-                                    glycosidicLinkages, glycositePreferences, overlapResidues, glycositeResidues);
-        gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap.count));
+                                    glycosidicLinkages, currentState, overlapResidues, glycositeResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentState.overlap.count));
     };
 
     this->WritePdbFile("glycoprotein_initial");
