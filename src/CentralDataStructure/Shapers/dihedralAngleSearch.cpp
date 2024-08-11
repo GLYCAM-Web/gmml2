@@ -153,7 +153,7 @@ namespace
         return std::sqrt(maxSquare);
     }
 
-    std::vector<double> wiggleAngles(cds::Bounds bounds, int approximateIncrement)
+    std::vector<double> wiggleAngles(cds::Bounds bounds, double approximateIncrement)
     {
         double range     = bounds.upper - bounds.lower;
         int steps        = std::ceil(range / approximateIncrement);
@@ -292,7 +292,7 @@ cds::AngleOverlap cds::wiggleWithinCurrentRotamer(cds::RotatableDihedral& dihedr
                                                   const DihedralAngleDataVector& metadataVector,
                                                   const AngleSearchPreference& preference,
                                                   std::vector<cds::Atom*>& overlapAtomSet1,
-                                                  std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
+                                                  std::vector<cds::Atom*>& overlapAtomSet2, double angleIncrement)
 {
     size_t currentMetadataIndex = dihedral.currentMetadataIndex;
     if (preference.metadataOrder.size() != 1 || preference.metadataOrder[0] != currentMetadataIndex)
@@ -307,7 +307,7 @@ cds::AngleOverlap cds::wiggleWithinCurrentRotamer(cds::RotatableDihedral& dihedr
 
 cds::AngleOverlap cds::wiggleUsingRotamers(const cds::DihedralCoordinates coordinates,
                                            const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
-                                           const AngleSearchPreference& preference, int angleIncrement,
+                                           const AngleSearchPreference& preference, double angleIncrement,
                                            const std::array<cds::DihedralRotationData, 2>& input)
 {
     std::vector<AngleOverlap> results;
@@ -326,7 +326,7 @@ void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
                                       const std::vector<AngleSearchPreference>& preferences,
                                       std::vector<cds::Atom*>& overlapAtomSet1,
-                                      std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement)
+                                      std::vector<cds::Atom*>& overlapAtomSet2, double angleIncrement)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
@@ -340,7 +340,7 @@ void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
 void cds::simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
                                       const std::vector<AngleSearchPreference>& preference,
-                                      const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement)
+                                      const std::array<std::vector<cds::Residue*>, 2>& residues, double angleIncrement)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
     {

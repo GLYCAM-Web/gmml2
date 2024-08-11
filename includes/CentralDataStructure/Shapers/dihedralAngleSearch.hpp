@@ -47,19 +47,19 @@ namespace cds
     AngleOverlap wiggleWithinCurrentRotamer(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
                                             const AngleSearchPreference& preference,
                                             std::vector<cds::Atom*>& overlapAtomSet1,
-                                            std::vector<cds::Atom*>& overlapAtomSet2, int angleIncrement);
+                                            std::vector<cds::Atom*>& overlapAtomSet2, double angleIncrement);
     AngleOverlap wiggleUsingRotamers(const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
                                      const DihedralAngleDataVector& rotamers, const AngleSearchPreference& preference,
-                                     int angleIncrement, const std::array<DihedralRotationData, 2>& input);
+                                     double angleIncrement, const std::array<DihedralRotationData, 2>& input);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preferences,
                                      std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-                                     int angleIncrement);
+                                     double angleIncrement);
     void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
-                                     const std::array<std::vector<cds::Residue*>, 2>& residues, int angleIncrement);
+                                     const std::array<std::vector<cds::Residue*>, 2>& residues, double angleIncrement);
     std::vector<AngleSearchPreference> angleSearchPreference(const ResidueLinkageShapePreference& preference);
     std::vector<std::vector<AngleSearchPreference>>
     angleSearchPreference(const std::vector<ResidueLinkageShapePreference>& preferences);

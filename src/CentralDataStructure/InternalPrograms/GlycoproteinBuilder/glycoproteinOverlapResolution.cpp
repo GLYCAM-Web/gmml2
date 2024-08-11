@@ -16,7 +16,7 @@ namespace
     using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
     using gmml::MolecularMetadata::GLYCAM::RotamerType;
 
-    void wigglePermutationLinkage(int interval, cds::ResidueLinkage& linkage,
+    void wigglePermutationLinkage(double interval, cds::ResidueLinkage& linkage,
                                   const cds::PermutationShapePreference& shapePreference,
                                   std::array<std::vector<Residue*>, 2>& overlapInput)
     {
@@ -38,7 +38,7 @@ namespace
         }
     }
 
-    void wiggleConformerLinkage(int interval, cds::ResidueLinkage& linkage,
+    void wiggleConformerLinkage(double interval, cds::ResidueLinkage& linkage,
                                 const cds::ConformerShapePreference& shapePreference,
                                 std::array<std::vector<Residue*>, 2>& overlapInput)
     {
@@ -78,7 +78,7 @@ namespace
         }
     }
 
-    void wiggleLinkage(int interval, cds::ResidueLinkage& linkage,
+    void wiggleLinkage(double interval, cds::ResidueLinkage& linkage,
                        const cds::ResidueLinkageShapePreference& shapePreference,
                        const std::vector<Residue*>& overlapResidues)
     {
@@ -138,7 +138,7 @@ std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
 }
 
 cds::Overlap
-wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly, int interval,
+wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly, double interval,
                         std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                         const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
                         const std::vector<std::vector<Residue*>>& overlapResidues,

@@ -27,7 +27,7 @@ std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
                                               const std::vector<std::vector<Residue*>>& overlapResidues,
                                               const std::vector<std::vector<Residue*>>& glycositeResidues);
 cds::Overlap
-wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly, int interval,
+wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly, double interval,
                         std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                         const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
                         const std::vector<std::vector<Residue*>>& overlapResidues,

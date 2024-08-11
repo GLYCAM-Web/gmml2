@@ -167,7 +167,7 @@ void GlycoproteinBuilder::ResolveOverlaps()
         }
         bool useMonteCarlo          = true;
         bool wiggleFirstLinkageOnly = true;
-        int angleIncrement          = 5;
+        double angleIncrement       = 5;
         cds::Overlap currentOverlap =
             wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
                                     glycosidicLinkages, glycositePreferences, overlapResidues.all, glycositeResidues);
