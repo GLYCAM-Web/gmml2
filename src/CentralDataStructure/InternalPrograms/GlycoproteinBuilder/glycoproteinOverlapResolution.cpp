@@ -243,35 +243,3 @@ cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bo
     }
     return lowest_global_overlap;
 }
-
-bool dumbRandomWalk(LinkageShapeRandomizer randomizeShape, uint overlapTolerance, int maxCycles,
-                    std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                    std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                    const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
-                    const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
-{
-    gmml::log(__LINE__, __FILE__, gmml::INF, "Starting DumbRandomWalk.");
-    int cycle = 1;
-    std::vector<size_t> sites_with_overlaps =
-        determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
-    while (cycle < maxCycles)
-    {
-        ++cycle;
-        for (auto& currentGlycosite : sites_with_overlaps)
-        {
-            auto& linkages   = glycosidicLinkages[currentGlycosite];
-            auto preferences = randomizeShape(linkages);
-            cds::setShapeToPreference(linkages, preferences);
-            glycositePreferences[currentGlycosite] = preferences;
-        }
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Updating list of sites with overlaps.");
-        sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
-        if (sites_with_overlaps.empty())
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF, "DumbRandomWalk resolved the overlaps. Stopping.");
-            return true;
-        }
-    }
-    gmml::log(__LINE__, __FILE__, gmml::INF, "DumbRandomWalk did not resolve the overlaps.");
-    return false;
-}

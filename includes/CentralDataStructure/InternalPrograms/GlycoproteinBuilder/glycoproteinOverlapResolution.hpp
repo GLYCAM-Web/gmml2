@@ -28,9 +28,4 @@ cds::Overlap randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bo
                            std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
                            const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
                            const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
-bool dumbRandomWalk(LinkageShapeRandomizer randomizeShape, uint overlapTolerance, int maxCycles,
-                    std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                    std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                    const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
-                    const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 #endif

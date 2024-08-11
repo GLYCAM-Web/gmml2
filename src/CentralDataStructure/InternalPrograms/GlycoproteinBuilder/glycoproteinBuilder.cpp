@@ -168,13 +168,6 @@ void GlycoproteinBuilder::ResolveOverlaps()
             cds::setShapeToPreference(linkages, preference);
             glycositePreferences.push_back(preference);
         }
-        // First try a very fast/cheap approach
-        if (dumbRandomWalk(randomizeShape, overlapTolerance, 10, glycosidicLinkages, glycositePreferences,
-                           overlapResidues,
-                           glycositeResidues)) // returns true if it fully resolves overlaps.
-        {
-            return;
-        }
         bool useMonteCarlo          = true;
         bool wiggleFirstLinkageOnly = true;
         double angleIncrement       = 5;
