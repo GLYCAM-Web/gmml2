@@ -16,12 +16,15 @@ namespace
     using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
     using gmml::MolecularMetadata::GLYCAM::RotamerType;
 
-    void wigglePermutationLinkage(double interval, cds::ResidueLinkage& linkage,
-                                  const cds::PermutationShapePreference& shapePreference,
-                                  std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
+    std::vector<cds::AngleWithMetadata>
+    wigglePermutationLinkage(double interval, cds::ResidueLinkage& linkage,
+                             const cds::PermutationShapePreference& shapePreference,
+                             std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals = linkage.rotatableDihedrals;
         auto& metadata  = linkage.dihedralMetadata;
+        std::vector<cds::AngleWithMetadata> shape;
+        shape.resize(dihedrals.size());
         //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
         //  rotatable bond in Asn outwards
         for (size_t rn = 0; rn < dihedrals.size(); rn++)
@@ -35,12 +38,15 @@ namespace
             auto best = cds::wiggleUsingRotamers(coordinates, codeUtils::indexVector(metadataVector), metadataVector,
                                                  preference, interval, input);
             cds::setDihedralAngle(dihedral, best.angle);
+            shape[n] = best.angle;
         }
+        return shape;
     }
 
-    void wiggleConformerLinkage(double interval, cds::ResidueLinkage& linkage,
-                                const cds::ConformerShapePreference& shapePreference,
-                                std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
+    std::vector<cds::AngleWithMetadata>
+    wiggleConformerLinkage(double interval, cds::ResidueLinkage& linkage,
+                           const cds::ConformerShapePreference& shapePreference,
+                           std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals         = linkage.rotatableDihedrals;
         auto& metadata          = linkage.dihedralMetadata;
@@ -49,8 +55,7 @@ namespace
         results.resize(numberOfMetadata);
         std::vector<cds::AngleOverlap> bestOverlaps;
         bestOverlaps.resize(numberOfMetadata);
-        auto initialShape = cds::currentShape(dihedrals, metadata);
-        auto index        = codeUtils::indexVector(metadata[0]);
+        auto index = codeUtils::indexVector(metadata[0]);
         for (size_t k = 0; k < numberOfMetadata; k++)
         {
             cds::setShapeToPreference(
@@ -72,15 +77,20 @@ namespace
             }
         }
         size_t bestIndex = cds::bestOverlapResultIndex(bestOverlaps);
+        std::vector<cds::AngleWithMetadata> shape;
+        shape.reserve(dihedrals.size());
         for (size_t n = 0; n < dihedrals.size(); n++)
         {
-            cds::setDihedralAngle(dihedrals[n], results[bestIndex][n]);
+            auto& bestShape = results[bestIndex][n];
+            cds::setDihedralAngle(dihedrals[n], bestShape);
+            shape.push_back(bestShape);
         }
+        return shape;
     }
 
-    void wiggleLinkage(double interval, cds::ResidueLinkage& linkage,
-                       const cds::ResidueLinkageShapePreference& shapePreference,
-                       const cds::ResiduesWithOverlapWeight& overlapResidues)
+    std::vector<cds::AngleWithMetadata> wiggleLinkage(double interval, cds::ResidueLinkage& linkage,
+                                                      const cds::ResidueLinkageShapePreference& shapePreference,
+                                                      const cds::ResiduesWithOverlapWeight& overlapResidues)
     {
         auto& nonReducing = linkage.nonReducingOverlapResidues;
         std::vector<double> nonReducingWeight(nonReducing.size(), 1.0);
@@ -97,14 +107,12 @@ namespace
             case RotamerType::permutation:
                 {
                     auto preference = std::get<cds::PermutationShapePreference>(shapePreference);
-                    wigglePermutationLinkage(interval, linkage, preference, overlapInput);
-                    return;
+                    return wigglePermutationLinkage(interval, linkage, preference, overlapInput);
                 }
             case RotamerType::conformer:
                 {
                     auto preference = std::get<cds::ConformerShapePreference>(shapePreference);
-                    wiggleConformerLinkage(interval, linkage, preference, overlapInput);
-                    return;
+                    return wiggleConformerLinkage(interval, linkage, preference, overlapInput);
                 }
         }
     }
@@ -149,6 +157,7 @@ GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int
     cds::Overlap overlap      = countTotalOverlaps(overlapResidues, glycositeResidues);
     auto glycositePreferences = initialState.preferences;
     auto glycositeShape       = initialState.shape;
+    auto wiggledShape         = glycositeShape;
     std::vector<size_t> sites_with_overlaps =
         determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
     while ((cycle < persistCycles) && (sites_with_overlaps.size() > 0))
@@ -162,7 +171,8 @@ GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int
             auto& linkages = glycosidicLinkages[glycosite];
             for (size_t n = 0; (n == 0 || !firstLinkageOnly) && (n < linkages.size()); n++)
             {
-                wiggleLinkage(interval, linkages[n], glycositePreferences[glycosite][n], overlapResidues[glycosite]);
+                wiggledShape[glycosite][n] = wiggleLinkage(interval, linkages[n], glycositePreferences[glycosite][n],
+                                                           overlapResidues[glycosite]);
             }
         }
         cds::Overlap newOverlap = countTotalOverlaps(overlapResidues, glycositeResidues);
@@ -172,7 +182,7 @@ GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int
             cycle   = 0;
             for (auto& glycosite : sites_with_overlaps)
             {
-                glycositeShape[glycosite] = cds::currentShape(glycosidicLinkages[glycosite]);
+                glycositeShape[glycosite] = wiggledShape[glycosite];
             }
         }
         else
@@ -180,6 +190,7 @@ GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int
             for (auto& glycosite : sites_with_overlaps)
             {
                 cds::setShape(glycosidicLinkages[glycosite], glycositeShape[glycosite]);
+                wiggledShape[glycosite] = glycositeShape[glycosite];
             }
         }
         sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
@@ -222,7 +233,15 @@ GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShap
             cds::Overlap previousOverlap = cds::CountOverlappingAtoms(overlapResidues[currentGlycosite], siteResidues);
             auto preferences             = randomizeShape(linkages);
             auto recordedShape           = glycositeShape[currentGlycosite];
+            auto currentShape            = glycositeShape[currentGlycosite];
             cds::setShapeToPreference(linkages, preferences);
+            for (size_t k = 0; k < 2; k++)
+            {
+                for (size_t n = 0; n < linkages.size(); n++)
+                {
+                    currentShape[n] = wiggleLinkage(5, linkages[n], preferences[n], overlapResidues[currentGlycosite]);
+                }
+            }
             cds::Overlap newOverlap = cds::CountOverlappingAtoms(overlapResidues[currentGlycosite], siteResidues);
             double diff             = newOverlap.count - previousOverlap.count;
             bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
@@ -233,17 +252,19 @@ GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShap
             else
             {
                 glycositePreferences[currentGlycosite] = preferences;
-                glycositeShape[currentGlycosite]       = cds::currentShape(linkages);
+                glycositeShape[currentGlycosite]       = currentShape;
                 gmml::log(__LINE__, __FILE__, gmml::INF, "RandomDescent accepted a change of " + std::to_string(diff));
             }
         }
+        std::vector<size_t> new_sites_with_overlaps =
+            determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
         cds::Overlap new_global_overlap = countTotalOverlaps(overlapResidues, glycositeResidues);
-        sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
         if (cds::compareOverlaps(lowest_global_overlap, new_global_overlap) > 0)
         {
             lowest_global_overlap = new_global_overlap;
             cycle                 = 0;
         }
+        sites_with_overlaps = new_sites_with_overlaps;
     }
     return {lowest_global_overlap, glycositePreferences, glycositeShape};
 }
