@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include <string>
+#include <fstream>
 
 // Adapted the preprocessor to prepare files for Yao's glycomimetic program.
 // In addition to regular preprocessing it:
