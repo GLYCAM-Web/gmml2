@@ -32,3 +32,18 @@ std::vector<size_t> codeUtils::weightedRandomOrder(pcg32& rng, std::vector<doubl
 
     return result;
 }
+
+double codeUtils::normalDistributionRandomDoubleWithCutoff(pcg32& rng, double lowerCutoff, double upperCutoff)
+{
+    double num = normalDistributionRandomDouble(rng);
+    // number is within cutoff
+    if ((num >= lowerCutoff) && (num <= upperCutoff))
+    {
+        return num;
+    }
+    // number outside of requested range, fall back to uniform distribution
+    else
+    {
+        return uniformRandomDoubleWithinRange(rng, lowerCutoff, upperCutoff);
+    }
+}

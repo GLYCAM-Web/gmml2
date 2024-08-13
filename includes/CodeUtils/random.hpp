@@ -32,6 +32,12 @@ namespace codeUtils
         return distr(rng);
     }
 
+    inline double normalDistributionRandomDouble(pcg32& rng)
+    {
+        std::normal_distribution<> distr(0.0, 1.0);
+        return distr(rng);
+    }
+
     template<class T> std::vector<T> shuffleVector(pcg32& rng, std::vector<T> vec)
     {
         std::shuffle(vec.begin(), vec.end(), rng);
@@ -39,5 +45,6 @@ namespace codeUtils
     }
 
     std::vector<size_t> weightedRandomOrder(pcg32& rng, std::vector<double> weights);
+    double normalDistributionRandomDoubleWithCutoff(pcg32& rng, double lowerCutoff, double upperCutoff);
 } // namespace codeUtils
 #endif
