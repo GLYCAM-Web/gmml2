@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+// may want to remove the constants.hpp file here.... Was added cause when
+// doing some brute force type compile checking this file needed constants.hpp
+#include "includes/CodeUtils/constants.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // residueId
 // #include "includes/utils.hpp" // gmml::Split
 #include "includes/CodeUtils/logging.hpp"
