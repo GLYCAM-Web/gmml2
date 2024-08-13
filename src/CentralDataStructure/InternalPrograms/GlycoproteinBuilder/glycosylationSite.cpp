@@ -1,11 +1,10 @@
 #include <bits/std_abs.h>
 #include <cstdlib>
-#include <iostream>
-#include <iterator>
 #include <string>
-#include <utility>
 #include <vector>
 #include <iomanip> // For setting precision and formating in output
+#include <stdexcept>
+
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateCoordinateFromInternalCoords
@@ -14,6 +13,7 @@
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp" //cdsSelections
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
@@ -29,16 +29,10 @@ GlycosylationSite::GlycosylationSite(Residue* residue, Carbohydrate* carbohydrat
     this->AttachGlycan(glycanStartResidueNumber);
     cdsSelections::ClearAtomLabels(carbohydrate->GetReducingResidue()); // jfc
     cdsSelections::ClearAtomLabels(this->GetResidue());
-    // this->SetInternalBondCount(cdsSelections::CountInternalHeavyAtomBonds(this->GetGlycan()->getAtoms()));
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, "Done attach glycan to " + this->GetResidueId());
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, "Here are the linkages:");
     for (auto& linkage : carbohydrate->GetGlycosidicLinkages())
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF, linkage.GetName());
         linkage.DetermineResiduesForOverlapCheck(); // Now that the protein residue is attached.
-        std::vector<Residue*> closestProteinResidues =
-            cdsSelections::selectNClosestResidues(otherProteinResidues, linkage.GetFromThisResidue1(), 20);
-        linkage.AddNonReducingOverlapResidues(closestProteinResidues);
+        linkage.AddNonReducingOverlapResidues(otherProteinResidues);
     }
 }
 
@@ -79,7 +73,7 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
     // Sialic acid. ToDo Ok so I reckon the below is just assuming alpha or beta depending on the concext. Need to fix a
     // lot, but need to reproduce functionality after refactor first.
     //    Atom* anomericAtom = cdsSelections::guessAnomericAtom(reducing_Residue);
-    //   This won't work as sometimes want alpha, sometimes beta. i.e. a CreateCoordinateForCenterAwayFromNeighbors
+    //   This won't work as sometimes want alpha, sometimes beta. i.e. a coordinateOppositeToNeighborAverage
     //   function
     // This needs to be abstracted so it works for C2 reducing residues:
     Coordinate* coordC5       = reducing_Residue->FindAtom("C5")->getCoordinate();
@@ -158,14 +152,10 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
     // will superimpose them onto the correspoinding "target" atoms in the protein residue (glycosite_residue).
     for (auto& superimposition_atom : this->GetGlycan()->GetAglycone()->getAtoms())
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF, "Aglycone atom is named: " +
-        //        superimposition_atom->getName());
         for (auto& protein_atom : glycosite_residue->getAtoms())
         {
             if (protein_atom->getName() == superimposition_atom->getName())
             {
-                //                gmml::log(__LINE__, __FILE__, gmml::INF,
-                //                          "Adding " + protein_atom->getName() + " to superimposition atoms\n");
                 targetCoords.push_back(protein_atom->getCoordinate());
             }
         }
@@ -173,10 +163,6 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
     std::vector<Coordinate*> aglyconeCoords =
         cdsSelections::getCoordinates(this->GetGlycan()->GetAglycone()->getAtoms());
     std::vector<Coordinate*> glycanCoords = cdsSelections::getCoordinates(this->GetGlycan()->getAtoms());
-    //        std::cout << "Number of moving coords: " << glycanCoords.size() << "vs" <<
-    //        this->GetGlycan()->getAtoms().size() << "\n"; std::cout << "Number of aglycone coords: " <<
-    //        aglyconeCoords.size() << " vs " << this->GetGlycan()->GetAglycone()->getAtoms().size() << "\n"; std::cout
-    //        << "Number of target coords: " << targetCoords.size() << "\n";
     // Sanity checks:
     if (aglyconeCoords.size() < 3)
     {
@@ -190,29 +176,16 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
                                  "superimposition to " +
                                  this->GetResidueId() + ".\nCheck your input structure!\n");
     }
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, "Superimposing via the aglycone.");
     cds::Superimpose(aglyconeCoords, targetCoords, glycanCoords);
     // Connect the glycan and protein atoms to each other.
     Atom* protein_connection_atom = this->GetConnectingProteinAtom(glycosite_residue->getName());
-    //    gmml::log(__LINE__, __FILE__, gmml::INF,
-    //              "Connecting the reducing atom of " + this->GetGlycan()->GetReducingResidue()->getStringId() +
-    //                  " to the protein:" + this->GetGlycan()->GetAnomericAtom()->getId() + " bonded to " +
-    //                  protein_connection_atom->getId());
     protein_connection_atom->addBond(this->GetGlycan()->GetAnomericAtom()); // Atom connectivity
     this->Rename_Protein_Residue_To_GLYCAM_Nomenclature();                  // e.g. ASN to NLN
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, "Replacing the aglycone");
-    // this->GetGlycan()->deleteResidue(this->GetGlycan()->GetAglycone());
     this->GetGlycan()->replaceAglycone(this->GetResidue());
-    //    gmml::log(__LINE__, __FILE__, gmml::INF, "Completed superimposition to " + glycosite_residue->getStringId());
     return;
 }
 
 void GlycosylationSite::Rename_Protein_Residue_To_GLYCAM_Nomenclature()
-{
-    this->GetResidue()->setName(glycoproteinMetadata::ConvertGlycosylatedResidueName(this->GetResidue()->getName()));
-}
-
-void GlycosylationSite::Rename_Protein_Residue_From_GLYCAM_To_Standard()
 {
     this->GetResidue()->setName(glycoproteinMetadata::ConvertGlycosylatedResidueName(this->GetResidue()->getName()));
 }
@@ -222,7 +195,7 @@ void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
     std::vector<cds::Residue*> allOtherGlycanResidues;
     for (auto& other_glycosite : this->GetOtherGlycosites())
     {
-        std::vector otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
+        std::vector<Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
         allOtherGlycanResidues.insert(allOtherGlycanResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
     }
     for (auto& glycoLinkage : this->GetGlycan()->GetGlycosidicLinkages())
@@ -230,18 +203,6 @@ void GlycosylationSite::AddOtherGlycositesToLinkageOverlapAtoms()
         glycoLinkage.AddNonReducingOverlapResidues(allOtherGlycanResidues);
     }
     return;
-}
-
-void GlycosylationSite::UpdateOverlapAtomsInLinkages(unsigned int maxProteinResidues)
-{ // This is an inefficient mess, but allows for speedups. Improve when able.
-    for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
-    {
-        linkage.DetermineResiduesForOverlapCheck();
-        std::vector<Residue*> closestProteinResidues = cdsSelections::selectNClosestResidues(
-            this->GetOtherProteinResidues(), linkage.GetFromThisResidue1(), maxProteinResidues);
-        linkage.AddNonReducingOverlapResidues(closestProteinResidues);
-    }
-    this->AddOtherGlycositesToLinkageOverlapAtoms();
 }
 
 unsigned int GlycosylationSite::CountOverlapsFast()
@@ -309,18 +270,6 @@ void GlycosylationSite::Wiggle(bool firstLinkageOnly, int interval, bool useAllR
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
-// void GlycosylationSite::SetDefaultDihedralAnglesUsingMetadata()
-//{
-//     for(auto &linkage : this->GetGlycan()->GetGlycosidicLinkages())
-//     {
-//         linkage.SetDefaultShapeUsingMetadata();
-//     }
-//     if( ! this->NoNewInternalCloseContacts() )
-//     {
-//         this->ResetDihedralAngles();
-//     }
-//     return;
-// }
 
 void GlycosylationSite::SetRandomDihedralAnglesUsingMetadata()
 {
@@ -333,14 +282,8 @@ void GlycosylationSite::SetRandomDihedralAnglesUsingMetadata()
     }
     for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF, "Setting random shape for linkage: " + linkage.GetName());
         linkage.SetRandomShapeUsingMetadata();
     }
-    //    if (!this->NoNewInternalCloseContacts())
-    //    {
-    //        gmml::log(__LINE__, __FILE__, gmml::INF, "Nope that caused an internal contact");
-    //        this->ResetDihedralAngles();
-    //    }
     return;
 }
 
@@ -349,19 +292,6 @@ void GlycosylationSite::ResetDihedralAngles()
     for (auto& linkage : this->GetGlycan()->GetGlycosidicLinkages())
     {
         linkage.SetShapeToPrevious();
-    }
-    return;
-}
-
-void GlycosylationSite::SetOtherGlycosites(std::vector<GlycosylationSite>& glycosites)
-{
-    other_glycosites_.clear();
-    for (auto& glycosite : glycosites)
-    {
-        if (this != &glycosite)
-        {
-            other_glycosites_.push_back(&glycosite);
-        }
     }
     return;
 }
@@ -408,7 +338,7 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
                                this->GetOtherProteinResidues().end());
         for (auto& other_glycosite : this->GetOtherGlycosites())
         {
-            std::vector otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
+            std::vector<cds::Residue*> otherSiteResidues = other_glycosite->GetGlycan()->getResidues();
             overlapResidues.insert(overlapResidues.end(), otherSiteResidues.begin(), otherSiteResidues.end());
         }
     }
@@ -416,25 +346,20 @@ void GlycosylationSite::WiggleOneLinkage(ResidueLinkage& linkage, int interval, 
     //  Asn outwards
     std::vector<RotatableDihedral> reversed_rotatable_bond_vector = linkage.GetRotatableDihedralsRef();
     std::reverse(reversed_rotatable_bond_vector.begin(), reversed_rotatable_bond_vector.end());
-    for (auto& rotatable_dihedral : reversed_rotatable_bond_vector)
+    for (auto& dihedral : reversed_rotatable_bond_vector)
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF,
-        //                  "About to wiggle all the rotamers of " + rotatable_dihedral.GetName() +
-        //                      " in this linkage: " + linkage.GetName());
+        const auto& rotamers = dihedral.GetMetadata();
         if (useAllResiduesForOverlap)
         {
-            rotatable_dihedral.WiggleUsingAllRotamers(overlapResidues, linkage.GetReducingOverlapResidues(), interval);
-            //            gmml::log(__LINE__, __FILE__, gmml::INF, "Triggered All. Checking " +
-            //            std::to_string(overlapResidues.size()) + " against " +
-            //            std::to_string(linkage.GetReducingOverlapResidues().size()) + " in " + linkage.GetName());
+            auto best = dihedral.WiggleUsingRotamers(rotamers, interval,
+                                                     {overlapResidues, linkage.GetReducingOverlapResidues()});
+            dihedral.SetDihedralAngle(best.angle);
         }
         else
         {
-            //            gmml::log(__LINE__, __FILE__, gmml::INF, "Triggered Some. Checking " +
-            //            std::to_string(linkage.GetNonReducingOverlapResidues().size()) + " against " +
-            //            std::to_string(linkage.GetReducingOverlapResidues().size()) + " in " + linkage.GetName());
-            rotatable_dihedral.WiggleUsingAllRotamers(linkage.GetNonReducingOverlapResidues(),
-                                                      linkage.GetReducingOverlapResidues(), interval);
+            auto best = dihedral.WiggleUsingRotamers(
+                rotamers, interval, {linkage.GetNonReducingOverlapResidues(), linkage.GetReducingOverlapResidues()});
+            dihedral.SetDihedralAngle(best.angle);
         }
     }
     return;

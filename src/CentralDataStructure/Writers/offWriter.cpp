@@ -1,4 +1,7 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+
+#include <iomanip>
 
 std::string cds::getOffType(const cds::ResidueType queryType)
 {

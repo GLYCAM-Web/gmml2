@@ -5,21 +5,21 @@
 #include "./Edge.hpp"
 #include "./GenericGraphObject.hpp"
 
+#include <algorithm>
 #include <memory>
-#include <unordered_set>
 #include <mutex> // lock
 
 namespace glygraph
 {
+    const std::string invalid = "INVALID NODE";
+
     template<class T> class Node : public GenericGraphObject
     {
       public:
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        Node();
-        Node(std::string name_t);
-        Node(std::string name_t, std::string label_t);
+        Node(std::string name_t, std::vector<std::string> labels_t);
 
         // copy constructor
         // Node(const Node<T> &rhs);
@@ -153,16 +153,9 @@ namespace glygraph
         friend class Edge<T>;
     };
 
-    template<class T> inline Node<T>::Node() : GenericGraphObject("INVALID NODE") {};
-
-    template<class T> inline Node<T>::Node(std::string name_t) : GenericGraphObject(name_t)
-    {
-        // lazyInfo(__LINE__, __func__,
-        //		"Created node with name <" + this->getName() + ">");
-    }
-
     template<class T>
-    inline Node<T>::Node(std::string name_t, std::string label_t) : GenericGraphObject(name_t, label_t)
+    inline Node<T>::Node(std::string name_t, std::vector<std::string> labels_t)
+        : GenericGraphObject(name_t, labels_t, glygraph::ConnectivityType::UNKNOWN)
     {
         // lazyInfo(__LINE__, __func__,
         //		"Created node with name <" + this->getName()
@@ -214,8 +207,7 @@ namespace glygraph
     // move constructor
     template<class T>
     inline Node<T>::Node(Node<T>&& rhs)
-        : GenericGraphObject(rhs.getName(), rhs.getLabels(), rhs.getConnectivityTypeIdentifier()),
-          outEdges_m(std::move(rhs.outEdges_m)), inEdges_m(std::move(rhs.inEdges_m))
+        : GenericGraphObject(rhs), outEdges_m(std::move(rhs.outEdges_m)), inEdges_m(std::move(rhs.inEdges_m))
     {
         // lazyInfo(__LINE__, __func__, "Calling node move constructor");
         this->edgeConnectionUpdate();
@@ -304,11 +296,9 @@ namespace glygraph
         }
         else
         {
-            std::unique_ptr<Edge<T>> tempEdge(new Edge<T>(edgeName_t, this->getDeriviedClass(), childNode_t));
-
-            childNode_t->inEdges_m.push_back(tempEdge.get());
-
-            this->outEdges_m.push_back(std::move(tempEdge));
+            auto& edge = this->outEdges_m.emplace_back(
+                std::unique_ptr<Edge<T>>(new Edge<T>(edgeName_t, {edgeName_t}, this->getDeriviedClass(), childNode_t)));
+            childNode_t->inEdges_m.push_back(edge.get());
         }
     }
 

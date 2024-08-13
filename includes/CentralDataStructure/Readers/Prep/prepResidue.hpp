@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
@@ -111,7 +111,7 @@ namespace prep
         std::vector<std::string> GetAtomNames() const;
         std::vector<std::string> GetHeavyAtomNames() const;
         double CalculatePrepResidueCharge();
-        std::string Print() const;
+        std::string toString() const;
         void Write(std::ostream& stream);
         std::string GetTitle() const;
 
@@ -196,4 +196,4 @@ namespace prep
                     //            DONE
     };
 } // namespace prep
-#endif // INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP_
+#endif

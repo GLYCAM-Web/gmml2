@@ -1,9 +1,7 @@
 #include "includes/CentralDataStructure/assembly.hpp"
 
-#include "../../includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/numbers.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 
 using cds::Assembly;
@@ -14,7 +12,7 @@ using cds::Residue;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTORS                   //
 //////////////////////////////////////////////////////////
-Assembly::Assembly(std::vector<Residue*>& residues)
+Assembly::Assembly(std::vector<Residue*>& residues) : Node<Assembly>(glygraph::invalid, {})
 {
     this->addMolecule(std::make_unique<Molecule>(residues));
 }
@@ -49,6 +47,7 @@ Assembly& Assembly::operator=(Assembly other)
 std::vector<Molecule*> Assembly::getMolecules() const
 {
     std::vector<Molecule*> molecules;
+    molecules.reserve(molecules_.size());
     for (auto& molPtr : molecules_)
     {
         molecules.push_back(molPtr.get());
@@ -91,7 +90,7 @@ Molecule* Assembly::addMolecule(std::unique_ptr<Molecule> myMolecule)
     return molecules_.back().get();
 }
 
-const Atom* Assembly::findAtom(const int& serialNumber) const
+const Atom* Assembly::findAtom(int serialNumber) const
 {
     return codeUtils::findElementWithNumber(this->getAtoms(), serialNumber);
 }

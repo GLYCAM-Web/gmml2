@@ -1,16 +1,16 @@
-#ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINBUILDER_HPP
-#define GMML_INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINBUILDER_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINBUILDER_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINBUILDER_HPP
+
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "includes/Abstract/absBuilder.hpp"
 #include <string>
 // #include <dirent.h>
 // #include <sys/stat.h>
 
 using cds::Assembly;
 
-class GlycoproteinBuilder : public Abstract::absBuilder
+class GlycoproteinBuilder
 {
   public:
     //////////////////////////////////////////////////////////
@@ -48,11 +48,6 @@ class GlycoproteinBuilder : public Abstract::absBuilder
         return glycosites_;
     }
 
-    inline std::vector<GlycosylationSite>& GetGlycosylationSites()
-    {
-        return glycosites_;
-    }
-
     inline unsigned int GetOverlapTolerance() const
     {
         return overlapTolerance_;
@@ -81,8 +76,6 @@ class GlycoproteinBuilder : public Abstract::absBuilder
     //////////////////////////////////////////////////////////
     //                  PRIVATE MUTATORS                    //
     //////////////////////////////////////////////////////////
-    void SetWorkingDirectory(const std::string workingDirectory);
-    void SetPrepFileLocation(const std::string prepFileLocation);
 
     inline void SetPersistCycles(const int i)
     {
@@ -135,7 +128,6 @@ class GlycoproteinBuilder : public Abstract::absBuilder
     //                                                            int tolerance);
     void SetOtherGlycosites();
     void AddOtherGlycositesToLinkageOverlapAtoms();
-    void UpdateAllOverlapAtomsInGlycosites(unsigned int maxProteinResidues = 20);
     //////////////////////////////////////////////////////////
     //                       ATTRIBUTES                     //
     //////////////////////////////////////////////////////////
@@ -148,4 +140,4 @@ class GlycoproteinBuilder : public Abstract::absBuilder
     int persistCycles_    = 5;     // Algos continue for persistCycles, reset count if there is an overlap improvement.
     bool isDeterministic_ = false; // "true" is good for testing: always same output.
 };
-#endif // GMML_INCLUDES_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINBUILDER_HPP
+#endif

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP
 
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
@@ -91,8 +91,8 @@ namespace gmmlPrograms
         std::vector<Coordinate*> coordsToAvoids_;
         std::vector<Coordinate*> wiggleMeCoordinates_;
         std::vector<Coordinate*> wiggleTargetCoordinates_;
-        unsigned int currentOverlapCount_;
+        unsigned int currentOverlapCount_ = -1;
         double currentDistance_;
     };
 } // namespace gmmlPrograms
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP_ */
+#endif

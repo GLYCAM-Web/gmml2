@@ -403,12 +403,11 @@ namespace glygraph
         }
     }
 
-    template<class T> inline void Graph<T>::bfsWalk(Node<T>* const& startNode_t)
+    template<class T> inline void Graph<T>::bfsWalk(Node<T>* const&)
     {}
 
     template<class T>
-    inline void Graph<T>::bfsHelper(Node<T>* const& currentNode_t, std::unordered_set<Node<T>*>& visitedNodeSet_t,
-                                    std::vector<Node<T>*>& reachableNodes_t)
+    inline void Graph<T>::bfsHelper(Node<T>* const&, std::unordered_set<Node<T>*>&, std::vector<Node<T>*>&)
     {}
 
     template<class T>

@@ -1,10 +1,12 @@
-#ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
-#define GMML_INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include <vector>
+#include <string>
 
 namespace cdsCondensedSequence
 {
@@ -56,21 +58,10 @@ namespace cdsCondensedSequence
 
       private:
         //////////////////////////////////////////////////////////
-        //                       ACCESSOR                       //
-        //////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////
-        //                       MUTATOR                        //
-        //////////////////////////////////////////////////////////
-        void deleteLinkage(cds::ResidueLinkage* linkage);
-        //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
         void ApplyDeoxy(ParsedResidue* deoxyResidue);
-        void MoveAtomsFromPrepResidueToParsedResidue(prep::PrepFile& prepResidues, ParsedResidue* parsedResidue);
         void DerivativeChargeAdjustment(ParsedResidue* parsedResidue);
-        void EnsureIntegralCharge(double charge);
-        //        void RecurveGenerateResidues(ParsedResidue *currentChild, MolecularModeling::Residue &parent,
-        //        MolecularModeling::Assembly* assembly);
         void ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue);
         std::vector<std::string> GetGlycamNamesOfResidues() const;
         std::string GetGlycamResidueName(ParsedResidue* residue) const;
@@ -78,7 +69,6 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                 PRIVATE MEMBERS                      //
         //////////////////////////////////////////////////////////
-        // std::map<std::string, PrepFileSpace::PrepFileResidue*> prepResidueMap_;
         std::string inputSequenceString_;
         std::vector<cds::ResidueLinkage> glycosidicLinkages_;
     };

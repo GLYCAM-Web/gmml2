@@ -1,6 +1,5 @@
-#ifndef CARBOHYDRATE_DIHEDRAL_ANGLE_PREFERENCE_HPP
-#define CARBOHYDRATE_DIHEDRAL_ANGLE_PREFERENCE_HPP
-#include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
+#ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
+#define INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 #include <string>
 #include <vector>
 
@@ -21,7 +20,7 @@ namespace gmml
                 double weight_;
                 std::string rotamer_type_; // permutation or conformer
                 std::string rotamer_name_;
-                int number_of_bonds_from_anomeric_carbon_;
+                unsigned int number_of_bonds_from_anomeric_carbon_;
                 int index_; // Used to indicate whether multiple entries are meant to overwrite each other or generate
                             // an additional angle
                 std::vector<std::string> residue1_conditions_;
@@ -65,10 +64,10 @@ namespace gmml
                 //                      QUERY FUNCTIONS                 //
                 //////////////////////////////////////////////////////////
                 // Pass in the two atoms on either side the residue-residue linkage
-                DihedralAngleDataVector GetEntriesForLinkage(const std::string atom1Name,
-                                                             const std::string residue1Name,
-                                                             const std::string atom2Name,
-                                                             const std::string residue2Name) const;
+                std::vector<DihedralAngleDataVector> GetEntriesForLinkage(const std::string atom1Name,
+                                                                          const std::string residue1Name,
+                                                                          const std::string atom2Name,
+                                                                          const std::string residue2Name) const;
 
               private:
                 //////////////////////////////////////////////////////////
@@ -88,4 +87,4 @@ namespace gmml
         } // namespace GLYCAM
     }     // namespace MolecularMetadata
 } // namespace gmml
-#endif // CARBOHYDRATE_DIHEDRAL_ANGLES_HPP
+#endif

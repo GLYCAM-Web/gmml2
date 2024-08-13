@@ -1,8 +1,8 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_CDSATOM_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_CDSATOM_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
 
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CodeUtils/constants.hpp" // dNotSet
 
 #include <string>
@@ -18,7 +18,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
-        Atom()          = default;
+        Atom() : Node<Atom>(glygraph::invalid, {}) {};
         virtual ~Atom() = default;
         Atom(const std::string name, const Coordinate& coord);
         Atom(Atom&& other) noexcept;               // Move Ctor
@@ -28,7 +28,6 @@ namespace cds
         friend void swap(Atom& lhs, Atom& rhs) noexcept
         {
             using std::swap;
-            swap(static_cast<glygraph::Node<cds::Atom>&>(lhs), static_cast<glygraph::Node<cds::Atom>&>(rhs));
             swap(lhs.currentCoordinate_, rhs.currentCoordinate_);
             swap(lhs.allCoordinates_, rhs.allCoordinates_);
             swap(lhs.charge_, rhs.charge_);
@@ -113,5 +112,7 @@ namespace cds
         std::string atomType_ = " ";
         int number_           = constants::iNotSet;
     };
+
+    std::vector<Coordinate*> getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms);
 } // namespace cds
-#endif // CDSATOM_HPP
+#endif

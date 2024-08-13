@@ -81,6 +81,10 @@ std::vector<Atom*> cdsSelections::findCycleAtoms(cds::Atom* const starterAtom)
 // For now it's the lowest numbered (e.g. C1 lower than C6) ring atom connected to the ring oxygen.
 Atom* cdsSelections::guessAnomericAtomByInternalNeighbors(const std::vector<cds::Atom*> atoms)
 {
+    if (atoms.empty())
+    {
+        throw std::runtime_error("Empty atom vector passed to guessAnomericAtomByInternalNeighbors");
+    }
     std::vector<Atom*> cycleAtoms = cdsSelections::findCycleAtoms(atoms.at(0));
     cds::Atom* cycleOxygen        = nullptr;
     for (auto& cycleAtom : cycleAtoms)
@@ -205,7 +209,7 @@ std::vector<Atom*> cdsSelections::FindAtomsWithinDistance(const Atom* queryAtom,
     std::vector<Atom*> foundAtoms;
     for (auto& otherAtom : otherAtoms)
     {
-        if (queryAtom->getCoordinate()->Distance(otherAtom->getCoordinate()) < distance)
+        if (withinDistance(distance, *queryAtom->getCoordinate(), *otherAtom->getCoordinate()))
         {
             foundAtoms.push_back(otherAtom);
         }

@@ -12,35 +12,8 @@ namespace abstrab
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        Index()
-        {
-            this->setIndex(this->generateIndex());
-        }
-
-        Index(unsigned int index)
-        {
-            this->setIndex(index);
-        }
-
-        // copy constructor
-        inline Index(const Index& rhs) : index_m(rhs.index_m)
+        Index() : index_m(generateIndex())
         {}
-
-        // move constructor
-        inline Index(Index&& rhs) : index_m(rhs.index_m)
-        {}
-
-        inline Index& operator=(const Index& rhs)
-        {
-            return *this = Index(rhs);
-        }
-
-        // move assignment
-        inline Index& operator=(Index&& rhs)
-        {
-            this->index_m = rhs.index_m;
-            return *this;
-        }
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //

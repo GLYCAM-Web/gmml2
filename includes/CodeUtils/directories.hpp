@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CODEUTILS_DIRECTORIES_HPP
-#define GMML_INCLUDES_CODEUTILS_DIRECTORIES_HPP
+#ifndef INCLUDES_CODEUTILS_DIRECTORIES_HPP
+#define INCLUDES_CODEUTILS_DIRECTORIES_HPP
 #include <sys/stat.h>  // To check if file exists using stat
 #include <sys/types.h> // The s_IFDIR
 #include <string>
@@ -38,4 +38,4 @@ namespace codeUtils
         std::filesystem::path(gmmlHomeDirPath).string() + "includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/";
 
 } // namespace codeUtils
-#endif // GMML_INCLUDES_CODEUTILS_DIRECTORIES_HPP
+#endif

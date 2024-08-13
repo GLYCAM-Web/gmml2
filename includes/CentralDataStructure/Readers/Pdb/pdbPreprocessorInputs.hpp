@@ -1,11 +1,11 @@
-#ifndef GMML_INCLUDES_RESOLVER_NEWPDBPREPROCSSOR_INPUTS_HPP
-#define GMML_INCLUDES_RESOLVER_NEWPDBPREPROCSSOR_INPUTS_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBPREPROCESSORINPUTS_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBPREPROCESSORINPUTS_HPP
 
 #include <string>
 #include <vector>
 
-//may want to remove the constants.hpp file here.... Was added cause when
-//doing some brute force type compile checking this file needed constants.hpp
+// may want to remove the constants.hpp file here.... Was added cause when
+// doing some brute force type compile checking this file needed constants.hpp
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // residueId
 // #include "includes/utils.hpp" // gmml::Split
@@ -196,4 +196,4 @@ namespace pdb
     };
 
 } // namespace pdb
-#endif // GMML_INCLUDES_RESOLVER_NEWPDBPREPROCSSORINPUTS_HPP
+#endif

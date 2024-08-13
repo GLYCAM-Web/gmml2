@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_WRITERS_PDBWRITER_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_WRITERS_PDBWRITER_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_WRITERS_PDBWRITER_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_WRITERS_PDBWRITER_HPP
 
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
@@ -7,7 +7,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 // Not all the options are available now, like e.g. writing molecule chain numbers, but I will add them as I need them
 namespace cds

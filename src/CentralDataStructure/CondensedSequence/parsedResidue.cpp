@@ -2,8 +2,27 @@
 #include "includes/CodeUtils/logging.hpp"
 #include <sstream>
 
+#include <regex>
+
 using cds::ResidueType;
 using cdsCondensedSequence::ParsedResidue;
+
+namespace
+{
+    std::string findLabelContaining(const std::string& query, const std::vector<std::string>& labels)
+    {
+        std::regex regexQuery(query, std::regex_constants::ECMAScript);
+        for (auto& label : labels)
+        {
+            if (std::regex_search(label, regexQuery))
+            {
+                return label;
+            }
+        }
+        // std::cout << "Found nothing.\n";
+        return "";
+    }
+} // namespace
 
 ParsedResidue::ParsedResidue(std::string residueString, ResidueType specifiedType) : fullResidueString_(residueString)
 //: Node(residueString), fullResidueString_ (residueString)
@@ -109,7 +128,7 @@ std::string ParsedResidue::GetName(const bool withLabels) const
 {
     if (withLabels)
     {
-        return this->findLabelContaining("&Label=");
+        return findLabelContaining("&Label=", this->getLabels());
     }
     return this->GetIsomer() + this->GetResidueName() + this->GetRingType() + this->GetResidueModifier() +
            this->GetRingShape();
@@ -124,7 +143,7 @@ std::string ParsedResidue::GetLinkageName(const bool withLabels) const
     {
         if (withLabels)
         {
-            return linkage->findLabelContaining("&Label=");
+            return findLabelContaining("&Label=", linkage->getLabels());
         }
         else
         {

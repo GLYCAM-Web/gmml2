@@ -14,8 +14,6 @@ namespace glygraph
         /************************************************
          *  CONSTRUCTORS/DESTRUCTORS
          ***********************************************/
-        Edge();
-        Edge(std::string name_t, T* const& sourceNode_t, T* const& targetNode_t);
         Edge(std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t, T* const& targetNode_t);
 
         // copy constructor
@@ -62,25 +60,10 @@ namespace glygraph
         T* targetNode_m;
     };
 
-    template<class T> inline Edge<T>::Edge()
-    {
-        // badBehavior(__LINE__, __func__, "Warning calling default constructor");
-        this->targetNode_m = nullptr;
-        this->sourceNode_m = nullptr;
-    }
-
-    template<class T>
-    inline Edge<T>::Edge(std::string name_t, T* const& sourceNode_t, T* const& targetNode_t)
-        : GenericGraphObject(name_t)
-    {
-        this->targetNode_m = targetNode_t;
-        this->sourceNode_m = sourceNode_t;
-    }
-
     template<class T>
     inline Edge<T>::Edge(std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t,
                          T* const& targetNode_t)
-        : GenericGraphObject(name_t, labels_t)
+        : GenericGraphObject(name_t, labels_t, ConnectivityType::UNKNOWN)
     {
         this->targetNode_m = targetNode_t;
         this->sourceNode_m = sourceNode_t;
@@ -101,8 +84,7 @@ namespace glygraph
     // copy constructor
     template<class T>
     inline Edge<T>::Edge(const Edge<T>& rhs)
-        : GenericGraphObject(rhs.getName(), rhs.getLabels(), rhs.getConnectivityTypeIdentifier()),
-          sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
+        : GenericGraphObject(rhs), sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
     {
         // lazyInfo(__LINE__, __func__,
         //		"Calling copy constructor on " + this->getName());
@@ -111,8 +93,7 @@ namespace glygraph
     // move constructor
     template<class T>
     inline Edge<T>::Edge(Edge<T>&& rhs)
-        : GenericGraphObject(rhs.getName(), rhs.getLabels(), rhs.getConnectivityTypeIdentifier()),
-          sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
+        : GenericGraphObject(rhs), sourceNode_m(rhs.getSourceNode()), targetNode_m(rhs.getTargetNode())
     {
         // wanted data has been yoinked so we go ahead and delete this edge that we dont care about
         //	anymore. As stated in move assignment we dont care what state we leave our rhs in after a move

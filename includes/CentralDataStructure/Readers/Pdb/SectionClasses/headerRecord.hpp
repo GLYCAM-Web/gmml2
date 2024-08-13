@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_INPUTSET_PDBFILE_HEADERRECORD_HPP
-#define GMML_INCLUDES_INPUTSET_PDBFILE_HEADERRECORD_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_HEADERRECORD_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_HEADERRECORD_HPP
 
 #include <string>
 #include <sstream>
@@ -50,4 +50,4 @@ namespace pdb
         std::string identifier_code_ = ""; /*!< Identifier code of the pdb file >*/
     };
 } // namespace pdb
-#endif // GMML_INCLUDES_INPUTSET_PDBFILE_HEADERRECORD_HPP
+#endif

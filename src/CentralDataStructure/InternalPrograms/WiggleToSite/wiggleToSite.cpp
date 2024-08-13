@@ -5,11 +5,11 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp" //select
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
-#include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateGeometricCenter
+#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
+using cds::Atom;
 using gmmlPrograms::WiggleToSite;
 
 //////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         this->randomizeLinkageOrder();
         for (auto& linkage : this->getWiggleLinkages())
         {
-            linkage.SetRandomShapeUsingMetadata(true);
+            linkage.SetRandomShapeUsingMetadata();
             if (this->acceptDistance(useMonteCarlo) && this->acceptOverlaps())
             {
                 cycle = 0; // reset when it improves
@@ -134,7 +134,8 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
         std::cout << residue->getName() << "_" << residue->getNumber() << ", ";
         if (previousResidue != nullptr)
         {
-            wiggleLinkages_.emplace_back(cds::ResidueLinkage(previousResidue, residue));
+            cds::ResidueLink link = cds::findResidueLink({previousResidue, residue});
+            wiggleLinkages_.emplace_back(link);
         }
         previousResidue = residue;
     }
@@ -148,14 +149,7 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
 
 double WiggleToSite::calculateDistance()
 {
-    return wiggleTargetCoordinates_.at(0)->Distance(wiggleMeCoordinates_.at(0));
-    //    double totalDistance = 0.0;
-    //    totalDistance += wiggleTargetCoordinates_.at(0)->Distance(wiggleMeCoordinates_.at(0));
-    //    totalDistance += wiggleTargetCoordinates_.at(1)->Distance(wiggleMeCoordinates_.at(1));
-    //    totalDistance += wiggleTargetCoordinates_.at(2)->Distance(wiggleMeCoordinates_.at(2));
-    //    return totalDistance;
-    //    //return
-    //    cds::calculateGeometricCenter(wiggleTargetCoordinates_).Distance(&cds::calculateGeometricCenter(wiggleMeCoordinates_));
+    return distance(*wiggleTargetCoordinates_.at(0), *wiggleMeCoordinates_.at(0));
 }
 
 bool WiggleToSite::acceptOverlaps()

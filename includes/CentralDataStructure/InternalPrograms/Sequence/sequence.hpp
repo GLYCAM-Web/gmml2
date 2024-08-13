@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP_
-#define GMML_INCLUDES_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP
 
 // OG Feb 2022
 // This class only exists so I can wrap it into gems without swig having to know about SequenceManipulator and the
@@ -7,7 +7,6 @@
 // when wrapping.
 
 #include <string>
-#include "includes/Abstract/absBuilder.hpp"
 
 namespace CondensedSequence
 {
@@ -76,4 +75,4 @@ namespace CondensedSequence
         std::string indexLabeled_        = "";
     };
 } // namespace CondensedSequence
-#endif /* INCLUDES_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP_ */
+#endif

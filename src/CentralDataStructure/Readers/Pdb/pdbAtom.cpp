@@ -80,9 +80,9 @@ PdbAtom::PdbAtom(const std::string& line)
     }
     try
     {
-        this->setCoordinate(cds::Coordinate(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
-                                            codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
-                                            codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8))));
+        this->setCoordinate(pdb::coordinateFromStrings(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
+                                                       codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
+                                                       codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8))));
     }
     catch (...)
     {
@@ -222,7 +222,7 @@ void PdbAtom::Print(std::ostream& out) const
         out << residueSequenceNumber_;
     }
     out << ", Inserion Code: " << insertionCode_ << ", Coordinate: ";
-    this->getCoordinate()->Print(out);
+    print(*getCoordinate(), out);
     out << ", Occupancy: ";
     if (occupancy_ == constants::dNotSet)
     {

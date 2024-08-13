@@ -1,25 +1,26 @@
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/MolecularMetadata/elementattributes.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+
 #include <ctype.h> // isalpha
+#include <sstream>
 
 using cds::Atom;
 
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTORS                   //
 //////////////////////////////////////////////////////////
-Atom::Atom(const std::string name, const Coordinate& coord)
+Atom::Atom(const std::string name, const Coordinate& coord) : Node<Atom>(name, {})
 {
     this->setCoordinate(coord);
-    this->setName(name);
     this->setNumber(1); // Seems like a fine default?
 }
 
 // Move Ctor
-Atom::Atom(Atom&& other) noexcept : Atom()
+Atom::Atom(Atom&& other) noexcept : Node<Atom>(other)
 {
     swap(*this, other);
 }
@@ -41,6 +42,7 @@ Atom::Atom(const Atom& other) noexcept
 // Move and Copy assignment operator
 Atom& Atom::operator=(Atom other) noexcept
 {
+    this->Node<Atom>::operator=(other);
     swap(*this, other);
     currentCoordinate_ = allCoordinates_.at(0).get();
     return *this;
@@ -68,7 +70,7 @@ unsigned int Atom::getNumberFromName() const
 {
     const std::string name        = this->getName();
     std::string convertableNumber = "";
-    for (int i = 1; i < name.size(); i++)
+    for (size_t i = 1; i < name.size(); i++)
     {
         if (isdigit(name[i]))
         {
@@ -156,17 +158,14 @@ std::string Atom::getId() const
 
 bool Atom::isWithinBondingDistance(const Atom* otherAtom) const
 {
-    double maxLength = atomicBonds::getMaxBondLengthByAtomType(this->getElement(), otherAtom->getElement());
-    if (this->getCoordinate()->withinDistance(otherAtom->getCoordinate(), maxLength))
-    {
-        return true;
-    }
-    return false;
+    double maxLength = MolecularMetadata::getMaxBondLengthByAtomType(
+        MolecularMetadata::toElement(this->getElement()), MolecularMetadata::toElement(otherAtom->getElement()));
+    return withinDistance(maxLength, *this->getCoordinate(), *otherAtom->getCoordinate());
 }
 
 double Atom::calculateDistance(const Atom* otherAtom) const
 {
-    return this->getCoordinate()->Distance(otherAtom->getCoordinate());
+    return distance(*this->getCoordinate(), *otherAtom->getCoordinate());
 }
 
 //////////////////////////////////////////////////////////
@@ -189,4 +188,15 @@ void Atom::Print(std::ostream& out) const
 {
     out << this->getName() << ", ";
     return;
+}
+
+std::vector<Coordinate*> cds::getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms)
+{
+    std::vector<Coordinate*> coordinates;
+    coordinates.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        coordinates.push_back(atom->getCoordinate());
+    }
+    return coordinates;
 }

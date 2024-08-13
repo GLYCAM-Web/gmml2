@@ -9,7 +9,7 @@ std::string codeUtils::Find_Program_Installation_Directory()
 { // A way to get the program name plus working directory
     char processID[32];
     char pBuffer[256];
-    size_t len = sizeof(pBuffer);
+    ssize_t len = sizeof(pBuffer);
     sprintf(processID, "/proc/%d/exe", getpid());
     int bytes = MIN(readlink(processID, pBuffer, len), len - 1);
     if (bytes >= 0)

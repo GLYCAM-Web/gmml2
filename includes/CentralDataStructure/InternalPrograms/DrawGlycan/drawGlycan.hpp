@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_INTERNALPROGRAMS_DRAWGLYCAN_DRAWGLYCAN_HPP_
-#define GMML_INCLUDES_INTERNALPROGRAMS_DRAWGLYCAN_DRAWGLYCAN_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_DRAWGLYCAN_DRAWGLYCAN_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_DRAWGLYCAN_DRAWGLYCAN_HPP
 
 // OG Feb 2022
 // This class only exists so I can wrap it into gems without swig having to know about SequenceManipulator and the
@@ -8,12 +8,11 @@
 
 #include <string>
 
-#include "includes/Abstract/absBuilder.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
 
 namespace CondensedSequence
 {
-    class DrawGlycan : public Abstract::absBuilder
+    class DrawGlycan
     {
       public:
         //////////////////////////////////////////////////////////
@@ -35,4 +34,4 @@ namespace CondensedSequence
         //////////////////////////////////////////////////////////
     };
 } // namespace CondensedSequence
-#endif /* INCLUDES_INTERNALPROGRAMS_DRAWGLYCAN_DRAWGLYCAN_HPP_ */
+#endif

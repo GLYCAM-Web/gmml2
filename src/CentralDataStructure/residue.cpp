@@ -1,12 +1,9 @@
 #include "includes/CentralDataStructure/residue.hpp"
 
-#include "../../includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CodeUtils/biology.hpp"
 
 using cds::Atom;
@@ -15,7 +12,7 @@ using cds::Residue;
 //////////////////////////////////////////////////////////
 //                    CONSTRUCTOR                       //
 //////////////////////////////////////////////////////////
-Residue::Residue(const std::string& residueName, const Residue* referenceResidue)
+Residue::Residue(const std::string& residueName, const Residue* referenceResidue) : Node<Residue>(glygraph::invalid, {})
 {
     this->setName(residueName);
     this->setNumber(referenceResidue->getNumber() + 1);
@@ -23,15 +20,14 @@ Residue::Residue(const std::string& residueName, const Residue* referenceResidue
 }
 
 // Move Ctor.
-Residue::Residue(Residue&& other) noexcept : Residue()
+Residue::Residue(Residue&& other) noexcept : Node<Residue>(other)
 {
     swap(*this, other);
 }
 
 // Copy Ctor. Using copy-swap idiom. Call the base class copy ctor.
 Residue::Residue(const Residue& other)
-    : glygraph::Node<cds::Residue>(other), name_(other.name_), geometricCenter_(other.geometricCenter_),
-      type_(other.type_), number_(other.number_)
+    : glygraph::Node<cds::Residue>(other), name_(other.name_), type_(other.type_), number_(other.number_)
 {
     std::vector<cds::Atom*> otherAtoms = other.getAtoms();
     for (auto& atom : otherAtoms)
@@ -59,6 +55,7 @@ Residue::Residue(const Residue& other)
 
 Residue& Residue::operator=(Residue other)
 {
+    this->Node<Residue>::operator=(other);
     swap(*this, other);
     return *this;
 }
@@ -70,6 +67,7 @@ Residue& Residue::operator=(Residue other)
 std::vector<Atom*> Residue::getAtoms() const
 {
     std::vector<Atom*> atoms;
+    atoms.reserve(atoms_.size());
     for (auto& atomPtr : atoms_)
     {
         atoms.push_back(atomPtr.get());
@@ -93,9 +91,10 @@ const std::string Residue::GetParmName() const // If terminal, need to look up e
 std::vector<std::string> Residue::getAtomNames() const
 {
     std::vector<std::string> foundAtomNames;
-    for (auto& atom : this->getAtoms())
+    foundAtomNames.reserve(atoms_.size());
+    for (auto& atom : atoms_)
     {
-        foundAtomNames.push_back(atom->getName());
+        foundAtomNames.push_back(atom.get()->getName());
     }
     return foundAtomNames;
 }
@@ -112,13 +111,12 @@ std::vector<Coordinate*> Residue::getCoordinates() const
     return cds::getCoordinatesFromAtoms(this->getAtoms());
 }
 
-const Coordinate* Residue::getGeometricCenter()
+void Residue::insertCoordinatesInto(std::vector<Coordinate>& coordinates) const
 {
-    if (geometricCenter_.GetX() == constants::dNotSet)
+    for (auto& a : atoms_)
     {
-        return this->calculateGeometricCenter();
+        coordinates.push_back(*a.get()->getCoordinate());
     }
-    return &geometricCenter_;
 }
 
 pdb::ResidueId Residue::getId() const
@@ -265,12 +263,6 @@ void Residue::MakeDeoxy(const std::string oxygenNumber)
     oxygenAtom->setType("H1");
     oxygenAtom->setCharge(0.0000);
     gmml::log(__LINE__, __FILE__, gmml::INF, "Completed MakeDeoxy\n");
-}
-
-const Coordinate* Residue::calculateGeometricCenter()
-{
-    geometricCenter_ = cds::calculateGeometricCenter(this->getCoordinates());
-    return &geometricCenter_;
 }
 
 cds::ResidueType Residue::determineType(const std::string& residueName)

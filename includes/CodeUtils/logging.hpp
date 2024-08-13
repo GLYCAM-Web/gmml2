@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CODEUTILS_LOGGING_HPP
-#define GMML_INCLUDES_CODEUTILS_LOGGING_HPP
+#ifndef INCLUDES_CODEUTILS_LOGGING_HPP
+#define INCLUDES_CODEUTILS_LOGGING_HPP
 
 #include <string>
 
@@ -27,4 +27,4 @@ namespace gmml
           */
     void log(int line, std::string file_path, LogLevel level, std::string msg, std::string out_file_name = "");
 } // namespace gmml
-#endif // GMML_INCLUDES_CODEUTILS_LOGGING_HPP
+#endif

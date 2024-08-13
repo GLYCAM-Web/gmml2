@@ -1,7 +1,6 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
 
 using cds::Residue;
 
@@ -85,57 +84,14 @@ void cdsSelections::FindConnectedResidues(std::vector<Residue*>& visitedList, Re
     return;
 }
 
-std::vector<Residue*> cdsSelections::selectNClosestResidues(std::vector<Residue*> inputResidues, Residue* query,
-                                                            const unsigned int n)
-{
-    const Coordinate* queryResidueCenter = query->calculateGeometricCenter();
-
-    // For the sort function
-    struct myComparatorClass
-    {
-        myComparatorClass(const Coordinate* reference) : reference_(reference)
-        {}
-
-        bool operator()(Residue* i, Residue* j)
-        {
-            return (reference_->Distance(i->calculateGeometricCenter()) <
-                    reference_->Distance(j->calculateGeometricCenter()));
-        }
-
-        const Coordinate* reference_;
-    };
-
-    myComparatorClass myComparatorObject(queryResidueCenter);
-    // End for the sort function
-    std::sort(inputResidues.begin(), inputResidues.end(), myComparatorObject);
-    if (n > inputResidues.size())
-    {
-        return inputResidues;
-    }
-    inputResidues.resize(n);
-    return inputResidues;
-}
-
-bool cdsSelections::areNeighbors(Residue* a, Residue* b)
-{
-    for (auto& neighbor : a->getNeighbors())
-    {
-        if (neighbor == b)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
 std::vector<Residue*> cdsSelections::selectResiduesWithinDistanceN(std::vector<Residue*> inputResidues,
                                                                    Residue* queryResidue, double queryDistance)
 {
     std::vector<Residue*> foundResidues;
-    const cds::Coordinate* queryCenter = queryResidue->getGeometricCenter();
+    cds::Coordinate queryCenter = cds::coordinateMean(queryResidue->getCoordinates());
     for (auto& inputRes : inputResidues)
     {
-        if (queryCenter->Distance(inputRes->getGeometricCenter()) <= queryDistance)
+        if (withinDistance(queryDistance, queryCenter, cds::coordinateMean(inputRes->getCoordinates())))
         {
             foundResidues.push_back(inputRes);
         }

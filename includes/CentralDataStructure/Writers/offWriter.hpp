@@ -1,13 +1,10 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_WRITERS_OFFWRITER_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_WRITERS_OFFWRITER_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_WRITERS_OFFWRITER_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_WRITERS_OFFWRITER_HPP
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp" // serializeNumbers
 #include <vector>
 #include <string>
-#include <iostream>
-#include <fstream>
-#include <iomanip> //std::precision
+#include <ostream>
 
 namespace cds
 {

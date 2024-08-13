@@ -108,7 +108,7 @@ void PdbModel::extractCoordinatesFromModel(std::stringstream& stream_block, std:
     std::vector<Atom*>::iterator it = myAtoms.begin();
     while ((std::getline(stream_block, line)))
     {
-        codeUtils::ExpandLine(line, iPdbLineLength);
+        pdb::expandLine(line, iPdbLineLength);
         std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         if (recordName == "ATOM" || recordName == "HETATM")
         {
@@ -126,7 +126,7 @@ void PdbModel::extractCoordinatesFromModel(std::stringstream& stream_block, std:
 
 void PdbModel::addConectRecord(const cds::Atom* atom1, const cds::Atom* atom2)
 {
-    conectRecords_.emplace_back(std::vector {atom1, atom2});
+    conectRecords_.emplace_back(std::vector<const cds::Atom*> {atom1, atom2});
     return;
 }
 

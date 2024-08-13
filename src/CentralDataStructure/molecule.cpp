@@ -3,7 +3,6 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
-#include "includes/CentralDataStructure/Shapers/atomToCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 
 using cds::Atom;
@@ -13,10 +12,10 @@ using cds::Residue;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTORS                   //
 //////////////////////////////////////////////////////////
-Molecule::Molecule(const std::string chainID) : number_(0), chainId_(chainID)
+Molecule::Molecule(const std::string chainID) : Node<Molecule>(glygraph::invalid, {}), number_(0), chainId_(chainID)
 {}
 
-Molecule::Molecule(std::vector<Residue*>& residues) : number_(0)
+Molecule::Molecule(std::vector<Residue*>& residues) : Node<Molecule>(glygraph::invalid, {}), number_(0)
 {
     for (auto& residue : residues)
     {
@@ -54,6 +53,7 @@ Molecule& Molecule::operator=(Molecule other)
 std::vector<Residue*> Molecule::getResidues() const
 {
     std::vector<Residue*> residues;
+    residues.reserve(residues_.size());
     for (auto& residuePtr : residues_)
     {
         residues.push_back(residuePtr.get());
@@ -82,12 +82,11 @@ std::vector<Coordinate*> Molecule::getCoordinates() const
 //////////////////////////////////////////////////////////
 //                    MUTATORS                          //
 //////////////////////////////////////////////////////////
-void Molecule::swapResiduePosition(Residue* queryResidue, int newPosition)
+void Molecule::swapResiduePosition(Residue* queryResidue, size_t newPosition)
 {
-    int oldPosition = 0;
-    for (auto& residue : residues_)
+    for (size_t oldPosition = 0; oldPosition < residues_.size(); oldPosition++)
     {
-        if (residue.get() == queryResidue)
+        if (residues_[oldPosition].get() == queryResidue)
         {
             if (oldPosition != newPosition)
             {
@@ -95,7 +94,6 @@ void Molecule::swapResiduePosition(Residue* queryResidue, int newPosition)
             }
             break;
         }
-        oldPosition++;
     }
 }
 
@@ -118,8 +116,6 @@ Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, const Re
     auto position = this->findPositionOfResidue(&positionReferenceResidue);
     if (position != residues_.end())
     {
-        //        gmml::log(__LINE__, __FILE__, gmml::INF,
-        //                  "New residue named " + myResidue->getName() + " will be born; You're welcome.");
         ++position; // it is ok to insert at end(). I checked. It was ok. Ok.
         position = residues_.insert(position, std::move(myResidue));
     }
@@ -133,23 +129,18 @@ Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, const Re
 
 std::vector<std::unique_ptr<Residue>>::iterator Molecule::findPositionOfResidue(const Residue* queryResidue)
 {
-    auto i = residues_.begin();
-    auto e = residues_.end();
-    while (i != e)
+    auto it = std::find_if(residues_.begin(), residues_.end(),
+                           [&](auto& i)
+                           {
+                               return queryResidue == i.get();
+                           });
+    if (it == residues_.end())
     {
-        if (queryResidue == i->get())
-        {
-            return i;
-        }
-        else
-        {
-            ++i;
-        }
+        gmml::log(__LINE__, __FILE__, gmml::ERR,
+                  "Did not find position of " + queryResidue->getName() +
+                      " in vector\n"); // every class should have a print?
     }
-    gmml::log(__LINE__, __FILE__, gmml::ERR,
-              "Did not find position of " + queryResidue->getName() +
-                  " in vector\n"); // every class should have a print?
-    return e;
+    return it;
 }
 
 std::vector<Residue*> Molecule::getResidues(std::vector<std::string> queryNames)
@@ -167,8 +158,6 @@ void Molecule::deleteResidue(Residue* residue)
     auto i = this->findPositionOfResidue(residue); // auto makes my life easier
     if (i != residues_.end())
     {
-        // gmml::log(__LINE__, __FILE__, gmml::INF, "Residue " + residue->getName() + " has been erased. You're
-        // welcome.");
         i = residues_.erase(i);
     }
     return;

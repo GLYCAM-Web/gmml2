@@ -2,7 +2,6 @@
 #define GMML_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_PARSEDRESIDUE_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
 #include <string>
 
 namespace cdsCondensedSequence

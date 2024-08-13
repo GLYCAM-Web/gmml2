@@ -45,8 +45,8 @@ SequenceParser::SequenceParser(std::string inputSequence)
 // DGlcpa1-[4DGlcpa1-3DManpa1-]<3>4DGalpa1-OH // Tails that aren't OH
 std::string SequenceParser::parseRepeatingUnits(const std::string inputSequence)
 {
-    unsigned int repeatCharacterEndLocation   = inputSequence.find_first_of('>');
-    unsigned int repeatCharacterStartLocation = inputSequence.find_first_of('<');
+    size_t repeatCharacterEndLocation   = inputSequence.find_first_of('>');
+    size_t repeatCharacterStartLocation = inputSequence.find_first_of('<');
     if (repeatCharacterStartLocation == std::string::npos)
     {
         throw std::runtime_error("No '<' found in sequence with repeating syntax symbol '>' : " + inputSequence);
@@ -55,7 +55,7 @@ std::string SequenceParser::parseRepeatingUnits(const std::string inputSequence)
     int numberRepeats = 0;
     try
     {
-        unsigned int numberStart = repeatCharacterStartLocation + 1;
+        size_t numberStart       = repeatCharacterStartLocation + 1;
         std::string stringNumber = inputSequence.substr(numberStart, (repeatCharacterEndLocation - numberStart));
         numberRepeats            = std::stoi(stringNumber);
     }
@@ -64,15 +64,15 @@ std::string SequenceParser::parseRepeatingUnits(const std::string inputSequence)
         throw std::runtime_error("Number of repeating units not specified correctly in repeating unit: " +
                                  inputSequence);
     }
-    unsigned int i = repeatCharacterStartLocation;
+    size_t i = repeatCharacterStartLocation;
     // Ensure next char is the ] of the repeating unit
     if (inputSequence[--i] != ']')
     {
         throw std::runtime_error("Missing or incorrect usage of ']' in repeating sequence: " + inputSequence);
     }
     // Ok now go find the position of the start of the repeating unit, considering branches
-    unsigned int repeatEnd   = i;
-    unsigned int repeatStart = this->seekRepeatStart(inputSequence, i);
+    size_t repeatEnd         = i;
+    size_t repeatStart       = this->seekRepeatStart(inputSequence, i);
     // std::cout << "Repeat starts at position " << repeatStart << " and ends here: " << repeatEnd << std::endl;
     //  std::cout << "Number of repeats: " << numberRepeats << "\n";
     std::string beforeRepeat = inputSequence.substr(0, repeatStart);

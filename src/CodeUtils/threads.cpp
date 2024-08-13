@@ -1,5 +1,6 @@
-#include <thread>
 #include "includes/CodeUtils/threads.hpp"
+#include <algorithm>
+#include <thread>
 
 unsigned long codeUtils::calculateNumberOfThreads(const unsigned long length)
 {

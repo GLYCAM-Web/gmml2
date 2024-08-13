@@ -1,5 +1,5 @@
-#ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP_
-#define INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP_
+#ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP
+#define INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP
 #include <string>
 #include <map>
 #include <vector>
@@ -15,4 +15,4 @@ namespace GlycamMetadata
     std::string GetAdjustmentAtom(std::string queryResidueCode);
     std::string GetConnectionAtomForResidue(const std::string query);
 } // namespace GlycamMetadata
-#endif /* INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP_ */
+#endif

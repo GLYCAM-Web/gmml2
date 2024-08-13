@@ -1,24 +1,21 @@
-#ifndef GMML_INCLUDES_CODEUTILS_STRINGS_HPP
-#define GMML_INCLUDES_CODEUTILS_STRINGS_HPP
+#ifndef INCLUDES_CODEUTILS_STRINGS_HPP
+#define INCLUDES_CODEUTILS_STRINGS_HPP
 
 #include <string>
-#include <unordered_map>
 #include <vector>
 #include <sstream>
-#include <algorithm> // erase remove
 
 namespace codeUtils
 {
     // Functions
     bool startsWith(std::string bigString, std::string smallString);
-    std::string FindStringInStringMap(const std::string s, const std::unordered_map<std::string, std::string>& sMap);
     std::string RemoveWhiteSpace(std::string str);
     void RemoveSpaces(std::string& str);
     void RemoveQuotes(std::string& str);
-    void ExpandLine(std::string& line, int length);
     int GetSizeOfIntInString(const std::string str);
     std::string& Trim(std::string& str);
     void removeMultipleSpaces(std::string& str);
+    std::vector<std::string> split(const std::string& s, char delim);
 
     template<typename T> T from_string(const std::string& str)
     {
@@ -38,13 +35,6 @@ namespace codeUtils
         }
     }
 
-    inline std::vector<std::string> split(const std::string& s, char delim)
-    {
-        std::vector<std::string> elems;
-        split(s, delim, std::back_inserter(elems));
-        return elems;
-    }
-
     template<class T> inline T extractFromStream(std::istream& ss, T temp)
     {
         ss >> temp;
@@ -52,4 +42,4 @@ namespace codeUtils
     }
 
 } // namespace codeUtils
-#endif // GMML_INCLUDES_CODEUTILS_STRINGS_HPP
+#endif

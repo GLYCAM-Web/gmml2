@@ -1,3 +1,6 @@
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -52,3 +55,5 @@ namespace glycoproteinBuilder
         std::vector<GlycosylationSiteInfo> table_;
     };
 } // namespace glycoproteinBuilder
+
+#endif

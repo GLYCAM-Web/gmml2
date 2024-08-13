@@ -1,5 +1,5 @@
-#ifndef GLYCAM06_RESIDUE_NAMES_TYPES_META_HPP
-#define GLYCAM06_RESIDUE_NAMES_TYPES_META_HPP
+#ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06RESIDUEINFO_HPP
+#define INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06RESIDUEINFO_HPP
 
 /** \file:  includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp
  * GLYCAM06 metadata for residues
@@ -20,6 +20,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <utility>
 
 namespace gmml
 {
@@ -65,7 +66,7 @@ namespace gmml
                 {
                     std::vector<std::string> matching_types;
                     // Iterate over the multimap using range based for loop
-                    for (std::pair<std::string, std::string> elem : glycam06NamesToTypesLookupMap_)
+                    for (auto& elem : glycam06NamesToTypesLookupMap_)
                     {
                         if (elem.first.compare(query) == 0)
                         {
@@ -77,10 +78,10 @@ namespace gmml
                 }
 
               private:
-                std::multimap<std::string, std::string> glycam06NamesToTypesLookupMap_;
+                std::vector<std::pair<std::string, std::string>> glycam06NamesToTypesLookupMap_;
             };
         } // namespace GLYCAM
     }     // namespace MolecularMetadata
 } // namespace gmml
 
-#endif // GLYCAM06_RESIDUE_NAMES_TYPES_META_HPP
+#endif

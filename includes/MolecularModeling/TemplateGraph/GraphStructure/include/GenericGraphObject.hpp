@@ -1,8 +1,6 @@
 #ifndef TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 #define TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 
-#include <iostream>
-
 #include "../../AbstractObject/includes/AbstractObject.hpp"
 
 namespace glygraph
@@ -62,65 +60,26 @@ namespace glygraph
 
       public:
         // constructor
-        inline GenericGraphObject(const std::string name_t) : abstrab::AbstractObject(name_t)
-        {}
-
-        inline GenericGraphObject(const std::string name_t, const std::string label_t)
-            : abstrab::AbstractObject(name_t, label_t)
-        {}
-
-        inline GenericGraphObject(const std::string name_t, const std::vector<std::string> labels_t)
-            : abstrab::AbstractObject(name_t, labels_t)
-        {}
-
         inline GenericGraphObject(const std::string name_t, const std::vector<std::string> labels_t,
                                   ConnectivityType connType_t)
             : abstrab::AbstractObject(name_t, labels_t), connTypeIdentifier_m(connType_t)
         {}
 
-        // copy constructor
-        inline GenericGraphObject(const GenericGraphObject& rhs)
-            : abstrab::AbstractObject(rhs), connTypeIdentifier_m(rhs.getConnectivityTypeIdentifier())
-        {}
-
-        // move constructor
-        inline GenericGraphObject(GenericGraphObject&& rhs)
-            : abstrab::AbstractObject(rhs), connTypeIdentifier_m(rhs.getConnectivityTypeIdentifier())
-        {}
-
-        // copy assignment
-        inline GenericGraphObject& operator=(const GenericGraphObject& rhs)
+        inline enum ConnectivityType getConnectivityTypeIdentifier() const
         {
-            return *this = GenericGraphObject(rhs);
+            return this->connTypeIdentifier_m;
         }
 
-        // move assignment
-        GenericGraphObject& operator=(GenericGraphObject&& rhs)
+        inline void setConnectivityTypeIdentifier(ConnectivityType structuralIdentifier_t)
         {
-            this->setConnectivityTypeIdentifier(rhs.getConnectivityTypeIdentifier());
-            abstrab::AbstractObject::operator=(rhs);
-            return *this;
+            this->connTypeIdentifier_m = structuralIdentifier_t;
         }
-
-        enum ConnectivityType getConnectivityTypeIdentifier() const;
-
-        void setConnectivityTypeIdentifier(ConnectivityType structuralIdentifier_t);
 
       private:
         // our deafult enum value is <UNKNOWN>, default enum value is the first element
         // just added the strutualType::UNKNOWN to make obvious
         ConnectivityType connTypeIdentifier_m = ConnectivityType::UNKNOWN;
     };
-
-    inline enum ConnectivityType GenericGraphObject::getConnectivityTypeIdentifier() const
-    {
-        return this->connTypeIdentifier_m;
-    }
-
-    inline void GenericGraphObject::setConnectivityTypeIdentifier(ConnectivityType structuralIdentifier_t)
-    {
-        this->connTypeIdentifier_m = structuralIdentifier_t;
-    }
 
 } // namespace glygraph
 

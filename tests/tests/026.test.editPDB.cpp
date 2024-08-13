@@ -1,11 +1,13 @@
-#include <string>
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 
-#include <fstream> // std::ifstream
+#include <vector>
+#include <string>
+#include <iostream>
+#include <fstream>
 
 int main(int argc, char* argv[])
 {

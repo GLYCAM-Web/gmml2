@@ -7,10 +7,20 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/strings.hpp" // split
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp" // selectResiduesByType
+#include "includes/External_Libraries/PCG/pcg_random.h"
+#include "includes/External_Libraries/PCG/pcg_extras.h"
+
+#include <vector>
+#include <string>
+#include <sstream>
+#include <fstream>
+#include <stdexcept>
+
 using cds::Assembly;
 
 //////////////////////////////////////////////////////////
@@ -26,8 +36,11 @@ GlycoproteinBuilder::GlycoproteinBuilder(glycoprotein::GlycoproteinBuilderInputs
         this->SetPersistCycles(inputStruct.persistCycles_);
         this->SetOverlapTolerance(inputStruct.overlapTolerance_);
         pdb::PdbFile pdbFile(inputStruct.substrateFileName_);
-        // pdb::PreprocessorOptions defaultOptions;
-        pdbFile.PreProcess(preprocessingOptions);
+        if (!inputStruct.skipMDPrep_)
+        {
+            gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
+            pdbFile.PreProcess(preprocessingOptions);
+        }
         glycoprotein_                                = std::move(*(pdbFile.getAssemblies().front()));
         std::vector<cds::Residue*> gpInitialResidues = glycoprotein_.getResidues();
         cds::setIntraConnectivity(gpInitialResidues);
@@ -51,35 +64,6 @@ GlycoproteinBuilder::GlycoproteinBuilder(glycoprotein::GlycoproteinBuilderInputs
 //////////////////////////////////////////////////////////
 //                       FUNCTIONS                      //
 //////////////////////////////////////////////////////////
-// void GlycoproteinBuilder::WriteOutputFiles(std::string prefix)
-//{
-//     // Pdb, original numbering.
-//     std::string fileName = prefix + ".pdb";
-//     std::ofstream outFileStream;
-//     outFileStream.open(fileName.c_str());
-//     cds::writeAssemblyToPdb(outFileStream, this->getGlycoprotein()->getMolecules());
-//     outFileStream.close();
-//     // Off file, serializes.
-//     fileName = prefix + ".off";
-//	outFileStream.open(fileName.c_str());
-//	cds::WriteAssemblyToOffFile(this->getGlycoprotein(), outFileStream, "GLYCOPROTEINBUILDER");
-//	outFileStream.close();
-//	// Pdb, serialized numbering.
-//	fileName = prefix + "_Serialized.pdb";
-//	outFileStream.open(fileName.c_str());
-//     cds::writeAssemblyToPdb(outFileStream, this->getGlycoprotein()->getMolecules());
-//	cds::writeConectCards(outFileStream, cdsSelections::selectResiduesByType(this->getGlycoprotein()->getResidues(),
-//{cds::ResidueType::Sugar, cds::ResidueType::Derivative, cds::ResidueType::Aglycone, cds::ResidueType::Undefined}));
-////    this->DeleteSitesIterativelyWithAtomicOverlapAboveTolerance(this->GetGlycosites(), this->GetOverlapTolerance());
-////	std::stringstream logss;
-////    logss << "Atomic overlap is " << this->CalculateOverlaps(ATOMIC) << "\n";
-////    logss << "Global overlap is " << this->GetGlobalOverlap() << "\n";
-////	  gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-//    this->PrintDihedralAnglesAndOverlapOfGlycosites();
-////	  this->WritePDBFile(this->GetGlycoproteinAssembly(), this->GetWorkingDirectory(), "GlycoProtein_Resolved",
-/// false);
-//    return;
-//}
 
 void GlycoproteinBuilder::WriteOffFile(const std::string prefix)
 {
@@ -152,8 +136,6 @@ void GlycoproteinBuilder::ResolveOverlapsWithWiggler()
     }
     currentOverlap = this->Wiggle(this->GetPersistCycles());
     gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentOverlap));
-    // this->UpdateAllOverlapAtomsInGlycosites(20);
-    // currentOverlap = this->Wiggle(this->GetPersistCycles(), wiggleFirstLinkageOnly);
     currentOverlap = this->Wiggle(this->GetPersistCycles(), wiggleFirstLinkageOnly, 5, useAllResiduesForOverlap);
     gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentOverlap));
     this->PrintDihedralAnglesAndOverlapOfGlycosites();
@@ -218,16 +200,8 @@ unsigned int GlycoproteinBuilder::RandomDescent(int persistCycles, bool monte_ca
             gmml::log(__LINE__, __FILE__, gmml::INF, "Stopping RandomDesent with all overlaps resolved.");
             return new_global_overlap;
         }
-        // gmml::WritePDBFile(glycosites.at(0).GetGlycoprotein(), cycle, "current", new_global_overlap);
-        //	        std::stringstream ss;
-        //	        ss << "current_cycle_" << cycle << "_overlap" << new_global_overlap;
-        //	        this->WriteOutputFile(ss.str());
         if (lowest_global_overlap > new_global_overlap + 1)
         {
-            //   logss << "Lowest: " << lowest_global_overlap << ", Current: " << new_global_overlap << "\n";
-            // std::stringstream ss;
-            // ss << "bestRandom_overlap" << new_global_overlap;
-            // gmml::WritePDBFile(this->GetGlycoproteinAssembly(), this->GetWorkingDirectory(), ss.str());
             lowest_global_overlap = new_global_overlap;
             cycle                 = 1;
         }
@@ -365,11 +339,12 @@ Residue* GlycoproteinBuilder::SelectResidueFromInput(const std::string userSelec
 
 void GlycoproteinBuilder::SetOtherGlycosites()
 {
-    for (auto& glycosite : this->GetGlycosites())
+    std::vector<GlycosylationSite>& glycosites    = this->GetGlycosites();
+    std::vector<GlycosylationSite*> glycositePtrs = codeUtils::pointerVector(glycosites);
+    for (size_t n = 0; n < glycosites.size(); n++)
     {
-        glycosite.SetOtherGlycosites(this->GetGlycosites());
+        glycosites[n].SetOtherGlycosites(codeUtils::withoutNth(n, glycositePtrs));
     }
-    return;
 }
 
 void GlycoproteinBuilder::AddOtherGlycositesToLinkageOverlapAtoms()
@@ -377,15 +352,6 @@ void GlycoproteinBuilder::AddOtherGlycositesToLinkageOverlapAtoms()
     for (auto& glycosite : this->GetGlycosites())
     {
         glycosite.AddOtherGlycositesToLinkageOverlapAtoms();
-    }
-    return;
-}
-
-void GlycoproteinBuilder::UpdateAllOverlapAtomsInGlycosites(unsigned int maxProteinResidues)
-{
-    for (auto& glycosite : this->GetGlycosites())
-    {
-        glycosite.UpdateOverlapAtomsInLinkages(maxProteinResidues);
     }
     return;
 }
@@ -408,7 +374,7 @@ void GlycoproteinBuilder::SetRandomDihedralAnglesUsingMetadata()
     return;
 }
 
-unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType moleculeType)
+unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType)
 {
     unsigned int overlap = 0;
     for (auto& glycosite : this->GetGlycosites())
@@ -418,7 +384,7 @@ unsigned int GlycoproteinBuilder::CountOverlaps(MoleculeType moleculeType)
     return overlap;
 }
 
-std::vector<GlycosylationSite*> GlycoproteinBuilder::DetermineSitesWithOverlap(MoleculeType moleculeType)
+std::vector<GlycosylationSite*> GlycoproteinBuilder::DetermineSitesWithOverlap(MoleculeType)
 {
     std::vector<GlycosylationSite*> sites_to_return;
     unsigned int overlap = 0;
@@ -432,49 +398,3 @@ std::vector<GlycosylationSite*> GlycoproteinBuilder::DetermineSitesWithOverlap(M
     }
     return sites_to_return;
 }
-
-// void GlycoproteinBuilder::DeleteSitesIterativelyWithAtomicOverlapAboveTolerance(
-//     std::vector<GlycosylationSite>& glycosites, int tolerance)
-//{
-//     std::stringstream logss;
-//     logss << "Atomic overlap before deleting sites is " << this->CountOverlaps() << "\n";
-//     bool continue_deleting = true;
-//     // While overlap for any site is > tolerance delete site with highest overlap then re-calculate overlaps as there
-//     // may be glycan-glycan overlap.
-//     while (continue_deleting)
-//     {
-//         GlycosylationSite* worst_site =
-//             glycosites.data(); // Pointer to the first glycosite. Remember an erase/remove "advances"
-//         for (auto& glycosite : this->GetGlycosites())
-//         {
-//             if (glycosite.CountOverlaps() > worst_site->CountOverlaps())
-//             {
-//                 worst_site = &glycosite;
-//             }
-//         }
-//         int worst_site_overlap = worst_site->CountOverlaps();
-//         if (worst_site_overlap > tolerance)
-//         {
-//             continue_deleting = true;
-//             // worst_site->Remove(this->GetGlycoproteinAssemblyPtr());
-//             worst_site->Rename_Protein_Residue_From_GLYCAM_To_Standard();
-//             logss << "Site " << worst_site->GetResidueId() << ": " << worst_site_overlap << " :"
-//                   << "Removed\n";
-//             glycosites.erase(std::remove(glycosites.begin(), glycosites.end(), *worst_site), glycosites.end());
-//             this->SetOtherGlycosites(); // This needs to be updated after you delete each site, so the others no
-//             longer
-//                                         // have a pointer to it. Great design Oliver well done you nailed it high
-//                                         five.
-//         }
-//         else
-//         {
-//             continue_deleting = false;
-//         }
-//         if (glycosites.empty()) // If we have deleted every site
-//         {
-//             continue_deleting = false;
-//         }
-//     }
-//     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-//     return;
-// }

@@ -8,15 +8,20 @@
 #include "includes/MolecularModeling/TemplateGraph/LazyPrints/LazyPrinters.hpp"
 
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp"
+
+#include <vector>
 #include <map>
 #include <set>
+#include <string>
+#include <iostream>
+#include <memory>
 
 using namespace glygraph;
 
 class Atom : public Node<Atom>
 {
   public:
-    inline Atom(std::string inName) : Node(inName) //, atomNodePtr_(std::shared_ptr<Atom>(this))
+    inline Atom(std::string inName) : Node(inName, {inName}) //, atomNodePtr_(std::shared_ptr<Atom>(this))
     {}
 
     virtual ~Atom()
@@ -36,7 +41,7 @@ class Atom : public Node<Atom>
     }
 
     // move constructor
-    inline Atom(Atom&& rhs)
+    inline Atom(Atom&& rhs) : Node(rhs)
     {
         lazyInfo(__LINE__, __func__, "Calling atom move constructor");
     }

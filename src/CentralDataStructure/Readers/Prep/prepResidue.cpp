@@ -7,7 +7,7 @@
 #include <iostream>
 #include <iomanip>
 #include <ios>
-#include "../../../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 
 using prep::PrepResidue;
 
@@ -58,7 +58,7 @@ PrepResidue::PrepResidue(std::ifstream& in_file, std::string& line)
             case prep::kSectionBlank:
                 break;
             case prep::kSectionOther:
-                gmml::log(__LINE__, __FILE__, gmml::WAR, "Unrecognized section in prep file");
+                gmml::log(__LINE__, __FILE__, gmml::WAR, "Unrecognized section in prep file:" + line);
                 break;
         }
     }
@@ -667,7 +667,7 @@ double PrepResidue::CalculatePrepResidueCharge()
 //////////////////////////////////////////////////////////
 //                     DISPLAY FUNCTIONS                //
 //////////////////////////////////////////////////////////
-std::string PrepResidue::Print() const
+std::string PrepResidue::toString() const
 {
     std::stringstream out;
     //    BondedAtomIndexMap bonded_atoms_map = this->GetBondingsOfResidue();

@@ -57,7 +57,8 @@ ParameterManager::ParameterManager(const std::vector<std::string> queryNames)
 
 cds::Residue* ParameterManager::findParameterResidue(const std::string name) const
 {
-    if (auto search = parameterResidueMap_.find(name); search != parameterResidueMap_.end())
+    auto search = parameterResidueMap_.find(name);
+    if (search != parameterResidueMap_.end())
     {
         return search->second;
     }

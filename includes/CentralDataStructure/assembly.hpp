@@ -16,8 +16,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Assembly()
-        {}
+        Assembly() : Node<Assembly>(glygraph::invalid, {}) {};
 
         Assembly(std::vector<Residue*>& residues);
         Assembly(Assembly&& other) noexcept; // Move Ctor
@@ -62,7 +61,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         // Molecule* addMolecule(const Molecule& molecule);
         Molecule* addMolecule(std::unique_ptr<Molecule> myMolecule);
-        const Atom* findAtom(const int& serialNumber) const;
+        const Atom* findAtom(int serialNumber) const;
         //////////////////////////////////////////////////////////
         //                    DISPLAY                           //
         //////////////////////////////////////////////////////////
@@ -74,4 +73,4 @@ namespace cds
         int number_ = 0;
     };
 } // namespace cds
-#endif // ASSEMBLY_HPP
+#endif

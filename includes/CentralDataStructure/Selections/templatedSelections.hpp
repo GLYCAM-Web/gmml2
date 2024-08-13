@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP
 
 #include <vector>
 #include <algorithm> // find
@@ -33,7 +33,7 @@ namespace codeUtils
         return nullptr;
     }
 
-    template<class T> T* findElementWithNumber(const std::vector<T*>& inputVector, const unsigned int& queryNumber)
+    template<class T> T* findElementWithNumber(const std::vector<T*>& inputVector, int queryNumber)
     {
         for (auto& element : inputVector)
         {
@@ -83,4 +83,4 @@ namespace codeUtils
         }
     }
 } // namespace codeUtils
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_TEMPLATEDSELECTIONS_HPP_ */
+#endif

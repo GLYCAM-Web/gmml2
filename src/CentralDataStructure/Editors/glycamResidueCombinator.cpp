@@ -2,6 +2,7 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06PrepToSugarDetail.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" //calculateCoordinateFromInternalCoords
 // #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
@@ -34,10 +35,17 @@ void residueCombinator::removeOMeMethyl(cds::Residue& queryResidue, cds::Atom* O
     return;
 }
 
+#include <functional>
+#include <sstream>
+
 void residueCombinator::removeHydroxyHydrogen(cds::Residue& queryResidue, const std::string hydrogenNumber)
 {
     cds::Atom* hydrogen = queryResidue.FindAtom("H" + hydrogenNumber + "O");
-    cds::Atom* oxygen   = queryResidue.FindAtom("O" + hydrogenNumber);
+    if (hydrogen == nullptr)
+    { // In ROH and some input prep files it's HO1. Otherwise H1O. Fun.
+        hydrogen = queryResidue.FindAtom("HO" + hydrogenNumber);
+    }
+    cds::Atom* oxygen = queryResidue.FindAtom("O" + hydrogenNumber);
     if (hydrogen == nullptr || oxygen == nullptr)
     {
         std::string message =
@@ -193,13 +201,8 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     { // Ok then grow the anomeric oxygen for the residueWithAnomericOxygen
         std::cout << "No Anomeric Oxygen Found in Template\n";
         anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithAnomericOxygen.getAtoms());
-        std::vector<Coordinate*> threeNeighbors;
-        for (auto& neighbor : anomer->getNeighbors())
-        {
-            threeNeighbors.push_back(neighbor->getCoordinate());
-        }
-        Coordinate newOxygenCoordinate =
-            cds::CreateCoordinateForCenterAwayFromNeighbors(anomer->getCoordinate(), threeNeighbors, 1.4);
+        Coordinate newOxygenCoordinate = cds::coordinateOppositeToNeighborAverage(
+            *anomer->getCoordinate(), getCoordinatesFromAtoms(anomer->getNeighbors()), 1.4);
         Atom* newAnomericOxygen = residueWithAnomericOxygen.addAtomToFront(
             std::make_unique<cds::Atom>("O" + anomerNumber, newOxygenCoordinate));
         newAnomericOxygen->setCharge(-0.388);

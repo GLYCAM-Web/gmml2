@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
-#define GMML_INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
 
 #include <string>
 #include <vector>
@@ -23,14 +23,15 @@ namespace glycoprotein
     struct GlycoproteinBuilderInputs
     {
         std::string substrateFileName_ = "Undefined"; // Program should throw if left as "Undefined".
-        int number3DStructures_        = 1;           // ToDo Implement this.
-        int maxThreads_                = 1;           // ToDo Implement this.
+        int number3DStructures_        = 1;
+        int maxThreads_                = 1; // ToDo Implement this.
         int persistCycles_             = 5;
         int overlapTolerance_          = 1;
         bool isDeterministic_          = false;
+        bool skipMDPrep_               = false;
         std::vector<GlycositeInput> glycositesInputVector_; // No default, program will throw if uninitialized.
     };
 
     GlycoproteinBuilderInputs readGPInputFile(std::string inputFileName);
 } // namespace glycoprotein
-#endif // GMML_INCLUDES_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
+#endif

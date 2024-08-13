@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOSYLATIONSITE_HPP
-#define GMML_INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOSYLATIONSITE_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOSYLATIONSITE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOSYLATIONSITE_HPP
 
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
@@ -38,7 +38,11 @@ class GlycosylationSite
     //////////////////////////////////////////////////////////
     //                       MUTATOR                        //
     //////////////////////////////////////////////////////////
-    void SetOtherGlycosites(std::vector<GlycosylationSite>& glycosites);
+    inline void SetOtherGlycosites(std::vector<GlycosylationSite*> glycosites)
+    {
+        other_glycosites_ = glycosites;
+    }
+
     //////////////////////////////////////////////////////////
     //                       FUNCTIONS                      //
     //////////////////////////////////////////////////////////
@@ -49,37 +53,12 @@ class GlycosylationSite
     void Wiggle(bool firstLinkageOnly = false, int interval = 5, bool useAllResiduesForOverlap = false);
     void SetRandomDihedralAnglesUsingMetadata();
     void ResetDihedralAngles();
-    void Rename_Protein_Residue_From_GLYCAM_To_Standard();
     void AddOtherGlycositesToLinkageOverlapAtoms();
-    void UpdateOverlapAtomsInLinkages(unsigned int maxProteinResidues = 20);
     //////////////////////////////////////////////////////////
     //                       DISPLAY FUNCTION               //
     //////////////////////////////////////////////////////////
     void PrintOverlaps();
     void Print(std::string type = "All");
-
-    //////////////////////////////////////////////////////////
-    //                       OPERATORS                      //
-    //////////////////////////////////////////////////////////
-    inline bool operator==(const GlycosylationSite& rhs) const
-    {
-        return rhs.residue_->getStringId() == residue_->getStringId();
-    }
-
-    inline bool operator!=(const GlycosylationSite& rhs) const
-    {
-        return residue_->getStringId() != rhs.residue_->getStringId();
-    }
-
-    inline bool operator<(const GlycosylationSite& rhs) const
-    {
-        return residue_->getStringId() < rhs.residue_->getStringId();
-    }
-
-    inline bool operator>(const GlycosylationSite& rhs) const
-    {
-        return residue_->getStringId() > rhs.residue_->getStringId();
-    }
 
   private:
     //////////////////////////////////////////////////////////
@@ -129,4 +108,4 @@ class GlycosylationSite
     std::vector<GlycosylationSite*> other_glycosites_;
     std::vector<Residue*> otherProteinResidues_;
 };
-#endif // GMML_INCLUDES_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOSYLATIONSITE_HPP
+#endif

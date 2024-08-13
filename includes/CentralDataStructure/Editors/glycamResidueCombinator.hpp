@@ -1,7 +1,10 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP_
-#define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP_
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
+
+#include <vector>
+#include <string>
 
 // Reads a prep file like 0GB and generates all possible permutations of decorated residues like 2GB, 3GB, YGB etc.
 // Going from 0GB with a charge of 0.1940 to 6GB with a charge of 0.0 requires adjusting the charge on the O6 from
@@ -19,4 +22,4 @@ namespace residueCombinator
 
                                      const cds::Residue* starterResidue);
 } // namespace residueCombinator
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP_ */
+#endif

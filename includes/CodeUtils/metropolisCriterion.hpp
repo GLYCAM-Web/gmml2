@@ -1,5 +1,5 @@
-#ifndef GMML_INCLUDES_CODEUTILS_METROPOLISCRITERION_HPP
-#define GMML_INCLUDES_CODEUTILS_METROPOLISCRITERION_HPP
+#ifndef INCLUDES_CODEUTILS_METROPOLISCRITERION_HPP
+#define INCLUDES_CODEUTILS_METROPOLISCRITERION_HPP
 
 #include "includes/External_Libraries/PCG/pcg_random.h" // $GEMSHOME/gmml/includes is in the makefile
 #include <cmath>
@@ -42,4 +42,4 @@ namespace monte_carlo
         return false;
     }
 } // namespace monte_carlo
-#endif // GMML_INCLUDES_INTERNALPROGRAMS_METROPOLISCRITERION_HPP
+#endif

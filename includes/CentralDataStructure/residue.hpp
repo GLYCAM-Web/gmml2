@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
 
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // getId
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 #include "includes/CodeUtils/constants.hpp" // iNotSet
@@ -32,8 +32,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Residue()
-        {} //{std::cout << "Residue default ctor\n";}
+        Residue() : Node<Residue>(glygraph::invalid, {}) {};
 
         Residue(const std::string& residueName, const Residue* referenceResidue);
         Residue(Residue&& other) noexcept; // Move Ctor
@@ -57,14 +56,14 @@ namespace cds
         std::vector<std::string> getAtomNames() const;
         std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
         std::vector<Coordinate*> getCoordinates() const;
-        const Coordinate* getGeometricCenter();
+        void insertCoordinatesInto(std::vector<Coordinate>& coordinates) const;
 
         inline ResidueType GetType() const
         {
             return type_;
         }
 
-        inline unsigned int getNumber() const
+        inline int getNumber() const
         {
             return number_;
         }
@@ -99,9 +98,14 @@ namespace cds
             type_ = type;
         }
 
-        inline void setNumber(unsigned int i)
+        inline void setNumber(int i)
         {
             number_ = i;
+        }
+
+        inline size_t atomCount() const
+        {
+            return atoms_.size();
         }
 
         //////////////////////////////////////////////////////////
@@ -115,7 +119,6 @@ namespace cds
         void findAtomPairsConnectedToOtherResidues(std::vector<std::pair<const Atom*, const Atom*>>& foundAtoms) const;
         //        std::vector<std::pair<const Atom*, const Atom*>> getAtomPairsConnectedToOtherResidues() const;
         void MakeDeoxy(const std::string oxygenNumber);
-        const Coordinate* calculateGeometricCenter();
         ResidueType determineType(const std::string& residueName);
         //////////////////////////////////////////////////////////
         //                    DISPLAY                           //
@@ -151,10 +154,8 @@ namespace cds
         friend void swap(Residue& lhs, Residue& rhs)
         {
             using std::swap;
-            swap(static_cast<glygraph::Node<cds::Residue>&>(lhs), static_cast<glygraph::Node<cds::Residue>&>(rhs));
             swap(lhs.atoms_, rhs.atoms_);
             swap(lhs.name_, rhs.name_);
-            swap(lhs.geometricCenter_, rhs.geometricCenter_);
             swap(lhs.type_, rhs.type_);
             swap(lhs.number_, rhs.number_);
         }
@@ -165,10 +166,9 @@ namespace cds
         //////////////////////////////////////////////////////////
         std::vector<std::unique_ptr<Atom>> atoms_;
         std::string name_ = "   ";
-        Coordinate geometricCenter_;
         ResidueType type_ = Undefined; // enum Type. See enum above.
-        unsigned int number_ =
+        int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
     };
 } // namespace cds
-#endif // INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
+#endif

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS__PDB_PDBFILE_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_READERS__PDB_PDBFILE_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFILE_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBFILE_HPP
 // ToDo split preprocessor into separate function.
 // ToDo Warning about gaps being 1 residue.
 // ToDo make more direct queries here instead of giving out HeaderRecord etc.
@@ -111,4 +111,4 @@ namespace pdb
         std::vector<pdb::DatabaseReference> databaseReferences_;
     };
 } // namespace pdb
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_READERS__PDB_PDBFILE_HPP */
+#endif

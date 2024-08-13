@@ -15,8 +15,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    CONSTRUCTOR                       //
         //////////////////////////////////////////////////////////
-        Ensemble()
-        {}
+        Ensemble() : Node<Ensemble>(glygraph::invalid, {}) {};
 
         Ensemble(Ensemble&& other) noexcept; // Move Ctor
         Ensemble(const Ensemble& other);     // Copy Ctor
@@ -56,4 +55,4 @@ namespace cds
         std::vector<std::unique_ptr<Assembly>> assemblies_;
     };
 } // namespace cds
-#endif // INCLUDES_CENTRALDATASTRUCTURE_ENSEMBLE_HPP
+#endif
