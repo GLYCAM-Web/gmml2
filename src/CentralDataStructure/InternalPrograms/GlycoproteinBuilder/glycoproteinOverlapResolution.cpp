@@ -116,6 +116,12 @@ namespace
                 }
         }
     }
+
+    cds::Overlap countOverlaps(const cds::ResiduesWithOverlapWeight& overlapResidues,
+                               const cds::ResiduesWithOverlapWeight& glycositeResidues)
+    {
+        return cds::CountOverlappingAtoms(true, overlapResidues, glycositeResidues);
+    }
 } // namespace
 
 cds::Overlap countTotalOverlaps(const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
@@ -124,7 +130,7 @@ cds::Overlap countTotalOverlaps(const std::vector<cds::ResiduesWithOverlapWeight
     cds::Overlap overlap {0, 0.0};
     for (size_t n = 0; n < overlapResidues.size(); n++)
     {
-        overlap += cds::CountOverlappingAtoms(overlapResidues[n], glycositeResidues[n]);
+        overlap += countOverlaps(overlapResidues[n], glycositeResidues[n]);
     }
     return overlap;
 }
@@ -137,7 +143,7 @@ std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
     cds::Overlap overlap {0, 0.0};
     for (size_t n = 0; n < overlapResidues.size(); n++)
     {
-        overlap = cds::CountOverlappingAtoms(overlapResidues[n], glycositeResidues[n]);
+        overlap = countOverlaps(overlapResidues[n], glycositeResidues[n]);
         if (overlap.count > overlapTolerance)
         {
             indices.push_back(n);
@@ -230,7 +236,7 @@ GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShap
         {
             auto siteResidues            = glycositeResidues[currentGlycosite];
             auto& linkages               = glycosidicLinkages[currentGlycosite];
-            cds::Overlap previousOverlap = cds::CountOverlappingAtoms(overlapResidues[currentGlycosite], siteResidues);
+            cds::Overlap previousOverlap = countOverlaps(overlapResidues[currentGlycosite], siteResidues);
             auto preferences             = randomizeShape(linkages);
             auto recordedShape           = glycositeShape[currentGlycosite];
             auto currentShape            = glycositeShape[currentGlycosite];
@@ -243,7 +249,7 @@ GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShap
                         wiggleLinkage(searchAngles, linkages[n], preferences[n], overlapResidues[currentGlycosite]);
                 }
             }
-            cds::Overlap newOverlap = cds::CountOverlappingAtoms(overlapResidues[currentGlycosite], siteResidues);
+            cds::Overlap newOverlap = countOverlaps(overlapResidues[currentGlycosite], siteResidues);
             double diff             = newOverlap.count - previousOverlap.count;
             bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
             if (isWorse || (monte_carlo && !acceptViaMetropolisCriterion(diff)))

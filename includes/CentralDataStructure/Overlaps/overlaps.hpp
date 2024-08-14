@@ -69,9 +69,9 @@ namespace cds
 
     ResidueAtomOverlapInput toOverlapInput(const ResiduesWithOverlapWeight& input);
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    Overlap CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
+    Overlap CountOverlappingAtoms(bool ignoreNeighboringResidues, const ResidueAtomOverlapInputReference& mostlyFixed,
                                   const ResidueAtomOverlapInputReference& moving);
-    Overlap CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
+    Overlap CountOverlappingAtoms(bool ignoreNeighboringResidues, const ResiduesWithOverlapWeight& residuesA,
                                   const ResiduesWithOverlapWeight& residuesB);
 } // namespace cds
 #endif

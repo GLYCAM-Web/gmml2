@@ -88,7 +88,8 @@ cds::ResidueAtomOverlapInput cds::toOverlapInput(const ResiduesWithOverlapWeight
     return {coordinates, boundingSpheres, residueAtoms, input.weights};
 }
 
-cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
+cds::Overlap cds::CountOverlappingAtoms(bool ignoreNeighboringResidues,
+                                        const ResidueAtomOverlapInputReference& mostlyFixed,
                                         const ResidueAtomOverlapInputReference& moving)
 {
     std::vector<Sphere> coordsA;
@@ -100,7 +101,8 @@ cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
         for (size_t k = 0; k < moving.boundingSpheres.size(); k++)
         {
             auto& sphereB = moving.boundingSpheres[k];
-            if (cds::spheresOverlap(constants::overlapTolerance, sphereA, sphereB))
+            if (!(ignoreNeighboringResidues && (n == 0) && (k == 0)) &&
+                cds::spheresOverlap(constants::overlapTolerance, sphereA, sphereB))
             {
                 setIntersectingCoordinates(coordsA, sphereB, mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[n]);
                 setIntersectingCoordinates(coordsB, sphereA, moving.atomCoordinates, moving.residueAtoms[k]);
@@ -112,13 +114,14 @@ cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
     return overlap;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
+cds::Overlap cds::CountOverlappingAtoms(bool ignoreNeighboringResidues, const ResiduesWithOverlapWeight& residuesA,
                                         const ResiduesWithOverlapWeight& residuesB)
 {
     auto inputA = toOverlapInput(residuesA);
     auto inputB = toOverlapInput(residuesB);
 
     return CountOverlappingAtoms(
+        ignoreNeighboringResidues,
         {inputA.atomCoordinates, inputA.boundingSpheres, inputA.residueAtoms, inputA.residueWeights},
         {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms, inputB.residueWeights});
 }

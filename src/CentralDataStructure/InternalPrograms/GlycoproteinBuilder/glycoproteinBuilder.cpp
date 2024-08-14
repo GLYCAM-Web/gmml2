@@ -295,7 +295,7 @@ void GlycoproteinBuilder::PrintDihedralAnglesAndOverlapOfGlycosites()
         cds::ResiduesWithOverlapWeight glycanResiduesWithWeight {glycanResidues,
                                                                  std::vector<double>(glycanResidues.size(), 1.0)};
         logss << "Residue ID: " << glycosite.GetResidue()->getStringId()
-              << ", overlap: " << cds::CountOverlappingAtoms(overlapResidues_[n], glycanResiduesWithWeight).count;
+              << ", overlap: " << cds::CountOverlappingAtoms(true, overlapResidues_[n], glycanResiduesWithWeight).count;
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
     }
     return;

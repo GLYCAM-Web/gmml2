@@ -206,7 +206,7 @@ namespace
                 movingSpheres[n].center = matrix * movingInput.boundingSpheres[n].center;
             }
             cds::Overlap overlaps = cds::CountOverlappingAtoms(
-                {fixedCoordinates, fixedSpheres, fixedInput.residueAtoms, fixedInput.residueWeights},
+                false, {fixedCoordinates, fixedSpheres, fixedInput.residueAtoms, fixedInput.residueWeights},
                 {movingCoordinates, movingSpheres, movingInput.residueAtoms, movingInput.residueWeights});
 
             results.push_back({
