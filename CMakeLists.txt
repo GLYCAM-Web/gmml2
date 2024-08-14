@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.13.4)
 
 #you always have to create a project. This is what your files
 #are named, how you create objects, etc.
-project(gmml VERSION 1.0.0 DESCRIPTION "GLYCAM Molecular Modeling Library")
+project(gmml2 VERSION 1.0.0 DESCRIPTION "GLYCAM Molecular Modeling Library")
 
 ################## BEGIN GETTING TOOLING TOGETHER ###################
 
@@ -180,15 +180,15 @@ if (NOT ${DEBUG_NO_WRAP})
     ################## BEGIN SETTING UP GMML_WRAPPED TARGET ###################
     #have cpp property set on for file gmml.i
     #This property is associated with the gmml.i file itself
-    set_property(SOURCE gmml.i PROPERTY CPLUSPLUS ON)
+    set_property(SOURCE gmml2.i PROPERTY CPLUSPLUS ON)
     #allow swig python stuff to use threads
-    set_property(SOURCE gmml.i PROPERTY SWIG_FLAGS "-threads")
+    set_property(SOURCE gmml2.i PROPERTY SWIG_FLAGS "-threads")
     #add a swig library with name ${PROJECT_NAME}_wrapped, wrapping the code
     #in python, using our gmml.i as our source file for swig
-    swig_add_library(${PROJECT_NAME}_wrapped LANGUAGE python SOURCES gmml.i)
+    swig_add_library(${PROJECT_NAME}_wrapped LANGUAGE python SOURCES gmml2.i)
     #makes sure the actual module produced by swig for wrapping is good, cmake 3.14
     #forward renames the module to whatever the target name is i.e. gmml_wrapped
-    set_target_properties(${PROJECT_NAME}_wrapped PROPERTIES OUTPUT_NAME gmml)
+    set_target_properties(${PROJECT_NAME}_wrapped PROPERTIES OUTPUT_NAME gmml2)
     #add the python headers so we can actually use them and wrap gmml in python
     target_include_directories(${PROJECT_NAME}_wrapped PUBLIC ${Python3_INCLUDE_DIRS})
 

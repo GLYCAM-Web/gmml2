@@ -38,6 +38,13 @@ if [ -z "${GEMSHOME}" ]; then
     echo -e "${YELLOW_BOLD}WARNING: Your GEMSHOME environment variable is not set! It should be set to the GEMS directory\nthat is the parent of the GMML directory. This can cause some issues as some of the codebase\nstill relies upon the GEMSHOME variable. Continuing but you have been warned.${RESET_STYLE}"
 fi
 
+#fetch our most recent gmml-test from origin. Assumes we are in gmml dir
+echo -e "\n${YELLOW_BOLD}Fetching changes from remote for GMML-TEST${RESET_STYLE}"
+git fetch --verbose origin gmml-test:gmml-test || {
+    echo -e "${RED_BOLD}Failed fetching changes for gmml-test. Exiting...${RESET_STYLE}"
+    exit 1
+}
+
 #ensure our branch naming pattern is correct
 ensure_branch_naming()
 {
@@ -60,7 +67,7 @@ ensure_branch_naming()
             exit 1
         else
             echo -e "${YELLOW_BOLD}WARNING: Youre trying to push to a branch that does not fit our naming schema"
-            echo -e "we should eventually take care of this. Aborting!${RESET_STYLE}"
+            echo -e "we should eventually take care of this.${RESET_STYLE}"
         fi
     fi
 }
@@ -119,8 +126,8 @@ check_if_branch_behind()
                 exit 1
             }
         elif [ "$1" == "GMML" ]; then
-            cd "${GEMS_DIR}/gmml" || {
-                echo -e "${RED_BOLD}failed...${RESET_STYLE} We could not change directory to the following:\n\t ${GEMS_DIR}/gmml"
+            cd "${GMML_DIR}" || {
+                echo -e "${RED_BOLD}failed...${RESET_STYLE} We could not change directory to the following:\n\t ${GMML_DIR}"
                 echo "Exiting..."
                 exit 1
             }
@@ -130,6 +137,15 @@ check_if_branch_behind()
             exit 1
         fi
         CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+        #fetch from origin
+        echo -e "\n${YELLOW_BOLD}Fetching changes from remote${RESET_STYLE}"
+        git fetch || {
+            echo -e "${RED_BOLD}Failed fetching changes. Exiting...${RESET_STYLE}"
+            exit 1
+        }
+        echo -e "\n${GREEN_BOLD}Changes fetched for $1${RESET_STYLE}"
+
         #let the user know what is going on, i.e. what branch is being checked and in what repo
         echo -e "\nEnsuring branch ${YELLOW_BOLD}${CURRENT_BRANCH}${RESET_STYLE} in repo ${YELLOW_BOLD}$1${RESET_STYLE} is up to date...."
 
@@ -149,6 +165,21 @@ check_if_branch_behind()
             if [ "$(git rev-list --left-only --count origin/"${CURRENT_BRANCH}"..."${CURRENT_BRANCH}")" != 0 ] || [ "${CURRENT_BRANCH}" == "HEAD" ]; then
                 #here the given value is non zero thus remote is ahead of our local so we want to go ahead and stop everything and just exit with an error
                 echo -e "${RED_BOLD}ERROR:${RESET_STYLE} $1 REMOTE IS AHEAD OF YOUR LOCAL BRANCH, PULL BEFORE YOU TRY TO PUSH"
+
+                #If our repo is behind, we give user option to pull repo from here. The test will still have to be rurun since
+                #we want to run our new pulled changes on everything aka the hook will still fail.
+                echo -e "${YELLOW_BOLD}$1 repo is behind... Would you like to pull?\nWARNING: This does have the potential to clobber changes! Keep that in mind!!${RESET_STYLE}"
+                read -p "Enter response (y/n): " response </dev/tty
+                if [[ "${response}" == [yY] ]]; then
+                    echo -e "Pulling branch ${CURRENT_BRANCH} from $1 repo...."
+                    git pull --verbose || {
+                        echo -e "{RED_BOLD}ERROR: COULD NOT PULL REPO $1, EXITING...${RESET_STYLE}"
+                        exit 1
+                    }
+                else
+                    echo -e "${YELLOW_BOLD}Not pulling repo for $1. You will be reminded to pull the repo at script completion${RESET_STYLE}"
+                fi
+
                 #since remote is ahead of local we know we want to stop the push and make the user pull the new code,
                 #BUT we want to go ahead and check both repos first and THEN exit so the user can know if they
                 #need to pull both GEMS and GMML. Basically this var is only populated if local branch is behind origin branch
@@ -230,11 +261,16 @@ cd "${GEMS_DIR}" || {
 }
 
 #Add these removes so the tests don't pass on an old version of the library
-rm -f "${GMML_DIR}"/gmml.py ${GMML_DIR}/_gmml.so
-rm -rf "${GMML_DIR}"/lib
-if [ -d ""${GMML_DIR}"/cmakeBuild" ]; then
+#This below is commented out. I need to ensure that GEMs doesnt do anything funky with the generated files like move
+#them within the gmml directory. End goal for gmml2 is that all generated files should remain where they are
+#generated and ref to correct location. Maybe just delete the cmakeBuild dir unsure...
+#rm -f "${GMML_DIR}/gmml.py" "${GMML_DIR}/_gmml.so"
+rm -rf "${GMML_DIR:?}/lib"
+if [ -d "${GMML_DIR}/cmakeBuild" ]; then
     echo "Removing the libgmml.so from our cmakeBuild directory"
-    rm "${GMML_DIR}"/cmakeBuild/libgmml.so
+    rm "${GMML_DIR}/cmakeBuild/libgmml2.so"
+    rm "${GMML_DIR}/cmakeBuild/_gmml2.so"
+    rm "${GMML_DIR}/cmakeBuild/gmml2.py"
 fi
 
 echo "Compiling gmml using GEMS ./make.sh, no wrap flag cause it auto wraps"
