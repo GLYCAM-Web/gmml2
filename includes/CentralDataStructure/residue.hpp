@@ -23,6 +23,7 @@ namespace cds
         Derivative,
         Solvent,
         Deoxy,
+        ProteinCappingGroup,
         Undefined
     };
 

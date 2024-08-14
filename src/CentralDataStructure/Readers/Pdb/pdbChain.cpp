@@ -122,7 +122,8 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         ch3Atom->addBond(hh31Atom);
         ch3Atom->addBond(hh32Atom);
         ch3Atom->addBond(hh33Atom);
-        static_cast<PdbResidue*>(newNMEResidue)->AddTerCard();
+        newNMEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
+        static_cast<PdbResidue*>(newNMEResidue)->AddTerCard(); // No longer used?
     }
     else if (type == "COCH3") // ACE
     {
@@ -167,6 +168,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         ch3Atom->addBond(hh31Atom);
         ch3Atom->addBond(hh32Atom);
         ch3Atom->addBond(hh33Atom);
+        newACEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Created ACE residue: " + static_cast<PdbResidue*>(newACEResidue)->printId());
     }

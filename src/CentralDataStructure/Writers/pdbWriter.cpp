@@ -42,9 +42,18 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<cds::Residu
     while (it != residues.end())
     {
         cds::writeResidueToPdb(stream, *it, "ATOM", coordinateSetNumber);
-        if ((++it != residues.end()) && ((*it)->GetType() != cds::ResidueType::Protein))
+        // When molecules,assemblies,ensembles end they write a TER. Need to look ahead so don't get repeats.
+        if ((++it != residues.end()) && ((*it)->GetType() == cds::ResidueType::Undefined))
         {
             stream << "TER\n";
+        }
+        if (it != residues.end() && (*it)->GetType() == cds::ResidueType::ProteinCappingGroup)
+        {
+            auto itCopy = it; // If the next and previous residue is a protein capping group
+            if ((*(--itCopy))->GetType() == cds::ResidueType::ProteinCappingGroup)
+            {
+                stream << "TER\n";
+            }
         }
     }
     stream << "TER\n";
