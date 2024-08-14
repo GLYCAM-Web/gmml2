@@ -23,7 +23,8 @@ namespace cds
         size_t metadataIndex;
     };
 
-    Bounds angleBounds(const DihedralAngleData& metadata);
+    std::vector<double> evenlySpaced(double lower, double upper, double approximateIncrement);
+    std::vector<double> evenlySpacedAngles(double deviation, double increment, const DihedralAngleData& metadata);
     DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
 } // namespace cds
 #endif

@@ -24,14 +24,14 @@ cds::Overlap countTotalOverlaps(const std::vector<cds::ResiduesWithOverlapWeight
 std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
                                               const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
                                               const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
-GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, uint overlapTolerance, int persistCycles, bool firstLinkageOnly,
-                                          double interval,
+GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, cds::SearchAngles searchAngles, uint overlapTolerance,
+                                          int persistCycles, bool firstLinkageOnly,
                                           std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                           const GlycoproteinState& initialState,
                                           const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
                                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
-GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, bool monte_carlo, int persistCycles,
-                                uint overlapTolerance,
+GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, cds::SearchAngles searchAngles,
+                                bool monte_carlo, int persistCycles, uint overlapTolerance,
                                 std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                 const GlycoproteinState& initialState,
                                 const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,

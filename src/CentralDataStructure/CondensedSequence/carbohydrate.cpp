@@ -55,8 +55,14 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
     this->SetIndexByConnectivity(); // For reporting residue index numbers to the user
     cds::serializeNumbers(this->getAtoms());
+    auto searchAngles = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
+    {
+        double deviation = 1.0;
+        double increment = 5.0;
+        return cds::evenlySpacedAngles(deviation, increment, metadata);
+    };
     // Set 3D structure
-    this->DepthFirstSetConnectivityAndGeometry(this->GetTerminal()); // recurve start with terminal
+    this->DepthFirstSetConnectivityAndGeometry(this->GetTerminal(), searchAngles); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.
@@ -66,7 +72,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
         cds::determineAtomsThatMove(linkage.rotatableDihedrals);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Final carbohydrate overlap resolution starting.");
-    this->ResolveOverlaps();
+    this->ResolveOverlaps(searchAngles);
     gmml::log(__LINE__, __FILE__, gmml::INF,
               "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
     return;
@@ -241,7 +247,8 @@ void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
     return;
 }
 
-void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residue* parentResidue)
+void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residue* parentResidue,
+                                         cds::SearchAngles searchAngles)
 {
     using cds::Atom;
     using cds::ResidueType;
@@ -350,13 +357,13 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     std::vector<cds::Atom*> childAtoms  = childResidue->getAtoms();  // keeps them alive in memory
     std::vector<cds::Atom*> parentAtoms = parentResidue->getAtoms(); // keeps them alive in memory
     auto searchPreference               = cds::angleSearchPreference(shapePreference);
-    cds::simpleWiggleCurrentRotamers(linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, childAtoms,
-                                     parentAtoms, 5);
+    cds::simpleWiggleCurrentRotamers(searchAngles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
+                                     searchPreference, childAtoms, parentAtoms);
     return;
 }
 
 // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
-void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent)
+void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent, cds::SearchAngles searchAngles)
 {
     // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
 
@@ -377,8 +384,8 @@ void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentPar
     // End Breath first code
     for (auto& child : currentParent->getChildren())
     {
-        this->ConnectAndSetGeometry(child, currentParent);
-        this->DepthFirstSetConnectivityAndGeometry(child);
+        this->ConnectAndSetGeometry(child, currentParent, searchAngles);
+        this->DepthFirstSetConnectivityAndGeometry(child, searchAngles);
     }
     return;
 }
@@ -426,7 +433,7 @@ void Carbohydrate::SetDefaultShapeUsingMetadata()
     return;
 }
 
-void Carbohydrate::ResolveOverlaps()
+void Carbohydrate::ResolveOverlaps(cds::SearchAngles searchAngles)
 {
     for (auto& linkage : glycosidicLinkages_)
     {
@@ -438,8 +445,8 @@ void Carbohydrate::ResolveOverlaps()
         auto preference =
             cds::angleSearchPreference(cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
         cds::simpleWiggleCurrentRotamers(
-            linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
-            {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)}, 5);
+            searchAngles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+            {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;
 }

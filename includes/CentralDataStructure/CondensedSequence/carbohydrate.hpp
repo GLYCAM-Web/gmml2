@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include <vector>
 #include <string>
 
@@ -47,7 +48,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void Generate3DStructureFiles(std::string fileOutputDirectory = "unspecified",
                                       std::string outputFileNaming    = "structure");
-        void ResolveOverlaps();
+        void ResolveOverlaps(cds::SearchAngles searchAngles);
         void SetDefaultShapeUsingMetadata();
         unsigned long int CountShapes(bool likelyShapesOnly = false) const;
         std::string GetNumberOfShapes(
@@ -62,10 +63,11 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void ApplyDeoxy(ParsedResidue* deoxyResidue);
         void DerivativeChargeAdjustment(ParsedResidue* parsedResidue);
-        void ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue);
+        void ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue,
+                                   cds::SearchAngles searchAngles);
         std::vector<std::string> GetGlycamNamesOfResidues() const;
         std::string GetGlycamResidueName(ParsedResidue* residue) const;
-        void DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent);
+        void DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent, cds::SearchAngles searchAngles);
         //////////////////////////////////////////////////////////
         //                 PRIVATE MEMBERS                      //
         //////////////////////////////////////////////////////////

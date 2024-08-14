@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -77,7 +78,13 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
                               standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
-    this->carbohydrate_.ResolveOverlaps();
+    auto searchAngles    = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
+    {
+        double deviation = 1.0;
+        double increment = 5.0;
+        return cds::evenlySpacedAngles(deviation, increment, metadata);
+    };
+    this->carbohydrate_.ResolveOverlaps(searchAngles);
     this->carbohydrate_.Generate3DStructureFiles(fileOutputDirectory, fileName);
     return;
 }

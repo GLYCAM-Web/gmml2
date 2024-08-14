@@ -5,14 +5,30 @@
 
 #include <string>
 #include <sstream>
+#include <cmath>
 
 using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
 using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
 
-cds::Bounds cds::angleBounds(const DihedralAngleData& metadata)
+std::vector<double> cds::evenlySpaced(double lower, double upper, double approximateIncrement)
 {
-    double defaultAngle = metadata.default_angle_value_;
-    return {defaultAngle - metadata.lower_deviation_, defaultAngle + metadata.upper_deviation_};
+    double range     = upper - lower;
+    int steps        = std::ceil(range / approximateIncrement);
+    double increment = range / steps;
+    std::vector<double> result;
+    result.reserve(steps + 1);
+    for (int k = 0; k < steps + 1; k++)
+    {
+        result.push_back(lower + k * increment);
+    }
+    return result;
+}
+
+std::vector<double> cds::evenlySpacedAngles(double deviation, double increment, const DihedralAngleData& metadata)
+{
+    double def = metadata.default_angle_value_;
+    return cds::evenlySpaced(def - deviation * metadata.lower_deviation_, def + deviation * metadata.upper_deviation_,
+                             increment);
 }
 
 DihedralAngleDataVector cds::likelyMetadata(const DihedralAngleDataVector& entries)

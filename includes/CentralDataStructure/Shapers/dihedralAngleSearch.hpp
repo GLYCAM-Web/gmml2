@@ -10,6 +10,7 @@
 
 #include <array>
 #include <vector>
+#include <functional>
 
 namespace cds
 {
@@ -37,6 +38,8 @@ namespace cds
         std::vector<size_t> metadataOrder;
     };
 
+    typedef std::function<std::vector<double>(const DihedralAngleData&)> SearchAngles;
+
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
     std::array<DihedralRotationData, 2>
@@ -45,22 +48,24 @@ namespace cds
                                                  std::vector<cds::Atom*>& overlapAtomSet1,
                                                  std::vector<cds::Atom*>& overlapAtomSet2, size_t metadataIndex,
                                                  std::vector<double> angles);
-    AngleOverlap wiggleWithinCurrentRotamer(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
+    AngleOverlap wiggleWithinCurrentRotamer(SearchAngles searchAngles, RotatableDihedral& dihedral,
+                                            const DihedralAngleDataVector& metadataVector,
                                             const AngleSearchPreference& preference,
                                             std::vector<cds::Atom*>& overlapAtomSet1,
-                                            std::vector<cds::Atom*>& overlapAtomSet2, double angleIncrement);
-    AngleOverlap wiggleUsingRotamers(const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
-                                     const DihedralAngleDataVector& rotamers, const AngleSearchPreference& preference,
-                                     double angleIncrement, const std::array<DihedralRotationData, 2>& input);
-    void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                            std::vector<cds::Atom*>& overlapAtomSet2);
+    AngleOverlap wiggleUsingRotamers(SearchAngles searchAngles, const DihedralCoordinates coordinates,
+                                     const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
+                                     const AngleSearchPreference& preference,
+                                     const std::array<DihedralRotationData, 2>& input);
+    void simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preferences,
-                                     std::vector<cds::Atom*>& overlapAtomSet1, std::vector<cds::Atom*>& overlapAtomSet2,
-                                     double angleIncrement);
-    void simpleWiggleCurrentRotamers(std::vector<RotatableDihedral>& dihedrals,
+                                     std::vector<cds::Atom*>& overlapAtomSet1,
+                                     std::vector<cds::Atom*>& overlapAtomSet2);
+    void simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
-                                     const std::array<ResiduesWithOverlapWeight, 2>& residues, double angleIncrement);
+                                     const std::array<ResiduesWithOverlapWeight, 2>& residues);
     std::vector<AngleSearchPreference> angleSearchPreference(const ResidueLinkageShapePreference& preference);
     std::vector<std::vector<AngleSearchPreference>>
     angleSearchPreference(const std::vector<ResidueLinkageShapePreference>& preferences);

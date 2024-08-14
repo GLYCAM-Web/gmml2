@@ -79,10 +79,12 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         auto weights = gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(metadataVector);
         return codeUtils::weightedRandomOrder(rng, weights);
     };
-    auto randomAngle = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    double angleStandardDeviation = 2.0;
+    auto randomAngle = [&rng, &angleStandardDeviation](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
     {
-        auto range = cds::angleBounds(metadata);
-        return codeUtils::uniformRandomDoubleWithinRange(rng, range.lower, range.upper);
+        double stdCutoff = angleStandardDeviation;
+        double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
+        return metadata.default_angle_value_ + num * (num < 0 ? metadata.lower_deviation_ : metadata.upper_deviation_);
     };
 
     int cycle = 0;

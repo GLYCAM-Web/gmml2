@@ -147,10 +147,18 @@ void GlycoproteinBuilder::ResolveOverlaps()
         auto weights = gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(metadataVector);
         return codeUtils::weightedRandomOrder(rng, weights);
     };
-    auto randomAngle = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    double angleStandardDeviation = 2.0;
+    double angleIncrement         = 1.0;
+    auto searchAngles =
+        [&angleStandardDeviation, &angleIncrement](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
     {
-        auto range = cds::angleBounds(metadata);
-        return codeUtils::uniformRandomDoubleWithinRange(rng, range.lower, range.upper);
+        return cds::evenlySpacedAngles(angleStandardDeviation, angleIncrement, metadata);
+    };
+    auto randomAngle = [&rng, &angleStandardDeviation](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    {
+        double stdCutoff = angleStandardDeviation;
+        double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
+        return metadata.default_angle_value_ + num * (num < 0 ? metadata.lower_deviation_ : metadata.upper_deviation_);
     };
     auto randomizeShape = [&randomMetadata, &randomAngle](std::vector<cds::ResidueLinkage> linkages)
     {
@@ -172,21 +180,20 @@ void GlycoproteinBuilder::ResolveOverlaps()
         }
         bool useMonteCarlo          = true;
         bool wiggleFirstLinkageOnly = true;
-        double angleIncrement       = 5;
         cds::Overlap initialOverlap = countTotalOverlaps(overlapResidues, glycositeResidues);
         auto initialState           = GlycoproteinState {initialOverlap, glycositePreferences, glycositeShape};
         GlycoproteinState currentState =
-            wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
+            wiggleSitesWithOverlaps(rng, searchAngles, overlapTolerance, persistCycles, wiggleFirstLinkageOnly,
                                     glycosidicLinkages, initialState, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "1. Overlap: " + std::to_string(currentState.overlap.count));
-        currentState = randomDescent(rng, randomizeShape, useMonteCarlo, persistCycles, overlapTolerance,
+        currentState = randomDescent(rng, randomizeShape, searchAngles, useMonteCarlo, persistCycles, overlapTolerance,
                                      glycosidicLinkages, currentState, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "1r. Overlap: " + std::to_string(currentState.overlap.count));
-        currentState = wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, false, angleIncrement,
+        currentState = wiggleSitesWithOverlaps(rng, searchAngles, overlapTolerance, persistCycles, false,
                                                glycosidicLinkages, currentState, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "2. Overlap: " + std::to_string(currentState.overlap.count));
         currentState =
-            wiggleSitesWithOverlaps(rng, overlapTolerance, persistCycles, wiggleFirstLinkageOnly, angleIncrement,
+            wiggleSitesWithOverlaps(rng, searchAngles, overlapTolerance, persistCycles, wiggleFirstLinkageOnly,
                                     glycosidicLinkages, currentState, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "3. Overlap: " + std::to_string(currentState.overlap.count));
     };
