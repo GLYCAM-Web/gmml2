@@ -114,7 +114,7 @@ void GlycoproteinBuilder::ResolveOverlaps()
         glycositeResiduesWithWeights.push_back({a, std::vector<double>(a.size(), 1.0)});
     }
 
-    double proteinOverlapWeight = 5.0;
+    double proteinOverlapWeight = 1000.0;
     double glycanOverlapWeight  = 1.0;
 
     overlapResidues_.clear();
