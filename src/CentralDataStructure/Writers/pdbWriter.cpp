@@ -38,30 +38,27 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
 void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<cds::Residue*> residues,
                              unsigned int coordinateSetNumber)
 {
-    auto it = residues.begin();
-    while (it != residues.end())
+    for (auto it = residues.begin(), next = it; it != residues.end(); ++it, next = it)
     {
         cds::writeResidueToPdb(stream, *it, "ATOM", coordinateSetNumber);
-        // When molecules,assemblies,ensembles end they write a TER. Need to look ahead so don't get repeats.
-        if ((++it != residues.end()) && ((*it)->GetType() == cds::ResidueType::Undefined))
-        {
+        if ((*it)->GetType() == cds::ResidueType::Undefined || (*it)->GetType() == cds::ResidueType::Sugar ||
+            (*it)->GetType() == cds::ResidueType::Derivative || (*it)->GetType() == cds::ResidueType::Aglycone)
+        { // I want TER between all sugar residues. Connectivity defined by CONECT.
             stream << "TER\n";
         }
-        if (it != residues.end() && (*it)->GetType() == cds::ResidueType::ProteinCappingGroup)
-        {
-            auto itCopy = it; // If the next and previous residue is a protein capping group
-            if ((*(--itCopy))->GetType() == cds::ResidueType::ProteinCappingGroup)
+        ++next;
+        if ((*it)->GetType() == cds::ResidueType::ProteinCappingGroup)
+        { // We are in between two capping groups
+            if (next != residues.end() && (*next)->GetType() == cds::ResidueType::ProteinCappingGroup)
             {
                 stream << "TER\n";
             }
         }
+        if (next == residues.end() && (*it)->GetType() == cds::ResidueType::Protein)
+        { // Last residue is protein:
+            stream << "TER\n";
+        }
     }
-    stream << "TER\n";
-    //    --it;
-    //    if((*it)->GetType() == cds::ResidueType::Protein)
-    //    {
-    //        stream << "TER\n";
-    //    }
 }
 
 void cds::writeResidueToPdb(std::ostream& stream, const cds::Residue* residue, const std::string recordName,
