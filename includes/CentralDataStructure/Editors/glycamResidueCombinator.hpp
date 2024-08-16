@@ -19,7 +19,6 @@ namespace residueCombinator
     std::vector<std::string> selectAllAtomsThatCanBeSubstituted(const cds::Residue& queryResidue);
     std::vector<std::vector<std::string>> getCombinations(const std::vector<std::string>& elements);
     void generateResidueCombinations(std::vector<cds::Residue*>& glycamResidueCombinations,
-
                                      const cds::Residue* starterResidue);
 } // namespace residueCombinator
 #endif

@@ -111,7 +111,8 @@ std::vector<std::vector<std::string>> residueCombinator::getCombinations(const s
 }
 
 void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombinations,
-                                const std::vector<std::string> numberCombination, const cds::Residue& templateResidue)
+                                const std::vector<std::string> numberCombination, const cds::Residue& templateResidue,
+                                const GlycamMetadata::residueMetadata& residueInfo)
 {
     cds::Residue* newResidue = glycamResidueCombinations.emplace_back(new cds::Residue(templateResidue));
     // cds::Residue* newResidue = glycamResidueCombinations.back();
@@ -129,6 +130,9 @@ void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombina
     std::string residueName = GlycamMetadata::GetGlycam06ResidueLinkageCode(numbersAsString.str());
     if (residueName.empty())
     { // Now we have the need for a new residue nomenclature to kick in.
+        std::cout << numbersAsString.str() << ": ???"
+                  << ", " << residueInfo.isomer << ", " << residueInfo.resname << ", " << residueInfo.ringType << ", "
+                  << residueInfo.residueModifier << ", " << residueInfo.configuration << "\n";
         gmml::log(__LINE__, __FILE__, gmml::WAR,
                   "No linkage code found for possible combo: " + numbersAsString.str() + " in residue " +
                       templateResidue.getName());
@@ -138,7 +142,9 @@ void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombina
     {
         residueName += templateResidue.getName().substr(1);
         newResidue->setName(residueName);
-        std::cout << numbersAsString.str() << ": " << newResidue->getName() << "\n";
+        std::cout << numbersAsString.str() << ": " << newResidue->getName() << ", " << residueInfo.isomer << ", "
+                  << residueInfo.resname << ", " << residueInfo.ringType << ", " << residueInfo.residueModifier << ", "
+                  << residueInfo.configuration << "\n";
     }
 }
 
@@ -235,7 +241,7 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     // Create a residue for each of the combinations, copying and modifying the original.
     for (auto& combination : numberCombinations)
     {
-        generateResidueCombination(glycamResidueCombinations, combination, residueWithoutAnomericOxygen);
+        generateResidueCombination(glycamResidueCombinations, combination, residueWithoutAnomericOxygen, residueInfo);
         // ToDo Activate the below when we can handle combinations with anomeric positions.
         // combination.push_back(anomerNumber);
         // generateResidueCombination(glycamResidueCombinations, combination, residueWithAnomericOxygen);
@@ -246,12 +252,16 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     std::string residueName  = anomerNumber;
     residueName              += starterResidue->getName().substr(1);
     newResidue->setName(residueName);
-    std::cout << "Added " << residueName << "\n";
+    std::cout << anomerNumber << ": " << residueName << ", " << residueInfo.isomer << ", " << residueInfo.resname
+              << ", " << residueInfo.ringType << ", " << residueInfo.residueModifier << ", "
+              << residueInfo.configuration << "\n";
     // Write out the 0.. version:
     newResidue  = glycamResidueCombinations.emplace_back(new cds::Residue(residueWithoutAnomericOxygen));
     residueName = "0";
     residueName += starterResidue->getName().substr(1);
     newResidue->setName(residueName);
-    std::cout << "Added " << residueName << "\n";
+    std::cout << "0: " << residueName << ", " << residueInfo.isomer << ", " << residueInfo.resname << ", "
+              << residueInfo.ringType << ", " << residueInfo.residueModifier << ", " << residueInfo.configuration
+              << "\n";
     return;
 }
