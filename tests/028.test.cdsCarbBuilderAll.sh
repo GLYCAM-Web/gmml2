@@ -8,7 +8,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/028.test.cdsCarbBuilderAll.cpp -lgmml -pthread -o 028.carbBuilder.exe
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/028.test.cdsCarbBuilderAll.cpp -lgmml2 -pthread -o 028.carbBuilder.exe
 rm -r 028.outputs/ >/dev/null 2>&1
 mkdir 028.outputs/
 ./028.carbBuilder.exe tests/inputs/023.smallLibrary.txt _ 028.outputs >028.output_carbohydrateBuilder.txt 2>&1

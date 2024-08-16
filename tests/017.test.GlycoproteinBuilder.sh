@@ -8,7 +8,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
 fi
 
 printf "Testing 017.test.GlycoproteinBuilder.cpp... "
-g++ -std=c++17 -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml -pthread -o gpBuilder
+g++ -std=c++17 -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
 ./gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt >output_GlycoproteinBuilder.txt 2>&1
 fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "output_GlycoproteinBuilder.txt")
 for file in "${fileList[@]}"; do

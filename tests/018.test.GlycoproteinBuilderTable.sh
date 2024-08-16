@@ -8,7 +8,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
 fi
 
 printf "Testing 018.test.createGlycosylationTables.cpp... "
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ ../internalPrograms/createGlycosylationTables.cpp -lgmml -pthread -o gpBuilderTable
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ ../internalPrograms/createGlycosylationTables.cpp -lgmml2 -pthread -o gpBuilderTable
 ./gpBuilderTable tests/inputs/018.4mbzEdit.pdb >018.output_GlycoproteinBuilderTable.txt 2>&1
 if ! cmp 018.output_GlycoproteinBuilderTable.txt tests/correct_outputs/018.output_GlycoproteinBuilderTable.txt >/dev/null 2>&1; then
     printf "Test FAILED!. tests/correct_outputs/018.output_GlycoproteinBuilderTable.txt different from 018.output_GlycoproteinBuilderTable.txt\ndiff tests/correct_outputs/018.output_GlycoproteinBuilderTable.txt 018.output_GlycoproteinBuilderTable.txt\n"

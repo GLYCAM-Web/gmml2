@@ -8,7 +8,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ ../internalPrograms/WiggleToSite/wiggleToSiteDriver.cpp -lgmml -pthread -o wiggleToSite
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ ../internalPrograms/WiggleToSite/wiggleToSiteDriver.cpp -lgmml2 -pthread -o wiggleToSite
 
 ./wiggleToSite tests/inputs/024.input.txt >024.output_wiggleToSite.txt 2>&1
 

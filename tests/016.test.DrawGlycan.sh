@@ -8,7 +8,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
 fi
 
 printf "Testing 016.test.DrawGlycan.cc..."
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/016.test.DrawGlycan.cc -lgmml -pthread -o drawGlycan
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/016.test.DrawGlycan.cc -lgmml2 -pthread -o drawGlycan
 ./drawGlycan >016.output_drawGlycan.txt
 for dotFile in $(ls *.dot); do
     cat "${dotFile}" >>016.output_drawGlycan.txt
