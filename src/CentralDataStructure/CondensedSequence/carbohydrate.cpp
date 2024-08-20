@@ -354,11 +354,16 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     cds::ResidueLinkage& linkage = glycosidicLinkages_.emplace_back(cds::createResidueLinkage(link));
     auto shapePreference         = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
     cds::setShapeToPreference(linkage, shapePreference);
-    std::vector<cds::Atom*> childAtoms  = childResidue->getAtoms();  // keeps them alive in memory
-    std::vector<cds::Atom*> parentAtoms = parentResidue->getAtoms(); // keeps them alive in memory
-    auto searchPreference               = cds::angleSearchPreference(shapePreference);
+    auto searchPreference  = cds::angleSearchPreference(shapePreference);
+    auto residueWithWeight = [](cds::Residue* residue)
+    {
+        auto residues = std::vector<cds::Residue*> {residue};
+        auto weights  = std::vector<double> {1.0};
+        return cds::ResiduesWithOverlapWeight {residues, weights};
+    };
     cds::simpleWiggleCurrentRotamers(searchAngles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
-                                     searchPreference, childAtoms, parentAtoms);
+                                     searchPreference,
+                                     {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     return;
 }
 

@@ -44,24 +44,10 @@ namespace cds
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
     std::array<DihedralRotationData, 2>
     dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues);
-    AngleOverlap wiggleWithinRangesDistanceCheck(RotatableDihedral& dihedral, const AngleSearchPreference& preference,
-                                                 std::vector<cds::Atom*>& overlapAtomSet1,
-                                                 std::vector<cds::Atom*>& overlapAtomSet2, size_t metadataIndex,
-                                                 std::vector<double> angles);
-    AngleOverlap wiggleWithinCurrentRotamer(SearchAngles searchAngles, RotatableDihedral& dihedral,
-                                            const DihedralAngleDataVector& metadataVector,
-                                            const AngleSearchPreference& preference,
-                                            std::vector<cds::Atom*>& overlapAtomSet1,
-                                            std::vector<cds::Atom*>& overlapAtomSet2);
     AngleOverlap wiggleUsingRotamers(SearchAngles searchAngles, const DihedralCoordinates coordinates,
                                      const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
                                      const AngleSearchPreference& preference,
                                      const std::array<DihedralRotationData, 2>& input);
-    void simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
-                                     const std::vector<DihedralAngleDataVector>& metadata,
-                                     const std::vector<AngleSearchPreference>& preferences,
-                                     std::vector<cds::Atom*>& overlapAtomSet1,
-                                     std::vector<cds::Atom*>& overlapAtomSet2);
     void simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
