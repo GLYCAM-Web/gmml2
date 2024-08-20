@@ -1,4 +1,6 @@
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CodeUtils/constants.hpp"
 
 #include <cmath>

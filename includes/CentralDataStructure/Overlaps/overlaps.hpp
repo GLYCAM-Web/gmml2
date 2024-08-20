@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
 
-#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 

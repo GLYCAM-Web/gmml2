@@ -1,4 +1,5 @@
-#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 
 #include <cmath>
 #include <vector>

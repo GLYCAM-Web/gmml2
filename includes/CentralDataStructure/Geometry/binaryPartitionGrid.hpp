@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_BINARYPARTITIONGRID_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_BINARYPARTITIONGRID_HPP
 
-#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 
 #include <array>
 #include <vector>

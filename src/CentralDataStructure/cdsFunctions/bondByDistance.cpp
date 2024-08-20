@@ -1,6 +1,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)

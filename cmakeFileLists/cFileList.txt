@@ -7,7 +7,7 @@
 ./src/CentralDataStructure/Editors/superimposition.cpp
 ./src/CentralDataStructure/Geometry/binaryPartitionGrid.cpp
 ./src/CentralDataStructure/Geometry/boundingSphere.cpp
-./src/CentralDataStructure/Geometry/coordinate.cpp
+./src/CentralDataStructure/Geometry/functions.cpp
 ./src/CentralDataStructure/Geometry/orientation.cpp
 ./src/CentralDataStructure/Geometry/rotationMatrix.cpp
 ./src/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.cpp

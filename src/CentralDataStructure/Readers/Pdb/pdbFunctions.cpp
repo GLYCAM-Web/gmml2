@@ -1,8 +1,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
-#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
 
 #include <string>
 #include <iostream>

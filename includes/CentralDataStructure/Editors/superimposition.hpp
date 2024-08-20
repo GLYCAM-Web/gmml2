@@ -1,10 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_EDITORS_SUPERIMPOSITION_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_SUPERIMPOSITION_HPP
 
-#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 #include <vector>
-
-using cds::Coordinate;
 
 namespace cds
 {

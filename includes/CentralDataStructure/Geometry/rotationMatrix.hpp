@@ -1,7 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_ROTATIONMATRIX_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_ROTATIONMATRIX_HPP
 
-#include "includes/CentralDataStructure/Geometry/coordinate.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/functions.hpp"
 
 #include <array>
 #include <vector>

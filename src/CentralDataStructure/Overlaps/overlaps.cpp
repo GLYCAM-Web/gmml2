@@ -2,6 +2,8 @@
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 
 #include <numeric>
