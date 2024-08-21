@@ -1,8 +1,9 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinOverlapResolution.hpp"
 
-#include "includes/CentralDataStructure/Overlaps/overlaps.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CodeUtils/logging.hpp"

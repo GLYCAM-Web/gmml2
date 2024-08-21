@@ -1,50 +1,16 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_OVERLAPS_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_ATOMOVERLAPS_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_ATOMOVERLAPS_HPP
 
 #include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 
 #include <vector>
 #include <utility>
-#include <cmath>
 
 namespace cds
 {
-    struct Overlap
-    {
-        double count;
-        double weight;
-
-        inline Overlap operator+(const Overlap& a) const
-        {
-            return {count + a.count, weight + a.weight};
-        }
-
-        inline Overlap operator*(double a) const
-        {
-            return {count * a, weight * a};
-        }
-
-        inline Overlap& operator+=(const Overlap& a)
-        {
-            *this = (*this + a);
-            return *this;
-        }
-    };
-
-    inline int compareOverlaps(const Overlap& a, const Overlap& b)
-    {
-        if (a.count == b.count)
-        {
-            return (std::fabs(a.weight - b.weight) <= 1e-10) ? 0 : ((a.weight > b.weight) ? 1 : -1);
-        }
-        else
-        {
-            return a.count - b.count;
-        }
-    }
-
     struct ResiduesWithOverlapWeight
     {
         std::vector<Residue*> residues;

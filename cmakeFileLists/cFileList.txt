@@ -9,6 +9,7 @@
 ./src/CentralDataStructure/Geometry/boundingSphere.cpp
 ./src/CentralDataStructure/Geometry/functions.cpp
 ./src/CentralDataStructure/Geometry/orientation.cpp
+./src/CentralDataStructure/Geometry/overlap.cpp
 ./src/CentralDataStructure/Geometry/rotationMatrix.cpp
 ./src/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.cpp
 ./src/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.cpp
@@ -21,7 +22,7 @@
 ./src/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.cpp
 ./src/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.cpp
 ./src/CentralDataStructure/Measurements/measurements.cpp
-./src/CentralDataStructure/Overlaps/overlaps.cpp
+./src/CentralDataStructure/Overlaps/atomOverlaps.cpp
 ./src/CentralDataStructure/Parameters/parameterManager.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryAtom.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryFile.cpp
