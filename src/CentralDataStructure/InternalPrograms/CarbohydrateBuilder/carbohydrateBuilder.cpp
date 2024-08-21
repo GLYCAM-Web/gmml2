@@ -80,8 +80,8 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
     std::string fileName = "structure";
     auto searchAngles    = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
     {
-        double deviation = 1.0;
-        double increment = 5.0;
+        double deviation = 2.0;
+        double increment = 1.0;
         return cds::evenlySpacedAngles(deviation, increment, metadata);
     };
     this->carbohydrate_.ResolveOverlaps(searchAngles);

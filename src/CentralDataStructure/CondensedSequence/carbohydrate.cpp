@@ -57,8 +57,8 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
     cds::serializeNumbers(this->getAtoms());
     auto searchAngles = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
     {
-        double deviation = 1.0;
-        double increment = 5.0;
+        double deviation = 2.0;
+        double increment = 1.0;
         return cds::evenlySpacedAngles(deviation, increment, metadata);
     };
     // Set 3D structure
