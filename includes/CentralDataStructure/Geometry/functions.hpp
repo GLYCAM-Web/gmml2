@@ -37,11 +37,6 @@ namespace cds
         return squaredDistance(a, b) < distance * distance;
     }
 
-    inline bool withinSphere(const Sphere& sphere, const Coordinate& point)
-    {
-        return withinDistance(sphere.radius, sphere.center, point);
-    }
-
     inline bool spheresOverlap(double tolerance, const Sphere& a, const Sphere& b)
     {
         return withinDistance(a.radius + b.radius - tolerance, a.center, b.center);
