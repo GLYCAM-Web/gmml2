@@ -79,8 +79,8 @@ namespace
         std::vector<double> newWeightsB {input[0].weights[0]};
         for (size_t n = 1; n < setA.residues.size(); n++)
         {
-            auto res    = setA.residues[n];
-            uint weight = setA.weights[n];
+            auto res      = setA.residues[n];
+            double weight = setA.weights[n];
             if (residueContainsMovingAtom(res))
             {
                 newSetB.push_back(res);
@@ -89,7 +89,7 @@ namespace
             else
             {
                 newSetA.push_back(res);
-                newWeightsB.push_back(weight);
+                newWeightsA.push_back(weight);
             }
         }
         return {

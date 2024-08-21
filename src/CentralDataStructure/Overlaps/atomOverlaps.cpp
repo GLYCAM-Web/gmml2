@@ -82,8 +82,8 @@ cds::Overlap cds::CountOverlappingAtoms(bool ignoreNeighboringResidues,
             {
                 setIntersectingCoordinates(coordsA, sphereB, mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[n]);
                 setIntersectingCoordinates(coordsB, sphereA, moving.atomCoordinates, moving.residueAtoms[k]);
-                uint weight = mostlyFixed.residueWeights[n] * moving.residueWeights[k];
-                overlap     += (overlapAmount(properties, coordsA, coordsB) * weight);
+                double weight = mostlyFixed.residueWeights[n] * moving.residueWeights[k];
+                overlap       += (overlapAmount(properties, coordsA, coordsB) * weight);
             }
         }
     }
