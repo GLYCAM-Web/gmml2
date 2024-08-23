@@ -175,7 +175,7 @@ void cds::determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals)
         atoms_that_move.push_back(atoms[2]);
         cdsSelections::FindConnectedAtoms(atoms_that_move, atoms[1]);
         atoms_that_move.erase(atoms_that_move.begin());
-        dihedral.movingCoordinates = getCoordinatesFromAtoms(atoms_that_move);
+        dihedral.movingAtoms = atoms_that_move;
     }
 }
 

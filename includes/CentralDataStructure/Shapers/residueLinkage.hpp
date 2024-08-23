@@ -47,10 +47,10 @@ namespace cds
 
         bool isBranchingLinkage;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
-        std::array<cds::Atom*, 4> atoms;
+        std::array<Atom*, 4> atoms;
         // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond
         // is rotated.
-        std::vector<cds::Coordinate*> movingCoordinates;
+        std::vector<Atom*> movingAtoms;
         size_t currentMetadataIndex;
     };
 

@@ -157,16 +157,6 @@ namespace
         return {coordinates, withinRangeSpheres, withinRangeResidueAtoms, withinRangeWeights, moving};
     }
 
-    double maxDistanceFrom(const Coordinate& pt, const std::vector<cds::Coordinate*>& coords)
-    {
-        double maxSquare = 0.0;
-        for (auto& a : coords)
-        {
-            maxSquare = std::max(maxSquare, squaredDistance(pt, *a));
-        }
-        return std::sqrt(maxSquare);
-    }
-
     void moveFirstResidueCoords(const cds::RotationMatrix matrix, const cds::DihedralRotationData& input,
                                 std::vector<cds::Sphere>& coordinates, std::vector<cds::Sphere>& spheres)
     {
@@ -249,19 +239,22 @@ std::array<cds::DihedralRotationData, 2>
 cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues)
 {
     auto& atoms                      = dihedral.atoms;
-    auto& movingCoordinates          = dihedral.movingCoordinates;
+    auto movingCoordinates           = getCoordinatesFromAtoms(dihedral.movingAtoms);
     auto dihedralResiduesMovingAtoms = movingAtomsWithinSet(
         atoms[2], atoms[1],
         codeUtils::vectorAppend(residues[0].residues[0]->getAtoms(), residues[1].residues[0]->getAtoms()));
 
-    auto centerPoint      = *atoms[1]->getCoordinate();
-    double maxDistance    = maxDistanceFrom(centerPoint, movingCoordinates);
-    double cutoffDistance = maxDistance + constants::maxCutOff;
+    auto movingAtomSpheres  = getCoordinatesWithRadiiFromAtoms(dihedral.movingAtoms);
+    auto movingAtomBounds   = boundingSphere(movingAtomSpheres);
+    Coordinate origin       = *atoms[1]->getCoordinate();
+    Coordinate axis         = *atoms[2]->getCoordinate() - origin;
+    auto closestPointOnAxis = origin + projection(movingAtomBounds.center - origin, axis);
+    double distanceToAxis   = length(closestPointOnAxis - movingAtomBounds.center);
+    auto movementBounds     = Sphere {movingAtomBounds.radius + distanceToAxis, closestPointOnAxis};
 
     auto rotationData = [&](const cds::ResiduesWithOverlapWeight& set)
     {
-        return toRotationData(Sphere {cutoffDistance, centerPoint}, dihedralResiduesMovingAtoms, set.residues,
-                              set.weights);
+        return toRotationData(movementBounds, dihedralResiduesMovingAtoms, set.residues, set.weights);
     };
 
     auto inputSets = dihedral.isBranchingLinkage ? branchedResidueSets(movingCoordinates, residues) : residues;
