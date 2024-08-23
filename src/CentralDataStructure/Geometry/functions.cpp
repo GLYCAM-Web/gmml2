@@ -39,6 +39,11 @@ Coordinate cds::crossProduct(const Coordinate& a, const Coordinate& b)
     return {cross(1, 2), cross(2, 0), cross(0, 1)};
 }
 
+Coordinate cds::projection(const Coordinate& a, const Coordinate& b)
+{
+    return scaleBy(dotProduct(a, b) / dotProduct(b, b), b);
+}
+
 Coordinate cds::coordinateMean(const std::vector<Coordinate*>& coords)
 {
     Coordinate center(0.0, 0.0, 0.0);
