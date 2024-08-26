@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 using glycoproteinBuilder::GlycosylationSiteFinder;
