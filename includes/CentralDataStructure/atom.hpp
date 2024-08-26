@@ -20,7 +20,6 @@ namespace cds
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
         Atom() : Node<Atom>(glygraph::invalid, {}) {};
-        virtual ~Atom() = default;
         Atom(const std::string name, const Coordinate& coord);
         Atom(Atom&& other) noexcept;               // Move Ctor
         explicit Atom(const Atom& other) noexcept; // Copy Ctor
@@ -41,7 +40,6 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
-        Coordinate* getCoordinate();
         Coordinate* getCoordinate() const;
         unsigned int getNumberOfCoordinateSets() const;
 
@@ -86,14 +84,10 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        void addBond(Atom* otherAtom);
-        void bondIfClose(Atom* otherAtom);
-        bool isWithinBondingDistance(const Atom* otherAtom) const;
         std::string getElement() const;
         MolecularMetadata::Element cachedElement();
         int getAtomicNumber() const;
         virtual std::string getId() const;
-        double calculateDistance(const Atom* otherAtom) const;
         //////////////////////////////////////////////////////////
         //                   OVERLOADED OPERATORS               //
         //////////////////////////////////////////////////////////

@@ -15,18 +15,6 @@ namespace MolecularMetadata
 
     double getMaxBondLengthByAtomType(Element atom1Element, Element atom2Element);
 
-    template<class atomT> inline bool bondAtomsIfClose(atomT* atom1, atomT* atom2)
-    {
-        double maxLength = MolecularMetadata::getMaxBondLengthByAtomType(toElement(atom1->getElement()),
-                                                                         toElement(atom2->getElement()));
-        if (withinDistance(maxLength, *atom1->getCoordinate(), *atom2->getCoordinate()))
-        {
-            atom1->addBond(atom2);
-            return true;
-        }
-        return false;
-    }
-
 } // namespace MolecularMetadata
 
 #endif

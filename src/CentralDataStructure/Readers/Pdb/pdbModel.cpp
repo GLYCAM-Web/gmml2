@@ -2,12 +2,14 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbChain.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Editors/amberMdPrep.hpp" //all preprocessing should move to here.
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include <iomanip> // setprecision setw
@@ -168,14 +170,14 @@ void PdbModel::preProcessCysResidues(pdb::PreprocessorInformation& ppInfo)
             if ((sgAtom1 != nullptr) && (sgAtom2 != nullptr))
             {
                 // gmml::log(__LINE__, __FILE__, gmml::INF, "Found SG ATOMS");
-                double distance = sgAtom1->calculateDistance(sgAtom2);
+                double distance = cds::distance(*sgAtom1->getCoordinate(), *sgAtom2->getCoordinate());
                 if (distance < constants::dSulfurCutoff && distance > 0.001)
                 {
                     // gmml::log(__LINE__, __FILE__, gmml::INF, "Distance less than cutoff");
                     cysRes1->setName("CYX");
                     cysRes2->setName("CYX");
                     // gmml::log(__LINE__, __FILE__, gmml::INF, "Names set");
-                    sgAtom1->addBond(sgAtom2); // I think I want this here. Not 100%.
+                    addBond(sgAtom1, sgAtom2); // I think I want this here. Not 100%.
                     this->addConectRecord(sgAtom1, sgAtom2);
                     ppInfo.cysBondResidues_.emplace_back(cysRes1->getId(), cysRes2->getId(), distance);
                     // gmml::log(__LINE__, __FILE__, gmml::INF, "ThisNoHappen?");
@@ -293,7 +295,7 @@ void PdbModel::preProcessGapsUsingDistance(pdb::PreprocessorInformation& ppInfo,
             //                            "_" + res2->getChainId() << std::endl;
             const cds::Atom* res1AtomC = res1->FindAtom("C");
             const cds::Atom* res2AtomN = res2->FindAtom("N");
-            if ((res1AtomC != nullptr) && (res2AtomN != nullptr) && (!res1AtomC->isWithinBondingDistance(res2AtomN)))
+            if ((res1AtomC != nullptr) && (res2AtomN != nullptr) && (!isWithinBondingDistance(res1AtomC, res2AtomN)))
             { // GAP detected
                 // Look for non-natural protein residues within bonding distance, they fall under ResidueType
                 // Undefined, this indicates it's not gap.

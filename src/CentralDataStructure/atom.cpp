@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
-#include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
@@ -53,10 +52,6 @@ Atom& Atom::operator=(Atom other) noexcept
 //////////////////////////////////////////////////////////
 //                    ACCESSOR                          //
 //////////////////////////////////////////////////////////
-Coordinate* Atom::getCoordinate()
-{
-    return currentCoordinate_;
-}
 
 Coordinate* Atom::getCoordinate() const
 {
@@ -116,23 +111,6 @@ Coordinate* Atom::addCoordinate(const Coordinate& newCoord)
 //////////////////////////////////////////////////////////
 //                    FUNCTIONS                         //
 //////////////////////////////////////////////////////////
-void Atom::addBond(Atom* otherAtom)
-{
-    this->addNeighbor("atomicBond", otherAtom);
-    return;
-}
-
-void Atom::bondIfClose(Atom* otherAtom)
-{
-    if (this->isWithinBondingDistance(otherAtom))
-    {
-        this->addBond(otherAtom);
-        // std::stringstream ss;
-        // std::cout << "Bonded " << this->getName() << "_" << this->getIndex() << " to " << otherAtom->getName() << "_"
-        // << otherAtom->getIndex() << "\n"; gmml::log(__LINE__,__FILE__,gmml::INF, ss.str());
-    }
-    return;
-}
 
 std::string Atom::getElement() const // derived classes should overwrite if more explicit about element.
 {
@@ -166,18 +144,6 @@ int Atom::getAtomicNumber() const
 std::string Atom::getId() const
 {
     return this->getName() + "_" + std::to_string(this->getIndex());
-}
-
-bool Atom::isWithinBondingDistance(const Atom* otherAtom) const
-{
-    double maxLength = MolecularMetadata::getMaxBondLengthByAtomType(
-        MolecularMetadata::toElement(this->getElement()), MolecularMetadata::toElement(otherAtom->getElement()));
-    return withinDistance(maxLength, *this->getCoordinate(), *otherAtom->getCoordinate());
-}
-
-double Atom::calculateDistance(const Atom* otherAtom) const
-{
-    return distance(*this->getCoordinate(), *otherAtom->getCoordinate());
 }
 
 //////////////////////////////////////////////////////////

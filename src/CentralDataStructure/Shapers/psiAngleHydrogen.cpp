@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
@@ -42,7 +43,7 @@ void cds::createHydrogenForPsiAngles(Residue* residue, std::vector<DihedralAtoms
                     Coordinate newCoord = coordinateOppositeToNeighborAverage(
                         *atom->getCoordinate(), getCoordinatesFromAtoms(atom->getNeighbors()), 1.0);
                     std::unique_ptr<Atom> newAtom = std::make_unique<Atom>("HHH", newCoord);
-                    atom->addBond(newAtom.get());
+                    addBond(atom, newAtom.get());
                     residue->addAtom(std::move(newAtom));
                 }
             }

@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
@@ -200,7 +201,7 @@ unsigned long int cdsSelections::CountAtomsWithinBondingDistance(const Atom* que
     unsigned long int count = 0;
     for (auto& otherAtom : otherAtoms)
     {
-        if (queryAtom->isWithinBondingDistance(otherAtom))
+        if (isWithinBondingDistance(queryAtom, otherAtom))
         {
             ++count;
         }

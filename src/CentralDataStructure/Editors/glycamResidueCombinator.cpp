@@ -3,6 +3,7 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06PrepToSugarDetail.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" //calculateCoordinateFromInternalCoords
 // #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
@@ -207,7 +208,7 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
             std::make_unique<cds::Atom>("O" + anomerNumber, newOxygenCoordinate));
         newAnomericOxygen->setCharge(-0.388);
         newAnomericOxygen->setType("Os");
-        newAnomericOxygen->addBond(anomer);
+        addBond(newAnomericOxygen, anomer);
     }
     // Find all positions that can be substituted, ignore the anomer.
     std::vector<std::string> atomNumbers =

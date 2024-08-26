@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/MolecularMetadata/proteinBonding.hpp"
@@ -16,7 +17,7 @@ namespace
             cds::Atom* secondAtom = proteinRes->FindAtom(bondPair.second);
             if (firstAtom != nullptr && secondAtom != nullptr)
             {
-                firstAtom->addBond(secondAtom);
+                addBond(firstAtom, secondAtom);
             }
         }
         for (auto& bondPair : biology::getSidechainBonding(proteinRes->getName()))
@@ -25,7 +26,7 @@ namespace
             cds::Atom* secondAtom = proteinRes->FindAtom(bondPair.second);
             if (firstAtom != nullptr && secondAtom != nullptr)
             {
-                firstAtom->addBond(secondAtom);
+                addBond(firstAtom, secondAtom);
             }
         }
         return;
@@ -35,9 +36,9 @@ namespace
     {
         cds::Atom* cAtom = cTermRes->FindAtom("C");
         cds::Atom* nAtom = nTermRes->FindAtom("N");
-        if (cAtom != nullptr && nAtom != nullptr && cAtom->isWithinBondingDistance(nAtom))
+        if (cAtom != nullptr && nAtom != nullptr && isWithinBondingDistance(cAtom, nAtom))
         {
-            cAtom->addBond(nAtom);
+            addBond(cAtom, nAtom);
             cTermRes->addNeighbor(nTermRes->getStringId() + "-" + cTermRes->getStringId(), nTermRes);
             return true;
         }

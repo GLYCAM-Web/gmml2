@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateCoordinateFromInternalCoords
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
@@ -95,7 +96,8 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
         superimposition_residue->addAtom(std::make_unique<Atom>(
             "OD1", (cds::calculateCoordinateFromInternalCoords(*coordC1, *atomND2->getCoordinate(),
                                                                *atomCG->getCoordinate(), 126, 0, 1.22))));
-        anomericAtom->addBond(atomND2); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
+        cds::addBond(anomericAtom,
+                     atomND2); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
     }
     else if ((amino_acid_name.compare("THR") == 0) || (amino_acid_name.compare("SER") == 0) ||
              (amino_acid_name.compare("OLT") == 0) || (amino_acid_name.compare("OLS") == 0))
@@ -112,7 +114,8 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
         {
             atomOG1->setName("OG1"); // It's OG in Ser.
         }
-        anomericAtom->addBond(atomOG1); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
+        cds::addBond(anomericAtom,
+                     atomOG1); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
     }
     else if ((amino_acid_name.compare("TYR") == 0) || (amino_acid_name.compare("OLY") == 0))
     {
@@ -124,7 +127,8 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
         superimposition_residue->addAtom(std::make_unique<Atom>(
             "CE1", (cds::calculateCoordinateFromInternalCoords(*coordC1, *atomOH->getCoordinate(),
                                                                *atomCZ->getCoordinate(), 120, 180, 1.37))));
-        anomericAtom->addBond(atomOH); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
+        cds::addBond(anomericAtom,
+                     atomOH); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
     }
     else
     {
@@ -173,8 +177,8 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
     cds::Superimpose(aglyconeCoords, targetCoords, glycanCoords);
     // Connect the glycan and protein atoms to each other.
     Atom* protein_connection_atom = this->GetConnectingProteinAtom(glycosite_residue->getName());
-    protein_connection_atom->addBond(this->GetGlycan()->GetAnomericAtom()); // Atom connectivity
-    this->Rename_Protein_Residue_To_GLYCAM_Nomenclature();                  // e.g. ASN to NLN
+    cds::addBond(protein_connection_atom, this->GetGlycan()->GetAnomericAtom()); // Atom connectivity
+    this->Rename_Protein_Residue_To_GLYCAM_Nomenclature();                       // e.g. ASN to NLN
     this->GetGlycan()->replaceAglycone(this->GetResidue());
     return;
 }

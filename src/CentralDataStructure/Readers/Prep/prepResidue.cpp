@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <sstream>
@@ -7,7 +9,6 @@
 #include <iostream>
 #include <iomanip>
 #include <ios>
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 
 using prep::PrepResidue;
 
@@ -433,7 +434,7 @@ void PrepResidue::SetConnectivities()
     for (auto& currentAtom : this->getAtoms())
     {
         PrepAtom* currentAtomAsPrepType = static_cast<PrepAtom*>(currentAtom);
-        connectionPointStack.back()->addBond(currentAtomAsPrepType);
+        addBond(connectionPointStack.back(), currentAtomAsPrepType);
         // std::cout << "Bonded " << connectionPointStack.back()->getName() << " to " << currentAtom->getName() <<
         // std::endl;;
         connectionPointStack.back()->visit();
@@ -453,7 +454,7 @@ void PrepResidue::SetConnectivities()
         // gmml::log(__LINE__,__FILE__, gmml::INF, "Bonding loop " + loop.first + " to " + loop.second + "\n");
         PrepAtom* firstAtom  = static_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.first));
         PrepAtom* secondAtom = static_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.second));
-        firstAtom->addBond(secondAtom);
+        addBond(firstAtom, secondAtom);
     }
 }
 

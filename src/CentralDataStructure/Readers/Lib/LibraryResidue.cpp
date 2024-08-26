@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Readers/Lib/LibraryResidue.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 
 using lib::LibraryResidue;
 
@@ -45,7 +46,7 @@ LibraryResidue::LibraryResidue(std::stringstream& residueStream, const std::stri
                 ss >> from >> to >> t_int;
                 try // yeah this sucks.
                 {
-                    createdAtoms.at(from - 1)->addBond(createdAtoms.at(to - 1));
+                    cds::addBond(createdAtoms.at(from - 1), createdAtoms.at(to - 1));
                 }
                 catch (...)
                 {

@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbChain.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
 #include "includes/CodeUtils/strings.hpp"
@@ -116,12 +117,12 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         cds::Atom* hh31Atom = newNMEResidue->addAtom(std::make_unique<PdbAtom>("HH31", hh31CoordNME));
         cds::Atom* hh32Atom = newNMEResidue->addAtom(std::make_unique<PdbAtom>("HH32", hh32CoordNME));
         cds::Atom* hh33Atom = newNMEResidue->addAtom(std::make_unique<PdbAtom>("HH33", hh33CoordNME));
-        nAtom->addBond(refResidue.FindAtom("C"));
-        nAtom->addBond(hAtom);
-        nAtom->addBond(ch3Atom);
-        ch3Atom->addBond(hh31Atom);
-        ch3Atom->addBond(hh32Atom);
-        ch3Atom->addBond(hh33Atom);
+        addBond(nAtom, refResidue.FindAtom("C"));
+        addBond(nAtom, hAtom);
+        addBond(nAtom, ch3Atom);
+        addBond(ch3Atom, hh31Atom);
+        addBond(ch3Atom, hh32Atom);
+        addBond(ch3Atom, hh33Atom);
         newNMEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
         static_cast<PdbResidue*>(newNMEResidue)->AddTerCard(); // No longer used?
     }
@@ -162,12 +163,12 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         cds::Atom* hh31Atom = newACEResidue->addAtom(std::make_unique<PdbAtom>("HH31", hh31CoordACE));
         cds::Atom* hh32Atom = newACEResidue->addAtom(std::make_unique<PdbAtom>("HH32", hh32CoordACE));
         cds::Atom* hh33Atom = newACEResidue->addAtom(std::make_unique<PdbAtom>("HH33", hh33CoordACE));
-        cAtom->addBond(refResidue.FindAtom("N"));
-        cAtom->addBond(oAtom);
-        cAtom->addBond(ch3Atom);
-        ch3Atom->addBond(hh31Atom);
-        ch3Atom->addBond(hh32Atom);
-        ch3Atom->addBond(hh33Atom);
+        addBond(cAtom, refResidue.FindAtom("N"));
+        addBond(cAtom, oAtom);
+        addBond(cAtom, ch3Atom);
+        addBond(ch3Atom, hh31Atom);
+        addBond(ch3Atom, hh32Atom);
+        addBond(ch3Atom, hh33Atom);
         newACEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Created ACE residue: " + static_cast<PdbResidue*>(newACEResidue)->printId());
@@ -211,7 +212,7 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
         cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(
             *(atomCA->getCoordinate()), *(atomC->getCoordinate()), *(atomO->getCoordinate()), 120.0, 180.0, 1.25);
         cds::Atom* oxtAtom = terminalResidue->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
-        oxtAtom->addBond(atomC);
+        addBond(oxtAtom, atomC);
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Created new atom named OXT after " + static_cast<const PdbAtom*>(atomO)->GetId());
         return;

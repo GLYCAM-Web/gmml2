@@ -15,6 +15,7 @@
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp" // serializeAtomNumbers
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include <sstream>
 #include <fstream>
@@ -335,7 +336,7 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // Geometry
     cds::moveConnectedAtomsAccordingToBondLength(parentAtom, childAtom);
     //   Now bond the atoms. This could also set distance?, and angle? if passed to function?
-    childAtom->addBond(parentAtom); // parentAtom also connected to childAtom. Fancy.
+    cds::addBond(childAtom, parentAtom); // parentAtom also connected to childAtom. Fancy.
     for (auto& parentAtomNeighbor : parentAtom->getNeighbors())
     {
         if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
