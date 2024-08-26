@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" //calculateCoordinateFromInternalCoords
 // #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include <fstream>

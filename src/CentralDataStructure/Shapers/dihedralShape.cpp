@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CodeUtils/containers.hpp"
 

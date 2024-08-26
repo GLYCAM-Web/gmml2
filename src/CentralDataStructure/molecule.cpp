@@ -1,9 +1,10 @@
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CodeUtils/logging.hpp"
 
 using cds::Atom;
 using cds::Molecule;

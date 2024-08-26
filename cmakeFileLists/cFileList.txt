@@ -50,7 +50,6 @@
 ./src/CentralDataStructure/Selections/linkageBranches.cpp
 ./src/CentralDataStructure/Selections/residueSelections.cpp
 ./src/CentralDataStructure/Selections/shaperSelections.cpp
-./src/CentralDataStructure/Shapers/atomToCoordinateInterface.cpp
 ./src/CentralDataStructure/Shapers/dihedralAngleSearch.cpp
 ./src/CentralDataStructure/Shapers/dihedralAngles.cpp
 ./src/CentralDataStructure/Shapers/dihedralShape.cpp
@@ -61,6 +60,7 @@
 ./src/CentralDataStructure/Writers/pdbWriter.cpp
 ./src/CentralDataStructure/assembly.cpp
 ./src/CentralDataStructure/atom.cpp
+./src/CentralDataStructure/cdsFunctions/atomCoordinateInterface.cpp
 ./src/CentralDataStructure/cdsFunctions/atomicBonding.cpp
 ./src/CentralDataStructure/cdsFunctions/atomicConnectivity.cpp
 ./src/CentralDataStructure/cdsFunctions/bondByDistance.cpp

@@ -110,9 +110,5 @@ namespace cds
         MolecularMetadata::Element element_ = MolecularMetadata::Element::Unknown;
         bool gotElement_                    = false;
     };
-
-    Sphere coordinateWithRadius(Atom* atom);
-    std::vector<Coordinate*> getCoordinatesFromAtoms(std::vector<Atom*> atoms);
-    std::vector<Sphere> getCoordinatesWithRadiiFromAtoms(std::vector<Atom*> atoms);
 } // namespace cds
 #endif

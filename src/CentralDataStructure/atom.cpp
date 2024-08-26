@@ -3,8 +3,6 @@
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
-#include "includes/CentralDataStructure/Geometry/functions.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 
 #include <ctype.h> // isalpha
 #include <sstream>
@@ -53,7 +51,7 @@ Atom& Atom::operator=(Atom other) noexcept
 //                    ACCESSOR                          //
 //////////////////////////////////////////////////////////
 
-Coordinate* Atom::getCoordinate() const
+cds::Coordinate* Atom::getCoordinate() const
 {
     return currentCoordinate_;
 }
@@ -102,7 +100,7 @@ void Atom::setCurrentCoordinate(unsigned int coordinateIndex)
     currentCoordinate_ = allCoordinates_.at(coordinateIndex).get();
 }
 
-Coordinate* Atom::addCoordinate(const Coordinate& newCoord)
+cds::Coordinate* Atom::addCoordinate(const Coordinate& newCoord)
 {
     allCoordinates_.push_back(std::make_unique<Coordinate>(newCoord));
     return allCoordinates_.back().get();
@@ -156,7 +154,7 @@ bool Atom::operator==(const Atom& otherAtom)
 
 bool Atom::operator!=(const Atom& otherAtom)
 {
-    return (this->getIndex() != otherAtom.getIndex());
+    return !(operator==(otherAtom));
 }
 
 //////////////////////////////////////////////////////////
@@ -166,32 +164,4 @@ void Atom::Print(std::ostream& out) const
 {
     out << this->getName() << ", ";
     return;
-}
-
-cds::Sphere cds::coordinateWithRadius(Atom* atom)
-{
-    auto element = atom->cachedElement();
-    return {MolecularMetadata::vanDerWaalsRadius(element), *atom->getCoordinate()};
-}
-
-std::vector<Coordinate*> cds::getCoordinatesFromAtoms(std::vector<cds::Atom*> atoms)
-{
-    std::vector<Coordinate*> coordinates;
-    coordinates.reserve(atoms.size());
-    for (auto& atom : atoms)
-    {
-        coordinates.push_back(atom->getCoordinate());
-    }
-    return coordinates;
-}
-
-std::vector<cds::Sphere> cds::getCoordinatesWithRadiiFromAtoms(std::vector<cds::Atom*> atoms)
-{
-    std::vector<cds::Sphere> coordinates;
-    coordinates.reserve(atoms.size());
-    for (auto& atom : atoms)
-    {
-        coordinates.push_back(coordinateWithRadius(atom));
-    }
-    return coordinates;
 }

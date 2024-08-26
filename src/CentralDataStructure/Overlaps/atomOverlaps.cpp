@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
 
 #include <numeric>
 

@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 
-#include "../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
