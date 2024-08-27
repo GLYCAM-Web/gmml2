@@ -59,6 +59,7 @@ namespace
         auto index = codeUtils::indexVector(metadata[0]);
         for (size_t k = 0; k < numberOfMetadata; k++)
         {
+            results[k].resize(dihedrals.size());
             cds::setShapeToPreference(
                 linkage, cds::ConformerShapePreference {shapePreference.angles, {shapePreference.metadataOrder[k]}});
             //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
@@ -72,7 +73,7 @@ namespace
                 auto coordinates = cds::dihedralCoordinates(dihedral);
                 auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
                 auto best = cds::wiggleUsingRotamers(searchAngles, coordinates, index, metadata[n], preference, input);
-                results[k].push_back(best.angle);
+                results[k][n]   = best.angle;
                 bestOverlaps[k] = best;
                 cds::setDihedralAngle(dihedral, best.angle);
             }
