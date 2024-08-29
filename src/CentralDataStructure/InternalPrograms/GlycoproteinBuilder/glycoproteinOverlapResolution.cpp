@@ -118,6 +118,7 @@ namespace
                     return wiggleConformerLinkage(searchAngles, linkage, preference, overlapInput);
                 }
         }
+        throw std::runtime_error("unhandled linkage shape preference in glycoproteinOverlapResolution wiggleLinkage");
     }
 
     cds::Overlap countOverlaps(const cds::ResiduesWithOverlapWeight& overlapResidues,
