@@ -31,6 +31,7 @@ namespace cds
         std::vector<std::pair<size_t, size_t>> residueAtoms;
         std::vector<double> residueWeights;
         std::vector<bool> firstResidueCoordinateMoving;
+        std::vector<bool> firstResidueBondedAtoms;
     };
 
     struct AngleSearchPreference

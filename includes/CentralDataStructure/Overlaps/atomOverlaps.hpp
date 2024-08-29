@@ -23,6 +23,7 @@ namespace cds
         std::vector<Sphere> boundingSpheres;
         const std::vector<std::pair<size_t, size_t>> residueAtoms;
         const std::vector<double> residueWeights;
+        const std::vector<bool> firstResidueBondedAtoms;
     };
 
     struct ResidueAtomOverlapInputReference
@@ -31,13 +32,13 @@ namespace cds
         std::vector<Sphere>& boundingSpheres;
         const std::vector<std::pair<size_t, size_t>>& residueAtoms;
         const std::vector<double>& residueWeights;
+        const std::vector<bool>& firstResidueBondedAtoms;
     };
 
-    ResidueAtomOverlapInput toOverlapInput(const ResiduesWithOverlapWeight& input);
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    Overlap CountOverlappingAtoms(bool ignoreNeighboringResidues, const ResidueAtomOverlapInputReference& mostlyFixed,
+    Overlap CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
                                   const ResidueAtomOverlapInputReference& moving);
-    Overlap CountOverlappingAtoms(bool ignoreNeighboringResidues, const ResiduesWithOverlapWeight& residuesA,
+    Overlap CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
                                   const ResiduesWithOverlapWeight& residuesB);
 } // namespace cds
 #endif

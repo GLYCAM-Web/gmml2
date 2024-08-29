@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 
 #include <numeric>
 
@@ -24,47 +25,65 @@ namespace
             }
         }
     }
+
+    void setNonIgnoredCoordinates(std::vector<cds::Sphere>& result, const std::vector<cds::Sphere>& coords,
+                                  const std::pair<size_t, size_t>& range, const std::vector<bool>& ignored)
+    {
+        if (ignored.size() != (range.second - range.first))
+        {
+            throw std::runtime_error("panic");
+        }
+        result.clear();
+        size_t offset = range.first;
+        for (size_t n = 0; n < ignored.size(); n++)
+        {
+            if (!ignored[n])
+            {
+                result.push_back(coords[n + offset]);
+            }
+        }
+    }
+
+    cds::ResidueAtomOverlapInput toOverlapInput(const cds::ResiduesWithOverlapWeight& input,
+                                                const std::vector<bool>& firstResidueBondedAtoms)
+    {
+        auto& residues   = input.residues;
+        size_t atomCount = 0;
+        for (auto res : residues)
+        {
+            atomCount += res->atomCount();
+        }
+        std::vector<cds::Sphere> coordinates;
+        coordinates.reserve(atomCount);
+        std::vector<std::pair<size_t, size_t>> residueAtoms;
+        residueAtoms.reserve(residues.size());
+        size_t currentAtom = 0;
+        for (auto& res : residues)
+        {
+            size_t startAtom = currentAtom;
+            for (const auto& atomPtr : res->getAtomsReference())
+            {
+                coordinates.push_back(cds::coordinateWithRadius(atomPtr.get()));
+            }
+            currentAtom += res->atomCount();
+            residueAtoms.push_back({startAtom, currentAtom});
+        }
+        std::vector<cds::Sphere> boundingSpheres;
+        boundingSpheres.reserve(residues.size());
+        std::vector<cds::Sphere> residuePoints;
+        for (size_t n = 0; n < residueAtoms.size(); n++)
+        {
+            auto range = residueAtoms[n];
+            residuePoints.clear();
+            residuePoints.insert(residuePoints.end(), coordinates.begin() + range.first,
+                                 coordinates.begin() + range.second);
+            boundingSpheres.push_back(cds::boundingSphere(residuePoints));
+        }
+        return {coordinates, boundingSpheres, residueAtoms, input.weights, firstResidueBondedAtoms};
+    }
 } // namespace
 
-cds::ResidueAtomOverlapInput cds::toOverlapInput(const ResiduesWithOverlapWeight& input)
-{
-    auto& residues   = input.residues;
-    size_t atomCount = 0;
-    for (auto res : residues)
-    {
-        atomCount += res->atomCount();
-    }
-    std::vector<Sphere> coordinates;
-    coordinates.reserve(atomCount);
-    std::vector<std::pair<size_t, size_t>> residueAtoms;
-    residueAtoms.reserve(residues.size());
-    size_t currentAtom = 0;
-    for (auto& res : residues)
-    {
-        size_t startAtom = currentAtom;
-        for (const auto& atomPtr : res->getAtomsReference())
-        {
-            coordinates.push_back(coordinateWithRadius(atomPtr.get()));
-        }
-        currentAtom += res->atomCount();
-        residueAtoms.push_back({startAtom, currentAtom});
-    }
-    std::vector<Sphere> boundingSpheres;
-    boundingSpheres.reserve(residues.size());
-    std::vector<Sphere> residuePoints;
-    for (size_t n = 0; n < residueAtoms.size(); n++)
-    {
-        auto range = residueAtoms[n];
-        residuePoints.clear();
-        residuePoints.insert(residuePoints.end(), coordinates.begin() + range.first,
-                             coordinates.begin() + range.second);
-        boundingSpheres.push_back(boundingSphere(residuePoints));
-    }
-    return {coordinates, boundingSpheres, residueAtoms, input.weights};
-}
-
-cds::Overlap cds::CountOverlappingAtoms(bool ignoreNeighboringResidues,
-                                        const ResidueAtomOverlapInputReference& mostlyFixed,
+cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& mostlyFixed,
                                         const ResidueAtomOverlapInputReference& moving)
 {
     std::vector<Sphere> coordsA;
@@ -77,30 +96,45 @@ cds::Overlap cds::CountOverlappingAtoms(bool ignoreNeighboringResidues,
         auto& sphereA = mostlyFixed.boundingSpheres[n];
         for (size_t k = 0; k < moving.boundingSpheres.size(); k++)
         {
+            double weight = mostlyFixed.residueWeights[n] * moving.residueWeights[k];
             auto& sphereB = moving.boundingSpheres[k];
-            if (!(ignoreNeighboringResidues && (n == 0) && (k == 0)) &&
-                cds::spheresOverlap(tolerance, sphereA, sphereB))
+            if ((n == 0) && (k == 0))
+            {
+                setNonIgnoredCoordinates(coordsA, mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[0],
+                                         mostlyFixed.firstResidueBondedAtoms);
+                setNonIgnoredCoordinates(coordsB, moving.atomCoordinates, moving.residueAtoms[0],
+                                         moving.firstResidueBondedAtoms);
+                overlap += (overlapAmount(properties, coordsA, coordsB) * weight);
+            }
+            else if (cds::spheresOverlap(tolerance, sphereA, sphereB))
             {
                 setIntersectingCoordinates(coordsA, sphereB, mostlyFixed.atomCoordinates, mostlyFixed.residueAtoms[n]);
                 setIntersectingCoordinates(coordsB, sphereA, moving.atomCoordinates, moving.residueAtoms[k]);
-                double weight = mostlyFixed.residueWeights[n] * moving.residueWeights[k];
-                overlap       += (overlapAmount(properties, coordsA, coordsB) * weight);
+                overlap += (overlapAmount(properties, coordsA, coordsB) * weight);
             }
         }
     }
     return overlap;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(bool ignoreNeighboringResidues, const ResiduesWithOverlapWeight& residuesA,
+cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
                                         const ResiduesWithOverlapWeight& residuesB)
 {
-    auto inputA = toOverlapInput(residuesA);
-    auto inputB = toOverlapInput(residuesB);
+    auto bondedAtoms = [](Atom* origin, std::vector<Atom*>& atoms)
+    {
+        // residues aren't bonded in certain cases, use a default if so
+        return (origin == nullptr) ? std::vector<bool>(atoms.size(), false) : atomsBondedTo(origin, atoms);
+    };
+    auto atomsA = residuesA.residues[0]->getAtoms();
+    auto atomsB = residuesB.residues[0]->getAtoms();
+    auto bond   = bondedAtomPair(atomsA, atomsB);
+    auto inputA = toOverlapInput(residuesA, bondedAtoms(bond[0], atomsA));
+    auto inputB = toOverlapInput(residuesB, bondedAtoms(bond[1], atomsB));
 
-    return CountOverlappingAtoms(
-        ignoreNeighboringResidues,
-        {inputA.atomCoordinates, inputA.boundingSpheres, inputA.residueAtoms, inputA.residueWeights},
-        {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms, inputB.residueWeights});
+    return CountOverlappingAtoms({inputA.atomCoordinates, inputA.boundingSpheres, inputA.residueAtoms,
+                                  inputA.residueWeights, inputA.firstResidueBondedAtoms},
+                                 {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms,
+                                  inputB.residueWeights, inputB.firstResidueBondedAtoms});
 }
 
 cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)

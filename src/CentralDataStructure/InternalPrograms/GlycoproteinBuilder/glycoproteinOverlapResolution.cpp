@@ -123,7 +123,7 @@ namespace
     cds::Overlap countOverlaps(const cds::ResiduesWithOverlapWeight& overlapResidues,
                                const cds::ResiduesWithOverlapWeight& glycositeResidues)
     {
-        return cds::CountOverlappingAtoms(true, overlapResidues, glycositeResidues);
+        return cds::CountOverlappingAtoms(overlapResidues, glycositeResidues);
     }
 } // namespace
 

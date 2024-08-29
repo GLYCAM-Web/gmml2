@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
@@ -101,7 +102,8 @@ namespace
 
     cds::DihedralRotationData toRotationData(const cds::Sphere bounds, const std::vector<cds::Atom*>& movingAtoms,
                                              const std::vector<cds::Residue*>& residues,
-                                             const std::vector<double>& residueWeights)
+                                             const std::vector<double>& residueWeights,
+                                             const std::vector<bool>& firstResidueBondedAtoms)
     {
         size_t atomCount = 0;
         for (auto res : residues)
@@ -133,10 +135,11 @@ namespace
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
             auto range  = residueAtoms[n];
-            bool within = false;
+            // always include first residue, we assume that it's bonded with first residue of the other set
+            bool within = n == 0;
             for (size_t k = range.first; k < range.second; k++)
             {
-                within = cds::spheresOverlap(constants::overlapTolerance, bounds, coordinates[k]);
+                within = within || cds::spheresOverlap(constants::overlapTolerance, bounds, coordinates[k]);
                 if (within)
                 {
                     break;
@@ -155,7 +158,8 @@ namespace
 
         const auto& firstAtoms   = residues[0]->getAtoms();
         std::vector<bool> moving = movingAtomsWithinResidue(movingAtoms, firstAtoms);
-        return {coordinates, withinRangeSpheres, withinRangeResidueAtoms, withinRangeWeights, moving};
+        return {coordinates, withinRangeSpheres,     withinRangeResidueAtoms, withinRangeWeights,
+                moving,      firstResidueBondedAtoms};
     }
 
     void moveFirstResidueCoords(const cds::RotationMatrix matrix, const cds::DihedralRotationData& input,
@@ -198,9 +202,11 @@ namespace
             {
                 movingSpheres[n].center = matrix * movingInput.boundingSpheres[n].center;
             }
-            cds::Overlap overlaps = cds::CountOverlappingAtoms(
-                false, {fixedCoordinates, fixedSpheres, fixedInput.residueAtoms, fixedInput.residueWeights},
-                {movingCoordinates, movingSpheres, movingInput.residueAtoms, movingInput.residueWeights});
+            cds::Overlap overlaps =
+                cds::CountOverlappingAtoms({fixedCoordinates, fixedSpheres, fixedInput.residueAtoms,
+                                            fixedInput.residueWeights, fixedInput.firstResidueBondedAtoms},
+                                           {movingCoordinates, movingSpheres, movingInput.residueAtoms,
+                                            movingInput.residueWeights, movingInput.firstResidueBondedAtoms});
 
             results.push_back({
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -253,13 +259,18 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<Res
     double distanceToAxis   = length(closestPointOnAxis - movingAtomBounds.center);
     auto movementBounds     = Sphere {movingAtomBounds.radius + distanceToAxis, closestPointOnAxis};
 
-    auto rotationData = [&](const cds::ResiduesWithOverlapWeight& set)
+    auto rotationData = [&](const cds::ResiduesWithOverlapWeight& set, const std::vector<bool>& firstResidueBondedAtoms)
     {
-        return toRotationData(movementBounds, dihedralResiduesMovingAtoms, set.residues, set.weights);
+        return toRotationData(movementBounds, dihedralResiduesMovingAtoms, set.residues, set.weights,
+                              firstResidueBondedAtoms);
     };
 
-    auto inputSets = dihedral.isBranchingLinkage ? branchedResidueSets(movingCoordinates, residues) : residues;
-    return {rotationData(inputSets[0]), rotationData(inputSets[1])};
+    auto inputSets   = dihedral.isBranchingLinkage ? branchedResidueSets(movingCoordinates, residues) : residues;
+    auto atomsA      = inputSets[0].residues[0]->getAtoms();
+    auto atomsB      = inputSets[1].residues[0]->getAtoms();
+    auto residueBond = bondedAtomPair(atomsA, atomsB);
+    return {rotationData(inputSets[0], atomsBondedTo(residueBond[0], atomsA)),
+            rotationData(inputSets[1], atomsBondedTo(residueBond[1], atomsB))};
 }
 
 cds::AngleOverlap cds::wiggleUsingRotamers(SearchAngles searchAngles, const cds::DihedralCoordinates coordinates,
