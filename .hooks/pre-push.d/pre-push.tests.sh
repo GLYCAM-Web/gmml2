@@ -169,7 +169,7 @@ check_if_branch_behind()
                 #If our repo is behind, we give user option to pull repo from here. The test will still have to be rurun since
                 #we want to run our new pulled changes on everything aka the hook will still fail.
                 echo -e "${YELLOW_BOLD}$1 repo is behind... Would you like to pull?\nWARNING: This does have the potential to clobber changes! Keep that in mind!!${RESET_STYLE}"
-                read -p "Enter response (y/n): " response </dev/tty
+                read -p 'Enter response (y/n): ' response </dev/tty
                 if [[ "${response}" == [yY] ]]; then
                     echo -e "Pulling branch ${CURRENT_BRANCH} from $1 repo...."
                     git pull --verbose || {
