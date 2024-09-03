@@ -8,7 +8,6 @@
 #include "includes/CodeUtils/strings.hpp" // split
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/random.hpp"
-#include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
@@ -165,12 +164,6 @@ void GlycoproteinBuilder::ResolveOverlaps()
         return cds::linkageShapePreference(randomMetadata, randomAngle, linkages);
     };
 
-    auto acceptViaMetropolisCriterion = [&rng](int difference)
-    {
-        double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
-        return monte_carlo::accept_via_metropolis_criterion(acceptance, difference);
-    };
-
     auto resolveOverlapsWithWiggler = [&](std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                           const std::vector<OverlapResidues>& overlapResidues,
                                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
@@ -193,8 +186,8 @@ void GlycoproteinBuilder::ResolveOverlaps()
             totalOverlaps(overlapWeight, overlapResidues, glycositeResidues, glycosidicLinkages);
         auto initialState = GlycoproteinState {initialOverlap, glycositePreferences, glycositeShape};
         GlycoproteinState currentState =
-            randomDescent(rng, randomizeShape, searchAngles, acceptViaMetropolisCriterion, persistCycles, overlapWeight,
-                          glycosidicLinkages, initialState, overlapResidues, glycositeResidues);
+            randomDescent(rng, randomizeShape, searchAngles, persistCycles, overlapWeight, glycosidicLinkages,
+                          initialState, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
     };
 

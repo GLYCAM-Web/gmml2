@@ -52,8 +52,7 @@ wiggleGlycosite(cds::SearchAngles searchAngles, OverlapWeight weight, std::vecto
                 const std::vector<cds::ResidueLinkageShapePreference>& preferences,
                 const OverlapResidues& overlapResidues);
 GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, cds::SearchAngles searchAngles,
-                                std::function<bool(int)> acceptViaMetropolisCriterion, int persistCycles,
-                                OverlapWeight overlapWeight,
+                                int persistCycles, OverlapWeight overlapWeight,
                                 std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                 const GlycoproteinState& initialState,
                                 const std::vector<OverlapResidues>& overlapResidues,
