@@ -5,7 +5,6 @@
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/random.hpp"
@@ -21,7 +20,7 @@ namespace
     std::vector<cds::AngleWithMetadata>
     wigglePermutationLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
                              const cds::PermutationShapePreference& shapePreference,
-                             std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
+                             const std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals = linkage.rotatableDihedrals;
         auto& metadata  = linkage.dihedralMetadata;
@@ -48,7 +47,7 @@ namespace
     std::vector<cds::AngleWithMetadata>
     wiggleConformerLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
                            const cds::ConformerShapePreference& shapePreference,
-                           std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
+                           const std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals         = linkage.rotatableDihedrals;
         auto& metadata          = linkage.dihedralMetadata;
@@ -90,65 +89,102 @@ namespace
         }
         return shape;
     }
-
-    std::vector<cds::AngleWithMetadata> wiggleLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
-                                                      const cds::ResidueLinkageShapePreference& shapePreference,
-                                                      const cds::ResiduesWithOverlapWeight& overlapResidues)
-    {
-        auto& nonReducing = linkage.nonReducingOverlapResidues;
-        std::vector<double> nonReducingWeight(nonReducing.size(), 1.0);
-        auto& reducing = linkage.reducingOverlapResidues;
-        std::vector<double> reducingWeight(reducing.size(), 1.0);
-        std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput = {
-            cds::ResiduesWithOverlapWeight {
-                                            codeUtils::vectorAppend(linkage.nonReducingOverlapResidues, overlapResidues.residues),
-                                            codeUtils::vectorAppend(nonReducingWeight, overlapResidues.weights)},
-            cds::ResiduesWithOverlapWeight {reducing, reducingWeight}
-        };
-        switch (linkage.rotamerType)
-        {
-            case RotamerType::permutation:
-                {
-                    auto preference = std::get<cds::PermutationShapePreference>(shapePreference);
-                    return wigglePermutationLinkage(searchAngles, linkage, preference, overlapInput);
-                }
-            case RotamerType::conformer:
-                {
-                    auto preference = std::get<cds::ConformerShapePreference>(shapePreference);
-                    return wiggleConformerLinkage(searchAngles, linkage, preference, overlapInput);
-                }
-        }
-        throw std::runtime_error("unhandled linkage shape preference in glycoproteinOverlapResolution wiggleLinkage");
-    }
-
-    cds::Overlap countOverlaps(const cds::ResiduesWithOverlapWeight& overlapResidues,
-                               const cds::ResiduesWithOverlapWeight& glycositeResidues)
-    {
-        return cds::CountOverlappingAtoms(overlapResidues, glycositeResidues);
-    }
 } // namespace
 
-cds::Overlap countTotalOverlaps(const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
-                                const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
+cds::Overlap intraGlycanOverlaps(const std::vector<cds::ResidueLinkage>& linkages)
 {
-    cds::Overlap overlap {0, 0.0};
-    for (size_t n = 0; n < overlapResidues.size(); n++)
+    auto withWeight = [](const std::vector<Residue*> residues)
     {
-        overlap += countOverlaps(overlapResidues[n], glycositeResidues[n]);
+        return cds::ResiduesWithOverlapWeight {residues, std::vector<double>(residues.size(), 1.0)};
+    };
+    cds::Overlap overlap = {0.0, 0.0};
+    // skip first linkage as it connects to protein. We're only counting glycan atoms here
+    for (size_t n = 1; n < linkages.size(); n++)
+    {
+        auto& linkage = linkages[n];
+        // only take first non-reducing residue to avoid any double-counting
+        overlap       += cds::CountOverlappingAtoms({{linkage.nonReducingOverlapResidues[0]}, {1.0}},
+                                                    withWeight(linkage.reducingOverlapResidues));
     }
     return overlap;
 }
 
-std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
-                                              const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
-                                              const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
+cds::Overlap countOverlaps(const std::vector<Residue*>& overlapResidues,
+                           const cds::ResiduesWithOverlapWeight& glycositeResidues)
 {
-    std::vector<size_t> indices;
-    cds::Overlap overlap {0, 0.0};
+    auto weights = std::vector<double>(overlapResidues.size(), 1.0);
+    return cds::CountOverlappingAtoms({overlapResidues, weights}, glycositeResidues);
+}
+
+cds::Overlap siteOverlaps(OverlapWeight weight, const OverlapResidues& overlapResidues,
+                          const cds::ResiduesWithOverlapWeight& glycositeResidues,
+                          const std::vector<cds::ResidueLinkage>& linkages)
+{
+    auto proteinOverlaps = countOverlaps(overlapResidues.protein, glycositeResidues);
+    auto glycanOverlaps  = countOverlaps(overlapResidues.glycan, glycositeResidues);
+    auto selfOverlaps    = intraGlycanOverlaps(linkages);
+    // glycans will be double counted, so halve them
+    return (proteinOverlaps * weight.protein) + (selfOverlaps * weight.self) + (glycanOverlaps * weight.glycan);
+}
+
+cds::Overlap totalOverlaps(OverlapWeight weight, const std::vector<OverlapResidues>& overlapResidues,
+                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues,
+                           const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages)
+{
+    // glycans will be double counted, so halve their weight
+    weight.glycan        *= 0.5;
+    cds::Overlap overlap = {0.0, 0.0};
     for (size_t n = 0; n < overlapResidues.size(); n++)
     {
-        overlap = countOverlaps(overlapResidues[n], glycositeResidues[n]);
-        if (overlap.count > overlapTolerance)
+        overlap += siteOverlaps(weight, overlapResidues[n], glycositeResidues[n], glycosidicLinkages[n]);
+    }
+    return overlap;
+}
+
+std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites,
+                                              const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
+                                              const std::vector<OverlapResidues>& overlapResidues,
+                                              const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
+{
+    auto hasProteinOverlap = [&](size_t n)
+    {
+        auto overlap = countOverlaps(overlapResidues[n].protein, glycositeResidues[n]);
+        return overlap.count > 0;
+    };
+    auto hasSelfOverlap = [&](size_t n)
+    {
+        auto overlap = intraGlycanOverlaps(glycosidicLinkages[n]);
+        return overlap.count > 0;
+    };
+    std::vector<bool> justMoved(glycositeResidues.size(), false);
+    for (size_t n : movedSites)
+    {
+        justMoved[n] = true;
+    }
+    std::vector<bool> glycanOverlap(glycositeResidues.size(), false);
+    for (size_t n : movedSites)
+    {
+        for (size_t k = n + 1; k < glycositeResidues.size(); k++)
+        {
+            if (!(glycanOverlap[n] && glycanOverlap[k]))
+            {
+                auto& glycanA   = glycositeResidues[n];
+                auto& glycanB   = glycositeResidues[k];
+                auto& glycosite = overlapResidues[n].protein[0];
+                if (cds::CountOverlappingAtoms(glycanA, glycanB).count > 0 ||
+                    cds::CountOverlappingAtoms(glycanB, {{glycosite}, {1.0}}).count > 0)
+                {
+                    glycanOverlap[n] = true;
+                    glycanOverlap[k] = true;
+                }
+            }
+        }
+    }
+    std::vector<size_t> indices;
+    for (size_t n = 0; n < overlapResidues.size(); n++)
+    {
+        // glycans which haven't moved won't overlap with protein or themselves (at least not more than before)
+        if (glycanOverlap[n] || (justMoved[n] && (hasProteinOverlap(n) || hasSelfOverlap(n))))
         {
             indices.push_back(n);
         }
@@ -156,126 +192,131 @@ std::vector<size_t> determineSitesWithOverlap(uint overlapTolerance,
     return indices;
 }
 
-GlycoproteinState wiggleSitesWithOverlaps(pcg32& rng, cds::SearchAngles searchAngles, uint overlapTolerance,
-                                          int persistCycles, bool firstLinkageOnly,
-                                          std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                                          const GlycoproteinState& initialState,
-                                          const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
-                                          const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
+std::vector<cds::AngleWithMetadata> wiggleLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
+                                                  const cds::ResidueLinkageShapePreference& shapePreference,
+                                                  const std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput)
 {
-    int cycle                 = 0;
-    cds::Overlap overlap      = countTotalOverlaps(overlapResidues, glycositeResidues);
-    auto glycositePreferences = initialState.preferences;
-    auto glycositeShape       = initialState.shape;
-    auto wiggledShape         = glycositeShape;
-    std::vector<size_t> sites_with_overlaps =
-        determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
-    while ((cycle < persistCycles) && (sites_with_overlaps.size() > 0))
+    switch (linkage.rotamerType)
     {
-        ++cycle;
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles) +
-                      ". Overlap: " + std::to_string(overlap.count));
-        for (auto& glycosite : codeUtils::shuffleVector(rng, sites_with_overlaps))
-        {
-            auto& linkages = glycosidicLinkages[glycosite];
-            for (size_t n = 0; (n == 0 || !firstLinkageOnly) && (n < linkages.size()); n++)
+        case RotamerType::permutation:
             {
-                wiggledShape[glycosite][n] = wiggleLinkage(
-                    searchAngles, linkages[n], glycositePreferences[glycosite][n], overlapResidues[glycosite]);
+                auto preference = std::get<cds::PermutationShapePreference>(shapePreference);
+                return wigglePermutationLinkage(searchAngles, linkage, preference, overlapInput);
             }
-        }
-        cds::Overlap newOverlap = countTotalOverlaps(overlapResidues, glycositeResidues);
-        if (cds::compareOverlaps(overlap, newOverlap) > 0)
-        {
-            overlap = newOverlap;
-            cycle   = 0;
-            for (auto& glycosite : sites_with_overlaps)
+        case RotamerType::conformer:
             {
-                glycositeShape[glycosite] = wiggledShape[glycosite];
+                auto preference = std::get<cds::ConformerShapePreference>(shapePreference);
+                return wiggleConformerLinkage(searchAngles, linkage, preference, overlapInput);
             }
-        }
-        else
-        {
-            for (auto& glycosite : sites_with_overlaps)
-            {
-                cds::setShape(glycosidicLinkages[glycosite], glycositeShape[glycosite]);
-                wiggledShape[glycosite] = glycositeShape[glycosite];
-            }
-        }
-        sites_with_overlaps = determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
     }
-    return {overlap, glycositePreferences, glycositeShape};
+    throw std::runtime_error("unhandled linkage shape preference in glycoproteinOverlapResolution wiggleLinkage");
 }
 
-GlycoproteinState randomDescent(pcg32& rng, LinkageShapeRandomizer randomizeShape, cds::SearchAngles searchAngles,
-                                bool monte_carlo, int persistCycles, uint overlapTolerance,
+std::vector<std::vector<cds::AngleWithMetadata>>
+wiggleGlycosite(cds::SearchAngles searchAngles, OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
+                const std::vector<cds::ResidueLinkageShapePreference>& preferences,
+                const OverlapResidues& overlapResidues)
+{
+    auto toWeight = [](const std::vector<cds::Residue*>& residues, double a)
+    {
+        return std::vector<double>(residues.size(), a);
+    };
+    auto baseResidues = codeUtils::vectorAppend(overlapResidues.protein, overlapResidues.glycan);
+    auto baseWeights  = codeUtils::vectorAppend(toWeight(overlapResidues.protein, weight.protein),
+                                                toWeight(overlapResidues.glycan, weight.glycan));
+    std::vector<std::vector<cds::AngleWithMetadata>> shape;
+    shape.resize(linkages.size());
+    // wiggling twice gives the first linkages a second chance to resolve in a better structure
+    for (size_t k = 0; k < 2; k++)
+    {
+        for (size_t n = 0; n < linkages.size(); n++)
+        {
+            auto& linkage       = linkages[n];
+            auto& reducing      = linkage.reducingOverlapResidues;
+            auto reducingWeight = toWeight(reducing, 1.0);
+
+            std::vector<cds::Residue*> nonReducing = linkage.nonReducingOverlapResidues;
+            // last is the glycosite, which should be present as the first entry of the protein vector
+            nonReducing.pop_back();
+            auto nonReducingWeight = toWeight(nonReducing, weight.self);
+
+            std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput = {
+                cds::ResiduesWithOverlapWeight {codeUtils::vectorAppend(nonReducing, baseResidues),
+                                                codeUtils::vectorAppend(nonReducingWeight, baseWeights)},
+                cds::ResiduesWithOverlapWeight {reducing, reducingWeight}
+            };
+            shape[n] = wiggleLinkage(searchAngles, linkage, preferences[n], overlapInput);
+        }
+    }
+    return shape;
+}
+
+GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, cds::SearchAngles searchAngles,
+                                std::function<bool(int)> acceptViaMetropolisCriterion, int persistCycles,
+                                OverlapWeight overlapWeight,
                                 std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                 const GlycoproteinState& initialState,
-                                const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                const std::vector<OverlapResidues>& overlapResidues,
                                 const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     std::stringstream logss;
-    logss << "Random Decent, persisting for " << persistCycles << " cycles and monte carlo is set as " << std::boolalpha
-          << monte_carlo << ".\n";
+    logss << "Random Decent, persisting for " << persistCycles << " cycles and monte carlo is set as true.\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-    auto acceptViaMetropolisCriterion = [&rng](int difference)
-    {
-        double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
-        return monte_carlo::accept_via_metropolis_criterion(acceptance, difference);
-    };
 
-    int cycle                          = 0;
-    cds::Overlap lowest_global_overlap = countTotalOverlaps(overlapResidues, glycositeResidues);
-    auto glycositePreferences          = initialState.preferences;
-    auto glycositeShape                = initialState.shape;
-    std::vector<size_t> sites_with_overlaps =
-        determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
-    while ((cycle < persistCycles) && (sites_with_overlaps.size() > 0))
+    int cycle                  = 0;
+    cds::Overlap globalOverlap = totalOverlaps(overlapWeight, overlapResidues, glycositeResidues, glycosidicLinkages);
+    auto glycositePreferences  = initialState.preferences;
+    auto glycositeShape        = initialState.shape;
+    std::vector<size_t> overlapSites = determineSitesWithOverlap(
+        codeUtils::indexVector(glycosidicLinkages), glycosidicLinkages, overlapResidues, glycositeResidues);
+    while ((cycle < persistCycles) && (overlapSites.size() > 0))
     {
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles));
         ++cycle;
-        for (auto& currentGlycosite : codeUtils::shuffleVector(rng, sites_with_overlaps))
+        cds::Overlap newGlobalOverlap = globalOverlap;
+        for (auto& site : codeUtils::shuffleVector(rng, overlapSites))
         {
-            auto siteResidues            = glycositeResidues[currentGlycosite];
-            auto& linkages               = glycosidicLinkages[currentGlycosite];
-            cds::Overlap previousOverlap = countOverlaps(overlapResidues[currentGlycosite], siteResidues);
-            auto preferences             = randomizeShape(linkages);
-            auto recordedShape           = glycositeShape[currentGlycosite];
-            auto currentShape            = glycositeShape[currentGlycosite];
-            cds::setShapeToPreference(linkages, preferences);
-            for (size_t k = 0; k < 2; k++)
+            auto& siteResidues        = glycositeResidues[site];
+            auto& siteOverlapResidues = overlapResidues[site];
+            auto& linkages            = glycosidicLinkages[site];
+            auto localOverlaps        = [&]()
             {
-                for (size_t n = 0; n < linkages.size(); n++)
-                {
-                    currentShape[n] =
-                        wiggleLinkage(searchAngles, linkages[n], preferences[n], overlapResidues[currentGlycosite]);
-                }
-            }
-            cds::Overlap newOverlap = countOverlaps(overlapResidues[currentGlycosite], siteResidues);
-            double diff             = newOverlap.count - previousOverlap.count;
-            bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
-            if (isWorse || (monte_carlo && !acceptViaMetropolisCriterion(diff)))
+                cds::Residue* glycosite = siteOverlapResidues.protein[0];
+                auto glycan             = siteOverlaps(overlapWeight, siteOverlapResidues, siteResidues, linkages);
+                auto protein = countOverlaps(siteOverlapResidues.glycan, {{glycosite}, {overlapWeight.protein}});
+                return glycan + protein;
+            };
+            auto previousOverlap = localOverlaps();
+            auto preferences     = randomizeShape(linkages);
+            auto recordedShape   = glycositeShape[site];
+            cds::setShapeToPreference(linkages, preferences);
+            auto currentShape =
+                wiggleGlycosite(searchAngles, overlapWeight, linkages, preferences, siteOverlapResidues);
+            auto newOverlap = localOverlaps();
+            auto diff       = newOverlap + (previousOverlap * -1);
+            bool isWorse    = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+            if (isWorse || (!acceptViaMetropolisCriterion(diff.count)))
             {
                 cds::setShape(linkages, recordedShape);
             }
             else
             {
-                glycositePreferences[currentGlycosite] = preferences;
-                glycositeShape[currentGlycosite]       = currentShape;
-                gmml::log(__LINE__, __FILE__, gmml::INF, "RandomDescent accepted a change of " + std::to_string(diff));
+                newGlobalOverlap           += diff;
+                glycositePreferences[site] = preferences;
+                glycositeShape[site]       = currentShape;
+                gmml::log(__LINE__, __FILE__, gmml::INF,
+                          "RandomDescent accepted a change of " + std::to_string(diff.count));
             }
         }
-        std::vector<size_t> new_sites_with_overlaps =
-            determineSitesWithOverlap(overlapTolerance, overlapResidues, glycositeResidues);
-        cds::Overlap new_global_overlap = countTotalOverlaps(overlapResidues, glycositeResidues);
-        if (cds::compareOverlaps(lowest_global_overlap, new_global_overlap) > 0)
+        if (cds::compareOverlaps(globalOverlap, newGlobalOverlap) > 0)
         {
-            lowest_global_overlap = new_global_overlap;
-            cycle                 = 0;
+            cycle = 0;
         }
-        sites_with_overlaps = new_sites_with_overlaps;
+        globalOverlap = newGlobalOverlap;
+        std::vector<size_t> newOverlapSites =
+            determineSitesWithOverlap(overlapSites, glycosidicLinkages, overlapResidues, glycositeResidues);
+        overlapSites = newOverlapSites;
     }
-    return {lowest_global_overlap, glycositePreferences, glycositeShape};
+    return {globalOverlap, glycositePreferences, glycositeShape};
 }
