@@ -1,30 +1,12 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
 
-/** \file:  src/MolecularMetadata/GLYCAM/glycam06residueinfo.cpp
- * GLYCAM06 metadata for residues
- *
- * This file was generated automatically on:
- *     Do 21 Dez 2023 12:53:45 CET
- *
- * by a script named:
- *     1_make_glycam06_residue_tag_lookup.bash
- *
- * The script was begun on 16 June 2018 by BLFoley and
- * can be found in:
- *     dat/MolecularMetadata/scripts/GLYCAM/GLYCAM06/ResidueTags
- *
- * See that and associated scripts for more information.
- */
+#include <string>
+#include <vector>
+#include <utility>
 
-//////////////////////////////////////////////////////////
-//                       CONSTRUCTOR                    //
-//////////////////////////////////////////////////////////
-
-using gmml::MolecularMetadata::GLYCAM::Glycam06NamesToTypesLookupContainer;
-
-Glycam06NamesToTypesLookupContainer::Glycam06NamesToTypesLookupContainer()
+namespace
 {
-    glycam06NamesToTypesLookupMap_ = {
+    const std::vector<std::pair<std::string, std::string>> glycam06NamesToTypesLookupMap = {
   //    Names:    HYP
   //    Types:    amino-acid modified mid-chain
         { "HYP",                     "amino-acid"},
@@ -18028,5 +18010,19 @@ Glycam06NamesToTypesLookupContainer::Glycam06NamesToTypesLookupContainer()
         { "1jB",                        "aglycon"},
         { "1jD",                        "aglycon"},
         { "1jU",                        "aglycon"},
-    }; // close Glycam06NamesToTypesLookupMap
+    };
+}
+
+std::vector<std::string> gmml::MolecularMetadata::GLYCAM::getTypesForResidue(std::string query)
+{
+    std::vector<std::string> matching_types;
+    // Iterate over the multimap using range based for loop
+    for (auto& elem : glycam06NamesToTypesLookupMap)
+    {
+        if (elem.first.compare(query) == 0)
+        {
+            matching_types.push_back(elem.second);
+        }
+    }
+    return matching_types;
 }

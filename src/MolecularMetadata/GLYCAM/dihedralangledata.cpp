@@ -239,9 +239,8 @@ std::vector<DihedralAngleDataVector> gmml::MolecularMetadata::GLYCAM::getDihedra
     const std::string residue2Name)
 {
     DihedralAngleDataVector matching_entries;
-    Glycam06NamesToTypesLookupContainer metadata_residueNamesToTypes;
-    std::vector<std::string> residue1_types = metadata_residueNamesToTypes.GetTypesForResidue(residue1Name);
-    std::vector<std::string> residue2_types = metadata_residueNamesToTypes.GetTypesForResidue(residue2Name);
+    std::vector<std::string> residue1_types = getTypesForResidue(residue1Name);
+    std::vector<std::string> residue2_types = getTypesForResidue(residue2Name);
     // Go through each entry in the metadata
     for (const auto& entry : dihedralAngleDataVector_)
     {
