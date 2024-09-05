@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <functional>
 #include <sstream>
@@ -68,7 +69,7 @@ size_t cds::numberOfShapes(GlycamMetadata::RotamerType rotamerType,
 size_t cds::numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,
                                  const std::vector<DihedralAngleDataVector>& metadata)
 {
-    return getNumberOfShapesBase(likelyMetadata, rotamerType, metadata);
+    return getNumberOfShapesBase(GlycamMetadata::likelyMetadata, rotamerType, metadata);
 }
 
 cds::DihedralCoordinates cds::dihedralCoordinates(const cds::RotatableDihedral& dihedral)

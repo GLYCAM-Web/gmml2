@@ -2,8 +2,8 @@
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -122,7 +122,7 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
             {
                 buffer.push_back(metadata.rotamer_name_);
             }
-            auto likely              = cds::likelyMetadata(metadataVector);
+            auto likely              = GlycamMetadata::likelyMetadata(metadataVector);
             std::string dihedralName = likely.empty() ? "Boo" : likely[0].dihedral_angle_name_;
             possibleRotamers.emplace_back(dihedralName, buffer);
             buffer.clear();

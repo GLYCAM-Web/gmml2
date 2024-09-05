@@ -5,7 +5,6 @@
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <vector>
@@ -17,6 +16,19 @@ namespace cds
 {
     using GlycamMetadata::DihedralAngleData;
     using GlycamMetadata::DihedralAngleDataVector;
+
+    struct Bounds
+    {
+        double lower;
+        double upper;
+    };
+
+    struct AngleWithMetadata
+    {
+        double value;
+        double preference;
+        size_t metadataIndex;
+    };
 
     typedef std::function<std::vector<size_t>(DihedralAngleDataVector)> MetadataDistribution;
     typedef std::function<double(DihedralAngleData)> AngleDistribution;

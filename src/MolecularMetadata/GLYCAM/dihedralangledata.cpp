@@ -294,3 +294,17 @@ std::vector<double> GlycamMetadata::dihedralAngleDataWeights(const DihedralAngle
     std::transform(metadataVector.begin(), metadataVector.end(), std::back_inserter(weights), metadataWeight);
     return weights;
 }
+
+DihedralAngleDataVector GlycamMetadata::likelyMetadata(const DihedralAngleDataVector& entries)
+{
+    DihedralAngleDataVector returningMetadata;
+    returningMetadata.reserve(entries.size());
+    for (auto& entry : entries)
+    {
+        if (entry.weight_ >= 0.01) // HARDCODE EVERYTHING.
+        {
+            returningMetadata.push_back(entry);
+        }
+    }
+    return returningMetadata;
+}

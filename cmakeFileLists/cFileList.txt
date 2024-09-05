@@ -51,7 +51,6 @@
 ./src/CentralDataStructure/Selections/residueSelections.cpp
 ./src/CentralDataStructure/Selections/shaperSelections.cpp
 ./src/CentralDataStructure/Shapers/dihedralAngleSearch.cpp
-./src/CentralDataStructure/Shapers/dihedralAngles.cpp
 ./src/CentralDataStructure/Shapers/dihedralShape.cpp
 ./src/CentralDataStructure/Shapers/psiAngleHydrogen.cpp
 ./src/CentralDataStructure/Shapers/residueLinkage.cpp

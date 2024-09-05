@@ -7,7 +7,6 @@
  */
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngles.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"

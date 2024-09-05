@@ -60,5 +60,6 @@ namespace GlycamMetadata
                                                                                const std::string atom2Name,
                                                                                const std::string residue2Name);
     std::vector<double> dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector);
+    DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
 } // namespace GlycamMetadata
 #endif

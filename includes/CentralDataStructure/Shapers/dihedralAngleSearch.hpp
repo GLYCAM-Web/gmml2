@@ -54,15 +54,9 @@ namespace cds
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
                                      const std::array<ResiduesWithOverlapWeight, 2>& residues);
+    std::vector<double> evenlySpacedAngles(double deviation, double increment, const DihedralAngleData& metadata);
     std::vector<AngleSearchPreference> angleSearchPreference(const ResidueLinkageShapePreference& preference);
     std::vector<std::vector<AngleSearchPreference>>
     angleSearchPreference(const std::vector<ResidueLinkageShapePreference>& preferences);
-
-    // wiggle with:
-    // shape preference angles
-    // allowed min/max angles
-    // metadata order (all for permutation, one for conformer)
-    // within current rotamer overrides shape preference metadata order
-
 } // namespace cds
 #endif
