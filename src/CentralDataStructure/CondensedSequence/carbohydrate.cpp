@@ -2,6 +2,7 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"

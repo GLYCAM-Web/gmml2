@@ -2,9 +2,9 @@
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
-#include "includes/CodeUtils/constants.hpp"
 
 #include <cmath>
+#include <limits>
 
 cds::Coordinate cds::axis(const DihedralCoordinates& coords)
 {
@@ -32,7 +32,7 @@ double cds::angle(const std::array<Coordinate, 3>& coords)
 {
     Coordinate b1 = coords[0] - coords[1];
     Coordinate b2 = coords[2] - coords[1];
-    return std::acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + constants::DIST_EPSILON));
+    return std::acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + std::numeric_limits<double>::epsilon()));
 }
 
 cds::RotationMatrix cds::rotationTo(const DihedralCoordinates& coords, double targetAngle)

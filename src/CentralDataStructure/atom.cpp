@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
-#include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 

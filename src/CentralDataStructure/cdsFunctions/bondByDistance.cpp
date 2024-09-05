@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
+#include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 namespace
