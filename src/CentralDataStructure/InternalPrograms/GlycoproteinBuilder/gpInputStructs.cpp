@@ -27,31 +27,27 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
         getline(infile, strInput);
         if (codeUtils::startsWith(strInput, "Protein:"))
         {
-            gpInputs.substrateFileName_ = codeUtils::split(strInput, ':').at(1);
+            gpInputs.substrateFileName = codeUtils::split(strInput, ':').at(1);
         }
         if (codeUtils::startsWith(strInput, "NumberOfOutputStructures:"))
         {
-            gpInputs.number3DStructures_ = std::stoi(codeUtils::split(strInput, ':').at(1));
+            gpInputs.number3DStructures = std::stoul(codeUtils::split(strInput, ':').at(1));
         }
         if (codeUtils::startsWith(strInput, "maxThreads:"))
         {
-            gpInputs.maxThreads_ = std::stoi(codeUtils::split(strInput, ':').at(1));
+            gpInputs.maxThreads = std::stoul(codeUtils::split(strInput, ':').at(1));
         }
         if (codeUtils::startsWith(strInput, "persistCycles:"))
         {
-            gpInputs.persistCycles_ = std::stoi(codeUtils::split(strInput, ':').at(1));
-        }
-        if (codeUtils::startsWith(strInput, "overlapTolerance:"))
-        {
-            gpInputs.overlapTolerance_ = std::stoi(codeUtils::split(strInput, ':').at(1));
+            gpInputs.persistCycles = std::stoul(codeUtils::split(strInput, ':').at(1));
         }
         if (codeUtils::startsWith(strInput, "isDeterministic:"))
         { // variable = (condition) ? expressionTrue : expressionFalse;
-            gpInputs.isDeterministic_ = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;
+            gpInputs.isDeterministic = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;
         }
         if (codeUtils::startsWith(strInput, "skipMDPrep:"))
         {
-            gpInputs.skipMDPrep_ = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;
+            gpInputs.skipMDPrep = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;
         }
         if (strInput == "ProteinResidue, GlycanName:")
         {
@@ -60,13 +56,13 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
             while (tempBuffer != "END")
             {
                 std::vector<std::string> splitLine = codeUtils::split(tempBuffer, '|');
-                gpInputs.glycositesInputVector_.emplace_back(splitLine.at(0), splitLine.at(1));
+                gpInputs.glycositesInputVector.emplace_back(splitLine.at(0), splitLine.at(1));
                 getline(infile, tempBuffer);
             }
         }
     }
     //    std::cout << "Reading input file complete, just making a quick check\n" << std::flush;
-    if (gpInputs.glycositesInputVector_.empty())
+    if (gpInputs.glycositesInputVector.empty())
     {
         throw std::runtime_error(
             "Error reading from gpInput file, no glycosites requested. Perhaps your formatting is incorrect.\n");

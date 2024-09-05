@@ -10,26 +10,25 @@ namespace glycoprotein
     struct GlycositeInput
     {
         // Constructor
-        GlycositeInput(std::string proteinResidueId, std::string glycan)
-            : proteinResidueId_(proteinResidueId), glycanInput_(glycan)
+        GlycositeInput(std::string& proteinResidueId_, std::string& glycan)
+            : proteinResidueId(proteinResidueId_), glycanInput(glycan)
         {}
 
-        std::string proteinResidueId_ = ""; // E.g. ?_20_A if no chain ID and residue number is 20 and insertion code is
-                                            // A. C_20_? if chain id is C and there is no insertion code.
-        std::string glycanInput_ =
+        std::string proteinResidueId = ""; // E.g. ?_20_A if no chain ID and residue number is 20 and insertion code is
+                                           // A. C_20_? if chain id is C and there is no insertion code.
+        std::string glycanInput =
             ""; // E.g. Man9 if "Library" glycanInputType. E.g. DGlcpNAcb1-4DGlcpNAcb1-OH if "Sequence".
     };
 
     struct GlycoproteinBuilderInputs
     {
-        std::string substrateFileName_ = "Undefined"; // Program should throw if left as "Undefined".
-        int number3DStructures_        = 1;
-        int maxThreads_                = 1; // ToDo Implement this.
-        int persistCycles_             = 5;
-        int overlapTolerance_          = 1;
-        bool isDeterministic_          = false;
-        bool skipMDPrep_               = false;
-        std::vector<GlycositeInput> glycositesInputVector_; // No default, program will throw if uninitialized.
+        std::string substrateFileName = "Undefined"; // Program should throw if left as "Undefined".
+        ulong number3DStructures      = 1;
+        ulong maxThreads              = 1; // ToDo Implement this.
+        ulong persistCycles           = 5;
+        bool isDeterministic          = false;
+        bool skipMDPrep               = false;
+        std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
     };
 
     GlycoproteinBuilderInputs readGPInputFile(std::string inputFileName);
