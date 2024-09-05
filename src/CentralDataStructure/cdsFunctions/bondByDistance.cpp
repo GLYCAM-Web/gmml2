@@ -8,6 +8,18 @@
 
 namespace
 {
+    bool bondAtomsIfClose(cds::Atom* atom1, cds::Atom* atom2)
+    {
+        double maxLength = MolecularMetadata::maxBondLengthByAtomType(
+            MolecularMetadata::toElement(atom1->getElement()), MolecularMetadata::toElement(atom2->getElement()));
+        if (withinDistance(maxLength, *atom1->getCoordinate(), *atom2->getCoordinate()))
+        {
+            addBond(atom1, atom2);
+            return true;
+        }
+        return false;
+    }
+
     void bondResidueAtoms(std::vector<cds::Residue*>::iterator it1, std::vector<cds::Residue*>::iterator itEnd)
     {
         cds::Residue* res1                = *it1;
@@ -40,7 +52,7 @@ void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)
     {
         for (size_t k = n + 1; k < atoms.size(); k++)
         {
-            double maxLength = MolecularMetadata::getMaxBondLengthByAtomType(elements[n], elements[k]);
+            double maxLength = MolecularMetadata::maxBondLengthByAtomType(elements[n], elements[k]);
             if (withinDistance(maxLength, *coordinates[n], *coordinates[k]))
             {
                 addBond(atoms[n], atoms[k]);

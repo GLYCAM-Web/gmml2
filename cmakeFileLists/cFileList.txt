@@ -75,7 +75,6 @@
 ./src/CodeUtils/random.cpp
 ./src/CodeUtils/strings.cpp
 ./src/CodeUtils/threads.cpp
-./src/MolecularMetadata/GLYCAM/bondlengthbytypepair.cpp
 ./src/MolecularMetadata/GLYCAM/dihedralangledata.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06Functions.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.cpp

@@ -20,7 +20,6 @@ namespace constants
     const int iNotSet                 = -123456;
     const std::string sNotSet         = "?";
     const double dSulfurCutoff        = 3.0;
-    const double defaultBondLength    = 1.4;
 
     inline double toRadians(double d)
     {

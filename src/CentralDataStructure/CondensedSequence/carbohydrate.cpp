@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
-#include "includes/MolecularMetadata/GLYCAM/bondlengthbytypepair.hpp"
+#include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
@@ -45,7 +45,7 @@ namespace
     // parentAtom (e.g. O of OME), childAtom (e.g. C1 of Gal1-, S1 of SO3)
     void moveConnectedAtomsAccordingToBondLength(cds::Atom* parentAtom, cds::Atom* childAtom)
     {
-        double distance      = GlycamMetadata::GetBondLengthForAtomTypes(parentAtom->getType(), childAtom->getType());
+        double distance      = MolecularMetadata::specificBondLength(parentAtom->getType(), childAtom->getType());
         //  Create an atom c that is will superimpose onto the a atom, bringing b atom with it.
         Coordinate c         = guessCoordinateOfMissingNeighbor(childAtom, distance);
         Coordinate cToParent = *parentAtom->getCoordinate() - c;
