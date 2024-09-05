@@ -13,9 +13,9 @@
 
 namespace
 {
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
-    using gmml::MolecularMetadata::GLYCAM::RotamerType;
+    using GlycamMetadata::DihedralAngleData;
+    using GlycamMetadata::DihedralAngleDataVector;
+    using GlycamMetadata::RotamerType;
 
     std::vector<cds::AngleWithMetadata>
     wigglePermutationLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,

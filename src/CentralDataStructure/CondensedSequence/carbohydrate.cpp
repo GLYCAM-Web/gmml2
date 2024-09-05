@@ -94,7 +94,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
     this->SetIndexByConnectivity(); // For reporting residue index numbers to the user
     cds::serializeNumbers(this->getAtoms());
-    auto searchAngles = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
+    auto searchAngles = [](const GlycamMetadata::DihedralAngleData& metadata)
     {
         double deviation = 2.0;
         double increment = 1.0;

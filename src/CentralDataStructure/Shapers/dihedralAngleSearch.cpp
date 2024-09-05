@@ -21,7 +21,7 @@
 #include <numeric>
 #include <vector>
 
-using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
+using GlycamMetadata::DihedralAngleData;
 
 namespace
 {

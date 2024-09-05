@@ -101,7 +101,7 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
     std::vector<cds::ResidueLinkage> sortedLinkages;
     for (auto& linkage : inputLinkages)
     {
-        if (linkage.rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+        if (linkage.rotamerType == GlycamMetadata::RotamerType::conformer)
         {
             sortedLinkages.push_back(linkage);
         }

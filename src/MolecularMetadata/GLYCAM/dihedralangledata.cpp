@@ -5,11 +5,11 @@
 
 #include <regex>
 
-using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+using GlycamMetadata::DihedralAngleDataVector;
 
 namespace
 {
-    using gmml::MolecularMetadata::GLYCAM::RotamerType;
+    using GlycamMetadata::RotamerType;
 
     // Struct is copied here for reference.
     // struct DihedralAngleData
@@ -234,9 +234,9 @@ namespace
 } // namespace
 
 // Pass in the two atoms on either side the residue-residue linkage
-std::vector<DihedralAngleDataVector> gmml::MolecularMetadata::GLYCAM::getDihedralAngleDataEntriesForLinkage(
-    const std::string atom1Name, const std::string residue1Name, const std::string atom2Name,
-    const std::string residue2Name)
+std::vector<DihedralAngleDataVector>
+GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string atom1Name, const std::string residue1Name,
+                                                      const std::string atom2Name, const std::string residue2Name)
 {
     DihedralAngleDataVector matching_entries;
     std::vector<std::string> residue1_types = getTypesForResidue(residue1Name);
@@ -283,8 +283,7 @@ std::vector<DihedralAngleDataVector> gmml::MolecularMetadata::GLYCAM::getDihedra
     return orderedEntries;
 }
 
-std::vector<double>
-gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector)
+std::vector<double> GlycamMetadata::dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector)
 {
     auto metadataWeight = [](const DihedralAngleData& a)
     {

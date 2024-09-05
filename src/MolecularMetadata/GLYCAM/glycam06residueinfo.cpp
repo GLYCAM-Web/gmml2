@@ -18013,7 +18013,7 @@ namespace
     };
 }
 
-std::vector<std::string> gmml::MolecularMetadata::GLYCAM::getTypesForResidue(std::string query)
+std::vector<std::string> GlycamMetadata::getTypesForResidue(std::string query)
 {
     std::vector<std::string> matching_types;
     // Iterate over the multimap using range based for loop

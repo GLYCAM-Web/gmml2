@@ -15,8 +15,8 @@
 
 namespace cds
 {
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+    using GlycamMetadata::DihedralAngleData;
+    using GlycamMetadata::DihedralAngleDataVector;
 
     typedef std::function<std::vector<size_t>(DihedralAngleDataVector)> MetadataDistribution;
     typedef std::function<double(DihedralAngleData)> AngleDistribution;

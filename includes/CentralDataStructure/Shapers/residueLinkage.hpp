@@ -19,8 +19,8 @@
 
 namespace cds
 {
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+    using GlycamMetadata::DihedralAngleData;
+    using GlycamMetadata::DihedralAngleDataVector;
 
     struct ResidueLink
     {
@@ -54,14 +54,13 @@ namespace cds
         size_t currentMetadataIndex;
     };
 
-    typedef std::vector<gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector> DihedralAngleMetadata;
+    typedef std::vector<GlycamMetadata::DihedralAngleDataVector> DihedralAngleMetadata;
 
     struct ResidueLinkage
     {
         ResidueLinkage(ResidueLink& link_, std::vector<RotatableDihedral>& dihedrals,
-                       std::vector<DihedralAngleDataVector>& metadata,
-                       gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType_, unsigned long long index_,
-                       std::string name_, std::vector<Residue*> reducingOverlapResidues_,
+                       std::vector<DihedralAngleDataVector>& metadata, GlycamMetadata::RotamerType rotamerType_,
+                       unsigned long long index_, std::string name_, std::vector<Residue*> reducingOverlapResidues_,
                        std::vector<Residue*> nonReducingOverlapResidues_)
             : link(link_), rotatableDihedrals(dihedrals), dihedralMetadata(metadata), rotamerType(rotamerType_),
               index(index_), name(name_), reducingOverlapResidues(reducingOverlapResidues_),
@@ -70,7 +69,7 @@ namespace cds
         ResidueLink link;
         std::vector<RotatableDihedral> rotatableDihedrals;
         std::vector<DihedralAngleDataVector> dihedralMetadata;
-        gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType;
+        GlycamMetadata::RotamerType rotamerType;
         unsigned long long index = 0;
         std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
         std::vector<cds::Residue*> reducingOverlapResidues;
@@ -78,9 +77,9 @@ namespace cds
     };
 
     std::vector<size_t> rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata);
-    size_t numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+    size_t numberOfShapes(GlycamMetadata::RotamerType rotamerType,
                           const std::vector<DihedralAngleDataVector>& metadata);
-    size_t numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+    size_t numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,
                                 const std::vector<DihedralAngleDataVector>& metadata);
     DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
     std::string print(const ResidueLink& link);

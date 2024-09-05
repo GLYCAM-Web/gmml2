@@ -10,14 +10,13 @@ using cds::RotatableDihedral;
 
 namespace
 {
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+    using GlycamMetadata::DihedralAngleDataVector;
 
     int
     getNumberOfShapesBase(std::function<const DihedralAngleDataVector(const DihedralAngleDataVector&)> selectedMetadata,
-                          gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
-                          const std::vector<DihedralAngleDataVector>& metadata)
+                          GlycamMetadata::RotamerType rotamerType, const std::vector<DihedralAngleDataVector>& metadata)
     {
-        if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::permutation)
+        if (rotamerType == GlycamMetadata::RotamerType::permutation)
         {
             int numberOfShapes = 1;
             for (auto& entry : metadata)
@@ -26,7 +25,7 @@ namespace
             }
             return numberOfShapes;
         }
-        else if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+        else if (rotamerType == GlycamMetadata::RotamerType::conformer)
         { // Conformer should mean that each dihedral will have the same number of metadata entries.
             // numberOfShapes = RotatableDihedrals_.size(); // This was correct for ASN for the wrong reason. 4
             // conformers and 4 dihedrals...
@@ -36,8 +35,7 @@ namespace
         {
             std::string str =
                 "Error: Unknown rotamer type: " +
-                std::to_string(
-                    static_cast<std::underlying_type_t<gmml::MolecularMetadata::GLYCAM::RotamerType>>(rotamerType));
+                std::to_string(static_cast<std::underlying_type_t<GlycamMetadata::RotamerType>>(rotamerType));
             gmml::log(__LINE__, __FILE__, gmml::ERR, str);
             throw std::runtime_error(str);
         }
@@ -57,7 +55,7 @@ std::vector<size_t> cds::rotatableDihedralsWithMultipleRotamers(const std::vecto
     return indices;
 }
 
-size_t cds::numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+size_t cds::numberOfShapes(GlycamMetadata::RotamerType rotamerType,
                            const std::vector<DihedralAngleDataVector>& metadata)
 {
     auto selectMetadata = [](const DihedralAngleDataVector& data)
@@ -67,7 +65,7 @@ size_t cds::numberOfShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerT
     return getNumberOfShapesBase(selectMetadata, rotamerType, metadata);
 }
 
-size_t cds::numberOfLikelyShapes(gmml::MolecularMetadata::GLYCAM::RotamerType rotamerType,
+size_t cds::numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,
                                  const std::vector<DihedralAngleDataVector>& metadata)
 {
     return getNumberOfShapesBase(likelyMetadata, rotamerType, metadata);

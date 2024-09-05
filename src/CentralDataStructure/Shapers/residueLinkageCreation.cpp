@@ -51,12 +51,11 @@ namespace
         std::string firstResidue  = link.residues.first;
         std::string secondResidue = link.residues.second;
         cds::DihedralAngleMetadata matching_entries =
-            gmml::MolecularMetadata::GLYCAM::getDihedralAngleDataEntriesForLinkage(firstAtom, firstResidue, secondAtom,
-                                                                                   secondResidue);
+            GlycamMetadata::getDihedralAngleDataEntriesForLinkage(firstAtom, firstResidue, secondAtom, secondResidue);
         if (matching_entries.empty())
         {
-            matching_entries = gmml::MolecularMetadata::GLYCAM::getDihedralAngleDataEntriesForLinkage(
-                secondAtom, secondResidue, firstAtom, firstResidue);
+            matching_entries = GlycamMetadata::getDihedralAngleDataEntriesForLinkage(secondAtom, secondResidue,
+                                                                                     firstAtom, firstResidue);
         }
         if (matching_entries.empty())
         {
@@ -253,7 +252,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
                            nonReducingOverlapResidues);
 
     validateRotamerTypes(linkage);
-    if (rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+    if (rotamerType == GlycamMetadata::RotamerType::conformer)
     {
         validateConformerMetadata(linkage);
     }

@@ -102,7 +102,7 @@ void cds::setShape(std::vector<cds::RotatableDihedral>& dihedrals, const std::ve
 void cds::setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference)
 {
     auto& dihedrals = linkage.rotatableDihedrals;
-    if (linkage.rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+    if (linkage.rotamerType == GlycamMetadata::RotamerType::conformer)
     {
         if (!std::holds_alternative<ConformerShapePreference>(preference))
         {
@@ -154,7 +154,7 @@ cds::ResidueLinkageShapePreference cds::linkageShapePreference(MetadataDistribut
             angles[n].push_back(angleDistribution(metadata));
         }
     }
-    if (linkage.rotamerType == gmml::MolecularMetadata::GLYCAM::RotamerType::conformer)
+    if (linkage.rotamerType == GlycamMetadata::RotamerType::conformer)
     {
         auto order = metadataDistribution(linkage.dihedralMetadata[0]);
         return ConformerShapePreference {angles, order};

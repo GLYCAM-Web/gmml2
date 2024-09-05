@@ -4,15 +4,9 @@
 #include <string>
 #include <vector>
 
-namespace gmml
+namespace GlycamMetadata
 {
-    namespace MolecularMetadata
-    {
-        namespace GLYCAM
-        {
-            std::vector<std::string> getTypesForResidue(std::string query);
-        } // namespace GLYCAM
-    }     // namespace MolecularMetadata
-} // namespace gmml
+    std::vector<std::string> getTypesForResidue(std::string query);
+}
 
 #endif

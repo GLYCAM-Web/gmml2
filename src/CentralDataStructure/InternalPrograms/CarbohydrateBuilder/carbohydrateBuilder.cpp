@@ -78,7 +78,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
                               standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
-    auto searchAngles    = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
+    auto searchAngles    = [](const GlycamMetadata::DihedralAngleData& metadata)
     {
         double deviation = 2.0;
         double increment = 1.0;
@@ -154,7 +154,7 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
                                                                  std::vector<cds::ResidueLinkage>::iterator end,
                                                                  int maxRotamers, int rotamerCount)
 {
-    auto defaultAngle = [](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    auto defaultAngle = [](const GlycamMetadata::DihedralAngleData metadata)
     {
         return metadata.default_angle_value_;
     };
@@ -165,7 +165,7 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
         ++rotamerCount;
         if (rotamerCount <= maxRotamers)
         {
-            auto specificShape = [&shapeNumber](const gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector)
+            auto specificShape = [&shapeNumber](const GlycamMetadata::DihedralAngleDataVector)
             {
                 return std::vector<size_t> {shapeNumber};
             };

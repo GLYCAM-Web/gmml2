@@ -7,8 +7,8 @@
 #include <sstream>
 #include <cmath>
 
-using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
-using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+using GlycamMetadata::DihedralAngleData;
+using GlycamMetadata::DihedralAngleDataVector;
 
 std::vector<double> cds::evenlySpaced(double lower, double upper, double approximateIncrement)
 {

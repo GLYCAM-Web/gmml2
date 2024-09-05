@@ -7,8 +7,8 @@
 
 namespace cds
 {
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleData;
-    using gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector;
+    using GlycamMetadata::DihedralAngleData;
+    using GlycamMetadata::DihedralAngleDataVector;
 
     struct Bounds
     {

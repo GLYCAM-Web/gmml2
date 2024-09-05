@@ -141,19 +141,18 @@ void GlycoproteinBuilder::ResolveOverlaps()
     uint64_t seed     = GetIsDeterministic() ? 0 : codeUtils::generateRandomSeed();
     pcg32 rng(seed);
 
-    auto randomMetadata = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadataVector)
+    auto randomMetadata = [&rng](GlycamMetadata::DihedralAngleDataVector metadataVector)
     {
-        auto weights = gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(metadataVector);
+        auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
         return codeUtils::weightedRandomOrder(rng, weights);
     };
     double angleStandardDeviation = 2.0;
     double angleIncrement         = 1.0;
-    auto searchAngles =
-        [&angleStandardDeviation, &angleIncrement](const gmml::MolecularMetadata::GLYCAM::DihedralAngleData& metadata)
+    auto searchAngles = [&angleStandardDeviation, &angleIncrement](const GlycamMetadata::DihedralAngleData& metadata)
     {
         return cds::evenlySpacedAngles(angleStandardDeviation, angleIncrement, metadata);
     };
-    auto randomAngle = [&rng, &angleStandardDeviation](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    auto randomAngle = [&rng, &angleStandardDeviation](GlycamMetadata::DihedralAngleData metadata)
     {
         double stdCutoff = angleStandardDeviation;
         double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);

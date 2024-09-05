@@ -76,13 +76,13 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
 {
     uint64_t seed = codeUtils::generateRandomSeed();
     pcg32 rng(seed);
-    auto randomMetadata = [&rng](gmml::MolecularMetadata::GLYCAM::DihedralAngleDataVector metadataVector)
+    auto randomMetadata = [&rng](GlycamMetadata::DihedralAngleDataVector metadataVector)
     {
-        auto weights = gmml::MolecularMetadata::GLYCAM::dihedralAngleDataWeights(metadataVector);
+        auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
         return codeUtils::weightedRandomOrder(rng, weights);
     };
     double angleStandardDeviation = 2.0;
-    auto randomAngle = [&rng, &angleStandardDeviation](gmml::MolecularMetadata::GLYCAM::DihedralAngleData metadata)
+    auto randomAngle              = [&rng, &angleStandardDeviation](GlycamMetadata::DihedralAngleData metadata)
     {
         double stdCutoff = angleStandardDeviation;
         double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
