@@ -39,6 +39,9 @@ int main(int argc, char* argv[])
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
     cds::writeAssemblyToPdb(outFileStream, firstModel->getMolecules());
+    outFileStream << "END\n"; // Original GMML needs this.
+    outFileStream.close();
+
     // for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in
     // Ensemble.
     //                                                // ToDo: Why is there a const blockage in Ensemble?
