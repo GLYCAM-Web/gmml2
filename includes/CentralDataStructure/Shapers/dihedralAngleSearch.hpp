@@ -36,11 +36,18 @@ namespace cds
 
     struct AngleSearchPreference
     {
+        double deviation;
         std::vector<double> angles;
         std::vector<size_t> metadataOrder;
     };
 
-    typedef std::function<std::vector<double>(const DihedralAngleData&)> SearchAngles;
+    typedef std::function<std::vector<double>(const DihedralAngleData&, double, double)> SearchAngles;
+
+    struct AngleSearchSettings
+    {
+        double deviation;
+        SearchAngles angles;
+    };
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
@@ -54,9 +61,11 @@ namespace cds
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
                                      const std::array<ResiduesWithOverlapWeight, 2>& residues);
-    std::vector<double> evenlySpacedAngles(double deviation, double increment, const DihedralAngleData& metadata);
-    std::vector<AngleSearchPreference> angleSearchPreference(const ResidueLinkageShapePreference& preference);
+    std::vector<double> evenlySpacedAngles(double preference, double deviation, double increment,
+                                           const DihedralAngleData& metadata);
+    std::vector<AngleSearchPreference> angleSearchPreference(double deviation,
+                                                             const ResidueLinkageShapePreference& preference);
     std::vector<std::vector<AngleSearchPreference>>
-    angleSearchPreference(const std::vector<ResidueLinkageShapePreference>& preferences);
+    angleSearchPreference(double deviation, const std::vector<ResidueLinkageShapePreference>& preferences);
 } // namespace cds
 #endif

@@ -29,8 +29,14 @@ struct OverlapResidues
     std::vector<cds::Residue*> glycan;
 };
 
+typedef std::function<std::vector<std::vector<cds::AngleWithMetadata>>(OverlapWeight, std::vector<cds::ResidueLinkage>&,
+                                                                       std::vector<cds::ResidueLinkageShapePreference>&,
+                                                                       const OverlapResidues&)>
+    WiggleGlycan;
+
 typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(std::vector<cds::ResidueLinkage>)>
     LinkageShapeRandomizer;
+
 cds::Overlap intraGlycanOverlaps(const std::vector<cds::ResidueLinkage>& linkages);
 cds::Overlap countOverlaps(const std::vector<Residue*>& overlapResidues,
                            const cds::ResiduesWithOverlapWeight& glycositeResidues);
@@ -44,14 +50,14 @@ std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSi
                                               const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                               const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
                                               const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
-std::vector<cds::AngleWithMetadata> wiggleLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
+std::vector<cds::AngleWithMetadata> wiggleLinkage(const cds::AngleSearchSettings& searchSettings,
+                                                  cds::ResidueLinkage& linkage,
                                                   const cds::ResidueLinkageShapePreference& shapePreference,
                                                   const std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput);
-std::vector<std::vector<cds::AngleWithMetadata>>
-wiggleGlycosite(cds::SearchAngles searchAngles, OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
-                const std::vector<cds::ResidueLinkageShapePreference>& preferences,
-                const OverlapResidues& overlapResidues);
-GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, cds::SearchAngles searchAngles,
+std::vector<std::vector<cds::AngleWithMetadata>> wiggleGlycosite(
+    const cds::AngleSearchSettings& searchSettings, OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
+    const std::vector<cds::ResidueLinkageShapePreference>& preferences, const OverlapResidues& overlapResidues);
+GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, WiggleGlycan wiggleGlycan,
                                 int persistCycles, OverlapWeight overlapWeight,
                                 std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                 const GlycoproteinState& initialState,

@@ -18,7 +18,7 @@ namespace
     using GlycamMetadata::RotamerType;
 
     std::vector<cds::AngleWithMetadata>
-    wigglePermutationLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
+    wigglePermutationLinkage(const cds::AngleSearchSettings& settings, cds::ResidueLinkage& linkage,
                              const cds::PermutationShapePreference& shapePreference,
                              const std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
@@ -30,13 +30,14 @@ namespace
         //  rotatable bond in Asn outwards
         for (size_t rn = 0; rn < dihedrals.size(); rn++)
         {
-            size_t n         = dihedrals.size() - 1 - rn;
-            auto& dihedral   = dihedrals[n];
-            auto preference  = cds::AngleSearchPreference {shapePreference.angles[n], shapePreference.metadataOrder[n]};
-            auto coordinates = cds::dihedralCoordinates(dihedral);
-            auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
+            size_t n             = dihedrals.size() - 1 - rn;
+            auto& dihedral       = dihedrals[n];
+            auto preference      = cds::AngleSearchPreference {settings.deviation, shapePreference.angles[n],
+                                                          shapePreference.metadataOrder[n]};
+            auto coordinates     = cds::dihedralCoordinates(dihedral);
+            auto input           = cds::dihedralRotationInputData(dihedral, overlapInput);
             auto& metadataVector = metadata[n];
-            auto best = cds::wiggleUsingRotamers(searchAngles, coordinates, codeUtils::indexVector(metadataVector),
+            auto best = cds::wiggleUsingRotamers(settings.angles, coordinates, codeUtils::indexVector(metadataVector),
                                                  metadataVector, preference, input);
             cds::setDihedralAngle(dihedral, best.angle);
             shape[n] = best.angle;
@@ -45,13 +46,15 @@ namespace
     }
 
     std::vector<cds::AngleWithMetadata>
-    wiggleConformerLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
+    wiggleConformerLinkage(const cds::AngleSearchSettings& settings, cds::ResidueLinkage& linkage,
                            const cds::ConformerShapePreference& shapePreference,
                            const std::array<cds::ResiduesWithOverlapWeight, 2>& overlapInput)
     {
         auto& dihedrals         = linkage.rotatableDihedrals;
         auto& metadata          = linkage.dihedralMetadata;
-        size_t numberOfMetadata = metadata[0].size();
+        size_t numberOfMetadata = shapePreference.metadataOrder.size();
+        auto& preferenceAngles  = shapePreference.angles;
+        auto& metadataOrder     = shapePreference.metadataOrder;
         std::vector<std::vector<cds::AngleWithMetadata>> results;
         results.resize(numberOfMetadata);
         std::vector<cds::AngleOverlap> bestOverlaps;
@@ -60,8 +63,7 @@ namespace
         for (size_t k = 0; k < numberOfMetadata; k++)
         {
             results[k].resize(dihedrals.size());
-            cds::setShapeToPreference(
-                linkage, cds::ConformerShapePreference {shapePreference.angles, {shapePreference.metadataOrder[k]}});
+            cds::setShapeToPreference(linkage, cds::ConformerShapePreference {preferenceAngles, {metadataOrder[k]}});
             //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
             //  rotatable bond in Asn outwards
             for (size_t rn = 0; rn < dihedrals.size(); rn++)
@@ -69,10 +71,11 @@ namespace
                 size_t n       = dihedrals.size() - 1 - rn;
                 auto& dihedral = dihedrals[n];
                 auto preference =
-                    cds::AngleSearchPreference {shapePreference.angles[n], {shapePreference.metadataOrder[k]}};
+                    cds::AngleSearchPreference {settings.deviation, preferenceAngles[n], {metadataOrder[k]}};
                 auto coordinates = cds::dihedralCoordinates(dihedral);
                 auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
-                auto best = cds::wiggleUsingRotamers(searchAngles, coordinates, index, metadata[n], preference, input);
+                auto best =
+                    cds::wiggleUsingRotamers(settings.angles, coordinates, index, metadata[n], preference, input);
                 results[k][n]   = best.angle;
                 bestOverlaps[k] = best;
                 cds::setDihedralAngle(dihedral, best.angle);
@@ -192,7 +195,8 @@ std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSi
     return indices;
 }
 
-std::vector<cds::AngleWithMetadata> wiggleLinkage(cds::SearchAngles searchAngles, cds::ResidueLinkage& linkage,
+std::vector<cds::AngleWithMetadata> wiggleLinkage(const cds::AngleSearchSettings& searchSettings,
+                                                  cds::ResidueLinkage& linkage,
                                                   const cds::ResidueLinkageShapePreference& shapePreference,
                                                   const std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput)
 {
@@ -201,21 +205,20 @@ std::vector<cds::AngleWithMetadata> wiggleLinkage(cds::SearchAngles searchAngles
         case RotamerType::permutation:
             {
                 auto preference = std::get<cds::PermutationShapePreference>(shapePreference);
-                return wigglePermutationLinkage(searchAngles, linkage, preference, overlapInput);
+                return wigglePermutationLinkage(searchSettings, linkage, preference, overlapInput);
             }
         case RotamerType::conformer:
             {
                 auto preference = std::get<cds::ConformerShapePreference>(shapePreference);
-                return wiggleConformerLinkage(searchAngles, linkage, preference, overlapInput);
+                return wiggleConformerLinkage(searchSettings, linkage, preference, overlapInput);
             }
     }
     throw std::runtime_error("unhandled linkage shape preference in glycoproteinOverlapResolution wiggleLinkage");
 }
 
-std::vector<std::vector<cds::AngleWithMetadata>>
-wiggleGlycosite(cds::SearchAngles searchAngles, OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
-                const std::vector<cds::ResidueLinkageShapePreference>& preferences,
-                const OverlapResidues& overlapResidues)
+std::vector<std::vector<cds::AngleWithMetadata>> wiggleGlycosite(
+    const cds::AngleSearchSettings& searchSettings, OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
+    const std::vector<cds::ResidueLinkageShapePreference>& preferences, const OverlapResidues& overlapResidues)
 {
     auto toWeight = [](const std::vector<cds::Residue*>& residues, double a)
     {
@@ -245,13 +248,13 @@ wiggleGlycosite(cds::SearchAngles searchAngles, OverlapWeight weight, std::vecto
                                                 codeUtils::vectorAppend(nonReducingWeight, baseWeights)},
                 cds::ResiduesWithOverlapWeight {reducing, reducingWeight}
             };
-            shape[n] = wiggleLinkage(searchAngles, linkage, preferences[n], overlapInput);
+            shape[n] = wiggleLinkage(searchSettings, linkage, preferences[n], overlapInput);
         }
     }
     return shape;
 }
 
-GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, cds::SearchAngles searchAngles,
+GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, WiggleGlycan wiggleGlycan,
                                 int persistCycles, OverlapWeight overlapWeight,
                                 std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
                                 const GlycoproteinState& initialState,
@@ -290,11 +293,10 @@ GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape
             auto preferences     = randomizeShape(linkages);
             auto recordedShape   = glycositeShape[site];
             cds::setShapeToPreference(linkages, preferences);
-            auto currentShape =
-                wiggleGlycosite(searchAngles, overlapWeight, linkages, preferences, siteOverlapResidues);
-            auto newOverlap = localOverlaps();
-            auto diff       = newOverlap + (previousOverlap * -1);
-            bool isWorse    = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+            auto currentShape = wiggleGlycan(overlapWeight, linkages, preferences, siteOverlapResidues);
+            auto newOverlap   = localOverlaps();
+            auto diff         = newOverlap + (previousOverlap * -1);
+            bool isWorse      = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
             if (isWorse)
             {
                 cds::setShape(linkages, recordedShape);

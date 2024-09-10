@@ -303,8 +303,10 @@ cds::AngleOverlap cds::wiggleUsingRotamers(SearchAngles searchAngles, const cds:
     std::vector<AngleOverlap> results;
     for (size_t n : preference.metadataOrder)
     {
-        AngleOverlap best =
-            WiggleAnglesOverlaps(coordinates, indices[n], preference.angles[n], searchAngles(rotamers[n]), input);
+        double angle      = preference.angles[n];
+        double deviation  = preference.deviation;
+        AngleOverlap best = WiggleAnglesOverlaps(coordinates, indices[n], preference.angles[n],
+                                                 searchAngles(rotamers[n], angle, deviation), input);
         results.push_back(best);
     }
 
@@ -327,14 +329,15 @@ void cds::simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<Rot
     }
 }
 
-std::vector<double> cds::evenlySpacedAngles(double deviation, double increment, const DihedralAngleData& metadata)
+std::vector<double> cds::evenlySpacedAngles(double preference, double deviation, double increment,
+                                            const DihedralAngleData& metadata)
 {
-    double def = metadata.default_angle_value_;
-    return evenlySpaced(def - deviation * metadata.lower_deviation_, def + deviation * metadata.upper_deviation_,
-                        increment);
+    return evenlySpaced(preference - deviation * metadata.lower_deviation_,
+                        preference + deviation * metadata.upper_deviation_, increment);
 }
 
-std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(const ResidueLinkageShapePreference& preference)
+std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(double deviation,
+                                                                   const ResidueLinkageShapePreference& preference)
 {
     if (std::holds_alternative<ConformerShapePreference>(preference))
     {
@@ -348,7 +351,7 @@ std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(const Residue
         result.reserve(pref.angles.size());
         for (auto& a : pref.angles)
         {
-            result.push_back({a, pref.metadataOrder});
+            result.push_back({deviation, a, pref.metadataOrder});
         }
         return result;
     }
@@ -360,7 +363,7 @@ std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(const Residue
         result.reserve(pref.angles.size());
         for (size_t n = 0; n < pref.angles.size(); n++)
         {
-            result.push_back({pref.angles[n], pref.metadataOrder[n]});
+            result.push_back({deviation, pref.angles[n], pref.metadataOrder[n]});
         }
         return result;
     }
@@ -371,13 +374,13 @@ std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(const Residue
 }
 
 std::vector<std::vector<cds::AngleSearchPreference>>
-cds::angleSearchPreference(const std::vector<ResidueLinkageShapePreference>& preferences)
+cds::angleSearchPreference(double deviation, const std::vector<ResidueLinkageShapePreference>& preferences)
 {
     std::vector<std::vector<AngleSearchPreference>> result;
     result.reserve(preferences.size());
     for (auto& a : preferences)
     {
-        result.push_back(angleSearchPreference(a));
+        result.push_back(angleSearchPreference(deviation, a));
     }
     return result;
 }

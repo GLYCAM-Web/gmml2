@@ -78,13 +78,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
                               standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
-    auto searchAngles    = [](const GlycamMetadata::DihedralAngleData& metadata)
-    {
-        double deviation = 2.0;
-        double increment = 1.0;
-        return cds::evenlySpacedAngles(deviation, increment, metadata);
-    };
-    this->carbohydrate_.ResolveOverlaps(searchAngles);
+    this->carbohydrate_.ResolveOverlaps(cdsCondensedSequence::defaultSearchSettings);
     this->carbohydrate_.Generate3DStructureFiles(fileOutputDirectory, fileName);
     return;
 }

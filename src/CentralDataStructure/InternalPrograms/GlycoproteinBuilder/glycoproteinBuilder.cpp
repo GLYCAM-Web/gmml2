@@ -142,21 +142,30 @@ void GlycoproteinBuilder::ResolveOverlaps()
         auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
         return codeUtils::weightedRandomOrder(rng, weights);
     };
-    double angleStandardDeviation = 2.0;
-    double angleIncrement         = 1.0;
-    auto searchAngles = [&angleStandardDeviation, &angleIncrement](const GlycamMetadata::DihedralAngleData& metadata)
+    double preferenceDeviation = 2.0;
+    double searchDeviation     = 0.5;
+    double searchIncrement     = 1.0;
+    auto searchAngles =
+        [&searchIncrement](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
     {
-        return cds::evenlySpacedAngles(angleStandardDeviation, angleIncrement, metadata);
+        return cds::evenlySpacedAngles(preference, deviation, searchIncrement, metadata);
     };
-    auto randomAngle = [&rng, &angleStandardDeviation](GlycamMetadata::DihedralAngleData metadata)
+    auto searchSettings = cds::AngleSearchSettings {searchDeviation, searchAngles};
+    auto randomAngle    = [&rng, &preferenceDeviation](GlycamMetadata::DihedralAngleData metadata)
     {
-        double stdCutoff = angleStandardDeviation;
+        double stdCutoff = preferenceDeviation;
         double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
         return metadata.default_angle_value_ + num * (num < 0 ? metadata.lower_deviation_ : metadata.upper_deviation_);
     };
     auto randomizeShape = [&randomMetadata, &randomAngle](std::vector<cds::ResidueLinkage> linkages)
     {
         return cds::linkageShapePreference(randomMetadata, randomAngle, linkages);
+    };
+    auto wiggleGlycan = [&searchSettings](OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
+                                          const std::vector<cds::ResidueLinkageShapePreference>& preferences,
+                                          const OverlapResidues& overlapResidues)
+    {
+        return wiggleGlycosite(searchSettings, weight, linkages, preferences, overlapResidues);
     };
 
     auto resolveOverlapsWithWiggler = [&](std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
@@ -174,14 +183,14 @@ void GlycoproteinBuilder::ResolveOverlaps()
         }
         for (size_t site : codeUtils::shuffleVector(rng, codeUtils::indexVector(glycosidicLinkages)))
         {
-            glycositeShape[site] = wiggleGlycosite(searchAngles, overlapWeight, glycosidicLinkages[site],
-                                                   glycositePreferences[site], overlapResidues[site]);
+            glycositeShape[site] = wiggleGlycan(overlapWeight, glycosidicLinkages[site], glycositePreferences[site],
+                                                overlapResidues[site]);
         }
         cds::Overlap initialOverlap =
             totalOverlaps(overlapWeight, overlapResidues, glycositeResidues, glycosidicLinkages);
         auto initialState = GlycoproteinState {initialOverlap, glycositePreferences, glycositeShape};
         GlycoproteinState currentState =
-            randomDescent(rng, randomizeShape, searchAngles, settings.persistCycles, overlapWeight, glycosidicLinkages,
+            randomDescent(rng, randomizeShape, wiggleGlycan, settings.persistCycles, overlapWeight, glycosidicLinkages,
                           initialState, overlapResidues, glycositeResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
     };

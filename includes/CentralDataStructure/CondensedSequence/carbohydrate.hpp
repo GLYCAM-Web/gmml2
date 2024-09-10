@@ -11,6 +11,14 @@
 
 namespace cdsCondensedSequence
 {
+    constexpr auto defaultSearchAngles =
+        [](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
+    {
+        double increment = 1.0;
+        return cds::evenlySpacedAngles(preference, deviation, increment, metadata);
+    };
+    const cds::AngleSearchSettings defaultSearchSettings = {2.0, defaultSearchAngles};
+
     class Carbohydrate : public SequenceManipulator
     {
       public:
@@ -48,7 +56,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void Generate3DStructureFiles(std::string fileOutputDirectory = "unspecified",
                                       std::string outputFileNaming    = "structure");
-        void ResolveOverlaps(cds::SearchAngles searchAngles);
+        void ResolveOverlaps(const cds::AngleSearchSettings& searchSettings);
         void SetDefaultShapeUsingMetadata();
         unsigned long int CountShapes(bool likelyShapesOnly = false) const;
         std::string GetNumberOfShapes(
@@ -64,10 +72,11 @@ namespace cdsCondensedSequence
         void ApplyDeoxy(ParsedResidue* deoxyResidue);
         void DerivativeChargeAdjustment(ParsedResidue* parsedResidue);
         void ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue,
-                                   cds::SearchAngles searchAngles);
+                                   const cds::AngleSearchSettings& searchSettings);
         std::vector<std::string> GetGlycamNamesOfResidues() const;
         std::string GetGlycamResidueName(ParsedResidue* residue) const;
-        void DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent, cds::SearchAngles searchAngles);
+        void DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent,
+                                                  const cds::AngleSearchSettings& searchSettings);
         //////////////////////////////////////////////////////////
         //                 PRIVATE MEMBERS                      //
         //////////////////////////////////////////////////////////

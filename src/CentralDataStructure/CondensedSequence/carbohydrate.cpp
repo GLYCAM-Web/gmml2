@@ -95,14 +95,9 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
     this->SetIndexByConnectivity(); // For reporting residue index numbers to the user
     cds::serializeNumbers(this->getAtoms());
-    auto searchAngles = [](const GlycamMetadata::DihedralAngleData& metadata)
-    {
-        double deviation = 2.0;
-        double increment = 1.0;
-        return cds::evenlySpacedAngles(deviation, increment, metadata);
-    };
+    auto searchSettings = defaultSearchSettings;
     // Set 3D structure
-    this->DepthFirstSetConnectivityAndGeometry(this->GetTerminal(), searchAngles); // recurve start with terminal
+    this->DepthFirstSetConnectivityAndGeometry(this->GetTerminal(), searchSettings); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.
@@ -112,7 +107,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
         cds::determineAtomsThatMove(linkage.rotatableDihedrals);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Final carbohydrate overlap resolution starting.");
-    this->ResolveOverlaps(searchAngles);
+    this->ResolveOverlaps(searchSettings);
     gmml::log(__LINE__, __FILE__, gmml::INF,
               "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
     return;
@@ -288,7 +283,7 @@ void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
 }
 
 void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residue* parentResidue,
-                                         cds::SearchAngles searchAngles)
+                                         const cds::AngleSearchSettings& searchSettings)
 {
     using cds::Atom;
     using cds::ResidueType;
@@ -394,21 +389,22 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     cds::ResidueLinkage& linkage = glycosidicLinkages_.emplace_back(cds::createResidueLinkage(link));
     auto shapePreference         = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
     cds::setShapeToPreference(linkage, shapePreference);
-    auto searchPreference  = cds::angleSearchPreference(shapePreference);
+    auto searchPreference  = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
     auto residueWithWeight = [](cds::Residue* residue)
     {
         auto residues = std::vector<cds::Residue*> {residue};
         auto weights  = std::vector<double> {1.0};
         return cds::ResiduesWithOverlapWeight {residues, weights};
     };
-    cds::simpleWiggleCurrentRotamers(searchAngles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
+    cds::simpleWiggleCurrentRotamers(searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
                                      searchPreference,
                                      {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     return;
 }
 
 // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
-void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent, cds::SearchAngles searchAngles)
+void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent,
+                                                        const cds::AngleSearchSettings& searchSettings)
 {
     // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
 
@@ -429,8 +425,8 @@ void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentPar
     // End Breath first code
     for (auto& child : currentParent->getChildren())
     {
-        this->ConnectAndSetGeometry(child, currentParent, searchAngles);
-        this->DepthFirstSetConnectivityAndGeometry(child, searchAngles);
+        this->ConnectAndSetGeometry(child, currentParent, searchSettings);
+        this->DepthFirstSetConnectivityAndGeometry(child, searchSettings);
     }
     return;
 }
@@ -478,7 +474,7 @@ void Carbohydrate::SetDefaultShapeUsingMetadata()
     return;
 }
 
-void Carbohydrate::ResolveOverlaps(cds::SearchAngles searchAngles)
+void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
 {
     for (auto& linkage : glycosidicLinkages_)
     {
@@ -487,10 +483,10 @@ void Carbohydrate::ResolveOverlaps(cds::SearchAngles searchAngles)
             return cds::ResiduesWithOverlapWeight {residues, std::vector<double>(residues.size(), 1.0)};
         };
 
-        auto preference =
-            cds::angleSearchPreference(cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
+        auto preference = cds::angleSearchPreference(
+            searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
         cds::simpleWiggleCurrentRotamers(
-            searchAngles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
             {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;
