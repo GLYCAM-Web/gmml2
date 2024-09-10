@@ -20,7 +20,7 @@ PdbResidue::PdbResidue(std::stringstream& singleResidueSecion, std::string first
     this->setNumber(std::stoi(resId.getNumber()));
     this->setInsertionCode(resId.getInsertionCode());
     this->setChainId(resId.getChainId());
-    std::string firstLineAlternativeLocationIndicator = resId.getAlternativeLocation(); // Normally empty
+    std::string firstFoundAlternativeLocationIndicator = resId.getAlternativeLocation(); // Normally empty
     std::string line;
     while (getline(singleResidueSecion, line))
     {
@@ -28,10 +28,20 @@ PdbResidue::PdbResidue(std::stringstream& singleResidueSecion, std::string first
         if ((recordName == "ATOM") || (recordName == "HETATM"))
         {
             ResidueId id(line); // Check alternativeLocation and ignore any that aren't the same as the first one.
-            if (firstLineAlternativeLocationIndicator.empty() ||
-                id.getAlternativeLocation() == firstLineAlternativeLocationIndicator)
-            {
+            if (id.getAlternativeLocation().empty() ||
+                id.getAlternativeLocation() == firstFoundAlternativeLocationIndicator)
+            { // If no alternative location (normal case) or alternateLocation is the first one (normally "A").
                 this->addAtom(std::make_unique<PdbAtom>(line));
+            }
+            else if (firstFoundAlternativeLocationIndicator.empty())
+            { // Sometimes first atom has one location, but later atoms have alternatives. Just set and use the first
+              // one (normally "A")
+                firstFoundAlternativeLocationIndicator = id.getAlternativeLocation();
+                this->addAtom(std::make_unique<PdbAtom>(line));
+            }
+            else
+            {
+                gmml::log(__LINE__, __FILE__, gmml::INF, "Skipping line with alternative location: " + line);
             }
         }
     }

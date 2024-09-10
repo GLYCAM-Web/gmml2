@@ -278,15 +278,7 @@ Unrecognized atoms:
 Missing heavy atoms:
 CD | PRO | A | 113
 CG | PRO | A | 113
-CD | LYS | A | 139
-CE | LYS | A | 139
 NZ | LYS | A | 139
-CG | ARG | A | 186
-CD | ARG | A | 186
-NE | ARG | A | 186
-CZ | ARG | A | 186
-NH1 | ARG | A | 186
-NH2 | ARG | A | 186
 Unrecognized residues:
 BGC | B | 1
 GAL | B | 2
