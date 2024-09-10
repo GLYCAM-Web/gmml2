@@ -27,16 +27,24 @@ namespace
 {
     std::vector<double> evenlySpaced(double lower, double upper, double approximateIncrement)
     {
-        double range     = upper - lower;
-        int steps        = std::ceil(range / approximateIncrement);
-        double increment = range / steps;
-        std::vector<double> result;
-        result.reserve(steps + 1);
-        for (int k = 0; k < steps + 1; k++)
+        double range = upper - lower;
+        int steps    = std::ceil(range / approximateIncrement);
+        if (steps == 0)
         {
-            result.push_back(lower + k * increment);
+            // range == 0, hence lower == upper
+            return {lower};
         }
-        return result;
+        else
+        {
+            double increment = range / steps;
+            std::vector<double> result;
+            result.reserve(steps + 1);
+            for (int k = 0; k < steps + 1; k++)
+            {
+                result.push_back(lower + k * increment);
+            }
+            return result;
+        }
     }
 
     std::vector<cds::Atom*> movingAtomsWithinSet(cds::Atom* dihedralFixed, cds::Atom* dihedralMoving,
