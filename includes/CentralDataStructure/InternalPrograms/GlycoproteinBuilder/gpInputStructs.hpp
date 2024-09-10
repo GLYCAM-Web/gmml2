@@ -28,6 +28,7 @@ namespace glycoprotein
         ulong persistCycles                     = 5;
         bool freezeGlycositeResidueConformation = false;
         bool isDeterministic                    = false;
+        uint64_t seed                           = 0;
         bool skipMDPrep                         = false;
         std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
     };

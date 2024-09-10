@@ -45,13 +45,14 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
         {
             gpInputs.freezeGlycositeResidueConformation = codeUtils::split(strInput, ':').at(1) == "true";
         }
-        if (codeUtils::startsWith(strInput, "isDeterministic:"))
-        { // variable = (condition) ? expressionTrue : expressionFalse;
-            gpInputs.isDeterministic = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;
+        if (codeUtils::startsWith(strInput, "seed:"))
+        {
+            gpInputs.isDeterministic = true;
+            gpInputs.seed            = std::stoul(codeUtils::split(strInput, ':').at(1));
         }
         if (codeUtils::startsWith(strInput, "skipMDPrep:"))
         {
-            gpInputs.skipMDPrep = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;
+            gpInputs.skipMDPrep = codeUtils::split(strInput, ':').at(1) == "true";
         }
         if (strInput == "ProteinResidue, GlycanName:")
         {

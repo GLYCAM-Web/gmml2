@@ -135,7 +135,7 @@ void GlycoproteinBuilder::ResolveOverlaps()
         overlapResidues_.push_back({protein, glycan});
     }
 
-    uint64_t seed = settings.isDeterministic ? 0 : codeUtils::generateRandomSeed();
+    uint64_t seed = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
     pcg32 rng(seed);
 
     auto randomMetadata = [&rng](GlycamMetadata::DihedralAngleDataVector metadataVector)
