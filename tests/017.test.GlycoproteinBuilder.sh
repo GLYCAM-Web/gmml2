@@ -48,6 +48,24 @@ for file in "${fileList[@]}"; do
         return 1
     fi
 done
+directory="017/freezeGSConformation"
+mkdir -p ${directory}
+./gpBuilder tests/inputs/017.GlycoproteinBuilderInputFreezeGSConformation.txt ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1
+fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "0_glycoprotein.pdb" "1_glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "GlycoproteinBuilder.txt")
+for file in "${fileList[@]}"; do
+    output="${directory}/${file}"
+    if [ ! -f "${output}" ]; then
+        echo -e "FreezeGSConformation Test FAILED!\n ${output} does not exist\n"
+        echo "Exit Code: 1"
+        return 1
+    fi
+    correct="tests/correct_outputs/${output}"
+    if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
+        echo -e "FreezeGSConformation Test FAILED!\n ${output} is different from ${correct}\n"
+        echo "Exit Code: 1"
+        return 1
+    fi
+done
 rm -r 017/ >/dev/null 2>&1
 printf "Test passed.\n"
 rm gpBuilder
