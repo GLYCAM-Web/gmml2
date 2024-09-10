@@ -10,7 +10,7 @@ overlapTolerance:1
 
 prepFileLocation:../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep
 
-isDeterministic:true
+seed:0
 
 skipMDPrep:true
 
