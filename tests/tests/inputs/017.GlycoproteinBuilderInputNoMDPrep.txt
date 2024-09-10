@@ -6,8 +6,6 @@ maxThreads:1
 
 persistCycles:5
 
-overlapTolerance:1
-
 prepFileLocation:../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep
 
 seed:0

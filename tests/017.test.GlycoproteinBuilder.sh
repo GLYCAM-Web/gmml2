@@ -9,49 +9,46 @@ fi
 
 printf "Testing 017.test.GlycoproteinBuilder.cpp... "
 g++ -std=c++17 -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
-./gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt >output_GlycoproteinBuilder.txt 2>&1
-fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "output_GlycoproteinBuilder.txt")
+rm -r 017/ >/dev/null 2>&1
+directory="017/standard"
+mkdir -p ${directory}
+./gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1
+fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "0_glycoprotein.pdb" "1_glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "GlycoproteinBuilder.txt")
 for file in "${fileList[@]}"; do
-    if [ ! -f "${file}" ]; then
-        echo -e "Test FAILED!\n ${file} does not exist\n"
+    output="${directory}/${file}"
+    if [ ! -f "${output}" ]; then
+        echo -e "Test FAILED!\n ${output} does not exist\n"
         echo "Exit Code: 1"
         return 1
     fi
-    if ! cmp "${file}" tests/correct_outputs/017."${file}" >/dev/null 2>&1; then
-        echo -e "Test FAILED!\n ${file} is different from tests/correct_outputs/017.${file}\n"
+    correct="tests/correct_outputs/${output}"
+    if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
+        echo -e "Test FAILED!\n ${output} is different from ${correct}\n"
         echo "Exit Code: 1"
         return 1
     fi
-    rm "${file}"
 done
 # Do it again but skip preprocessing
 echo "Dingo"
-./gpBuilder tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt >output_GlycoproteinBuilder.txt 2>&1
-fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "output_GlycoproteinBuilder.txt")
-prefix="skipMDPrep_"
+directory="017/skipMdPrep"
+mkdir -p ${directory}
+./gpBuilder tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1
+fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "0_glycoprotein.pdb" "1_glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "GlycoproteinBuilder.txt")
 for file in "${fileList[@]}"; do
-    if [ ! -f "${file}" ]; then
-        echo -e "SkipMdPrep Test FAILED!\n ${file} does not exist\n"
+    output="${directory}/${file}"
+    if [ ! -f "${output}" ]; then
+        echo -e "SkipMdPrep Test FAILED!\n ${output} does not exist\n"
         echo "Exit Code: 1"
         return 1
     fi
-    if ! cmp "${file}" tests/correct_outputs/017."${prefix}""${file}" >/dev/null 2>&1; then
-        echo -e "SkipMdPrep Test FAILED!\n ${file} is different from tests/correct_outputs/017."${prefix}"${file}\n"
+    correct="tests/correct_outputs/${output}"
+    if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
+        echo -e "SkipMdPrep Test FAILED!\n ${output} is different from ${correct}\n"
         echo "Exit Code: 1"
         return 1
     fi
-    rm "${file}"
 done
-#These need only exist, as will have random data each time.
-fileList=("0_glycoprotein.pdb" "1_glycoprotein.pdb")
-for file in "${fileList[@]}"; do
-    if [ ! -f "${file}" ]; then
-        echo -e "Test FAILED!\n ${file} does not exist\n"
-        echo "Exit Code: 1"
-        return 1
-    fi
-    rm "${file}"
-done
+rm -r 017/ >/dev/null 2>&1
 printf "Test passed.\n"
 rm gpBuilder
 echo "Exit Code: 0"
