@@ -33,7 +33,7 @@ class GlycoproteinBuilder
     //////////////////////////////////////////////////////////
     //                       FUNCTIONS                      //
     //////////////////////////////////////////////////////////
-    void ResolveOverlaps();
+    void ResolveOverlaps(std::string outputDir);
     void WritePdbFile(const std::string prefix = "glycoprotein", const bool writeConectSection = true);
     void WriteOffFile(const std::string prefix = "glycoprotein");
     // void WriteOutputFiles(std::string prefix = "Glycoprotein_All_Resolved");

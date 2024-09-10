@@ -96,7 +96,7 @@ void GlycoproteinBuilder::WritePdbFile(const std::string prefix, const bool writ
     return;
 }
 
-void GlycoproteinBuilder::ResolveOverlaps()
+void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
 { // First time here so get default output files that might be deterministic for tests.
     std::vector<std::vector<cds::ResidueLinkage>> glycosidicLinkages;
     std::vector<std::vector<Residue*>> glycositeResidues;
@@ -222,12 +222,12 @@ void GlycoproteinBuilder::ResolveOverlaps()
         gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
     };
 
-    this->WritePdbFile("glycoprotein_initial");
+    this->WritePdbFile(outputDir + "glycoprotein_initial");
     resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues_, glycositeResiduesWithWeights);
     this->PrintDihedralAnglesAndOverlapOfGlycosites();
-    this->WritePdbFile("glycoprotein");
-    this->WriteOffFile("glycoprotein");
-    this->WritePdbFile("glycoprotein_serialized");
+    this->WritePdbFile(outputDir + "glycoprotein");
+    this->WriteOffFile(outputDir + "glycoprotein");
+    this->WritePdbFile(outputDir + "glycoprotein_serialized");
 
     for (size_t count = 0; count < settings.number3DStructures; count++)
     {
@@ -235,7 +235,7 @@ void GlycoproteinBuilder::ResolveOverlaps()
         this->PrintDihedralAnglesAndOverlapOfGlycosites();
         std::stringstream prefix;
         prefix << count << "_glycoprotein";
-        this->WritePdbFile(prefix.str(), true);
+        this->WritePdbFile(outputDir + prefix.str(), true);
     }
 }
 
