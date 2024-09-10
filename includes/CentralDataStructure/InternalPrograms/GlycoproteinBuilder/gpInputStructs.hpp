@@ -22,12 +22,13 @@ namespace glycoprotein
 
     struct GlycoproteinBuilderInputs
     {
-        std::string substrateFileName = "Undefined"; // Program should throw if left as "Undefined".
-        ulong number3DStructures      = 1;
-        ulong maxThreads              = 1; // ToDo Implement this.
-        ulong persistCycles           = 5;
-        bool isDeterministic          = false;
-        bool skipMDPrep               = false;
+        std::string substrateFileName           = "Undefined"; // Program should throw if left as "Undefined".
+        ulong number3DStructures                = 1;
+        ulong maxThreads                        = 1; // ToDo Implement this.
+        ulong persistCycles                     = 5;
+        bool freezeGlycositeResidueConformation = false;
+        bool isDeterministic                    = false;
+        bool skipMDPrep                         = false;
         std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
     };
 

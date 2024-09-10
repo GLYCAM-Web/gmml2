@@ -41,6 +41,10 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
         {
             gpInputs.persistCycles = std::stoul(codeUtils::split(strInput, ':').at(1));
         }
+        if (codeUtils::startsWith(strInput, "freezeGlycositeResidueConformation:"))
+        {
+            gpInputs.freezeGlycositeResidueConformation = codeUtils::split(strInput, ':').at(1) == "true";
+        }
         if (codeUtils::startsWith(strInput, "isDeterministic:"))
         { // variable = (condition) ? expressionTrue : expressionFalse;
             gpInputs.isDeterministic = (codeUtils::split(strInput, ':').at(1) == "true") ? true : false;

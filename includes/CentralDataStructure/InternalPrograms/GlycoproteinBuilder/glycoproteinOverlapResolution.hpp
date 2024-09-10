@@ -34,7 +34,7 @@ typedef std::function<std::vector<std::vector<cds::AngleWithMetadata>>(OverlapWe
                                                                        const OverlapResidues&)>
     WiggleGlycan;
 
-typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(std::vector<cds::ResidueLinkage>)>
+typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(const std::vector<cds::ResidueLinkage>&)>
     LinkageShapeRandomizer;
 
 cds::Overlap intraGlycanOverlaps(const std::vector<cds::ResidueLinkage>& linkages);

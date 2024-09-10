@@ -157,8 +157,9 @@ cds::ResidueLinkageShapePreference cds::linkageShapePreference(MetadataDistribut
     }
     if (linkage.rotamerType == GlycamMetadata::RotamerType::conformer)
     {
-        auto order = metadataDistribution(linkage.dihedralMetadata[0]);
-        return ConformerShapePreference {angles, order};
+        auto order    = metadataDistribution(linkage.dihedralMetadata[0]);
+        auto isFrozen = std::vector<bool>(linkage.rotatableDihedrals.size(), false);
+        return ConformerShapePreference {isFrozen, angles, order};
     }
     else
     {
@@ -191,8 +192,9 @@ cds::ResidueLinkageShapePreference cds::selectedRotamersOnly(MetadataPreferenceS
 {
     if (std::holds_alternative<ConformerShapePreference>(preference))
     {
-        auto pref = std::get<ConformerShapePreference>(preference);
-        return ConformerShapePreference {pref.angles,
+        auto pref     = std::get<ConformerShapePreference>(preference);
+        auto isFrozen = std::vector<bool>(linkage.rotatableDihedrals.size(), false);
+        return ConformerShapePreference {isFrozen, pref.angles,
                                          metadataSelection(pref.metadataOrder, linkage.rotatableDihedrals[0])};
     }
     else if (std::holds_alternative<PermutationShapePreference>(preference))

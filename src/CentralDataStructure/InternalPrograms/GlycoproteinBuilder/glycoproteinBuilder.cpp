@@ -20,6 +20,7 @@
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
+#include <variant>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -142,9 +143,10 @@ void GlycoproteinBuilder::ResolveOverlaps()
         auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
         return codeUtils::weightedRandomOrder(rng, weights);
     };
-    double preferenceDeviation = 2.0;
-    double searchDeviation     = 0.5;
-    double searchIncrement     = 1.0;
+    bool freezeGlycositeResidueConformation = settings.freezeGlycositeResidueConformation;
+    double preferenceDeviation              = 2.0;
+    double searchDeviation                  = 0.5;
+    double searchIncrement                  = 1.0;
     auto searchAngles =
         [&searchIncrement](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
     {
@@ -157,9 +159,34 @@ void GlycoproteinBuilder::ResolveOverlaps()
         double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
         return metadata.default_angle_value_ + num * (num < 0 ? metadata.lower_deviation_ : metadata.upper_deviation_);
     };
-    auto randomizeShape = [&randomMetadata, &randomAngle](std::vector<cds::ResidueLinkage> linkages)
+    auto glycositeResidueConformationFrozen =
+        [](std::vector<cds::ResidueLinkageShapePreference> preference, const std::vector<cds::ResidueLinkage>& linkages)
     {
-        return cds::linkageShapePreference(randomMetadata, randomAngle, linkages);
+        if (std::holds_alternative<cds::ConformerShapePreference>(preference[0]))
+        {
+            auto& firstLinkage = linkages[0];
+            auto& pref         = std::get<cds::ConformerShapePreference>(preference[0]);
+            auto shape         = cds::currentShape(firstLinkage.rotatableDihedrals, firstLinkage.dihedralMetadata);
+            for (size_t n = 0; n < firstLinkage.rotatableDihedrals.size(); n++)
+            {
+                auto& name = firstLinkage.dihedralMetadata[n][0].dihedral_angle_name_;
+                if ((name == "Chi1") || (name == "Chi2"))
+                {
+                    pref.isFrozen[n]         = true;
+                    size_t metadata          = shape[n].metadataIndex;
+                    pref.angles[n][metadata] = shape[n].value;
+                    pref.metadataOrder       = {metadata};
+                }
+            }
+        }
+        return preference;
+    };
+    auto randomizeShape = [&randomMetadata, &randomAngle, &freezeGlycositeResidueConformation,
+                           &glycositeResidueConformationFrozen](const std::vector<cds::ResidueLinkage>& linkages)
+    {
+        auto preference = cds::linkageShapePreference(randomMetadata, randomAngle, linkages);
+        return freezeGlycositeResidueConformation ? glycositeResidueConformationFrozen(preference, linkages)
+                                                  : preference;
     };
     auto wiggleGlycan = [&searchSettings](OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
                                           const std::vector<cds::ResidueLinkageShapePreference>& preferences,

@@ -38,6 +38,7 @@ namespace cds
 
     struct ConformerShapePreference
     {
+        std::vector<bool> isFrozen;
         std::vector<std::vector<double>> angles;
         std::vector<size_t> metadataOrder;
     };

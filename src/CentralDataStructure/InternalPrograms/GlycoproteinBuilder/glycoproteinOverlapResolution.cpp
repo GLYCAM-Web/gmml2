@@ -55,6 +55,7 @@ namespace
         size_t numberOfMetadata = shapePreference.metadataOrder.size();
         auto& preferenceAngles  = shapePreference.angles;
         auto& metadataOrder     = shapePreference.metadataOrder;
+        auto& isFrozen          = shapePreference.isFrozen;
         std::vector<std::vector<cds::AngleWithMetadata>> results;
         results.resize(numberOfMetadata);
         std::vector<cds::AngleOverlap> bestOverlaps;
@@ -63,15 +64,16 @@ namespace
         for (size_t k = 0; k < numberOfMetadata; k++)
         {
             results[k].resize(dihedrals.size());
-            cds::setShapeToPreference(linkage, cds::ConformerShapePreference {preferenceAngles, {metadataOrder[k]}});
+            cds::setShapeToPreference(linkage,
+                                      cds::ConformerShapePreference {isFrozen, preferenceAngles, {metadataOrder[k]}});
             //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
             //  rotatable bond in Asn outwards
             for (size_t rn = 0; rn < dihedrals.size(); rn++)
             {
-                size_t n       = dihedrals.size() - 1 - rn;
-                auto& dihedral = dihedrals[n];
-                auto preference =
-                    cds::AngleSearchPreference {settings.deviation, preferenceAngles[n], {metadataOrder[k]}};
+                size_t n        = dihedrals.size() - 1 - rn;
+                auto& dihedral  = dihedrals[n];
+                auto preference = cds::AngleSearchPreference {
+                    isFrozen[n] ? 0.0 : settings.deviation, preferenceAngles[n], {metadataOrder[k]}};
                 auto coordinates = cds::dihedralCoordinates(dihedral);
                 auto input       = cds::dihedralRotationInputData(dihedral, overlapInput);
                 auto best =
