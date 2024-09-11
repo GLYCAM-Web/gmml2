@@ -74,7 +74,8 @@ void GlycoproteinBuilder::WriteOffFile(const std::string prefix)
     std::string fileName = prefix + ".off";
     std::ofstream outFileStream;
     outFileStream.open(fileName.c_str());
-    cds::WriteAssemblyToOffFile(this->getGlycoprotein(), outFileStream, "GLYCOPROTEINBUILDER");
+    auto molecule = getGlycoprotein();
+    cds::WriteToOffFile(molecule->getResidues(), molecule->getAtoms(), outFileStream, "GLYCOPROTEINBUILDER");
     outFileStream.close();
     return;
 }

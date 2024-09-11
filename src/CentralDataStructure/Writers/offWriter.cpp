@@ -194,6 +194,14 @@ void cds::WriteOffFileUnit(std::vector<cds::Residue*> residues, std::ostream& st
     return;
 }
 
+void cds::SerializeAndWriteToOffFile(std::vector<Residue*> residues, std::vector<Atom*> atoms, std::ostream& stream,
+                                     const std::string unitName)
+{
+    cds::serializeNumbers(atoms);
+    cds::serializeNumbers(residues);
+    cds::WriteOffFileUnit(residues, stream, unitName);
+}
+
 void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostream& stream)
 { // For writing each residue separately
     stream << "!!index array str" << std::endl;
@@ -203,29 +211,14 @@ void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostre
     }
     for (auto& residue : residues)
     {
-        cds::serializeNumbers(std::vector<cds::Residue*> {residue});
-        cds::serializeNumbers(residue->getAtoms());
-        cds::WriteOffFileUnit(std::vector<cds::Residue*> {residue}, stream, residue->getName());
+        SerializeAndWriteToOffFile({residue}, residue->getAtoms(), stream, residue->getName());
     }
-    return;
 }
 
-void cds::WriteMoleculeToOffFile(cds::Molecule* molecule, std::ostream& stream, const std::string unitName)
+void cds::WriteToOffFile(std::vector<Residue*> residues, std::vector<Atom*> atoms, std::ostream& stream,
+                         const std::string unitName)
 { // For writing residues together as a molecule
     stream << "!!index array str" << std::endl;
     stream << " \"" << unitName << "\"" << std::endl;
-    cds::serializeNumbers(molecule->getAtoms());
-    cds::serializeNumbers(molecule->getResidues());
-    cds::WriteOffFileUnit(molecule->getResidues(), stream, unitName);
-    return;
-}
-
-void cds::WriteAssemblyToOffFile(cds::Assembly* assembly, std::ostream& stream, const std::string unitName)
-{
-    stream << "!!index array str" << std::endl;
-    stream << " \"" << unitName << "\"" << std::endl;
-    cds::serializeNumbers(assembly->getAtoms());
-    cds::serializeNumbers(assembly->getResidues());
-    cds::WriteOffFileUnit(assembly->getResidues(), stream, unitName);
-    return;
+    SerializeAndWriteToOffFile(residues, atoms, stream, unitName);
 }

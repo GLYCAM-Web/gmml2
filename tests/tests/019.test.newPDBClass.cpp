@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
             std::ofstream outFileStream;
             outFileStream.open("outputOffFile.off");
             std::string outFileName = "Assembly";
-            cds::WriteAssemblyToOffFile(assembly, outFileStream, outFileName.c_str());
+            cds::WriteToOffFile(assembly->getResidues(), assembly->getAtoms(), outFileStream, outFileName.c_str());
             outFileStream.close();
         }
         catch (std::runtime_error& error)
