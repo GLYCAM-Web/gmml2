@@ -7,7 +7,8 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-test_case() {
+test_case()
+{
     prefix=$1
     input=$2
     directory=$3
@@ -19,24 +20,36 @@ test_case() {
         if [ ! -f "${output}" ]; then
             echo -e "${prefix} Test FAILED!\n ${output} does not exist\n"
             echo "Exit Code: 1"
+            failed=1
             return 1
         fi
         correct="tests/correct_outputs/${output}"
         if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
             echo -e "${prefix} Test FAILED!\n ${output} is different from ${correct}\n"
             echo "Exit Code: 1"
+            failed=1
             return 1
         fi
     done
+    failed=0
 }
 
-
 printf "Testing 017.test.GlycoproteinBuilder.cpp... "
-g++ -std=c++17 -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
+g++ -std=c++17 -g -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
 rm -r 017/ >/dev/null 2>&1
+
 test_case "" "tests/inputs/017.GlycoproteinBuilderInput.txt" "017/standard"
+if [ "$failed" == 1 ]; then
+    return 1
+fi
 test_case "SkipMdPrep " "tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt" "017/skipMdPrep"
+if [ "$failed" == 1 ]; then
+    return 1
+fi
 test_case "FreezeGSConformation " "tests/inputs/017.GlycoproteinBuilderInputFreezeGSConformation.txt" "017/freezeGSConformation"
+if [ "$failed" == 1 ]; then
+    return 1
+fi
 
 rm -r 017/ >/dev/null 2>&1
 printf "Test passed.\n"
