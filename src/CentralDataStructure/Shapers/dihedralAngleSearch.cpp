@@ -307,6 +307,12 @@ cds::AngleOverlap cds::wiggleUsingRotamers(SearchAngles searchAngles, const cds:
         double deviation  = preference.deviation;
         AngleOverlap best = WiggleAnglesOverlaps(coordinates, indices[n], preference.angles[n],
                                                  searchAngles(rotamers[n], angle, deviation), input);
+        // found something with no overlaps
+        // if metadata and angles are sorted in order of preference, we can quit here
+        if (best.overlaps.count <= 0.0)
+        {
+            return best;
+        }
         results.push_back(best);
     }
 
