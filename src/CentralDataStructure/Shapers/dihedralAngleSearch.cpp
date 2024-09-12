@@ -28,18 +28,18 @@ namespace
     std::vector<double> evenlySpaced(double lower, double upper, double approximateIncrement)
     {
         double range = upper - lower;
-        int steps    = std::ceil(range / approximateIncrement);
+        int steps    = std::ceil(std::abs(range) / approximateIncrement);
         if (steps == 0)
         {
             // range == 0, hence lower == upper
-            return {lower};
+            return {};
         }
         else
         {
             double increment = range / steps;
             std::vector<double> result;
-            result.reserve(steps + 1);
-            for (int k = 0; k < steps + 1; k++)
+            result.reserve(steps);
+            for (int k = 0; k < steps; k++)
             {
                 result.push_back(lower + k * increment);
             }
@@ -332,8 +332,16 @@ void cds::simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<Rot
 std::vector<double> cds::evenlySpacedAngles(double preference, double deviation, double increment,
                                             const DihedralAngleData& metadata)
 {
-    return evenlySpaced(preference - deviation * metadata.lower_deviation_,
-                        preference + deviation * metadata.upper_deviation_, increment);
+    auto closerToPreference = [&preference](double a, double b)
+    {
+        return std::abs(a - preference) < std::abs(b - preference);
+    };
+    auto lowerRange = evenlySpaced(preference - deviation * metadata.lower_deviation_, preference, increment);
+    auto upperRange = evenlySpaced(preference + deviation * metadata.upper_deviation_, preference, increment);
+    std::vector<double> result = codeUtils::vectorAppend(lowerRange, upperRange);
+    result.push_back(preference);
+    std::sort(result.begin(), result.end(), closerToPreference);
+    return result;
 }
 
 std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(double deviation,
