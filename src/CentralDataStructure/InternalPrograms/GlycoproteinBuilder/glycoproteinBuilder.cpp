@@ -1,23 +1,23 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/strings.hpp" // split
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/random.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp" // selectResiduesByType
+#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/random.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
@@ -30,9 +30,6 @@
 
 using cds::Assembly;
 
-//////////////////////////////////////////////////////////
-//                       CONSTRUCTOR                    //
-//////////////////////////////////////////////////////////
 GlycoproteinBuilder::GlycoproteinBuilder(glycoprotein::GlycoproteinBuilderInputs inputStruct,
                                          pdb::PreprocessorOptions preprocessingOptions)
     : settings(inputStruct)
@@ -60,45 +57,6 @@ GlycoproteinBuilder::GlycoproteinBuilder(glycoprotein::GlycoproteinBuilderInputs
         throw std::runtime_error(errorMessage);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
-    return;
-}
-
-//////////////////////////////////////////////////////////
-//                       ACCESSOR                       //
-//////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
-//                       FUNCTIONS                      //
-//////////////////////////////////////////////////////////
-
-void GlycoproteinBuilder::WriteOffFile(const std::string prefix)
-{
-    std::string fileName = prefix + ".off";
-    std::ofstream outFileStream;
-    outFileStream.open(fileName.c_str());
-    auto molecule = getGlycoprotein();
-    auto residues = molecule->getResidues();
-    auto atoms    = molecule->getAtoms();
-    cds::serializeNumbers(atoms);
-    cds::serializeNumbers(residues);
-    cds::WriteToOffFile(residues, outFileStream, "GLYCOPROTEINBUILDER");
-    outFileStream.close();
-    return;
-}
-
-void GlycoproteinBuilder::WritePdbFile(const std::string prefix, const bool writeConectSection)
-{
-    std::string fileName = prefix + ".pdb";
-    std::ofstream outFileStream;
-    outFileStream.open(fileName.c_str());
-    cds::writeAssemblyToPdb(outFileStream, this->getGlycoprotein()->getMolecules());
-    if (writeConectSection)
-    {
-        cds::writeConectCards(outFileStream, cdsSelections::selectResiduesByType(
-                                                 this->getGlycoprotein()->getResidues(),
-                                                 {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
-                                                  cds::ResidueType::Aglycone, cds::ResidueType::Undefined}));
-    }
-    outFileStream.close();
     return;
 }
 
@@ -228,20 +186,73 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
     };
 
-    this->WritePdbFile(outputDir + "glycoprotein_initial");
+    auto writeOffFile = [](const std::vector<cds::Residue*>& residues, const std::string& prefix)
+    {
+        std::string fileName = prefix + ".off";
+        std::ofstream outFileStream;
+        outFileStream.open(fileName.c_str());
+        cds::WriteToOffFile(residues, outFileStream, "GLYCOPROTEINBUILDER");
+        outFileStream.close();
+    };
+
+    auto writePdbFile = [](const std::vector<cds::Molecule*>& molecules, const std::vector<cds::Residue*>& residues,
+                           const std::string& prefix)
+    {
+        std::string fileName = prefix + ".pdb";
+        std::ofstream outFileStream;
+        outFileStream.open(fileName.c_str());
+        cds::writeAssemblyToPdb(outFileStream, molecules);
+        cds::writeConectCards(outFileStream, residues);
+        outFileStream.close();
+        return;
+    };
+
+    auto printDihedralAnglesAndOverlapOfGlycosites =
+        [](std::vector<GlycosylationSite>& glycosites, const std::vector<OverlapResidues>& overlapResiduesVec)
+    {
+        std::stringstream logss;
+        for (size_t n = 0; n < glycosites.size(); n++)
+        {
+            auto& glycosite       = glycosites[n];
+            auto glycan           = glycosite.GetGlycan();
+            auto glycanResidues   = glycan->getResidues();
+            auto& overlapResidues = overlapResiduesVec[n];
+            auto glycanResiduesWithWeight =
+                cds::ResiduesWithOverlapWeight {glycanResidues, std::vector<double>(glycanResidues.size(), 1.0)};
+            auto proteinOverlaps = countOverlaps(overlapResidues.protein, glycanResiduesWithWeight);
+            auto glycanOverlaps  = countOverlaps(overlapResidues.glycan, glycanResiduesWithWeight);
+            auto selfOverlaps    = intraGlycanOverlaps(glycan->GetGlycosidicLinkages());
+            logss << "Residue ID: " << glycosite.GetResidue()->getStringId()
+                  << ", protein overlap: " << proteinOverlaps.count << ", glycan overlap: " << glycanOverlaps.count
+                  << ", self overlap: " << selfOverlaps.count;
+            gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
+        }
+    };
+
+    auto assembly  = getGlycoprotein();
+    auto molecules = assembly->getMolecules();
+    auto residues  = assembly->getResidues();
+    auto atoms     = assembly->getAtoms();
+    auto pdbResidues =
+        cdsSelections::selectResiduesByType(residues, {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
+                                                       cds::ResidueType::Aglycone, cds::ResidueType::Undefined});
+
+    writePdbFile(molecules, pdbResidues, outputDir + "glycoprotein_initial");
     resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues_, glycositeResiduesWithWeights);
-    this->PrintDihedralAnglesAndOverlapOfGlycosites();
-    this->WritePdbFile(outputDir + "glycoprotein");
-    this->WriteOffFile(outputDir + "glycoprotein");
-    this->WritePdbFile(outputDir + "glycoprotein_serialized");
+    printDihedralAnglesAndOverlapOfGlycosites(glycosites_, overlapResidues_);
+    writePdbFile(molecules, pdbResidues, outputDir + "glycoprotein");
+    cds::serializeNumbers(atoms);
+    cds::serializeNumbers(residues);
+    writeOffFile(residues, outputDir + "glycoprotein");
+    writePdbFile(molecules, pdbResidues, outputDir + "glycoprotein_serialized");
 
     for (size_t count = 0; count < settings.number3DStructures; count++)
     {
         resolveOverlapsWithWiggler(glycosidicLinkages, overlapResidues_, glycositeResiduesWithWeights);
-        this->PrintDihedralAnglesAndOverlapOfGlycosites();
+        printDihedralAnglesAndOverlapOfGlycosites(glycosites_, overlapResidues_);
         std::stringstream prefix;
         prefix << count << "_glycoprotein";
-        this->WritePdbFile(outputDir + prefix.str(), true);
+        writePdbFile(molecules, pdbResidues, outputDir + prefix.str());
     }
 }
 
@@ -312,26 +323,4 @@ Residue* GlycoproteinBuilder::SelectResidueFromInput(const std::string userSelec
         }
     }
     return nullptr;
-}
-
-void GlycoproteinBuilder::PrintDihedralAnglesAndOverlapOfGlycosites()
-{
-    std::stringstream logss;
-    for (size_t n = 0; n < glycosites_.size(); n++)
-    {
-        auto& glycosite       = glycosites_[n];
-        auto glycan           = glycosite.GetGlycan();
-        auto glycanResidues   = glycan->getResidues();
-        auto& overlapResidues = overlapResidues_[n];
-        auto glycanResiduesWithWeight =
-            cds::ResiduesWithOverlapWeight {glycanResidues, std::vector<double>(glycanResidues.size(), 1.0)};
-        auto proteinOverlaps = countOverlaps(overlapResidues.protein, glycanResiduesWithWeight);
-        auto glycanOverlaps  = countOverlaps(overlapResidues.glycan, glycanResiduesWithWeight);
-        auto selfOverlaps    = intraGlycanOverlaps(glycan->GetGlycosidicLinkages());
-        logss << "Residue ID: " << glycosite.GetResidue()->getStringId()
-              << ", protein overlap: " << proteinOverlaps.count << ", glycan overlap: " << glycanOverlaps.count
-              << ", self overlap: " << selfOverlaps.count;
-        gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-    }
-    return;
 }

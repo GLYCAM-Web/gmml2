@@ -31,7 +31,6 @@ int main(int argc, char* argv[])
         GlycoproteinBuilder glycoproteinBuilder(inputStruct);
         std::cout << "Test 017 Resolving overlaps" << std::endl;
         glycoproteinBuilder.ResolveOverlaps(outputDir);
-        glycoproteinBuilder.PrintDihedralAnglesAndOverlapOfGlycosites();
     }
     catch (const std::runtime_error& error)
     {
