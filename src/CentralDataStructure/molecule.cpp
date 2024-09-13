@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -185,5 +186,9 @@ void Molecule::WritePdb(std::ostream& stream) const
 
 void Molecule::WriteOff(std::ostream& stream)
 {
-    cds::WriteToOffFile(getResidues(), getAtoms(), stream, getName());
+    auto residues = getResidues();
+    auto atoms    = getAtoms();
+    cds::serializeNumbers(atoms);
+    cds::serializeNumbers(residues);
+    cds::WriteToOffFile(residues, stream, getName());
 }

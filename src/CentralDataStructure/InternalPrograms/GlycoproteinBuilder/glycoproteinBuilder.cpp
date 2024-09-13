@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
@@ -75,7 +76,11 @@ void GlycoproteinBuilder::WriteOffFile(const std::string prefix)
     std::ofstream outFileStream;
     outFileStream.open(fileName.c_str());
     auto molecule = getGlycoprotein();
-    cds::WriteToOffFile(molecule->getResidues(), molecule->getAtoms(), outFileStream, "GLYCOPROTEINBUILDER");
+    auto residues = molecule->getResidues();
+    auto atoms    = molecule->getAtoms();
+    cds::serializeNumbers(atoms);
+    cds::serializeNumbers(residues);
+    cds::WriteToOffFile(residues, outFileStream, "GLYCOPROTEINBUILDER");
     outFileStream.close();
     return;
 }

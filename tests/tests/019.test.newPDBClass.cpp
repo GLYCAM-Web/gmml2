@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include <string>
 #include <iostream>
@@ -29,7 +30,11 @@ int main(int argc, char* argv[])
             std::ofstream outFileStream;
             outFileStream.open("outputOffFile.off");
             std::string outFileName = "Assembly";
-            cds::WriteToOffFile(assembly->getResidues(), assembly->getAtoms(), outFileStream, outFileName.c_str());
+            auto residues           = assembly->getResidues();
+            auto atoms              = assembly->getAtoms();
+            cds::serializeNumbers(atoms);
+            cds::serializeNumbers(residues);
+            cds::WriteToOffFile(residues, outFileStream, outFileName.c_str());
             outFileStream.close();
         }
         catch (std::runtime_error& error)

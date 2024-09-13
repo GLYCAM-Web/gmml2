@@ -1,6 +1,9 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 
+#include <vector>
+#include <string>
 #include <iomanip>
 
 std::string cds::getOffType(const cds::ResidueType queryType)
@@ -16,7 +19,7 @@ std::string cds::getOffType(const cds::ResidueType queryType)
     return "?";
 }
 
-void cds::WriteOffFileUnit(std::vector<cds::Residue*> residues, std::ostream& stream, const std::string unitName)
+void cds::WriteOffFileUnit(const std::vector<cds::Residue*>& residues, std::ostream& stream, const std::string unitName)
 {
     // WriteAtomSection
     const std::string FLAG = "131072";
@@ -194,14 +197,6 @@ void cds::WriteOffFileUnit(std::vector<cds::Residue*> residues, std::ostream& st
     return;
 }
 
-void cds::SerializeAndWriteToOffFile(std::vector<Residue*> residues, std::vector<Atom*> atoms, std::ostream& stream,
-                                     const std::string unitName)
-{
-    cds::serializeNumbers(atoms);
-    cds::serializeNumbers(residues);
-    cds::WriteOffFileUnit(residues, stream, unitName);
-}
-
 void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostream& stream)
 { // For writing each residue separately
     stream << "!!index array str" << std::endl;
@@ -211,14 +206,17 @@ void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostre
     }
     for (auto& residue : residues)
     {
-        SerializeAndWriteToOffFile({residue}, residue->getAtoms(), stream, residue->getName());
+        auto residues = std::vector<Residue*> {residue};
+        auto atoms    = residue->getAtoms();
+        cds::serializeNumbers(atoms);
+        cds::serializeNumbers(residues);
+        cds::WriteOffFileUnit(residues, stream, residue->getName());
     }
 }
 
-void cds::WriteToOffFile(std::vector<Residue*> residues, std::vector<Atom*> atoms, std::ostream& stream,
-                         const std::string unitName)
+void cds::WriteToOffFile(const std::vector<Residue*>& residues, std::ostream& stream, const std::string unitName)
 { // For writing residues together as a molecule
     stream << "!!index array str" << std::endl;
     stream << " \"" << unitName << "\"" << std::endl;
-    SerializeAndWriteToOffFile(residues, atoms, stream, unitName);
+    cds::WriteOffFileUnit(residues, stream, unitName);
 }
