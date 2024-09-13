@@ -12,6 +12,7 @@
 struct GlycoproteinState
 {
     cds::Overlap overlap;
+    std::vector<size_t> overlapSites;
     std::vector<std::vector<cds::ResidueLinkageShapePreference>> preferences;
     std::vector<std::vector<std::vector<cds::AngleWithMetadata>>> shape;
 };
@@ -48,7 +49,7 @@ cds::Overlap totalOverlaps(OverlapWeight weight, const std::vector<OverlapResidu
                            const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages);
 std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites,
                                               const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                                              const std::vector<cds::ResiduesWithOverlapWeight>& overlapResidues,
+                                              const std::vector<OverlapResidues>& overlapResidues,
                                               const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
 std::vector<cds::AngleWithMetadata> wiggleLinkage(const cds::AngleSearchSettings& searchSettings,
                                                   cds::ResidueLinkage& linkage,

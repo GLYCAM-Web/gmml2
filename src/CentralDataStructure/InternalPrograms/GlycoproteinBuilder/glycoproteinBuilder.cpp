@@ -179,7 +179,9 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         }
         cds::Overlap initialOverlap =
             totalOverlaps(overlapWeight, overlapResidues, glycositeResidues, glycosidicLinkages);
-        auto initialState = GlycoproteinState {initialOverlap, glycositePreferences, glycositeShape};
+        auto overlapSites = determineSitesWithOverlap(codeUtils::indexVector(glycosidicLinkages), glycosidicLinkages,
+                                                      overlapResidues, glycositeResidues);
+        auto initialState = GlycoproteinState {initialOverlap, overlapSites, glycositePreferences, glycositeShape};
         GlycoproteinState currentState =
             randomDescent(rng, randomizeShape, wiggleGlycan, settings.persistCycles, overlapWeight, glycosidicLinkages,
                           initialState, overlapResidues, glycositeResidues);

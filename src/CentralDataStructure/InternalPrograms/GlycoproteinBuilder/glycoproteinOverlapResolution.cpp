@@ -264,16 +264,15 @@ GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape
                                 const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues)
 {
     std::stringstream logss;
-    logss << "Random Decent, persisting for " << persistCycles << " cycles and monte carlo is set as true.\n";
+    logss << "Random Decent, persisting for " << persistCycles << " cycles.\n";
     gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 
-    int cycle                  = 0;
-    cds::Overlap globalOverlap = totalOverlaps(overlapWeight, overlapResidues, glycositeResidues, glycosidicLinkages);
-    auto glycositePreferences  = initialState.preferences;
-    auto glycositeShape        = initialState.shape;
-    std::vector<size_t> overlapSites = determineSitesWithOverlap(
-        codeUtils::indexVector(glycosidicLinkages), glycosidicLinkages, overlapResidues, glycositeResidues);
-    while ((cycle < persistCycles) && (overlapSites.size() > 0))
+    auto globalOverlap        = initialState.overlap;
+    auto overlapSites         = initialState.overlapSites;
+    auto glycositePreferences = initialState.preferences;
+    auto glycositeShape       = initialState.shape;
+    int cycle                 = 0;
+    while ((cycle < persistCycles) && (!overlapSites.empty()))
     {
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles));
@@ -317,9 +316,7 @@ GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape
             cycle = 0;
         }
         globalOverlap = newGlobalOverlap;
-        std::vector<size_t> newOverlapSites =
-            determineSitesWithOverlap(overlapSites, glycosidicLinkages, overlapResidues, glycositeResidues);
-        overlapSites = newOverlapSites;
+        overlapSites  = determineSitesWithOverlap(overlapSites, glycosidicLinkages, overlapResidues, glycositeResidues);
     }
-    return {globalOverlap, glycositePreferences, glycositeShape};
+    return {globalOverlap, overlapSites, glycositePreferences, glycositeShape};
 }
