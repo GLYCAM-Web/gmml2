@@ -119,7 +119,7 @@ void PdbResidue::modifyCTerminal(const std::string& type)
             const cds::Atom* atomC   = this->FindAtom("C");
             const cds::Atom* atomO   = this->FindAtom("O");
             cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(
-                *(atomCA->getCoordinate()), *(atomC->getCoordinate()), *(atomO->getCoordinate()), 120.0, 180.0, 1.25);
+                atomCA->coordinate(), atomC->coordinate(), atomO->coordinate(), 120.0, 180.0, 1.25);
             this->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Created new atom named OXT after " + static_cast<const PdbAtom*>(atomO)->GetId());
@@ -140,8 +140,9 @@ void PdbResidue::Print(std::ostream& out) const
     out << "pdb::Residue : " << this->printId() << std::endl;
     for (auto& atom : this->getAtoms())
     {
-        out << "    atom : " << static_cast<const PdbAtom*>(atom)->GetId() << " X: " << atom->getCoordinate()->GetX()
-            << " Y: " << atom->getCoordinate()->GetY() << " Z: " << atom->getCoordinate()->GetZ() << "\n";
+        auto coord = atom->coordinate();
+        out << "    atom : " << static_cast<const PdbAtom*>(atom)->GetId() << " X: " << coord.GetX()
+            << " Y: " << coord.GetY() << " Z: " << coord.GetZ() << "\n";
     }
 }
 

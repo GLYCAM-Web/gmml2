@@ -8,13 +8,13 @@
 using cds::Coordinate;
 
 Coordinate cds::coordinateOppositeToNeighborAverage(const Coordinate& centralCoord,
-                                                    const std::vector<Coordinate*>& neighbors, const double distance)
+                                                    const std::vector<Coordinate>& neighbors, const double distance)
 {
     Coordinate combinedVs(0.0, 0.0, 0.0);
     for (auto& neighbor : neighbors)
     {
         // normalize so that a small bond length in a H doesn't create a wonky tetrahedral
-        combinedVs = combinedVs + normal(centralCoord - *neighbor);
+        combinedVs = combinedVs + normal(centralCoord - neighbor);
     }
     return centralCoord + scaleBy(distance, normal(combinedVs));
 }

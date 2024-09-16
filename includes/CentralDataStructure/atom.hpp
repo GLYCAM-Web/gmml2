@@ -40,7 +40,8 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
-        Coordinate* getCoordinate() const;
+        Coordinate coordinate() const;
+        Coordinate* coordinatePointer();
         unsigned int getNumberOfCoordinateSets() const;
 
         inline double getCharge() const

@@ -187,7 +187,7 @@ std::vector<Atom*> cdsSelections::FindAtomsWithinDistance(const Atom* queryAtom,
     std::vector<Atom*> foundAtoms;
     for (auto& otherAtom : otherAtoms)
     {
-        if (withinDistance(distance, *queryAtom->getCoordinate(), *otherAtom->getCoordinate()))
+        if (withinDistance(distance, queryAtom->coordinate(), otherAtom->coordinate()))
         {
             foundAtoms.push_back(otherAtom);
         }

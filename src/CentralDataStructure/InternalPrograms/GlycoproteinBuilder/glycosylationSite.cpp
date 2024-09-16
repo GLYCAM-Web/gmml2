@@ -72,9 +72,9 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
     //   This won't work as sometimes want alpha, sometimes beta. i.e. a coordinateOppositeToNeighborAverage
     //   function
     // This needs to be abstracted so it works for C2 reducing residues:
-    Coordinate* coordC5       = reducing_Residue->FindAtom("C5")->getCoordinate();
-    Coordinate* coordO5       = reducing_Residue->FindAtom("O5")->getCoordinate();
-    Coordinate* coordC1       = reducing_Residue->FindAtom("C1")->getCoordinate();
+    Coordinate coordC5        = reducing_Residue->FindAtom("C5")->coordinate();
+    Coordinate coordO5        = reducing_Residue->FindAtom("O5")->coordinate();
+    Coordinate coordC1        = reducing_Residue->FindAtom("C1")->coordinate();
     Atom* anomericAtom        = reducing_Residue->FindAtom("C1"); // For adding bond.
     // Delete aglycon atoms from glycan.
     Residue* aglycon          = this->GetGlycan()->GetAglycone();
@@ -90,13 +90,13 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
     if ((amino_acid_name == "ASN") || (amino_acid_name == "NLN"))
     {
         Atom* atomND2 = superimposition_residue->addAtom(std::make_unique<Atom>(
-            "ND2", (cds::calculateCoordinateFromInternalCoords(*coordC5, *coordO5, *coordC1, 109.3, 180, 1.53))));
-        Atom* atomCG  = superimposition_residue->addAtom(
-            std::make_unique<Atom>("CG", (cds::calculateCoordinateFromInternalCoords(
-                                             *coordO5, *coordC1, *atomND2->getCoordinate(), 109.3, 261, 1.325))));
-        superimposition_residue->addAtom(std::make_unique<Atom>(
-            "OD1", (cds::calculateCoordinateFromInternalCoords(*coordC1, *atomND2->getCoordinate(),
-                                                               *atomCG->getCoordinate(), 126, 0, 1.22))));
+            "ND2", (cds::calculateCoordinateFromInternalCoords(coordC5, coordO5, coordC1, 109.3, 180, 1.53))));
+        Atom* atomCG  = superimposition_residue->addAtom(std::make_unique<Atom>(
+            "CG",
+            (cds::calculateCoordinateFromInternalCoords(coordO5, coordC1, atomND2->coordinate(), 109.3, 261, 1.325))));
+        superimposition_residue->addAtom(
+            std::make_unique<Atom>("OD1", (cds::calculateCoordinateFromInternalCoords(
+                                              coordC1, atomND2->coordinate(), atomCG->coordinate(), 126, 0, 1.22))));
         cds::addBond(anomericAtom,
                      atomND2); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
     }
@@ -104,13 +104,13 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
              (amino_acid_name.compare("OLT") == 0) || (amino_acid_name.compare("OLS") == 0))
     {
         Atom* atomOG1 = superimposition_residue->addAtom(std::make_unique<Atom>(
-            "OG", (cds::calculateCoordinateFromInternalCoords(*coordC5, *coordO5, *coordC1, 112, 68, 1.46))));
-        Atom* atomCB  = superimposition_residue->addAtom(
-            std::make_unique<Atom>("CB", (cds::calculateCoordinateFromInternalCoords(
-                                             *coordO5, *coordC1, *atomOG1->getCoordinate(), 109.3, 75, 1.53))));
-        superimposition_residue->addAtom(std::make_unique<Atom>(
-            "CA", (cds::calculateCoordinateFromInternalCoords(*coordC1, *atomOG1->getCoordinate(),
-                                                              *atomCB->getCoordinate(), 109.3, 125, 1.53))));
+            "OG", (cds::calculateCoordinateFromInternalCoords(coordC5, coordO5, coordC1, 112, 68, 1.46))));
+        Atom* atomCB  = superimposition_residue->addAtom(std::make_unique<Atom>(
+            "CB",
+            (cds::calculateCoordinateFromInternalCoords(coordO5, coordC1, atomOG1->coordinate(), 109.3, 75, 1.53))));
+        superimposition_residue->addAtom(
+            std::make_unique<Atom>("CA", (cds::calculateCoordinateFromInternalCoords(
+                                             coordC1, atomOG1->coordinate(), atomCB->coordinate(), 109.3, 125, 1.53))));
         if ((amino_acid_name.compare("THR") == 0) || (amino_acid_name.compare("OLT") == 0))
         {
             atomOG1->setName("OG1"); // It's OG in Ser.
@@ -121,13 +121,12 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
     else if ((amino_acid_name.compare("TYR") == 0) || (amino_acid_name.compare("OLY") == 0))
     {
         Atom* atomOH = superimposition_residue->addAtom(std::make_unique<Atom>(
-            "OH", (cds::calculateCoordinateFromInternalCoords(*coordC5, *coordO5, *coordC1, 112, 68, 1.46))));
+            "OH", (cds::calculateCoordinateFromInternalCoords(coordC5, coordO5, coordC1, 112, 68, 1.46))));
         Atom* atomCZ = superimposition_residue->addAtom(std::make_unique<Atom>(
-            "CZ",
-            (cds::calculateCoordinateFromInternalCoords(*coordO5, *coordC1, *atomOH->getCoordinate(), 117, 60, 1.35))));
-        superimposition_residue->addAtom(std::make_unique<Atom>(
-            "CE1", (cds::calculateCoordinateFromInternalCoords(*coordC1, *atomOH->getCoordinate(),
-                                                               *atomCZ->getCoordinate(), 120, 180, 1.37))));
+            "CZ", (cds::calculateCoordinateFromInternalCoords(coordO5, coordC1, atomOH->coordinate(), 117, 60, 1.35))));
+        superimposition_residue->addAtom(
+            std::make_unique<Atom>("CE1", (cds::calculateCoordinateFromInternalCoords(
+                                              coordC1, atomOH->coordinate(), atomCZ->coordinate(), 120, 180, 1.37))));
         cds::addBond(anomericAtom,
                      atomOH); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
     }
@@ -155,12 +154,14 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
         {
             if (protein_atom->getName() == superimposition_atom->getName())
             {
-                targetCoords.push_back(protein_atom->getCoordinate());
+                targetCoords.push_back(protein_atom->coordinatePointer());
             }
         }
     }
-    std::vector<Coordinate*> aglyconeCoords = cds::atomCoordinates(this->GetGlycan()->GetAglycone()->getAtoms());
-    std::vector<Coordinate*> glycanCoords   = cds::atomCoordinates(this->GetGlycan()->getAtoms());
+    auto aglyconeAtoms                      = this->GetGlycan()->GetAglycone()->mutableAtoms();
+    auto glycanAtoms                        = this->GetGlycan()->mutableAtoms();
+    std::vector<Coordinate*> aglyconeCoords = cds::atomCoordinatePointers(aglyconeAtoms);
+    std::vector<Coordinate*> glycanCoords   = cds::atomCoordinatePointers(glycanAtoms);
     // Sanity checks:
     if (aglyconeCoords.size() < 3)
     {

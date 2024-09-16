@@ -44,12 +44,12 @@ Coordinate cds::projection(const Coordinate& a, const Coordinate& b)
     return scaleBy(dotProduct(a, b) / dotProduct(b, b), b);
 }
 
-Coordinate cds::coordinateMean(const std::vector<Coordinate*>& coords)
+Coordinate cds::coordinateMean(const std::vector<Coordinate>& coords)
 {
     Coordinate center(0.0, 0.0, 0.0);
     for (auto& coord : coords)
     {
-        center = center + *coord;
+        center = center + coord;
     }
     return scaleBy(1.0 / coords.size(), center);
 }

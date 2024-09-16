@@ -3,6 +3,7 @@
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -13,7 +14,7 @@ namespace
     {
         double maxLength = MolecularMetadata::maxBondLengthByAtomType(
             MolecularMetadata::toElement(atom1->getElement()), MolecularMetadata::toElement(atom2->getElement()));
-        if (withinDistance(maxLength, *atom1->getCoordinate(), *atom2->getCoordinate()))
+        if (withinDistance(maxLength, atom1->coordinate(), atom2->coordinate()))
         {
             addBond(atom1, atom2);
             return true;
@@ -29,7 +30,7 @@ namespace
         {
             cds::Residue* res2                = *it2;
             std::vector<cds::Atom*> res2Atoms = res2->getAtoms();
-            double residueDistance = distance(*res1Atoms.at(0)->getCoordinate(), *res2Atoms.at(0)->getCoordinate());
+            double residueDistance            = distance(res1Atoms.at(0)->coordinate(), res2Atoms.at(0)->coordinate());
             if (residueDistance < constants::residueDistanceOverlapCutoff)
             {
                 cds::bondAtomsAndResiduesByDistance(res1, res2);
@@ -42,19 +43,17 @@ void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)
 {
     std::vector<MolecularMetadata::Element> elements;
     elements.reserve(atoms.size());
-    std::vector<Coordinate*> coordinates;
-    coordinates.reserve(atoms.size());
+    std::vector<Coordinate> coordinates = atomCoordinates(atoms);
     for (auto& a : atoms)
     {
         elements.push_back(MolecularMetadata::toElement(a->getElement()));
-        coordinates.push_back(a->getCoordinate());
     }
     for (size_t n = 0; n < atoms.size(); n++)
     {
         for (size_t k = n + 1; k < atoms.size(); k++)
         {
             double maxLength = MolecularMetadata::maxBondLengthByAtomType(elements[n], elements[k]);
-            if (withinDistance(maxLength, *coordinates[n], *coordinates[k]))
+            if (withinDistance(maxLength, coordinates[n], coordinates[k]))
             {
                 addBond(atoms[n], atoms[k]);
             }

@@ -74,10 +74,8 @@ size_t cds::numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,
 
 cds::DihedralCoordinates cds::dihedralCoordinates(const cds::RotatableDihedral& dihedral)
 {
-    auto& atoms                       = dihedral.atoms;
-    std::array<Coordinate*, 4> coords = {atoms[3]->getCoordinate(), atoms[2]->getCoordinate(),
-                                         atoms[1]->getCoordinate(), atoms[0]->getCoordinate()};
-    return DihedralCoordinates {*coords[0], *coords[1], *coords[2], *coords[3]};
+    auto& atoms = dihedral.atoms;
+    return {atoms[3]->coordinate(), atoms[2]->coordinate(), atoms[1]->coordinate(), atoms[0]->coordinate()};
 }
 
 std::string cds::print(const ResidueLink& link)

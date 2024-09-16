@@ -50,7 +50,12 @@ Atom& Atom::operator=(Atom other) noexcept
 //                    ACCESSOR                          //
 //////////////////////////////////////////////////////////
 
-cds::Coordinate* Atom::getCoordinate() const
+cds::Coordinate Atom::coordinate() const
+{
+    return *currentCoordinate_;
+}
+
+cds::Coordinate* Atom::coordinatePointer()
 {
     return currentCoordinate_;
 }
@@ -83,7 +88,7 @@ unsigned int Atom::getNumberFromName() const
 //////////////////////////////////////////////////////////
 void Atom::setCoordinate(const Coordinate& newCoord)
 {
-    currentCoordinate_ = this->addCoordinate(newCoord);
+    currentCoordinate_ = addCoordinate(newCoord);
 }
 
 void Atom::setCurrentCoordinate(unsigned int coordinateIndex)

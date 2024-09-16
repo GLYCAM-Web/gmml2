@@ -77,6 +77,17 @@ std::vector<Atom*> Residue::getAtoms() const
     return atoms;
 }
 
+std::vector<Atom*> Residue::mutableAtoms()
+{
+    std::vector<Atom*> atoms;
+    atoms.reserve(atoms_.size());
+    for (auto& atomPtr : atoms_)
+    {
+        atoms.push_back(atomPtr.get());
+    }
+    return atoms;
+}
+
 const std::string Residue::GetParmName() const // If terminal, need to look up e.g. NPRO or CPRO instead of PRO.
 {
     if (this->containsLabel("NTerminal"))
@@ -106,11 +117,6 @@ std::string Residue::getStringId(std::string moleculeNumber) const
     const std::string insertionCode = constants::sNotSet;
     pdb::ResidueId temp(this->getName(), std::to_string(this->getNumber()), insertionCode, moleculeNumber);
     return temp.print();
-}
-
-std::vector<Coordinate*> Residue::getCoordinates() const
-{
-    return cds::atomCoordinates(this->getAtoms());
 }
 
 pdb::ResidueId Residue::getId() const

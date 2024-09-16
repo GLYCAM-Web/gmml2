@@ -54,9 +54,9 @@ namespace cds
 
         const std::string GetParmName() const;
         std::vector<Atom*> getAtoms() const;
+        std::vector<Atom*> mutableAtoms();
         std::vector<std::string> getAtomNames() const;
         std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
-        std::vector<Coordinate*> getCoordinates() const;
 
         inline const std::vector<std::unique_ptr<Atom>>& getAtomsReference() const
         {

@@ -42,8 +42,8 @@ namespace cds
             return number_;
         }
 
-        std::vector<Coordinate*> getCoordinates() const;
         std::vector<Atom*> getAtoms() const;
+        std::vector<Atom*> mutableAtoms();
         std::vector<Residue*> getResidues() const;
 
         inline std::string GetChainId() const

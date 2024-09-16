@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -91,10 +92,10 @@ std::vector<Residue*> cdsSelections::selectResiduesWithinDistanceN(std::vector<R
                                                                    Residue* queryResidue, double queryDistance)
 {
     std::vector<Residue*> foundResidues;
-    cds::Coordinate queryCenter = cds::coordinateMean(queryResidue->getCoordinates());
+    cds::Coordinate queryCenter = cds::coordinateMean(cds::atomCoordinates(queryResidue->getAtoms()));
     for (auto& inputRes : inputResidues)
     {
-        if (withinDistance(queryDistance, queryCenter, cds::coordinateMean(inputRes->getCoordinates())))
+        if (withinDistance(queryDistance, queryCenter, cds::coordinateMean(cds::atomCoordinates(inputRes->getAtoms()))))
         {
             foundResidues.push_back(inputRes);
         }

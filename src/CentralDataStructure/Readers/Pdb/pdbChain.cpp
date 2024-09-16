@@ -94,15 +94,15 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
     {
         //        int sequenceNumber = refResidue.GetSequenceNumber() + 1; // Single gaps will end up with the same ACE
         //        NME resid numbers. Otherwise good.
-        const Coordinate* cCoordProtein  = refResidue.FindAtom("C")->getCoordinate();
-        const Coordinate* caCoordProtein = refResidue.FindAtom("CA")->getCoordinate();
-        const Coordinate* oCoordProtein  = refResidue.FindAtom("O")->getCoordinate();
-        Coordinate nCoordNME             = cds::calculateCoordinateFromInternalCoords(*oCoordProtein, *caCoordProtein,
-                                                                                      *cCoordProtein, 120.0, 180.0, 1.4);
+        Coordinate cCoordProtein  = refResidue.FindAtom("C")->coordinate();
+        Coordinate caCoordProtein = refResidue.FindAtom("CA")->coordinate();
+        Coordinate oCoordProtein  = refResidue.FindAtom("O")->coordinate();
+        Coordinate nCoordNME =
+            cds::calculateCoordinateFromInternalCoords(oCoordProtein, caCoordProtein, cCoordProtein, 120.0, 180.0, 1.4);
         Coordinate hCoordNME =
-            cds::calculateCoordinateFromInternalCoords(*oCoordProtein, *caCoordProtein, nCoordNME, 109.0, 180.0, 1.0);
+            cds::calculateCoordinateFromInternalCoords(oCoordProtein, caCoordProtein, nCoordNME, 109.0, 180.0, 1.0);
         Coordinate ch3CoordNME =
-            cds::calculateCoordinateFromInternalCoords(*caCoordProtein, *cCoordProtein, nCoordNME, 125.0, 180.0, 1.48);
+            cds::calculateCoordinateFromInternalCoords(caCoordProtein, cCoordProtein, nCoordNME, 125.0, 180.0, 1.48);
         Coordinate hh31CoordNME =
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, 180.0, 1.09);
         Coordinate hh32CoordNME =
@@ -131,16 +131,16 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         //        int sequenceNumber = refResidue.GetSequenceNumber() - 1; // Single gaps will end up with the same ACE
         //        NME resid numbers. Otherwise good.
         // These are the atoms in residue that I use to build the ACE out from.
-        const Coordinate* cCoordProtein  = refResidue.FindAtom("C")->getCoordinate();
-        const Coordinate* caCoordProtein = refResidue.FindAtom("CA")->getCoordinate();
-        const Coordinate* nCoordProtein  = refResidue.FindAtom("N")->getCoordinate();
+        Coordinate cCoordProtein  = refResidue.FindAtom("C")->coordinate();
+        Coordinate caCoordProtein = refResidue.FindAtom("CA")->coordinate();
+        Coordinate nCoordProtein  = refResidue.FindAtom("N")->coordinate();
         // This is bad, should use templates loaded from lib/prep file instead.
-        Coordinate cCoordACE             = cds::calculateCoordinateFromInternalCoords(*cCoordProtein, *caCoordProtein,
-                                                                                      *nCoordProtein, 120.0, -130.0, 1.4);
+        Coordinate cCoordACE = cds::calculateCoordinateFromInternalCoords(cCoordProtein, caCoordProtein, nCoordProtein,
+                                                                          120.0, -130.0, 1.4);
         Coordinate oCoordACE =
-            cds::calculateCoordinateFromInternalCoords(*caCoordProtein, *nCoordProtein, cCoordACE, 120.0, 0.0, 1.23);
+            cds::calculateCoordinateFromInternalCoords(caCoordProtein, nCoordProtein, cCoordACE, 120.0, 0.0, 1.23);
         Coordinate ch3CoordACE =
-            cds::calculateCoordinateFromInternalCoords(*caCoordProtein, *nCoordProtein, cCoordACE, 125.0, 180.0, 1.48);
+            cds::calculateCoordinateFromInternalCoords(caCoordProtein, nCoordProtein, cCoordACE, 125.0, 180.0, 1.48);
         Coordinate hh31CoordACE =
             cds::calculateCoordinateFromInternalCoords(oCoordACE, cCoordACE, ch3CoordACE, 109.0, 180.0, 1.09);
         Coordinate hh32CoordACE =
@@ -209,9 +209,9 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
                 "Cterminal residue missing an atoms named CA, C or O, cannot create an OXT atom for this residue.");
             return;
         }
-        cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(
-            *(atomCA->getCoordinate()), *(atomC->getCoordinate()), *(atomO->getCoordinate()), 120.0, 180.0, 1.25);
-        cds::Atom* oxtAtom = terminalResidue->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
+        cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(atomCA->coordinate(), atomC->coordinate(),
+                                                                              atomO->coordinate(), 120.0, 180.0, 1.25);
+        cds::Atom* oxtAtom       = terminalResidue->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
         addBond(oxtAtom, atomC);
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Created new atom named OXT after " + static_cast<const PdbAtom*>(atomO)->GetId());

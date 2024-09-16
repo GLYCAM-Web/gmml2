@@ -76,6 +76,7 @@ void cds::writeAtomToPdb(std::ostream& stream, const cds::Atom* atom, const std:
                          const std::string residueName, const int residueNumber, const std::string chainId,
                          const std::string insertionCode, const double occupancy, const double temperatureFactor)
 {
+    auto coord                             = atom->coordinate();
     std::string residueAlternativeLocation = ""; // If we ever need this to be anything else, change this function.
     stream << std::left << std::setw(6) << recordName;
     stream << std::right << std::setw(5) << atom->getNumber() << std::left << std::setw(1) << " ";
@@ -85,9 +86,9 @@ void cds::writeAtomToPdb(std::ostream& stream, const cds::Atom* atom, const std:
     stream << std::left << std::setw(1) << chainId;
     stream << std::right << std::setw(4) << residueNumber;
     stream << std::left << std::setw(1) << insertionCode << std::left << std::setw(3) << " ";
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << atom->getCoordinate()->GetX();
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << atom->getCoordinate()->GetY();
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << atom->getCoordinate()->GetZ();
+    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetX();
+    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetY();
+    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetZ();
     stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << occupancy;
     stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << temperatureFactor << std::left
            << std::setw(10) << " ";

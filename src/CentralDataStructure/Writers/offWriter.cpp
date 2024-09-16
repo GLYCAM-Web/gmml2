@@ -122,8 +122,9 @@ void cds::WriteOffFileUnit(const std::vector<cds::Residue*>& residues, std::ostr
     {
         for (auto& atom : residue->getAtoms())
         {
-            stream << std::setprecision(6) << std::fixed << " " << atom->getCoordinate()->GetX() << " "
-                   << atom->getCoordinate()->GetY() << " " << atom->getCoordinate()->GetZ() << std::endl;
+            auto coord = atom->coordinate();
+            stream << std::setprecision(6) << std::fixed << " " << coord.GetX() << " " << coord.GetY() << " "
+                   << coord.GetZ() << std::endl;
         }
     }
     // WriteResidueConnectSection // Every residue needs a head/tail regardless of reality. tleap uses this info.

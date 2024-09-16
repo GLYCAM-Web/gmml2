@@ -49,6 +49,6 @@ namespace cds
     Coordinate crossProduct(const Coordinate& a, const Coordinate& b);
     // finds the point closest to 'a' on the line defined by 'b' and (0,0,0)
     Coordinate projection(const Coordinate& a, const Coordinate& b);
-    Coordinate coordinateMean(const std::vector<Coordinate*>& coords);
+    Coordinate coordinateMean(const std::vector<Coordinate>& coords);
 } // namespace cds
 #endif

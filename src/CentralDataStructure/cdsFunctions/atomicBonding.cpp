@@ -8,7 +8,7 @@ bool cds::isWithinBondingDistance(const Atom* atom, const Atom* otherAtom)
 {
     double maxLength = MolecularMetadata::maxBondLengthByAtomType(
         MolecularMetadata::toElement(atom->getElement()), MolecularMetadata::toElement(otherAtom->getElement()));
-    return withinDistance(maxLength, *atom->getCoordinate(), *otherAtom->getCoordinate());
+    return withinDistance(maxLength, atom->coordinate(), otherAtom->coordinate());
 }
 
 void cds::addBond(Atom* atom, Atom* otherAtom)

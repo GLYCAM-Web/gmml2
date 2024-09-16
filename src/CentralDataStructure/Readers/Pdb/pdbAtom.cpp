@@ -222,7 +222,7 @@ void PdbAtom::Print(std::ostream& out) const
         out << residueSequenceNumber_;
     }
     out << ", Inserion Code: " << insertionCode_ << ", Coordinate: ";
-    print(*getCoordinate(), out);
+    print(coordinate(), out);
     out << ", Occupancy: ";
     if (occupancy_ == constants::dNotSet)
     {

@@ -39,7 +39,7 @@ namespace
             gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
             throw std::runtime_error(ss.str());
         }
-        return cds::coordinateOppositeToNeighborAverage(*centralAtom->getCoordinate(),
+        return cds::coordinateOppositeToNeighborAverage(centralAtom->coordinate(),
                                                         cds::atomCoordinates(centralAtom->getNeighbors()), distance);
     }
 
@@ -49,7 +49,7 @@ namespace
         double distance      = MolecularMetadata::specificBondLength(parentAtom->getType(), childAtom->getType());
         //  Create an atom c that is will superimpose onto the a atom, bringing b atom with it.
         Coordinate c         = guessCoordinateOfMissingNeighbor(childAtom, distance);
-        Coordinate cToParent = *parentAtom->getCoordinate() - c;
+        Coordinate cToParent = parentAtom->coordinate() - c;
         // Figure out which atoms will move
         std::vector<cds::Atom*> atomsToMove;
         atomsToMove.push_back(parentAtom); // add Parent atom so search doesn't go through it.
@@ -57,7 +57,7 @@ namespace
         atomsToMove.erase(atomsToMove.begin()); // delete the parentAtom
         for (auto& atom : atomsToMove)
         {
-            Coordinate* coord = atom->getCoordinate();
+            Coordinate* coord = atom->coordinatePointer();
             *coord            = *coord + cToParent;
         }
     }
@@ -375,11 +375,11 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     {
         if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
         {
-            auto matrix =
-                cds::rotationTo(std::array<Coordinate, 3> {*parentAtomNeighbor->getCoordinate(),
-                                                           *parentAtom->getCoordinate(), *childAtom->getCoordinate()},
-                                constants::toRadians(constants::DEFAULT_ANGLE));
-            matrix.rotateCoordinates(childResidue->getCoordinates());
+            auto matrix            = cds::rotationTo(std::array<Coordinate, 3> {parentAtomNeighbor->coordinate(),
+                                                                                parentAtom->coordinate(), childAtom->coordinate()},
+                                                     constants::toRadians(constants::DEFAULT_ANGLE));
+            auto childResidueAtoms = childResidue->mutableAtoms();
+            matrix.rotateCoordinates(cds::atomCoordinatePointers(childResidueAtoms));
             break;
         }
     }

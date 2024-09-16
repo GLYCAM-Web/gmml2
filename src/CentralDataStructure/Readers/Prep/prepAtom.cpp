@@ -210,15 +210,15 @@ void PrepAtom::Determine3dCoordinate()
     std::vector<PrepAtom*> foundAtoms;
     foundAtoms.push_back(this);
     this->FindDihedralAtoms(foundAtoms);
-    if (foundAtoms.at(3)->getCoordinate() == nullptr)
+    if (foundAtoms.at(3)->coordinatePointer() == nullptr)
     {
         std::string message = "This atom has no coordinate: " + foundAtoms.at(3)->getName();
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw std::runtime_error(message);
     }
     this->setCoordinate(cds::calculateCoordinateFromInternalCoords(
-        *(foundAtoms.at(3)->getCoordinate()), *(foundAtoms.at(2)->getCoordinate()),
-        *(foundAtoms.at(1)->getCoordinate()), this->GetAngle(), this->GetDihedral(), this->GetBondLength()));
+        foundAtoms.at(3)->coordinate(), foundAtoms.at(2)->coordinate(), foundAtoms.at(1)->coordinate(),
+        this->GetAngle(), this->GetDihedral(), this->GetBondLength()));
     return;
 }
 
