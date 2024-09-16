@@ -1,7 +1,8 @@
 #ifndef TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 #define TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 
-#include "../../AbstractObject/includes/AbstractObject.hpp"
+#include <vector>
+#include <string>
 
 namespace glygraph
 {
@@ -14,7 +15,7 @@ namespace glygraph
         INCYCLE
     };
 
-    class GenericGraphObject : public abstrab::AbstractObject
+    class GenericGraphObject
     {
         //	Quick tl;dr about each type & why we care.
         // 		- LEAF: Only a node can be a <leaf>, a <leaf> is a node with a SINGLE edge. In
@@ -62,8 +63,53 @@ namespace glygraph
         // constructor
         inline GenericGraphObject(const std::string name_t, const std::vector<std::string> labels_t,
                                   ConnectivityType connType_t)
-            : abstrab::AbstractObject(name_t, labels_t), connTypeIdentifier_m(connType_t)
+            : index_m(generateIndex()), name_m(name_t), labels_m(labels_t), connTypeIdentifier_m(connType_t)
         {}
+
+        inline unsigned int getIndex() const
+        {
+            return index_m;
+        }
+
+        inline void setIndex(unsigned int index)
+        {
+            index_m = index;
+        }
+
+        inline std::string getName() const
+        {
+            return name_m;
+        }
+
+        inline std::string getLabel() const
+        {
+            return labels_m.empty() ? "" : labels_m.back();
+        }
+
+        inline std::vector<std::string> getLabels() const
+        {
+            return labels_m;
+        }
+
+        inline void setName(std::string name_t)
+        {
+            name_m = name_t;
+        }
+
+        inline void clearLabels()
+        {
+            labels_m.clear();
+        }
+
+        inline void setLabels(std::vector<std::string> labels_t)
+        {
+            labels_m = labels_t;
+        }
+
+        inline void addLabel(std::string label_t)
+        {
+            labels_m.push_back(label_t);
+        }
 
         inline enum ConnectivityType getConnectivityTypeIdentifier() const
         {
@@ -76,8 +122,18 @@ namespace glygraph
         }
 
       private:
+        inline unsigned int generateIndex()
+        {
+            static unsigned int s_NodeIndex =
+                0; // static keyword means it is created only once and persists beyond scope of code block.
+            return s_NodeIndex++; // makes copy of index, increments the real index, then returns the value in the copy
+        }
+
         // our deafult enum value is <UNKNOWN>, default enum value is the first element
         // just added the strutualType::UNKNOWN to make obvious
+        unsigned int index_m;
+        std::string name_m;
+        std::vector<std::string> labels_m;
         ConnectivityType connTypeIdentifier_m = ConnectivityType::UNKNOWN;
     };
 

@@ -28,8 +28,6 @@
 ./includes/MolecularMetadata/Sugars/SNFG_Symbol_Images
 ./includes/MolecularModeling
 ./includes/MolecularModeling/TemplateGraph
-./includes/MolecularModeling/TemplateGraph/AbstractObject
-./includes/MolecularModeling/TemplateGraph/AbstractObject/includes
 ./includes/MolecularModeling/TemplateGraph/Algorithms
 ./includes/MolecularModeling/TemplateGraph/Algorithms/include
 ./includes/MolecularModeling/TemplateGraph/GraphStructure

@@ -82,4 +82,3 @@
 ./src/MolecularMetadata/elements.cpp
 ./src/MolecularMetadata/glycoprotein.cpp
 ./src/MolecularMetadata/proteinBonding.cpp
-./src/MolecularModeling/TemplateGraph/AbstractObject/includes/AbstractObject.cpp

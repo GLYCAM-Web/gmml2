@@ -90,11 +90,12 @@ std::vector<Atom*> Residue::mutableAtoms()
 
 const std::string Residue::GetParmName() const // If terminal, need to look up e.g. NPRO or CPRO instead of PRO.
 {
-    if (this->containsLabel("NTerminal"))
+    auto labels = getLabels();
+    if (codeUtils::contains(labels, std::string("NTerminal")))
     {
         return "N" + this->getName();
     }
-    else if (this->containsLabel("CTerminal"))
+    else if (codeUtils::contains(labels, std::string("CTerminal")))
     {
         return "C" + this->getName();
     }
