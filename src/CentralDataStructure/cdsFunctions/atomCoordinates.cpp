@@ -1,7 +1,8 @@
-#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 #include <vector>
 

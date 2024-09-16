@@ -5,7 +5,7 @@
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 

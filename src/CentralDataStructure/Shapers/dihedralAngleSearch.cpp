@@ -5,7 +5,7 @@
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"

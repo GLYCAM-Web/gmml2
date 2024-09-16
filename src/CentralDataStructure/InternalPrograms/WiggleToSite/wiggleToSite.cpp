@@ -9,7 +9,7 @@
 #include "includes/CodeUtils/random.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
