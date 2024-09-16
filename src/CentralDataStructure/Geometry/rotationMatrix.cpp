@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 #include <vector>
 #include <cmath>
@@ -8,11 +9,11 @@
 using cds::RotationMatrix;
 
 // Functions
-void RotationMatrix::rotateCoordinates(std::vector<Coordinate*> coords)
+void RotationMatrix::rotateCoordinates(std::vector<CoordinateReference> coords)
 {
     for (auto& coord : coords)
     {
-        *coord = (*this) * (*coord);
+        coord.set((*this) * coord.get());
     }
 }
 

@@ -13,10 +13,12 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // For the ClearAtomLabels sillyness.
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/references.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
 
 //////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ void GlycosylationSite::Prepare_Glycans_For_Superimposition_To_Particular_Residu
 void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_residue)
 {
     // Get the 3 target atoms from protein residue.
-    std::vector<Coordinate*> targetCoords;
+    std::vector<cds::CoordinateReference> targetCoords;
     // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g. CG, ND2, we
     // will superimpose them onto the correspoinding "target" atoms in the protein residue (glycosite_residue).
     for (auto& superimposition_atom : this->GetGlycan()->GetAglycone()->getAtoms())
@@ -154,14 +156,14 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
         {
             if (protein_atom->getName() == superimposition_atom->getName())
             {
-                targetCoords.push_back(protein_atom->coordinatePointer());
+                targetCoords.push_back(protein_atom->coordinateReference());
             }
         }
     }
-    auto aglyconeAtoms                      = this->GetGlycan()->GetAglycone()->mutableAtoms();
-    auto glycanAtoms                        = this->GetGlycan()->mutableAtoms();
-    std::vector<Coordinate*> aglyconeCoords = cds::atomCoordinatePointers(aglyconeAtoms);
-    std::vector<Coordinate*> glycanCoords   = cds::atomCoordinatePointers(glycanAtoms);
+    auto aglyconeAtoms                                   = this->GetGlycan()->GetAglycone()->mutableAtoms();
+    auto glycanAtoms                                     = this->GetGlycan()->mutableAtoms();
+    std::vector<cds::CoordinateReference> aglyconeCoords = cds::atomCoordinateReferences(aglyconeAtoms);
+    std::vector<cds::CoordinateReference> glycanCoords   = cds::atomCoordinateReferences(glycanAtoms);
     // Sanity checks:
     if (aglyconeCoords.size() < 3)
     {

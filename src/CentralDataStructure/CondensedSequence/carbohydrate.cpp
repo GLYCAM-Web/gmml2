@@ -57,8 +57,8 @@ namespace
         atomsToMove.erase(atomsToMove.begin()); // delete the parentAtom
         for (auto& atom : atomsToMove)
         {
-            Coordinate* coord = atom->coordinatePointer();
-            *coord            = *coord + cToParent;
+            auto coord = atom->coordinateReference();
+            coord.set(coord.get() + cToParent);
         }
     }
 } // namespace
@@ -379,7 +379,7 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
                                                                                 parentAtom->coordinate(), childAtom->coordinate()},
                                                      constants::toRadians(constants::DEFAULT_ANGLE));
             auto childResidueAtoms = childResidue->mutableAtoms();
-            matrix.rotateCoordinates(cds::atomCoordinatePointers(childResidueAtoms));
+            matrix.rotateCoordinates(cds::atomCoordinateReferences(childResidueAtoms));
             break;
         }
     }

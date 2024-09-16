@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 #include <array>
 #include <vector>
@@ -26,7 +27,7 @@ namespace cds
             return {col(0), col(1), col(2)};
         };
 
-        void rotateCoordinates(std::vector<Coordinate*> coords);
+        void rotateCoordinates(std::vector<CoordinateReference> coords);
 
       private:
         RotationMatrixInternals matrix_;

@@ -88,12 +88,12 @@ namespace
     }
 
     std::array<cds::ResiduesWithOverlapWeight, 2>
-    branchedResidueSets(const std::vector<Coordinate*>& movingCoordinates,
+    branchedResidueSets(const std::vector<cds::CoordinateReference>& movingCoordinates,
                         const std::array<cds::ResiduesWithOverlapWeight, 2>& input)
     {
         auto residueContainsMovingAtom = [&](cds::Residue* res)
         {
-            return codeUtils::contains(movingCoordinates, res->getAtoms()[0]->coordinatePointer());
+            return codeUtils::contains(movingCoordinates, res->getAtoms()[0]->coordinateReference());
         };
         auto& setA                         = input[0];
         auto& setB                         = input[1];
@@ -268,7 +268,7 @@ std::array<cds::DihedralRotationData, 2>
 cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues)
 {
     auto& atoms                      = dihedral.atoms;
-    auto movingCoordinates           = atomCoordinatePointers(dihedral.movingAtoms);
+    auto movingCoordinates           = atomCoordinateReferences(dihedral.movingAtoms);
     auto dihedralResiduesMovingAtoms = movingAtomsWithinSet(
         atoms[2], atoms[1],
         codeUtils::vectorAppend(residues[0].residues[0]->getAtoms(), residues[1].residues[0]->getAtoms()));

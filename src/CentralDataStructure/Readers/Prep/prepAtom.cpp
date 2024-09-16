@@ -210,7 +210,7 @@ void PrepAtom::Determine3dCoordinate()
     std::vector<PrepAtom*> foundAtoms;
     foundAtoms.push_back(this);
     this->FindDihedralAtoms(foundAtoms);
-    if (foundAtoms.at(3)->coordinatePointer() == nullptr)
+    if (foundAtoms.at(3)->coordinateReference().invalid())
     {
         std::string message = "This atom has no coordinate: " + foundAtoms.at(3)->getName();
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);

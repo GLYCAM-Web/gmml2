@@ -5,6 +5,7 @@
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CodeUtils/constants.hpp" // dNotSet
+#include "includes/CodeUtils/references.hpp"
 
 #include <string>
 #include <iostream>
@@ -41,7 +42,7 @@ namespace cds
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
         Coordinate coordinate() const;
-        Coordinate* coordinatePointer();
+        CoordinateReference coordinateReference();
         unsigned int getNumberOfCoordinateSets() const;
 
         inline double getCharge() const
@@ -80,8 +81,8 @@ namespace cds
         }
 
         void setCoordinate(const Coordinate& c);
-        void setCurrentCoordinate(unsigned int coordinateIndex = 0);
-        Coordinate* addCoordinate(const Coordinate& c);
+        void setCurrentCoordinate(size_t coordinateIndex);
+        void addCoordinate(const Coordinate& c);
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
@@ -103,8 +104,8 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
-        Coordinate* currentCoordinate_ = nullptr;
-        std::vector<std::unique_ptr<Coordinate>> allCoordinates_;
+        size_t currentCoordinate_ = -1;
+        std::vector<Coordinate> allCoordinates_;
         double charge_                      = constants::dNotSet;
         std::string atomType_               = " ";
         int number_                         = constants::iNotSet;

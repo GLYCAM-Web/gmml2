@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 #include <vector>
 
@@ -22,13 +23,13 @@ std::vector<cds::Coordinate> cds::atomCoordinates(const std::vector<cds::Atom*>&
     return coordinates;
 }
 
-std::vector<cds::Coordinate*> cds::atomCoordinatePointers(std::vector<cds::Atom*>& atoms)
+std::vector<cds::CoordinateReference> cds::atomCoordinateReferences(std::vector<cds::Atom*>& atoms)
 {
-    std::vector<Coordinate*> coordinates;
+    std::vector<CoordinateReference> coordinates;
     coordinates.reserve(atoms.size());
     for (auto& atom : atoms)
     {
-        coordinates.push_back(atom->coordinatePointer());
+        coordinates.push_back(atom->coordinateReference());
     }
     return coordinates;
 }

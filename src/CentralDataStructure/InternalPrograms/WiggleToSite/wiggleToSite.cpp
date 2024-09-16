@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CodeUtils/random.hpp"
+#include "includes/CodeUtils/references.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
@@ -37,8 +38,8 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
            << "\nOr selection for wiggling target: " << inputStruct.wigglingTargetResidue_ << " was not found\n";
         throw std::runtime_error(ss.str());
     }
-    auto atoms                                       = getCarbohydrate().mutableAtoms();
-    std::vector<Coordinate*> carbohydrateCoordinates = cds::atomCoordinatePointers(atoms);
+    auto atoms                                                    = getCarbohydrate().mutableAtoms();
+    std::vector<cds::CoordinateReference> carbohydrateCoordinates = cds::atomCoordinateReferences(atoms);
     Residue* superimposeMe = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
                                                               inputStruct.carbohydrateSuperimpositionResidue_);
     Residue* wiggleMe      = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
@@ -52,12 +53,12 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
     this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
     this->setCurrentOverlapCount(cds::CountOverlappingAtoms(atomsToAvoid_, this->getCarbohydrate().getAtoms()));
-    this->wiggleMeCoordinates_     = {wiggleMe->FindAtom("C1")->coordinatePointer(),
-                                      wiggleMe->FindAtom("C3")->coordinatePointer(),
-                                      wiggleMe->FindAtom("C5")->coordinatePointer()};
-    this->wiggleTargetCoordinates_ = {wigglingTarget->FindAtom("C1")->coordinatePointer(),
-                                      wigglingTarget->FindAtom("C3")->coordinatePointer(),
-                                      wigglingTarget->FindAtom("C5")->coordinatePointer()};
+    this->wiggleMeCoordinates_     = {wiggleMe->FindAtom("C1")->coordinateReference(),
+                                      wiggleMe->FindAtom("C3")->coordinateReference(),
+                                      wiggleMe->FindAtom("C5")->coordinateReference()};
+    this->wiggleTargetCoordinates_ = {wigglingTarget->FindAtom("C1")->coordinateReference(),
+                                      wigglingTarget->FindAtom("C3")->coordinateReference(),
+                                      wigglingTarget->FindAtom("C5")->coordinateReference()};
     if (wiggleMeCoordinates_.size() < 3 || wiggleTargetCoordinates_.size() < 3)
     {
         throw std::runtime_error("Did not find the cooordinates of the atoms required for wiggling\n");
@@ -113,16 +114,17 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
 //////////////////////////////////////////////////////////
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
-void WiggleToSite::superimpose(std::vector<Coordinate*>& carbohydrateCoordinates, const Residue* superimpositionTarget,
-                               Residue* superimposeMe)
+void WiggleToSite::superimpose(std::vector<cds::CoordinateReference>& carbohydrateCoordinates,
+                               const Residue* superimpositionTarget, Residue* superimposeMe)
 {
     // Limiting the selection to just these atoms as sometimes hydrogens or an oxygen is missing from xtal. That's ok.
-    std::vector<Coordinate*> superimposeMeCoordinates = {superimposeMe->FindAtom("C1")->coordinatePointer(),
-                                                         superimposeMe->FindAtom("C3")->coordinatePointer(),
-                                                         superimposeMe->FindAtom("C5")->coordinatePointer()};
-    std::vector<Coordinate*> superTargetCoordinates   = {superimpositionTarget->FindAtom("C1")->coordinatePointer(),
-                                                         superimpositionTarget->FindAtom("C3")->coordinatePointer(),
-                                                         superimpositionTarget->FindAtom("C5")->coordinatePointer()};
+    std::vector<cds::CoordinateReference> superimposeMeCoordinates = {
+        superimposeMe->FindAtom("C1")->coordinateReference(), superimposeMe->FindAtom("C3")->coordinateReference(),
+        superimposeMe->FindAtom("C5")->coordinateReference()};
+    std::vector<cds::CoordinateReference> superTargetCoordinates = {
+        superimpositionTarget->FindAtom("C1")->coordinateReference(),
+        superimpositionTarget->FindAtom("C3")->coordinateReference(),
+        superimpositionTarget->FindAtom("C5")->coordinateReference()};
     cds::Superimpose(superimposeMeCoordinates, superTargetCoordinates,
                      carbohydrateCoordinates); // "alsoMoving" are the carbohydrate Coordinates
     return;
@@ -157,7 +159,7 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
 
 double WiggleToSite::calculateDistance()
 {
-    return distance(*wiggleTargetCoordinates_.at(0), *wiggleMeCoordinates_.at(0));
+    return distance(wiggleTargetCoordinates_[0].get(), wiggleMeCoordinates_[0].get());
 }
 
 bool WiggleToSite::acceptOverlaps()

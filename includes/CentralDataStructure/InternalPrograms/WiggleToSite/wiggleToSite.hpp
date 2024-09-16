@@ -71,8 +71,8 @@ namespace gmmlPrograms
             currentDistance_ = d;
         }
 
-        void superimpose(std::vector<Coordinate*>& carbohydrateCoordinates, const Residue* superimpositionTarget,
-                         Residue* superimposeMe);
+        void superimpose(std::vector<cds::CoordinateReference>& carbohydrateCoordinates,
+                         const Residue* superimpositionTarget, Residue* superimposeMe);
         std::vector<cds::ResidueLinkage>& determineWiggleLinkages(Residue* startResidue, Residue* endResidue);
 
         double calculateDistance();
@@ -85,8 +85,8 @@ namespace gmmlPrograms
         cdsCondensedSequence::Carbohydrate carbohydrate_;
         std::vector<cds::ResidueLinkage> wiggleLinkages_;
         std::vector<cds::Atom*> atomsToAvoid_;
-        std::vector<Coordinate*> wiggleMeCoordinates_;
-        std::vector<Coordinate*> wiggleTargetCoordinates_;
+        std::vector<cds::CoordinateReference> wiggleMeCoordinates_;
+        std::vector<cds::CoordinateReference> wiggleTargetCoordinates_;
         cds::Overlap currentOverlapCount_ = cds::Overlap {0, 0.0};
         double currentDistance_;
     };

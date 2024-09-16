@@ -30,11 +30,8 @@ Atom::Atom(const Atom& other) noexcept
 {
     //    gmml::log(__LINE__, __FILE__, gmml::INF,
     //              "Atom copy ctor creating " + this->getName() + "_" + std::to_string(this->getIndex()));
-    for (auto& coord : other.allCoordinates_)
-    {
-        allCoordinates_.push_back(std::make_unique<Coordinate>((*coord.get())));
-    }
-    currentCoordinate_ = allCoordinates_.at(0).get();
+    allCoordinates_    = other.allCoordinates_;
+    currentCoordinate_ = 0;
 }
 
 // Move and Copy assignment operator
@@ -42,7 +39,7 @@ Atom& Atom::operator=(Atom other) noexcept
 {
     this->Node<Atom>::operator=(other);
     swap(*this, other);
-    currentCoordinate_ = allCoordinates_.at(0).get();
+    currentCoordinate_ = 0;
     return *this;
 }
 
@@ -52,12 +49,12 @@ Atom& Atom::operator=(Atom other) noexcept
 
 cds::Coordinate Atom::coordinate() const
 {
-    return *currentCoordinate_;
+    return allCoordinates_[currentCoordinate_];
 }
 
-cds::Coordinate* Atom::coordinatePointer()
+cds::CoordinateReference Atom::coordinateReference()
 {
-    return currentCoordinate_;
+    return {currentCoordinate_, &allCoordinates_};
 }
 
 unsigned int Atom::getNumberOfCoordinateSets() const
@@ -88,10 +85,11 @@ unsigned int Atom::getNumberFromName() const
 //////////////////////////////////////////////////////////
 void Atom::setCoordinate(const Coordinate& newCoord)
 {
-    currentCoordinate_ = addCoordinate(newCoord);
+    addCoordinate(newCoord);
+    currentCoordinate_ = allCoordinates_.size() - 1;
 }
 
-void Atom::setCurrentCoordinate(unsigned int coordinateIndex)
+void Atom::setCurrentCoordinate(size_t coordinateIndex)
 {
     if (allCoordinates_.size() <= coordinateIndex)
     {
@@ -101,13 +99,12 @@ void Atom::setCurrentCoordinate(unsigned int coordinateIndex)
         gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
         throw std::runtime_error(ss.str());
     }
-    currentCoordinate_ = allCoordinates_.at(coordinateIndex).get();
+    currentCoordinate_ = coordinateIndex;
 }
 
-cds::Coordinate* Atom::addCoordinate(const Coordinate& newCoord)
+void Atom::addCoordinate(const Coordinate& newCoord)
 {
-    allCoordinates_.push_back(std::make_unique<Coordinate>(newCoord));
-    return allCoordinates_.back().get();
+    allCoordinates_.push_back(newCoord);
 }
 
 //////////////////////////////////////////////////////////
