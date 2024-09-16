@@ -78,7 +78,7 @@ std::vector<Atom*> Molecule::getAtoms() const
 
 std::vector<Coordinate*> Molecule::getCoordinates() const
 {
-    return cds::getCoordinatesFromAtoms(this->getAtoms());
+    return cds::atomCoordinates(this->getAtoms());
 }
 
 //////////////////////////////////////////////////////////

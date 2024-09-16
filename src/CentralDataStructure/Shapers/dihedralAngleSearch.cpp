@@ -268,12 +268,12 @@ std::array<cds::DihedralRotationData, 2>
 cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues)
 {
     auto& atoms                      = dihedral.atoms;
-    auto movingCoordinates           = getCoordinatesFromAtoms(dihedral.movingAtoms);
+    auto movingCoordinates           = atomCoordinates(dihedral.movingAtoms);
     auto dihedralResiduesMovingAtoms = movingAtomsWithinSet(
         atoms[2], atoms[1],
         codeUtils::vectorAppend(residues[0].residues[0]->getAtoms(), residues[1].residues[0]->getAtoms()));
 
-    auto movingAtomSpheres  = getCoordinatesWithRadiiFromAtoms(dihedral.movingAtoms);
+    auto movingAtomSpheres  = atomCoordinatesWithRadii(dihedral.movingAtoms);
     auto movingAtomBounds   = boundingSphere(movingAtomSpheres);
     Coordinate origin       = *atoms[1]->getCoordinate();
     Coordinate axis         = *atoms[2]->getCoordinate() - origin;

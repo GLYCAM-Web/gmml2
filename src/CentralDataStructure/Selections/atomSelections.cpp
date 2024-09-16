@@ -74,10 +74,8 @@ std::vector<Atom*> cdsSelections::findCycleAtoms(cds::Atom* const starterAtom)
     for (std::pair<std::unordered_set<glygraph::Node<Atom>*>, std::unordered_set<glygraph::Edge<Atom>*>> currCyclePair :
          g1Cycles)
     {
-        // std::cout << "Cycle:""\n\tNodes: ";
         for (glygraph::Node<Atom>* currAtom : currCyclePair.first)
         {
-            // std::cout << currAtom->getName() + ", ";
             cycleAtoms.push_back(currAtom->getDeriviedClass());
         }
     }
@@ -105,7 +103,6 @@ Atom* cdsSelections::guessAnomericAtomByInternalNeighbors(const std::vector<cds:
         throw std::runtime_error("Did not find a ring oxygen when trying to guess what the anomeric carbon is. Your "
                                  "atom names, are likely, strange.");
     }
-    // std::cout << "\nCycle oxygen is " << cycleOxygen->getName() << std::endl;
     std::vector<Atom*> anomerCandidates = cycleOxygen->getNeighbors();
     // So deciding this isn't straightforward. For me use case of prep files this is fine. For reading form the PDB I
     // want a meeting first to figure out what we really need. Using a lambda to sort the candidates so that C1 appears
@@ -116,22 +113,7 @@ Atom* cdsSelections::guessAnomericAtomByInternalNeighbors(const std::vector<cds:
                   return (a->getNumberFromName() < b->getNumberFromName());
               });
     Atom* bestOne = anomerCandidates.front();
-    // std::cout << "Anomer is " << bestOne->getName() << "\n";
     return bestOne;
-    //    for(auto & anomerCandidate : anomerCandidates)
-    //    {
-    //        for (auto & candidateNeighbor: anomerCandidate->getNeighbors())
-    //        {
-    //            if (cdsSelections::selectNeighborNotInAtomVector(candidateNeighbor, cycleAtoms) != nullptr)
-    //            { // candidateNeighbor is not in the ring and has type O N or S
-    //                std::string element = candidateNeighbor->getElement();
-    //                if (element == "S" || element == "O" || element == "N")
-    //                {
-    //
-    //                }
-    //            }
-    //        }
-    //    }
 }
 
 Atom* cdsSelections::selectNeighborNotInAtomVector(const Atom* atomWithNeighbors, std::vector<Atom*> queryAtoms)
@@ -144,16 +126,6 @@ Atom* cdsSelections::selectNeighborNotInAtomVector(const Atom* atomWithNeighbors
         }
     }
     return nullptr;
-}
-
-std::vector<Coordinate*> cdsSelections::getCoordinates(std::vector<Atom*> queryAtoms)
-{
-    std::vector<Coordinate*> coords;
-    for (auto& atom : queryAtoms)
-    {
-        coords.push_back(atom->getCoordinate());
-    }
-    return coords;
 }
 
 unsigned long int cdsSelections::CountInternalHeavyAtomBonds(std::vector<Atom*> queryAtoms)

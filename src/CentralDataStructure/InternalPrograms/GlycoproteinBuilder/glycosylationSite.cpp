@@ -7,6 +7,7 @@
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinateInterface.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // calculateCoordinateFromInternalCoords
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
@@ -158,9 +159,8 @@ void GlycosylationSite::Superimpose_Glycan_To_Glycosite(Residue* glycosite_resid
             }
         }
     }
-    std::vector<Coordinate*> aglyconeCoords =
-        cdsSelections::getCoordinates(this->GetGlycan()->GetAglycone()->getAtoms());
-    std::vector<Coordinate*> glycanCoords = cdsSelections::getCoordinates(this->GetGlycan()->getAtoms());
+    std::vector<Coordinate*> aglyconeCoords = cds::atomCoordinates(this->GetGlycan()->GetAglycone()->getAtoms());
+    std::vector<Coordinate*> glycanCoords   = cds::atomCoordinates(this->GetGlycan()->getAtoms());
     // Sanity checks:
     if (aglyconeCoords.size() < 3)
     {

@@ -139,8 +139,8 @@ cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residue
 
 cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
-    auto coordsA = getCoordinatesWithRadiiFromAtoms(atomsA);
-    auto coordsB = getCoordinatesWithRadiiFromAtoms(atomsB);
+    auto coordsA = atomCoordinatesWithRadii(atomsA);
+    auto coordsB = atomCoordinatesWithRadii(atomsB);
 
     auto properties = OverlapProperties {constants::clashWeightBase, constants::overlapTolerance};
     Overlap overlap {0, 0.0};

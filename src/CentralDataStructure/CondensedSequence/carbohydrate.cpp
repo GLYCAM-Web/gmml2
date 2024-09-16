@@ -39,8 +39,8 @@ namespace
             gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
             throw std::runtime_error(ss.str());
         }
-        return cds::coordinateOppositeToNeighborAverage(
-            *centralAtom->getCoordinate(), cds::getCoordinatesFromAtoms(centralAtom->getNeighbors()), distance);
+        return cds::coordinateOppositeToNeighborAverage(*centralAtom->getCoordinate(),
+                                                        cds::atomCoordinates(centralAtom->getNeighbors()), distance);
     }
 
     // parentAtom (e.g. O of OME), childAtom (e.g. C1 of Gal1-, S1 of SO3)

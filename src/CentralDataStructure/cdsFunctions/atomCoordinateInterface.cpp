@@ -11,7 +11,7 @@ cds::Sphere cds::coordinateWithRadius(Atom* atom)
     return {MolecularMetadata::vanDerWaalsRadius(element), *atom->getCoordinate()};
 }
 
-std::vector<cds::Coordinate*> cds::getCoordinatesFromAtoms(const std::vector<cds::Atom*>& atoms)
+std::vector<cds::Coordinate*> cds::atomCoordinates(const std::vector<cds::Atom*>& atoms)
 {
     std::vector<Coordinate*> coordinates;
     coordinates.reserve(atoms.size());
@@ -22,7 +22,7 @@ std::vector<cds::Coordinate*> cds::getCoordinatesFromAtoms(const std::vector<cds
     return coordinates;
 }
 
-std::vector<cds::Sphere> cds::getCoordinatesWithRadiiFromAtoms(const std::vector<cds::Atom*>& atoms)
+std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const std::vector<cds::Atom*>& atoms)
 {
     std::vector<cds::Sphere> coordinates;
     coordinates.reserve(atoms.size());

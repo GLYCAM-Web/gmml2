@@ -110,7 +110,7 @@ std::string Residue::getStringId(std::string moleculeNumber) const
 
 std::vector<Coordinate*> Residue::getCoordinates() const
 {
-    return cds::getCoordinatesFromAtoms(this->getAtoms());
+    return cds::atomCoordinates(this->getAtoms());
 }
 
 pdb::ResidueId Residue::getId() const

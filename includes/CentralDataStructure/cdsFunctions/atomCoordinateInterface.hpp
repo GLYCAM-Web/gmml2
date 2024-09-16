@@ -9,7 +9,7 @@
 namespace cds
 {
     Sphere coordinateWithRadius(Atom* atom);
-    std::vector<Coordinate*> getCoordinatesFromAtoms(const std::vector<Atom*>& atoms);
-    std::vector<Sphere> getCoordinatesWithRadiiFromAtoms(const std::vector<Atom*>& atoms);
+    std::vector<Coordinate*> atomCoordinates(const std::vector<Atom*>& atoms);
+    std::vector<Sphere> atomCoordinatesWithRadii(const std::vector<Atom*>& atoms);
 } // namespace cds
 #endif

@@ -290,7 +290,7 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
         std::cout << "No Anomeric Oxygen Found in Template\n";
         anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithAnomericOxygen.getAtoms());
         Coordinate newOxygenCoordinate = cds::coordinateOppositeToNeighborAverage(
-            *anomer->getCoordinate(), getCoordinatesFromAtoms(anomer->getNeighbors()), 1.4);
+            *anomer->getCoordinate(), atomCoordinates(anomer->getNeighbors()), 1.4);
         Atom* newAnomericOxygen = residueWithAnomericOxygen.addAtomToFront(
             std::make_unique<cds::Atom>("O" + anomerNumber, newOxygenCoordinate));
         newAnomericOxygen->setCharge(-0.388);

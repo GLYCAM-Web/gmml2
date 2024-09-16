@@ -26,7 +26,7 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     : substrate_(inputStruct.substrateFile_), carbohydrate_(inputStruct.carbohydrateSequence_)
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial");
-    std::vector<Coordinate*> carbohydrateCoordinates = cds::getCoordinatesFromAtoms(this->getCarbohydrate().getAtoms());
+    std::vector<Coordinate*> carbohydrateCoordinates = cds::atomCoordinates(this->getCarbohydrate().getAtoms());
     // const Residue* superimpositionTarget = codeUtils::findElementWithNumber(this->getSubstrate().getResidues(),
     // inputStruct.superimpositionTargetResidue_);
     const Residue* superimpositionTarget             = pdb::residueSelector(
