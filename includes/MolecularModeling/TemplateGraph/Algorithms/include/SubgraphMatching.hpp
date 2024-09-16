@@ -138,7 +138,7 @@ namespace
                 // if (!(currNode == resultsPair.first.back()))
                 if (!(previousNode_t == currNode))
                 {
-                    resultsPair_t.second.push_back(currNode->getConnectingEdge(previousNode_t->getDeriviedClass()));
+                    resultsPair_t.second.push_back(currNode->getConnectingEdge(previousNode_t->getDerivedClass()));
                 }
                 //}				//end our bit that inserts edge.
 
@@ -163,7 +163,7 @@ namespace
                     if (!(currNode == resultsPair_t.first.back()))
                     {
                         resultsPair_t.second.push_back(
-                            currNode->getConnectingEdge(resultsPair_t.first.back()->getDeriviedClass()));
+                            currNode->getConnectingEdge(resultsPair_t.first.back()->getDerivedClass()));
                     }
                 } // end our bit that inserts edge.
 

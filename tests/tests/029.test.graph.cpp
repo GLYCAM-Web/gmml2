@@ -81,7 +81,7 @@ class Atom : public Node<Atom>
 
         for (Node<Atom>* currAtom : this->getNeighbors())
         {
-            bondedAtomVec.push_back(currAtom->getDeriviedClass());
+            bondedAtomVec.push_back(currAtom->getDerivedClass());
         }
         return bondedAtomVec;
     }

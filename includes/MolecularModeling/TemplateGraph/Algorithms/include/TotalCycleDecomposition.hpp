@@ -328,7 +328,7 @@ namespace cycle_decomp
                         // figuring out what a working state of this looks like.
                         glygraph::Node<T>* tmpNode = inputGraph_t.getNodeFromIndex(bNodeIndex);
                         glygraph::Edge<T>* tempLoleEdge =
-                            inputGraph_t.getNodeFromIndex(aNodeIndex)->getConnectingEdge(tmpNode->getDeriviedClass());
+                            inputGraph_t.getNodeFromIndex(aNodeIndex)->getConnectingEdge(tmpNode->getDerivedClass());
                         temporaryEdgeCycleSet.insert(tempLoleEdge);
                     }
                 }

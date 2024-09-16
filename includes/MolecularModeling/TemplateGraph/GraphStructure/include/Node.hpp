@@ -42,7 +42,7 @@ namespace glygraph
          *  GETTER/SETTER
          ***********************************************/
 
-        inline T* getDeriviedClass()
+        inline T* getDerivedClass()
         {
             auto derived = static_cast<T*>(this);
             return derived;
@@ -58,7 +58,6 @@ namespace glygraph
         /************************************************
          *  MUTATORS
          ***********************************************/
-        void addEdge(Edge<T>* edgeToAdd_t);
         /* TODO: Finalize how we would like to add nodes to one another. The addNeighbor will just be a
          * 			wrapper for our addChild. Please note how I avoided having an "addEdge" because from
          * 			my understanding and what I am pretty sure our use will be every single edge is
@@ -188,7 +187,7 @@ namespace glygraph
         //        {
         //            std::unique_ptr<Edge<T>> tempIn(std::make_unique<Edge<T>>(*currInEdge));
         //
-        //            tempIn.get()->setTargetNode(this->getDeriviedClass());
+        //            tempIn.get()->setTargetNode(this->getDerivedClass());
         //
         //            this->inEdges_m.push_back(tempIn.get());
         //            tempIn.get()->getSourceNode()->outEdges_m.push_back(std::move(tempIn));
@@ -197,7 +196,7 @@ namespace glygraph
         //        {
         //            std::unique_ptr<Edge<T>> tempOut(std::make_unique<Edge<T>>(*currOutEdge.get()));
         //
-        //            tempOut.get()->setSourceNode(this->getDeriviedClass());
+        //            tempOut.get()->setSourceNode(this->getDerivedClass());
         //
         //            tempOut.get()->getTargetNode()->inEdges_m.push_back(tempOut.get());
         //            this->outEdges_m.push_back(std::move(tempOut));
@@ -297,14 +296,14 @@ namespace glygraph
         else
         {
             auto& edge = this->outEdges_m.emplace_back(
-                std::unique_ptr<Edge<T>>(new Edge<T>(edgeName_t, {edgeName_t}, this->getDeriviedClass(), childNode_t)));
+                std::unique_ptr<Edge<T>>(new Edge<T>(edgeName_t, {edgeName_t}, this->getDerivedClass(), childNode_t)));
             childNode_t->inEdges_m.push_back(edge.get());
         }
     }
 
     template<class T> inline void Node<T>::addParent(std::string edgeName_t, T* const& parentNode_t)
     {
-        parentNode_t->addChild(edgeName_t, this->getDeriviedClass());
+        parentNode_t->addChild(edgeName_t, this->getDerivedClass());
     }
 
     template<class T> inline void Node<T>::removeEdgeBetween(T* const& otherNode_t)
@@ -318,7 +317,7 @@ namespace glygraph
             }
             else if (this->isParentOf(otherNode_t))
             {
-                otherNode_t->removeEdgeBetween(this->getDeriviedClass());
+                otherNode_t->removeEdgeBetween(this->getDerivedClass());
             }
             else
             {
@@ -392,11 +391,11 @@ namespace glygraph
         //	not updated said edges with their new vertex appropriately
         for (Edge<T>* currInEdge : this->inEdges_m)
         {
-            currInEdge->setTargetNode(this->getDeriviedClass());
+            currInEdge->setTargetNode(this->getDerivedClass());
         }
         for (std::unique_ptr<Edge<T>>& currOutEdge : this->outEdges_m)
         {
-            currOutEdge.get()->setSourceNode(this->getDeriviedClass());
+            currOutEdge.get()->setSourceNode(this->getDerivedClass());
         }
     }
 

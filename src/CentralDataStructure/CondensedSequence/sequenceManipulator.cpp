@@ -26,7 +26,7 @@ std::string SequenceManipulator::ReorderSequence()
     int position = 0;
     for (auto& node : sequenceGraph.getNodes())
     {
-        this->swapResiduePosition(node->getDeriviedClass(), position++);
+        this->swapResiduePosition(node->getDerivedClass(), position++);
     }
     return this->Print();
 }
@@ -38,7 +38,7 @@ std::vector<ParsedResidue*> SequenceManipulator::GetParsedResiduesOrderedByConne
     glygraph::Graph<cds::Residue> sequenceGraph(this->GetTerminal());
     for (auto& node : sequenceGraph.getNodes())
     {
-        rawResidues.push_back(static_cast<ParsedResidue*>(node->getDeriviedClass()));
+        rawResidues.push_back(static_cast<ParsedResidue*>(node->getDerivedClass()));
     }
     return rawResidues;
 }

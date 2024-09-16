@@ -76,7 +76,7 @@ std::vector<Atom*> cdsSelections::findCycleAtoms(cds::Atom* const starterAtom)
     {
         for (glygraph::Node<Atom>* currAtom : currCyclePair.first)
         {
-            cycleAtoms.push_back(currAtom->getDeriviedClass());
+            cycleAtoms.push_back(currAtom->getDerivedClass());
         }
     }
     return cycleAtoms;
@@ -93,9 +93,9 @@ Atom* cdsSelections::guessAnomericAtomByInternalNeighbors(const std::vector<cds:
     cds::Atom* cycleOxygen        = nullptr;
     for (auto& cycleAtom : cycleAtoms)
     {
-        if (cycleAtom->getDeriviedClass()->getElement() == "O")
+        if (cycleAtom->getDerivedClass()->getElement() == "O")
         {
-            cycleOxygen = cycleAtom->getDeriviedClass();
+            cycleOxygen = cycleAtom->getDerivedClass();
         }
     }
     if (cycleOxygen == nullptr)
