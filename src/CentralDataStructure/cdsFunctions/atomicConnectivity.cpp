@@ -2,7 +2,10 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/proteinBonding.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <vector>
@@ -74,6 +77,60 @@ namespace
         return;
     }
 } // namespace
+
+std::vector<std::pair<int, int>> cds::atomPairNumbers(const std::vector<std::pair<Atom*, Atom*>>& pairs)
+{
+    std::vector<std::pair<int, int>> result;
+    result.reserve(pairs.size());
+    for (auto& pair : pairs)
+    {
+        result.push_back({pair.first->getNumber(), pair.second->getNumber()});
+    }
+    return result;
+}
+
+std::vector<std::pair<cds::Atom*, cds::Atom*>> cds::atomPairsConnectedToOtherResidues(std::vector<Atom*> atoms)
+{
+    std::vector<std::pair<Atom*, Atom*>> foundAtoms;
+    for (auto& atom : atoms)
+    { // only "child" neighbors or we find same pair twice
+        for (auto& neighbor : atom->getChildren())
+        { // check if neighbor is not one of the atoms in this residue.
+            if (!codeUtils::contains(atoms, neighbor))
+            {
+                foundAtoms.push_back({atom, neighbor});
+            }
+        }
+    }
+    return foundAtoms;
+}
+
+std::vector<std::pair<cds::Atom*, cds::Atom*>> cds::atomPairsConnectedToOtherResidues(std::vector<Residue*> residues)
+{
+    std::vector<std::pair<Atom*, Atom*>> foundAtoms;
+    for (auto& residue : residues)
+    {
+        auto newPairs = atomPairsConnectedToOtherResidues(residue->getAtoms());
+        codeUtils::insertInto(foundAtoms, newPairs);
+    }
+    return foundAtoms;
+}
+
+std::vector<cds::Atom*> cds::atomsConnectedToOtherResidues(std::vector<Atom*> atoms)
+{
+    std::vector<Atom*> foundAtoms;
+    for (auto& atom : atoms)
+    {
+        for (auto& neighbor : atom->getNeighbors())
+        { // check if neighbor is not one of the atoms in this residue.
+            if (!codeUtils::contains(atoms, neighbor))
+            {
+                foundAtoms.push_back(atom);
+            }
+        }
+    }
+    return foundAtoms;
+}
 
 void cds::setIntraConnectivity(std::vector<cds::Residue*> residues)
 {

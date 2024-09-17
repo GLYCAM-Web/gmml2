@@ -141,12 +141,6 @@ Atom* Residue::addAtomToFront(std::unique_ptr<Atom> myAtom)
     return atoms_.front().get();
 }
 
-// void Residue::addAtom(Atom* myAtom)
-//{
-//     atoms_.push_back(std::make_unique<Atom>(myAtom));
-//     return;
-// }
-
 bool Residue::moveAtomToLastPosition(const Atom* atom)
 { // Passing in a raw ptr, but the vector is unique_ptr so gotta use i->get() to compare raws.
     auto i = this->FindPositionOfAtom(atom); // auto makes my life easier
@@ -211,40 +205,6 @@ bool Residue::contains(const Atom* queryAtom) const
 {
     std::vector<Atom*> atoms = this->getAtoms();
     return (std::find(atoms.begin(), atoms.end(), queryAtom) != atoms.end());
-}
-
-std::vector<const Atom*> Residue::getAtomsConnectedToOtherResidues() const
-{
-    std::vector<const Atom*> foundAtoms;
-    std::vector<Atom*> residueAtoms = this->getAtoms();
-    for (auto& atom : residueAtoms)
-    {
-        for (auto& neighbor : atom->getNeighbors())
-        { // check if neighbor is not one of the atoms in this residue.
-            if (!codeUtils::contains(residueAtoms, neighbor))
-            {
-                foundAtoms.push_back(atom);
-            }
-        }
-    }
-    return foundAtoms;
-}
-
-void Residue::findAtomPairsConnectedToOtherResidues(std::vector<std::pair<const Atom*, const Atom*>>& foundAtoms) const
-{
-    // std::vector<std::pair<const Atom*, const Atom*>> foundAtoms;
-    std::vector<Atom*> residueAtoms = this->getAtoms();
-    for (auto& atom : residueAtoms)
-    { // only "child" neighbors or we find same pair twice
-        for (auto& neighbor : atom->getChildren())
-        { // check if neighbor is not one of the atoms in this residue.
-            if (!codeUtils::contains(residueAtoms, neighbor))
-            {
-                foundAtoms.push_back({atom, neighbor});
-            }
-        }
-    }
-    return;
 }
 
 void Residue::MakeDeoxy(const std::string oxygenNumber)

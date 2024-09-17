@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
@@ -180,10 +181,16 @@ void Molecule::renumberResidues(int newStartNumber)
 //////////////////////////////////////////////////////////
 void Molecule::WritePdb(std::ostream& stream) const
 {
-    cds::writeMoleculeToPdb(stream, this->getResidues());
+    auto residues     = this->getResidues();
+    auto types        = residueTypes(residues);
+    auto ter          = residueTER(types);
+    auto residueAtoms = residuePdbAtoms(residues);
+    cds::writeMoleculeToPdb(stream, ter, residueAtoms);
     using cds::ResidueType; // to help readability of the Sugar, etc below
-    cds::writeConectCards(
-        stream, cdsSelections::selectResiduesByType(this->getResidues(), {Sugar, Derivative, Aglycone, Undefined}));
+    auto selectedResidues  = cdsSelections::selectResiduesByType(residues, {Sugar, Derivative, Aglycone, Undefined});
+    auto connectedAtoms    = atomPairsConnectedToOtherResidues(selectedResidues);
+    auto connectionNumbers = atomPairNumbers(connectedAtoms);
+    cds::writeConectCards(stream, connectionNumbers);
 }
 
 void Molecule::WriteOff(std::ostream& stream)

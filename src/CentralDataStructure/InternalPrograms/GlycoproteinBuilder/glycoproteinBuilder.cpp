@@ -297,7 +297,9 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         std::ofstream outFileStream;
         outFileStream.open(fileName.c_str());
         cds::writeAssemblyToPdb(outFileStream, molecules);
-        cds::writeConectCards(outFileStream, residues);
+        auto connectedAtoms    = cds::atomPairsConnectedToOtherResidues(residues);
+        auto connectionNumbers = atomPairNumbers(connectedAtoms);
+        cds::writeConectCards(outFileStream, connectionNumbers);
         outFileStream.close();
         return;
     };

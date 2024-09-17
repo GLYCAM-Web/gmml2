@@ -1,110 +1,165 @@
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include <iomanip> // setw
+
+cds::AtomPdbData cds::toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName,
+                                    int residueNumber, std::string chainId, std::string insertionCode, double occupancy,
+                                    double temperatureFactor)
+{
+    std::string residueAlternativeLocation = "";
+    return {atom->coordinate(),
+            atom->getNumber(),
+            atom->getName(),
+            atom->getElement(),
+            recordName,
+            residueAlternativeLocation,
+            residueNumber,
+            residueName.substr(0, 3),
+            chainId,
+            insertionCode,
+            occupancy,
+            temperatureFactor};
+}
+
+cds::AtomPdbData cds::toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName,
+                                    int residueNumber)
+{
+    return toAtomPdbData(atom, recordName, residueName, residueNumber, "", "", 1.0, 0.0);
+}
+
+std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
+{
+    std::vector<bool> result;
+    result.reserve(types.size());
+    for (size_t n = 0; n < types.size(); n++)
+    {
+        auto& type   = types[n];
+        size_t next  = n + 1;
+        bool isSugar = type == cds::ResidueType::Undefined || type == cds::ResidueType::Sugar ||
+                       type == cds::ResidueType::Derivative || type == cds::ResidueType::Aglycone;
+        bool nextIsCapping           = next < types.size() && types[next] == cds::ResidueType::ProteinCappingGroup;
+        bool betweenTwoCappingGroups = (type == cds::ResidueType::ProteinCappingGroup) && nextIsCapping;
+        bool isLast                  = next == types.size();
+        bool isProtein               = type == cds::ResidueType::Protein;
+        result.push_back(isSugar || betweenTwoCappingGroups || (isLast && isProtein));
+    }
+    return result;
+}
+
+std::vector<cds::AtomPdbData> cds::residuePdbAtoms(Residue* residue)
+{
+    auto number = residue->getNumber();
+    auto name   = residue->getName();
+    std::vector<AtomPdbData> atomData;
+    auto atoms = residue->getAtoms();
+    atomData.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        atomData.push_back(toAtomPdbData(atom, "ATOM", name, number));
+    }
+    return atomData;
+}
+
+std::vector<std::vector<cds::AtomPdbData>> cds::residuePdbAtoms(std::vector<Residue*>& residues)
+{
+    std::vector<std::vector<AtomPdbData>> result;
+    result.reserve(residues.size());
+    for (auto& residue : residues)
+    {
+        result.push_back(residuePdbAtoms(residue));
+    }
+    return result;
+}
 
 void cds::writeAssemblyToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules)
 {
     for (auto& molecule : molecules)
     {
-        cds::writeMoleculeToPdb(stream, molecule->getResidues());
+        auto residues = molecule->getResidues();
+        auto types    = residueTypes(residues);
+        auto ter      = residueTER(types);
+        auto atoms    = residuePdbAtoms(residues);
+        cds::writeMoleculeToPdb(stream, ter, atoms);
     }
 }
 
 void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules)
 {
-    unsigned int coordinateSets = molecules.at(0)->getAtoms().at(0)->getNumberOfCoordinateSets();
-    for (unsigned int modelCount = 1; modelCount <= coordinateSets; modelCount++)
+    size_t modelCount = molecules.at(0)->getAtoms().at(0)->getNumberOfCoordinateSets();
+    for (size_t coordinateSet = 0; coordinateSet < modelCount; coordinateSet++)
     {
-        stream << "MODEL " << std::right << std::setw(8) << modelCount << "\n";
+        stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
         for (auto& molecule : molecules)
         {
-            cds::writeMoleculeToPdb(stream, molecule->getResidues(), (modelCount - 1));
+            auto residues = molecule->getResidues();
+            for (auto& atom : molecule->getAtoms())
+            {
+                atom->setCurrentCoordinate(coordinateSet);
+            }
+            auto types = residueTypes(residues);
+            auto ter   = residueTER(types);
+            auto atoms = residuePdbAtoms(residues);
+            cds::writeMoleculeToPdb(stream, ter, atoms);
         }
         stream << "ENDMDL\n";
     }
 }
 
-void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<cds::Residue*> residues,
-                             unsigned int coordinateSetNumber)
+void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<bool>& residueTER,
+                             const std::vector<std::vector<AtomPdbData>>& residueAtoms)
 {
-    for (auto it = residues.begin(), next = it; it != residues.end(); ++it, next = it)
+    for (size_t n = 0; n < residueAtoms.size(); n++)
     {
-        cds::writeResidueToPdb(stream, *it, "ATOM", coordinateSetNumber);
-        if ((*it)->GetType() == cds::ResidueType::Undefined || (*it)->GetType() == cds::ResidueType::Sugar ||
-            (*it)->GetType() == cds::ResidueType::Derivative || (*it)->GetType() == cds::ResidueType::Aglycone)
-        { // I want TER between all sugar residues. Connectivity defined by CONECT.
-            stream << "TER\n";
-        }
-        ++next;
-        if ((*it)->GetType() == cds::ResidueType::ProteinCappingGroup)
-        { // We are in between two capping groups
-            if (next != residues.end() && (*next)->GetType() == cds::ResidueType::ProteinCappingGroup)
-            {
-                stream << "TER\n";
-            }
-        }
-        if (next == residues.end() && (*it)->GetType() == cds::ResidueType::Protein)
-        { // Last residue is protein:
+        cds::writeResidueToPdb(stream, residueAtoms[n]);
+        if (residueTER[n])
+        {
             stream << "TER\n";
         }
     }
 }
 
-void cds::writeResidueToPdb(std::ostream& stream, const cds::Residue* residue, const std::string recordName,
-                            unsigned int coordinateSetNumber)
+void cds::writeResidueToPdb(std::ostream& stream, const std::vector<AtomPdbData>& atoms)
 {
-    for (auto& atom : residue->getAtoms())
+    for (auto& atom : atoms)
     {
-        atom->setCurrentCoordinate(coordinateSetNumber);
-        cds::writeAtomToPdb(stream, atom, recordName, residue->getName(), residue->getNumber());
+        cds::writeAtomToPdb(stream, atom);
     }
 }
 
 // Used by the PdbAtom class and cds classes. Thus what it takes as input is a bit odd.
-void cds::writeAtomToPdb(std::ostream& stream, const cds::Atom* atom, const std::string recordName,
-                         const std::string residueName, const int residueNumber, const std::string chainId,
-                         const std::string insertionCode, const double occupancy, const double temperatureFactor)
+void cds::writeAtomToPdb(std::ostream& stream, const AtomPdbData& data)
 {
-    auto coord                             = atom->coordinate();
-    std::string residueAlternativeLocation = ""; // If we ever need this to be anything else, change this function.
-    stream << std::left << std::setw(6) << recordName;
-    stream << std::right << std::setw(5) << atom->getNumber() << std::left << std::setw(1) << " ";
-    stream << std::left << std::setw(4) << atom->getName();
-    stream << std::left << std::setw(1) << residueAlternativeLocation;
-    stream << std::right << std::setw(3) << residueName.substr(0, 3) << std::left << std::setw(1) << " ";
-    stream << std::left << std::setw(1) << chainId;
-    stream << std::right << std::setw(4) << residueNumber;
-    stream << std::left << std::setw(1) << insertionCode << std::left << std::setw(3) << " ";
+    auto coord = data.coordinate;
+    stream << std::left << std::setw(6) << data.recordName;
+    stream << std::right << std::setw(5) << data.number << std::left << std::setw(1) << " ";
+    stream << std::left << std::setw(4) << data.name;
+    stream << std::left << std::setw(1) << data.residueAlternativeLocation;
+    stream << std::right << std::setw(3) << data.residueName << std::left << std::setw(1) << " ";
+    stream << std::left << std::setw(1) << data.chainId;
+    stream << std::right << std::setw(4) << data.residueNumber;
+    stream << std::left << std::setw(1) << data.insertionCode << std::left << std::setw(3) << " ";
     stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetX();
     stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetY();
     stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetZ();
-    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << occupancy;
-    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << temperatureFactor << std::left
+    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << data.occupancy;
+    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << data.temperatureFactor << std::left
            << std::setw(10) << " ";
-    stream << std::right << std::setw(2) << atom->getElement();
-    //    We probably don't want to write charges into pdb file. Width allowed is 2.
-    //    if (atom->getCharge() != codeUtils::dNotSet)
-    //    {
-    //        stream << std::left << std::setw(2) << std::setprecision(1) << atom->getCharge();
-    //    }
+    stream << std::right << std::setw(2) << data.element;
+    //    We probably don't want to write charges into pdb file. Width allowed is 2
     stream << std::endl;
     return;
 }
 
-void cds::writeConectCards(std::ostream& stream, const std::vector<cds::Residue*> residues)
+void cds::writeConectCards(std::ostream& stream, std::vector<std::pair<int, int>> connectedAtomNumbers)
 { // These are only written for atoms connecting residues. The numbers overflow/truncate when longer than 5, but the
   // format is what the format is.
-    std::vector<std::pair<const Atom*, const Atom*>> atomsPairsConnectedToOtherResidues;
-    for (auto& residue : residues)
+    for (auto& atomPair : connectedAtomNumbers)
     {
-        residue->findAtomPairsConnectedToOtherResidues(atomsPairsConnectedToOtherResidues);
-    }
-    //    auto it = std::unique(atomsPairsConnectedToOtherResidues.begin(),atomsPairsConnectedToOtherResidues.end() );
-    //    atomsPairsConnectedToOtherResidues.resize(std::distance(atomsPairsConnectedToOtherResidues.begin(), it));
-    for (auto& atomPair : atomsPairsConnectedToOtherResidues)
-    {
-        stream << "CONECT" << std::right << std::setw(5) << atomPair.first->getNumber() << std::right << std::setw(5)
-               << atomPair.second->getNumber() << "\n";
-        stream << "CONECT" << std::right << std::setw(5) << atomPair.second->getNumber() << std::right << std::setw(5)
-               << atomPair.first->getNumber() << "\n";
+        stream << "CONECT" << std::right << std::setw(5) << atomPair.first << std::right << std::setw(5)
+               << atomPair.second << "\n";
+        stream << "CONECT" << std::right << std::setw(5) << atomPair.second << std::right << std::setw(5)
+               << atomPair.first << "\n";
     }
 }

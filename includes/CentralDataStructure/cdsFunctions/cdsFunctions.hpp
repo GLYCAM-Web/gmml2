@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 
 #include <array>
 #include <vector>
@@ -18,6 +19,8 @@ namespace cds
         return;
     }
 
+    std::vector<int> atomNumbers(const std::vector<Atom*>& atoms);
+    std::vector<ResidueType> residueTypes(const std::vector<Residue*>& residues);
     std::array<Atom*, 2> bondedAtomPair(std::vector<Atom*>& atomsA, std::vector<Atom*>& atomsB);
     std::vector<bool> atomsBondedTo(Atom* origin, std::vector<Atom*>& atoms);
 } // namespace cds

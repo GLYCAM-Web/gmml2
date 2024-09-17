@@ -120,9 +120,6 @@ namespace cds
         Atom* FindAtom(const std::string queryName) const;
         Atom* FindAtom(const int& queryNumber) const;
         bool contains(const Atom* queryAtom) const;
-        std::vector<const Atom*> getAtomsConnectedToOtherResidues() const;
-        void findAtomPairsConnectedToOtherResidues(std::vector<std::pair<const Atom*, const Atom*>>& foundAtoms) const;
-        //        std::vector<std::pair<const Atom*, const Atom*>> getAtomPairsConnectedToOtherResidues() const;
         void MakeDeoxy(const std::string oxygenNumber);
         ResidueType determineType(const std::string& residueName);
         //////////////////////////////////////////////////////////

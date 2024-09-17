@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 
@@ -132,20 +133,21 @@ void cds::WriteOffFileUnit(const std::vector<cds::Residue*>& residues, std::ostr
            << ".unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x" << std::endl;
     for (auto& residue : residues)
     {
-        auto atomsConnectedToOtherResidues = residue->getAtomsConnectedToOtherResidues();
+        auto atomsConnectedToOtherResidues = cds::atomsConnectedToOtherResidues(residue->getAtoms());
+        auto atomNumbers                   = cds::atomNumbers(atomsConnectedToOtherResidues);
         // Deal with residues that don't have a tail/head in reality:
-        if (atomsConnectedToOtherResidues.size() == 1)
+        if (atomNumbers.size() == 1)
         { // Repeating the same atom changes the tree structure in the parm7 file. Not sure anything uses that. Old gmml
           // code repeats so doing that.
             // For reducing terminal old code puts a 1 2 0 0 0 0. So not repeat. Changing to 2 2 0 0 0 0 causes first
             // atom not to be M (main). Might be an issue let's see.
-            atomsConnectedToOtherResidues.push_back(atomsConnectedToOtherResidues.front());
+            atomNumbers.push_back(atomNumbers.front());
         }
-        for (auto& atom : atomsConnectedToOtherResidues)
+        for (auto& number : atomNumbers)
         {
-            stream << " " << atom->getNumber();
+            stream << " " << number;
         }
-        int columnsWithZero = 6 - atomsConnectedToOtherResidues.size();
+        int columnsWithZero = 6 - atomNumbers.size();
         for (int i = 0; i < columnsWithZero; ++i)
         {
             stream << " "

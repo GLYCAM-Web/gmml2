@@ -9,42 +9,6 @@
 #include <iostream>
 #include <fstream>
 
-// For reading a single prep file and generating the combos.
-// int main(int argc, char* argv[])
-//{
-//    if (argc != 3)
-//    {
-//        std::cout << "Usage: " << argv[0] << " inputPrepFile outLibFileName\n";
-//        std::cout << "Exmpl: " << argv[0] << " ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep myLib.lib\n";
-//        std::exit(1);
-//    }
-//    std::string inputFile                           = argv[1];
-//    std::string outputFile                          = argv[2];
-//    std::cout << "Reading prep file\n";
-//    prep::PrepFile glycamPrepFile(inputFile);
-//    std::cout << "Reading complete\n";
-//    std::vector<cds::Residue*> allTheResidues;
-//    allTheResidues.reserve(59);
-//    for (auto& residue : glycamPrepFile.getResidues())
-//    {
-//        std::cout << "Generating those combos from " << residue->getName() << std::endl;
-//        residueCombinator::generateResidueCombinations(allTheResidues, residue);
-//        for(auto & combiRes : allTheResidues)
-//        {
-//            std::ofstream outFileStream;
-//            std::string fileName = combiRes->getName() + ".pdb";
-//            outFileStream.open(fileName.c_str());
-//            cds::writeResidueToPdb(outFileStream, combiRes);
-//            outFileStream.close();
-//        }
-//    }
-//    std::cout << "About to write" << std::endl;
-//    std::ofstream outFileStream;
-//    outFileStream.open(outputFile.c_str());
-//    cds::WriteResiduesToOffFile(allTheResidues, outFileStream);
-//    outFileStream.close();
-//}
-
 // For loading select residues from glycam06.prep files
 int main(int argc, char* argv[])
 {
@@ -83,23 +47,10 @@ int main(int argc, char* argv[])
         // allTheResidues.reserve(residuesToLoadFromPrep.size() * 20);
         for (auto& residue : glycamPrepFile.getResidues())
         {
-            // std::ofstream outFileStream;
-            // std::string fileName = residue->getName() + "_original.pdb";
-            // outFileStream.open(fileName.c_str());
-            // cds::writeResidueToPdb(outFileStream, residue);
-            // outFileStream.close();
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
             residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
         }
     }
-    // for (auto& combiRes : allGeneratedResidues)
-    // {
-    //     std::ofstream outFileStream;
-    //     std::string fileName = combiRes->getName() + ".pdb";
-    //     outFileStream.open(fileName.c_str());
-    //     cds::writeResidueToPdb(outFileStream, combiRes);
-    //     outFileStream.close();
-    // }
 
     // Note "CA2" was in the prep file, but Rob said delete. "Perhaps we had it before Amber did"
     // "4YP" is the same as 4YnP, which I'll generate from 0YnP anyway
@@ -129,11 +80,6 @@ int main(int argc, char* argv[])
     for (auto& specialResidue : glycamPrepFile2.getResidues())
     {
         allGeneratedResidues.push_back(specialResidue);
-        //        std::ofstream outFileStream;
-        //        std::string fileName = specialResidue->getName() + ".pdb";
-        //        outFileStream.open(fileName.c_str());
-        //        cds::writeResidueToPdb(outFileStream, specialResidue);
-        //        outFileStream.close();
     }
 
     std::ofstream outFileStream;

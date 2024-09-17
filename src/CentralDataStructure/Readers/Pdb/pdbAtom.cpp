@@ -247,6 +247,6 @@ void PdbAtom::Print(std::ostream& out) const
 void PdbAtom::Write(std::ostream& stream, const std::string residueName, const unsigned int residueNumber,
                     const std::string chainId, const std::string insertionCode) const
 {
-    cds::writeAtomToPdb(stream, this, this->GetRecordName(), residueName, residueNumber, chainId, insertionCode,
-                        this->GetOccupancy(), this->GetTemperatureFactor());
+    cds::writeAtomToPdb(stream, cds::toAtomPdbData(this, GetRecordName(), residueName, residueNumber, chainId,
+                                                   insertionCode, GetOccupancy(), GetTemperatureFactor()));
 }
