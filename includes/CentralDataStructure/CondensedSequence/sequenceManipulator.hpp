@@ -10,13 +10,13 @@
 
 namespace cdsCondensedSequence
 {
-    class SequenceManipulator : public SequenceParser
+    class SequenceManipulator : public cds::Molecule
     {
       public:
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        SequenceManipulator(std::string inputSequence) : SequenceParser {inputSequence} {};
+        SequenceManipulator(std::string inputSequence);
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //

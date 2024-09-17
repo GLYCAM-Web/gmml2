@@ -9,10 +9,18 @@
 using cdsCondensedSequence::ParsedResidue;
 using cdsCondensedSequence::SequenceManipulator;
 
-bool file_exists(const char* filename)
+namespace
 {
-    struct stat buffer;
-    return (stat(filename, &buffer) == 0);
+    bool file_exists(const char* filename)
+    {
+        struct stat buffer;
+        return (stat(filename, &buffer) == 0);
+    }
+} // namespace
+
+SequenceManipulator::SequenceManipulator(std::string inputSequence) : cds::Molecule()
+{
+    parseSequence(this, inputSequence);
 }
 
 std::string SequenceManipulator::ReorderSequence()
