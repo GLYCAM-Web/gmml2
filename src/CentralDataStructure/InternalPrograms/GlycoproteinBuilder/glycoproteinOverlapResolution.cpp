@@ -11,6 +11,8 @@
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
+#include <sstream>
+
 namespace
 {
     using GlycamMetadata::DihedralAngleData;

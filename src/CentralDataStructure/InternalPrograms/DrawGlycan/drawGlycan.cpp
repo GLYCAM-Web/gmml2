@@ -1,13 +1,14 @@
 #include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 
 #include <string>
 
-using cdsCondensedSequence::SequenceManipulator;
 using CondensedSequence::DrawGlycan;
 
 DrawGlycan::DrawGlycan(cdsCondensedSequence::GraphVizDotConfig configs, std::string condensedSequence)
 {
-    SequenceManipulator manipulator(condensedSequence);
-    manipulator.PrintGraphViz(configs);
+    cds::Molecule molecule;
+    cdsCondensedSequence::parseSequence(&molecule, condensedSequence);
+    cdsCondensedSequence::printGraphViz(configs, molecule.getResidues());
 }

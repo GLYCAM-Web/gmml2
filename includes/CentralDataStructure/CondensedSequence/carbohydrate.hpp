@@ -1,11 +1,11 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 
-#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 #include <vector>
 #include <string>
 
@@ -19,7 +19,7 @@ namespace cdsCondensedSequence
     };
     const cds::AngleSearchSettings defaultSearchSettings = {2.0, defaultSearchAngles};
 
-    class Carbohydrate : public SequenceManipulator
+    class Carbohydrate : public cds::Molecule
     {
       public:
         //////////////////////////////////////////////////////////

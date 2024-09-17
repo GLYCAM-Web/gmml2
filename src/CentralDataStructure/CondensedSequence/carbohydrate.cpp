@@ -1,4 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
@@ -66,11 +68,12 @@ namespace
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inputSequence}
+Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
 {
+    parseSequence(this, inputSequence);
     this->setName("CONDENSEDSEQUENCE");
-    this->ReorderSequence(); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
-                             // Gala1-3[Fuca1-2]Glca. Same 3D structure.
+    reorderSequence(this); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
+                           // Gala1-3[Fuca1-2]Glca. Same 3D structure.
     cdsParameters::ParameterManager parameterManager(this->GetGlycamNamesOfResidues());
     // prep::PrepFile glycamPrepFileSelect(prepFilePath, this->GetGlycamNamesOfResidues());
     for (auto& cdsResidue : this->getResidues())
@@ -93,11 +96,12 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : SequenceManipulator {inp
         }
     }
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
-    this->SetIndexByConnectivity(); // For reporting residue index numbers to the user
+    setIndexByConnectivity(getResidues()); // For reporting residue index numbers to the user
     cds::serializeNumbers(this->getAtoms());
     auto searchSettings = defaultSearchSettings;
     // Set 3D structure
-    this->DepthFirstSetConnectivityAndGeometry(this->GetTerminal(), searchSettings); // recurve start with terminal
+    this->DepthFirstSetConnectivityAndGeometry(terminalResidue(getResidues()),
+                                               searchSettings); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.
