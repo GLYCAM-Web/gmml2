@@ -469,15 +469,6 @@ std::string Carbohydrate::GetGlycamResidueName(ParsedResidue* residue) const
     return code;
 }
 
-void Carbohydrate::SetDefaultShapeUsingMetadata()
-{
-    for (auto& linkage : glycosidicLinkages_)
-    {
-        cds::setShapeToPreference(linkage, cds::defaultShapePreference(linkage));
-    }
-    return;
-}
-
 void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
 {
     for (auto& linkage : glycosidicLinkages_)
