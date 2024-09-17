@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
@@ -20,14 +21,15 @@ int main(int argc, char* argv[])
     // requirement: a chain ID for every single ATOM entry, and all ligand atoms should be put in a single residue.
     pdb::PdbFile pdbFile(argv[1]); // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
                                    // every molecule to have any chain ID you can do:
-    for (auto& residue : pdbFile.getResidues())
+    auto residues = pdb::getResidues(pdbFile.getAssemblies());
+    for (auto& residue : residues)
     {
         static_cast<pdb::PdbResidue*>(residue)->setChainId("Y");
         // std::cout << "Set chain of " << residue->getStringId() << "\n";
     }
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:
     std::vector<cds::Residue*> ligandResidues =
-        cdsSelections::selectResiduesByType(pdbFile.getResidues(), cds::ResidueType::Undefined);
+        cdsSelections::selectResiduesByType(residues, cds::ResidueType::Undefined);
     if (ligandResidues.empty())
     {
         std::cout << "No ligand residues found in input file\n";
@@ -44,7 +46,7 @@ int main(int argc, char* argv[])
     // ************************************************************************ //
     // Separate thing showing how to read/write PDB files as "trajectories/frames"
     pdb::PdbFile pdbFileTraj(argv[1], pdb::InputType::modelsAsCoordinates);
-    std::vector<cds::Residue*> myResidues = pdbFileTraj.getResidues();
+    std::vector<cds::Residue*> myResidues = pdb::getResidues(pdbFileTraj.getAssemblies());
     // somehow you specify number in inputs. e.g. A_405 chain A, residue 405.
     cds::Residue* queryResidue            = codeUtils::findElementWithNumber(myResidues, 5);
     double distance                       = 12.345; // inputs

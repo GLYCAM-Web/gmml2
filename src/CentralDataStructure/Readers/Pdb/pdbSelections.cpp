@@ -1,15 +1,38 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
 
+#include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
+#include "includes/CodeUtils/containers.hpp"
+
 using pdb::residueSelector;
+
+std::vector<cds::Atom*> pdb::getAtoms(const std::vector<PdbModel>& models)
+{
+    std::vector<cds::Atom*> result;
+    for (auto& model : models)
+    {
+        codeUtils::insertInto(result, model.getAtoms());
+    }
+    return result;
+}
+
+std::vector<cds::Residue*> pdb::getResidues(const std::vector<PdbModel>& models)
+{
+    std::vector<cds::Residue*> result;
+    for (auto& model : models)
+    {
+        codeUtils::insertInto(result, model.getResidues());
+    }
+    return result;
+}
 
 pdb::PdbResidue* pdb::residueSelector(const PdbFile& pdbFile, const pdb::ResidueId& residueId, const int modelNumber)
 {
     for (auto& model : pdbFile.getAssemblies())
     {
         // std::cout << model->getNumber() << ":" << modelNumber << std::endl;
-        if (model->getNumber() == modelNumber)
+        if (model.getNumber() == modelNumber)
         {
-            return pdb::residueSelector(model->getResidues(), residueId);
+            return pdb::residueSelector(model.getResidues(), residueId);
         }
     }
     return nullptr;

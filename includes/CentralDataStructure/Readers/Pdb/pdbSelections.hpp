@@ -7,6 +7,8 @@
 
 namespace pdb
 {
+    std::vector<cds::Atom*> getAtoms(const std::vector<PdbModel>& models);
+    std::vector<cds::Residue*> getResidues(const std::vector<PdbModel>& models);
     PdbResidue* residueSelector(const PdbFile& pdbFile, const pdb::ResidueId& residueId, const int modelNumber = 0);
     PdbResidue* residueSelector(std::vector<cds::Residue*> residues, const pdb::ResidueId& queryId);
 } // namespace pdb

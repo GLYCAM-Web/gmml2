@@ -23,15 +23,15 @@ int main(int argc, char* argv[])
                                                    // ToDo: Why is there a const blockage in Ensemble?
     {
         std::cout << "Bonding atoms by distance for assembly" << std::endl;
-        cds::bondAtomsByDistance(assembly->getAtoms());
+        cds::bondAtomsByDistance(assembly.getAtoms());
         // OFF molecule
         try
         {
             std::ofstream outFileStream;
             outFileStream.open("outputOffFile.off");
             std::string outFileName = "Assembly";
-            auto residues           = assembly->getResidues();
-            auto atoms              = assembly->getAtoms();
+            auto residues           = assembly.getResidues();
+            auto atoms              = assembly.getAtoms();
             cds::serializeNumbers(atoms);
             cds::serializeNumbers(residues);
             cds::WriteToOffFile(residues, outFileStream, outFileName.c_str());

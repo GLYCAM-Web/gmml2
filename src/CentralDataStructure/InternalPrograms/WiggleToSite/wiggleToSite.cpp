@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp" //select
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
@@ -47,8 +48,8 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
     this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed");
     this->determineWiggleLinkages(superimposeMe, wiggleMe);
-    std::vector<cds::Atom*> substrateWithoutSuperimpositionAtoms =
-        codeUtils::findElementsNotInVector(this->getSubstrate().getAtoms(), superimpositionTarget->getAtoms());
+    std::vector<cds::Atom*> substrateWithoutSuperimpositionAtoms = codeUtils::findElementsNotInVector(
+        pdb::getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
     std::vector<cds::Atom*> substrateAtomsToAvoidOverlappingWith =
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
     this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;

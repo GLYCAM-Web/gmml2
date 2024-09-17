@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
     pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(options);
-    cds::Assembly* firstModel           = pdbFile.getAssemblies().front();
+    cds::Assembly* firstModel           = &pdbFile.mutableAssemblies().front();
     for (auto& molecule : firstModel->getMolecules())
     {
         for (auto& residue : molecule->getResidues())

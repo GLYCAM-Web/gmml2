@@ -157,18 +157,18 @@ GlycoproteinBuilder::GlycoproteinBuilder(glycoprotein::GlycoproteinBuilderInputs
 {
     try
     {
-        pdb::PdbFile pdbFile(inputStruct.substrateFileName);
+        pdbFile = pdb::PdbFile(inputStruct.substrateFileName);
         if (!inputStruct.skipMDPrep)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
             pdbFile.PreProcess(preprocessingOptions);
         }
-        glycoprotein_                                = std::move(*(pdbFile.getAssemblies().front()));
-        std::vector<cds::Residue*> gpInitialResidues = glycoprotein_.getResidues();
+        glycoprotein_                                = &pdbFile.mutableAssemblies().front();
+        std::vector<cds::Residue*> gpInitialResidues = glycoprotein_->getResidues();
         cds::setIntraConnectivity(gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
-        proteinResidues_ = glycoprotein_.getResidues();
-        glycosites_      = createGlycosites(&glycoprotein_, inputStruct.glycositesInputVector);
+        proteinResidues_ = glycoprotein_->getResidues();
+        glycosites_      = createGlycosites(glycoprotein_, inputStruct.glycositesInputVector);
         cds::setInterConnectivity(gpInitialResidues); // do the inter here, so that the whole protein isn't included as
                                                       // overlap residues in the glycan linkages.
     }

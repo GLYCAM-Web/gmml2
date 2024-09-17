@@ -50,7 +50,7 @@ void PdbFile::ParseInFileStream(std::ifstream& pdbFileStream, const InputType pd
         {
             std::stringstream recordSection =
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
-            this->addAssembly(std::make_unique<PdbModel>(recordSection));
+            assemblies_.emplace_back(PdbModel(recordSection));
         }
         else if (recordName == "HEADER")
         {
@@ -190,16 +190,15 @@ pdb::PreprocessorInformation PdbFile::PreProcess(PreprocessorOptions inputOption
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocesssing has begun");
     pdb::PreprocessorInformation ppInfo;
-    cdsParameters::ParameterManager parmManager;    // ToDo pass this into preProcessMissingUnrecognized
-    for (auto& cdsAssembly : this->getAssemblies()) // Now we do all, but maybe user can select at some point.
+    cdsParameters::ParameterManager parmManager; // ToDo pass this into preProcessMissingUnrecognized
+    for (auto& model : mutableAssemblies())      // Now we do all, but maybe user can select at some point.
     {
-        PdbModel* model = static_cast<PdbModel*>(cdsAssembly);
-        model->preProcessCysResidues(ppInfo);
-        model->preProcessHisResidues(ppInfo, inputOptions);
-        model->preProcessChainTerminals(ppInfo, inputOptions);
-        model->preProcessGapsUsingDistance(ppInfo, inputOptions);
-        model->preProcessMissingUnrecognized(ppInfo, parmManager);
-        parmManager.setAtomChargesForResidues(model->getResidues());
+        model.preProcessCysResidues(ppInfo);
+        model.preProcessHisResidues(ppInfo, inputOptions);
+        model.preProcessChainTerminals(ppInfo, inputOptions);
+        model.preProcessGapsUsingDistance(ppInfo, inputOptions);
+        model.preProcessMissingUnrecognized(ppInfo, parmManager);
+        parmManager.setAtomChargesForResidues(model.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing completed");
     return ppInfo;
@@ -233,9 +232,9 @@ void PdbFile::Write(std::ostream& out) const
     {
         dbref.Write(out);
     }
-    for (auto& model : this->getAssemblies())
+    for (auto& model : getAssemblies())
     {
-        static_cast<PdbModel*>(model)->Write(out);
+        model.Write(out);
     }
     return;
 }

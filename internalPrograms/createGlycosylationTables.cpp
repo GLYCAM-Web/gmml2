@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,8 +16,9 @@ int main(int argc, char* argv[])
     }
     std::string inputFileName = argv[1];
     pdb::PdbFile inputFile(inputFileName);
-    cds::bondAtomsAndResiduesByDistance(inputFile.getResidues());
-    glycoproteinBuilder::GlycosylationSiteFinder siteFinder(inputFile.getResidues());
+    auto residues = pdb::getResidues(inputFile.getAssemblies());
+    cds::bondAtomsAndResiduesByDistance(residues);
+    glycoproteinBuilder::GlycosylationSiteFinder siteFinder(residues);
     std::cout << siteFinder.PrintTable();
     // std::vector<GlycosylationSiteInfo> tableInfo = siteFinder.GetTable();
     //    for (auto &tableElement : tableInfo)
