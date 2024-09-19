@@ -17,7 +17,7 @@ namespace cdsCondensedSequence
         double increment = 1.0;
         return cds::evenlySpacedAngles(preference, deviation, increment, metadata);
     };
-    const cds::AngleSearchSettings defaultSearchSettings = {2.0, defaultSearchAngles};
+    const cds::AngleSearchSettings defaultSearchSettings = {1.0, defaultSearchAngles};
 
     class Carbohydrate : public cds::Molecule
     {
