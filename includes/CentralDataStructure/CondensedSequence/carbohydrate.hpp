@@ -15,7 +15,8 @@ namespace cdsCondensedSequence
         [](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
     {
         double increment = 1.0;
-        return cds::evenlySpacedAngles(preference, deviation, increment, metadata);
+        return cds::evenlySpacedAngles(preference, deviation * metadata.lower_deviation_,
+                                       deviation * metadata.upper_deviation_, increment);
     };
     const cds::AngleSearchSettings defaultSearchSettings = {1.0, defaultSearchAngles};
 

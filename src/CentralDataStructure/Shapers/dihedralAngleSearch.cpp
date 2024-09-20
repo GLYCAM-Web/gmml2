@@ -335,15 +335,15 @@ void cds::simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<Rot
     }
 }
 
-std::vector<double> cds::evenlySpacedAngles(double preference, double deviation, double increment,
-                                            const DihedralAngleData& metadata)
+std::vector<double> cds::evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
+                                            double increment)
 {
     auto closerToPreference = [&preference](double a, double b)
     {
         return std::abs(a - preference) < std::abs(b - preference);
     };
-    auto lowerRange = evenlySpaced(preference - deviation * metadata.lower_deviation_, preference, increment);
-    auto upperRange = evenlySpaced(preference + deviation * metadata.upper_deviation_, preference, increment);
+    auto lowerRange            = evenlySpaced(preference - lowerDeviation, preference, increment);
+    auto upperRange            = evenlySpaced(preference + upperDeviation, preference, increment);
     std::vector<double> result = codeUtils::vectorAppend(lowerRange, upperRange);
     result.push_back(preference);
     std::sort(result.begin(), result.end(), closerToPreference);

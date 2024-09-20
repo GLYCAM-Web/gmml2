@@ -61,8 +61,8 @@ namespace cds
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
                                      const std::array<ResiduesWithOverlapWeight, 2>& residues);
-    std::vector<double> evenlySpacedAngles(double preference, double deviation, double increment,
-                                           const DihedralAngleData& metadata);
+    std::vector<double> evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
+                                           double increment);
     std::vector<AngleSearchPreference> angleSearchPreference(double deviation,
                                                              const ResidueLinkageShapePreference& preference);
     std::vector<std::vector<AngleSearchPreference>>

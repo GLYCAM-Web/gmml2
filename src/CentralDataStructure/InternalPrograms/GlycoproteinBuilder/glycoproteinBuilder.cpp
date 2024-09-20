@@ -200,17 +200,36 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
     double preferenceDeviation              = 2.0;
     double searchDeviation                  = 0.5;
     double searchIncrement                  = 1.0;
-    auto searchAngles =
-        [&searchIncrement](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
+    auto standardDeviation = [&preferenceDeviation, &searchDeviation](const GlycamMetadata::DihedralAngleData& metadata)
     {
-        return cds::evenlySpacedAngles(preference, deviation, searchIncrement, metadata);
+        switch (metadata.rotamer_type_)
+        {
+            case GlycamMetadata::RotamerType::conformer:
+                return std::pair<double, double> {metadata.lower_deviation_, metadata.upper_deviation_};
+            case GlycamMetadata::RotamerType::permutation:
+                {
+                    double max_std   = preferenceDeviation + searchDeviation;
+                    double lower_std = metadata.lower_deviation_ / max_std;
+                    double upper_std = metadata.upper_deviation_ / max_std;
+                    return std::pair<double, double> {lower_std, upper_std};
+                }
+            default:
+                throw std::runtime_error("unknown rotamer type");
+        }
+    };
+    auto searchAngles = [&standardDeviation, &searchIncrement](const GlycamMetadata::DihedralAngleData& metadata,
+                                                               double preference, double deviation)
+    {
+        auto std = standardDeviation(metadata);
+        return cds::evenlySpacedAngles(preference, deviation * std.first, deviation * std.second, searchIncrement);
     };
     auto searchSettings = cds::AngleSearchSettings {searchDeviation, searchAngles};
-    auto randomAngle    = [&rng, &preferenceDeviation](GlycamMetadata::DihedralAngleData metadata)
+    auto randomAngle    = [&rng, &standardDeviation, &preferenceDeviation](GlycamMetadata::DihedralAngleData metadata)
     {
         double stdCutoff = preferenceDeviation;
         double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
-        return metadata.default_angle_value_ + num * (num < 0 ? metadata.lower_deviation_ : metadata.upper_deviation_);
+        auto std         = standardDeviation(metadata);
+        return metadata.default_angle_value_ + num * (num < 0 ? std.first : std.second);
     };
     auto glycositeResidueConformationFrozen =
         [](std::vector<cds::ResidueLinkageShapePreference> preference, const std::vector<cds::ResidueLinkage>& linkages)
