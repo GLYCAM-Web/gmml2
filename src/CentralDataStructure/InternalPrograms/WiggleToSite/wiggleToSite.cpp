@@ -82,9 +82,26 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
     double angleStandardDeviation = 2.0;
     auto randomAngle              = [&rng, &angleStandardDeviation](GlycamMetadata::DihedralAngleData metadata)
     {
-        double stdCutoff = angleStandardDeviation;
-        double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
-        return metadata.default_angle_value_ + num * (num < 0 ? metadata.lower_deviation_ : metadata.upper_deviation_);
+        auto random = [&rng, &metadata](double stdCutoff, double lower, double upper)
+        {
+            double num = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
+            return metadata.default_angle + num * (num < 0 ? lower : upper);
+        };
+        auto angle = metadata.angle_deviation;
+        if (std::holds_alternative<GlycamMetadata::AngleLimit>(angle))
+        {
+            auto dev = std::get<GlycamMetadata::AngleLimit>(angle);
+            return random(1.0, dev.lowerDeviationLimit, dev.upperDeviationLimit);
+        }
+        else if (std::holds_alternative<GlycamMetadata::AngleStd>(angle))
+        {
+            auto dev = std::get<GlycamMetadata::AngleStd>(angle);
+            return random(angleStandardDeviation, dev.lowerDeviationStd, dev.upperDeviationStd);
+        }
+        else
+        {
+            throw std::runtime_error("unknown dihedral angle type");
+        }
     };
 
     int cycle = 0;

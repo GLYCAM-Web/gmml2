@@ -27,7 +27,7 @@ bool cds::setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataV
             auto& metadata = metadataVector[n];
             if (metadata.rotamer_name_ == selectedRotamer)
             {
-                setDihedralAngle(dihedral, {metadata.default_angle_value_, metadata.default_angle_value_, n});
+                setDihedralAngle(dihedral, {metadata.default_angle, metadata.default_angle, n});
                 return true;
             }
         }
@@ -65,7 +65,7 @@ std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<Rotatabl
         auto& metadataIndex   = dihedral.currentMetadataIndex;
         auto& currentMetadata = metadata[n][metadataIndex];
         result.push_back({constants::toDegrees(cds::angle(dihedralCoordinates(dihedral))),
-                          currentMetadata.default_angle_value_, metadataIndex});
+                          currentMetadata.default_angle, metadataIndex});
     }
 
     return result;
@@ -181,7 +181,7 @@ cds::ResidueLinkageShapePreference cds::defaultShapePreference(const ResidueLink
     };
     auto defaultAngle = [](const DihedralAngleData metadata)
     {
-        return metadata.default_angle_value_;
+        return metadata.default_angle;
     };
     return linkageShapePreference(metadataOrder, defaultAngle, linkage);
 }

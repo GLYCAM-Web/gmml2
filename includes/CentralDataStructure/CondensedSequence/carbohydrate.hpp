@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+#include <variant>
 #include <vector>
 #include <string>
 
@@ -15,8 +16,22 @@ namespace cdsCondensedSequence
         [](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
     {
         double increment = 1.0;
-        return cds::evenlySpacedAngles(preference, deviation * metadata.lower_deviation_,
-                                       deviation * metadata.upper_deviation_, increment);
+        auto angle       = metadata.angle_deviation;
+        if (std::holds_alternative<GlycamMetadata::AngleLimit>(angle))
+        {
+            auto dev = std::get<GlycamMetadata::AngleLimit>(angle);
+            return cds::evenlySpacedAngles(preference, dev.lowerDeviationLimit, dev.upperDeviationLimit, increment);
+        }
+        else if (std::holds_alternative<GlycamMetadata::AngleStd>(angle))
+        {
+            auto dev = std::get<GlycamMetadata::AngleStd>(angle);
+            return cds::evenlySpacedAngles(preference, deviation * dev.lowerDeviationStd,
+                                           deviation * dev.upperDeviationStd, increment);
+        }
+        else
+        {
+            throw std::runtime_error("unknown dihedral angle type");
+        }
     };
     const cds::AngleSearchSettings defaultSearchSettings = {1.0, defaultSearchAngles};
 

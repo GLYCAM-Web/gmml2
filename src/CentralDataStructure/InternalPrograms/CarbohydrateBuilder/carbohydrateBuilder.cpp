@@ -150,7 +150,7 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
 {
     auto defaultAngle = [](const GlycamMetadata::DihedralAngleData metadata)
     {
-        return metadata.default_angle_value_;
+        return metadata.default_angle;
     };
 
     for (size_t shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->dihedralMetadata);

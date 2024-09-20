@@ -1,6 +1,8 @@
 #ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 #define INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
+
 #include <string>
+#include <variant>
 #include <vector>
 
 namespace GlycamMetadata
@@ -11,14 +13,25 @@ namespace GlycamMetadata
         permutation
     };
 
+    struct AngleLimit
+    {
+        double lowerDeviationLimit;
+        double upperDeviationLimit;
+    };
+
+    struct AngleStd
+    {
+        double lowerDeviationStd;
+        double upperDeviationStd;
+    };
+
     struct DihedralAngleData
     {
         std::string linking_atom1_;
         std::string linking_atom2_;
         std::string dihedral_angle_name_;
-        double default_angle_value_;
-        double lower_deviation_;
-        double upper_deviation_;
+        double default_angle;
+        std::variant<AngleLimit, AngleStd> angle_deviation;
         double weight_;
         RotamerType rotamer_type_; // permutation or conformer
         std::string rotamer_name_;
