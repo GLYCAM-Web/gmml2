@@ -27,7 +27,7 @@ Cycle #4
 	Edges: Delux -> Frank, Frank -> Bingo, Delux -> Bingo, 
 Cycle #5
 	Nodes: Bingo, Frank, Ronne, Steve, 
-	Edges: Ronne -> Bingo, Steve -> Frank, Frank -> Bingo, Steve -> Ronne, 
+	Edges: Frank -> Bingo, Ronne -> Bingo, Steve -> Frank, Steve -> Ronne, 
 Cycle #6
 	Nodes: cycle3, cycle2, cycle1, 
 	Edges: cycle2 -> cycle3, cycle1 -> cycle3, cycle1 -> cycle2, 
@@ -54,7 +54,7 @@ Cycle #13
 	Edges: Frank -> Marsh, Marsh -> Delux, Frank -> Bingo, Delux -> Bingo, 
 Cycle #14
 	Nodes: Bingo, Delux, Frank, Ronne, Steve, 
-	Edges: Delux -> Bingo, Ronne -> Delux, Steve -> Frank, Frank -> Bingo, Steve -> Ronne, 
+	Edges: Frank -> Bingo, Delux -> Bingo, Ronne -> Delux, Steve -> Frank, Steve -> Ronne, 
 Cycle #15
 	Nodes: Frank, Delux, Bingo, Ronne, 
 	Edges: Delux -> Frank, Frank -> Bingo, Ronne -> Delux, Ronne -> Bingo, 
@@ -75,7 +75,7 @@ Cycle #20
 	Edges: Delux -> Frank, Delux -> Bingo, Ronne -> Frank, Ronne -> Bingo, 
 Cycle #21
 	Nodes: Marsh, Bingo, Delux, Frank, Ronne, Steve, 
-	Edges: Marsh -> Delux, Bingo -> Marsh, Ronne -> Delux, Steve -> Frank, Frank -> Bingo, Steve -> Ronne, 
+	Edges: Marsh -> Delux, Frank -> Bingo, Bingo -> Marsh, Ronne -> Delux, Steve -> Frank, Steve -> Ronne, 
 Cycle #22
 	Nodes: Marsh, Delux, Bingo, 
 	Edges: Marsh -> Delux, Bingo -> Marsh, Delux -> Bingo, 
