@@ -9,6 +9,7 @@
 namespace codeUtils
 {
     std::string FindStringInStringMap(const std::string& s, const std::unordered_map<std::string, std::string>& sMap);
+    std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
 
     template<class T> bool contains(const std::vector<T> vector, const T element)
     {
@@ -63,6 +64,17 @@ namespace codeUtils
         for (size_t n = 0; n < vec.size(); n++)
         {
             result.push_back(n);
+        }
+        return result;
+    }
+
+    template<class T> std::vector<T> indexValues(const std::vector<T>& values, const std::vector<size_t>& indices)
+    {
+        std::vector<T> result;
+        result.reserve(indices.size());
+        for (size_t n : indices)
+        {
+            result.push_back(values[n]);
         }
         return result;
     }

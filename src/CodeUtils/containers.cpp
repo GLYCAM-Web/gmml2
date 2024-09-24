@@ -6,3 +6,14 @@ std::string codeUtils::FindStringInStringMap(const std::string& s,
     auto found = sMap.find(s);
     return (found != sMap.end()) ? found->second : "";
 }
+
+std::vector<bool> codeUtils::vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB)
+{
+    std::vector<bool> result;
+    result.reserve(vecA.size());
+    for (size_t n = 0; n < vecA.size(); n++)
+    {
+        result[n] = vecA[n] && vecB[n];
+    }
+    return result;
+}
