@@ -7,6 +7,7 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <fstream> // std::ifstream
+#include <iomanip> // setprecision setw
 
 using pdb::PdbFile;
 
@@ -232,9 +233,18 @@ void PdbFile::Write(std::ostream& out) const
     {
         dbref.Write(out);
     }
-    for (auto& model : getAssemblies())
+    const std::vector<PdbModel>& assemblies = this->getAssemblies();
+    for (auto& model : assemblies)
     {
+        if (assemblies.size() > 1)
+        {
+            out << "MODEL " << std::right << std::setw(4) << model.getNumber() << "\n";
+        }
         model.Write(out);
+        if (assemblies.size() > 1)
+        {
+            out << "ENDMDL\n";
+        }
     }
     return;
 }

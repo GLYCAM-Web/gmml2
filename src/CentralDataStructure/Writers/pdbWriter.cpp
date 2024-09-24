@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include <iomanip> // setw
 
 cds::AtomPdbData cds::toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName,

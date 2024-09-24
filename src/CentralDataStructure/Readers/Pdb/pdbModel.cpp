@@ -13,7 +13,6 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include <iomanip> // setprecision setw
 
 using pdb::PdbModel;
 
@@ -386,7 +385,6 @@ void PdbModel::Print(std::ostream& out) const
 
 void PdbModel::Write(std::ostream& stream) const
 {
-    stream << "MODEL " << std::right << std::setw(4) << this->getNumber() << "\n";
     for (auto& cdsMolecule : this->getMolecules())
     {
         static_cast<PdbChain*>(cdsMolecule)->Write(stream);
@@ -395,6 +393,5 @@ void PdbModel::Write(std::ostream& stream) const
     {
         conect.Write(stream);
     }
-    stream << "ENDMDL\n";
     return;
 }

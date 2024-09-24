@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include <string>
 #include <fstream>
 
@@ -29,6 +30,14 @@ int main(int argc, char* argv[])
     {
         for (auto& residue : molecule->getResidues())
         {
+            if (residue->GetType() != cds::ResidueType::Protein)
+            {
+                for (auto& atom : residue->getAtoms())
+                {
+                    pdb::PdbAtom* castPdbAtomPtr = static_cast<pdb::PdbAtom*>(atom);
+                    castPdbAtomPtr->SetRecordName("ATOM");
+                }
+            }
             if (residue->getName() == "HOH" || residue->getName() == "WAT")
             {
                 std::cout << "Deleting " << residue->getName() << "\n";
@@ -38,7 +47,9 @@ int main(int argc, char* argv[])
     }
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
-    cds::writeAssemblyToPdb(outFileStream, firstModel->getMolecules());
+    pdb::PdbModel* castPdbModelPtr = static_cast<pdb::PdbModel*>(firstModel);
+    castPdbModelPtr->Write(outFileStream);
+    //    cds::writeAssemblyToPdb(outFileStream, firstModel->getMolecules());
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();
 

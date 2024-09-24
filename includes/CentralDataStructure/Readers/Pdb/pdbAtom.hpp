@@ -61,6 +61,7 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
+        void SetRecordName(const std::string s);
         //////////////////////////////////////////////////////////
         //                       FUNCTION                       //
         //////////////////////////////////////////////////////////
@@ -78,7 +79,6 @@ namespace pdb
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
         void SetModelNumber(const int i);
-        void SetRecordName(const std::string s);
         void SetAlternateLocation(const std::string atom_alternate_location);
         void SetChainId(const std::string atom_chain_id);
         void SetResidueSequenceNumber(const int atom_residue_sequence_number);
