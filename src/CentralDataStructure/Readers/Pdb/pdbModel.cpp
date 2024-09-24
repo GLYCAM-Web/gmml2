@@ -389,9 +389,9 @@ void PdbModel::Write(std::ostream& stream) const
     {
         static_cast<PdbChain*>(cdsMolecule)->Write(stream);
     }
-    for (auto& conect : this->GetConectRecords())
-    {
-        conect.Write(stream);
-    }
+    //    for (auto& conect : this->GetConectRecords()) These are broken and breaking yao's gm MGL code.
+    //    {
+    //        conect.Write(stream);
+    //    }
     return;
 }
