@@ -57,15 +57,20 @@ namespace codeUtils
         return result;
     }
 
-    template<class T> std::vector<size_t> indexVector(const std::vector<T>& vec)
+    template<class T> std::vector<size_t> indexVectorWithOffset(size_t offset, const std::vector<T>& vec)
     {
         std::vector<size_t> result;
         result.reserve(vec.size());
         for (size_t n = 0; n < vec.size(); n++)
         {
-            result.push_back(n);
+            result.push_back(n + offset);
         }
         return result;
+    }
+
+    template<class T> std::vector<size_t> indexVector(const std::vector<T>& vec)
+    {
+        return indexVectorWithOffset(0, vec);
     }
 
     template<class T> std::vector<T> indexValues(const std::vector<T>& values, const std::vector<size_t>& indices)
