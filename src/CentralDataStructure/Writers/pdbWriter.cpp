@@ -5,30 +5,18 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include <iomanip> // setw
 
-cds::AtomPdbData cds::toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName,
-                                    int residueNumber, std::string chainId, std::string insertionCode, double occupancy,
-                                    double temperatureFactor)
-{
-    std::string residueAlternativeLocation = "";
-    return {atom->coordinate(),
-            atom->getNumber(),
-            atom->getName(),
-            atom->getElement(),
-            recordName,
-            residueAlternativeLocation,
-            residueNumber,
-            residueName.substr(0, 3),
-            chainId,
-            insertionCode,
-            occupancy,
-            temperatureFactor};
-}
+cds::AtomPdbData::AtomPdbData(const cds::Atom* atom, std::string recordName_, std::string residueName_,
+                              int residueNumber_, std::string chainId_, std::string insertionCode_, double occupancy_,
+                              double temperatureFactor_)
+    : coordinate(atom->coordinate()), number(atom->getNumber()), name(atom->getName()), element(atom->getElement()),
+      recordName(recordName_), residueAlternativeLocation(""), residueNumber(residueNumber_),
+      residueName(residueName_.substr(0, 3)), chainId(chainId_), insertionCode(insertionCode_), occupancy(occupancy_),
+      temperatureFactor(temperatureFactor_)
+{}
 
-cds::AtomPdbData cds::toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName,
-                                    int residueNumber)
-{
-    return toAtomPdbData(atom, recordName, residueName, residueNumber, "", "", 1.0, 0.0);
-}
+cds::AtomPdbData::AtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName, int residueNumber)
+    : AtomPdbData(atom, recordName, residueName, residueNumber, "", "", 1.0, 0.0)
+{}
 
 std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
 {
@@ -58,7 +46,7 @@ std::vector<cds::AtomPdbData> cds::residuePdbAtoms(Residue* residue)
     atomData.reserve(atoms.size());
     for (auto& atom : atoms)
     {
-        atomData.push_back(toAtomPdbData(atom, "ATOM", name, number));
+        atomData.push_back(AtomPdbData(atom, "ATOM", name, number));
     }
     return atomData;
 }

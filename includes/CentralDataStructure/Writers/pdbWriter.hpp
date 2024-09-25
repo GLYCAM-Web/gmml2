@@ -13,6 +13,9 @@ namespace cds
 {
     struct AtomPdbData
     {
+        AtomPdbData(const cds::Atom* atom, std::string recordName_, std::string residueName_, int residueNumber_,
+                    std::string chainId_, std::string insertionCode_, double occupancy_, double temperatureFactor_);
+        AtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName, int residueNumber);
         Coordinate coordinate;
         int number;
         std::string name;
@@ -26,19 +29,6 @@ namespace cds
         double occupancy;
         double temperatureFactor;
     };
-
-    struct ResiduePdbData
-    {
-        ResidueType type;
-        std::vector<AtomPdbData> atoms;
-    };
-
-    AtomPdbData toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName, int residueNumber,
-                              std::string chainId, std::string insertionCode, double occupancy,
-                              double temperatureFactor);
-
-    AtomPdbData toAtomPdbData(const cds::Atom* atom, std::string recordName, std::string residueName,
-                              int residueNumber);
 
     std::vector<bool> residueTER(const std::vector<ResidueType>& types);
     std::vector<AtomPdbData> residuePdbAtoms(Residue* residue);
