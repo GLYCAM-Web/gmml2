@@ -38,15 +38,19 @@ printf "Testing 017.test.GlycoproteinBuilder.cpp... "
 g++ -std=c++17 -g -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
 rm -r 017/ >/dev/null 2>&1
 
-test_case "" "tests/inputs/017.GlycoproteinBuilderInput.txt" "017/standard"
+test_case "Standard " "tests/inputs/017.GlycoproteinBuilderInput.txt" "017/standard"
 if [ "$failed" == 1 ]; then
     return 1
 fi
-test_case "SkipMdPrep " "tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt" "017/skipMdPrep"
+test_case "Skip MD prep " "tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt" "017/skipMdPrep"
 if [ "$failed" == 1 ]; then
     return 1
 fi
-test_case "FreezeGSConformation " "tests/inputs/017.GlycoproteinBuilderInputFreezeGSConformation.txt" "017/freezeGSConformation"
+test_case "Freeze glycosite conformation " "tests/inputs/017.GlycoproteinBuilderInputFreezeGSConformation.txt" "017/freezeGSConformation"
+if [ "$failed" == 1 ]; then
+    return 1
+fi
+test_case "Single glycan " "tests/inputs/017.GlycoproteinBuilderInputSingleGlycan.txt" "017/singleGlycan"
 if [ "$failed" == 1 ]; then
     return 1
 fi
