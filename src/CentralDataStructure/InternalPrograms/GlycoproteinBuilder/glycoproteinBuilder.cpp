@@ -314,15 +314,13 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         outFileStream.close();
     };
 
-    auto writePdbFile = [](const std::vector<cds::Molecule*>& molecules, const std::vector<cds::Residue*>& residues,
-                           const std::string& prefix)
+    auto writePdbFile = [](const std::vector<cds::Molecule*>& molecules,
+                           const std::vector<std::pair<int, int>>& connectionNumbers, const std::string& prefix)
     {
         std::string fileName = prefix + ".pdb";
         std::ofstream outFileStream;
         outFileStream.open(fileName.c_str());
         cds::writeAssemblyToPdb(outFileStream, molecules);
-        auto connectedAtoms    = cds::atomPairsConnectedToOtherResidues(residues);
-        auto connectionNumbers = atomPairNumbers(connectedAtoms);
         cds::writeConectCards(outFileStream, connectionNumbers);
         outFileStream.close();
         return;
@@ -360,14 +358,17 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         cdsSelections::selectResiduesByType(residues, {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
                                                        cds::ResidueType::Aglycone, cds::ResidueType::Undefined});
 
-    writePdbFile(molecules, pdbResidues, outputDir + "glycoprotein_initial");
+    std::vector<std::pair<int, int>> noConnections = {};
+    writePdbFile(molecules, noConnections, outputDir + "glycoprotein_initial");
     resolveOverlapsWithWiggler(proteinResidues_, glycosites_);
     printDihedralAnglesAndOverlapOfGlycosites(proteinResidues_, glycosites_);
-    writePdbFile(molecules, pdbResidues, outputDir + "glycoprotein");
+    writePdbFile(molecules, noConnections, outputDir + "glycoprotein");
     cds::serializeNumbers(atoms);
     cds::serializeNumbers(residues);
+    std::vector<std::pair<int, int>> connectionNumbers =
+        atomPairNumbers(cds::atomPairsConnectedToOtherResidues(pdbResidues));
     writeOffFile(residues, outputDir + "glycoprotein");
-    writePdbFile(molecules, pdbResidues, outputDir + "glycoprotein_serialized");
+    writePdbFile(molecules, connectionNumbers, outputDir + "glycoprotein_serialized");
 
     for (size_t count = 0; count < settings.number3DStructures; count++)
     {
@@ -375,6 +376,6 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         printDihedralAnglesAndOverlapOfGlycosites(proteinResidues_, glycosites_);
         std::stringstream prefix;
         prefix << count << "_glycoprotein";
-        writePdbFile(molecules, pdbResidues, outputDir + prefix.str());
+        writePdbFile(molecules, connectionNumbers, outputDir + prefix.str());
     }
 }
