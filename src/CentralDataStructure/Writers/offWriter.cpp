@@ -123,7 +123,7 @@ void cds::WriteOffFileUnit(const std::vector<cds::Residue*>& residues, std::ostr
     {
         for (auto& atom : residue->getAtoms())
         {
-            auto coord = atom->coordinate();
+            Coordinate coord = atom->coordinate();
             stream << std::setprecision(6) << std::fixed << " " << coord.GetX() << " " << coord.GetY() << " "
                    << coord.GetZ() << std::endl;
         }
@@ -133,8 +133,8 @@ void cds::WriteOffFileUnit(const std::vector<cds::Residue*>& residues, std::ostr
            << ".unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x" << std::endl;
     for (auto& residue : residues)
     {
-        auto atomsConnectedToOtherResidues = cds::atomsConnectedToOtherResidues(residue->getAtoms());
-        auto atomNumbers                   = cds::atomNumbers(atomsConnectedToOtherResidues);
+        std::vector<Atom*> atomsConnectedToOtherResidues = cds::atomsConnectedToOtherResidues(residue->getAtoms());
+        std::vector<int> atomNumbers                     = cds::atomNumbers(atomsConnectedToOtherResidues);
         // Deal with residues that don't have a tail/head in reality:
         if (atomNumbers.size() == 1)
         { // Repeating the same atom changes the tree structure in the parm7 file. Not sure anything uses that. Old gmml
@@ -209,8 +209,8 @@ void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostre
     }
     for (auto& residue : residues)
     {
-        auto residues = std::vector<Residue*> {residue};
-        auto atoms    = residue->getAtoms();
+        std::vector<Residue*> residues = {residue};
+        std::vector<Atom*> atoms       = residue->getAtoms();
         cds::serializeNumbers(atoms);
         cds::serializeNumbers(residues);
         cds::WriteOffFileUnit(residues, stream, residue->getName());
