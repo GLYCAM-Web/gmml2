@@ -181,22 +181,23 @@ void Molecule::renumberResidues(int newStartNumber)
 //////////////////////////////////////////////////////////
 void Molecule::WritePdb(std::ostream& stream) const
 {
-    auto residues     = this->getResidues();
-    auto types        = residueTypes(residues);
-    auto ter          = residueTER(types);
-    auto residueAtoms = residuePdbAtoms(residues);
-    cds::writeMoleculeToPdb(stream, ter, residueAtoms);
+    std::vector<Residue*> residues = getResidues();
+    std::vector<ResidueType> types = residueTypes(residues);
+    std::vector<bool> ter          = residueTER(types);
+    ResiduePdbData residueData     = toResiduePdbData(residues);
+    cds::writeMoleculeToPdb(stream, ter, residueData.atomIndices, residueData.atomData);
     using cds::ResidueType; // to help readability of the Sugar, etc below
-    auto selectedResidues  = cdsSelections::selectResiduesByType(residues, {Sugar, Derivative, Aglycone, Undefined});
-    auto connectedAtoms    = atomPairsConnectedToOtherResidues(selectedResidues);
-    auto connectionNumbers = atomPairNumbers(connectedAtoms);
+    std::vector<Residue*> selectedResidues =
+        cdsSelections::selectResiduesByType(residues, {Sugar, Derivative, Aglycone, Undefined});
+    std::vector<std::pair<Atom*, Atom*>> connectedAtoms = atomPairsConnectedToOtherResidues(selectedResidues);
+    std::vector<std::pair<int, int>> connectionNumbers  = atomPairNumbers(connectedAtoms);
     cds::writeConectCards(stream, connectionNumbers);
 }
 
 void Molecule::WriteOff(std::ostream& stream)
 {
-    auto residues = getResidues();
-    auto atoms    = getAtoms();
+    std::vector<Residue*> residues = getResidues();
+    std::vector<Atom*> atoms       = getAtoms();
     cds::serializeNumbers(atoms);
     cds::serializeNumbers(residues);
     cds::WriteToOffFile(residues, stream, getName());

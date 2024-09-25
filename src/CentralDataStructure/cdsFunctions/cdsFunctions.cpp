@@ -16,6 +16,28 @@ std::vector<int> cds::atomNumbers(const std::vector<Atom*>& atoms)
     return result;
 }
 
+std::vector<std::string> cds::atomNames(const std::vector<Atom*>& atoms)
+{
+    std::vector<std::string> result;
+    result.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        result.push_back(atom->getName());
+    }
+    return result;
+}
+
+std::vector<std::string> cds::atomElements(const std::vector<Atom*>& atoms)
+{
+    std::vector<std::string> result;
+    result.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        result.push_back(atom->getElement());
+    }
+    return result;
+}
+
 std::vector<cds::ResidueType> cds::residueTypes(const std::vector<Residue*>& residues)
 {
     std::vector<ResidueType> result;
