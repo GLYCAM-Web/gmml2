@@ -124,11 +124,15 @@ std::string ParsedResidue::GetChildLinkagesForGlycamResidueNaming() const
     return linkages;
 }
 
-std::string ParsedResidue::GetName(const bool withLabels) const
+std::string ParsedResidue::GetName(const bool withLabels, const bool iupacConsensed) const
 {
     if (withLabels)
     {
         return findLabelContaining("&Label=", this->getLabels());
+    }
+    if (iupacConsensed)
+    {
+        return this->GetResidueName() + this->GetResidueModifier();
     }
     return this->GetIsomer() + this->GetResidueName() + this->GetRingType() + this->GetResidueModifier() +
            this->GetRingShape();

@@ -2,6 +2,7 @@
 ./src/CentralDataStructure/CondensedSequence/parsedResidue.cpp
 ./src/CentralDataStructure/CondensedSequence/sequenceManipulator.cpp
 ./src/CentralDataStructure/CondensedSequence/sequenceParser.cpp
+./src/CentralDataStructure/CondensedSequence/sequenceParser2.cpp
 ./src/CentralDataStructure/Editors/amberMdPrep.cpp
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Editors/superimposition.cpp

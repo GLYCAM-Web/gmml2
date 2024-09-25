@@ -95,12 +95,12 @@ namespace
     }
 
     void recurvePrint(ParsedResidue* currentResidue, int& branchStackSize, std::vector<std::string>& output,
-                      const bool withLabels)
+                      const bool withLabels, const bool iupacCondensed)
     {
         auto neighbors                  = currentResidue->GetChildren();
         size_t numberOfNeighbors        = neighbors.size();
         // Derivatives. E.g. 2S,3Me in DManp[2S,3Me]a1-6DManpa1-OH
-        std::string outputResidueString = currentResidue->GetName(withLabels);
+        std::string outputResidueString = currentResidue->GetName(withLabels, iupacCondensed);
         std::vector<std::string> derivatives;
         for (auto& neighbor : neighbors)
         {
@@ -123,7 +123,15 @@ namespace
             outputResidueString += "]";
         }
         // Output
+        if (iupacCondensed) // needs () around the linkageName
+        {
+            outputResidueString += "(";
+        }
         outputResidueString += currentResidue->GetLinkageName(withLabels);
+        if (iupacCondensed)
+        {
+            outputResidueString += ")";
+        }
         output.push_back(outputResidueString);
         // End of a branch check
         if (numberOfNeighbors == 0 && branchStackSize > 0)
@@ -142,7 +150,7 @@ namespace
                     output.push_back("]");
                     ++branchStackSize;
                 }
-                recurvePrint(neighbor, branchStackSize, output, withLabels);
+                recurvePrint(neighbor, branchStackSize, output, withLabels, iupacCondensed);
             }
         }
         return;
@@ -227,11 +235,12 @@ void cdsCondensedSequence::labelSequence(std::vector<cds::Residue*> residues)
     return;
 }
 
-std::string cdsCondensedSequence::printSequence(std::vector<cds::Residue*> residues, bool withLabels)
+std::string cdsCondensedSequence::printSequence(std::vector<cds::Residue*> residues, bool withLabels,
+                                                bool iupacCondensed)
 {
     std::vector<std::string> output;
     int branchStackSize = 0;
-    recurvePrint(terminalResidue(residues), branchStackSize, output, withLabels);
+    recurvePrint(terminalResidue(residues), branchStackSize, output, withLabels, iupacCondensed);
     std::reverse(output.begin(), output.end()); // Reverse order, as it starts from terminal.
     std::stringstream ss;
     for (auto& label : output)

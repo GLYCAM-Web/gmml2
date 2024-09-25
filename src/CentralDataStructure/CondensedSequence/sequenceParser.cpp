@@ -80,7 +80,7 @@ namespace
 
     void parseLabelledInput(std::string inString)
     {
-        throw std::runtime_error("Error: SequenceParser can't handle labeled stuff yet: " + inString + "\n");
+        throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
     }
 
     ParsedResidue* saveResidue(cds::Molecule* molecule, std::vector<std::string>& savedDerivatives,

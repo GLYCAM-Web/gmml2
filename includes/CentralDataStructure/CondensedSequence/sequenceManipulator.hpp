@@ -15,7 +15,8 @@ namespace cdsCondensedSequence
     void setIndexByConnectivity(std::vector<cds::Residue*> residues);
     void labelSequence(std::vector<cds::Residue*> residues);
     std::string printGraphViz(GraphVizDotConfig& configs, std::vector<cds::Residue*> residues);
-    std::string printSequence(std::vector<cds::Residue*> residues, bool withLabels);
+    std::string printSequence(std::vector<cds::Residue*> residues, bool withLabels = false,
+                              bool iupacCondensed = false);
     std::string reorderSequence(cds::Molecule* molecule);
     ParsedResidue* terminalResidue(std::vector<cds::Residue*> residues);
 } // namespace cdsCondensedSequence
