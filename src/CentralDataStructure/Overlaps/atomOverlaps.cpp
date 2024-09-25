@@ -120,21 +120,28 @@ cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
 cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
                                         const ResiduesWithOverlapWeight& residuesB)
 {
-    auto bondedAtoms = [](Atom* origin, std::vector<Atom*>& atoms)
+    if (residuesA.residues.empty() || residuesB.residues.empty())
     {
-        // residues aren't bonded in certain cases, use a default if so
-        return (origin == nullptr) ? std::vector<bool>(atoms.size(), false) : atomsBondedTo(origin, atoms);
-    };
-    auto atomsA = residuesA.residues[0]->getAtoms();
-    auto atomsB = residuesB.residues[0]->getAtoms();
-    auto bond   = bondedAtomPair(atomsA, atomsB);
-    auto inputA = toOverlapInput(residuesA, bondedAtoms(bond[0], atomsA));
-    auto inputB = toOverlapInput(residuesB, bondedAtoms(bond[1], atomsB));
+        return Overlap {0.0, 0.0};
+    }
+    else
+    {
+        auto bondedAtoms = [](Atom* origin, std::vector<Atom*>& atoms)
+        {
+            // residues aren't bonded in certain cases, use a default if so
+            return (origin == nullptr) ? std::vector<bool>(atoms.size(), false) : atomsBondedTo(origin, atoms);
+        };
+        auto atomsA = residuesA.residues[0]->getAtoms();
+        auto atomsB = residuesB.residues[0]->getAtoms();
+        auto bond   = bondedAtomPair(atomsA, atomsB);
+        auto inputA = toOverlapInput(residuesA, bondedAtoms(bond[0], atomsA));
+        auto inputB = toOverlapInput(residuesB, bondedAtoms(bond[1], atomsB));
 
-    return CountOverlappingAtoms({inputA.atomCoordinates, inputA.boundingSpheres, inputA.residueAtoms,
-                                  inputA.residueWeights, inputA.firstResidueBondedAtoms},
-                                 {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms,
-                                  inputB.residueWeights, inputB.firstResidueBondedAtoms});
+        return CountOverlappingAtoms({inputA.atomCoordinates, inputA.boundingSpheres, inputA.residueAtoms,
+                                      inputA.residueWeights, inputA.firstResidueBondedAtoms},
+                                     {inputB.atomCoordinates, inputB.boundingSpheres, inputB.residueAtoms,
+                                      inputB.residueWeights, inputB.firstResidueBondedAtoms});
+    }
 }
 
 cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
