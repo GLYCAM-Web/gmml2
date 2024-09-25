@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/biology.hpp" // proteinResidueNames
@@ -124,7 +125,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         addBond(ch3Atom, hh32Atom);
         addBond(ch3Atom, hh33Atom);
         newNMEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
-        static_cast<PdbResidue*>(newNMEResidue)->AddTerCard(); // No longer used?
+        codeUtils::throwing_cast<PdbResidue*>(newNMEResidue)->AddTerCard(); // No longer used?
     }
     else if (type == "COCH3") // ACE
     {
@@ -153,7 +154,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         // residue before here:
         auto refPosition = this->findPositionOfResidue(&refResidue);
         --refPosition;
-        PdbResidue* previousResidue = static_cast<PdbResidue*>(
+        PdbResidue* previousResidue = codeUtils::throwing_cast<PdbResidue*>(
             (*refPosition).get()); // Its an iterator to a unique ptr, so deref and get the raw. Ugh.
         cds::Residue* newACEResidue =
             this->insertNewResidue(std::make_unique<PdbResidue>("ACE", previousResidue), *previousResidue);
@@ -171,7 +172,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         addBond(ch3Atom, hh33Atom);
         newACEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created ACE residue: " + static_cast<PdbResidue*>(newACEResidue)->printId());
+                  "Created ACE residue: " + codeUtils::throwing_cast<PdbResidue*>(newACEResidue)->printId());
     }
 }
 
@@ -180,9 +181,10 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
     if (type == "NH3+") // For now, leaving it to tleap to add the correct H's
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + terminalResidue->printId());
-        const PdbAtom* atom = static_cast<const PdbAtom*>(terminalResidue->FindAtom("H"));
-        if (atom != nullptr)
+        cds::Atom* found = terminalResidue->FindAtom("H");
+        if (found != nullptr)
         {
+            const PdbAtom* atom = codeUtils::throwing_cast<const PdbAtom*>(terminalResidue->FindAtom("H"));
             gmml::log(__LINE__, __FILE__, gmml::INF, "Deleting atom with id: " + atom->GetId());
             terminalResidue->deleteAtom(atom);
         }
@@ -195,7 +197,7 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
         if (atom != nullptr)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "OXT atom already exists: " + static_cast<const PdbAtom*>(atom)->GetId());
+                      "OXT atom already exists: " + codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId());
             return;
         }
         // I don't like this, but at least it's somewhat contained:
@@ -214,7 +216,7 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
         cds::Atom* oxtAtom       = terminalResidue->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
         addBond(oxtAtom, atomC);
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created new atom named OXT after " + static_cast<const PdbAtom*>(atomO)->GetId());
+                  "Created new atom named OXT after " + codeUtils::throwing_cast<const PdbAtom*>(atomO)->GetId());
         return;
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);
@@ -231,7 +233,7 @@ pdb::PdbResidue* PdbChain::getNTerminal()
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
         return nullptr;
     }
-    return static_cast<PdbResidue*>(proteinResidues.front());
+    return codeUtils::throwing_cast<PdbResidue*>(proteinResidues.front());
 }
 
 pdb::PdbResidue* PdbChain::getCTerminal()
@@ -242,7 +244,7 @@ pdb::PdbResidue* PdbChain::getCTerminal()
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
         return nullptr;
     }
-    return static_cast<PdbResidue*>(proteinResidues.back());
+    return codeUtils::throwing_cast<PdbResidue*>(proteinResidues.back());
 }
 
 // void PdbChain::addCapsToGaps(pdb::PreprocessorInformation &ppInfo, const pdb::PreprocessorOptions& inputOptions)
@@ -290,7 +292,7 @@ void PdbChain::Write(std::ostream& stream) const
     std::vector<cds::Residue*> residues = this->getResidues();
     for (auto& residue : residues)
     {
-        static_cast<const PdbResidue*>(residue)->Write(stream);
+        codeUtils::throwing_cast<const PdbResidue*>(residue)->Write(stream);
     }
     if (!residues.empty())
     { // Sometimes you get empty chains after things have been deleted I guess.

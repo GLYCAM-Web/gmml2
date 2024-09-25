@@ -4,6 +4,7 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
@@ -80,7 +81,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     { // Move atoms from prep file into parsedResidues.
         if (cdsResidue->GetType() != cds::ResidueType::Deoxy)
         {
-            ParsedResidue* parsedResidue = static_cast<ParsedResidue*>(cdsResidue);
+            ParsedResidue* parsedResidue = codeUtils::throwing_cast<ParsedResidue*>(cdsResidue);
             parameterManager.createAtomsForResidue(cdsResidue, this->GetGlycamResidueName(parsedResidue));
             if (parsedResidue->GetType() == cds::ResidueType::Derivative)
             { // Deal with adjusting charges for derivatives
@@ -92,7 +93,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     { // Apply any deoxy
         if (cdsResidue->GetType() == cds::ResidueType::Deoxy)
         {
-            this->ApplyDeoxy(static_cast<ParsedResidue*>(cdsResidue));
+            this->ApplyDeoxy(codeUtils::throwing_cast<ParsedResidue*>(cdsResidue));
         }
     }
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
@@ -291,7 +292,7 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
 {
     using cds::Atom;
     using cds::ResidueType;
-    std::string linkageLabel = static_cast<ParsedResidue*>(childResidue)->GetLinkageName();
+    std::string linkageLabel = codeUtils::throwing_cast<ParsedResidue*>(childResidue)->GetLinkageName();
     // This is using the new Node<Residue> functionality and the old AtomNode
     // Now go figure out how which Atoms to bond to each other in the residues.
     // Rule: Can't ever have a child aglycone or a parent derivative.
@@ -342,8 +343,9 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // Now get child atom
     if (childResidue->GetType() == ResidueType::Derivative)
     {
-        std::string glycamNameForResidue = this->GetGlycamResidueName(static_cast<ParsedResidue*>(childResidue));
-        childAtomName                    = GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
+        std::string glycamNameForResidue =
+            this->GetGlycamResidueName(codeUtils::throwing_cast<ParsedResidue*>(childResidue));
+        childAtomName = GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
     }
     else if (childResidue->GetType() == ResidueType::Sugar)
     {
@@ -442,7 +444,7 @@ std::vector<std::string> Carbohydrate::GetGlycamNamesOfResidues() const
     {
         if (residue->GetType() != cds::ResidueType::Deoxy)
         {
-            names.push_back(this->GetGlycamResidueName(static_cast<ParsedResidue*>(residue)));
+            names.push_back(this->GetGlycamResidueName(codeUtils::throwing_cast<ParsedResidue*>(residue)));
         }
     }
     return names;

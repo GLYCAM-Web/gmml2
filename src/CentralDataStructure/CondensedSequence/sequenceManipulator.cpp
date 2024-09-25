@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include <sstream>
 #include <sys/stat.h> // for checking if file exists
@@ -246,7 +247,7 @@ cdsCondensedSequence::parsedResiduesOrderedByConnectivity(std::vector<cds::Resid
     glygraph::Graph<cds::Residue> sequenceGraph(cdsCondensedSequence::terminalResidue(residues));
     for (auto& node : sequenceGraph.getNodes())
     {
-        rawResidues.push_back(static_cast<ParsedResidue*>(node->getDerivedClass()));
+        rawResidues.push_back(codeUtils::throwing_cast<ParsedResidue*>(node->getDerivedClass()));
     }
     return rawResidues;
 }
@@ -318,7 +319,7 @@ std::string cdsCondensedSequence::reorderSequence(cds::Molecule* molecule)
 { // Just doing the default by ascending link number for now.
     for (auto& residue : molecule->getResidues())
     {
-        ParsedResidue* brian = static_cast<ParsedResidue*>(residue);
+        ParsedResidue* brian = codeUtils::throwing_cast<ParsedResidue*>(residue);
         brian->sortOutEdgesBySourceTObjectComparator();
     }
     glygraph::Graph<cds::Residue> sequenceGraph(terminalResidue(molecule->getResidues()));
@@ -332,5 +333,5 @@ std::string cdsCondensedSequence::reorderSequence(cds::Molecule* molecule)
 
 ParsedResidue* cdsCondensedSequence::terminalResidue(std::vector<cds::Residue*> residues)
 {
-    return static_cast<ParsedResidue*>(residues.front());
+    return codeUtils::throwing_cast<ParsedResidue*>(residues.front());
 }

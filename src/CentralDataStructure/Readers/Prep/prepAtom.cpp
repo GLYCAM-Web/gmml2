@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" //get_cartesian_point_from_internal_coords()
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -195,7 +196,7 @@ void PrepAtom::FindDihedralAtoms(std::vector<PrepAtom*>& foundAtoms, int current
     {
         return;
     }
-    PrepAtom* parent = static_cast<PrepAtom*>(
+    PrepAtom* parent = codeUtils::throwing_cast<PrepAtom*>(
         foundAtoms.back()
             ->getParents()
             .front()); // Go up the first parent only. Loops may create another parent, but they should be ignored.

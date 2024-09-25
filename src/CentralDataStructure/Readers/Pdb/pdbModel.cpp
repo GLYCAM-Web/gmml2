@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -136,7 +137,7 @@ void PdbModel::ChangeResidueName(const std::string& selector, const std::string&
 {
     for (auto& residue : this->getResidues())
     {
-        std::size_t found = static_cast<PdbResidue*>(residue)->printId().find(selector);
+        std::size_t found = codeUtils::throwing_cast<PdbResidue*>(residue)->printId().find(selector);
         if (found != std::string::npos)
         {
             residue->setName(newName);
@@ -161,11 +162,11 @@ void PdbModel::preProcessCysResidues(pdb::PreprocessorInformation& ppInfo)
     }
     for (std::vector<cds::Residue*>::iterator it1 = cysResidues.begin(); it1 != cysResidues.end(); ++it1)
     { // I want to go through the list and compare from current item to end. Thus it2 = std::next it1
-        PdbResidue* cysRes1 = static_cast<PdbResidue*>(*it1);
+        PdbResidue* cysRes1 = codeUtils::throwing_cast<PdbResidue*>(*it1);
         cds::Atom* sgAtom1  = cysRes1->FindAtom("SG");
         for (std::vector<cds::Residue*>::iterator it2 = std::next(it1, 1); it2 != cysResidues.end(); ++it2)
         {
-            PdbResidue* cysRes2 = static_cast<PdbResidue*>(*it2);
+            PdbResidue* cysRes2 = codeUtils::throwing_cast<PdbResidue*>(*it2);
             cds::Atom* sgAtom2  = cysRes2->FindAtom("SG");
             if ((sgAtom1 != nullptr) && (sgAtom2 != nullptr))
             {
@@ -204,7 +205,7 @@ void PdbModel::preProcessHisResidues(pdb::PreprocessorInformation& ppInfo, const
     // HIS protonation, automatic handling.
     for (auto& cdsresidue : this->getResidues())
     {
-        PdbResidue* residue = static_cast<PdbResidue*>(cdsresidue);
+        PdbResidue* residue = codeUtils::throwing_cast<PdbResidue*>(cdsresidue);
         if (residue->getName() == "HIE" || residue->getName() == "HID" || residue->getName() == "HIP")
         {
             ppInfo.hisResidues_.emplace_back(residue->getId());
@@ -237,7 +238,7 @@ void PdbModel::preProcessChainTerminals(pdb::PreprocessorInformation& ppInfo,
     gmml::log(__LINE__, __FILE__, gmml::INF, "Chain terminations");
     for (auto& cdsMolecule : this->getMolecules())
     {
-        PdbChain* chain = static_cast<PdbChain*>(cdsMolecule);
+        PdbChain* chain = codeUtils::throwing_cast<PdbChain*>(cdsMolecule);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Chain termination processing started for this chain");
         // Do the thing
         PdbResidue* nTerResidue = chain->getNTerminal();
@@ -272,7 +273,7 @@ void PdbModel::preProcessGapsUsingDistance(pdb::PreprocessorInformation& ppInfo,
     gmml::log(__LINE__, __FILE__, gmml::INF, "Gaps");
     for (auto& cdsMolecule : this->getMolecules())
     {
-        PdbChain* chain = static_cast<PdbChain*>(cdsMolecule);
+        PdbChain* chain = codeUtils::throwing_cast<PdbChain*>(cdsMolecule);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Gap detection started for chain " + chain->GetChainId());
         std::vector<cds::Residue*> proteinResidues =
             cdsSelections::selectResiduesByType(chain->getResidues(), cds::ResidueType::Protein);
@@ -287,8 +288,8 @@ void PdbModel::preProcessGapsUsingDistance(pdb::PreprocessorInformation& ppInfo,
              ++it1)
         {
             it2                        = std::next(it1);
-            PdbResidue* res1           = static_cast<PdbResidue*>(*it1);
-            PdbResidue* res2           = static_cast<PdbResidue*>(*it2);
+            PdbResidue* res1           = codeUtils::throwing_cast<PdbResidue*>(*it1);
+            PdbResidue* res2           = codeUtils::throwing_cast<PdbResidue*>(*it2);
             //                            std::cout << "res1 is " + res1->getNumberAndInsertionCode() + "_" +
             //                            res1->getChainId()
             //                            << std::endl; std::cout << "res2 is " + res2->getNumberAndInsertionCode() +
@@ -328,7 +329,7 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
 {
     for (auto& cdsResidue : this->getResidues())
     {
-        PdbResidue* residue            = static_cast<PdbResidue*>(cdsResidue);
+        PdbResidue* residue            = codeUtils::throwing_cast<PdbResidue*>(cdsResidue);
         cds::Residue* parameterResidue = parmManager.findParameterResidue(residue->GetParmName());
         // Unrecognized residue->
         if (parameterResidue == nullptr)
@@ -387,7 +388,7 @@ void PdbModel::Write(std::ostream& stream) const
 {
     for (auto& cdsMolecule : this->getMolecules())
     {
-        static_cast<PdbChain*>(cdsMolecule)->Write(stream);
+        codeUtils::throwing_cast<PdbChain*>(cdsMolecule)->Write(stream);
     }
     //    for (auto& conect : this->GetConectRecords()) These are broken and breaking yao's gm MGL code.
     //    {

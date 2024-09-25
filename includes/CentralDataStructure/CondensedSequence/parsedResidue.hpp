@@ -2,6 +2,7 @@
 #define GMML_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_PARSEDRESIDUE_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include <string>
 
 namespace cdsCondensedSequence
@@ -90,22 +91,22 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         bool operator==(const cds::Residue& rhs) const
         {
-            return (this->GetLink() == static_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() == codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
         bool operator!=(const cds::Residue& rhs) const
         {
-            return (this->GetLink() != static_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() != codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
         bool operator>(const cds::Residue& rhs) const
         {
-            return (this->GetLink() > static_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() > codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
         bool operator<(const cds::Residue& rhs) const
         {
-            return (this->GetLink() < static_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() < codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
       private:

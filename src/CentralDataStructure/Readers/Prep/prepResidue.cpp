@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <sstream>
@@ -429,11 +430,11 @@ void PrepResidue::SetConnectivities()
     // std::cout << "Number of atoms: " << this->getAtoms().size() << std::endl;
     // std::cout << "First atom is " << this->getAtoms().front()->getName() << std::endl;
     std::vector<PrepAtom*> connectionPointStack;
-    connectionPointStack.push_back(static_cast<PrepAtom*>(this->getAtoms().front()));
+    connectionPointStack.push_back(codeUtils::throwing_cast<PrepAtom*>(this->getAtoms().front()));
     // while(currentAtom != this->getAtoms().end())
     for (auto& currentAtom : this->getAtoms())
     {
-        PrepAtom* currentAtomAsPrepType = static_cast<PrepAtom*>(currentAtom);
+        PrepAtom* currentAtomAsPrepType = codeUtils::throwing_cast<PrepAtom*>(currentAtom);
         addBond(connectionPointStack.back(), currentAtomAsPrepType);
         // std::cout << "Bonded " << connectionPointStack.back()->getName() << " to " << currentAtom->getName() <<
         // std::endl;;
@@ -452,8 +453,10 @@ void PrepResidue::SetConnectivities()
     for (auto& loop : this->GetLoops())
     {
         // gmml::log(__LINE__,__FILE__, gmml::INF, "Bonding loop " + loop.first + " to " + loop.second + "\n");
-        PrepAtom* firstAtom  = static_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.first));
-        PrepAtom* secondAtom = static_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.second));
+        PrepAtom* firstAtom =
+            codeUtils::throwing_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.first));
+        PrepAtom* secondAtom =
+            codeUtils::throwing_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.second));
         addBond(firstAtom, secondAtom);
     }
 }
@@ -474,7 +477,7 @@ void PrepResidue::Generate3dStructure()
         //		std::cout << "it1 is now pointing at atom: " << (*it1)->getName() << "\n";
         while (it1 != atomsInResidue.end())
         {
-            PrepAtom* it1AsPrepAtom = static_cast<PrepAtom*>(*it1);
+            PrepAtom* it1AsPrepAtom = codeUtils::throwing_cast<PrepAtom*>(*it1);
             it1AsPrepAtom->Determine3dCoordinate();
             ++it1;
         }
@@ -802,7 +805,7 @@ void PrepResidue::Write(std::ostream& stream)
            << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->GetCharge() << std::endl;
     for (auto& atom : this->getAtoms())
     {
-        static_cast<PrepAtom*>(atom)->Write(stream);
+        codeUtils::throwing_cast<PrepAtom*>(atom)->Write(stream);
     }
     stream << std::endl;
     if (this->GetImproperDihedrals().size() > 0)

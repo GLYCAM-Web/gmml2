@@ -13,11 +13,12 @@
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/random.hpp"
+#include "includes/CodeUtils/strings.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
@@ -104,7 +105,7 @@ namespace
         gmml::log(__LINE__, __FILE__, gmml::INF, "We working with " + userSelectedChain + "_" + userSelectedResidue);
         for (auto& residue : glycoprotein->getResidues())
         {
-            pdb::PdbResidue* pdbResidue = static_cast<pdb::PdbResidue*>(residue);
+            pdb::PdbResidue* pdbResidue = codeUtils::throwing_cast<pdb::PdbResidue*>(residue);
             // std::cout << pdbResidue->getChainId() << "_";
             //        std::cout << pdbResidue->getNumberAndInsertionCode() << "\n";
             if ((pdbResidue->getChainId() == userSelectedChain) &&
@@ -126,7 +127,7 @@ namespace
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                           glycositeInput.glycanInput);
-            Carbohydrate* carb = static_cast<Carbohydrate*>(
+            Carbohydrate* carb = codeUtils::throwing_cast<Carbohydrate*>(
                 glycoprotein->addMolecule(std::make_unique<Carbohydrate>(glycositeInput.glycanInput)));
             Residue* glycositeResidue = selectResidueFromInput(glycoprotein, glycositeInput.proteinResidueId);
             if (glycositeResidue == nullptr)

@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include <sstream>
 
@@ -76,7 +77,7 @@ std::vector<ParsedResidue*> ParsedResidue::GetChildren() const
     std::vector<ParsedResidue*> resRet;
     for (auto& currNodeRes : this->getChildren())
     {
-        resRet.push_back(static_cast<ParsedResidue*>(currNodeRes));
+        resRet.push_back(codeUtils::throwing_cast<ParsedResidue*>(currNodeRes));
     }
     return resRet;
 }
@@ -86,7 +87,7 @@ std::vector<ParsedResidue*> ParsedResidue::GetParents() const
     std::vector<ParsedResidue*> resRet;
     for (auto& currNodeRes : this->getParents())
     {
-        resRet.push_back(static_cast<ParsedResidue*>(currNodeRes));
+        resRet.push_back(codeUtils::throwing_cast<ParsedResidue*>(currNodeRes));
     }
     return resRet;
 }
@@ -100,7 +101,7 @@ ParsedResidue* ParsedResidue::GetParent() const
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw std::runtime_error(message);
     }
-    return static_cast<ParsedResidue*>(parents.front());
+    return codeUtils::throwing_cast<ParsedResidue*>(parents.front());
 }
 
 std::string ParsedResidue::GetChildLinkagesForGlycamResidueNaming() const

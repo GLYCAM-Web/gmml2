@@ -1,9 +1,10 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
+#include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"   // ensureFileExists
 #include "includes/CodeUtils/strings.hpp" // split
-#include "includes/CodeUtils/containers.hpp"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -97,7 +98,7 @@ void PrepFile::SetAtomConnectivities()
 {
     for (auto& residue : this->getResidues())
     {
-        static_cast<PrepResidue*>(residue)->SetConnectivities();
+        codeUtils::throwing_cast<PrepResidue*>(residue)->SetConnectivities();
     }
     return;
 }
@@ -106,7 +107,7 @@ void PrepFile::Generate3dStructures()
 {
     for (auto& residue : this->getResidues())
     {
-        static_cast<PrepResidue*>(residue)->Generate3dStructure();
+        codeUtils::throwing_cast<PrepResidue*>(residue)->Generate3dStructure();
     }
     return;
 }
@@ -197,7 +198,7 @@ void PrepFile::Write(std::ofstream& stream)
            << "\n";
     for (auto& residue : this->getResidues())
     {
-        static_cast<PrepResidue*>(residue)->Write(stream);
+        codeUtils::throwing_cast<PrepResidue*>(residue)->Write(stream);
     }
     stream << "STOP\n";
 }
@@ -211,7 +212,7 @@ std::string PrepFile::Print() const
     for (auto& residue : this->getResidues())
     {
         out += "**********************************************************************************\n";
-        out += static_cast<PrepResidue*>(residue)->toString();
+        out += codeUtils::throwing_cast<PrepResidue*>(residue)->toString();
     }
     return out;
 }

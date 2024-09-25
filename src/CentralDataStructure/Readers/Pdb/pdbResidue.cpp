@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"  // residueId
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp" //RemoveWhiteSpace
 #include <sstream>
@@ -95,7 +96,7 @@ void PdbResidue::modifyNTerminal(const std::string& type)
         if (atom != nullptr)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Deleting atom with id: " + static_cast<const PdbAtom*>(atom)->GetId());
+                      "Deleting atom with id: " + codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId());
             this->deleteAtom(atom);
         }
     }
@@ -122,7 +123,7 @@ void PdbResidue::modifyCTerminal(const std::string& type)
                 atomCA->coordinate(), atomC->coordinate(), atomO->coordinate(), 120.0, 180.0, 1.25);
             this->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Created new atom named OXT after " + static_cast<const PdbAtom*>(atomO)->GetId());
+                      "Created new atom named OXT after " + codeUtils::throwing_cast<const PdbAtom*>(atomO)->GetId());
         }
     }
     else
@@ -141,7 +142,7 @@ void PdbResidue::Print(std::ostream& out) const
     for (auto& atom : this->getAtoms())
     {
         auto coord = atom->coordinate();
-        out << "    atom : " << static_cast<const PdbAtom*>(atom)->GetId() << " X: " << coord.GetX()
+        out << "    atom : " << codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId() << " X: " << coord.GetX()
             << " Y: " << coord.GetY() << " Z: " << coord.GetZ() << "\n";
     }
 }
@@ -150,8 +151,8 @@ void PdbResidue::Write(std::ostream& stream) const
 {
     for (auto& atom : this->getAtoms())
     {
-        static_cast<const PdbAtom*>(atom)->Write(stream, this->getName(), this->getNumber(), this->getChainId(),
-                                                 this->getInsertionCode());
+        codeUtils::throwing_cast<const PdbAtom*>(atom)->Write(stream, this->getName(), this->getNumber(),
+                                                              this->getChainId(), this->getInsertionCode());
     }
     if (this->HasTerCard())
     {
