@@ -11,10 +11,9 @@ namespace cds
 {
     template<typename T> void serializeNumbers(std::vector<T*> elements)
     {
-        unsigned int i = 0;
-        for (auto& element : elements)
+        for (size_t n = 0; n < elements.size(); n++)
         {
-            element->setNumber(++i);
+            elements[n]->setNumber(n + 1);
         }
         return;
     }

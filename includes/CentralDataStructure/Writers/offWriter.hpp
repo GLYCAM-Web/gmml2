@@ -40,10 +40,12 @@ namespace cds
         AtomOffData atoms;
     };
 
+    OffWriterData toOffWriterData(const std::vector<Residue*>& residues);
+    void serializeResiduesIndividually(std::vector<cds::Residue*>& residues);
     std::string getOffType(const cds::ResidueType queryType);
     void WriteOffFileUnit(const std::vector<size_t>& residueIndices, const ResidueOffData& residues,
                           const AtomOffData& atoms, std::ostream& stream, const std::string unitName);
-    void WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostream& stream);
-    void WriteToOffFile(const std::vector<Residue*>& residues, std::ostream& stream, const std::string unitName);
+    void WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffWriterData& data);
+    void WriteResiduesTogetherToOffFile(std::ostream& stream, const OffWriterData& data, const std::string unitName);
 } // namespace cds
 #endif

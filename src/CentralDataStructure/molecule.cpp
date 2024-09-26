@@ -200,5 +200,6 @@ void Molecule::WriteOff(std::ostream& stream)
     std::vector<Atom*> atoms       = getAtoms();
     cds::serializeNumbers(atoms);
     cds::serializeNumbers(residues);
-    cds::WriteToOffFile(residues, stream, getName());
+    cds::OffWriterData data = cds::toOffWriterData(residues);
+    cds::WriteResiduesTogetherToOffFile(stream, data, getName());
 }

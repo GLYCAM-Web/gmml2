@@ -306,12 +306,12 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
     };
 
-    auto writeOffFile = [](const std::vector<cds::Residue*>& residues, const std::string& prefix)
+    auto writeOffFile = [](const cds::OffWriterData& data, const std::string& prefix)
     {
         std::string fileName = prefix + ".off";
         std::ofstream outFileStream;
         outFileStream.open(fileName.c_str());
-        cds::WriteToOffFile(residues, outFileStream, "GLYCOPROTEINBUILDER");
+        cds::WriteResiduesTogetherToOffFile(outFileStream, data, "GLYCOPROTEINBUILDER");
         outFileStream.close();
     };
 
@@ -399,7 +399,10 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
     writerData.residues.numbers = cds::residueNumbers(residues);
     std::vector<std::pair<int, int>> connectionNumbers =
         atomPairNumbers(cds::atomPairsConnectedToOtherResidues(pdbResidues));
-    writeOffFile(residues, outputDir + "glycoprotein");
+    {
+        cds::OffWriterData offData = cds::toOffWriterData(residues);
+        writeOffFile(offData, outputDir + "glycoprotein");
+    }
     writePdbFile(residueIndices, residueTER, writerData, connectionNumbers, outputDir + "glycoprotein_serialized");
 
     for (size_t count = 0; count < settings.number3DStructures; count++)

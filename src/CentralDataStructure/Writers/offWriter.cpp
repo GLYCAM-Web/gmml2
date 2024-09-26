@@ -21,28 +21,6 @@ namespace
         }
         return result;
     }
-
-    cds::OffWriterData toOffWriterData(const std::vector<cds::Residue*>& residues)
-    {
-        std::vector<cds::Atom*> atoms;
-        std::vector<std::vector<int>> atomChildren;
-        std::vector<std::vector<size_t>> indices;
-        std::vector<std::vector<int>> connections;
-        for (auto& residue : residues)
-        {
-            std::vector<cds::Atom*> residueAtoms = residue->getAtoms();
-            indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
-            std::vector<cds::Atom*> atomsConnectedToOtherResidues = cds::atomsConnectedToOtherResidues(residueAtoms);
-            connections.push_back(cds::atomNumbers(atomsConnectedToOtherResidues));
-            codeUtils::insertInto(atoms, residueAtoms);
-        }
-        cds::AtomOffData atomData(cds::atomNumbers(atoms), cds::atomNames(atoms), cds::atomTypes(atoms),
-                                  cds::atomAtomicNumbers(atoms), cds::atomCharges(atoms), cds::atomCoordinates(atoms),
-                                  atomChildrenNumbers(atoms));
-        cds::ResidueOffData residueData(cds::residueNumbers(residues), cds::residueNames(residues),
-                                        cds::residueTypes(residues), indices, connections);
-        return cds::OffWriterData {residueData, atomData};
-    }
 } // namespace
 
 cds::AtomOffData::AtomOffData(std::vector<int> numbers_, std::vector<std::string> names_,
@@ -59,6 +37,36 @@ cds::ResidueOffData::ResidueOffData(std::vector<int> numbers_, std::vector<std::
     : numbers(numbers_), names(names_), types(types_), atomIndices(atomIndices_),
       atomsConnectedToOtherResidues(connections_)
 {}
+
+cds::OffWriterData cds::toOffWriterData(const std::vector<Residue*>& residues)
+{
+    std::vector<Atom*> atoms;
+    std::vector<std::vector<int>> atomChildren;
+    std::vector<std::vector<size_t>> indices;
+    std::vector<std::vector<int>> connections;
+    for (auto& residue : residues)
+    {
+        std::vector<Atom*> residueAtoms = residue->getAtoms();
+        indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
+        std::vector<Atom*> atomsConnected = atomsConnectedToOtherResidues(residueAtoms);
+        connections.push_back(atomNumbers(atomsConnected));
+        codeUtils::insertInto(atoms, residueAtoms);
+    }
+    AtomOffData atomData(atomNumbers(atoms), atomNames(atoms), atomTypes(atoms), atomAtomicNumbers(atoms),
+                         atomCharges(atoms), atomCoordinates(atoms), atomChildrenNumbers(atoms));
+    ResidueOffData residueData(residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
+                               connections);
+    return OffWriterData {residueData, atomData};
+}
+
+void cds::serializeResiduesIndividually(std::vector<cds::Residue*>& residues)
+{
+    for (auto& residue : residues)
+    {
+        residue->setNumber(1);
+        cds::serializeNumbers(residue->getAtoms());
+    }
+}
 
 std::string cds::getOffType(const cds::ResidueType queryType)
 {
@@ -249,28 +257,23 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const Resi
     return;
 }
 
-void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostream& stream)
+void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffWriterData& data)
 { // For writing each residue separately
+    size_t residueCount = data.residues.names.size();
     stream << "!!index array str" << std::endl;
-    for (auto& residue : residues)
+    for (size_t n = 0; n < residueCount; n++)
     {
-        stream << " \"" << residue->getName() << "\"" << std::endl;
+        stream << " \"" << data.residues.names[n] << "\"" << std::endl;
     }
-    for (auto& residue : residues)
+    for (size_t n = 0; n < residueCount; n++)
     {
-        std::vector<Residue*> residues = {residue};
-        std::vector<Atom*> atoms       = residue->getAtoms();
-        cds::serializeNumbers(atoms);
-        cds::serializeNumbers(residues);
-        OffWriterData data = toOffWriterData(residues);
-        cds::WriteOffFileUnit(codeUtils::indexVector(residues), data.residues, data.atoms, stream, residue->getName());
+        cds::WriteOffFileUnit({n}, data.residues, data.atoms, stream, data.residues.names[n]);
     }
 }
 
-void cds::WriteToOffFile(const std::vector<Residue*>& residues, std::ostream& stream, const std::string unitName)
+void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const OffWriterData& data, const std::string unitName)
 { // For writing residues together as a molecule
     stream << "!!index array str" << std::endl;
     stream << " \"" << unitName << "\"" << std::endl;
-    OffWriterData data = toOffWriterData(residues);
-    cds::WriteOffFileUnit(codeUtils::indexVector(residues), data.residues, data.atoms, stream, unitName);
+    cds::WriteOffFileUnit(codeUtils::indexVector(data.residues.names), data.residues, data.atoms, stream, unitName);
 }

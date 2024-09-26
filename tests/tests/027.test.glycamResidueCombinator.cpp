@@ -85,6 +85,7 @@ int main(int argc, char* argv[])
     std::ofstream outFileStream;
     std::string fileName = "GLYCAM_06k.lib";
     outFileStream.open(fileName.c_str());
-    cds::WriteResiduesToOffFile(allGeneratedResidues, outFileStream);
+    cds::serializeResiduesIndividually(allGeneratedResidues);
+    cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffWriterData(allGeneratedResidues));
     outFileStream.close();
 }
