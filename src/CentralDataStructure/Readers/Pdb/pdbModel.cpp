@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbChain.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
@@ -388,11 +389,32 @@ void PdbModel::Write(std::ostream& stream) const
 {
     for (auto& cdsMolecule : this->getMolecules())
     {
-        codeUtils::throwing_cast<PdbChain*>(cdsMolecule)->Write(stream);
+        PdbChain* pdbChain                  = codeUtils::throwing_cast<PdbChain*>(cdsMolecule);
+        std::vector<cds::Residue*> residues = pdbChain->getResidues();
+        for (auto& residue : residues)
+        {
+            PdbResidue* pdbResidue        = codeUtils::throwing_cast<PdbResidue*>(residue);
+            std::vector<cds::Atom*> atoms = pdbResidue->getAtoms();
+            std::vector<std::string> recordName;
+            std::vector<double> occupancy;
+            std::vector<double> temperatureFactor;
+            for (auto& atom : atoms)
+            {
+                PdbAtom* pdbAtom = codeUtils::throwing_cast<PdbAtom*>(atom);
+                recordName.push_back(pdbAtom->GetRecordName());
+                occupancy.push_back(pdbAtom->GetOccupancy());
+                temperatureFactor.push_back(pdbAtom->GetTemperatureFactor());
+            }
+            cds::ResiduePdbData residueData({codeUtils::indexVector(atoms)}, {pdbResidue->getNumber()},
+                                            {pdbResidue->getName()}, {pdbResidue->getChainId()},
+                                            {pdbResidue->getInsertionCode()});
+            cds::AtomPdbData atomData(atoms, recordName, occupancy, temperatureFactor);
+            cds::writeMoleculeToPdb(stream, {0}, {pdbResidue->HasTerCard()},
+                                    cds::PdbWriterData {residueData, atomData});
+        }
+        if (!residues.empty())
+        { // Sometimes you get empty chains after things have been deleted I guess.
+            stream << "TER\n";
+        }
     }
-    //    for (auto& conect : this->GetConectRecords()) These are broken and breaking yao's gm MGL code.
-    //    {
-    //        conect.Write(stream);
-    //    }
-    return;
 }

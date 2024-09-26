@@ -78,7 +78,6 @@ namespace pdb
         }
 
         void Print(std::ostream& out = std::cerr) const;
-        void Write(std::ostream& stream) const;
 
       private:
         //////////////////////////////////////////////////////////

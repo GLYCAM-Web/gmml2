@@ -2,9 +2,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"  // residueId
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp" //RemoveWhiteSpace
 #include <sstream>
@@ -146,23 +144,4 @@ void PdbResidue::Print(std::ostream& out) const
         out << "    atom : " << codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId() << " X: " << coord.GetX()
             << " Y: " << coord.GetY() << " Z: " << coord.GetZ() << "\n";
     }
-}
-
-void PdbResidue::Write(std::ostream& stream) const
-{
-    std::vector<cds::Atom*> atoms = getAtoms();
-    std::vector<std::string> recordName;
-    std::vector<double> occupancy;
-    std::vector<double> temperatureFactor;
-    for (auto& atom : atoms)
-    {
-        PdbAtom* pdbAtom = codeUtils::throwing_cast<PdbAtom*>(atom);
-        recordName.push_back(pdbAtom->GetRecordName());
-        occupancy.push_back(pdbAtom->GetOccupancy());
-        temperatureFactor.push_back(pdbAtom->GetTemperatureFactor());
-    }
-    cds::ResiduePdbData residueData({codeUtils::indexVector(atoms)}, {getNumber()}, {getName()}, {getChainId()},
-                                    {getInsertionCode()});
-    cds::AtomPdbData atomData(atoms, recordName, occupancy, temperatureFactor);
-    cds::writeMoleculeToPdb(stream, {0}, {HasTerCard()}, cds::PdbWriterData {residueData, atomData});
 }

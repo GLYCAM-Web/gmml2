@@ -35,12 +35,6 @@ namespace pdb
         void ModifyTerminal(const std::string& type, PdbResidue* terminalResidue);
         PdbResidue* getNTerminal();
         PdbResidue* getCTerminal();
-        // addCapsToGaps(pdb::PreprocessorInformation &ppInfo, const pdb::PreprocessorOptions& inputOptions);
-        //////////////////////////////////////////////////////////
-        //                       DISPLAY FUNCTION               //
-        //////////////////////////////////////////////////////////
-        //  void Print(std::ostream& out = std::cerr) const;
-        void Write(std::ostream& stream) const;
 
       private:
         //////////////////////////////////////////////////////////
