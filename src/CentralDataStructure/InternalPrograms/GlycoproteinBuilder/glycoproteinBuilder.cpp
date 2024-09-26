@@ -106,7 +106,7 @@ namespace
         gmml::log(__LINE__, __FILE__, gmml::INF, "We working with " + userSelectedChain + "_" + userSelectedResidue);
         for (auto& residue : glycoprotein->getResidues())
         {
-            pdb::PdbResidue* pdbResidue = codeUtils::throwing_cast<pdb::PdbResidue*>(residue);
+            pdb::PdbResidue* pdbResidue = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
             // std::cout << pdbResidue->getChainId() << "_";
             //        std::cout << pdbResidue->getNumberAndInsertionCode() << "\n";
             if ((pdbResidue->getChainId() == userSelectedChain) &&
@@ -128,7 +128,7 @@ namespace
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                           glycositeInput.glycanInput);
-            Carbohydrate* carb = codeUtils::throwing_cast<Carbohydrate*>(
+            Carbohydrate* carb = codeUtils::erratic_cast<Carbohydrate*>(
                 glycoprotein->addMolecule(std::make_unique<Carbohydrate>(glycositeInput.glycanInput)));
             Residue* glycositeResidue = selectResidueFromInput(glycoprotein, glycositeInput.proteinResidueId);
             if (glycositeResidue == nullptr)

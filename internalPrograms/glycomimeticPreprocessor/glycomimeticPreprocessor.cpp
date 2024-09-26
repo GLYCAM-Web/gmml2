@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
             {
                 for (auto& atom : residue->getAtoms())
                 {
-                    pdb::PdbAtom* castPdbAtomPtr = codeUtils::throwing_cast<pdb::PdbAtom*>(atom);
+                    pdb::PdbAtom* castPdbAtomPtr = codeUtils::erratic_cast<pdb::PdbAtom*>(atom);
                     castPdbAtomPtr->SetRecordName("ATOM");
                 }
             }
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
     }
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
-    pdb::PdbModel* castPdbModelPtr = codeUtils::throwing_cast<pdb::PdbModel*>(firstModel);
+    pdb::PdbModel* castPdbModelPtr = codeUtils::erratic_cast<pdb::PdbModel*>(firstModel);
     castPdbModelPtr->Write(outFileStream);
     //    cds::writeAssemblyToPdb(outFileStream, firstModel->getMolecules());
     outFileStream << "END\n"; // Original GMML needs this.

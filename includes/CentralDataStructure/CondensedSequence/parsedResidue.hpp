@@ -91,22 +91,22 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         bool operator==(const cds::Residue& rhs) const
         {
-            return (this->GetLink() == codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() == codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
         bool operator!=(const cds::Residue& rhs) const
         {
-            return (this->GetLink() != codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() != codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
         bool operator>(const cds::Residue& rhs) const
         {
-            return (this->GetLink() > codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() > codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
         bool operator<(const cds::Residue& rhs) const
         {
-            return (this->GetLink() < codeUtils::throwing_cast<const ParsedResidue*>(&rhs)->GetLink());
+            return (this->GetLink() < codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
         }
 
       private:

@@ -95,7 +95,7 @@ void PdbResidue::modifyNTerminal(const std::string& type)
         if (atom != nullptr)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Deleting atom with id: " + codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId());
+                      "Deleting atom with id: " + codeUtils::erratic_cast<const PdbAtom*>(atom)->GetId());
             this->deleteAtom(atom);
         }
     }
@@ -122,7 +122,7 @@ void PdbResidue::modifyCTerminal(const std::string& type)
                 atomCA->coordinate(), atomC->coordinate(), atomO->coordinate(), 120.0, 180.0, 1.25);
             this->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Created new atom named OXT after " + codeUtils::throwing_cast<const PdbAtom*>(atomO)->GetId());
+                      "Created new atom named OXT after " + codeUtils::erratic_cast<const PdbAtom*>(atomO)->GetId());
         }
     }
     else
@@ -141,7 +141,7 @@ void PdbResidue::Print(std::ostream& out) const
     for (auto& atom : this->getAtoms())
     {
         auto coord = atom->coordinate();
-        out << "    atom : " << codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId() << " X: " << coord.GetX()
+        out << "    atom : " << codeUtils::erratic_cast<const PdbAtom*>(atom)->GetId() << " X: " << coord.GetX()
             << " Y: " << coord.GetY() << " Z: " << coord.GetZ() << "\n";
     }
 }

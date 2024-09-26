@@ -430,11 +430,11 @@ void PrepResidue::SetConnectivities()
     // std::cout << "Number of atoms: " << this->getAtoms().size() << std::endl;
     // std::cout << "First atom is " << this->getAtoms().front()->getName() << std::endl;
     std::vector<PrepAtom*> connectionPointStack;
-    connectionPointStack.push_back(codeUtils::throwing_cast<PrepAtom*>(this->getAtoms().front()));
+    connectionPointStack.push_back(codeUtils::erratic_cast<PrepAtom*>(this->getAtoms().front()));
     // while(currentAtom != this->getAtoms().end())
     for (auto& currentAtom : this->getAtoms())
     {
-        PrepAtom* currentAtomAsPrepType = codeUtils::throwing_cast<PrepAtom*>(currentAtom);
+        PrepAtom* currentAtomAsPrepType = codeUtils::erratic_cast<PrepAtom*>(currentAtom);
         addBond(connectionPointStack.back(), currentAtomAsPrepType);
         // std::cout << "Bonded " << connectionPointStack.back()->getName() << " to " << currentAtom->getName() <<
         // std::endl;;
@@ -454,9 +454,9 @@ void PrepResidue::SetConnectivities()
     {
         // gmml::log(__LINE__,__FILE__, gmml::INF, "Bonding loop " + loop.first + " to " + loop.second + "\n");
         PrepAtom* firstAtom =
-            codeUtils::throwing_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.first));
+            codeUtils::erratic_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.first));
         PrepAtom* secondAtom =
-            codeUtils::throwing_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.second));
+            codeUtils::erratic_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.second));
         addBond(firstAtom, secondAtom);
     }
 }
@@ -477,7 +477,7 @@ void PrepResidue::Generate3dStructure()
         //		std::cout << "it1 is now pointing at atom: " << (*it1)->getName() << "\n";
         while (it1 != atomsInResidue.end())
         {
-            PrepAtom* it1AsPrepAtom = codeUtils::throwing_cast<PrepAtom*>(*it1);
+            PrepAtom* it1AsPrepAtom = codeUtils::erratic_cast<PrepAtom*>(*it1);
             it1AsPrepAtom->Determine3dCoordinate();
             ++it1;
         }
@@ -805,7 +805,7 @@ void PrepResidue::Write(std::ostream& stream)
            << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->GetCharge() << std::endl;
     for (auto& atom : this->getAtoms())
     {
-        codeUtils::throwing_cast<PrepAtom*>(atom)->Write(stream);
+        codeUtils::erratic_cast<PrepAtom*>(atom)->Write(stream);
     }
     stream << std::endl;
     if (this->GetImproperDihedrals().size() > 0)

@@ -77,7 +77,7 @@ std::vector<ParsedResidue*> ParsedResidue::GetChildren() const
     std::vector<ParsedResidue*> resRet;
     for (auto& currNodeRes : this->getChildren())
     {
-        resRet.push_back(codeUtils::throwing_cast<ParsedResidue*>(currNodeRes));
+        resRet.push_back(codeUtils::erratic_cast<ParsedResidue*>(currNodeRes));
     }
     return resRet;
 }
@@ -87,7 +87,7 @@ std::vector<ParsedResidue*> ParsedResidue::GetParents() const
     std::vector<ParsedResidue*> resRet;
     for (auto& currNodeRes : this->getParents())
     {
-        resRet.push_back(codeUtils::throwing_cast<ParsedResidue*>(currNodeRes));
+        resRet.push_back(codeUtils::erratic_cast<ParsedResidue*>(currNodeRes));
     }
     return resRet;
 }
@@ -101,7 +101,7 @@ ParsedResidue* ParsedResidue::GetParent() const
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw std::runtime_error(message);
     }
-    return codeUtils::throwing_cast<ParsedResidue*>(parents.front());
+    return codeUtils::erratic_cast<ParsedResidue*>(parents.front());
 }
 
 std::string ParsedResidue::GetChildLinkagesForGlycamResidueNaming() const

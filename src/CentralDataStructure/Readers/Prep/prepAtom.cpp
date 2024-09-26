@@ -196,7 +196,7 @@ void PrepAtom::FindDihedralAtoms(std::vector<PrepAtom*>& foundAtoms, int current
     {
         return;
     }
-    PrepAtom* parent = codeUtils::throwing_cast<PrepAtom*>(
+    PrepAtom* parent = codeUtils::erratic_cast<PrepAtom*>(
         foundAtoms.back()
             ->getParents()
             .front()); // Go up the first parent only. Loops may create another parent, but they should be ignored.

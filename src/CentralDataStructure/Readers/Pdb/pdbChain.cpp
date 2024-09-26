@@ -125,7 +125,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         addBond(ch3Atom, hh32Atom);
         addBond(ch3Atom, hh33Atom);
         newNMEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
-        codeUtils::throwing_cast<PdbResidue*>(newNMEResidue)->AddTerCard(); // No longer used?
+        codeUtils::erratic_cast<PdbResidue*>(newNMEResidue)->AddTerCard(); // No longer used?
     }
     else if (type == "COCH3") // ACE
     {
@@ -154,7 +154,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         // residue before here:
         auto refPosition = this->findPositionOfResidue(&refResidue);
         --refPosition;
-        PdbResidue* previousResidue = codeUtils::throwing_cast<PdbResidue*>(
+        PdbResidue* previousResidue = codeUtils::erratic_cast<PdbResidue*>(
             (*refPosition).get()); // Its an iterator to a unique ptr, so deref and get the raw. Ugh.
         cds::Residue* newACEResidue =
             this->insertNewResidue(std::make_unique<PdbResidue>("ACE", previousResidue), *previousResidue);
@@ -172,7 +172,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         addBond(ch3Atom, hh33Atom);
         newACEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created ACE residue: " + codeUtils::throwing_cast<PdbResidue*>(newACEResidue)->printId());
+                  "Created ACE residue: " + codeUtils::erratic_cast<PdbResidue*>(newACEResidue)->printId());
     }
 }
 
@@ -184,7 +184,7 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
         cds::Atom* found = terminalResidue->FindAtom("H");
         if (found != nullptr)
         {
-            const PdbAtom* atom = codeUtils::throwing_cast<const PdbAtom*>(terminalResidue->FindAtom("H"));
+            const PdbAtom* atom = codeUtils::erratic_cast<const PdbAtom*>(terminalResidue->FindAtom("H"));
             gmml::log(__LINE__, __FILE__, gmml::INF, "Deleting atom with id: " + atom->GetId());
             terminalResidue->deleteAtom(atom);
         }
@@ -197,7 +197,7 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
         if (atom != nullptr)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "OXT atom already exists: " + codeUtils::throwing_cast<const PdbAtom*>(atom)->GetId());
+                      "OXT atom already exists: " + codeUtils::erratic_cast<const PdbAtom*>(atom)->GetId());
             return;
         }
         // I don't like this, but at least it's somewhat contained:
@@ -216,7 +216,7 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
         cds::Atom* oxtAtom       = terminalResidue->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
         addBond(oxtAtom, atomC);
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created new atom named OXT after " + codeUtils::throwing_cast<const PdbAtom*>(atomO)->GetId());
+                  "Created new atom named OXT after " + codeUtils::erratic_cast<const PdbAtom*>(atomO)->GetId());
         return;
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);
@@ -233,7 +233,7 @@ pdb::PdbResidue* PdbChain::getNTerminal()
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
         return nullptr;
     }
-    return codeUtils::throwing_cast<PdbResidue*>(proteinResidues.front());
+    return codeUtils::erratic_cast<PdbResidue*>(proteinResidues.front());
 }
 
 pdb::PdbResidue* PdbChain::getCTerminal()
@@ -244,5 +244,5 @@ pdb::PdbResidue* PdbChain::getCTerminal()
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
         return nullptr;
     }
-    return codeUtils::throwing_cast<PdbResidue*>(proteinResidues.back());
+    return codeUtils::erratic_cast<PdbResidue*>(proteinResidues.back());
 }

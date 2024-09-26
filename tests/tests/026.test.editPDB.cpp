@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
     auto residues = pdb::getResidues(pdbFile.getAssemblies());
     for (auto& residue : residues)
     {
-        codeUtils::throwing_cast<pdb::PdbResidue*>(residue)->setChainId("Y");
+        codeUtils::erratic_cast<pdb::PdbResidue*>(residue)->setChainId("Y");
         // std::cout << "Set chain of " << residue->getStringId() << "\n";
     }
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:

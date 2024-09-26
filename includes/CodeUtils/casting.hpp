@@ -6,7 +6,7 @@
 
 namespace codeUtils
 {
-    template<class T, class U> T throwing_cast(U obj, const std::string& msg = "")
+    template<class T, class U> T erratic_cast(U obj, const std::string& msg = "")
     {
         T result = dynamic_cast<T>(obj);
         if (result == nullptr)

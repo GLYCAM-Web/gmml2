@@ -99,7 +99,7 @@ namespace
         if (residueString.find('-') != std::string::npos)
         {
             molecule->addResidue(std::make_unique<ParsedResidue>(residueString, parent));
-            ParsedResidue* newRes = codeUtils::throwing_cast<ParsedResidue*>(molecule->getResidues().back());
+            ParsedResidue* newRes = codeUtils::erratic_cast<ParsedResidue*>(molecule->getResidues().back());
             if (!savedDerivatives.empty())
             {
                 for (auto& derivative : savedDerivatives)
@@ -188,7 +188,7 @@ namespace
         { // e.g. DGlcpa1-OH
             molecule->addResidue(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Aglycone));
         }
-        ParsedResidue* terminal = codeUtils::throwing_cast<ParsedResidue*>(molecule->getResidues().back());
+        ParsedResidue* terminal = codeUtils::erratic_cast<ParsedResidue*>(molecule->getResidues().back());
         recurveParseAlt(molecule, savedDerivatives, i, sequence, terminal);
         return true;
     }

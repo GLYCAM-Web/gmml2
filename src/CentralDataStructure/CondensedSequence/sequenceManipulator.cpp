@@ -247,7 +247,7 @@ cdsCondensedSequence::parsedResiduesOrderedByConnectivity(std::vector<cds::Resid
     glygraph::Graph<cds::Residue> sequenceGraph(cdsCondensedSequence::terminalResidue(residues));
     for (auto& node : sequenceGraph.getNodes())
     {
-        rawResidues.push_back(codeUtils::throwing_cast<ParsedResidue*>(node->getDerivedClass()));
+        rawResidues.push_back(codeUtils::erratic_cast<ParsedResidue*>(node->getDerivedClass()));
     }
     return rawResidues;
 }
@@ -319,7 +319,7 @@ std::string cdsCondensedSequence::reorderSequence(cds::Molecule* molecule)
 { // Just doing the default by ascending link number for now.
     for (auto& residue : molecule->getResidues())
     {
-        ParsedResidue* brian = codeUtils::throwing_cast<ParsedResidue*>(residue);
+        ParsedResidue* brian = codeUtils::erratic_cast<ParsedResidue*>(residue);
         brian->sortOutEdgesBySourceTObjectComparator();
     }
     glygraph::Graph<cds::Residue> sequenceGraph(terminalResidue(molecule->getResidues()));
@@ -333,5 +333,5 @@ std::string cdsCondensedSequence::reorderSequence(cds::Molecule* molecule)
 
 ParsedResidue* cdsCondensedSequence::terminalResidue(std::vector<cds::Residue*> residues)
 {
-    return codeUtils::throwing_cast<ParsedResidue*>(residues.front());
+    return codeUtils::erratic_cast<ParsedResidue*>(residues.front());
 }

@@ -43,7 +43,7 @@ pdb::PdbResidue* pdb::residueSelector(std::vector<cds::Residue*> residues, const
 { // I'm using empty() to mean that it could be anything.
     for (auto& residue : residues)
     {
-        PdbResidue* pdbResidue = codeUtils::throwing_cast<PdbResidue*>(residue);
+        PdbResidue* pdbResidue = codeUtils::erratic_cast<PdbResidue*>(residue);
         // std::cout << "currentId vs queryId: " << pdbResidue->getId() << " vs " << queryId << std::endl;
         if (queryId.getName().empty() || queryId.getName() == pdbResidue->getId().getName())
         {
