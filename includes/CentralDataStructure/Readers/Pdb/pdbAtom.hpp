@@ -2,14 +2,12 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBATOM_HPP
 // See http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM for an explanation of atom
 // formats in PDB files
-// #include "includes/GeometryTopology/coordinate.hpp"
-// #include "includes/MolecularModeling/TemplateGraph/AbstractObject/includes/Labels.hpp"
+
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CodeUtils/constants.hpp" // codeUtils::iNotSet
 #include <string>
 #include <iostream>
 
-// using GeometryTopology::Coordinate;
 namespace pdb
 {
     class PdbAtom : public cds::Atom
@@ -29,10 +27,6 @@ namespace pdb
             return recordName_;
         }
 
-        // inline const std::string& GetResidueName() const {return residueName_;}
-        // inline const std::string& GetChainId() const {return chainId_;}
-        // inline const int& GetResidueSequenceNumber() const {return residueSequenceNumber_;}
-        // inline const std::string& GetInsertionCode() const {return insertionCode_;}
         inline const std::string& GetAlternateLocation() const
         {
             return alternateLocation_;
@@ -76,17 +70,14 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
-        void SetModelNumber(const int i);
         void SetAlternateLocation(const std::string atom_alternate_location);
         void SetChainId(const std::string atom_chain_id);
         void SetResidueSequenceNumber(const int atom_residue_sequence_number);
         void SetInsertionCode(const std::string atom_insertion_code);
-        //    void SetCoordinate(const Coordinate c);
         void SetOccupancy(double atom_occupancy);
         void SetTempretureFactor(const double atom_temperature_factor);
         void SetElement(const std::string atom_element_symbol);
         void SetCharge(const std::string atom_charge);
-        // void AddAlternateLocation(AtomRecord* alternate_atom);
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
@@ -100,7 +91,6 @@ namespace pdb
         double temperatureFactor_  = constants::dNotSet; // Atom temperature factor
         std::string element_       = "";                 // Atom element symbol
         std::string charge_        = "";                 // Atom charge
-        // std::vector<AtomRecord*> alternateLocations_; // Alternate atom locations, as a vector of atom cards, as
         // there is   more information that may be needed (such as ID (A,B,C, etc), %occupancy, etc)
     };
 } // namespace pdb

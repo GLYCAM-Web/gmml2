@@ -4,11 +4,8 @@
 #include <string>
 #include <vector>
 
-// may want to remove the constants.hpp file here.... Was added cause when
-// doing some brute force type compile checking this file needed constants.hpp
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // residueId
-// #include "includes/utils.hpp" // gmml::Split
 #include "includes/CodeUtils/logging.hpp"
 
 // These structs are all for interacting with the website via gems.
@@ -37,35 +34,6 @@ namespace pdb
         std::vector<std::pair<std::string, std::string>>
             hisSelections_; // e.g. pair: residue id like this <"HIS_20_?_A_1", "HID">
     };
-
-    // struct pdb::ResidueId
-    //{
-    //     //Constructor
-    //     pdb::ResidueId(std::string inputId)
-    //     {
-    //         std::vector<std::string> tokens = gmml::Split(inputId, "_");
-    //         if (tokens.size() == 4)
-    //         {
-    //             inputId_ = inputId;
-    //             name_ = tokens.at(0);
-    //             number_ = tokens.at(1);
-    //             insertionCode_ = tokens.at(2);
-    //             chainId_ = tokens.at(3);
-    ////            model_ = tokens.at(4);
-    //        }
-    //        else
-    //        {
-    //            gmml::log(__LINE__,__FILE__,gmml::ERR, "Could not parse residue id info from this id: " + inputId);
-    //        }
-    //    }
-    //    // Members
-    //    std::string inputId_;
-    //    std::string name_;
-    //    std::string number_;
-    //    std::string insertionCode_;
-    //    std::string chainId_;
-    ////    std::string model_;
-    //};
 
     struct DisulphideBond // The original spelling is phabulous.
     {
@@ -102,39 +70,6 @@ namespace pdb
         std::string terminationBeforeGap_;
         std::string terminationAfterGap_;
     };
-
-    // struct AtomId
-    //{
-    //     //Constructor
-    //     AtomId(std::string inputId)
-    //     {
-    //         std::vector<std::string> tokens = gmml::Split(inputId, "_");
-    //         if (tokens.size() == 7)
-    //         {
-    //             inputId_ = inputId;
-    //             name_ = tokens.at(0);
-    //             number_ = tokens.at(1);
-    //             resName_ = tokens.at(2);
-    //             resNumber_ = tokens.at(3);
-    //             resInsertionCode_ = tokens.at(4);
-    //             chainId_ = tokens.at(5);
-    //             model_ = tokens.at(6);
-    //         }
-    //         else
-    //         {
-    //             gmml::log(__LINE__,__FILE__,gmml::ERR, "Could not parse atom id info from this id: " + inputId);
-    //         }
-    //     }
-    //     // Members
-    //     std::string inputId_;
-    //     std::string name_;
-    //     std::string number_;
-    //     std::string resName_;
-    //     std::string resNumber_;
-    //     std::string resInsertionCode_;
-    //     std::string chainId_;
-    //     std::string model_;
-    // };
 
     struct AtomInfo
     {

@@ -18,15 +18,6 @@ namespace pdb
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
         PdbChain(std::stringstream& stream_block, const std::string& chainId);
-        //    PdbChain(PdbResidue pdbResidue);
-        //    PdbChain(std::vector<PdbResidue> pdbResidues);
-        //////////////////////////////////////////////////////////
-        //                       ACCESSOR                       //
-        //////////////////////////////////////////////////////////
-        //    const std::string& GetChainId() const;
-        //////////////////////////////////////////////////////////
-        //                       MUTATOR                        //
-        //////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
@@ -40,15 +31,7 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        // std::string extractResidueId(const std::string &line);
         std::stringstream extractSingleResidueFromRecordSection(std::stringstream& pdbFileStream, std::string line);
-
-        // PdbResidue& GetFirstResidue() const;
-        //////////////////////////////////////////////////////////
-        //                       ATTRIBUTES                     //
-        //////////////////////////////////////////////////////////
-        // std::vector<PdbResidue> pdbResidues_;
-        // std::string chainId_;
     };
 } // namespace pdb
 #endif
