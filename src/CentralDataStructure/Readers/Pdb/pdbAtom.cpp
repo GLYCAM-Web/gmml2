@@ -3,7 +3,6 @@
 #include "includes/CodeUtils/constants.hpp" // gmml::iNotSet
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 
 using pdb::PdbAtom;
 
@@ -242,13 +241,4 @@ void PdbAtom::Print(std::ostream& out) const
         out << temperatureFactor_;
     }
     out << ", Element: " << element_ << ", Charge: " << charge_ << std::endl;
-}
-
-void PdbAtom::Write(std::ostream& stream, const std::string residueName, const unsigned int residueNumber,
-                    const std::string chainId, const std::string insertionCode) const
-{
-    cds::writeAtomToPdb(stream,
-                        cds::AtomPdbData(this, GetRecordName(), residueName, residueNumber, chainId, insertionCode,
-                                         GetOccupancy(), GetTemperatureFactor()),
-                        0);
 }

@@ -71,8 +71,6 @@ namespace pdb
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
         void Print(std::ostream& out = std::cerr) const;
-        void Write(std::ostream& stream, const std::string residueName, const unsigned int residueNumber,
-                   const std::string chainId, const std::string insertionCode) const;
 
       private:
         //////////////////////////////////////////////////////////

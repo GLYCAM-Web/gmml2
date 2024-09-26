@@ -22,6 +22,8 @@ namespace cds
     std::vector<int> atomNumbers(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomNames(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomElements(const std::vector<Atom*>& atoms);
+    std::vector<int> residueNumbers(const std::vector<Residue*>& residues);
+    std::vector<std::string> residueNames(const std::vector<Residue*>& residues);
     std::vector<ResidueType> residueTypes(const std::vector<Residue*>& residues);
     std::array<Atom*, 2> bondedAtomPair(std::vector<Atom*>& atomsA, std::vector<Atom*>& atomsB);
     std::vector<bool> atomsBondedTo(Atom* origin, std::vector<Atom*>& atoms);

@@ -20,23 +20,24 @@ namespace
     }
 } // namespace
 
-cds::AtomPdbData::AtomPdbData(const cds::Atom* atom, std::string recordName_, std::string residueName_,
-                              int residueNumber_, std::string chainId_, std::string insertionCode_, double occupancy_,
-                              double temperatureFactor_)
-    : coordinate({atom->coordinate()}), number({atom->getNumber()}), name({atom->getName()}),
-      element({atom->getElement()}), recordName({recordName_}), residueAlternativeLocation({""}),
-      residueNumber({residueNumber_}), residueName({residueName_.substr(0, 3)}), chainId({chainId_}),
-      insertionCode({insertionCode_}), occupancy({occupancy_}), temperatureFactor({temperatureFactor_})
+cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_,
+                              std::vector<double> occupancies_, std::vector<double> temperatureFactors_)
+    : coordinates(atomCoordinates(atoms)), numbers(atomNumbers(atoms)), names(atomNames(atoms)),
+      elements(atomElements(atoms)), recordNames(recordNames_), occupancies(occupancies_),
+      temperatureFactors(temperatureFactors_)
 {}
 
-cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*> atoms, std::vector<std::string> recordNames,
-                              std::vector<std::string> residueNames, std::vector<int> residueNumbers)
-    : coordinate(atomCoordinates(atoms)), number(atomNumbers(atoms)), name(atomNames(atoms)),
-      element(atomElements(atoms)), recordName(recordNames),
-      residueAlternativeLocation(std::vector<std::string>(atoms.size(), "")), residueNumber(residueNumbers),
-      residueName(nameSubstrings(residueNames)), chainId(std::vector<std::string>(atoms.size(), "")),
-      insertionCode(std::vector<std::string>(atoms.size(), "")), occupancy(std::vector<double>(atoms.size(), 1.0)),
-      temperatureFactor(std::vector<double>(atoms.size(), 0.0))
+cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_)
+    : coordinates(atomCoordinates(atoms)), numbers(atomNumbers(atoms)), names(atomNames(atoms)),
+      elements(atomElements(atoms)), recordNames(recordNames_), occupancies(std::vector<double>(atoms.size(), 1.0)),
+      temperatureFactors(std::vector<double>(atoms.size(), 0.0))
+{}
+
+cds::ResiduePdbData::ResiduePdbData(std::vector<std::vector<size_t>> atomIndices_, std::vector<int> numbers_,
+                                    std::vector<std::string> names_, std::vector<std::string> chainIds_,
+                                    std::vector<std::string> insertionCodes_)
+    : atomIndices(atomIndices_), numbers(numbers_), names(nameSubstrings(names_)), chainIds(chainIds_),
+      insertionCodes(insertionCodes_)
 {}
 
 std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
@@ -58,34 +59,22 @@ std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
     return result;
 }
 
-cds::ResiduePdbData cds::toResiduePdbData(std::vector<Residue*>& residues)
+cds::PdbWriterData cds::toPdbWriterData(std::vector<Residue*>& residues)
 {
     std::vector<Atom*> atoms;
     std::vector<std::vector<size_t>> indices;
-    std::vector<std::string> residueNames;
-    std::vector<int> residueNumbers;
     for (auto& residue : residues)
     {
         std::vector<Atom*> residueAtoms = residue->getAtoms();
         indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
         codeUtils::insertInto(atoms, residueAtoms);
-        codeUtils::insertInto(residueNames, std::vector<std::string>(residueAtoms.size(), residue->getName()));
-        codeUtils::insertInto(residueNumbers, std::vector<int>(residueAtoms.size(), residue->getNumber()));
     }
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
-    return ResiduePdbData(indices, AtomPdbData(atoms, recordNames, residueNames, residueNumbers));
-}
-
-void cds::writeAssemblyToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules)
-{
-    for (auto& molecule : molecules)
-    {
-        std::vector<cds::Residue*> residues = molecule->getResidues();
-        std::vector<cds::ResidueType> types = residueTypes(residues);
-        std::vector<bool> ter               = residueTER(types);
-        ResiduePdbData data                 = toResiduePdbData(residues);
-        cds::writeMoleculeToPdb(stream, ter, data.atomIndices, data.atomData);
-    }
+    std::vector<std::string> chainIds(residues.size(), "");
+    std::vector<std::string> insertionCodes(residues.size(), "");
+    ResiduePdbData residueData(indices, residueNumbers(residues), residueNames(residues), chainIds, insertionCodes);
+    AtomPdbData atomData(atoms, recordNames);
+    return PdbWriterData {residueData, atomData};
 }
 
 void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules)
@@ -103,21 +92,24 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
             }
             std::vector<cds::ResidueType> types = residueTypes(residues);
             std::vector<bool> ter               = residueTER(types);
-            ResiduePdbData data                 = toResiduePdbData(residues);
-            cds::writeMoleculeToPdb(stream, ter, data.atomIndices, data.atomData);
+            PdbWriterData data                  = toPdbWriterData(residues);
+            cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
         }
         stream << "ENDMDL\n";
     }
 }
 
-void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<bool>& residueTER,
-                             const std::vector<std::vector<size_t>>& indices, const AtomPdbData& atomData)
+void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
+                             const std::vector<bool>& residueTER, const PdbWriterData& data)
 {
-    for (size_t n = 0; n < indices.size(); n++)
+    const ResiduePdbData& residues = data.residues;
+    const AtomPdbData& atoms       = data.atoms;
+    for (size_t n = 0; n < residueIndices.size(); n++)
     {
-        for (size_t index : indices[n])
+        size_t residueIndex = residueIndices[n];
+        for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            cds::writeAtomToPdb(stream, atomData, index);
+            cds::writeAtomToPdb(stream, residues, residueIndex, atoms, atomIndex);
         }
         if (residueTER[n])
         {
@@ -127,24 +119,26 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<bool>& resi
 }
 
 // Used by the PdbAtom class and cds classes. Thus what it takes as input is a bit odd.
-void cds::writeAtomToPdb(std::ostream& stream, const AtomPdbData& data, size_t index)
+void cds::writeAtomToPdb(std::ostream& stream, const ResiduePdbData& residues, size_t residueIndex,
+                         const AtomPdbData& atoms, size_t atomIndex)
 {
-    const cds::Coordinate& coord = data.coordinate[index];
-    stream << std::left << std::setw(6) << data.recordName[index];
-    stream << std::right << std::setw(5) << data.number[index] << std::left << std::setw(1) << " ";
-    stream << std::left << std::setw(4) << data.name[index];
-    stream << std::left << std::setw(1) << data.residueAlternativeLocation[index];
-    stream << std::right << std::setw(3) << data.residueName[index] << std::left << std::setw(1) << " ";
-    stream << std::left << std::setw(1) << data.chainId[index];
-    stream << std::right << std::setw(4) << data.residueNumber[index];
-    stream << std::left << std::setw(1) << data.insertionCode[index] << std::left << std::setw(3) << " ";
+    std::string residueAlternativeLocation = ""; // don't know if this should live in residue or atom..
+    const cds::Coordinate& coord           = atoms.coordinates[atomIndex];
+    stream << std::left << std::setw(6) << atoms.recordNames[atomIndex];
+    stream << std::right << std::setw(5) << atoms.numbers[atomIndex] << std::left << std::setw(1) << " ";
+    stream << std::left << std::setw(4) << atoms.names[atomIndex];
+    stream << std::left << std::setw(1) << residueAlternativeLocation;
+    stream << std::right << std::setw(3) << residues.names[residueIndex] << std::left << std::setw(1) << " ";
+    stream << std::left << std::setw(1) << residues.chainIds[residueIndex];
+    stream << std::right << std::setw(4) << residues.numbers[residueIndex];
+    stream << std::left << std::setw(1) << residues.insertionCodes[residueIndex] << std::left << std::setw(3) << " ";
     stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetX();
     stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetY();
     stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetZ();
-    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << data.occupancy[index];
-    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << data.temperatureFactor[index]
+    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << atoms.occupancies[atomIndex];
+    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << atoms.temperatureFactors[atomIndex]
            << std::left << std::setw(10) << " ";
-    stream << std::right << std::setw(2) << data.element[index];
+    stream << std::right << std::setw(2) << atoms.elements[atomIndex];
     //    We probably don't want to write charges into pdb file. Width allowed is 2
     stream << std::endl;
 }

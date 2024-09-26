@@ -14,43 +14,46 @@ namespace cds
 {
     struct AtomPdbData
     {
-        AtomPdbData(const cds::Atom* atom, std::string recordName_, std::string residueName_, int residueNumber_,
-                    std::string chainId_, std::string insertionCode_, double occupancy_, double temperatureFactor_);
-        AtomPdbData(std::vector<cds::Atom*> atoms, std::vector<std::string> recordNames,
-                    std::vector<std::string> residueNames, std::vector<int> residueNumbers);
-        std::vector<Coordinate> coordinate;
-        std::vector<int> number;
-        std::vector<std::string> name;
-        std::vector<std::string> element;
-        std::vector<std::string> recordName;
-        std::vector<std::string> residueAlternativeLocation;
-        std::vector<int> residueNumber;
-        std::vector<std::string> residueName;
-        std::vector<std::string> chainId;
-        std::vector<std::string> insertionCode;
-        std::vector<double> occupancy;
-        std::vector<double> temperatureFactor;
+        AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_,
+                    std::vector<double> occupancies_, std::vector<double> temperatureFactors_);
+        AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_);
+        std::vector<Coordinate> coordinates;
+        std::vector<int> numbers;
+        std::vector<std::string> names;
+        std::vector<std::string> elements;
+        std::vector<std::string> recordNames;
+        std::vector<double> occupancies;
+        std::vector<double> temperatureFactors;
     };
 
     struct ResiduePdbData
     {
-        ResiduePdbData(std::vector<std::vector<size_t>> atomIndices_, AtomPdbData atomData_)
-            : atomIndices(atomIndices_), atomData(atomData_)
-        {}
+        ResiduePdbData(std::vector<std::vector<size_t>> atomIndices_, std::vector<int> numbers_,
+                       std::vector<std::string> names_, std::vector<std::string> chainIds_,
+                       std::vector<std::string> insertionCodes_);
 
         std::vector<std::vector<size_t>> atomIndices;
-        AtomPdbData atomData;
+        std::vector<int> numbers;
+        std::vector<std::string> names;
+        std::vector<std::string> chainIds;
+        std::vector<std::string> insertionCodes;
+    };
+
+    struct PdbWriterData
+    {
+        ResiduePdbData residues;
+        AtomPdbData atoms;
     };
 
     std::vector<bool> residueTER(const std::vector<ResidueType>& types);
-    ResiduePdbData toResiduePdbData(std::vector<Residue*>& residues);
+    PdbWriterData toPdbWriterData(std::vector<Residue*>& residues);
 
-    void writeAssemblyToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules);
-    void writeMoleculeToPdb(std::ostream& stream, const std::vector<bool>& residueTER,
-                            const std::vector<std::vector<size_t>>& indices, const AtomPdbData& atomData);
-    void writeAtomToPdb(std::ostream& stream, const AtomPdbData& data, size_t index);
+    void writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
+                            const std::vector<bool>& residueTER, const PdbWriterData& data);
+    void writeAtomToPdb(std::ostream& stream, const ResiduePdbData& residues, size_t residueIndex,
+                        const AtomPdbData& atoms, size_t atomIndex);
     void writeConectCards(std::ostream& stream, std::vector<std::pair<int, int>> atomsPairsConnectedToOtherResidues);
     void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules);
 
 } // namespace cds
-#endif /* INCLUDES_CENTRALDATASTRUCTURE_WRITERS_PDBWRITER_HPP_ */
+#endif
