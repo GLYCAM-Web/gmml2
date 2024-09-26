@@ -11,31 +11,38 @@ namespace cds
 {
     struct AtomOffData
     {
-        AtomOffData(int number_, std::string name_, std::string type_, int atomicNumber_, double charge_,
-                    Coordinate coordinate_, std::vector<int> children_);
-        int number;
-        std::string name;
-        std::string type;
-        int atomicNumber;
-        double charge;
-        Coordinate coordinate;
-        std::vector<int> children;
+        AtomOffData(std::vector<int> numbers_, std::vector<std::string> names_, std::vector<std::string> types_,
+                    std::vector<int> atomicNumbers_, std::vector<double> charges_, std::vector<Coordinate> coordinates_,
+                    std::vector<std::vector<int>> children_);
+        std::vector<int> numbers;
+        std::vector<std::string> names;
+        std::vector<std::string> types;
+        std::vector<int> atomicNumbers;
+        std::vector<double> charges;
+        std::vector<Coordinate> coordinates;
+        std::vector<std::vector<int>> children;
     };
 
     struct ResidueOffData
     {
-        ResidueOffData(int number_, std::string name_, ResidueType type_, std::vector<AtomOffData> atoms_,
-                       std::vector<int> connections_);
-        int number;
-        std::string name;
-        ResidueType type;
-        std::vector<AtomOffData> atoms;
-        std::vector<int> atomsConnectedToOtherResidues;
+        ResidueOffData(std::vector<int> numbers_, std::vector<std::string> names_, std::vector<ResidueType> types_,
+                       std::vector<std::vector<size_t>> atomIndices_, std::vector<std::vector<int>> connections_);
+        std::vector<int> numbers;
+        std::vector<std::string> names;
+        std::vector<ResidueType> types;
+        std::vector<std::vector<size_t>> atomIndices;
+        std::vector<std::vector<int>> atomsConnectedToOtherResidues;
+    };
+
+    struct OffWriterData
+    {
+        ResidueOffData residues;
+        AtomOffData atoms;
     };
 
     std::string getOffType(const cds::ResidueType queryType);
-    void WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ostream& stream,
-                          const std::string unitName);
+    void WriteOffFileUnit(const std::vector<size_t>& residueIndices, const ResidueOffData& residues,
+                          const AtomOffData& atoms, std::ostream& stream, const std::string unitName);
     void WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostream& stream);
     void WriteToOffFile(const std::vector<Residue*>& residues, std::ostream& stream, const std::string unitName);
 } // namespace cds

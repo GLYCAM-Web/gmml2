@@ -1,7 +1,9 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 #include <string>
@@ -9,47 +11,53 @@
 
 namespace
 {
-    cds::AtomOffData toAtomOffData(const cds::Atom& atom)
+    std::vector<std::vector<int>> atomChildrenNumbers(const std::vector<cds::Atom*>& atoms)
     {
-        std::vector<int> children = cds::atomNumbers(atom.getChildren());
-        return cds::AtomOffData(atom.getNumber(), atom.getName(), atom.getType(), atom.getAtomicNumber(),
-                                atom.getCharge(), atom.coordinate(), children);
-    }
-
-    cds::ResidueOffData toResidueOffData(const cds::Residue& residue)
-    {
-        std::vector<cds::Atom*> atoms = residue.getAtoms();
-        std::vector<cds::AtomOffData> offAtoms;
+        std::vector<std::vector<int>> result;
+        result.reserve(atoms.size());
         for (auto& atom : atoms)
         {
-            offAtoms.push_back(toAtomOffData(*atom));
-        }
-        std::vector<cds::Atom*> atomsConnectedToOtherResidues = cds::atomsConnectedToOtherResidues(atoms);
-        std::vector<int> connectedAtomNumbers                 = cds::atomNumbers(atomsConnectedToOtherResidues);
-        return cds::ResidueOffData(residue.getNumber(), residue.getName(), residue.GetType(), offAtoms,
-                                   connectedAtomNumbers);
-    }
-
-    std::vector<cds::ResidueOffData> toResidueOffDataVector(const std::vector<cds::Residue*>& residues)
-    {
-        std::vector<cds::ResidueOffData> result;
-        for (auto& residue : residues)
-        {
-            result.push_back(toResidueOffData(*residue));
+            result.push_back(cds::atomNumbers(atom->getChildren()));
         }
         return result;
     }
+
+    cds::OffWriterData toOffWriterData(const std::vector<cds::Residue*>& residues)
+    {
+        std::vector<cds::Atom*> atoms;
+        std::vector<std::vector<int>> atomChildren;
+        std::vector<std::vector<size_t>> indices;
+        std::vector<std::vector<int>> connections;
+        for (auto& residue : residues)
+        {
+            std::vector<cds::Atom*> residueAtoms = residue->getAtoms();
+            indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
+            std::vector<cds::Atom*> atomsConnectedToOtherResidues = cds::atomsConnectedToOtherResidues(residueAtoms);
+            connections.push_back(cds::atomNumbers(atomsConnectedToOtherResidues));
+            codeUtils::insertInto(atoms, residueAtoms);
+        }
+        cds::AtomOffData atomData(cds::atomNumbers(atoms), cds::atomNames(atoms), cds::atomTypes(atoms),
+                                  cds::atomAtomicNumbers(atoms), cds::atomCharges(atoms), cds::atomCoordinates(atoms),
+                                  atomChildrenNumbers(atoms));
+        cds::ResidueOffData residueData(cds::residueNumbers(residues), cds::residueNames(residues),
+                                        cds::residueTypes(residues), indices, connections);
+        return cds::OffWriterData {residueData, atomData};
+    }
 } // namespace
 
-cds::AtomOffData::AtomOffData(int number_, std::string name_, std::string type_, int atomicNumber_, double charge_,
-                              Coordinate coordinate_, std::vector<int> children_)
-    : number(number_), name(name_), type(type_), atomicNumber(atomicNumber_), charge(charge_), coordinate(coordinate_),
-      children(children_)
+cds::AtomOffData::AtomOffData(std::vector<int> numbers_, std::vector<std::string> names_,
+                              std::vector<std::string> types_, std::vector<int> atomicNumbers_,
+                              std::vector<double> charges_, std::vector<Coordinate> coordinates_,
+                              std::vector<std::vector<int>> children_)
+    : numbers(numbers_), names(names_), types(types_), atomicNumbers(atomicNumbers_), charges(charges_),
+      coordinates(coordinates_), children(children_)
 {}
 
-cds::ResidueOffData::ResidueOffData(int number_, std::string name_, ResidueType type_, std::vector<AtomOffData> atoms_,
-                                    std::vector<int> connections_)
-    : number(number_), name(name_), type(type_), atoms(atoms_), atomsConnectedToOtherResidues(connections_)
+cds::ResidueOffData::ResidueOffData(std::vector<int> numbers_, std::vector<std::string> names_,
+                                    std::vector<ResidueType> types_, std::vector<std::vector<size_t>> atomIndices_,
+                                    std::vector<std::vector<int>> connections_)
+    : numbers(numbers_), names(names_), types(types_), atomIndices(atomIndices_),
+      atomsConnectedToOtherResidues(connections_)
 {}
 
 std::string cds::getOffType(const cds::ResidueType queryType)
@@ -65,36 +73,38 @@ std::string cds::getOffType(const cds::ResidueType queryType)
     return "?";
 }
 
-void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ostream& stream,
-                           const std::string unitName)
+void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const ResidueOffData& residues,
+                           const AtomOffData& atoms, std::ostream& stream, const std::string unitName)
 {
     // WriteAtomSection
     const std::string FLAG = "131072";
     stream << "!entry." << unitName
            << ".unit.atoms table  str name  str type  int typex  int resx  int flags  int seq  int elmnt  dbl chg"
            << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
         unsigned int atomNumberInResidue = 1;
-        for (auto& atom : residue.atoms)
+        for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            stream << " \"" << atom.name << "\" "
-                   << "\"" << atom.type << "\" "
+            stream << " \"" << atoms.names[atomIndex] << "\" "
+                   << "\"" << atoms.types[atomIndex] << "\" "
                    << "0"
-                   << " " << residue.number << " " << FLAG << " " << atomNumberInResidue << " " << atom.atomicNumber
-                   << " " << std::fixed << std::setprecision(6) << atom.charge << std::endl;
+                   << " " << residues.numbers[residueIndex] << " " << FLAG << " " << atomNumberInResidue << " "
+                   << atoms.atomicNumbers[atomIndex] << " " << std::fixed << std::setprecision(6)
+                   << atoms.charges[atomIndex] << std::endl;
             atomNumberInResidue++;
         }
     }
     // WriteAtomPertInfoSection
     stream << "!entry." << unitName
            << ".unit.atomspertinfo table  str pname  str ptype  int ptypex  int pelmnt  dbl pchg" << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
-        for (auto& atom : residue.atoms)
+        for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            stream << " \"" << atom.name << "\" "
-                   << "\"" << atom.type << "\" " << 0 << " " << -1 << " " << std::setprecision(1) << 0.0 << std::endl;
+            stream << " \"" << atoms.names[atomIndex] << "\" "
+                   << "\"" << atoms.types[atomIndex] << "\" " << 0 << " " << -1 << " " << std::setprecision(1) << 0.0
+                   << std::endl;
         }
     }
     // WriteBoundBoxSection
@@ -107,24 +117,24 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
     stream << " " << 0.0 << std::endl;
     // WriteChildSequenceSection
     stream << "!entry." << unitName << ".unit.childsequence single int" << std::endl;
-    stream << " " << residues.size() + 1 << std::endl;
+    stream << " " << residueIndices.size() + 1 << std::endl;
     // WriteConnectSection
     //  Note: this is silly but fine for most cases. If you're reading this it's because it mattered and you need to
     //  make it better.
     stream << "!entry." << unitName << ".unit.connect array int" << std::endl;
     stream << " " << 1 << std::endl;
-    stream << " " << residues.back().atoms.back().number << std::endl;
+    stream << " " << atoms.numbers[residues.atomIndices[residueIndices.back()].back()] << std::endl;
     // WriteConnectivitySection
     stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags" << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
-        for (auto& atom : residue.atoms)
+        for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            for (auto& neighborNumber : atom.children)
+            for (auto& neighborNumber : atoms.children[atomIndex])
             { // According to docs: (the *second* atom is the one with the larger index). So ordering
-                std::pair<int, int> numbers = (atom.number < neighborNumber)
-                                                  ? std::pair<int, int> {atom.number, neighborNumber}
-                                                  : std::pair<int, int> {neighborNumber, atom.number};
+                std::pair<int, int> numbers = (atoms.numbers[atomIndex] < neighborNumber)
+                                                  ? std::pair<int, int> {atoms.numbers[atomIndex], neighborNumber}
+                                                  : std::pair<int, int> {neighborNumber, atoms.numbers[atomIndex]};
                 stream << " " << numbers.first << " " << numbers.second << " " << 1 << std::endl;
             }
         }
@@ -132,7 +142,7 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
     // WriteHierarchySection
     stream << "!entry." << unitName << ".unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx"
            << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
         stream << " \""
                << "U"
@@ -141,17 +151,17 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
                << "\""
                << "R"
                << "\""
-               << " " << residue.number << std::endl;
-        for (auto& atom : residue.atoms)
+               << " " << residues.numbers[residueIndex] << std::endl;
+        for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
             stream << " \""
                    << "R"
                    << "\""
-                   << " " << residue.number << " "
+                   << " " << residues.numbers[residueIndex] << " "
                    << "\""
                    << "A"
                    << "\""
-                   << " " << atom.number << std::endl;
+                   << " " << atoms.numbers[atomIndex] << std::endl;
         }
     }
     // WriteNameSection
@@ -159,11 +169,11 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
     stream << " \"" << unitName << "\"" << std::endl;
     // WritePositionSection
     stream << "!entry." << unitName << ".unit.positions table  dbl x  dbl y  dbl z" << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
-        for (auto& atom : residue.atoms)
+        for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            Coordinate coord = atom.coordinate;
+            Coordinate coord = atoms.coordinates[atomIndex];
             stream << std::setprecision(6) << std::fixed << " " << coord.GetX() << " " << coord.GetY() << " "
                    << coord.GetZ() << std::endl;
         }
@@ -171,9 +181,9 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
     // WriteResidueConnectSection // Every residue needs a head/tail regardless of reality. tleap uses this info.
     stream << "!entry." << unitName
            << ".unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x" << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
-        std::vector<int> atomNumbers = residue.atomsConnectedToOtherResidues;
+        std::vector<int> atomNumbers = residues.atomsConnectedToOtherResidues[residueIndex];
         // Deal with residues that don't have a tail/head in reality:
         if (atomNumbers.size() == 1)
         { // Repeating the same atom changes the tree structure in the parm7 file. Not sure anything uses that. Old gmml
@@ -198,14 +208,15 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
     stream << "!entry." << unitName
            << ".unit.residues table  str name  int seq  int childseq  int startatomx  str restype  int imagingx"
            << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
-        unsigned int childseq   = residue.atoms.size() + 1;
-        unsigned int startatomx = residue.atoms.front().number;
-        std::string restype     = cds::getOffType(residue.type);
-        unsigned int imagingx   = 0;
-        stream << " \"" << residue.name << "\""
-               << " " << residue.number << " " << childseq << " " << startatomx << " "
+        const std::vector<size_t>& atomIndices = residues.atomIndices[residueIndex];
+        unsigned int childseq                  = atomIndices.size() + 1;
+        unsigned int startatomx                = atoms.numbers[atomIndices.front()];
+        std::string restype                    = cds::getOffType(residues.types[residueIndex]);
+        unsigned int imagingx                  = 0;
+        stream << " \"" << residues.names[residueIndex] << "\""
+               << " " << residues.numbers[residueIndex] << " " << childseq << " " << startatomx << " "
                << "\"" << restype << "\""
                << " " << imagingx << std::endl;
     }
@@ -223,9 +234,9 @@ void cds::WriteOffFileUnit(const std::vector<ResidueOffData>& residues, std::ost
            << "0.0" << std::endl;
     // WriteVelocitiesSection
     stream << "!entry." << unitName << ".unit.velocities table  dbl x  dbl y  dbl z" << std::endl;
-    for (auto& residue : residues)
+    for (size_t residueIndex : residueIndices)
     {
-        for (size_t n = 0; n < residue.atoms.size(); n++)
+        for (size_t n = 0; n < residues.atomIndices[residueIndex].size(); n++)
         { // Maybe later we'll want to deal with atom velocities...
             stream << " "
                    << "0.0"
@@ -251,7 +262,8 @@ void cds::WriteResiduesToOffFile(std::vector<cds::Residue*> residues, std::ostre
         std::vector<Atom*> atoms       = residue->getAtoms();
         cds::serializeNumbers(atoms);
         cds::serializeNumbers(residues);
-        cds::WriteOffFileUnit(toResidueOffDataVector(residues), stream, residue->getName());
+        OffWriterData data = toOffWriterData(residues);
+        cds::WriteOffFileUnit(codeUtils::indexVector(residues), data.residues, data.atoms, stream, residue->getName());
     }
 }
 
@@ -259,5 +271,6 @@ void cds::WriteToOffFile(const std::vector<Residue*>& residues, std::ostream& st
 { // For writing residues together as a molecule
     stream << "!!index array str" << std::endl;
     stream << " \"" << unitName << "\"" << std::endl;
-    cds::WriteOffFileUnit(toResidueOffDataVector(residues), stream, unitName);
+    OffWriterData data = toOffWriterData(residues);
+    cds::WriteOffFileUnit(codeUtils::indexVector(residues), data.residues, data.atoms, stream, unitName);
 }
