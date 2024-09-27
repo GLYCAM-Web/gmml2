@@ -21,7 +21,7 @@ namespace cds
     {
         std::vector<Sphere> atomCoordinates;
         std::vector<Sphere> boundingSpheres;
-        const std::vector<std::pair<size_t, size_t>> residueAtoms;
+        const std::vector<std::vector<size_t>> residueAtoms;
         const std::vector<double> residueWeights;
         const std::vector<bool> firstResidueBondedAtoms;
     };
@@ -30,7 +30,7 @@ namespace cds
     {
         std::vector<Sphere>& atomCoordinates;
         std::vector<Sphere>& boundingSpheres;
-        const std::vector<std::pair<size_t, size_t>>& residueAtoms;
+        const std::vector<std::vector<size_t>>& residueAtoms;
         const std::vector<double>& residueWeights;
         const std::vector<bool>& firstResidueBondedAtoms;
     };

@@ -134,20 +134,20 @@ namespace
         }
         std::vector<cds::Sphere> coordinates;
         coordinates.reserve(atomCount);
-        std::vector<std::pair<size_t, size_t>> residueAtoms;
+        std::vector<std::vector<size_t>> residueAtoms;
         residueAtoms.reserve(residues.size());
         size_t currentAtom = 0;
         for (auto& res : residues)
         {
-            size_t startAtom = currentAtom;
-            for (const auto& atomPtr : res->getAtomsReference())
+            auto& atomsRef = res->getAtomsReference();
+            residueAtoms.push_back(codeUtils::indexVectorWithOffset(currentAtom, atomsRef));
+            for (auto& atomPtr : atomsRef)
             {
                 coordinates.push_back(coordinateWithRadius(atomPtr.get()));
             }
-            currentAtom += res->atomCount();
-            residueAtoms.push_back({startAtom, currentAtom});
+            currentAtom += atomsRef.size();
         }
-        std::vector<std::pair<size_t, size_t>> withinRangeResidueAtoms;
+        std::vector<std::vector<size_t>> withinRangeResidueAtoms;
         withinRangeResidueAtoms.reserve(residues.size());
         std::vector<cds::Sphere> withinRangeSpheres;
         withinRangeSpheres.reserve(residues.size());
@@ -156,12 +156,12 @@ namespace
         std::vector<cds::Sphere> residuePoints;
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
-            auto range  = residueAtoms[n];
             // always include first residue, we assume that it's bonded with first residue of the other set
-            bool within = n == 0;
-            for (size_t k = range.first; k < range.second; k++)
+            bool within                  = n == 0;
+            std::vector<size_t>& indices = residueAtoms[n];
+            for (size_t index : indices)
             {
-                within = within || cds::spheresOverlap(constants::overlapTolerance, bounds, coordinates[k]);
+                within = within || cds::spheresOverlap(constants::overlapTolerance, bounds, coordinates[index]);
                 if (within)
                 {
                     break;
@@ -170,11 +170,13 @@ namespace
             if (within)
             {
                 residuePoints.clear();
-                residuePoints.insert(residuePoints.end(), coordinates.begin() + range.first,
-                                     coordinates.begin() + range.second);
+                for (size_t index : indices)
+                {
+                    residuePoints.push_back(coordinates[index]);
+                }
                 withinRangeSpheres.push_back(boundingSphere(residuePoints));
                 withinRangeWeights.push_back(residueWeights[n]);
-                withinRangeResidueAtoms.push_back(range);
+                withinRangeResidueAtoms.push_back(indices);
             }
         }
 
@@ -188,13 +190,13 @@ namespace
                                 std::vector<cds::Sphere>& coordinates, std::vector<cds::Sphere>& spheres)
     {
         std::vector<cds::Sphere> firstCoords;
-        auto range = input.residueAtoms[0];
-        firstCoords.reserve(range.second - range.first);
-        for (size_t n = range.first; n < range.second; n++)
+        const std::vector<size_t>& indices = input.residueAtoms[0];
+        firstCoords.reserve(indices.size());
+        for (size_t index : indices)
         {
-            auto& center          = input.coordinates[n].center;
-            coordinates[n].center = input.firstResidueCoordinateMoving[n] ? matrix * center : center;
-            firstCoords.push_back(coordinates[n]);
+            const Coordinate& center  = input.coordinates[index].center;
+            coordinates[index].center = input.firstResidueCoordinateMoving[index] ? matrix * center : center;
+            firstCoords.push_back(coordinates[index]);
         }
         spheres[0] = cds::boundingSphere(firstCoords);
     }
@@ -216,9 +218,13 @@ namespace
             auto matrix = rotationTo(dihedral, constants::toRadians(angle));
             moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedSpheres);
             moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingSpheres);
-            for (size_t n = movingInput.residueAtoms[0].second; n < movingCoordinates.size(); n++)
+            for (size_t n = 1; n < movingInput.residueAtoms.size(); n++)
             {
-                movingCoordinates[n].center = matrix * movingInput.coordinates[n].center;
+                const std::vector<size_t>& indices = movingInput.residueAtoms[n];
+                for (size_t index : indices)
+                {
+                    movingCoordinates[index].center = matrix * movingInput.coordinates[index].center;
+                }
             }
             for (size_t n = 1; n < movingSpheres.size(); n++)
             {

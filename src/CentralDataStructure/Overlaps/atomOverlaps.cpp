@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
@@ -13,12 +14,12 @@
 namespace
 {
     void setIntersectingCoordinates(std::vector<cds::Sphere>& result, cds::Sphere sphere,
-                                    const std::vector<cds::Sphere>& coords, const std::pair<size_t, size_t>& range)
+                                    const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices)
     {
         result.clear();
-        for (size_t n = range.first; n < range.second; n++)
+        for (size_t index : indices)
         {
-            auto& a = coords[n];
+            auto& a = coords[index];
             if (cds::spheresOverlap(constants::overlapTolerance, sphere, a))
             {
                 result.push_back(a);
@@ -27,19 +28,18 @@ namespace
     }
 
     void setNonIgnoredCoordinates(std::vector<cds::Sphere>& result, const std::vector<cds::Sphere>& coords,
-                                  const std::pair<size_t, size_t>& range, const std::vector<bool>& ignored)
+                                  const std::vector<size_t>& indices, const std::vector<bool>& ignored)
     {
-        if (ignored.size() != (range.second - range.first))
+        if (ignored.size() != indices.size())
         {
             throw std::runtime_error("panic");
         }
         result.clear();
-        size_t offset = range.first;
-        for (size_t n = 0; n < ignored.size(); n++)
+        for (size_t n = 0; n < indices.size(); n++)
         {
             if (!ignored[n])
             {
-                result.push_back(coords[n + offset]);
+                result.push_back(coords[indices[n]]);
             }
         }
     }
@@ -55,28 +55,30 @@ namespace
         }
         std::vector<cds::Sphere> coordinates;
         coordinates.reserve(atomCount);
-        std::vector<std::pair<size_t, size_t>> residueAtoms;
+        std::vector<std::vector<size_t>> residueAtoms;
         residueAtoms.reserve(residues.size());
         size_t currentAtom = 0;
         for (auto& res : residues)
         {
-            size_t startAtom = currentAtom;
-            for (const auto& atomPtr : res->getAtomsReference())
+            auto& atomsRef = res->getAtomsReference();
+            residueAtoms.push_back(codeUtils::indexVectorWithOffset(currentAtom, atomsRef));
+            for (const auto& atomPtr : atomsRef)
             {
                 coordinates.push_back(cds::coordinateWithRadius(atomPtr.get()));
             }
-            currentAtom += res->atomCount();
-            residueAtoms.push_back({startAtom, currentAtom});
+            currentAtom += atomsRef.size();
         }
         std::vector<cds::Sphere> boundingSpheres;
         boundingSpheres.reserve(residues.size());
         std::vector<cds::Sphere> residuePoints;
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
-            auto range = residueAtoms[n];
+            std::vector<size_t> indices = residueAtoms[n];
             residuePoints.clear();
-            residuePoints.insert(residuePoints.end(), coordinates.begin() + range.first,
-                                 coordinates.begin() + range.second);
+            for (size_t index : indices)
+            {
+                residuePoints.push_back(coordinates[index]);
+            }
             boundingSpheres.push_back(cds::boundingSphere(residuePoints));
         }
         return {coordinates, boundingSpheres, residueAtoms, input.weights, firstResidueBondedAtoms};

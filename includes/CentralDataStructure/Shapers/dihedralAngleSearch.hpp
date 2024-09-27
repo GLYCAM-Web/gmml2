@@ -28,7 +28,7 @@ namespace cds
     {
         std::vector<Sphere> coordinates;
         std::vector<Sphere> boundingSpheres;
-        std::vector<std::pair<size_t, size_t>> residueAtoms;
+        std::vector<std::vector<size_t>> residueAtoms;
         std::vector<double> residueWeights;
         std::vector<bool> firstResidueCoordinateMoving;
         std::vector<bool> firstResidueBondedAtoms;
