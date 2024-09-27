@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
@@ -85,6 +86,18 @@ std::vector<std::pair<int, int>> cds::atomPairNumbers(const std::vector<std::pai
     for (auto& pair : pairs)
     {
         result.push_back({pair.first->getNumber(), pair.second->getNumber()});
+    }
+    return result;
+}
+
+std::vector<std::pair<size_t, size_t>> cds::atomPairVectorIndices(const std::vector<Atom*>& atoms,
+                                                                  const std::vector<std::pair<Atom*, Atom*>>& pairs)
+{
+    std::vector<std::pair<size_t, size_t>> result;
+    result.reserve(pairs.size());
+    for (auto& pair : pairs)
+    {
+        result.push_back({atomVectorIndex(atoms, pair.first), atomVectorIndex(atoms, pair.second)});
     }
     return result;
 }

@@ -10,6 +10,8 @@
 namespace cds
 {
     std::vector<std::pair<int, int>> atomPairNumbers(const std::vector<std::pair<Atom*, Atom*>>& pairs);
+    std::vector<std::pair<size_t, size_t>> atomPairVectorIndices(const std::vector<Atom*>& atoms,
+                                                                 const std::vector<std::pair<Atom*, Atom*>>& pairs);
     std::vector<std::pair<Atom*, Atom*>> atomPairsConnectedToOtherResidues(std::vector<Atom*> atoms);
     std::vector<std::pair<Atom*, Atom*>> atomPairsConnectedToOtherResidues(std::vector<Residue*> residues);
     std::vector<Atom*> atomsConnectedToOtherResidues(std::vector<Atom*> atoms);

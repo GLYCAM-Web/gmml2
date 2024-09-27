@@ -5,6 +5,28 @@
 #include <array>
 #include <vector>
 
+std::vector<int> cds::serializedNumberVector(size_t count)
+{
+    std::vector<int> result;
+    result.reserve(count);
+    for (size_t n = 0; n < count; n++)
+    {
+        result.push_back(n + 1);
+    }
+    return result;
+}
+
+size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, const cds::Atom* find)
+{
+    auto found = std::find(atoms.begin(), atoms.end(), find);
+    if (found == atoms.end())
+    {
+        throw std::runtime_error("atom missing from data in off writer data");
+    }
+    // index equals offset from start of vector
+    return found - atoms.begin();
+}
+
 std::vector<int> cds::atomNumbers(const std::vector<Atom*>& atoms)
 {
     std::vector<int> result;
