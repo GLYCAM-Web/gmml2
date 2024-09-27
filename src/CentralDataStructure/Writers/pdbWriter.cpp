@@ -20,16 +20,16 @@ namespace
     }
 } // namespace
 
-cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_,
+cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms_, std::vector<std::string> recordNames_,
                               std::vector<double> occupancies_, std::vector<double> temperatureFactors_)
-    : coordinates(atomCoordinates(atoms)), numbers(atomNumbers(atoms)), names(atomNames(atoms)),
-      elements(atomElements(atoms)), recordNames(recordNames_), occupancies(occupancies_),
+    : atoms(atoms_), coordinates(atomCoordinates(atoms_)), numbers(atomNumbers(atoms_)), names(atomNames(atoms_)),
+      elements(atomElements(atoms_)), recordNames(recordNames_), occupancies(occupancies_),
       temperatureFactors(temperatureFactors_)
 {}
 
-cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_)
-    : coordinates(atomCoordinates(atoms)), numbers(atomNumbers(atoms)), names(atomNames(atoms)),
-      elements(atomElements(atoms)), recordNames(recordNames_), occupancies(std::vector<double>(atoms.size(), 1.0)),
+cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms_, std::vector<std::string> recordNames_)
+    : atoms(atoms_), coordinates(atomCoordinates(atoms_)), numbers(atomNumbers(atoms_)), names(atomNames(atoms_)),
+      elements(atomElements(atoms_)), recordNames(recordNames_), occupancies(std::vector<double>(atoms.size(), 1.0)),
       temperatureFactors(std::vector<double>(atoms.size(), 0.0))
 {}
 
@@ -143,14 +143,15 @@ void cds::writeAtomToPdb(std::ostream& stream, const ResiduePdbData& residues, s
     stream << std::endl;
 }
 
-void cds::writeConectCards(std::ostream& stream, std::vector<std::pair<int, int>> connectedAtomNumbers)
+void cds::writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
+                           std::vector<std::pair<size_t, size_t>> connectionIndices)
 { // These are only written for atoms connecting residues. The numbers overflow/truncate when longer than 5, but the
   // format is what the format is.
-    for (auto& atomPair : connectedAtomNumbers)
+    for (auto& atomPair : connectionIndices)
     {
-        stream << "CONECT" << std::right << std::setw(5) << atomPair.first << std::right << std::setw(5)
-               << atomPair.second << "\n";
-        stream << "CONECT" << std::right << std::setw(5) << atomPair.second << std::right << std::setw(5)
-               << atomPair.first << "\n";
+        stream << "CONECT" << std::right << std::setw(5) << atomNumbers[atomPair.first] << std::right << std::setw(5)
+               << atomNumbers[atomPair.second] << "\n";
+        stream << "CONECT" << std::right << std::setw(5) << atomNumbers[atomPair.second] << std::right << std::setw(5)
+               << atomNumbers[atomPair.first] << "\n";
     }
 }

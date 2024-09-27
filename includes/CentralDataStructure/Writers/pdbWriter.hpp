@@ -16,7 +16,8 @@ namespace cds
     {
         AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_,
                     std::vector<double> occupancies_, std::vector<double> temperatureFactors_);
-        AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_);
+        AtomPdbData(std::vector<cds::Atom*>& atoms_, std::vector<std::string> recordNames_);
+        std::vector<cds::Atom*> atoms;
         std::vector<Coordinate> coordinates;
         std::vector<int> numbers;
         std::vector<std::string> names;
@@ -52,7 +53,8 @@ namespace cds
                             const std::vector<bool>& residueTER, const PdbWriterData& data);
     void writeAtomToPdb(std::ostream& stream, const ResiduePdbData& residues, size_t residueIndex,
                         const AtomPdbData& atoms, size_t atomIndex);
-    void writeConectCards(std::ostream& stream, std::vector<std::pair<int, int>> atomsPairsConnectedToOtherResidues);
+    void writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
+                          std::vector<std::pair<size_t, size_t>> connectionIndices);
     void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules);
 
 } // namespace cds

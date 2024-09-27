@@ -317,7 +317,7 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
 
     auto writePdbFile = [](const std::vector<std::vector<size_t>>& residueIndices,
                            const std::vector<std::vector<bool>>& residueTER, const cds::PdbWriterData& data,
-                           const std::vector<std::pair<int, int>>& connectionNumbers, const std::string& prefix)
+                           const std::vector<std::pair<size_t, size_t>>& connectionIndices, const std::string& prefix)
     {
         std::string fileName = prefix + ".pdb";
         std::ofstream outFileStream;
@@ -326,7 +326,7 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         {
             cds::writeMoleculeToPdb(outFileStream, residueIndices[n], residueTER[n], data);
         }
-        cds::writeConectCards(outFileStream, connectionNumbers);
+        cds::writeConectCards(outFileStream, data.atoms.numbers, connectionIndices);
         outFileStream.close();
     };
 
@@ -378,8 +378,8 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
     std::vector<std::string> chainIds(residues.size(), "");
     std::vector<std::string> insertionCodes(residues.size(), "");
-    cds::ResiduePdbData residuePdbData(atomIndices, residueNumbers(residues), residueNames(residues), chainIds,
-                                       insertionCodes);
+    cds::ResiduePdbData residuePdbData(atomIndices, cds::residueNumbers(residues), cds::residueNames(residues),
+                                       chainIds, insertionCodes);
     cds::AtomPdbData atomPdbData(atoms, recordNames);
     cds::PdbWriterData writerData {residuePdbData, atomPdbData};
 
@@ -387,31 +387,31 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         cdsSelections::selectResiduesByType(residues, {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
                                                        cds::ResidueType::Aglycone, cds::ResidueType::Undefined});
 
-    std::vector<std::pair<int, int>> noConnections = {};
+    std::vector<std::pair<size_t, size_t>> noConnections = {};
+    std::vector<std::pair<size_t, size_t>> connectionIndices =
+        atomPairVectorIndices(atoms, cds::atomPairsConnectedToOtherResidues(pdbResidues));
     writePdbFile(residueIndices, residueTER, writerData, noConnections, outputDir + "glycoprotein_initial");
     resolveOverlapsWithWiggler(proteinResidues_, glycosites_);
     printDihedralAnglesAndOverlapOfGlycosites(proteinResidues_, glycosites_);
     writerData.atoms.coordinates = cds::atomCoordinates(atoms);
     writePdbFile(residueIndices, residueTER, writerData, noConnections, outputDir + "glycoprotein");
-    cds::serializeNumbers(atoms);
-    cds::serializeNumbers(residues);
-    writerData.atoms.numbers    = cds::atomNumbers(atoms);
-    writerData.residues.numbers = cds::residueNumbers(residues);
-    std::vector<std::pair<int, int>> connectionNumbers =
-        atomPairNumbers(cds::atomPairsConnectedToOtherResidues(pdbResidues));
+    writerData.atoms.numbers    = cds::serializedNumberVector(atoms.size());
+    writerData.residues.numbers = cds::serializedNumberVector(residues.size());
     {
         cds::OffWriterData offData = cds::toOffWriterData(residues);
+        offData.atoms.numbers      = writerData.atoms.numbers;
+        offData.residues.numbers   = writerData.residues.numbers;
         writeOffFile(offData, outputDir + "glycoprotein");
     }
-    writePdbFile(residueIndices, residueTER, writerData, connectionNumbers, outputDir + "glycoprotein_serialized");
+    writePdbFile(residueIndices, residueTER, writerData, connectionIndices, outputDir + "glycoprotein_serialized");
 
     for (size_t count = 0; count < settings.number3DStructures; count++)
     {
+        resolveOverlapsWithWiggler(proteinResidues_, glycosites_);
         printDihedralAnglesAndOverlapOfGlycosites(proteinResidues_, glycosites_);
+        writerData.atoms.coordinates = cds::atomCoordinates(atoms);
         std::stringstream prefix;
         prefix << count << "_glycoprotein";
-        resolveOverlapsWithWiggler(proteinResidues_, glycosites_);
-        writerData.atoms.coordinates = cds::atomCoordinates(atoms);
-        writePdbFile(residueIndices, residueTER, writerData, connectionNumbers, outputDir + prefix.str());
+        writePdbFile(residueIndices, residueTER, writerData, connectionIndices, outputDir + prefix.str());
     }
 }

@@ -13,25 +13,25 @@ namespace cds
     {
         AtomOffData(std::vector<int> numbers_, std::vector<std::string> names_, std::vector<std::string> types_,
                     std::vector<int> atomicNumbers_, std::vector<double> charges_, std::vector<Coordinate> coordinates_,
-                    std::vector<std::vector<int>> children_);
+                    std::vector<std::vector<size_t>> children_);
         std::vector<int> numbers;
         std::vector<std::string> names;
         std::vector<std::string> types;
         std::vector<int> atomicNumbers;
         std::vector<double> charges;
         std::vector<Coordinate> coordinates;
-        std::vector<std::vector<int>> children;
+        std::vector<std::vector<size_t>> children;
     };
 
     struct ResidueOffData
     {
         ResidueOffData(std::vector<int> numbers_, std::vector<std::string> names_, std::vector<ResidueType> types_,
-                       std::vector<std::vector<size_t>> atomIndices_, std::vector<std::vector<int>> connections_);
+                       std::vector<std::vector<size_t>> atomIndices_, std::vector<std::vector<size_t>> connections_);
         std::vector<int> numbers;
         std::vector<std::string> names;
         std::vector<ResidueType> types;
         std::vector<std::vector<size_t>> atomIndices;
-        std::vector<std::vector<int>> atomsConnectedToOtherResidues;
+        std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
     };
 
     struct OffWriterData
