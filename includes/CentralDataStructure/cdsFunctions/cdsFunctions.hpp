@@ -3,6 +3,8 @@
 
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 #include <array>
 #include <vector>
@@ -20,10 +22,15 @@ namespace cds
 
     std::vector<int> serializedNumberVector(size_t count);
     size_t atomVectorIndex(const std::vector<cds::Atom*>& atoms, const cds::Atom* find);
+    cds::Sphere coordinateWithRadius(Atom* atom);
     std::vector<int> atomNumbers(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomNames(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomElements(const std::vector<Atom*>& atoms);
     std::vector<int> atomAtomicNumbers(const std::vector<Atom*>& atoms);
+    std::vector<double> atomRadii(const std::vector<cds::Atom*>& atoms);
+    std::vector<Coordinate> atomCoordinates(const std::vector<Atom*>& atoms);
+    std::vector<Sphere> atomCoordinatesWithRadii(const std::vector<Atom*>& atoms);
+    std::vector<CoordinateReference> atomCoordinateReferences(std::vector<Atom*>& atoms);
     std::vector<std::string> atomTypes(const std::vector<Atom*>& atoms);
     std::vector<double> atomCharges(const std::vector<Atom*>& atoms);
     std::vector<int> residueNumbers(const std::vector<Residue*>& residues);

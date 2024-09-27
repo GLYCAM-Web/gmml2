@@ -1,6 +1,10 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 #include <array>
 #include <vector>
@@ -25,6 +29,12 @@ size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, const cds::Ato
     }
     // index equals offset from start of vector
     return found - atoms.begin();
+}
+
+cds::Sphere cds::coordinateWithRadius(Atom* atom)
+{
+    auto element = atom->cachedElement();
+    return {MolecularMetadata::vanDerWaalsRadius(element), atom->coordinate()};
 }
 
 std::vector<int> cds::atomNumbers(const std::vector<Atom*>& atoms)
@@ -69,6 +79,51 @@ std::vector<int> cds::atomAtomicNumbers(const std::vector<Atom*>& atoms)
         result.push_back(atom->getAtomicNumber());
     }
     return result;
+}
+
+std::vector<double> cds::atomRadii(const std::vector<cds::Atom*>& atoms)
+{
+    std::vector<double> radii;
+    radii.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        auto element = atom->cachedElement();
+        radii.push_back(MolecularMetadata::vanDerWaalsRadius(element));
+    }
+    return radii;
+}
+
+std::vector<cds::Coordinate> cds::atomCoordinates(const std::vector<cds::Atom*>& atoms)
+{
+    std::vector<Coordinate> coordinates;
+    coordinates.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        coordinates.push_back(atom->coordinate());
+    }
+    return coordinates;
+}
+
+std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const std::vector<Atom*>& atoms)
+{
+    std::vector<Sphere> spheres;
+    spheres.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        spheres.push_back(coordinateWithRadius(atom));
+    }
+    return spheres;
+}
+
+std::vector<cds::CoordinateReference> cds::atomCoordinateReferences(std::vector<cds::Atom*>& atoms)
+{
+    std::vector<CoordinateReference> coordinates;
+    coordinates.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        coordinates.push_back(atom->coordinateReference());
+    }
+    return coordinates;
 }
 
 std::vector<std::string> cds::atomTypes(const std::vector<Atom*>& atoms)

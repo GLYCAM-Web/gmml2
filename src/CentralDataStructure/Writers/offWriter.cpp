@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/containers.hpp"

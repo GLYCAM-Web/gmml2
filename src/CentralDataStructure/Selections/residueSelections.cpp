@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 
 #include "includes/CentralDataStructure/Geometry/functions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomCoordinates.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
