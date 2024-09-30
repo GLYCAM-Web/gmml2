@@ -123,15 +123,18 @@ namespace
             outputResidueString += "]";
         }
         // Output
-        if (iupacCondensed &&
-            currentResidue->GetType() != cds::ResidueType::Aglycone) // needs () around the linkageName
-        {
+        if (iupacCondensed && currentResidue->GetType() != cds::ResidueType::Aglycone)
+        { // needs () around the linkageName
             outputResidueString += "(";
         }
         outputResidueString += currentResidue->GetLinkageName(withLabels);
         if (iupacCondensed && currentResidue->GetType() != cds::ResidueType::Aglycone)
-        {
-            outputResidueString += ")";
+        { // Reducing/rightmost residue has no parent.
+            if (currentResidue->getParent() != nullptr &&
+                currentResidue->getParent()->GetType() != cds::ResidueType::Aglycone)
+            { // IUPAC leaves the terminal open. So you get Glc(b1-
+                outputResidueString += ")";
+            }
         }
         output.push_back(outputResidueString);
         // End of a branch check
