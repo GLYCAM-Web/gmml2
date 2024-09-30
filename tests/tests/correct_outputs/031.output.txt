@@ -1,0 +1,105 @@
+s1:
+DTalp[2S,3Me]a1-6DManpa1-6[DAllpb1-3][DNeup5Aca2-6DGalpb1-4DGlcp[3S]b1-2DAltpa1-4]DManpb1-4DGulp[6Me]b1-4DGlcpNAcb1-OH
+Index Ordered:
+DAllpb1-3[DNeup5Aca2-6DGalpb1-4DGlcp[3S]b1-2DAltpa1-4][DTalp[2S,3Me]a1-6DManpa1-6]DManpb1-4DGulp[6Me]b1-4DGlcpNAcb1-OH
+Iupac:
+All(b1-3)[Neu5Ac(a2-6)Gal(b1-4)Glc[3S](b1-2)Alt(a1-4)][Tal[2S,3Me](a1-6)Man(a1-6)]Man(b1-4)Gul[6Me](b1-4)GlcNAc(b1-)OH
+Labeled:
+DAllp&Label=residue-15;b1-3&Label=link-13;[DNeup5Ac&Label=residue-13;a2-6&Label=link-11;DGalp&Label=residue-12;b1-4&Label=link-10;DGlcp&Label=residue-11;[3&Label=link-12;S&Label=residue-14;]b1-2&Label=link-9;DAltp&Label=residue-10;a1-4&Label=link-8;][DTalp&Label=residue-7;[2&Label=link-7;S&Label=residue-9;,3&Label=link-6;Me&Label=residue-8;]a1-6&Label=link-5;DManp&Label=residue-6;a1-6&Label=link-4;]DManp&Label=residue-5;b1-4&Label=link-3;DGulp&Label=residue-3;[6&Label=link-2;Me&Label=residue-4;]b1-4&Label=link-1;DGlcpNAc&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+
+s2:
+DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH
+Index Ordered:
+DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]b1-2DManpa1-3[DGlcpNAcb1-4][DManp[2S,3Me]a1-6DManpa1-6]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH
+Iupac:
+Neu5Ac(a2-6)Gal(b1-4)GlcNAc[3S](b1-2)Man(a1-3)[GlcNAc(b1-4)][Man[2S,3Me](a1-6)Man(a1-6)]Man(b1-4)GlcNAc[6Me](b1-4)GlcNAc(b1-)OH
+Labeled:
+DNeup5Ac&Label=residue-14;a2-6&Label=link-12;DGalp&Label=residue-13;b1-4&Label=link-11;DGlcpNAc&Label=residue-12;[3&Label=link-13;S&Label=residue-15;]b1-2&Label=link-10;DManp&Label=residue-11;a1-3&Label=link-9;[DGlcpNAc&Label=residue-10;b1-4&Label=link-8;][DManp&Label=residue-7;[2&Label=link-7;S&Label=residue-9;,3&Label=link-6;Me&Label=residue-8;]a1-6&Label=link-5;DManp&Label=residue-6;a1-6&Label=link-4;]DManp&Label=residue-5;b1-4&Label=link-3;DGlcpNAc&Label=residue-3;[6&Label=link-2;Me&Label=residue-4;]b1-4&Label=link-1;DGlcpNAc&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+
+s3:
+DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
+Index Ordered:
+DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
+Iupac:
+GlcNAc(b1-4)GlcA(b1-4)GlcA(b1-3)Gal(b1-3)Gal(b1-4)Xyl(b1-)OH
+Labeled:
+DGlcpNAc&Label=residue-7;b1-4&Label=link-5;DGlcpA&Label=residue-6;b1-4&Label=link-4;DGlcpA&Label=residue-5;b1-3&Label=link-3;DGalp&Label=residue-4;b1-3&Label=link-2;DGalp&Label=residue-3;b1-4&Label=link-1;DXylp&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+
+s4:
+dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4DGlcpNSa1-4DGlcpA[2S]b1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
+Index Ordered:
+dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4DGlcpNSa1-4DGlcpA[2S]b1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
+Iupac:
+dUA[2S](1-4)GlcNAc[3S,6S](a1-4)IdoA[2S](a1-4)GlcNS(a1-4)GlcA[2S](b1-4)GlcA(b1-3)Gal(b1-3)Gal(b1-4)Xyl(b1-)OH
+Labeled:
+dUA&Label=residue-11;[2&Label=link-10;S&Label=residue-12;]1-4&Label=link-9;DGlcpNAc&Label=residue-9;[3&Label=link-11;S&Label=residue-13;,6&Label=link-8;S&Label=residue-10;]a1-4&Label=link-7;LIdopA(2SO)&Label=residue-8;[2&Label=link-12;S&Label=residue-14;]a1-4&Label=link-6;DGlcpNS&Label=residue-7;a1-4&Label=link-5;DGlcpA&Label=residue-6;[2&Label=link-13;S&Label=residue-15;]b1-4&Label=link-4;DGlcpA&Label=residue-5;b1-3&Label=link-3;DGalp&Label=residue-4;b1-3&Label=link-2;DGalp&Label=residue-3;b1-4&Label=link-1;DXylp&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+
+s5:
+dUA[2S]a1-4DGlcpNSa1-4LIdopA[2S]a1-4DGlcpNSa1-4LIdopA(4C1)a1-4DGlcpNS[6S]a1-OH
+Index Ordered:
+dUA[2S]a1-4DGlcpNSa1-4LIdopA[2S]a1-4DGlcpNSa1-4LIdopA(4C1)a1-4DGlcpNS[6S]a1-OH
+Iupac:
+dUA[2S](a1-4)GlcNS(a1-4)IdoA[2S](a1-4)GlcNS(a1-4)IdoA(a1-4)GlcNS[6S](a1-)OH
+Labeled:
+dUA&Label=residue-8;[2&Label=link-7;S&Label=residue-9;]a1-4&Label=link-6;DGlcpNS&Label=residue-7;a1-4&Label=link-5;LIdopA&Label=residue-6;[2&Label=link-8;S&Label=residue-10;]a1-4&Label=link-4;DGlcpNS&Label=residue-5;a1-4&Label=link-3;LIdopA(4C1)&Label=residue-4;a1-4&Label=link-2;DGlcpNS&Label=residue-2;[6&Label=link-1;S&Label=residue-3;]a1-&Label=link-0;OH&Label=residue-1;
+
+s6:
+DGlcpa1-2DFrufb
+Index Ordered:
+DGlcpa1-2DFrufb
+Iupac:
+Glc(a1-2)Fru(b)
+Labeled:
+DGlcp&Label=residue-2;a1-2&Label=link-0;DFruf&Label=residue-1;
+
+s7:
+DFrufb2-1DGlcpa
+Index Ordered:
+DFrufb2-1DGlcpa
+Iupac:
+Fru(b2-1)Glc(a)
+Labeled:
+DFruf&Label=residue-2;b2-1&Label=link-0;DGlcp&Label=residue-1;
+
+s8:
+DNeup5Ac&Label=residue-9;a2-6&Label=link-7;DGalp&Label=residue-8;b1-4&Label=link-6;DGlcpNAc&Label=residue-6;[3&Label=link-5;S&Label=residue-7;]b1-2&Label=link-4;DManp&Label=residue-5;a1-3&Label=link-3;[DGlcpNAc&Label=residue-10;b1-4&Label=link-8;][DManp&Label=residue-12;[2&Label=link-11;S&Label=residue-13;,3&Label=link-12;Me&Label=residue-14;]a1-6&Label=link-10;DManp&Label=residue-11;a1-6&Label=link-9;]DManp&Label=residue-4;b1-4&Label=link-2;DGlcpNAc&Label=residue-3;[6&Label=link-13;Me&Label=residue-15;]b1-4&Label=link-1;DGlcpNAc&Label=residue-2;b1-1&Label=link-0;-OH&Label=residue-1;
+Runtime error thrown for sequence s8 : DNeup5Ac&Label=residue-9;a2-6&Label=link-7;DGalp&Label=residue-8;b1-4&Label=link-6;DGlcpNAc&Label=residue-6;[3&Label=link-5;S&Label=residue-7;]b1-2&Label=link-4;DManp&Label=residue-5;a1-3&Label=link-3;[DGlcpNAc&Label=residue-10;b1-4&Label=link-8;][DManp&Label=residue-12;[2&Label=link-11;S&Label=residue-13;,3&Label=link-12;Me&Label=residue-14;]a1-6&Label=link-10;DManp&Label=residue-11;a1-6&Label=link-9;]DManp&Label=residue-4;b1-4&Label=link-2;DGlcpNAc&Label=residue-3;[6&Label=link-13;Me&Label=residue-15;]b1-4&Label=link-1;DGlcpNAc&Label=residue-2;b1-1&Label=link-0;-OH&Label=residue-1;
+Error: SequenceParser can't read labeled sequences yet: DNeup5Ac&Label=residue-9;a2-6&Label=link-7;DGalp&Label=residue-8;b1-4&Label=link-6;DGlcpNAc&Label=residue-6;[3&Label=link-5;S&Label=residue-7;]b1-2&Label=link-4;DManp&Label=residue-5;a1-3&Label=link-3;[DGlcpNAc&Label=residue-10;b1-4&Label=link-8;][DManp&Label=residue-12;[2&Label=link-11;S&Label=residue-13;,3&Label=link-12;Me&Label=residue-14;]a1-6&Label=link-10;DManp&Label=residue-11;a1-6&Label=link-9;]DManp&Label=residue-4;b1-4&Label=link-2;DGlcpNAc&Label=residue-3;[6&Label=link-13;Me&Label=residue-15;]b1-4&Label=link-1;DGlcpNAc&Label=residue-2;b1-1&Label=link-0;-OH&Label=residue-1;
+
+
+s9:
+
+Runtime error thrown for sequence s9 : 
+Error: sequence is empty:>>><<<
+
+s10:
+There will be cake.
+Runtime error thrown for sequence s10 : There will be cake.
+Error: the cake is a lie:>>>There will be cake.<<<
+
+s11:
+DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH 
+Runtime error thrown for sequence s11 : DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH 
+Error: sequence contains a space:>>>DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH <<<
+
+s12:
+DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3]DGalpb1-4DXylpb1-OH
+Runtime error thrown for sequence s12 : DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3]DGalpb1-4DXylpb1-OH
+Error: the number of [ doesn't match the number of ]. Bad branch in :>>>DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3]DGalpb1-4DXylpb1-OH<<<
+
+s13:
+DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalp[Boo]b1-3DGalpb1-4DXylpb1-OH
+Runtime error thrown for sequence s13 : DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalp[Boo]b1-3DGalpb1-4DXylpb1-OH
+Error: we can't parse this residue: "Boo"
+
+s14:
+dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4LIdopA(2SO)a1-4DGlcpNSa1-4DGlcpA[2S]b1-OH
+Index Ordered:
+dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4LIdopA(2SO)a1-4DGlcpNSa1-4DGlcpA[2S]b1-OH
+Iupac:
+dUA[2S](1-4)GlcNAc[3S,6S](a1-4)IdoA[2S](a1-4)IdoA(a1-4)GlcNS(a1-4)GlcA[2S](b1-)OH
+Labeled:
+dUA&Label=residue-8;[2&Label=link-7;S&Label=residue-9;]1-4&Label=link-6;DGlcpNAc&Label=residue-6;[3&Label=link-8;S&Label=residue-10;,6&Label=link-5;S&Label=residue-7;]a1-4&Label=link-4;LIdopA(2SO)&Label=residue-5;[2&Label=link-9;S&Label=residue-11;]a1-4&Label=link-3;LIdopA(2SO)&Label=residue-4;a1-4&Label=link-2;DGlcpNS&Label=residue-3;a1-4&Label=link-1;DGlcpA&Label=residue-2;[2&Label=link-10;S&Label=residue-12;]b1-&Label=link-0;OH&Label=residue-1;
+
+Finished test
+
