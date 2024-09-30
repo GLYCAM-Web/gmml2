@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/references.hpp"
 
@@ -20,15 +21,15 @@ std::vector<int> cds::serializedNumberVector(size_t count)
     return result;
 }
 
-size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, const cds::Atom* find)
+size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* find)
 {
-    auto found = std::find(atoms.begin(), atoms.end(), find);
-    if (found == atoms.end())
+    size_t index = codeUtils::indexOf(atoms, find);
+    if (index == atoms.size())
     {
         throw std::runtime_error("atom missing from data in off writer data");
     }
     // index equals offset from start of vector
-    return found - atoms.begin();
+    return index;
 }
 
 cds::Sphere cds::coordinateWithRadius(Atom* atom)

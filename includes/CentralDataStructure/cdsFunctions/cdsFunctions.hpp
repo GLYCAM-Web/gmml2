@@ -21,7 +21,7 @@ namespace cds
     }
 
     std::vector<int> serializedNumberVector(size_t count);
-    size_t atomVectorIndex(const std::vector<cds::Atom*>& atoms, const cds::Atom* find);
+    size_t atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* find);
     cds::Sphere coordinateWithRadius(Atom* atom);
     std::vector<int> atomNumbers(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomNames(const std::vector<Atom*>& atoms);

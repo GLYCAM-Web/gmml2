@@ -11,9 +11,14 @@ namespace codeUtils
     std::string FindStringInStringMap(const std::string& s, const std::unordered_map<std::string, std::string>& sMap);
     std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
 
+    template<class T> size_t indexOf(const std::vector<T>& vector, const T element)
+    {
+        return std::find(vector.begin(), vector.end(), element) - vector.begin();
+    }
+
     template<class T> bool contains(const std::vector<T> vector, const T element)
     {
-        return std::find(vector.begin(), vector.end(), element) != vector.end();
+        return indexOf(vector, element) < vector.size();
     }
 
     template<class T> void eraseNth(size_t n, std::vector<T>& vec)
