@@ -123,12 +123,13 @@ namespace
             outputResidueString += "]";
         }
         // Output
-        if (iupacCondensed) // needs () around the linkageName
+        if (iupacCondensed &&
+            currentResidue->GetType() != cds::ResidueType::Aglycone) // needs () around the linkageName
         {
             outputResidueString += "(";
         }
         outputResidueString += currentResidue->GetLinkageName(withLabels);
-        if (iupacCondensed)
+        if (iupacCondensed && currentResidue->GetType() != cds::ResidueType::Aglycone)
         {
             outputResidueString += ")";
         }
