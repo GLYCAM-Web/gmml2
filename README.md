@@ -1,5 +1,7 @@
-# GMML
-The GLYCAM Molecular Modeling Library (GMML) is typically used as a library accessed by GEMS (GLYCAM Extensible Modeling Script).  
+# GMML2
+The GLYCAM Molecular Modeling Library (GMML) is a C++ library created by the Woods Group. This is the scientific code underlying much of GLYCAM-Web (glycam.org). 
+GMML2 is a new version of GMML that has replaced much of the old codebase. Some tools like Glyfinder (glycam.org/gf) and the glycomimetic builder use the original GMML.
+Note that the GMMl2 code was originally developed within GMML1. We then forked to this repo and deleted the old code from here.
 
 [Overview](#overview)
 
@@ -18,7 +20,7 @@ The GLYCAM Molecular Modeling Library (GMML) is typically used as a library acce
 ---
 ## Overview
 
-GMML provides a library for common molecular modeling tasks.  It is 
+GMML2 provides a library for common molecular modeling tasks.  It is 
 particularly well-tuned for models of carbohydrates and systems that
 contain carbohydrates.
 
@@ -58,11 +60,11 @@ sudo apt-get install libssl1.1 libssl-dev git python3.9 python3.9-dev libboost-a
 ```
 For other linux distros, please follow the instructions for the package managment software included with your system.
 
-Please note that swig 4.0.2 must be installed from [their website](https://www.swig.org/download.html). Just kidding, most current linux distros already have `swig4.0` available right out of the box.
+Most linux distros have swig 4.0. Otherwise swig 4.0.2 must be installed from [their website](https://www.swig.org/download.html). 
 
 ### Contributing to GMML
 
-If you want to contribute to `gmml` you will also need to install the following packages:
+If you want to contribute to `gmml2` you will also need to install the following packages:
 
 * `clang-tidy-15`
 * `shellcheck`
@@ -74,30 +76,21 @@ The following does not require root access, but it does require one has `git` in
 
 1. Navigate to the directory that you would like to have `gmml` live. Please note that in order to use the produced library with [`gems`](https://github.com/glycam-web/gems/) the `gmml` directory must be placed within the `gems` directory.
 
-2. Clone `gmml` from the git repo and place into a folder named `gmml`
+2. Clone `gmml2` from the git repo
 ```bash
-git clone https://github.com/GLYCAM-Web/gmml.git gmml
+git clone https://github.com/GLYCAM-Web/gmml2.git -b feature_ChangesForFork
 ```
 
-**NOTE:** There are non-git ways to obtain gems and gmml.  Please see the [`gems repo`](https://github.com/GLYCAM-Web/GEMS) and the [`gmml repo`](https://github.com/GLYCAM-Web/GMML) on github for more information.
+**NOTE:** There are non-git ways to obtain gmml2. Don't do this as our tests won't compile outside of a git repo.
+**NOTE:** The -b feature_ChangesForFork should be temporary. If it's not working we likely forgot to update this doc. Try remove "-b feature_ChangesForFork" from the command.
 
 ---
 ## Compiling the Library
-
-As of now, we rely upon an shell enviroment variable named `GEMSHOME` but this need is in the process of being removed. The code expects `GEMSHOME` to be the parent directory of where `gmml` is being built. An easy one liner, from within the `gmml` directory, is as follows:
-
-```bash
-user@host:.../gmml$ cd .. && export GEMSHOME=$(pwd) && cd -
 ```
+Make sure you are in the gmml2 folder. To control the number of processors used during the *`make`* process, use the `-j` flag for our `make.sh`, so to run with 8 cores we would run `./make.sh -j 8`.
 
-Now to compile the library first make sure you are still in the `gmml` directory.
-```bash
-pwd
-./gmml
-```
-To control the number of processors used during the *`make`* process, use the `-j` flag for our `make.sh`, so to run with 8 cores we would run `./make.sh -j 8`.
-
-Also, we have the option to wrap our code using `swig`. There are two methods to do this.
+Also, we have the option to wrap our code into python using `swig`. If you are not using GEMS you can skip this step.
+There are two methods to do this.
 
 1. Once the makefile is generated using `cmake`, you can go into the `cmakeBuild` directory (or wherever you threw the makefile) and use the `gmml_wrapped` make target.
 
@@ -111,33 +104,19 @@ $./make.sh
 
 This will create the needed `cmake` files and will add the following directories within the `gmml` directory:
 
-* `lib` (Contains: the `gmml` shared object libary, `libgmml.so`)
+* `lib` (Contains: the `gmml2` shared object libary, `libgmml2.so`)
 * `cmakeBuild` (Contains: all files produced by the `cmake` command, a `compile_commands.json` file to be used with tools of your choice, and all files contained within the directories listed above)
 
-You can either use the `libgmml.so` file within the `lib` directory or the `libgmml.so` file within the `cmakeBuild` directory. They are the exact same.
+You can either use the `libgmml2.so` file within the `lib` directory or the `libgmml2.so` file within the `cmakeBuild` directory. They are the exact same.
 
 Both the `build` and `lib` directories must remain untouched because `gems` utilizes them both and expects both to be in the state that `./make.sh` leaves them.
 
 Please enter `./make.sh -h` for help regarding the make script.
 
-### Updating file lists and whatnot
-
-**DO NOT JUST FIRE THE `updateCmakeFileList.sh` SCRIPT AND NOT KNOW WHAT IS GOING ON. The method implemented is done in order to avoid a taxing typical cmake pattern; if the script is just fired off too many times we will have to remove it in order to avoid possible undefined behavior**. Please note that not only for cmake, but for all compilers, one should not just grab every file present and compile; these type of things must have some thought to them. The reason why one should never just glob files that one *thinks* are what one needs to compile is due to the huge increase in chances of introducing unknown behavior.
-
-Basically treat this the same way as one treats using `git add --all` as bad practice due to priming the code base to have a bunch of random files (that should not be pushed) added to the repo; instead of being able to directly avoid `git add --all` and using `git add <YOUR_SPECIFIC_FILES>` instead, **YOU** must be the difference between that logic if you call the script check the git.
-
-The `cmakeFileLists` directory contains the ouput from our `./updateCmakeFileList.sh` script. This script goes through and grabs all our files that we want to compile. There are 3 types:
-
-* `cFileList.txt` - this contains all of our cpp files and where they be
-
-* `hDirectoryList.txt` - this contains all of the directories that OUR source headers are. In the compiler this gets passed `-I` flag
-
-* `externalHDirectoryList.txt` - this contains all the directoires of the EXTERNAL source code headers. For example, the eigen library. This is done so our `compile_commands.json` will use all these files with the `-isystem` flag which makes running tools much easier. 
-
 ---
 ## Testing the Library
 
-From within the `gmml` directory, you must change your current working directory to the `gmml/tests` directory. Note that `<NUM_JOBS>` is however many tests you want to run at once.
+From within the `gmml2` directory, you must change your current working directory to the `gmml2/tests` directory. Note that `<NUM_JOBS>` is however many tests you want to run at once.
 
 ```bash
 gmml$ cd tests/
@@ -287,13 +266,23 @@ Exit Code: 1
 !!! FINISHED PRINTING FAILED TESTS !!!
 ```
 
----
-## Documentation
+## Using the Glycoprotein Builder:
+[Glycoprotein Builder Instructions](internalPrograms/GlycoproteinBuilder/README.md)
 
-The official documentation for both GEMS and GMML can be found on the main GLYCAM website:
 
-* GEMS - [http://glycam.org/gems](http://glycam.org/gems "GEMS")
-* GMML - [http://glycam.org/gmml](http://glycam.org/gmml "GMML")
+## Developers only (other users can ignore below here): 
+
+###Updating file lists and whatnot
+
+**DO NOT JUST FIRE THE `updateCmakeFileList.sh` SCRIPT AND NOT KNOW WHAT IS GOING ON. The method implemented is done in order to avoid a taxing typical cmake pattern; if the script is just fired off too many times we will have to remove it in order to avoid possible undefined behavior**. Please note that not only for cmake, but for all compilers, one should not just grab every file present and compile; these type of things must have some thought to them. The reason why one should never just glob files that one *thinks* are what one needs to compile is due to the huge increase in chances of introducing unknown behavior.
+
+Basically treat this the same way as one treats using `git add --all` as bad practice due to priming the code base to have a bunch of random files (that should not be pushed) added to the repo; instead of being able to directly avoid `git add --all` and using `git add <YOUR_SPECIFIC_FILES>` instead, **YOU** must be the difference between that logic if you call the script check the git.
+
+The `cmakeFileLists` directory contains the ouput from our `./updateCmakeFileList.sh` script. This script goes through and grabs all our files that we want to compile. There are 3 types:
+
+* `cFileList.txt` - this contains all of our cpp files and where they be
+
+* `hDirectoryList.txt` - this contains all of the directories that OUR source headers are. In the compiler this gets passed `-I` flag
 
 ---
 ## Coding Standards
