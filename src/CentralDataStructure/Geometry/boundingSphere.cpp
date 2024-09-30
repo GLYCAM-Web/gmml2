@@ -74,19 +74,25 @@ namespace
     {
         for (auto& a : spheres)
         {
-            Coordinate diff   = center(a) - sphere.center;
-            double diffLength = length(diff);
-            double dist       = diffLength + radius(a);
-            if (dist > sphere.radius)
-            {
-                double newRadius     = 0.5 * (sphere.radius + dist);
-                Coordinate newCenter = sphere.center + cds::scaleBy((dist - sphere.radius) / (2.0 * diffLength), diff);
-                sphere               = Sphere {newRadius, newCenter};
-            }
+            sphere = cds::boundingSphereIncluding(sphere, a);
         }
         return sphere;
     }
 } // namespace
+
+cds::Sphere cds::boundingSphereIncluding(Sphere sphere, const Sphere include)
+{
+    Coordinate diff   = center(include) - sphere.center;
+    double diffLength = length(diff);
+    double dist       = diffLength + radius(include);
+    if (dist > sphere.radius)
+    {
+        double newRadius     = 0.5 * (sphere.radius + dist);
+        Coordinate newCenter = sphere.center + cds::scaleBy((dist - sphere.radius) / (2.0 * diffLength), diff);
+        sphere               = Sphere {newRadius, newCenter};
+    }
+    return sphere;
+}
 
 cds::Sphere cds::boundingSphere(const std::vector<Sphere>& spheres)
 {

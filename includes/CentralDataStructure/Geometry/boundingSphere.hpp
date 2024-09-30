@@ -7,7 +7,7 @@
 
 namespace cds
 {
-    Sphere boundingSphere(const std::vector<Coordinate>& points);
+    Sphere boundingSphereIncluding(Sphere sphere, const Sphere include);
     Sphere boundingSphere(const std::vector<Sphere>& spheres);
 } // namespace cds
 
