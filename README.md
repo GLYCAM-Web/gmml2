@@ -74,7 +74,7 @@ If you want to contribute to `gmml2` you will also need to install the following
 ## Obtaining the software
 The following does not require root access, but it does require one has `git` installed.
 
-1. Navigate to the directory that you would like to have `gmml` live. Please note that in order to use the produced library with [`gems`](https://github.com/glycam-web/gems/) the `gmml` directory must be placed within the `gems` directory.
+1. Navigate to the directory that you would like to have `gmml2` live. Please note that in order to use the produced library with [`gems`](https://github.com/glycam-web/gems/) the `gmml2` directory must be placed within the `gems` directory.
 
 2. Clone `gmml2` from the git repo
 ```bash
@@ -102,7 +102,7 @@ Now all one must do is run the make script.
 $./make.sh
 ```
 
-This will create the needed `cmake` files and will add the following directories within the `gmml` directory:
+This will create the needed `cmake` files and will add the following directories within the `gmml2` directory:
 
 * `lib` (Contains: the `gmml2` shared object libary, `libgmml2.so`)
 * `cmakeBuild` (Contains: all files produced by the `cmake` command, a `compile_commands.json` file to be used with tools of your choice, and all files contained within the directories listed above)
@@ -119,8 +119,8 @@ Please enter `./make.sh -h` for help regarding the make script.
 From within the `gmml2` directory, you must change your current working directory to the `gmml2/tests` directory. Note that `<NUM_JOBS>` is however many tests you want to run at once.
 
 ```bash
-gmml$ cd tests/
-gmml/tests$ ./compile_run_tests.bash -j <NUM_JOBS>
+gmml2$ cd tests/
+gmml2/tests$ ./compile_run_tests.bash -j <NUM_JOBS>
 ```
 
 Please note that running GMML bare metal will cause test 016 (svg drawing) to fail, this is due to not setting the created svgs correctly and will eventually be fixed but for now don't worry if `016.test.DrawGlycan.sh` fails while running on bare metal; if you are utilizing the dev enviroment all tests are expected to pass. This is of no concern because these tests need some extra things running to check, but those are internal for now.
@@ -128,112 +128,37 @@ Please note that running GMML bare metal will cause test 016 (svg drawing) to fa
 The output will tell you whether or not the library is behaving appropriately and if all tests are passed the output will look similar to the following:
 
 ```bash
+$ bash compile_run_tests.bash -j4
+
 #### Beginning GMML tests ####
-Number of tests found:  23
-Number of testing jobs: 4
+Number of tests found:	13
+Number of testing jobs:	4
 
 mkdir: created directory './tempTestOutputs'
 
-Beginning test: ./000.test.buildBySequenceOldWay.sh
-Beginning test: ./002.test.createAssemblyWritePDB.sh
-Beginning test: ./003.test.SuperimpositionEigen.sh
-Beginning test: ./004.test.PDBpreprocessor.sh
-
-Testing 003.superimpositionEigen.cc... Test passed
-Exit Code: 0
-
-Beginning test: ./005.test.Overlaps.sh
-
-Testing 002.create_Assembly_WritePDB.cc... Test passed
-Exit Code: 0
-
-Beginning test: ./006.test.BFMP-RingShapeCalculation.sh
-
-Testing 000.buildBySequence.cc... Test passed
-Exit Code: 0
-
-Beginning test: ./007.test.DetectSugars.sh
-
-Testing 006.ringShapeDetection.cc (BFMP Ring Shape Calculation)... Test passed.
-Exit Code: 0
-
-Beginning test: ./008.test.PDB2GlycamAndSubgraphMatching.sh
-
-Testing 005.overlaps.cc... Test passed
-Exit Code: 0
-
-Beginning test: ./009.test.Reorder_and_Label_Sequence.sh
-
-Testing 009.reorderSequence.cc (Sequence reordering and labeling)... Test passed.
-Exit Code: 0
-
-Beginning test: ./010.test.buildBySequenceRotamer.sh
-
-Testing 008.pdb2glycam.cc and molecule subgraph matching... Test passed.
-Exit Code: 0
-
-Beginning test: ./011.test.writeResNumbers.sh
-
-Testing 010.buildBySequenceRotamer.cc... Test passed.
-Exit Code: 0
-
-Beginning test: ./012.test.AddSolventNeutralize.sh
-
-Testing 011.writeResNumbers.cc (write original and new residue numbers into a PDB file)... Test passed.
-Exit Code: 0
-
-Beginning test: ./014.test.SequenceParser.sh
-
-Testing 014.test.SequenceParser.cc... Test passed.
-Exit Code: 0
-
-Beginning test: ./015.test.SequenceToAssembly.sh
-
-Testing 012.AddSolventNeutralize... Test passed.
-Exit Code: 0
-
 Beginning test: ./016.test.DrawGlycan.sh
-
-Testing PDBPreprocessor... ~15 seconds
-Test passed for tests/inputs/004.preprocessorInput_4mbz.pdb.
-Test passed for tests/inputs/004.preprocessorInput_original.pdb.
-Test passed for tests/inputs/004.preprocessorInput_reduce.pdb.
-Exit Code: 0
-
 Beginning test: ./017.test.GlycoproteinBuilder.sh
+Beginning test: ./018.test.GlycoproteinBuilderTable.sh
+Beginning test: ./019.test.newPDBClass.sh
 
-Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 132, line 2
+Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
 Test FAILED! Output file 0.svg different to tests/correct_outputs/016.output_SVGs/0.svg
 Exit Code: 1
 
-Beginning test: ./018.test.GlycoproteinBuilderTable.sh
+Beginning test: ./020.test.parameterFiles.sh
 
 Testing 018.test.createGlycosylationTables.cpp... Test passed.
 Exit Code: 0
 
-Beginning test: ./019.test.newPDBClass.sh
-
-Testing 007.detectSugars.cc... Test passed.
-Exit Code: 0
-
-Beginning test: ./020.test.parameterFiles.sh
-
-Testing 015.test.SequenceAssembly.cc... Test passed.
-Exit Code: 0
-
-Beginning test: ./021.test.cdsSequence.sh
-
-Testing 020.test.parameterFiles.cpp... Test passed.
-Exit Code: 0
-
 Beginning test: ./022.test.libraryFileReader.sh
 
-Testing 022.test.libraryFileReader.cpp... Test passed.
+Testing 020.test.parameterFiles.cpp... Test passed.
+
 Exit Code: 0
 
 Beginning test: ./023.test.carbohydrateBuilder.sh
 
-Testing 021.test.cdsSequence.cpp... Test passed.
+Testing 022.test.libraryFileReader.cpp... Test passed.
 Exit Code: 0
 
 Beginning test: ./024.test.wiggleToSite.sh
@@ -241,30 +166,64 @@ Beginning test: ./024.test.wiggleToSite.sh
 Testing 024.wiggleToSite...Test passed.
 Exit Code: 0
 
+Beginning test: ./026.test.editPdbFile.sh
+
+Testing 017.test.GlycoproteinBuilder.cpp... Test passed.
+Exit Code: 0
+
+Beginning test: ./027.test.glycamResidueCombinator.sh
+
+Testing 026.test.editPDB.cpp... ~2 seconds. Test passed.
+Exit Code: 0
+
+Beginning test: ./028.test.cdsCarbBuilderAll.sh
+
 Testing 023.carbohydrateBuilder... Test passed.
+Exit Code: 0
+
+Beginning test: ./029.test.graph.sh
+
+Testing 029.graph...Test FAILED! Output file different. Try
+diff 029.output_graph.txt tests/correct_outputs/029.output_graph.txt
+Exit Code: 1
+
+Beginning test: ./030.test.gmPreProcessor.sh
+
+Testing 030.test.gmPreProcessor.cpp... ~3 seconds. Test passed.
+Exit Code: 0
+
+Testing 028.test.cdsCarbBuilderAll.cpp...Test passed.
+Exit Code: 0
+
+Testing 027.test.glycamResidueCombinator.cpp... Test passed.
+
 Exit Code: 0
 
 Testing 019.test.newPDBClass.cpp... ~30 seconds. Test passed.
 Exit Code: 0
 
-Testing 017.test.GlycoproteinBuilder.cpp... Test passed.
-Exit Code: 0
-
 ######## GMML TESTS COMPLETED ########
-Required tests: 23
-Passed tests:   22
-Failed tests:   1
-Time taken:     34 seconds
+Required tests:	13
+Passed tests:	11
+Failed tests:	2
+Time taken:	11 seconds
 ######################################
 
-!!! OUTPUT OF THE 1 GMML TEST(S) THAT FAILED !!!
+!!! OUTPUT OF THE 2 GMML TEST(S) THAT FAILED !!!
 
-Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 132, line 2
+Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
 Test FAILED! Output file 0.svg different to tests/correct_outputs/016.output_SVGs/0.svg
 Exit Code: 1
 
+Testing 029.graph...Test FAILED! Output file different. Try
+diff 029.output_graph.txt tests/correct_outputs/029.output_graph.txt
+Exit Code: 1
+
 !!! FINISHED PRINTING FAILED TESTS !!!
+
 ```
+Note that both test 016 and 029 fail outside of the developer environment and that's ok. If any other tests fail the something is wrong.
+
 
 ## Using the Glycoprotein Builder:
 [Glycoprotein Builder Instructions](internalPrograms/GlycoproteinBuilder/README.md)
@@ -318,13 +277,13 @@ All code must follow the format described in the `.clang-format` file, and the p
 Now, how do you format a specific file?
 
 ```bash
-user@host:.../gmml$ clang-tidy-15 -i path/to/bad/file.cpp 
+user@host:.../gmml2$ clang-tidy-15 -i path/to/bad/file.cpp 
 ```
 
 What if you did a bunch of files and want to be lazy? This can miss a couple bits that need to be changed so run it a couple times, it also will use all your cores but hey it is pretty quick.
 
 ```bash
-user@host:.../gmml$ find . -not -path "./cmakeBuild/*" -type f -iname "*.cpp" -o -iname "*.hpp" -o -iname "*.h" -o -iname "*.cc" | xargs -P $(nproc --all --ignore=2)  -I % sh -c 'clang-format-15 -i %'
+user@host:.../gmml2$ find . -not -path "./cmakeBuild/*" -type f -iname "*.cpp" -o -iname "*.hpp" -o -iname "*.h" -o -iname "*.cc" | xargs -P $(nproc --all --ignore=2)  -I % sh -c 'clang-format-15 -i %'
 ```
 
 #### Hooks for Shell Scripts
@@ -333,12 +292,12 @@ In order to commit any shell scripts, the files must adhear to both our formatti
 
 * Formatting a shell script (NOTE: the formatting will be immediately applied to the script in question):
 ```bash
-user@host:.../gmml$ shfmt -i 4 -ci -fn -w path/to/bad/script.sh
+user@host:.../gmml2$ shfmt -i 4 -ci -fn -w path/to/bad/script.sh
 ```
 
 * Linting a shell script (NOTE: you will have to edit your script so it no longer has the issues the linter displays):
 ```bash
-user@host:.../gmml$ shellcheck --enable=require-variable-braces,quote-safe-variables,add-default-case path/to/bad/script.sh
+user@host:.../gmml2$ shellcheck --enable=require-variable-braces,quote-safe-variables,add-default-case path/to/bad/script.sh
 ```
 
 ---
@@ -353,4 +312,4 @@ Github:  [https://github.com/GLYCAM-Web/gems](https://github.com/GLYCAM-Web/gems
 
 To get started, follow the [Download and Install](http://glycam.org/docs/gems/download-and-install/ "Download and Install") instructions. These instructions will walk you through the steps to obtain and configure the software, and also test the installation.
   
-To compile and use the programs that are based on gmml (e.g. the carbohydrate or glycoprotein builders) go to their subfolders (e.g. internalPrograms/GlycoproteinBuilder/) and follow the compilation instructions in the readme there.
+To compile and use the programs that are based on gmml2 (e.g. the carbohydrate or glycoprotein builders) go to their subfolders (e.g. internalPrograms/GlycoproteinBuilder/) and follow the compilation instructions in the readme there.
