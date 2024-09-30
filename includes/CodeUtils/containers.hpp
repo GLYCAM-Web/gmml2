@@ -10,6 +10,7 @@ namespace codeUtils
 {
     std::string FindStringInStringMap(const std::string& s, const std::unordered_map<std::string, std::string>& sMap);
     std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
+    std::vector<size_t> offsetIndices(size_t offset, std::vector<size_t> indices);
 
     template<class T> size_t indexOf(const std::vector<T>& vector, const T element)
     {

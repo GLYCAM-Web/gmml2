@@ -17,3 +17,12 @@ std::vector<bool> codeUtils::vectorAnd(const std::vector<bool>& vecA, const std:
     }
     return result;
 }
+
+std::vector<size_t> codeUtils::offsetIndices(size_t offset, std::vector<size_t> indices)
+{
+    for (auto& index : indices)
+    {
+        index += offset;
+    }
+    return indices;
+}
