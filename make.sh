@@ -374,7 +374,7 @@ if [ "${AUTO_TESTIN_TIME}" == 1 ]; then
 fi
 
 #NOTE: All our build stuff is within the cmakeBuild dir
-echo -e "\n${INFO_STYLE}###### Now actually making GMML, COMMAND USED: ./gmml/cmakeBuild$ make -j${NMP} ${MAKE_TARGET} ######${RESET_STYLE}"
+echo -e "\n${INFO_STYLE}###### Now actually making GMML, COMMAND USED: ./gmml2/cmakeBuild$ make -j${NMP} ${MAKE_TARGET} ######${RESET_STYLE}"
 cd cmakeBuild || {
     echo -e "${ERROR_STYLE}ERROR BUILDING GMML: $0 FAILED, EXITING${RESET_STYLE}"
     exit 1
