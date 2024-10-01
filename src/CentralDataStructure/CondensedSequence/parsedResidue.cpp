@@ -130,16 +130,17 @@ std::string ParsedResidue::GetName(const bool withLabels, const bool iupacConsen
     {
         return findLabelContaining("&Label=", this->getLabels());
     }
-    if (iupacConsensed)
-    { // Iupac doesn't write -OH, but does include reducing terminal when it's sugar-sugar ano-ano
-        if (this->GetType() == cds::ResidueType::Sugar)
-        {
-            return this->GetResidueName() + this->GetResidueModifier();
-        }
-        return ""; // The chase where you have an aglycone.
-    }
     return this->GetIsomer() + this->GetResidueName() + this->GetRingType() + this->GetResidueModifier() +
            this->GetRingShape();
+}
+
+std::string ParsedResidue::GetIupacName() const
+{ // Iupac doesn't write -OH, but does include reducing terminal when it's sugar-sugar ano-ano
+    if (this->GetType() == cds::ResidueType::Sugar)
+    {
+        return this->GetResidueName() + this->GetResidueModifier();
+    }
+    return ""; // The chase where you have an aglycone.
 }
 
 std::string ParsedResidue::GetLinkageName(const bool withLabels) const

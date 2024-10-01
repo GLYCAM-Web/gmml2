@@ -26,6 +26,7 @@ namespace cdsCondensedSequence
         //                       ACCESSOR                       //
         //////////////////////////////////////////////////////////
         std::string GetName(const bool withLabels = false, const bool iupacConsensed = false) const;
+        std::string GetIupacName() const;
         std::string GetLinkageName(const bool withLabels = false) const;
 
         inline std::string GetInputString() const

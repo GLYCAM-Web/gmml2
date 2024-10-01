@@ -94,41 +94,40 @@ namespace
         return ss.str();
     }
 
-    void recurvePrint(ParsedResidue* currentResidue, int& branchStackSize, std::vector<std::string>& output,
-                      const bool withLabels, const bool iupacCondensed)
+    void recurvePrintIupac(ParsedResidue* currentResidue, int& branchStackSize, std::vector<std::string>& output)
     {
         auto neighbors                  = currentResidue->GetChildren();
         size_t numberOfNeighbors        = neighbors.size();
         // Derivatives. E.g. 2S,3Me in DManp[2S,3Me]a1-6DManpa1-OH
-        std::string outputResidueString = currentResidue->GetName(withLabels, iupacCondensed);
+        std::string outputResidueString = currentResidue->GetIupacName();
         std::vector<std::string> derivatives;
         for (auto& neighbor : neighbors)
         {
             if (neighbor->GetType() == cds::ResidueType::Derivative || neighbor->GetType() == cds::ResidueType::Deoxy)
             {
                 --numberOfNeighbors;
-                derivatives.push_back(neighbor->GetLinkageName(withLabels) + neighbor->GetName(withLabels));
-                derivatives.push_back(",");
+                derivatives.push_back(neighbor->GetLinkageName() + neighbor->GetName());
+                // derivatives.push_back(","); not for iupac it looks like Glc2Me3Ac
             }
         }
         if (!derivatives.empty())
         {
-            derivatives.pop_back();                               // Remove the last ","
+            // derivatives.pop_back();                               // Remove the last ","
             std::reverse(derivatives.begin(), derivatives.end()); // order should be 2S,6S, not 6S,2S.
-            outputResidueString += "[";
+            // outputResidueString += "[";
             for (auto& derivative : derivatives)
             {
                 outputResidueString += derivative;
             }
-            outputResidueString += "]";
+            // outputResidueString += "]";
         }
         // Output
-        if (iupacCondensed && currentResidue->GetType() != cds::ResidueType::Aglycone)
-        { // needs () around the linkageName
+        if (currentResidue->GetType() != cds::ResidueType::Aglycone)
+        { // needs () around the linkageName, but not the aglycone
             outputResidueString += "(";
         }
-        outputResidueString += currentResidue->GetLinkageName(withLabels);
-        if (iupacCondensed && currentResidue->GetType() != cds::ResidueType::Aglycone)
+        outputResidueString += currentResidue->GetLinkageName();
+        if (currentResidue->GetType() != cds::ResidueType::Aglycone)
         { // Reducing/rightmost residue has no parent.
             if (currentResidue->getParent() != nullptr &&
                 currentResidue->getParent()->GetType() != cds::ResidueType::Aglycone)
@@ -154,7 +153,60 @@ namespace
                     output.push_back("]");
                     ++branchStackSize;
                 }
-                recurvePrint(neighbor, branchStackSize, output, withLabels, iupacCondensed);
+                recurvePrintIupac(neighbor, branchStackSize, output);
+            }
+        }
+        return;
+    }
+
+    void recurvePrint(ParsedResidue* currentResidue, int& branchStackSize, std::vector<std::string>& output,
+                      const bool withLabels)
+    {
+        auto neighbors                  = currentResidue->GetChildren();
+        size_t numberOfNeighbors        = neighbors.size();
+        // Derivatives. E.g. 2S,3Me in DManp[2S,3Me]a1-6DManpa1-OH
+        std::string outputResidueString = currentResidue->GetName(withLabels);
+        std::vector<std::string> derivatives;
+        for (auto& neighbor : neighbors)
+        {
+            if (neighbor->GetType() == cds::ResidueType::Derivative || neighbor->GetType() == cds::ResidueType::Deoxy)
+            {
+                --numberOfNeighbors;
+                derivatives.push_back(neighbor->GetLinkageName(withLabels) + neighbor->GetName(withLabels));
+                derivatives.push_back(",");
+            }
+        }
+        if (!derivatives.empty())
+        {
+            derivatives.pop_back();                               // Remove the last ","
+            std::reverse(derivatives.begin(), derivatives.end()); // order should be 2S,6S, not 6S,2S.
+            outputResidueString += "[";
+            for (auto& derivative : derivatives)
+            {
+                outputResidueString += derivative;
+            }
+            outputResidueString += "]";
+        }
+        outputResidueString += currentResidue->GetLinkageName(withLabels);
+        output.push_back(outputResidueString);
+        // End of a branch check
+        if (numberOfNeighbors == 0 && branchStackSize > 0)
+        {
+            output.push_back("[");
+            --branchStackSize;
+        }
+        size_t loopCount = 0;
+        for (auto& neighbor : neighbors)
+        {
+            if (neighbor->GetType() != cds::ResidueType::Derivative && neighbor->GetType() != cds::ResidueType::Deoxy)
+            {
+                ++loopCount;
+                if (loopCount < numberOfNeighbors)
+                {
+                    output.push_back("]");
+                    ++branchStackSize;
+                }
+                recurvePrint(neighbor, branchStackSize, output, withLabels);
             }
         }
         return;
@@ -244,7 +296,14 @@ std::string cdsCondensedSequence::printSequence(std::vector<cds::Residue*> resid
 {
     std::vector<std::string> output;
     int branchStackSize = 0;
-    recurvePrint(terminalResidue(residues), branchStackSize, output, withLabels, iupacCondensed);
+    if (iupacCondensed)
+    {
+        recurvePrintIupac(terminalResidue(residues), branchStackSize, output);
+    }
+    else
+    {
+        recurvePrint(terminalResidue(residues), branchStackSize, output, withLabels);
+    }
     std::reverse(output.begin(), output.end()); // Reverse order, as it starts from terminal.
     std::stringstream ss;
     for (auto& label : output)

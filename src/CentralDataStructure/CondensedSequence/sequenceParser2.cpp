@@ -16,9 +16,14 @@ void Sequence::LabelSequence()
     labelSequence(this->getResidues());
 }
 
-std::string Sequence::Print(const bool withLabels, const bool iupac) const
+std::string Sequence::Print(const bool withLabels) const
 {
-    return printSequence(this->getResidues(), withLabels, iupac);
+    return printSequence(this->getResidues(), withLabels);
+}
+
+std::string Sequence::PrintIupac() const
+{
+    return printSequence(this->getResidues(), false, true);
 }
 
 std::string Sequence::PrintGraphViz(GraphVizDotConfig& configs)

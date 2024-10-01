@@ -13,7 +13,8 @@ namespace cdsCondensedSequence
         Sequence(std::string glycamCondensedString);
         std::string ReorderSequence();
         void LabelSequence();
-        std::string Print(const bool withLabels = false, const bool iupac = false) const;
+        std::string Print(const bool withLabels = false) const;
+        std::string PrintIupac() const;
         std::string PrintGraphViz(GraphVizDotConfig& configs);
 
       private:
