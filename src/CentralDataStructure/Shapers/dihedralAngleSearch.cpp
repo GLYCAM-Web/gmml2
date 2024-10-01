@@ -221,6 +221,7 @@ namespace
         std::vector<size_t> fixedResidueIndices = codeUtils::indexVector(fixedInput.residueAtoms);
         std::vector<size_t> movingResidueIndices =
             codeUtils::indexVectorWithOffset(residueOffset, movingInput.residueAtoms);
+
         auto movingAtomIndices = movingInput.residueAtoms;
         for (size_t n = 0; n < movingAtomIndices.size(); n++)
         {
@@ -228,8 +229,10 @@ namespace
         }
         std::vector<std::vector<size_t>> residueAtoms =
             codeUtils::vectorAppend(fixedInput.residueAtoms, movingAtomIndices);
-        std::array<std::vector<bool>, 2> firstResidueBondedAtoms = {fixedInput.firstResidueBondedAtoms,
-                                                                    movingInput.firstResidueBondedAtoms};
+        std::vector<cds::BondedResidueOverlapInput> bonds {
+            {{fixedResidueIndices[0], movingResidueIndices[0]},
+             {fixedInput.firstResidueBondedAtoms, movingInput.firstResidueBondedAtoms}}
+        };
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
@@ -247,9 +250,8 @@ namespace
             {
                 residueBounds[movingResidueIndices[n]].center = matrix * movingInput.boundingSpheres[n].center;
             }
-            cds::Overlap overlaps =
-                cds::CountOverlappingAtoms({atomBounds, residueBounds, residueAtoms, weights, firstResidueBondedAtoms},
-                                           fixedResidueIndices, movingResidueIndices);
+            cds::Overlap overlaps = cds::CountOverlappingAtoms({atomBounds, residueBounds, residueAtoms, weights},
+                                                               bonds, fixedResidueIndices, movingResidueIndices);
 
             results.push_back({
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
