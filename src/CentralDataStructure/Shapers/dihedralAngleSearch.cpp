@@ -185,19 +185,21 @@ namespace
                 moving,      firstResidueBondedAtoms};
     }
 
-    void moveFirstResidueCoords(const cds::RotationMatrix matrix, const cds::DihedralRotationData& input,
-                                std::vector<cds::Sphere>& coordinates, std::vector<cds::Sphere>& spheres)
+    void moveFirstResidueCoords(size_t atomOffset, size_t residueOffset, const cds::RotationMatrix matrix,
+                                const cds::DihedralRotationData& input, std::vector<cds::Sphere>& coordinates,
+                                std::vector<cds::Sphere>& spheres)
     {
         std::vector<cds::Sphere> firstCoords;
         const std::vector<size_t>& indices = input.residueAtoms[0];
         firstCoords.reserve(indices.size());
         for (size_t index : indices)
         {
-            const Coordinate& center  = input.coordinates[index].center;
-            coordinates[index].center = input.firstResidueCoordinateMoving[index] ? matrix * center : center;
-            firstCoords.push_back(coordinates[index]);
+            const Coordinate& center = input.coordinates[index].center;
+            coordinates[index + atomOffset].center =
+                input.firstResidueCoordinateMoving[index] ? matrix * center : center;
+            firstCoords.push_back(coordinates[index + atomOffset]);
         }
-        spheres[0] = cds::boundingSphere(firstCoords);
+        spheres[residueOffset] = cds::boundingSphere(firstCoords);
     }
 
     cds::AngleOverlap WiggleAnglesOverlaps(const cds::DihedralCoordinates dihedral, size_t metadataIndex,
@@ -211,29 +213,43 @@ namespace
         std::vector<cds::Sphere> fixedSpheres      = fixedInput.boundingSpheres;
         std::vector<cds::Sphere> movingCoordinates = movingInput.coordinates;
         std::vector<cds::Sphere> movingSpheres     = movingInput.boundingSpheres;
+        size_t atomOffset                          = fixedCoordinates.size();
+        size_t residueOffset                       = fixedSpheres.size();
+        std::vector<cds::Sphere> atomBounds        = codeUtils::vectorAppend(fixedCoordinates, movingCoordinates);
+        std::vector<cds::Sphere> residueBounds     = codeUtils::vectorAppend(fixedSpheres, movingSpheres);
+        std::vector<double> weights = codeUtils::vectorAppend(fixedInput.residueWeights, movingInput.residueWeights);
+        std::vector<size_t> fixedResidueIndices = codeUtils::indexVector(fixedInput.residueAtoms);
+        std::vector<size_t> movingResidueIndices =
+            codeUtils::indexVectorWithOffset(residueOffset, movingInput.residueAtoms);
+        auto movingAtomIndices = movingInput.residueAtoms;
+        for (size_t n = 0; n < movingAtomIndices.size(); n++)
+        {
+            movingAtomIndices[n] = codeUtils::offsetIndices(atomOffset, movingAtomIndices[n]);
+        }
+        std::vector<std::vector<size_t>> residueAtoms =
+            codeUtils::vectorAppend(fixedInput.residueAtoms, movingAtomIndices);
+        std::array<std::vector<bool>, 2> firstResidueBondedAtoms = {fixedInput.firstResidueBondedAtoms,
+                                                                    movingInput.firstResidueBondedAtoms};
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
             auto matrix = rotationTo(dihedral, constants::toRadians(angle));
-            moveFirstResidueCoords(matrix, fixedInput, fixedCoordinates, fixedSpheres);
-            moveFirstResidueCoords(matrix, movingInput, movingCoordinates, movingSpheres);
+            moveFirstResidueCoords(0, 0, matrix, fixedInput, atomBounds, residueBounds);
+            moveFirstResidueCoords(atomOffset, residueOffset, matrix, movingInput, atomBounds, residueBounds);
             for (size_t n = 1; n < movingInput.residueAtoms.size(); n++)
             {
-                const std::vector<size_t>& indices = movingInput.residueAtoms[n];
-                for (size_t index : indices)
+                for (size_t index : movingInput.residueAtoms[n])
                 {
-                    movingCoordinates[index].center = matrix * movingInput.coordinates[index].center;
+                    atomBounds[index + atomOffset].center = matrix * movingInput.coordinates[index].center;
                 }
             }
-            for (size_t n = 1; n < movingSpheres.size(); n++)
+            for (size_t n = 1; n < movingResidueIndices.size(); n++)
             {
-                movingSpheres[n].center = matrix * movingInput.boundingSpheres[n].center;
+                residueBounds[movingResidueIndices[n]].center = matrix * movingInput.boundingSpheres[n].center;
             }
             cds::Overlap overlaps =
-                cds::CountOverlappingAtoms({fixedCoordinates, fixedSpheres, fixedInput.residueAtoms,
-                                            fixedInput.residueWeights, fixedInput.firstResidueBondedAtoms},
-                                           {movingCoordinates, movingSpheres, movingInput.residueAtoms,
-                                            movingInput.residueWeights, movingInput.firstResidueBondedAtoms});
+                cds::CountOverlappingAtoms({atomBounds, residueBounds, residueAtoms, weights, firstResidueBondedAtoms},
+                                           fixedResidueIndices, movingResidueIndices);
 
             results.push_back({
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}

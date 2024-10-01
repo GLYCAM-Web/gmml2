@@ -31,17 +31,3 @@ cds::Overlap cds::overlapAmount(const OverlapProperties properties, const Sphere
         return Overlap {0.0, 0.0};
     }
 }
-
-cds::Overlap cds::overlapAmount(const OverlapProperties properties, const std::vector<Sphere>& avec,
-                                const std::vector<Sphere>& bvec)
-{
-    Overlap overlap {0.0, 0.0};
-    for (auto& a : avec)
-    {
-        for (auto& b : bvec)
-        {
-            overlap += overlapAmount(properties, a, b);
-        }
-    }
-    return overlap;
-}

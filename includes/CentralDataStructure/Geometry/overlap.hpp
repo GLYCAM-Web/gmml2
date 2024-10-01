@@ -35,8 +35,6 @@ namespace cds
 
     int compareOverlaps(const Overlap& a, const Overlap& b);
     Overlap overlapAmount(const OverlapProperties properties, const Sphere& a, const Sphere& b);
-    Overlap overlapAmount(const OverlapProperties properties, const std::vector<Sphere>& avec,
-                          const std::vector<Sphere>& bvec);
 } // namespace cds
 
 #endif
