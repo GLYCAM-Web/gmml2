@@ -43,7 +43,6 @@ In order to build GMML, you are required to have the following software availabl
 * `libssl1.1`
 * `libssl-dev`
 * `cmake` (Version >= `3.13.4`)
-* `boost`
 * `g++` (Version >= `7.0`)
 * `make`
 * `python3.9` (Version `3.9.12`)
@@ -56,7 +55,7 @@ Installation instructions will vary according to what package manager your distr
 
 ```bash
 sudo apt-get update &&\
-sudo apt-get install libssl1.1 libssl-dev git python3.9 python3.9-dev libboost-all-dev cmake g++ git-all libeigen3-dev
+sudo apt-get install libssl1.1 libssl-dev git python3.9 python3.9-dev cmake g++ git-all libeigen3-dev
 ```
 For other linux distros, please follow the instructions for the package managment software included with your system.
 
