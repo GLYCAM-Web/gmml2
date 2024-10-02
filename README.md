@@ -247,9 +247,12 @@ The `cmakeFileLists` directory contains the ouput from our `./updateCmakeFileLis
 
 In order to make deving on the library consistent, we must enforce coding standards. They will be added piecewise, including the appropriate tests (be them pre-commit/push hooks, ci/cd hooks, etc.) and will be outlined below.
 
-### Branch Naming
+### Git Branches that define our workflow:
+release: Updated from stable where commits get tagged with the semver e.g. 2.1.0 for use in the test, dev and actual websites.
+stable: Updated from dev. Hotfix from here. Before pushing: (spin up dev env, do tests. precommit, no skipping).
+dev: Updated from feature branches created from here. Before pushing: (pre-commit & pre-push so gmml2 level tests need to pass).
 
-We use a gitflow based workflow, due to us not being able to think of all the structures that could break things we slowly move our changes up in our production branches where each one should be increasingly stable. When developing on `gmml` create feature branches off of `gmml-test`.
+### Branch Naming
 
 All branch names must take the form of `<branchType>_<descriptiveName>`. Be sure that you have a good descriptive name. The branch types are as follows:
 
