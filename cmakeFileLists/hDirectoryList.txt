@@ -22,6 +22,7 @@
 ./includes/CentralDataStructure/Writers
 ./includes/CentralDataStructure/cdsFunctions
 ./includes/CodeUtils
+./includes/Graph
 ./includes/MolecularMetadata
 ./includes/MolecularMetadata/GLYCAM
 ./includes/MolecularMetadata/Sugars
