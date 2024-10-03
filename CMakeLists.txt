@@ -152,6 +152,15 @@ STRING(REGEX REPLACE "[\n;]$" "" EXHDIRECTORIES "${EXHDIRECTORIES}")
 add_library(${PROJECT_NAME} SHARED
 	${CFILES})
 
+
+################## GENERATE VERSION ###############################
+
+add_custom_target(versionHeader
+  ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/versionHeader.cmake
+)
+
+add_dependencies(${PROJECT_NAME} versionHeader)
+
 #Add eigen lib
 target_include_directories(${PROJECT_NAME} PUBLIC ${EIGEN3_INCLUDE_DIRS})
 	
