@@ -26,9 +26,9 @@ int main(int argc, char* argv[])
         }
         outputDir = outputDir + "/";
         std::cout << "Test 017 Input file is " << inputFile << "\n";
-        glycoprotein::GlycoproteinBuilderInputs inputStruct = glycoprotein::readGPInputFile(inputFile);
+        glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct = glycoproteinBuilder::readGPInputFile(inputFile);
         std::cout << "Test 017 Reading input file complete, on to construction\n" << std::flush;
-        GlycoproteinBuilder glycoproteinBuilder(inputStruct);
+        glycoproteinBuilder::GlycoproteinBuilder glycoproteinBuilder(inputStruct);
         std::cout << "Test 017 Resolving overlaps" << std::endl;
         glycoproteinBuilder.ResolveOverlaps(outputDir);
     }

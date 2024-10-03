@@ -35,12 +35,14 @@ namespace cds
 
     struct ResidueAtomOverlapInputReference
     {
-        std::vector<Sphere>& atomCoordinates;
-        std::vector<Sphere>& boundingSpheres;
+        const std::vector<Sphere>& atomCoordinates;
+        const std::vector<Sphere>& boundingSpheres;
         const std::vector<std::vector<size_t>>& residueAtoms;
         const std::vector<double>& residueWeights;
     };
 
+    void insertIndicesOfIntersection(std::vector<size_t>& result, cds::Sphere sphere,
+                                     const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     std::vector<size_t> intersectingIndices(cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
                                             const std::vector<size_t>& indices);
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);

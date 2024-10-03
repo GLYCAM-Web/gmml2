@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 
-namespace glycoprotein
+namespace glycoproteinBuilder
 {
     struct GlycositeInput
     {
@@ -33,5 +33,5 @@ namespace glycoprotein
     };
 
     GlycoproteinBuilderInputs readGPInputFile(std::string inputFileName);
-} // namespace glycoprotein
+} // namespace glycoproteinBuilder
 #endif
