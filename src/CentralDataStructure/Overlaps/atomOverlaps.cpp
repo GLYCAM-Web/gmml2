@@ -12,19 +12,6 @@
 
 namespace
 {
-    void setIntersectingIndices(std::vector<size_t>& result, cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
-                                const std::vector<size_t>& indices)
-    {
-        for (size_t index : indices)
-        {
-            auto& a = coords[index];
-            if (cds::spheresOverlap(constants::overlapTolerance, sphere, a))
-            {
-                result.push_back(index);
-            }
-        }
-    }
-
     void setNonIgnoredIndices(std::vector<size_t>& result, const std::vector<size_t>& indices,
                               const std::vector<bool>& ignored)
     {
@@ -32,6 +19,7 @@ namespace
         {
             throw std::runtime_error("panic");
         }
+        result.reserve(indices.size());
         for (size_t n = 0; n < indices.size(); n++)
         {
             if (!ignored[n])
@@ -98,11 +86,25 @@ namespace
     }
 } // namespace
 
+void cds::insertIndicesOfIntersection(std::vector<size_t>& result, const Sphere sphere,
+                                      const std::vector<Sphere>& coords, const std::vector<size_t>& indices)
+{
+    result.reserve(indices.size());
+    for (size_t index : indices)
+    {
+        auto& a = coords[index];
+        if (cds::spheresOverlap(constants::overlapTolerance, sphere, a))
+        {
+            result.push_back(index);
+        }
+    }
+}
+
 std::vector<size_t> cds::intersectingIndices(cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
                                              const std::vector<size_t>& indices)
 {
     std::vector<size_t> result;
-    setIntersectingIndices(result, sphere, coords, indices);
+    insertIndicesOfIntersection(result, sphere, coords, indices);
     return result;
 }
 
@@ -138,8 +140,8 @@ cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& 
             }
             else if (cds::spheresOverlap(tolerance, sphereA, sphereB))
             {
-                setIntersectingIndices(indicesA, sphereB, input.atomCoordinates, atomsA);
-                setIntersectingIndices(indicesB, sphereA, input.atomCoordinates, atomsB);
+                insertIndicesOfIntersection(indicesA, sphereB, input.atomCoordinates, atomsA);
+                insertIndicesOfIntersection(indicesB, sphereA, input.atomCoordinates, atomsB);
             }
             for (size_t an : indicesA)
             {

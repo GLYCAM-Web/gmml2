@@ -1,6 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINOVERLAPRESOLUTION_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINOVERLAPRESOLUTION_HPP
 
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
@@ -30,38 +31,37 @@ struct OverlapResidues
     std::vector<cds::Residue*> glycan;
 };
 
-typedef std::function<std::vector<std::vector<cds::AngleWithMetadata>>(OverlapWeight, std::vector<cds::ResidueLinkage>&,
-                                                                       std::vector<cds::ResidueLinkageShapePreference>&,
-                                                                       const OverlapResidues&)>
+typedef std::function<std::vector<std::vector<cds::AngleWithMetadata>>(
+    const AssemblyGraphs&, AssemblyData&, size_t glycanId, OverlapWeight,
+    std::vector<cds::ResidueLinkageShapePreference>&)>
     WiggleGlycan;
 
 typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(const std::vector<cds::ResidueLinkage>&)>
     LinkageShapeRandomizer;
 
-cds::Overlap intraGlycanOverlaps(const std::vector<cds::ResidueLinkage>& linkages);
-cds::Overlap countOverlaps(const std::vector<Residue*>& overlapResidues,
-                           const cds::ResiduesWithOverlapWeight& glycositeResidues);
-cds::Overlap siteOverlaps(OverlapWeight weight, const OverlapResidues& overlapResidues,
-                          const cds::ResiduesWithOverlapWeight& glycositeResidues,
-                          const std::vector<cds::ResidueLinkage>& linkages);
-cds::Overlap totalOverlaps(OverlapWeight weight, const std::vector<OverlapResidues>& overlapResidues,
-                           const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues,
-                           const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages);
-std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites,
-                                              const std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                                              const std::vector<OverlapResidues>& overlapResidues,
-                                              const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
-std::vector<cds::AngleWithMetadata> wiggleLinkage(const cds::AngleSearchSettings& searchSettings,
-                                                  cds::ResidueLinkage& linkage,
-                                                  const cds::ResidueLinkageShapePreference& shapePreference,
-                                                  const std::array<cds::ResiduesWithOverlapWeight, 2> overlapInput);
-std::vector<std::vector<cds::AngleWithMetadata>> wiggleGlycosite(
-    const cds::AngleSearchSettings& searchSettings, OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
-    const std::vector<cds::ResidueLinkageShapePreference>& preferences, const OverlapResidues& overlapResidues);
+void setLinkageShape(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
+                     const std::vector<std::vector<std::vector<cds::AngleWithMetadata>>>& shape);
+void setLinkageShapeToPreference(const AssemblyGraphs& graphs, AssemblyData& data, size_t linkageId,
+                                 const cds::ResidueLinkageShapePreference& preference);
+cds::Overlap intraGlycanOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId);
+cds::Overlap moleculeOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t moleculeA,
+                              size_t moleculeB);
+cds::Overlap moleculeResidueOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t molecule,
+                                     size_t residue);
+cds::Overlap totalOverlaps(OverlapWeight weight, const AssemblyGraphs& graphs, const AssemblyData& data);
+std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites, const AssemblyGraphs& graphs,
+                                              const AssemblyData& data);
+std::vector<cds::AngleWithMetadata> wiggleLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
+                                                  size_t linkageId, const cds::AngleSearchSettings& searchSettings,
+                                                  OverlapWeight weight,
+                                                  const cds::ResidueLinkageShapePreference& shapePreference);
+std::vector<std::vector<cds::AngleWithMetadata>>
+wiggleGlycan(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
+             const cds::AngleSearchSettings& searchSettings, OverlapWeight weight,
+             const std::vector<cds::ResidueLinkageShapePreference>& preferences);
+void updateGlycanBounds(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId);
 GlycoproteinState randomDescent(pcg32 rng, LinkageShapeRandomizer randomizeShape, WiggleGlycan wiggleGlycan,
-                                int persistCycles, OverlapWeight overlapWeight,
-                                std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
-                                const GlycoproteinState& initialState,
-                                const std::vector<OverlapResidues>& overlapResidues,
-                                const std::vector<cds::ResiduesWithOverlapWeight>& glycositeResidues);
+                                int persistCycles, OverlapWeight overlapWeight, const AssemblyGraphs& graphs,
+                                AssemblyData& data, std::vector<std::vector<cds::ResidueLinkage>>& glycosidicLinkages,
+                                const GlycoproteinState& initialState);
 #endif

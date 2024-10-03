@@ -1,8 +1,11 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinOverlapResolution.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
@@ -13,12 +16,17 @@
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
+#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/random.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/Graph/types.hpp"
+#include "includes/Graph/manipulation.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/External_Libraries/PCG/pcg_extras.h"
 
@@ -33,7 +41,6 @@ struct GlycositeData
 {
     std::vector<std::vector<cds::ResidueLinkage>> glycosidicLinkages;
     std::vector<std::vector<Residue*>> glycositeResidues;
-    std::vector<cds::ResiduesWithOverlapWeight> glycositeResiduesWithWeights;
 };
 
 namespace
@@ -48,13 +55,7 @@ namespace
             glycosidicLinkages.push_back(glycan->GetGlycosidicLinkages());
             glycositeResidues.push_back(glycan->getResidues());
         }
-
-        std::vector<cds::ResiduesWithOverlapWeight> glycositeResiduesWithWeights;
-        for (auto& a : glycositeResidues)
-        {
-            glycositeResiduesWithWeights.push_back({a, std::vector<double>(a.size(), 1.0)});
-        }
-        return GlycositeData {glycosidicLinkages, glycositeResidues, glycositeResiduesWithWeights};
+        return GlycositeData {glycosidicLinkages, glycositeResidues};
     }
 
     std::vector<OverlapResidues> toOverlapResidues(const std::vector<cds::Residue*>& proteinResidues,
@@ -265,43 +266,51 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         return freezeGlycositeResidueConformation ? glycositeResidueConformationFrozen(preference, linkages)
                                                   : preference;
     };
-    auto wiggleGlycan = [&searchSettings](OverlapWeight weight, std::vector<cds::ResidueLinkage>& linkages,
-                                          const std::vector<cds::ResidueLinkageShapePreference>& preferences,
-                                          const OverlapResidues& overlapResidues)
+    auto wiggleGlycanFunc = [&searchSettings](const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
+                                              OverlapWeight weight,
+                                              const std::vector<cds::ResidueLinkageShapePreference>& preferences)
     {
-        return wiggleGlycosite(searchSettings, weight, linkages, preferences, overlapResidues);
+        return wiggleGlycan(graphs, data, glycanId, searchSettings, weight, preferences);
     };
 
-    auto resolveOverlapsWithWiggler =
-        [&](const std::vector<cds::Residue*>& proteinResidues, std::vector<GlycosylationSite>& glycosites)
+    auto resolveOverlapsWithWiggler = [&](const AssemblyGraphs& assemblyGraphs, AssemblyData& assemblyData,
+                                          GlycositeData& data, const std::vector<cds::Residue*>& proteinResidues,
+                                          std::vector<GlycosylationSite>& glycosites)
     {
-        auto data                = toGlycositeData(glycosites);
         auto& glycosidicLinkages = data.glycosidicLinkages;
-        auto& weightedResidues   = data.glycositeResiduesWithWeights;
         auto overlapResidues     = toOverlapResidues(proteinResidues, glycosites, data.glycositeResidues);
 
         std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
         std::vector<std::vector<std::vector<cds::AngleWithMetadata>>> glycositeShape;
-        for (auto& linkages : glycosidicLinkages)
+        for (size_t n = 0; n < glycosidicLinkages.size(); n++)
         {
-            auto preference = randomizeShape(linkages);
-            cds::setShapeToPreference(linkages, preference);
+            auto& linkages                        = glycosidicLinkages[n];
+            auto preference                       = randomizeShape(linkages);
+            const std::vector<size_t>& linkageIds = assemblyGraphs.glycans[n].linkages;
+            for (size_t k = 0; k < linkageIds.size(); k++)
+            {
+                setLinkageShapeToPreference(assemblyGraphs, assemblyData, linkageIds[k], preference[k]);
+            }
+            updateGlycanBounds(assemblyGraphs, assemblyData, n);
             glycositePreferences.push_back(preference);
             glycositeShape.push_back(cds::currentShape(linkages));
         }
-        for (size_t site : codeUtils::shuffleVector(rng, codeUtils::indexVector(glycosidicLinkages)))
+        for (size_t glycanId : codeUtils::shuffleVector(rng, codeUtils::indexVector(glycosidicLinkages)))
         {
-            glycositeShape[site] = wiggleGlycan(overlapWeight, glycosidicLinkages[site], glycositePreferences[site],
-                                                overlapResidues[site]);
+            glycositeShape[glycanId] =
+                wiggleGlycanFunc(assemblyGraphs, assemblyData, glycanId, overlapWeight, glycositePreferences[glycanId]);
         }
-        cds::Overlap initialOverlap =
-            totalOverlaps(overlapWeight, overlapResidues, weightedResidues, glycosidicLinkages);
-        auto overlapSites = determineSitesWithOverlap(codeUtils::indexVector(glycosidicLinkages), glycosidicLinkages,
-                                                      overlapResidues, weightedResidues);
+        cds::Overlap initialOverlap = totalOverlaps(overlapWeight, assemblyGraphs, assemblyData);
+        auto overlapSites =
+            determineSitesWithOverlap(codeUtils::indexVector(assemblyGraphs.glycans), assemblyGraphs, assemblyData);
         auto initialState = GlycoproteinState {initialOverlap, overlapSites, glycositePreferences, glycositeShape};
         GlycoproteinState currentState =
-            randomDescent(rng, randomizeShape, wiggleGlycan, settings.persistCycles, overlapWeight, glycosidicLinkages,
-                          initialState, overlapResidues, weightedResidues);
+            randomDescent(rng, randomizeShape, wiggleGlycanFunc, settings.persistCycles, overlapWeight, assemblyGraphs,
+                          assemblyData, glycosidicLinkages, initialState);
+        for (size_t n = 0; n < assemblyGraphs.indices.atoms.size(); n++)
+        {
+            assemblyData.atoms.coordinateReferences[n].set(assemblyData.atoms.bounds[n].center);
+        }
         gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
     };
 
@@ -329,49 +338,214 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
         outFileStream.close();
     };
 
-    auto printDihedralAnglesAndOverlapOfGlycosites =
-        [](const std::vector<cds::Residue*>& proteinResidues, std::vector<GlycosylationSite>& glycosites)
+    auto printDihedralAnglesAndOverlapOfGlycosites = [](const AssemblyGraphs& graphs, const AssemblyData& data)
     {
-        auto data               = toGlycositeData(glycosites);
-        auto overlapResiduesVec = toOverlapResidues(proteinResidues, glycosites, data.glycositeResidues);
         std::stringstream logss;
-        for (size_t n = 0; n < glycosites.size(); n++)
+        const std::vector<GlycanIndices>& glycans = graphs.glycans;
+        for (size_t n = 0; n < glycans.size(); n++)
         {
-            auto& glycosite       = glycosites[n];
-            auto glycan           = glycosite.GetGlycan();
-            auto glycanResidues   = glycan->getResidues();
-            auto& overlapResidues = overlapResiduesVec[n];
-            auto glycanResiduesWithWeight =
-                cds::ResiduesWithOverlapWeight {glycanResidues, std::vector<double>(glycanResidues.size(), 1.0)};
-            auto proteinOverlaps = countOverlaps(overlapResidues.protein, glycanResiduesWithWeight);
-            auto glycanOverlaps  = countOverlaps(overlapResidues.glycan, glycanResiduesWithWeight);
-            auto selfOverlaps    = intraGlycanOverlaps(glycan->GetGlycosidicLinkages());
-            logss << "Residue ID: " << glycosite.GetResidue()->getStringId()
-                  << ", protein overlap: " << proteinOverlaps.count << ", glycan overlap: " << glycanOverlaps.count
-                  << ", self overlap: " << selfOverlaps.count;
+            const GlycanIndices& glycan = graphs.glycans[n];
+            cds::Overlap selfOverlap    = intraGlycanOverlaps(graphs, data, n);
+            cds::Overlap proteinOverlap {0.0, 0.0};
+            for (size_t n : graphs.proteinMolecules)
+            {
+                proteinOverlap += moleculeOverlaps(graphs, data, n, glycan.glycanMolecule);
+            }
+            cds::Overlap glycanOverlap {0.0, 0.0};
+            for (size_t k = 0; k < graphs.glycans.size(); k++)
+            {
+                if (k != n)
+                {
+                    glycanOverlap += moleculeOverlaps(graphs, data, glycan.glycanMolecule, glycans[k].glycanMolecule);
+                }
+            }
+            logss << "Residue ID: " << graphs.indices.residues[glycan.attachmentResidue]->getStringId()
+                  << ", protein overlap: " << proteinOverlap.count << ", glycan overlap: " << glycanOverlap.count
+                  << ", self overlap: " << selfOverlap.count;
             gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
         }
     };
 
-    Assembly* assembly = getGlycoprotein();
-    std::vector<cds::Residue*> residues;
-    std::vector<cds::Atom*> atoms;
-    std::vector<std::vector<bool>> residueTER;
-    std::vector<std::vector<size_t>> residueIndices;
-    std::vector<std::vector<size_t>> atomIndices;
+    std::vector<cds::Molecule*> molecules         = getGlycoprotein()->getMolecules();
+    cds::GraphIndexData graphIndices              = cds::toIndexData(molecules);
+    graph::Database atomGraphData                 = cds::createGraphData(graphIndices);
+    graph::Graph atomGraph                        = graph::identity(atomGraphData);
+    graph::Graph residueGraph                     = graph::quotient(atomGraphData, graphIndices.atomResidue);
+    std::vector<std::vector<size_t>>& atomIndices = residueGraph.nodes.elements;
+    graph::Graph moleculeGraph = graph::quotient(graph::asData(residueGraph), graphIndices.residueMolecule);
+    std::vector<std::vector<size_t>>& residueIndices = moleculeGraph.nodes.elements;
+    std::vector<cds::Atom*>& atoms                   = graphIndices.atoms;
+    std::vector<cds::Residue*>& residues             = graphIndices.residues;
 
-    for (auto& molecule : assembly->getMolecules())
+    std::vector<cds::Coordinate> atomCoordinates = cds::atomCoordinates(atoms);
+    std::vector<double> atomRadii                = cds::atomRadii(atoms);
+    std::vector<cds::Sphere> atomBoundingSpheres;
+    atomBoundingSpheres.reserve(atoms.size());
+    for (size_t n = 0; n < atoms.size(); n++)
     {
-        std::vector<cds::Residue*> moleculeResidues = molecule->getResidues();
-        residueIndices.push_back(codeUtils::indexVectorWithOffset(residues.size(), moleculeResidues));
-        codeUtils::insertInto(residues, moleculeResidues);
-        residueTER.push_back(cds::residueTER(cds::residueTypes(moleculeResidues)));
-        for (auto& residue : moleculeResidues)
+        atomBoundingSpheres.push_back({atomRadii[n], atomCoordinates[n]});
+    }
+    AtomData atomData {cds::atomCoordinateReferences(atoms), atomCoordinates, atomBoundingSpheres};
+    auto boundingSpheresOf =
+        [](const std::vector<cds::Sphere>& spheres, const std::vector<std::vector<size_t>>& indexVector)
+    {
+        std::vector<cds::Sphere> result;
+        result.reserve(indexVector.size());
+        for (auto& indices : indexVector)
         {
-            std::vector<Atom*> residueAtoms = residue->getAtoms();
-            atomIndices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
-            codeUtils::insertInto(atoms, residueAtoms);
+            result.push_back(cds::boundingSphere(codeUtils::indexValues(spheres, indices)));
         }
+        return result;
+    };
+
+    auto indexOfResidues = [&residues](const std::vector<Residue*>& toFind)
+    {
+        std::vector<size_t> result;
+        result.reserve(toFind.size());
+        for (auto& res : toFind)
+        {
+            result.push_back(codeUtils::indexOf(residues, res));
+        }
+        return result;
+    };
+
+    auto indexOfAtoms = [&atoms](const std::vector<Atom*>& toFind)
+    {
+        std::vector<size_t> result;
+        result.reserve(toFind.size());
+        for (auto& res : toFind)
+        {
+            result.push_back(codeUtils::indexOf(atoms, res));
+        }
+        return result;
+    };
+
+    auto closelyBondedAtoms = [&](size_t residueId, size_t atomId)
+    {
+        if (graphIndices.atomResidue[atomId] != residueId)
+        {
+            throw std::runtime_error("bork");
+        }
+        const std::vector<size_t>& elements = residueGraph.nodes.elements[residueId];
+        std::vector<bool> result(elements.size(), false);
+        for (size_t n = 0; n < elements.size(); n++)
+        {
+            const std::vector<size_t>& adjacencies = atomGraph.nodes.nodeAdjacencies[atomId];
+            size_t id                              = elements[n];
+            result[n]                              = (id == atomId) || codeUtils::contains(adjacencies, id);
+        }
+        return result;
+    };
+
+    std::vector<MoleculeType> moleculeTypes(graphIndices.molecules.size(), MoleculeType::protein);
+
+    auto glycositeData = toGlycositeData(glycosites_);
+    std::vector<size_t> rotatableDihedralCurrentMetadataIndex;
+    std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
+    std::vector<ResidueLinkageIndices> residueLinkages;
+    std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
+    std::vector<std::vector<GlycamMetadata::DihedralAngleDataVector>> linkageMetadata;
+    std::vector<std::vector<cds::BondedResidueOverlapInput>> linkageOverlapBonds;
+    std::vector<bool> linkageBranching;
+    std::vector<GlycanIndices> glycositeIndices;
+    for (size_t n = 0; n < glycosites_.size(); n++)
+    {
+        size_t site = codeUtils::indexOf(residues, glycosites_[n].GetResidue());
+        size_t moleculeIndex =
+            codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycosites_[n].GetGlycan()));
+        auto& linkages                 = glycositeData.glycosidicLinkages[n];
+        std::vector<size_t> linkageIds = codeUtils::indexVectorWithOffset(residueLinkages.size(), linkages);
+        for (auto& linkage : linkages)
+        {
+            auto& linkageDihedrals = linkage.rotatableDihedrals;
+            std::vector<size_t> dihedralIndices =
+                codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
+            for (auto& dihedral : linkageDihedrals)
+            {
+                rotatableDihedralCurrentMetadataIndex.push_back(0);
+                std::array<size_t, 4> dihedralAtoms;
+                for (size_t n = 0; n < 4; n++)
+                {
+                    dihedralAtoms[n] = codeUtils::indexOf(atoms, dihedral.atoms[n]);
+                }
+                rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
+            }
+            auto onlyThisMolecule = [&](const std::vector<size_t>& indices)
+            {
+                std::vector<size_t> result;
+                result.reserve(indices.size());
+                for (size_t index : indices)
+                {
+                    if (graphIndices.residueMolecule[index] == moleculeIndex)
+                    {
+                        result.push_back(index);
+                    }
+                }
+                return result;
+            };
+            std::vector<size_t> nonReducing = onlyThisMolecule(indexOfResidues(linkage.nonReducingOverlapResidues));
+            std::vector<size_t> reducing    = onlyThisMolecule(indexOfResidues(linkage.reducingOverlapResidues));
+            size_t firstResidue             = codeUtils::indexOf(residues, linkage.link.residues.first);
+            size_t secondResidue            = codeUtils::indexOf(residues, linkage.link.residues.second);
+            auto& adjacencies               = residueGraph.nodes.nodeAdjacencies[firstResidue];
+            size_t edgeN                    = codeUtils::indexOf(adjacencies, secondResidue);
+            if (edgeN >= adjacencies.size())
+            {
+                throw std::runtime_error("no residue adjacency");
+            }
+            size_t edgeId                    = residueGraph.nodes.edgeAdjacencies[firstResidue][edgeN];
+            std::array<size_t, 2> residueIds = residueGraph.edges.nodeAdjacencies[edgeId];
+            std::array<size_t, 2> atomIds    = atomGraph.edges.nodeAdjacencies[residueGraph.edges.indices[edgeId]];
+            bool direction                   = graphIndices.atomResidue[atomIds[0]] == residueIds[1];
+            std::array<std::vector<bool>, 2> bondedAtoms = {closelyBondedAtoms(residueIds[0], atomIds[direction]),
+                                                            closelyBondedAtoms(residueIds[1], atomIds[!direction])};
+
+            residueLinkages.push_back({edgeId, dihedralIndices, bondedAtoms, nonReducing, reducing});
+            linkageRotamerTypes.push_back(linkage.rotamerType);
+            linkageMetadata.push_back(linkage.dihedralMetadata);
+            linkageOverlapBonds.push_back({
+                {residueIds, bondedAtoms}
+            });
+            linkageBranching.push_back(linkage.rotatableDihedrals[0].isBranchingLinkage);
+        }
+        moleculeTypes[moleculeIndex] = MoleculeType::glycan;
+        glycositeIndices.push_back({site, moleculeIndex, linkageIds});
+    }
+    std::vector<double> residueOverlapWeight;
+    for (size_t molecule : graphIndices.residueMolecule)
+    {
+        residueOverlapWeight.push_back(moleculeTypes[molecule] == MoleculeType::protein ? proteinWeight : glycanWeight);
+    }
+
+    std::vector<cds::Sphere> residueBoundingSpheres =
+        boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
+    ResidueData residueData {residueOverlapWeight, residueBoundingSpheres};
+    std::vector<cds::Sphere> moleculeBoundingSpheres =
+        boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
+    MoleculeData moleculeData {moleculeTypes, moleculeBoundingSpheres};
+    RotatableDihedralData RotatableDihedralData {rotatableDihedralCurrentMetadataIndex};
+    ResidueLinkagedata residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds, linkageBranching};
+    AssemblyData assemblyData {atomData, residueData, moleculeData, RotatableDihedralData, residueLinkageData};
+
+    std::vector<size_t> proteinMolecules;
+    for (size_t n = 0; n < moleculeTypes.size(); n++)
+    {
+        if (moleculeTypes[n] == MoleculeType::protein)
+        {
+            proteinMolecules.push_back(n);
+        }
+    }
+
+    AssemblyGraphs assemblyGraphs {graphIndices,    atomGraph,        residueGraph,
+                                   moleculeGraph,   proteinMolecules, rotatableDihedralIndices,
+                                   residueLinkages, glycositeIndices};
+
+    std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
+    std::vector<std::vector<bool>> residueTER;
+
+    for (auto& indices : residueIndices)
+    {
+        residueTER.push_back(cds::residueTER(codeUtils::indexValues(residueTypes, indices)));
     }
 
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
@@ -390,8 +564,8 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
     std::vector<std::pair<size_t, size_t>> connectionIndices =
         atomPairVectorIndices(atoms, cds::atomPairsConnectedToOtherResidues(pdbResidues));
     writePdbFile(residueIndices, residueTER, writerData, noConnections, outputDir + "glycoprotein_initial");
-    resolveOverlapsWithWiggler(proteinResidues_, glycosites_);
-    printDihedralAnglesAndOverlapOfGlycosites(proteinResidues_, glycosites_);
+    resolveOverlapsWithWiggler(assemblyGraphs, assemblyData, glycositeData, proteinResidues_, glycosites_);
+    printDihedralAnglesAndOverlapOfGlycosites(assemblyGraphs, assemblyData);
     writerData.atoms.coordinates = cds::atomCoordinates(atoms);
     writePdbFile(residueIndices, residueTER, writerData, noConnections, outputDir + "glycoprotein");
     writerData.atoms.numbers    = cds::serializedNumberVector(atoms.size());
@@ -406,8 +580,8 @@ void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
 
     for (size_t count = 0; count < settings.number3DStructures; count++)
     {
-        resolveOverlapsWithWiggler(proteinResidues_, glycosites_);
-        printDihedralAnglesAndOverlapOfGlycosites(proteinResidues_, glycosites_);
+        resolveOverlapsWithWiggler(assemblyGraphs, assemblyData, glycositeData, proteinResidues_, glycosites_);
+        printDihedralAnglesAndOverlapOfGlycosites(assemblyGraphs, assemblyData);
         writerData.atoms.coordinates = cds::atomCoordinates(atoms);
         std::stringstream prefix;
         prefix << count << "_glycoprotein";
