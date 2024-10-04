@@ -57,6 +57,7 @@ std::ostream & get_cout() { return std::cout; }
 // CarbohydrateBuilder
 %include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 
+
 ///MD Prep///
 %template (AtomInfoVector) std::vector<pdb::AtomInfo>;
 %template (GapInAminoAcidChainVector) std::vector<pdb::GapInAminoAcidChain>;
@@ -64,3 +65,20 @@ std::ostream & get_cout() { return std::cout; }
 %template (ChainTerminalVector) std::vector<pdb::ChainTerminal>;
 %template (DisulphideBondVector) std::vector<pdb::DisulphideBond>;
 %template (hisSelectionPairVector) std::vector<std::pair<std::string,std::string>>;
+
+
+///Carbohydrate Builder///
+%template(string_vector) std::vector<std::string>;
+//%template(dihedral_vector) std::vector<std::vector<std::string> >;
+
+//typedef std::vector<DihedralOptions> DihedralOptionsVector;
+%template(dihedral_options_vector) std::vector<cdsCondensedSequence::DihedralOptions>;
+
+//typedef std::vector<LinkageOptions> LinkageOptionsVector;
+%template(linkage_options_vector) std::vector<cdsCondensedSequence::LinkageOptions>;
+
+//typedef std::vector<SingleRotamerInfo> SingleRotamerInfoVector;
+%template(single_rotamer_info_vector) std::vector<cdsCondensedSequence::SingleRotamerInfo>;
+
+//typedef std::vector<MolecularModeling::Residue*> ResidueVector;
+//%template(residue_vector) std::vector<MolecularModeling::Residue* >;
