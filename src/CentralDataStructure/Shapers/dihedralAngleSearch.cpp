@@ -46,212 +46,160 @@ namespace
         }
     }
 
-    std::vector<cds::Atom*> movingAtomsWithinSet(cds::Atom* dihedralFixed, cds::Atom* dihedralMoving,
-                                                 const std::vector<cds::Atom*> set)
+    std::vector<size_t> toResidueIndices(const std::vector<cds::Residue*>& residues,
+                                         const std::vector<cds::Residue*>& reindex)
     {
-        std::vector<cds::Atom*> result;
-        std::vector<cds::Atom*> queued;
-        auto shouldAdd = [&](cds::Atom* atom)
+        std::vector<size_t> result;
+        result.reserve(reindex.size());
+        for (auto res : reindex)
         {
-            return codeUtils::contains(set, atom) && !codeUtils::contains(result, atom) &&
-                   !codeUtils::contains(queued, atom);
-        };
-        result.push_back(dihedralFixed);
-        queued.push_back(dihedralMoving);
-        while (!queued.empty())
-        {
-            auto next = queued.back();
-            result.push_back(next);
-            queued.pop_back();
-            for (auto& a : next->getNeighbors())
-            {
-                if (shouldAdd(a))
-                {
-                    queued.push_back(a);
-                }
-            }
-        }
-        result.erase(result.begin());
-        return result;
-    }
-
-    std::vector<bool> movingAtomsWithinResidue(const std::vector<cds::Atom*> movingAtoms,
-                                               const std::vector<cds::Atom*> residueAtoms)
-    {
-        std::vector<bool> result;
-        for (auto& a : residueAtoms)
-        {
-            result.push_back(codeUtils::contains(movingAtoms, a));
+            result.push_back(codeUtils::indexOf(residues, res));
         }
         return result;
     }
 
-    std::array<cds::ResiduesWithOverlapWeight, 2>
-    branchedResidueSets(const std::vector<cds::CoordinateReference>& movingCoordinates,
-                        const std::array<cds::ResiduesWithOverlapWeight, 2>& input)
+    std::array<std::vector<size_t>, 2> branchedResidueSets(const std::vector<bool>& residueMoving,
+                                                           const std::vector<size_t>& setA,
+                                                           const std::vector<size_t>& setB)
     {
-        auto residueContainsMovingAtom = [&](cds::Residue* res)
+        std::vector<size_t> newSetA = setB;
+        std::vector<size_t> newSetB = {setA[0]};
+        for (size_t n = 1; n < setA.size(); n++)
         {
-            return codeUtils::contains(movingCoordinates, res->getAtoms()[0]->coordinateReference());
-        };
-        auto& setA                         = input[0];
-        auto& setB                         = input[1];
-        std::vector<cds::Residue*> newSetA = setB.residues;
-        std::vector<cds::Residue*> newSetB {setA.residues[0]};
-        std::vector<double> newWeightsA = input[1].weights;
-        std::vector<double> newWeightsB {input[0].weights[0]};
-        for (size_t n = 1; n < setA.residues.size(); n++)
-        {
-            auto res      = setA.residues[n];
-            double weight = setA.weights[n];
-            if (residueContainsMovingAtom(res))
+            size_t index = setA[n];
+            if (residueMoving[index])
             {
-                newSetB.push_back(res);
-                newWeightsB.push_back(weight);
+                newSetB.push_back(index);
             }
             else
             {
-                newSetA.push_back(res);
-                newWeightsA.push_back(weight);
+                newSetA.push_back(index);
             }
         }
-        return {
-            cds::ResiduesWithOverlapWeight {newSetA, newWeightsA},
-            cds::ResiduesWithOverlapWeight {newSetB, newWeightsB}
-        };
+        return {newSetA, newSetB};
     }
 
-    cds::DihedralRotationData toRotationData(const cds::Sphere bounds, const std::vector<cds::Atom*>& movingAtoms,
-                                             const std::vector<cds::Residue*>& residues,
-                                             const std::vector<double>& residueWeights,
-                                             const std::vector<bool>& firstResidueBondedAtoms)
+    std::pair<std::vector<cds::Atom*>, std::vector<size_t>> toAtoms(const std::vector<cds::Residue*>& residues)
     {
         size_t atomCount = 0;
         for (auto res : residues)
         {
             atomCount += res->atomCount();
         }
-        std::vector<cds::Sphere> coordinates;
-        coordinates.reserve(atomCount);
-        std::vector<std::vector<size_t>> residueAtoms;
-        residueAtoms.reserve(residues.size());
-        size_t currentAtom = 0;
-        for (auto& res : residues)
+        std::vector<cds::Atom*> atoms;
+        atoms.reserve(atomCount);
+        std::vector<size_t> atomResidues;
+        atomResidues.reserve(atomCount);
+        for (size_t n = 0; n < residues.size(); n++)
         {
-            auto& atomsRef = res->getAtomsReference();
-            residueAtoms.push_back(codeUtils::indexVectorWithOffset(currentAtom, atomsRef));
-            for (auto& atomPtr : atomsRef)
+            for (auto& atomPtr : residues[n]->getAtomsReference())
             {
-                coordinates.push_back(coordinateWithRadius(atomPtr.get()));
-            }
-            currentAtom += atomsRef.size();
-        }
-        std::vector<std::vector<size_t>> withinRangeResidueAtoms;
-        withinRangeResidueAtoms.reserve(residues.size());
-        std::vector<cds::Sphere> withinRangeSpheres;
-        withinRangeSpheres.reserve(residues.size());
-        std::vector<double> withinRangeWeights;
-        withinRangeWeights.reserve(residues.size());
-        std::vector<cds::Sphere> residuePoints;
-        for (size_t n = 0; n < residueAtoms.size(); n++)
-        {
-            // always include first residue, we assume that it's bonded with first residue of the other set
-            bool within                  = n == 0;
-            std::vector<size_t>& indices = residueAtoms[n];
-            for (size_t index : indices)
-            {
-                within = within || cds::spheresOverlap(constants::overlapTolerance, bounds, coordinates[index]);
-                if (within)
-                {
-                    break;
-                }
-            }
-            if (within)
-            {
-                residuePoints.clear();
-                for (size_t index : indices)
-                {
-                    residuePoints.push_back(coordinates[index]);
-                }
-                withinRangeSpheres.push_back(boundingSphere(residuePoints));
-                withinRangeWeights.push_back(residueWeights[n]);
-                withinRangeResidueAtoms.push_back(indices);
+                atoms.push_back(atomPtr.get());
+                atomResidues.push_back(n);
             }
         }
-
-        const auto& firstAtoms   = residues[0]->getAtoms();
-        std::vector<bool> moving = movingAtomsWithinResidue(movingAtoms, firstAtoms);
-        return {coordinates, withinRangeSpheres,     withinRangeResidueAtoms, withinRangeWeights,
-                moving,      firstResidueBondedAtoms};
+        return {atoms, atomResidues};
     }
 
-    void moveFirstResidueCoords(size_t atomOffset, size_t residueOffset, const cds::RotationMatrix matrix,
-                                const cds::DihedralRotationData& input, std::vector<cds::Sphere>& coordinates,
-                                std::vector<cds::Sphere>& spheres)
+    std::vector<std::vector<size_t>> toResidueAtoms(const std::vector<size_t>& atomResidues)
     {
-        std::vector<cds::Sphere> firstCoords;
-        const std::vector<size_t>& indices = input.residueAtoms[0];
-        firstCoords.reserve(indices.size());
-        for (size_t index : indices)
+        size_t maxId = 0;
+        for (size_t res : atomResidues)
         {
-            const Coordinate& center = input.coordinates[index].center;
-            coordinates[index + atomOffset].center =
-                input.firstResidueCoordinateMoving[index] ? matrix * center : center;
-            firstCoords.push_back(coordinates[index + atomOffset]);
+            maxId = std::max(maxId, res);
         }
-        spheres[residueOffset] = cds::boundingSphere(firstCoords);
+        std::vector<size_t> count(maxId + 1, 0);
+        for (size_t res : atomResidues)
+        {
+            count[res]++;
+        }
+        std::vector<std::vector<size_t>> result(count.size());
+        for (size_t n = 0; n < count.size(); n++)
+        {
+            result[n].reserve(count[n]);
+        }
+        for (size_t n = 0; n < atomResidues.size(); n++)
+        {
+            size_t residue = atomResidues[n];
+            result[residue].push_back(n);
+        }
+        return result;
+    }
+
+    std::vector<bool> toAtomMoving(const std::vector<cds::Atom*>& atoms, const std::vector<cds::Atom*>& movingAtoms)
+    {
+        std::vector<bool> atomMoving;
+        atomMoving.reserve(atoms.size());
+        for (auto& atom : atoms)
+        {
+            atomMoving.push_back(codeUtils::contains(movingAtoms, atom));
+        }
+        return atomMoving;
+    }
+
+    std::vector<cds::Sphere> toResidueBounds(const std::vector<cds::Sphere>& atomBounds,
+                                             const std::vector<std::vector<size_t>>& residueAtoms)
+    {
+
+        std::vector<cds::Sphere> result;
+        result.reserve(residueAtoms.size());
+        for (size_t n = 0; n < residueAtoms.size(); n++)
+        {
+            result.push_back(boundingSphere(codeUtils::indexValues(atomBounds, residueAtoms[n])));
+        }
+        return result;
+    }
+
+    void moveFirstResidueCoords(size_t side, const cds::RotationMatrix matrix, const cds::DihedralRotationData& input,
+                                std::vector<cds::Sphere>& atomBounds, std::vector<cds::Sphere>& residueBounds)
+    {
+        size_t residue = input.residueIndices[side][0];
+        std::vector<cds::Sphere> firstCoords;
+        const std::vector<size_t>& indices = input.residueAtoms[residue];
+        firstCoords.reserve(indices.size());
+        for (size_t n = 0; n < indices.size(); n++)
+        {
+            size_t index             = indices[n];
+            const Coordinate& center = input.atomBounds[index].center;
+            atomBounds[index].center = input.atomMoving[index] ? matrix * center : center;
+            firstCoords.push_back(atomBounds[index]);
+        }
+        residueBounds[residue] = cds::boundingSphere(firstCoords);
     }
 
     cds::AngleOverlap WiggleAnglesOverlaps(const cds::DihedralCoordinates dihedral, size_t metadataIndex,
                                            double anglePreference, std::vector<double> angles,
-                                           const std::array<cds::DihedralRotationData, 2>& input)
+                                           const cds::DihedralRotationData& input)
     {
-        auto& fixedInput                           = input[0];
-        auto& movingInput                          = input[1];
         // copies of input vectors used for updates during looping
-        std::vector<cds::Sphere> fixedCoordinates  = fixedInput.coordinates;
-        std::vector<cds::Sphere> fixedSpheres      = fixedInput.boundingSpheres;
-        std::vector<cds::Sphere> movingCoordinates = movingInput.coordinates;
-        std::vector<cds::Sphere> movingSpheres     = movingInput.boundingSpheres;
-        size_t atomOffset                          = fixedCoordinates.size();
-        size_t residueOffset                       = fixedSpheres.size();
-        std::vector<cds::Sphere> atomBounds        = codeUtils::vectorAppend(fixedCoordinates, movingCoordinates);
-        std::vector<cds::Sphere> residueBounds     = codeUtils::vectorAppend(fixedSpheres, movingSpheres);
-        std::vector<double> weights = codeUtils::vectorAppend(fixedInput.residueWeights, movingInput.residueWeights);
-        std::vector<size_t> fixedResidueIndices = codeUtils::indexVector(fixedInput.residueAtoms);
-        std::vector<size_t> movingResidueIndices =
-            codeUtils::indexVectorWithOffset(residueOffset, movingInput.residueAtoms);
-
-        auto movingAtomIndices = movingInput.residueAtoms;
-        for (size_t n = 0; n < movingAtomIndices.size(); n++)
-        {
-            movingAtomIndices[n] = codeUtils::offsetIndices(atomOffset, movingAtomIndices[n]);
-        }
-        std::vector<std::vector<size_t>> residueAtoms =
-            codeUtils::vectorAppend(fixedInput.residueAtoms, movingAtomIndices);
-        std::vector<cds::BondedResidueOverlapInput> bonds {
-            {{fixedResidueIndices[0], movingResidueIndices[0]},
-             {fixedInput.firstResidueBondedAtoms, movingInput.firstResidueBondedAtoms}}
-        };
+        std::vector<cds::Sphere> atomBounds             = input.atomBounds;
+        std::vector<cds::Sphere> residueBounds          = input.residueBounds;
+        const std::vector<size_t>& fixedResidueIndices  = input.residueIndices[0];
+        const std::vector<size_t>& movingResidueIndices = input.residueIndices[1];
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
             auto matrix = rotationTo(dihedral, constants::toRadians(angle));
-            moveFirstResidueCoords(0, 0, matrix, fixedInput, atomBounds, residueBounds);
-            moveFirstResidueCoords(atomOffset, residueOffset, matrix, movingInput, atomBounds, residueBounds);
-            for (size_t n = 1; n < movingInput.residueAtoms.size(); n++)
+            for (size_t side = 0; side < 2; side++)
             {
-                for (size_t index : movingInput.residueAtoms[n])
+                moveFirstResidueCoords(side, matrix, input, atomBounds, residueBounds);
+            }
+            for (size_t n = 1; n < movingResidueIndices.size(); n++)
+            {
+                size_t residue = movingResidueIndices[n];
+                for (size_t index : input.residueAtoms[residue])
                 {
-                    atomBounds[index + atomOffset].center = matrix * movingInput.coordinates[index].center;
+                    atomBounds[index].center = matrix * input.atomBounds[index].center;
                 }
             }
             for (size_t n = 1; n < movingResidueIndices.size(); n++)
             {
-                residueBounds[movingResidueIndices[n]].center = matrix * movingInput.boundingSpheres[n].center;
+                residueBounds[movingResidueIndices[n]].center =
+                    matrix * input.residueBounds[movingResidueIndices[n]].center;
             }
-            cds::Overlap overlaps = cds::CountOverlappingAtoms({atomBounds, residueBounds, residueAtoms, weights},
-                                                               bonds, fixedResidueIndices, movingResidueIndices);
+            cds::Overlap overlaps =
+                cds::CountOverlappingAtoms({atomBounds, residueBounds, input.residueAtoms, input.residueWeights},
+                                           input.bonds, fixedResidueIndices, movingResidueIndices);
 
             results.push_back({
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -287,41 +235,59 @@ cds::AngleOverlap cds::bestOverlapResult(const std::vector<AngleOverlap>& result
     return results[bestOverlapResultIndex(results)];
 }
 
-std::array<cds::DihedralRotationData, 2>
-cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues)
+cds::DihedralRotationData cds::dihedralRotationInputData(RotatableDihedral& dihedral,
+                                                         const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
 {
-    auto& atoms                      = dihedral.atoms;
-    auto movingCoordinates           = atomCoordinateReferences(dihedral.movingAtoms);
-    auto dihedralResiduesMovingAtoms = movingAtomsWithinSet(
-        atoms[2], atoms[1],
-        codeUtils::vectorAppend(residues[0].residues[0]->getAtoms(), residues[1].residues[0]->getAtoms()));
-
     auto movingAtomSpheres  = atomCoordinatesWithRadii(dihedral.movingAtoms);
     auto movingAtomBounds   = boundingSphere(movingAtomSpheres);
-    Coordinate origin       = atoms[1]->coordinate();
-    Coordinate axis         = atoms[2]->coordinate() - origin;
+    Coordinate origin       = dihedral.atoms[1]->coordinate();
+    Coordinate axis         = dihedral.atoms[2]->coordinate() - origin;
     auto closestPointOnAxis = origin + projection(movingAtomBounds.center - origin, axis);
     double distanceToAxis   = length(closestPointOnAxis - movingAtomBounds.center);
     auto movementBounds     = Sphere {movingAtomBounds.radius + distanceToAxis, closestPointOnAxis};
 
-    auto rotationData = [&](const cds::ResiduesWithOverlapWeight& set, const std::vector<bool>& firstResidueBondedAtoms)
+    std::vector<cds::Residue*> residues = codeUtils::vectorAppend(residueSets[0].residues, residueSets[1].residues);
+    std::vector<double> residueWeights  = codeUtils::vectorAppend(residueSets[0].weights, residueSets[1].weights);
+    auto atomVecs                       = toAtoms(residues);
+    std::vector<cds::Atom*> atoms       = atomVecs.first;
+    std::vector<size_t> atomResidues    = atomVecs.second;
+    std::vector<bool> atomMoving        = toAtomMoving(atoms, dihedral.movingAtoms);
+    std::vector<bool> residueMoving(residues.size(), false);
+    for (size_t n = 0; n < atomResidues.size(); n++)
     {
-        return toRotationData(movementBounds, dihedralResiduesMovingAtoms, set.residues, set.weights,
-                              firstResidueBondedAtoms);
-    };
+        if (atomMoving[n])
+        {
+            residueMoving[atomResidues[n]] = true;
+        }
+    }
+    std::vector<size_t> residueSetA = toResidueIndices(residues, residueSets[0].residues);
+    std::vector<size_t> residueSetB = toResidueIndices(residues, residueSets[1].residues);
+    std::array<std::vector<size_t>, 2> residueIndices =
+        dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
+                                    : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
+    std::vector<std::vector<size_t>> residueAtoms = toResidueAtoms(atomResidues);
+    std::vector<Sphere> atomBounds                = atomCoordinatesWithRadii(atoms);
+    std::vector<Sphere> residueBounds             = toResidueBounds(atomBounds, residueAtoms);
 
-    auto inputSets   = dihedral.isBranchingLinkage ? branchedResidueSets(movingCoordinates, residues) : residues;
-    auto atomsA      = inputSets[0].residues[0]->getAtoms();
-    auto atomsB      = inputSets[1].residues[0]->getAtoms();
+    auto atomsA      = codeUtils::indexValues(atoms, residueAtoms[residueIndices[0][0]]);
+    auto atomsB      = codeUtils::indexValues(atoms, residueAtoms[residueIndices[1][0]]);
     auto residueBond = bondedAtomPair(atomsA, atomsB);
-    return {rotationData(inputSets[0], atomsBondedTo(residueBond[0], atomsA)),
-            rotationData(inputSets[1], atomsBondedTo(residueBond[1], atomsB))};
+    auto bonds       = std::vector<cds::BondedResidueOverlapInput> {
+        {{residueIndices[0][0], residueIndices[1][0]},
+         {atomsBondedTo(residueBond[0], atomsA), atomsBondedTo(residueBond[1], atomsB)}}
+    };
+    return {
+        atomMoving,    atomBounds,
+        residueBounds, residueWeights,
+        residueAtoms,  {residueIndices[0], cds::intersectingIndices(movementBounds, residueBounds, residueIndices[1])},
+        bonds
+    };
 }
 
 cds::AngleOverlap cds::wiggleUsingRotamers(SearchAngles searchAngles, const cds::DihedralCoordinates coordinates,
                                            const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
                                            const AngleSearchPreference& preference,
-                                           const std::array<cds::DihedralRotationData, 2>& input)
+                                           const cds::DihedralRotationData& input)
 {
     std::vector<AngleOverlap> results;
     for (size_t n : preference.metadataOrder)

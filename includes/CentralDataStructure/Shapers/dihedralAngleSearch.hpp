@@ -26,12 +26,13 @@ namespace cds
 
     struct DihedralRotationData
     {
-        std::vector<Sphere> coordinates;
-        std::vector<Sphere> boundingSpheres;
-        std::vector<std::vector<size_t>> residueAtoms;
+        std::vector<bool> atomMoving;
+        std::vector<Sphere> atomBounds;
+        std::vector<Sphere> residueBounds;
         std::vector<double> residueWeights;
-        std::vector<bool> firstResidueCoordinateMoving;
-        std::vector<bool> firstResidueBondedAtoms;
+        std::vector<std::vector<size_t>> residueAtoms;
+        std::array<std::vector<size_t>, 2> residueIndices;
+        std::vector<cds::BondedResidueOverlapInput> bonds;
     };
 
     struct AngleSearchPreference
@@ -51,12 +52,11 @@ namespace cds
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
-    std::array<DihedralRotationData, 2>
-    dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residues);
+    DihedralRotationData dihedralRotationInputData(RotatableDihedral& dihedral,
+                                                   const std::array<ResiduesWithOverlapWeight, 2>& residues);
     AngleOverlap wiggleUsingRotamers(SearchAngles searchAngles, const DihedralCoordinates coordinates,
                                      const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
-                                     const AngleSearchPreference& preference,
-                                     const std::array<DihedralRotationData, 2>& input);
+                                     const AngleSearchPreference& preference, const DihedralRotationData& input);
     void simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,

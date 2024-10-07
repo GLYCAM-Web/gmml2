@@ -41,6 +41,8 @@ namespace cds
         const std::vector<double>& residueWeights;
     };
 
+    std::vector<size_t> intersectingIndices(cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
+                                            const std::vector<size_t>& indices);
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
     Overlap CountOverlappingAtoms(const ResidueAtomOverlapInputReference& input,
                                   const std::vector<BondedResidueOverlapInput>& bonds,
