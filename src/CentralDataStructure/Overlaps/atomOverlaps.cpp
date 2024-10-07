@@ -98,6 +98,14 @@ namespace
     }
 } // namespace
 
+std::vector<size_t> cds::intersectingIndices(cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
+                                             const std::vector<size_t>& indices)
+{
+    std::vector<size_t> result;
+    setIntersectingIndices(result, sphere, coords, indices);
+    return result;
+}
+
 cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& input,
                                         const std::vector<BondedResidueOverlapInput>& bonds,
                                         const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
