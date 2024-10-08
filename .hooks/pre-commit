@@ -8,6 +8,7 @@ YELLOW_BOLD='\033[0;33m\033[1m'
 RED_BOLD='\033[0;31m\033[1m'
 
 ##### HELPFUL STUFF #####
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
@@ -16,6 +17,9 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
 fi
 
 cp -r "${GMML_ROOT_DIR}"/.hooks/* "${GMML_ROOT_DIR}"/.git/hooks/
+
+# abort if version.txt isn't valid
+${BASEDIR}/validate-version-txt.sh || exit 1
 
 FAILED_FILES=()
 PASSED_FILES=()

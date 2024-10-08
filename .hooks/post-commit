@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BASEDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# abort if version.txt isn't valid, else attempt to tag release
+(${BASEDIR}/validate-version-txt.sh && ${BASEDIR}/tag-release.sh) || exit 1
