@@ -53,3 +53,6 @@
 00057_DGlcpa1-[4DGlcpa1-]<4>2DGlcpa1-[4DGlcpa1-6DGlcpa1-[4DGlcpa1-]<3>4DManpa1-]<2>OH
 00058_DGlcpNPa1-4LIdopA(1C4)a1-4DGlcpNSa1-4LIdopA(4C1)a1-4DGlcpNSa1-4LIdopA(2SO)a1-OH
 00059_DGlcpa1-1DGlcpa
+00060_DArafa1-3DFrufa2-2DLyxfa1-6DTagfa2-4LSorfa2-3DRibfa1-3DXylfa1-3DPsifa2-OH
+00061_DArafb1-3DFrufb2-2DLyxfb1-6DTagfb2-4LSorfb2-3DRibfb1-3DXylfb1-3DPsifb2-OH
+00062_LArafb1-3LFrufb2-2LLyxfb1-6LTagfb2-4DSorfb2-3LRibfb1-3LXylfb1-3LPsifb2-OH

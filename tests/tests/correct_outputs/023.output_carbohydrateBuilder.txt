@@ -242,6 +242,18 @@ Building DGlcpNPa1-4LIdopA(1C4)a1-4DGlcpNSa1-4LIdopA(4C1)a1-4DGlcpNSa1-4LIdopA(2
 *********************
 Building DGlcpa1-1DGlcpa
 *********************
+
+*********************
+Building DArafa1-3DFrufa2-2DLyxfa1-6DTagfa2-4LSorfa2-3DRibfa1-3DXylfa1-3DPsifa2-OH
+*********************
+
+*********************
+Building DArafb1-3DFrufb2-2DLyxfb1-6DTagfb2-4LSorfb2-3DRibfb1-3DXylfb1-3DPsifb2-OH
+*********************
+
+*********************
+Building LArafb1-3LFrufb2-2LLyxfb1-6LTagfb2-4DSorfb2-3LRibfb1-3LXylfb1-3LPsifb2-OH
+*********************
 00001.pdb not created.
 00002.pdb succesfully created.
 00003.pdb succesfully created.
@@ -295,6 +307,9 @@ Building DGlcpa1-1DGlcpa
 00057.pdb succesfully created.
 00058.pdb succesfully created.
 00059.pdb succesfully created.
+00060.pdb succesfully created.
+00061.pdb succesfully created.
+00062.pdb succesfully created.
 00001.off not created.
 00002.off succesfully created.
 00003.off succesfully created.
@@ -348,3 +363,6 @@ Building DGlcpa1-1DGlcpa
 00057.off succesfully created.
 00058.off succesfully created.
 00059.off succesfully created.
+00060.off succesfully created.
+00061.off succesfully created.
+00062.off succesfully created.
