@@ -4492,7 +4492,7 @@ LastLetter is n
 glycamCode is A
 So far for 0an we think isomer ringtype config is L_p_b
 Finding name for code: AN
-Found name is: L_AraN_p__b
+Found name is: L_Ara4N_p__b
 Anomer: 1
 3,2,
 3,2: Zan
@@ -4628,7 +4628,7 @@ LastLetter is H
 glycamCode is D
 So far for 0DH we think isomer ringtype config is D_p_a
 Finding name for code: DH
-Found name is: D_DDManHep_p__a
+Found name is: D_DDmanHep_p__a
 Anomer: 1
 7,6,2,3,4,
 7,4: KDH
@@ -4758,7 +4758,7 @@ LastLetter is h
 glycamCode is D
 So far for 0Dh we think isomer ringtype config is D_p_b
 Finding name for code: DH
-Found name is: D_DDManHep_p__b
+Found name is: D_DDmanHep_p__b
 Anomer: 1
 7,6,2,3,4,
 7,4: KDh
@@ -4844,7 +4844,7 @@ LastLetter is H
 glycamCode is L
 So far for 0LH we think isomer ringtype config is D_p_a
 Finding name for code: LH
-Found name is: D_LDManHep_p__a
+Found name is: D_LDmanHep_p__a
 Anomer: 1
 7,6,2,3,4,
 7,4: KLH
@@ -5021,7 +5021,7 @@ LastLetter is h
 glycamCode is L
 So far for 0Lh we think isomer ringtype config is D_p_b
 Finding name for code: LH
-Found name is: D_LDManHep_p__b
+Found name is: D_LDmanHep_p__b
 Anomer: 1
 7,6,2,3,4,
 7,4: KLh
