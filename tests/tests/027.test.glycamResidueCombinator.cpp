@@ -51,7 +51,8 @@ int main(int argc, char* argv[])
             std::ofstream outFileStream;
             std::string fileName = residue->getName() + "_original.pdb";
             outFileStream.open(fileName.c_str());
-            cds::writeResidueToPdb(outFileStream, residue);
+            std::vector<cds::Residue*> vec = {residue};
+            cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
             outFileStream.close();
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
             residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
@@ -62,7 +63,8 @@ int main(int argc, char* argv[])
         std::ofstream outFileStream;
         std::string fileName = combiRes->getName() + ".pdb";
         outFileStream.open(fileName.c_str());
-        cds::writeResidueToPdb(outFileStream, combiRes);
+        std::vector<cds::Residue*> vec = {combiRes};
+        cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
         outFileStream.close();
     }
 
