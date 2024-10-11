@@ -2,7 +2,7 @@
 
 This is a remark line
 molecule.res
-0MR   INT  0
+0Mr   INT  0
 CORRECT     OMIT DU   BEG
  -1.0000
    1  DUMM  DU    M    0  -1  -2     0.000      .0        .0      .00000
