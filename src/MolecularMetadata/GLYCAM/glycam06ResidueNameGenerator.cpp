@@ -23,7 +23,7 @@ std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& link
     std::string inputs = "\nInputs:\nlinkages: " + linkages + "\nisomer: " + isomer +
                          "\ninputResName: " + inputResName + "\nringType: " + ringType +
                          "\nresidueModifier: " + residueModifier + "\nconfiguration: " + configuration;
-    // gmml::log(__LINE__, __FILE__, gmml::INF, inputs);
+    gmml::log(__LINE__, __FILE__, gmml::INF, inputs);
 
     std::string linkCode = ""; // Can be empty for e.g. ROH
     if (!linkages.empty())
