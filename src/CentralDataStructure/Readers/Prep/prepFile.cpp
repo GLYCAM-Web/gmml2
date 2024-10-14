@@ -5,6 +5,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"   // ensureFileExists
 #include "includes/CodeUtils/strings.hpp" // split
+#include "includes/CodeUtils/logging.hpp" // split
 #include <fstream>
 #include <iostream>
 #include <iomanip>
@@ -50,8 +51,11 @@ PrepFile::PrepFile(const std::string& prep_file, const std::vector<std::string> 
     }
     // Note that I'm assuming that given a list of query names, the user wants
     // to use all these residues, thus this isn't wasteful:
+    gmml::log(__LINE__, __FILE__, gmml::INF, "Finished reading prep file. Now setting atomic connectivities.");
     this->SetAtomConnectivities();
+    gmml::log(__LINE__, __FILE__, gmml::INF, "Finished setting atomic connectivities. Now generating 3D structures.");
     this->Generate3dStructures();
+    gmml::log(__LINE__, __FILE__, gmml::INF, "Finished, returning from PreFile constructor..");
 }
 
 //////////////////////////////////////////////////////////

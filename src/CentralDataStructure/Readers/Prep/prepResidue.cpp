@@ -60,8 +60,12 @@ PrepResidue::PrepResidue(std::ifstream& in_file, std::string& line)
             case prep::kSectionBlank:
                 break;
             case prep::kSectionOther:
-                gmml::log(__LINE__, __FILE__, gmml::WAR, "Unrecognized section in prep file:" + line);
+                gmml::log(__LINE__, __FILE__, gmml::WAR,
+                          "Unrecognized section in prep file inside these brackets >>>" + line + "<<<");
                 break;
+            default:
+                gmml::log(__LINE__, __FILE__, gmml::WAR,
+                          "Did not figure out a prep section type for line inside these brackets >>>" + line + "<<<");
         }
     }
 }
@@ -217,7 +221,7 @@ std::string PrepResidue::GetStringFormatOfSectionType(SectionType section_type) 
         case prep::kSectionImproper:
             return "SectionImproper";
         case prep::kSectionDone:
-            return "prep::kSectionDone";
+            return "kSectionDone";
         case prep::kSectionOther:
             return "SectionOther";
         default:
@@ -614,16 +618,21 @@ void PrepResidue::ExtractLoops(std::ifstream& in_file)
 {
     std::string line;
     std::stringstream ss;
-    getline(in_file, line);
-    while (!codeUtils::Trim(line).empty()) /// Read file until blank line which determines the end of the section
+    while (getline(in_file, line) &&
+           !codeUtils::Trim(line).empty()) /// Read file until blank line which determines the end of the section
     {
         ss.clear();
         ss.str(line); /// Create a stream from the read line
         std::string atom_names[2];
         ss >> atom_names[0] >> atom_names[1]; /// Extract atom names from the stream
-        this->AddLoop(
-            std::make_pair(atom_names[0], atom_names[1])); /// Add a new entry into the loop map of the residue
-        getline(in_file, line);
+        if (atom_names[0].empty() || atom_names[1].empty())
+        {
+            std::string message = "Error parsing LOOP section of prep file. Unexpected line >>>" + line +
+                                  "<<<\nNote: LOOP sections must be bounded by empty lines!";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+        this->AddLoop(std::make_pair(atom_names[0], atom_names[1]));
     }
     return;
 }
@@ -634,8 +643,8 @@ void PrepResidue::ExtractImproperDihedral(std::ifstream& in_file)
     std::string line;
     std::stringstream ss;
     std::vector<Dihedral> dihedrals;
-    getline(in_file, line);
-    while (!codeUtils::Trim(line).empty()) /// Read file until blank line which determines the end of the section
+    while (getline(in_file, line) &&
+           !codeUtils::Trim(line).empty()) /// Read file until blank line which determines the end of the section
     {
         std::string atom_names[4];
         Dihedral dihedral;
@@ -643,13 +652,19 @@ void PrepResidue::ExtractImproperDihedral(std::ifstream& in_file)
         ss.str(line);
         /// Extract improper atom types involving in a dihedral from each line
         ss >> atom_names[0] >> atom_names[1] >> atom_names[2] >> atom_names[3];
+        if (atom_names[0].empty() || atom_names[1].empty() || atom_names[2].empty() || atom_names[3].empty())
+        {
+            std::string message = "Error parsing DIHEDRAL section of prep file. Unexpected line >>>" + line +
+                                  "<<<\nNote: DIHEDRAL sections must be bounded by empty lines!";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
         /// Push all atoms into a std::vector of atom types
         for (int i = 0; i < 4; i++)
         {
             dihedral.push_back(atom_names[i]);
         }
         dihedrals.push_back(dihedral); /// Create a new dihedral into the std::vector of dihedrals
-        getline(in_file, line);        /// Read the next line
     }
     this->SetImproperDihedrals(dihedrals);
     return;
