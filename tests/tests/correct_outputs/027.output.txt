@@ -4054,7 +4054,7 @@ LastLetter is R
 glycamCode is D
 So far for 0dR we think isomer ringtype config is L_p_a
 Finding name for code: DR
-Found name is: L_Olip_p__a
+Found name is: L_Olipa_p__a
 Anomer: 1
 4,3,
 4,3: WdR
@@ -4096,7 +4096,7 @@ LastLetter is P
 glycamCode is BP
 So far for 0ZBP we think isomer ringtype config is D_p_a
 Finding name for code: BP
-Found name is: D_GlcpA+_p__a
+Found name is: D_GlcpA+a_p__a
 Anomer: 1
 4,3,2,
 4,3,2: TZBP
@@ -4492,7 +4492,7 @@ LastLetter is n
 glycamCode is A
 So far for 0an we think isomer ringtype config is L_p_b
 Finding name for code: AN
-Found name is: L_Ara4N_p__b
+Found name is: L_Arap4Na_p__b
 Anomer: 1
 3,2,
 3,2: Zan
@@ -4520,7 +4520,7 @@ LastLetter is c
 glycamCode is E
 So far for 0ec we think isomer ringtype config is L_p_b
 Finding name for code: EC
-Found name is: L_Aci_p__b
+Found name is: L_Acipa_p__b
 Anomer: 2
 8,4,
 8,4: Jec
@@ -4529,6 +4529,33 @@ Anomer: 2
 Added 2ec
 Added 0ec
 Loading tests/inputs/027.BacterialPrep/0LG_alfa_final.prep
+Generating those combos from 0LG
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Os
+O_Os
+C1_C
+C3_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O2
+Continuing
+O8,O4
+LastLetter is G
+glycamCode is L
+So far for 0LG we think isomer ringtype config is D_p_a
+Finding name for code: LG
+Found name is: D_Legpa_p__a
+Anomer: 2
+8,4,
+8,4: JLG
+8: 8LG
+4: 4LG
+Added 2LG
+Added 0LG
 Loading tests/inputs/027.BacterialPrep/0LU.prep
 Generating those combos from 0LU
 Copying the input residue 
@@ -4628,7 +4655,7 @@ LastLetter is H
 glycamCode is D
 So far for 0DH we think isomer ringtype config is D_p_a
 Finding name for code: DH
-Found name is: D_DDmanHep_p__a
+Found name is: D_DDmanpHepa_p__a
 Anomer: 1
 7,6,2,3,4,
 7,4: KDH
@@ -4670,7 +4697,7 @@ LastLetter is f
 glycamCode is G
 So far for 0gf we think isomer ringtype config is L_p_b
 Finding name for code: GF
-Found name is: L_Fus_p__b
+Found name is: L_Fuspa_p__b
 Anomer: 2
 8,7,4,
 8,7,4: Egf
@@ -4702,7 +4729,7 @@ LastLetter is g
 glycamCode is L
 So far for 0Lg we think isomer ringtype config is D_p_b
 Finding name for code: LG
-Found name is: D_Leg_p__b
+Found name is: D_Legpa_p__b
 Anomer: 2
 8,4,
 8,4: JLg
@@ -4730,7 +4757,7 @@ LastLetter is P
 glycamCode is M
 So far for 0mP we think isomer ringtype config is L_p_a
 Finding name for code: MP
-Found name is: L_Pse_p__a
+Found name is: L_Psepa_p__a
 Anomer: 2
 8,4,
 8,4: JmP
@@ -4758,7 +4785,7 @@ LastLetter is h
 glycamCode is D
 So far for 0Dh we think isomer ringtype config is D_p_b
 Finding name for code: DH
-Found name is: D_DDmanHep_p__b
+Found name is: D_DDmanpHepa_p__b
 Anomer: 1
 7,6,2,3,4,
 7,4: KDh
@@ -4800,7 +4827,7 @@ LastLetter is X
 glycamCode is K
 So far for 0KX we think isomer ringtype config is D_p_a
 Finding name for code: KX
-Found name is: D_KO_p__a
+Found name is: D_KOpa_p__a
 Anomer: 2
 8,7,3,4,5,
 8,7,4,5: dKX
@@ -4844,7 +4871,7 @@ LastLetter is H
 glycamCode is L
 So far for 0LH we think isomer ringtype config is D_p_a
 Finding name for code: LH
-Found name is: D_LDmanHep_p__a
+Found name is: D_LDmanpHepa_p__a
 Anomer: 1
 7,6,2,3,4,
 7,4: KLH
@@ -4886,7 +4913,7 @@ LastLetter is p
 glycamCode is M
 So far for 0mp we think isomer ringtype config is L_p_b
 Finding name for code: MP
-Found name is: L_Pse_p__b
+Found name is: L_Psepa_p__b
 Anomer: 2
 8,4,
 8,4: Jmp
@@ -4914,7 +4941,7 @@ LastLetter is C
 glycamCode is E
 So far for 0eC we think isomer ringtype config is L_p_a
 Finding name for code: EC
-Found name is: L_Aci_p__a
+Found name is: L_Acipa_p__a
 Anomer: 2
 8,4,
 8,4: JeC
@@ -5021,7 +5048,7 @@ LastLetter is h
 glycamCode is L
 So far for 0Lh we think isomer ringtype config is D_p_b
 Finding name for code: LH
-Found name is: D_LDmanHep_p__b
+Found name is: D_LDmanpHepa_p__b
 Anomer: 1
 7,6,2,3,4,
 7,4: KLh
@@ -5044,7 +5071,7 @@ Anomer: 1
 Added 1Lh
 Added 0Lh
 Loading tests/inputs/027.BacterialPrep/0Mr_beta_final.prep
-Generating those combos from 0MR
+Generating those combos from 0Mr
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
@@ -5059,18 +5086,18 @@ Copying
 Deleting O1
 Continuing
 O4,O6
-LastLetter is R
+LastLetter is r
 glycamCode is M
-So far for 0MR we think isomer ringtype config is D_p_a
+So far for 0Mr we think isomer ringtype config is D_p_b
 Finding name for code: MR
-Found name is: D_MurNAc_p__a
+Found name is: D_MurpNAca_p__b
 Anomer: 1
 4,6,
-4,6: UMR
-4: 4MR
-6: 6MR
-Added 1MR
-Added 0MR
+4,6: UMr
+4: 4Mr
+6: 6Mr
+Added 1Mr
+Added 0Mr
 nAD is new in lib file
 tAD is new in lib file
 uAD is new in lib file
@@ -5518,6 +5545,11 @@ Jec is new in lib file
 4ec is new in lib file
 2ec is new in lib file
 0ec is new in lib file
+JLG is new in lib file
+8LG is new in lib file
+4LG is new in lib file
+2LG is new in lib file
+0LG is new in lib file
 eLU is new in lib file
 mLU is new in lib file
 lLU is new in lib file
@@ -5712,11 +5744,11 @@ WLh is new in lib file
 4Lh is new in lib file
 1Lh is new in lib file
 0Lh is new in lib file
-UMR is new in lib file
-4MR is new in lib file
-6MR is new in lib file
-1MR is new in lib file
-0MR is new in lib file
+UMr is new in lib file
+4Mr is new in lib file
+6Mr is new in lib file
+1Mr is new in lib file
+0Mr is new in lib file
 CA2 not found in lib file
 4YP not found in lib file
 LKn not found in lib file

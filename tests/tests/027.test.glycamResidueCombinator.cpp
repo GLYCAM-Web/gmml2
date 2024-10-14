@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
         {"0xA"},  {"0xB"}, {"0xD"}, {"0xU"}, {"0yA"}, {"0yB"}, {"0zA"}, {"0zB"}, {"0dR"}, {"045"}, {"0Yn"},  {"0YN"},
         {"0YS"},  {"0Ys"}, {"0yS"}, {"0ys"}, {"0Kn"}, {"0Ko"}, {"0KN"}, {"0KO"}, {"0AE"}, {"0Ae"}, {"0YnP"}, {"0YNP"},
         {"0ZBP"}, {"0LU"}, {"0LD"}, {"0an"}, {"0DH"}, {"0Dh"}, {"0eC"}, {"0ec"}, {"0gf"}, {"0KX"}, {"0LD"},  {"0LG"},
-        {"0Lg"},  {"0LH"}, {"0Lh"}, {"0LU"}, {"0mP"}, {"0mp"}, {"0MR"}};
+        {"0Lg"},  {"0LH"}, {"0Lh"}, {"0LU"}, {"0mP"}, {"0mp"}, {"0Mr"}};
 
     std::vector<cds::Residue*> allGeneratedResidues;
 
@@ -48,24 +48,24 @@ int main(int argc, char* argv[])
         // allTheResidues.reserve(residuesToLoadFromPrep.size() * 20);
         for (auto& residue : glycamPrepFile.getResidues())
         {
-            //            std::ofstream outFileStream;
-            //            std::string fileName = residue->getName() + "_original.pdb";
-            //            outFileStream.open(fileName.c_str());
-            //            std::vector<cds::Residue*> vec = {residue};
-            //            cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
-            //            outFileStream.close();
+            std::ofstream outFileStream;
+            std::string fileName = residue->getName() + "_original.pdb";
+            outFileStream.open(fileName.c_str());
+            std::vector<cds::Residue*> vec = {residue};
+            cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
+            outFileStream.close();
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
             residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
         }
     }
     //    for (auto& combiRes : allGeneratedResidues)
     //    {
-    //        std::ofstream outFileStream;
-    //        std::string fileName = combiRes->getName() + ".pdb";
-    //        outFileStream.open(fileName.c_str());
-    //        std::vector<cds::Residue*> vec = {combiRes};
-    //        cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
-    //        outFileStream.close();
+    //    	std::ofstream outFileStream;
+    //    	std::string fileName = combiRes->getName() + ".pdb";
+    //    	outFileStream.open(fileName.c_str());
+    //    	std::vector<cds::Residue*> vec = {combiRes};
+    //    	cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
+    //    	outFileStream.close();
     //    }
 
     // Note "CA2" was in the prep file, but Rob said delete. "Perhaps we had it before Amber did"

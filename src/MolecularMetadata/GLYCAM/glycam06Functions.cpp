@@ -124,81 +124,97 @@ namespace
 
     static const std::vector<NamesCodesTypes> ResidueNameCodeLookup = {
   // residueName_, glycamCode_ , residueType_
-        {        "All",   "N", "Saccharide"},
-        {        "Alt",   "E", "Saccharide"},
-        {        "Ara",   "A", "Saccharide"},
-        {        "Fru",   "C", "Saccharide"},
-        {        "Fuc",   "F", "Saccharide"},
-        {        "Gal",   "L", "Saccharide"},
-        {       "GalA",   "O", "Saccharide"},
-        {     "GalNAc",   "V", "Saccharide"},
-        {        "Glc",   "G", "Saccharide"},
-        {       "GlcA",   "Z", "Saccharide"},
-        {     "GlcNAc",   "Y", "Saccharide"},
-        {        "Gul",   "K", "Saccharide"},
-        {        "Ido",   "I", "Saccharide"},
-        {       "IdoA",   "U", "Saccharide"},
-        {        "Lyx",   "D", "Saccharide"},
-        {        "Man",   "M", "Saccharide"},
-        {     "ManNAc",   "W", "Saccharide"},
-        {     "Neu5Ac",   "S", "Saccharide"},
-        {     "NeuNAc",   "S", "Saccharide"},
-        {        "Psi",   "P", "Saccharide"},
-        {        "Qui",   "Q", "Saccharide"},
-        {        "Rha",   "H", "Saccharide"},
-        {        "Rib",   "R", "Saccharide"},
-        {        "Sor",   "B", "Saccharide"},
-        {        "Tag",   "J", "Saccharide"},
-        {        "Tal",   "T", "Saccharide"},
-        {        "Xyl",   "X", "Saccharide"},
-        {    "GlcpNSa",  "YS", "Saccharide"},
-        {    "GlcpNSb",  "Ys", "Saccharide"},
-        {     "GlcpNa",  "YN", "Saccharide"},
-        {     "GlcpNb",  "Yn", "Saccharide"},
-        {    "GlcpNPa", "YNP", "Saccharide"},
-        {    "GlcpNPb", "YnP", "Saccharide"},
-        {      "Tyvpa",  "TV", "Saccharide"},
-        {      "Tyvpb",  "Tv", "Saccharide"},
-        {        "dUA",  "45", "Saccharide"}, // Unsaturated 4,5-unsaturated uronate.
-        {"LIdopA(1C4)", "uA1", "Saccharide"}, // e.g 0uA1 with the 1 over-running.
-        {"LIdopA(2SO)", "uA2", "Saccharide"},
-        {"LIdopA(4C1)", "uA3", "Saccharide"},
-        {   "Neup5Gca",  "GL", "Saccharide"},
-        {   "NeupNGca",  "GL", "Saccharide"},
-        {      "KDNpa",  "KN", "Saccharide"},
-        {      "KDOpa",  "KO", "Saccharide"},
-        {      "KDNpb",  "Kn", "Saccharide"},
-        {      "KDOpb",  "Ko", "Saccharide"},
-        {      "Bacpa",  "BC", "Saccharide"},
-        {      "Abepa",  "AE", "Saccharide"},
-        {       "Olip",  "DR", "Saccharide"},
-        {     "GlcpA+", "ZBP", "Saccharide"},
-        {      "Ara4N",  "AN", "Saccharide"}, // Bacterial Ferran.
-        {   "DDmanHep",  "DH", "Saccharide"}, // Bacterial Ferran.
-        {        "Aci",  "EC", "Saccharide"}, // Bacterial Ferran.
-        {        "Fus",  "GF", "Saccharide"}, // Bacterial Ferran.
-        {         "KO",  "KX", "Saccharide"}, // Bacterial Ferran.
-        {        "Leg",  "LG", "Saccharide"}, // Bacterial Ferran.
-        {   "LDmanHep",  "LH", "Saccharide"}, // Bacterial Ferran.
-        {        "Pse",  "MP", "Saccharide"}, // Bacterial Ferran.
-        {     "MurNAc",  "MR", "Saccharide"}, // Bacterial Ferran.
-        {        "ROH", "ROH",   "Aglycone"},
-        {         "OH", "ROH",   "Aglycone"},
-        {        "OME", "OME",   "Aglycone"},
-        {       "OtBu", "TBT",   "Aglycone"},
-        {       "OThr", "OLT", "Amino-acid"},
-        {       "OSer", "OST", "Amino-acid"},
-        {       "OTyr", "OLY", "Amino-acid"},
-        {       "NAsn", "NLN", "Amino-acid"},
-        {     "Sulpho", "SO3", "Derivative"}, // Phosfo? Phosno.
-        {    "Phospho", "PO3", "Derivative"},
-        {     "Methyl", "MEX", "Derivative"},
-        {     "Acetyl", "ACX", "Derivative"},
-        {          "S", "SO3", "Derivative"},
-        {          "P", "PO3", "Derivative"},
-        {         "Me", "MEX", "Derivative"},
-        {         "Ac", "ACX", "Derivative"},
-        {          "A", "ACX", "Derivative"},
+        {          "All",   "N", "Saccharide"},
+        {          "Alt",   "E", "Saccharide"},
+        {          "Ara",   "A", "Saccharide"},
+        {          "Fru",   "C", "Saccharide"},
+        {          "Fuc",   "F", "Saccharide"},
+        {          "Gal",   "L", "Saccharide"},
+        {         "GalA",   "O", "Saccharide"},
+        {       "GalNAc",   "V", "Saccharide"},
+        {          "Glc",   "G", "Saccharide"},
+        {         "GlcA",   "Z", "Saccharide"},
+        {       "GlcNAc",   "Y", "Saccharide"},
+        {          "Gul",   "K", "Saccharide"},
+        {          "Ido",   "I", "Saccharide"},
+        {         "IdoA",   "U", "Saccharide"},
+        {          "Lyx",   "D", "Saccharide"},
+        {          "Man",   "M", "Saccharide"},
+        {       "ManNAc",   "W", "Saccharide"},
+        {       "Neu5Ac",   "S", "Saccharide"},
+        {       "NeuNAc",   "S", "Saccharide"},
+        {          "Psi",   "P", "Saccharide"},
+        {          "Qui",   "Q", "Saccharide"},
+        {          "Rha",   "H", "Saccharide"},
+        {          "Rib",   "R", "Saccharide"},
+        {          "Sor",   "B", "Saccharide"},
+        {          "Tag",   "J", "Saccharide"},
+        {          "Tal",   "T", "Saccharide"},
+        {          "Xyl",   "X", "Saccharide"},
+        {      "GlcpNSa",  "YS", "Saccharide"},
+        {      "GlcpNSb",  "Ys", "Saccharide"},
+        {       "GlcpNa",  "YN", "Saccharide"},
+        {       "GlcpNb",  "Yn", "Saccharide"},
+        {      "GlcpNPa", "YNP", "Saccharide"},
+        {      "GlcpNPb", "YnP", "Saccharide"},
+        {        "Tyvpa",  "TV", "Saccharide"},
+        {        "Tyvpb",  "Tv", "Saccharide"},
+        {          "dUA",  "45", "Saccharide"}, // Unsaturated 4,5-unsaturated uronate.
+        {  "LIdopA(1C4)", "uA1", "Saccharide"}, // e.g 0uA1 with the 1 over-running.
+        {  "LIdopA(2SO)", "uA2", "Saccharide"},
+        {  "LIdopA(4C1)", "uA3", "Saccharide"},
+        {     "Neup5Gca",  "GL", "Saccharide"},
+        {     "NeupNGca",  "GL", "Saccharide"},
+        {        "KDNpa",  "KN", "Saccharide"},
+        {        "KDOpa",  "KO", "Saccharide"},
+        {        "KDNpb",  "Kn", "Saccharide"},
+        {        "KDOpb",  "Ko", "Saccharide"},
+        {        "Bacpa",  "BC", "Saccharide"},
+        {        "Bacpb",  "Bc", "Saccharide"},
+        {        "Abepa",  "AE", "Saccharide"},
+        {        "Abepb",  "Ae", "Saccharide"},
+        {        "Olipa",  "DR", "Saccharide"},
+        {        "Olipb",  "Dr", "Saccharide"},
+        {      "GlcpA+a", "ZBP", "Saccharide"}, // Weirdo from that Gag paper
+        {      "Arap4Na",  "AN", "Saccharide"}, // Bacterial Ferran.
+        {      "Arap4Nb",  "An", "Saccharide"}, // Bacterial Ferran.
+        {   "DDmanpHepa",  "DH", "Saccharide"}, // Bacterial Ferran.
+        {   "DDmanpHepb",  "Dh", "Saccharide"}, // Bacterial Ferran.
+        {   "LDmanpHepa",  "LH", "Saccharide"}, // Bacterial Ferran.
+        {   "LDmanpHepb",  "Lh", "Saccharide"}, // Bacterial Ferran.
+        {        "Acipa",  "EC", "Saccharide"}, // Bacterial Ferran.
+        {        "Acipb",  "Ec", "Saccharide"}, // Bacterial Ferran.
+        {        "Fuspa",  "GF", "Saccharide"}, // Bacterial Ferran.
+        {        "Fuspb",  "Gf", "Saccharide"}, // Bacterial Ferran.
+        {         "KOpa",  "KX", "Saccharide"}, // Bacterial Ferran.
+        {         "KOpb",  "Kx", "Saccharide"}, // Bacterial Ferran.
+        {        "Legpa",  "LG", "Saccharide"}, // Bacterial Ferran.
+        {        "Legpb",  "Lg", "Saccharide"}, // Bacterial Ferran.
+        {        "Psepa",  "MP", "Saccharide"}, // Bacterial Ferran.
+        {        "Psepb",  "Mp", "Saccharide"}, // Bacterial Ferran.
+        {     "MurpNAca",  "MR", "Saccharide"}, // Bacterial Ferran.
+        {     "MurpNAcb",  "Mr", "Saccharide"}, // Bacterial Ferran.
+        { "QuipNAc4NAca",  "QF", "Saccharide"}, // Bacterial Ferran.
+        { "QuipNAc4NAcb",  "Qf", "Saccharide"}, // Bacterial Ferran.
+        {"GlcpNAc3NAcAa",  "ZF", "Saccharide"}, // Bacterial Ferran.
+        {"GlcpNAc3NAcAb",  "Zf", "Saccharide"}, // Bacterial Ferran.
+        {          "ROH", "ROH",   "Aglycone"},
+        {           "OH", "ROH",   "Aglycone"},
+        {          "OME", "OME",   "Aglycone"},
+        {         "OtBu", "TBT",   "Aglycone"},
+        {         "OThr", "OLT", "Amino-acid"},
+        {         "OSer", "OST", "Amino-acid"},
+        {         "OTyr", "OLY", "Amino-acid"},
+        {         "NAsn", "NLN", "Amino-acid"},
+        {       "Sulpho", "SO3", "Derivative"}, // Phosfo? Phosno.
+        {      "Phospho", "PO3", "Derivative"},
+        {       "Methyl", "MEX", "Derivative"},
+        {       "Acetyl", "ACX", "Derivative"},
+        {            "S", "SO3", "Derivative"},
+        {            "P", "PO3", "Derivative"},
+        {           "Me", "MEX", "Derivative"},
+        {           "Ac", "ACX", "Derivative"},
+        {            "A", "ACX", "Derivative"},
     };
 } // namespace
 
