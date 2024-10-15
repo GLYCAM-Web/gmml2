@@ -44,6 +44,24 @@ namespace codeUtils
         return vec;
     }
 
+    template<class T> size_t randomIndex(pcg32& rng, std::vector<T>& vec)
+    {
+        if (vec.empty())
+        {
+            throw std::runtime_error("can't generate random index on empty vector");
+        }
+        std::uniform_int_distribution<> dist(0, vec.size() - 1);
+        return dist(rng);
+    }
+
+    template<class T> std::vector<T> sample(pcg32& rng, size_t count, std::vector<T>& vec)
+    {
+        std::vector<T> result;
+        result.reserve(count);
+        std::sample(vec.begin(), vec.end(), std::back_inserter(result), count, rng);
+        return result;
+    }
+
     std::vector<size_t> weightedRandomOrder(pcg32& rng, std::vector<double> weights);
     double normalDistributionRandomDoubleWithCutoff(pcg32& rng, double lowerCutoff, double upperCutoff);
 } // namespace codeUtils

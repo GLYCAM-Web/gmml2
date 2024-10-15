@@ -44,6 +44,11 @@ namespace codeUtils
         into.insert(into.end(), other.begin(), other.end());
     }
 
+    template<class T> void fill(std::vector<T>& into, const T& value)
+    {
+        std::fill(into.begin(), into.end(), value);
+    }
+
     template<class T> std::vector<T> vectorAppend(const std::vector<T> vecA, const std::vector<T> vecB)
     {
         std::vector<T> result;
@@ -86,6 +91,20 @@ namespace codeUtils
         for (size_t n : indices)
         {
             result.push_back(values[n]);
+        }
+        return result;
+    }
+
+    template<class T> std::vector<T> maskValues(const std::vector<T>& values, const std::vector<bool>& mask)
+    {
+        std::vector<T> result;
+        result.reserve(mask.size());
+        for (size_t n = 0; n < mask.size(); n++)
+        {
+            if (mask[n])
+            {
+                result.push_back(values[n]);
+            }
         }
         return result;
     }
