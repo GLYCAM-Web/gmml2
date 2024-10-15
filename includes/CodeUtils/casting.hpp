@@ -11,7 +11,7 @@ namespace codeUtils
         T result = dynamic_cast<T>(obj);
         if (result == nullptr)
         {
-            throw std::runtime_error("casting returned nullptr: " + msg);
+            throw std::runtime_error("Dynamic casting returned nullptr: " + msg + "\n");
         }
         return result;
     }

@@ -16,8 +16,7 @@ namespace glycoprotein
 
         std::string proteinResidueId = ""; // E.g. ?_20_A if no chain ID and residue number is 20 and insertion code is
                                            // A. C_20_? if chain id is C and there is no insertion code.
-        std::string glycanInput =
-            ""; // E.g. Man9 if "Library" glycanInputType. E.g. DGlcpNAcb1-4DGlcpNAcb1-OH if "Sequence".
+        std::string glycanInput      = ""; // E.g. DGlcpNAcb1-4DGlcpNAcb1-OH
     };
 
     struct GlycoproteinBuilderInputs
