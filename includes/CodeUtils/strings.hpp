@@ -8,6 +8,7 @@
 namespace codeUtils
 {
     // Functions
+    std::istream& safeGetline(std::istream& is, std::string& t);
     bool startsWith(std::string bigString, std::string smallString);
     std::string RemoveWhiteSpace(std::string str);
     void RemoveSpaces(std::string& str);

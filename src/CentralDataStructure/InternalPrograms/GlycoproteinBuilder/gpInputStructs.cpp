@@ -25,9 +25,7 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
     while (infile) // While there's still stuff left to read
     {
         std::string strInput;
-        getline(infile, strInput);
-        strInput.erase(std::remove(strInput.begin(), strInput.end(), '\r'),
-                       strInput.end()); // files created in windows, being read in unix.
+        codeUtils::safeGetline(infile, strInput);
         gmml::log(__LINE__, __FILE__, gmml::INF, strInput);
         if (codeUtils::startsWith(strInput, "Protein:"))
         {
@@ -61,14 +59,8 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
         if (codeUtils::startsWith(strInput, "ProteinResidue, GlycanName:"))
         {
             std::string tempBuffer; //  Temporarily holds whatever getline() finds on the line;
-            while (getline(infile, tempBuffer))
+            while (codeUtils::safeGetline(infile, tempBuffer) && tempBuffer == "END")
             {
-                tempBuffer.erase(std::remove(tempBuffer.begin(), tempBuffer.end(), '\r'),
-                                 tempBuffer.end()); // files created in windows, being read in unix.
-                if (tempBuffer == "END")
-                {
-                    break;
-                }
                 std::vector<std::string> splitLine = codeUtils::split(tempBuffer, '|');
                 gpInputs.glycositesInputVector.emplace_back(splitLine.at(0), splitLine.at(1));
             }
