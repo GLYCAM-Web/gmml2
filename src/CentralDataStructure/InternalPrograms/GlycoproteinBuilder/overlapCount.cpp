@@ -202,9 +202,10 @@ namespace glycoproteinBuilder
         std::vector<bool> glycanOverlap(glycans.size(), false);
         for (size_t n : movedSites)
         {
-            for (size_t k = n + 1; k < glycans.size(); k++)
+            for (size_t k = 0; k < glycans.size(); k++)
             {
-                if (!(glycanOverlap[n] && glycanOverlap[k]))
+                double avoidDoubleCount = k > n || !justMoved[k];
+                if ((k != n) && avoidDoubleCount && !(glycanOverlap[n] && glycanOverlap[k]))
                 {
                     if (moleculeOverlaps(graphs, data, glycans[n].glycanMolecule, glycans[k].glycanMolecule).count >
                             0 ||
