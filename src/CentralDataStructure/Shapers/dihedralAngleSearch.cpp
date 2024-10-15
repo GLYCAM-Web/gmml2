@@ -238,13 +238,11 @@ cds::AngleOverlap cds::bestOverlapResult(const std::vector<AngleOverlap>& result
 cds::DihedralRotationData cds::dihedralRotationInputData(RotatableDihedral& dihedral,
                                                          const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
 {
-    auto movingAtomSpheres  = atomCoordinatesWithRadii(dihedral.movingAtoms);
-    auto movingAtomBounds   = boundingSphere(movingAtomSpheres);
-    Coordinate origin       = dihedral.atoms[1]->coordinate();
-    Coordinate axis         = dihedral.atoms[2]->coordinate() - origin;
-    auto closestPointOnAxis = origin + projection(movingAtomBounds.center - origin, axis);
-    double distanceToAxis   = length(closestPointOnAxis - movingAtomBounds.center);
-    auto movementBounds     = Sphere {movingAtomBounds.radius + distanceToAxis, closestPointOnAxis};
+    auto movingAtomSpheres = atomCoordinatesWithRadii(dihedral.movingAtoms);
+    auto movingAtomBounds  = boundingSphere(movingAtomSpheres);
+    Coordinate pointA      = dihedral.atoms[1]->coordinate();
+    Coordinate pointB      = dihedral.atoms[2]->coordinate();
+    auto movementBounds    = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
 
     std::vector<cds::Residue*> residues = codeUtils::vectorAppend(residueSets[0].residues, residueSets[1].residues);
     std::vector<double> residueWeights  = codeUtils::vectorAppend(residueSets[0].weights, residueSets[1].weights);

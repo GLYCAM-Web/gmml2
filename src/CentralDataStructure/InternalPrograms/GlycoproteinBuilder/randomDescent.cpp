@@ -37,12 +37,10 @@ namespace glycoproteinBuilder
             std::vector<cds::Sphere>& atomBounds    = data.atoms.bounds;
             std::vector<cds::Sphere>& residueBounds = data.residues.bounds;
             std::vector<double> residueWeights      = data.residues.overlapWeights;
-            cds::Sphere movingAtomBounds  = cds::boundingSphere(codeUtils::indexValues(atomBounds, movingAtoms));
-            Coordinate origin             = data.atoms.bounds[dihedral.atoms[1]].center;
-            Coordinate axis               = data.atoms.bounds[dihedral.atoms[2]].center - origin;
-            Coordinate closestPointOnAxis = origin + projection(movingAtomBounds.center - origin, axis);
-            double distanceToAxis         = length(closestPointOnAxis - movingAtomBounds.center);
-            cds::Sphere movementBounds    = cds::Sphere {movingAtomBounds.radius + distanceToAxis, closestPointOnAxis};
+            cds::Sphere movingAtomBounds = cds::boundingSphere(codeUtils::indexValues(atomBounds, movingAtoms));
+            Coordinate pointA            = data.atoms.bounds[dihedral.atoms[1]].center;
+            Coordinate pointB            = data.atoms.bounds[dihedral.atoms[2]].center;
+            cds::Sphere movementBounds   = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
 
             std::vector<size_t> intersectingResidues;
             intersectingResidues.reserve(graphs.indices.residues.size());

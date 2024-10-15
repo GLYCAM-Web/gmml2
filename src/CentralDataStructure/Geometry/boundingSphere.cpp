@@ -94,6 +94,14 @@ cds::Sphere cds::boundingSphereIncluding(Sphere sphere, const Sphere include)
     return sphere;
 }
 
+cds::Sphere cds::boundingSphereCenteredOnLine(Sphere sphere, Coordinate& point1, Coordinate& point2)
+{
+    Coordinate direction          = point2 - point1;
+    Coordinate closestPointOnAxis = point1 + projection(sphere.center - point1, direction);
+    double distanceToAxis         = length(closestPointOnAxis - sphere.center);
+    return {sphere.radius + distanceToAxis, closestPointOnAxis};
+}
+
 cds::Sphere cds::boundingSphere(const std::vector<Sphere>& spheres)
 {
     Sphere sphere = boundingSphereInitialEstimate(spheres);
