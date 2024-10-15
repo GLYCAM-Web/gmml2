@@ -62,10 +62,9 @@ namespace glycoproteinBuilder
                 size_t bondIndex = graphs.residues.edges.indices[edgeIndex];
                 bonds.push_back(bondedResidueOverlapInput(graphs, bondIndex));
             }
-            overlap += cds::CountOverlappingAtoms(
-                cds::ResidueAtomOverlapInputReference {data.atoms.bounds, data.residues.bounds,
-                                                       graphs.residues.nodes.elements, data.residues.overlapWeights},
-                bonds, {residueA}, residuesB);
+            overlap +=
+                cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
+                                           data.residues.overlapWeights, bonds, {residueA}, residuesB);
         }
         return overlap;
     }
@@ -97,10 +96,8 @@ namespace glycoproteinBuilder
                                              graphs.molecules.nodes.elements[moleculeA]);
             cds::insertIndicesOfIntersection(residuesB, boundsA, data.residues.bounds,
                                              graphs.molecules.nodes.elements[moleculeB]);
-            return cds::CountOverlappingAtoms(
-                cds::ResidueAtomOverlapInputReference {data.atoms.bounds, data.residues.bounds,
-                                                       graphs.residues.nodes.elements, data.residues.overlapWeights},
-                bonds, residuesA, residuesB);
+            return cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
+                                              data.residues.overlapWeights, bonds, residuesA, residuesB);
         }
     }
 
@@ -126,10 +123,9 @@ namespace glycoproteinBuilder
                 size_t atomBondIndex    = graphs.residues.edges.indices[residueBondIndex];
                 bonds.push_back(bondedResidueOverlapInput(graphs, atomBondIndex));
             }
-            return cds::CountOverlappingAtoms(
-                cds::ResidueAtomOverlapInputReference {data.atoms.bounds, data.residues.bounds,
-                                                       graphs.residues.nodes.elements, data.residues.overlapWeights},
-                bonds, {residue}, graphs.molecules.nodes.elements[molecule]);
+            return cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
+                                              data.residues.overlapWeights, bonds, {residue},
+                                              graphs.molecules.nodes.elements[molecule]);
         }
     }
 

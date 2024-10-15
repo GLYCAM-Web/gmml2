@@ -12,8 +12,8 @@
 
 namespace
 {
-    void setNonIgnoredIndices(std::vector<size_t>& result, const std::vector<size_t>& indices,
-                              const std::vector<bool>& ignored)
+    void insertNonIgnored(std::vector<cds::Sphere>& result, const std::vector<cds::Sphere>& bounds,
+                          const std::vector<size_t>& indices, const std::vector<bool>& ignored)
     {
         if (ignored.size() != indices.size())
         {
@@ -24,7 +24,21 @@ namespace
         {
             if (!ignored[n])
             {
-                result.push_back(indices[n]);
+                result.push_back(bounds[indices[n]]);
+            }
+        }
+    }
+
+    void insertIntersection(std::vector<cds::Sphere>& result, const cds::Sphere sphere,
+                            const std::vector<cds::Sphere>& bounds, const std::vector<size_t>& indices)
+    {
+        result.reserve(indices.size());
+        for (size_t index : indices)
+        {
+            auto& a = bounds[index];
+            if (cds::spheresOverlap(constants::overlapTolerance, sphere, a))
+            {
+                result.push_back(a);
             }
         }
     }
@@ -108,47 +122,48 @@ std::vector<size_t> cds::intersectingIndices(cds::Sphere sphere, const std::vect
     return result;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(const ResidueAtomOverlapInputReference& input,
+cds::Overlap cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
+                                        const std::vector<std::vector<size_t>>& residueAtoms,
+                                        const std::vector<double>& residueWeights,
                                         const std::vector<BondedResidueOverlapInput>& bonds,
                                         const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
 {
-    std::vector<size_t> indicesA;
-    std::vector<size_t> indicesB;
+    std::vector<Sphere> boundsA;
+    std::vector<Sphere> boundsB;
     double tolerance = constants::overlapTolerance;
     auto properties  = OverlapProperties {constants::clashWeightBase, tolerance};
     Overlap overlap {0.0, 0.0};
     for (size_t n = 0; n < residuesA.size(); n++)
     {
-        size_t aIndex = residuesA[n];
-        auto& sphereA = input.boundingSpheres[aIndex];
+        size_t aIndex        = residuesA[n];
+        auto& residueBoundsA = residueBounds[aIndex];
         for (size_t k = 0; k < residuesB.size(); k++)
         {
-            size_t bIndex = residuesB[k];
-            auto& sphereB = input.boundingSpheres[bIndex];
-            auto& atomsA  = input.residueAtoms[aIndex];
-            auto& atomsB  = input.residueAtoms[bIndex];
-            double weight = input.residueWeights[aIndex] * input.residueWeights[bIndex];
-            indicesA.clear();
-            indicesB.clear();
+            size_t bIndex        = residuesB[k];
+            auto& residueBoundsB = residueBounds[bIndex];
+            auto& atomsA         = residueAtoms[aIndex];
+            auto& atomsB         = residueAtoms[bIndex];
+            double weight        = residueWeights[aIndex] * residueWeights[bIndex];
+            boundsA.clear();
+            boundsB.clear();
             size_t bondIndex = findBondIndex(bonds, aIndex, bIndex);
             if (bondIndex < bonds.size())
             {
                 const BondedResidueOverlapInput& bond = bonds[bondIndex];
                 bool order                            = !(bond.residueIndices[0] == aIndex);
-                setNonIgnoredIndices(indicesA, atomsA, bond.ignoredAtoms[order]);
-                setNonIgnoredIndices(indicesB, atomsB, bond.ignoredAtoms[!order]);
+                insertNonIgnored(boundsA, atomBounds, atomsA, bond.ignoredAtoms[order]);
+                insertNonIgnored(boundsB, atomBounds, atomsB, bond.ignoredAtoms[!order]);
             }
-            else if (cds::spheresOverlap(tolerance, sphereA, sphereB))
+            else if (cds::spheresOverlap(tolerance, residueBoundsA, residueBoundsB))
             {
-                insertIndicesOfIntersection(indicesA, sphereB, input.atomCoordinates, atomsA);
-                insertIndicesOfIntersection(indicesB, sphereA, input.atomCoordinates, atomsB);
+                insertIntersection(boundsA, residueBoundsB, atomBounds, atomsA);
+                insertIntersection(boundsB, residueBoundsA, atomBounds, atomsB);
             }
-            for (size_t an : indicesA)
+            for (Sphere& a : boundsA)
             {
-                for (size_t bn : indicesB)
+                for (Sphere& b : boundsB)
                 {
-                    overlap +=
-                        (overlapAmount(properties, input.atomCoordinates[an], input.atomCoordinates[bn]) * weight);
+                    overlap += (overlapAmount(properties, a, b) * weight);
                 }
             }
         }
@@ -196,7 +211,7 @@ cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residue
                 {inputA.firstResidueBondedAtoms, inputB.firstResidueBondedAtoms}
             });
         }
-        return CountOverlappingAtoms({atomBounds, residueBounds, residueAtoms, residueWeights}, bonds,
+        return CountOverlappingAtoms(atomBounds, residueBounds, residueAtoms, residueWeights, bonds,
                                      inputA.residueIndices, residueIndicesB);
     }
 }

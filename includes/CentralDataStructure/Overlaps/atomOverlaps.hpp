@@ -33,20 +33,14 @@ namespace cds
         std::array<std::vector<bool>, 2> ignoredAtoms;
     };
 
-    struct ResidueAtomOverlapInputReference
-    {
-        const std::vector<Sphere>& atomCoordinates;
-        const std::vector<Sphere>& boundingSpheres;
-        const std::vector<std::vector<size_t>>& residueAtoms;
-        const std::vector<double>& residueWeights;
-    };
-
     void insertIndicesOfIntersection(std::vector<size_t>& result, cds::Sphere sphere,
                                      const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     std::vector<size_t> intersectingIndices(cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
                                             const std::vector<size_t>& indices);
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    Overlap CountOverlappingAtoms(const ResidueAtomOverlapInputReference& input,
+    Overlap CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
+                                  const std::vector<std::vector<size_t>>& residueAtoms,
+                                  const std::vector<double>& residueWeights,
                                   const std::vector<BondedResidueOverlapInput>& bonds,
                                   const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
     Overlap CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,

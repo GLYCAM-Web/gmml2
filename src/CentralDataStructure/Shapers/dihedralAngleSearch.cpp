@@ -198,7 +198,7 @@ namespace
                     matrix * input.residueBounds[movingResidueIndices[n]].center;
             }
             cds::Overlap overlaps =
-                cds::CountOverlappingAtoms({atomBounds, residueBounds, input.residueAtoms, input.residueWeights},
+                cds::CountOverlappingAtoms(atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
                                            input.bonds, fixedResidueIndices, movingResidueIndices);
 
             results.push_back({
