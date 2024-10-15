@@ -44,7 +44,7 @@ graph::Database cds::createGraphData(GraphIndexData& indices)
     {
         initialIndices.push_back(atom->getIndex());
     }
-    graph::Database graph({}, {}, {}, {}, {});
+    graph::Database graph;
     auto& atoms = indices.atoms;
     for (size_t n = 0; n < atoms.size(); n++)
     {
