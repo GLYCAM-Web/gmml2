@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <algorithm> // remove
 
 using glycoprotein::GlycoproteinBuilderInputs;
 
@@ -25,6 +26,9 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
     {
         std::string strInput;
         getline(infile, strInput);
+        strInput.erase(std::remove(strInput.begin(), strInput.end(), '\r'),
+                       strInput.end()); // files created in windows, being read in unix.
+        gmml::log(__LINE__, __FILE__, gmml::INF, strInput);
         if (codeUtils::startsWith(strInput, "Protein:"))
         {
             gpInputs.substrateFileName = codeUtils::split(strInput, ':').at(1);
@@ -54,15 +58,19 @@ GlycoproteinBuilderInputs glycoprotein::readGPInputFile(std::string inputFileNam
         {
             gpInputs.skipMDPrep = codeUtils::split(strInput, ':').at(1) == "true";
         }
-        if (strInput == "ProteinResidue, GlycanName:")
+        if (codeUtils::startsWith(strInput, "ProteinResidue, GlycanName:"))
         {
             std::string tempBuffer; //  Temporarily holds whatever getline() finds on the line;
-            getline(infile, tempBuffer);
-            while (tempBuffer != "END")
+            while (getline(infile, tempBuffer))
             {
+                tempBuffer.erase(std::remove(tempBuffer.begin(), tempBuffer.end(), '\r'),
+                                 tempBuffer.end()); // files created in windows, being read in unix.
+                if (tempBuffer == "END")
+                {
+                    break;
+                }
                 std::vector<std::string> splitLine = codeUtils::split(tempBuffer, '|');
                 gpInputs.glycositesInputVector.emplace_back(splitLine.at(0), splitLine.at(1));
-                getline(infile, tempBuffer);
             }
         }
     }
