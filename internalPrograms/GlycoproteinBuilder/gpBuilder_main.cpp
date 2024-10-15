@@ -34,14 +34,19 @@ int main(int argc, char* argv[])
     }
     catch (const std::runtime_error& error)
     {
-        gmml::log(__LINE__, __FILE__, gmml::ERR, "glycoproteinBuilder main caught an error:");
-        gmml::log(__LINE__, __FILE__, gmml::ERR, error.what());
+        std::string errorMessage(error.what());
+        std::string message = "glycoproteinBuilder: " + errorMessage;
+        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+        std::cout << message;
+        std::exit(1);
     }
     catch (...)
     {
-        gmml::log(
-            __LINE__, __FILE__, gmml::ERR,
-            "glycoproteinBuilder main caught an unexpected error. Please report how you got this to glycam@gmail.com");
+        std::string message =
+            "glycoproteinBuilder: unexpected error. Please report how you got this to glycam@gmail.com";
+        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+        std::cout << message << "\n";
+        std::exit(1);
     }
     std::cout << "Test 017 Program got to end ok" << std::endl;
     return 0;
