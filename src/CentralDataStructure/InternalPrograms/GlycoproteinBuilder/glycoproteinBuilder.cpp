@@ -280,10 +280,10 @@ namespace glycoproteinBuilder
 
         auto printDihedralAnglesAndOverlapOfGlycosites = [](const AssemblyGraphs& graphs, const AssemblyData& data)
         {
-            std::stringstream logss;
             const std::vector<GlycanIndices>& glycans = graphs.glycans;
             for (size_t n = 0; n < glycans.size(); n++)
             {
+                std::stringstream logss;
                 const GlycanIndices& glycan = graphs.glycans[n];
                 cds::Overlap selfOverlap    = intraGlycanOverlaps(graphs, data, n);
                 cds::Overlap proteinOverlap {0.0, 0.0};
