@@ -1,0 +1,16 @@
+Protein:tests/inputs/017.createError.pdb
+
+NumberOfOutputStructures:2
+
+maxThreads:1
+
+persistCycles:5
+
+prepFileLocation:../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep
+
+seed:0
+
+ProteinResidue, GlycanName:
+A_124|DGalpb1-OH
+A_537|DGalpb1-OH
+END

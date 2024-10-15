@@ -55,6 +55,17 @@ if [ "$failed" == 1 ]; then
     return 1
 fi
 
+
+output=017.failure.txt
+correct=tests/correct_outputs/$output
+./gpBuilder tests/inputs/017.GlycoproteinBuilderInputDosAndError.txt > $output 2>&1
+if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
+    echo -e "Failure test failed to fail as expected!\n ${output} is different from ${correct}\n"
+    echo "Exit Code: 1"
+    return 1
+fi
+rm $output
+
 rm -r 017/ >/dev/null 2>&1
 printf "Test passed.\n"
 rm gpBuilder
