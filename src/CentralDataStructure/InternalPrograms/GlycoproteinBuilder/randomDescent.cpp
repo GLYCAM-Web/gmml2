@@ -46,13 +46,23 @@ namespace glycoproteinBuilder
             intersectingResidues.reserve(graphs.indices.residues.size());
             codeUtils::insertInto(intersectingResidues, linkage.nonReducingResidues);
             size_t glycanMolecule = graphs.glycans[glycanId].glycanMolecule;
-            for (size_t n = 0; n < graphs.indices.molecules.size(); n++)
+            for (size_t n : graphs.proteinMolecules)
             {
-                if ((n != glycanMolecule) &&
-                    cds::spheresOverlap(constants::overlapTolerance, movementBounds, data.molecules.bounds[n]))
+                if (cds::spheresOverlap(constants::overlapTolerance, movementBounds, data.molecules.bounds[n]))
                 {
                     cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,
                                                      graphs.molecules.nodes.elements[n]);
+                }
+            }
+            for (size_t n = 0; n < graphs.glycans.size(); n++)
+            {
+                size_t otherMolecule = graphs.glycans[n].glycanMolecule;
+                if (data.glycanData.included[n] && (otherMolecule != glycanMolecule) &&
+                    cds::spheresOverlap(constants::overlapTolerance, movementBounds,
+                                        data.molecules.bounds[otherMolecule]))
+                {
+                    cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,
+                                                     graphs.molecules.nodes.elements[otherMolecule]);
                 }
             }
 

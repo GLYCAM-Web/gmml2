@@ -176,8 +176,9 @@ namespace glycoproteinBuilder
         RotatableDihedralData rotatableDihedralData {rotatableDihedralCurrentShape};
         ResidueLinkagedata residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds,
                                                linkageBranching};
+        GlycanData glycanData {std::vector<bool>(glycosites.size(), true)};
 
-        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData};
+        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, glycanData};
 
         std::vector<size_t> proteinMolecules;
         for (size_t n = 0; n < moleculeTypes.size(); n++)

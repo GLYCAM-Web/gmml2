@@ -54,6 +54,11 @@ namespace glycoproteinBuilder
         std::vector<bool> branching;
     };
 
+    struct GlycanData
+    {
+        std::vector<bool> included;
+    };
+
     struct AssemblyData
     {
         AtomData atoms;
@@ -61,6 +66,7 @@ namespace glycoproteinBuilder
         MoleculeData molecules;
         RotatableDihedralData rotatableDihedralData;
         ResidueLinkagedata residueLinkageData;
+        GlycanData glycanData;
     };
 
     struct RotatableDihedralIndices

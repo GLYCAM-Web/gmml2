@@ -26,6 +26,7 @@ namespace glycoproteinBuilder
         ulong maxThreads                        = 1; // ToDo Implement this.
         ulong persistCycles                     = 5;
         bool freezeGlycositeResidueConformation = false;
+        bool deleteSitesUntilResolved           = false;
         bool isDeterministic                    = false;
         uint64_t seed                           = 0;
         bool skipMDPrep                         = false;
