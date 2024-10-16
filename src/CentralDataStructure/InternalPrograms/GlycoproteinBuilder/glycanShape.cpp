@@ -22,7 +22,7 @@ namespace glycoproteinBuilder
     void updateResidueBounds(const AssemblyGraphs& graphs, AssemblyData& data, size_t index)
     {
         data.residues.bounds[index] =
-            cds::boundingSphere(codeUtils::indexValues(data.atoms.bounds, graphs.residues.nodes.elements[index]));
+            cds::boundingSphere(codeUtils::indexValues(data.atoms.bounds, residueAtoms(graphs, index)));
     }
 
     void updateResidueMoleculeBounds(const AssemblyGraphs& graphs, AssemblyData& data, size_t index)
@@ -35,7 +35,7 @@ namespace glycoproteinBuilder
     void updateMoleculeBounds(const AssemblyGraphs& graphs, AssemblyData& data, size_t index)
     {
         data.molecules.bounds[index] =
-            cds::boundingSphere(codeUtils::indexValues(data.residues.bounds, graphs.molecules.nodes.elements[index]));
+            cds::boundingSphere(codeUtils::indexValues(data.residues.bounds, moleculeResidues(graphs, index)));
     }
 
     void updateGlycanBounds(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId)
@@ -45,7 +45,7 @@ namespace glycoproteinBuilder
         updateResidueBounds(graphs, data, siteResidue);
         updateResidueMoleculeBounds(graphs, data, siteResidue);
         size_t moleculeId = glycan.glycanMolecule;
-        for (size_t residue : graphs.molecules.nodes.elements[moleculeId])
+        for (size_t residue : moleculeResidues(graphs, moleculeId))
         {
             updateResidueBounds(graphs, data, residue);
         }
@@ -88,7 +88,7 @@ namespace glycoproteinBuilder
         for (size_t n : residueIds)
         {
             data.residues.bounds[n] =
-                cds::boundingSphere(codeUtils::indexValues(data.atoms.bounds, graphs.residues.nodes.elements[n]));
+                cds::boundingSphere(codeUtils::indexValues(data.atoms.bounds, residueAtoms(graphs, n)));
         }
 
         data.rotatableDihedralData.currentShape[dihedralId] = target;

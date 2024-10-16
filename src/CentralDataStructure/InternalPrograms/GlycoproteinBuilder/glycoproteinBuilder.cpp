@@ -230,6 +230,16 @@ namespace glycoproteinBuilder
             return result;
         };
 
+        auto restoreAllGlycans = [](AssemblyData& data)
+        {
+            codeUtils::fill(data.glycanData.included, true);
+        };
+
+        auto deleteGlycan = [](AssemblyData& data, size_t glycanId)
+        {
+            data.glycanData.included[glycanId] = false;
+        };
+
         auto resolveOverlapsWithWiggler = [&](const AssemblyGraphs& graphs, AssemblyData& data,
                                               const std::vector<cds::Coordinate>& initialCoordinates,
                                               bool deleteSitesUntilResolved)
@@ -263,13 +273,13 @@ namespace glycoproteinBuilder
                 overlapSites = currentState.overlapSites;
                 if (deleteSitesUntilResolved && !overlapSites.empty())
                 {
-                    size_t indexToRemove             = codeUtils::randomIndex(rng, overlapSites);
-                    size_t glycan                    = overlapSites[indexToRemove];
-                    data.glycanData.included[glycan] = false;
+                    size_t indexToRemove = codeUtils::randomIndex(rng, overlapSites);
+                    size_t glycan        = overlapSites[indexToRemove];
+                    deleteGlycan(data, glycan);
                     overlapSites.erase(overlapSites.begin() + indexToRemove);
                     size_t proteinResidue = graphs.glycans[glycan].attachmentResidue;
                     // restore atoms to initial shape
-                    for (size_t n : graphs.residues.nodes.elements[proteinResidue])
+                    for (size_t n : residueAtoms(graphs, proteinResidue))
                     {
                         data.atoms.bounds[n].center = initialCoordinates[n];
                     }
@@ -411,7 +421,7 @@ namespace glycoproteinBuilder
 
         for (size_t count = 0; count < settings.number3DStructures; count++)
         {
-            codeUtils::fill(data.glycanData.included, true);
+            restoreAllGlycans(data);
             writerData.atoms.coordinates =
                 resolveOverlapsWithWiggler(graphs, data, initalCoordinates, settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data);

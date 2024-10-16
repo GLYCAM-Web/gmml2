@@ -108,5 +108,22 @@ namespace glycoproteinBuilder
         AssemblyGraphs graphs;
         AssemblyData data;
     };
+
+    inline const std::vector<size_t>& residueAtoms(const AssemblyGraphs& graphs, size_t residueId)
+    {
+        return graphs.residues.nodes.elements[residueId];
+    };
+
+    inline const std::vector<size_t>& moleculeResidues(const AssemblyGraphs& graphs, size_t moleculeId)
+    {
+        return graphs.molecules.nodes.elements[moleculeId];
+    };
+
+    inline size_t moleculeEdgeToAtomEdgeIndex(const AssemblyGraphs& graphs, size_t moleculeEdgeId)
+    {
+        size_t residueBondIndex = graphs.molecules.edges.indices[moleculeEdgeId];
+        return graphs.residues.edges.indices[residueBondIndex];
+    }
+
 } // namespace glycoproteinBuilder
 #endif

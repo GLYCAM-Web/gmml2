@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -11,15 +12,15 @@ namespace glycoproteinBuilder
     {
         std::vector<bool> ignoredAtomsOf(const AssemblyGraphs& graphs, size_t residueIndex, size_t atomIndex)
         {
-            const std::vector<size_t>& atomAdj      = graphs.atoms.nodes.nodeAdjacencies[atomIndex];
-            const std::vector<size_t>& residueAtoms = graphs.residues.nodes.elements[residueIndex];
-            std::vector<bool> ignored(residueAtoms.size(), false);
-            ignored[codeUtils::indexOf(residueAtoms, atomIndex)] = true;
+            const std::vector<size_t>& atomAdj     = graphs.atoms.nodes.nodeAdjacencies[atomIndex];
+            const std::vector<size_t>& atomIndices = residueAtoms(graphs, residueIndex);
+            std::vector<bool> ignored(atomIndices.size(), false);
+            ignored[codeUtils::indexOf(atomIndices, atomIndex)] = true;
             for (size_t adj : atomAdj)
             {
                 if (graphs.indices.atomResidue[adj] == residueIndex)
                 {
-                    ignored[codeUtils::indexOf(residueAtoms, adj)] = true;
+                    ignored[codeUtils::indexOf(atomIndices, adj)] = true;
                 }
             }
             return ignored;
@@ -39,6 +40,36 @@ namespace glycoproteinBuilder
                 {ignoredA, ignoredB}
             };
         }
+
+        std::vector<cds::BondedResidueOverlapInput> residueBonds(const AssemblyGraphs& graphs, size_t residueA,
+                                                                 size_t residueB)
+        {
+            std::vector<cds::BondedResidueOverlapInput> bonds;
+            auto& adjacencies     = graphs.residues.nodes.nodeAdjacencies[residueA];
+            size_t adjacencyIndex = codeUtils::indexOf(adjacencies, residueB);
+            if (adjacencyIndex < adjacencies.size())
+            {
+                size_t edgeIndex = graphs.residues.nodes.edgeAdjacencies[residueA][adjacencyIndex];
+                size_t bondIndex = graphs.residues.edges.indices[edgeIndex];
+                bonds.push_back(bondedResidueOverlapInput(graphs, bondIndex));
+            }
+            return bonds;
+        }
+
+        std::vector<cds::BondedResidueOverlapInput> moleculeBonds(const AssemblyGraphs& graphs, size_t moleculeA,
+                                                                  size_t moleculeB)
+        {
+            std::vector<cds::BondedResidueOverlapInput> bonds;
+            auto& adjacencies     = graphs.molecules.nodes.nodeAdjacencies[moleculeA];
+            size_t adjacencyIndex = codeUtils::indexOf(adjacencies, moleculeB);
+            if (adjacencyIndex < adjacencies.size())
+            {
+                size_t edgeIndex     = graphs.molecules.nodes.edgeAdjacencies[moleculeA][adjacencyIndex];
+                size_t atomBondIndex = moleculeEdgeToAtomEdgeIndex(graphs, edgeIndex);
+                bonds.push_back(bondedResidueOverlapInput(graphs, atomBondIndex));
+            }
+            return bonds;
+        }
     } // namespace
 
     cds::Overlap intraGlycanOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId)
@@ -53,15 +84,7 @@ namespace glycoproteinBuilder
             size_t residueA                      = linkage.nonReducingResidues[0];
             const std::vector<size_t>& residuesB = linkage.reducingResidues;
 
-            std::vector<cds::BondedResidueOverlapInput> bonds;
-            auto& adjacencies     = graphs.residues.nodes.nodeAdjacencies[residueA];
-            size_t adjacencyIndex = codeUtils::indexOf(adjacencies, residuesB[0]);
-            if (adjacencyIndex < adjacencies.size())
-            {
-                size_t edgeIndex = graphs.residues.nodes.edgeAdjacencies[residueA][adjacencyIndex];
-                size_t bondIndex = graphs.residues.edges.indices[edgeIndex];
-                bonds.push_back(bondedResidueOverlapInput(graphs, bondIndex));
-            }
+            std::vector<cds::BondedResidueOverlapInput> bonds = residueBonds(graphs, residueA, residuesB[0]);
             overlap +=
                 cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
                                            data.residues.overlapWeights, bonds, {residueA}, residuesB);
@@ -80,22 +103,13 @@ namespace glycoproteinBuilder
         }
         else
         {
-            std::vector<cds::BondedResidueOverlapInput> bonds;
-            auto& adjacencies     = graphs.molecules.nodes.nodeAdjacencies[moleculeA];
-            size_t adjacencyIndex = codeUtils::indexOf(adjacencies, moleculeB);
-            if (adjacencyIndex < adjacencies.size())
-            {
-                size_t edgeIndex        = graphs.molecules.nodes.edgeAdjacencies[moleculeA][adjacencyIndex];
-                size_t residueBondIndex = graphs.molecules.edges.indices[edgeIndex];
-                size_t atomBondIndex    = graphs.residues.edges.indices[residueBondIndex];
-                bonds.push_back(bondedResidueOverlapInput(graphs, atomBondIndex));
-            }
+            std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graphs, moleculeA, moleculeB);
             std::vector<size_t> residuesA;
             std::vector<size_t> residuesB;
             cds::insertIndicesOfIntersection(residuesA, boundsB, data.residues.bounds,
-                                             graphs.molecules.nodes.elements[moleculeA]);
+                                             moleculeResidues(graphs, moleculeA));
             cds::insertIndicesOfIntersection(residuesB, boundsA, data.residues.bounds,
-                                             graphs.molecules.nodes.elements[moleculeB]);
+                                             moleculeResidues(graphs, moleculeB));
             return cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
                                               data.residues.overlapWeights, bonds, residuesA, residuesB);
         }
@@ -106,26 +120,17 @@ namespace glycoproteinBuilder
     {
         const cds::Sphere& moleculeBounds = data.molecules.bounds[molecule];
         const cds::Sphere& residueBounds  = data.residues.bounds[residue];
-        size_t residueMolecule            = graphs.indices.residueMolecule[residue];
         if (!cds::spheresOverlap(constants::overlapTolerance, moleculeBounds, residueBounds))
         {
             return cds::Overlap {0.0, 0.0};
         }
         else
         {
-            std::vector<cds::BondedResidueOverlapInput> bonds;
-            auto& adjacencies     = graphs.molecules.nodes.nodeAdjacencies[molecule];
-            size_t adjacencyIndex = codeUtils::indexOf(adjacencies, residueMolecule);
-            if (adjacencyIndex < adjacencies.size())
-            {
-                size_t edgeIndex        = graphs.molecules.nodes.edgeAdjacencies[molecule][adjacencyIndex];
-                size_t residueBondIndex = graphs.molecules.edges.indices[edgeIndex];
-                size_t atomBondIndex    = graphs.residues.edges.indices[residueBondIndex];
-                bonds.push_back(bondedResidueOverlapInput(graphs, atomBondIndex));
-            }
+            size_t residueMolecule                            = graphs.indices.residueMolecule[residue];
+            std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graphs, molecule, residueMolecule);
             return cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
                                               data.residues.overlapWeights, bonds, {residue},
-                                              graphs.molecules.nodes.elements[molecule]);
+                                              moleculeResidues(graphs, molecule));
         }
     }
 

@@ -51,7 +51,7 @@ namespace glycoproteinBuilder
                 if (cds::spheresOverlap(constants::overlapTolerance, movementBounds, data.molecules.bounds[n]))
                 {
                     cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,
-                                                     graphs.molecules.nodes.elements[n]);
+                                                     moleculeResidues(graphs, n));
                 }
             }
             for (size_t n = 0; n < graphs.glycans.size(); n++)
@@ -62,7 +62,7 @@ namespace glycoproteinBuilder
                                         data.molecules.bounds[otherMolecule]))
                 {
                     cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,
-                                                     graphs.molecules.nodes.elements[otherMolecule]);
+                                                     moleculeResidues(graphs, otherMolecule));
                 }
             }
 
@@ -95,10 +95,10 @@ namespace glycoproteinBuilder
             //  rotatable bond in Asn outwards
             for (size_t rn = 0; rn < dihedrals.size(); rn++)
             {
-                size_t n                              = dihedrals.size() - 1 - rn;
-                size_t dihedralId                     = graphs.residueLinkages[linkageId].rotatableDihedrals[n];
-                cds::AngleSearchPreference preference = {settings.deviation, shapePreference.angles[n],
-                                                         shapePreference.metadataOrder[n]};
+                size_t n                                         = dihedrals.size() - 1 - rn;
+                size_t dihedralId                                = dihedrals[n];
+                cds::AngleSearchPreference preference            = {settings.deviation, shapePreference.angles[n],
+                                                                    shapePreference.metadataOrder[n]};
                 const std::array<cds::Coordinate, 4> coordinates = dihedralCoordinates(graphs, data, dihedralId);
                 cds::DihedralRotationData input =
                     toRotationInputData(graphs, data, weight, glycanId, linkageId, dihedralId);
@@ -135,7 +135,7 @@ namespace glycoproteinBuilder
                 for (size_t rn = 0; rn < dihedrals.size(); rn++)
                 {
                     size_t n                              = dihedrals.size() - 1 - rn;
-                    size_t dihedralId                     = graphs.residueLinkages[linkageId].rotatableDihedrals[n];
+                    size_t dihedralId                     = dihedrals[n];
                     cds::AngleSearchPreference preference = {isFrozen[n] ? 0.0 : settings.deviation,
                                                              preferenceAngles[n], order};
                     cds::DihedralCoordinates coordinates = dihedralCoordinates(graphs, data, dihedralId);
@@ -152,7 +152,7 @@ namespace glycoproteinBuilder
             size_t bestIndex = cds::bestOverlapResultIndex(bestOverlaps);
             for (size_t n = 0; n < dihedrals.size(); n++)
             {
-                size_t dihedralId                 = graphs.residueLinkages[linkageId].rotatableDihedrals[n];
+                size_t dihedralId                 = dihedrals[n];
                 cds::AngleWithMetadata& bestShape = results[bestIndex][n];
                 setDihedralAngle(graphs, data, linkageId, dihedralId, bestShape);
             }
