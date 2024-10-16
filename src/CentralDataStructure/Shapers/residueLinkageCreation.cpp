@@ -9,6 +9,8 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <cmath>
 #include <sstream>
@@ -138,6 +140,37 @@ namespace
             }
         }
     }
+
+    void throwMissingMetadataError(const cds::ResidueLinkNames& names,
+                                   const std::vector<cds::DihedralAtoms>& dihedralAtoms,
+                                   const cds::DihedralAngleMetadata& metadata)
+    {
+        size_t dihedralCount = dihedralAtoms.size();
+        size_t missingCount  = dihedralCount - metadata.size();
+        std::ostringstream stream;
+        stream << "Insufficient metadata found for the linkage between " << names.residues.first << " and "
+               << names.residues.second << ". Missing metadata for ";
+        if (missingCount > 1)
+        {
+            stream << "dihedrals " << dihedralCount - missingCount + 1 << "-" << dihedralCount;
+        }
+        else
+        {
+            stream << "dihedral " << dihedralCount;
+        }
+        std::vector<std::string> dihedralInfo;
+        for (size_t n = metadata.size(); n < dihedralAtoms.size(); n++)
+        {
+            std::vector<std::string> atomNames;
+            for (auto& atom : dihedralAtoms[n].atoms)
+            {
+                atomNames.push_back(atom->getName());
+            }
+            dihedralInfo.push_back(codeUtils::join(", ", atomNames));
+        }
+        stream << ": [" << codeUtils::join("], [", dihedralInfo) << "]";
+        throw std::runtime_error(stream.str());
+    }
 } // namespace
 
 unsigned long long cds::generateResidueLinkageIndex()
@@ -187,7 +220,8 @@ void cds::determineResiduesForOverlapCheck(ResidueLinkage& linkage)
 
 cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
 {
-    int local_debug = -1;
+    ResidueLinkNames names = toNames(link);
+    int local_debug        = -1;
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF,
@@ -209,7 +243,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
                   "Finding metadata for " + link.residues.first->getStringId() +
                       " :: " + link.residues.second->getStringId());
     }
-    DihedralAngleMetadata metadata = findResidueLinkageMetadata(toNames(link));
+    DihedralAngleMetadata metadata = findResidueLinkageMetadata(names);
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Metadata found:");
@@ -220,6 +254,10 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
                 gmml::log(__LINE__, __FILE__, gmml::INF, dihedralAngleData.print());
             }
         }
+    }
+    if (metadata.size() < dihedralAtoms.size())
+    {
+        throwMissingMetadataError(names, dihedralAtoms, metadata);
     }
     if (metadata.size() > dihedralAtoms.size())
     {
@@ -234,7 +272,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
 
     auto& residues = link.residues;
     createHydrogenForPsiAngles(residues.second, dihedralAtoms, metadata);
-    std::string name                         = determineLinkageNameFromResidueNames(toNames(link));
+    std::string name                         = determineLinkageNameFromResidueNames(names);
     std::vector<RotatableDihedral> dihedrals = createRotatableDihedrals(name, dihedralAtoms, metadata);
     determineAtomsThatMove(dihedrals);
 
