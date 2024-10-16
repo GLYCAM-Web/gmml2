@@ -73,7 +73,11 @@ fi
 ##
 ## Start by writing header-type info to the hpp file
 ##
-echo "#include \"../../../includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp\"
+echo "#include \"includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp\"
+
+#include <string>
+#include <vector>
+#include <utility>
 
 /** \\file:  ${GMMLOUTPATH}/${OUTFILE}
  * GLYCAM06 metadata for residues
@@ -91,16 +95,10 @@ echo "#include \"../../../includes/MolecularMetadata/GLYCAM/glycam06residueinfo.
  * See that and associated scripts for more information.
  */
 
-//////////////////////////////////////////////////////////
-//                       CONSTRUCTOR                    //
-//////////////////////////////////////////////////////////
-
-using gmml::MolecularMetadata::GLYCAM::Glycam06NamesToTypesLookupContainer;
-
-Glycam06NamesToTypesLookupContainer::Glycam06NamesToTypesLookupContainer()
+namespace
 {
-    glycam06NamesToTypesLookupMap_ =
-    {" > ${OUTPATH}/${OUTFILE}
+
+    const std::vector<std::pair<std::string, std::string>> glycam06NamesToTypesLookupMap = {" > ${OUTPATH}/${OUTFILE}
 
 ##
 ## Add the data for the map
@@ -119,8 +117,8 @@ while [ "${i}" -lt "${NumSets}" ] ; do
 	##   Ensure that the data doesn't contain newlines (for the comments to be right)
 	thisNames="${NAMES[${i}]//$'\n'/ }"
 	thisTypes="${TYPES[${i}]//$'\n'/ }"
-	echo "//    Names:   ${thisNames} " >> ${OUTPATH}/${OUTFILE}
-	echo "//    Types:   ${thisTypes} " >> ${OUTPATH}/${OUTFILE}
+	#echo "//    Names:   ${thisNames} " >> ${OUTPATH}/${OUTFILE}
+	#echo "//    Types:   ${thisTypes} " >> ${OUTPATH}/${OUTFILE}
 	for nam in ${NAMES[${i}]} ; do
 		for typ in ${TYPES[${i}]} ; do
 		printf "${format}" \"${nam}\" \"${typ}\" >> ${OUTPATH}/${OUTFILE}
@@ -129,6 +127,19 @@ while [ "${i}" -lt "${NumSets}" ] ; do
 	i=$((i+1))
 done
 ## Close this data set
-echo "
-    }; // close Glycam06NamesToTypesLookupMap
+echo "    };
+} 
+
+std::vector<std::string> GlycamMetadata::getTypesForResidue(std::string query)
+{
+    std::vector<std::string> matching_types;
+    // Iterate over the multimap using range based for loop
+    for (auto& elem : glycam06NamesToTypesLookupMap)
+    {
+        if (elem.first.compare(query) == 0)
+        {
+            matching_types.push_back(elem.second);
+        }
+    }
+    return matching_types;
 }" >> ${OUTPATH}/${OUTFILE}
