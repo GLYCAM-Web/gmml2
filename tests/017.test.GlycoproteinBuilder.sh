@@ -54,6 +54,10 @@ test_case "Single glycan " "tests/inputs/017.GlycoproteinBuilderInputSingleGlyca
 if [ "$failed" == 1 ]; then
     return 1
 fi
+test_case "Delete incompatible sites " "tests/inputs/017.GlycoproteinBuilderInputDeleteSites.txt" "017/deleteSites"
+if [ "$failed" == 1 ]; then
+    return 1
+fi
 
 
 output=017.failure.txt
