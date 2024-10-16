@@ -4,26 +4,35 @@
 #include <vector>
 #include <utility>
 
+/** \file:  src/MolecularMetadata/GLYCAM/glycam06residueinfo.cpp
+ * GLYCAM06 metadata for residues
+ *
+ * This file was generated automatically on:
+ *     Wed Oct 16 02:01:03 PM CEST 2024
+ *
+ * by a script named:
+ *     1_make_glycam06_residue_tag_lookup.bash
+ *
+ * The script was begun on 16 June 2018 by BLFoley and
+ * can be found in:
+ *     dat/MolecularMetadata/scripts/GLYCAM/GLYCAM06/ResidueTags
+ *
+ * See that and associated scripts for more information.
+ */
+
 namespace
 {
+
     const std::vector<std::pair<std::string, std::string>> glycam06NamesToTypesLookupMap = {
-  //    Names:    HYP
-  //    Types:    amino-acid modified mid-chain
         { "HYP",                     "amino-acid"},
         { "HYP",                       "modified"},
         { "HYP",                      "mid-chain"},
- //    Names:    CHYP
-  //    Types:    amino-acid modified N-terminal
         {"CHYP",                     "amino-acid"},
         {"CHYP",                       "modified"},
         {"CHYP",                     "N-terminal"},
- //    Names:    NHYP
-  //    Types:    amino-acid modified C-terminal
         {"NHYP",                     "amino-acid"},
         {"NHYP",                       "modified"},
         {"NHYP",                     "C-terminal"},
- //    Names:    ZOLS  ZOLT
-  //    Types:    amino-acid O-linking zwitterionic aglycon
         {"ZOLS",                     "amino-acid"},
         {"ZOLS",                      "O-linking"},
         {"ZOLS",                   "zwitterionic"},
@@ -32,23 +41,15 @@ namespace
         {"ZOLT",                      "O-linking"},
         {"ZOLT",                   "zwitterionic"},
         {"ZOLT",                        "aglycon"},
- //    Names:    NLN
-  //    Types:    amino-acid N-linking mid-chain
         { "NLN",                     "amino-acid"},
         { "NLN",                      "N-linking"},
         { "NLN",                      "mid-chain"},
- //    Names:    CNLN
-  //    Types:    amino-acid N-linking C-terminal
         {"CNLN",                     "amino-acid"},
         {"CNLN",                      "N-linking"},
         {"CNLN",                     "C-terminal"},
- //    Names:    NNLN
-  //    Types:    amino-acid N-linking N-terminal
         {"NNLN",                     "amino-acid"},
         {"NNLN",                      "N-linking"},
         {"NNLN",                     "N-terminal"},
- //    Names:    OLP  OLS  OLT  OLY
-  //    Types:    amino-acid O-linking mid-chain
         { "OLP",                     "amino-acid"},
         { "OLP",                      "O-linking"},
         { "OLP",                      "mid-chain"},
@@ -61,8 +62,6 @@ namespace
         { "OLY",                     "amino-acid"},
         { "OLY",                      "O-linking"},
         { "OLY",                      "mid-chain"},
- //    Names:    COLP COLS COLT COLY
-  //    Types:    amino-acid O-linking C-terminal
         {"COLP",                     "amino-acid"},
         {"COLP",                      "O-linking"},
         {"COLP",                     "C-terminal"},
@@ -75,8 +74,6 @@ namespace
         {"COLY",                     "amino-acid"},
         {"COLY",                      "O-linking"},
         {"COLY",                     "C-terminal"},
- //    Names:    NOLP  NOLS  NOLT  NOLY
-  //    Types:    amino-acid O-linking N-terminal
         {"NOLP",                     "amino-acid"},
         {"NOLP",                      "O-linking"},
         {"NOLP",                     "N-terminal"},
@@ -89,30 +86,18 @@ namespace
         {"NOLY",                     "amino-acid"},
         {"NOLY",                      "O-linking"},
         {"NOLY",                     "N-terminal"},
- //    Names:    OME ROH TBT
-  //    Types:    aglycon
         { "OME",                        "aglycon"},
         { "ROH",                        "aglycon"},
         { "TBT",                        "aglycon"},
- //    Names:    CA2
-  //    Types:    counter-ion formal-charge=+2
         { "CA2",                    "counter-ion"},
         { "CA2",               "formal-charge=+2"},
- //    Names:    ACX
-  //    Types:    derivative head-hybridization=sp2
         { "ACX",                     "derivative"},
         { "ACX",         "head-hybridization=sp2"},
- //    Names:    MEX
-  //    Types:    derivative head-hybridization=sp3
         { "MEX",                     "derivative"},
         { "MEX",         "head-hybridization=sp3"},
- //    Names:    SO3
-  //    Types:    derivative head-hybridization=sp3 formal-charge=-1
         { "SO3",                     "derivative"},
         { "SO3",         "head-hybridization=sp3"},
         { "SO3",               "formal-charge=-1"},
- //    Names:    PTA QTA RTA UTA STA VTA XTA 6TA TTA WTA YTA 4TA ZTA 3TA 2TA 1TA 0TA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PTA",                   "carbohydrate"},
         { "PTA",                 "monosaccharide"},
         { "PTA",                       "pyranose"},
@@ -249,8 +234,6 @@ namespace
         { "0TA",                "formal-charge=0"},
         { "0TA",                          "alpha"},
         { "0TA",                       "D-isomer"},
- //    Names:    PTB QTB RTB UTB STB VTB XTB 6TB TTB WTB YTB 4TB ZTB 3TB 2TB 1TB 0TB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PTB",                   "carbohydrate"},
         { "PTB",                 "monosaccharide"},
         { "PTB",                       "pyranose"},
@@ -387,8 +370,6 @@ namespace
         { "0TB",                "formal-charge=0"},
         { "0TB",                           "beta"},
         { "0TB",                       "D-isomer"},
- //    Names:    PNA QNA RNA UNA SNA VNA XNA 6NA TNA WNA YNA 4NA ZNA 3NA 2NA 1NA 0NA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PNA",                   "carbohydrate"},
         { "PNA",                 "monosaccharide"},
         { "PNA",                       "pyranose"},
@@ -525,8 +506,6 @@ namespace
         { "0NA",                "formal-charge=0"},
         { "0NA",                          "alpha"},
         { "0NA",                       "D-isomer"},
- //    Names:    PNB QNB RNB UNB SNB VNB XNB 6NB TNB WNB YNB 4NB ZNB 3NB 2NB 1NB 0NB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PNB",                   "carbohydrate"},
         { "PNB",                 "monosaccharide"},
         { "PNB",                       "pyranose"},
@@ -663,8 +642,6 @@ namespace
         { "0NB",                "formal-charge=0"},
         { "0NB",                           "beta"},
         { "0NB",                       "D-isomer"},
- //    Names:    PEA QEA REA UEA SEA VEA XEA 6EA TEA WEA YEA 4EA ZEA 3EA 2EA 1EA 0EA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PEA",                   "carbohydrate"},
         { "PEA",                 "monosaccharide"},
         { "PEA",                       "pyranose"},
@@ -801,8 +778,6 @@ namespace
         { "0EA",                "formal-charge=0"},
         { "0EA",                          "alpha"},
         { "0EA",                       "D-isomer"},
- //    Names:    PEB QEB REB UEB SEB VEB XEB 6EB TEB WEB YEB 4EB ZEB 3EB 2EB 1EB 0EB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PEB",                   "carbohydrate"},
         { "PEB",                 "monosaccharide"},
         { "PEB",                       "pyranose"},
@@ -939,8 +914,6 @@ namespace
         { "0EB",                "formal-charge=0"},
         { "0EB",                           "beta"},
         { "0EB",                       "D-isomer"},
- //    Names:    TFA WFA YFA 4FA ZFA 3FA 2FA 1FA 0FA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "TFA",                   "carbohydrate"},
         { "TFA",                 "monosaccharide"},
         { "TFA",                       "pyranose"},
@@ -1013,8 +986,6 @@ namespace
         { "0FA",                "formal-charge=0"},
         { "0FA",                          "alpha"},
         { "0FA",                       "D-isomer"},
- //    Names:    TFB WFB YFB 4FB ZFB 3FB 2FB 1FB 0FB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "TFB",                   "carbohydrate"},
         { "TFB",                 "monosaccharide"},
         { "TFB",                       "pyranose"},
@@ -1087,8 +1058,6 @@ namespace
         { "0FB",                "formal-charge=0"},
         { "0FB",                           "beta"},
         { "0FB",                       "D-isomer"},
- //    Names:    PLA QLA RLA ULA SLA VLA XLA 6LA TLA WLA YLA 4LA ZLA 3LA 2LA 1LA 0LA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PLA",                   "carbohydrate"},
         { "PLA",                 "monosaccharide"},
         { "PLA",                       "pyranose"},
@@ -1225,8 +1194,6 @@ namespace
         { "0LA",                "formal-charge=0"},
         { "0LA",                          "alpha"},
         { "0LA",                       "D-isomer"},
- //    Names:    PLB QLB RLB ULB SLB VLB XLB 6LB TLB WLB YLB 4LB ZLB 3LB 2LB 1LB 0LB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PLB",                   "carbohydrate"},
         { "PLB",                 "monosaccharide"},
         { "PLB",                       "pyranose"},
@@ -1363,8 +1330,6 @@ namespace
         { "0LB",                "formal-charge=0"},
         { "0LB",                           "beta"},
         { "0LB",                       "D-isomer"},
- //    Names:    PGA QGA RGA UGA SGA VGA XGA 6GA TGA WGA YGA 4GA ZGA 3GA 2GA 1GA 0GA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PGA",                   "carbohydrate"},
         { "PGA",                 "monosaccharide"},
         { "PGA",                       "pyranose"},
@@ -1501,8 +1466,6 @@ namespace
         { "0GA",                "formal-charge=0"},
         { "0GA",                          "alpha"},
         { "0GA",                       "D-isomer"},
- //    Names:    PGB QGB RGB UGB SGB VGB XGB 6GB TGB WGB YGB 4GB ZGB 3GB 2GB 1GB 0GB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PGB",                   "carbohydrate"},
         { "PGB",                 "monosaccharide"},
         { "PGB",                       "pyranose"},
@@ -1639,8 +1602,6 @@ namespace
         { "0GB",                "formal-charge=0"},
         { "0GB",                           "beta"},
         { "0GB",                       "D-isomer"},
- //    Names:    PKA QKA RKA UKA SKA VKA XKA 6KA TKA WKA YKA 4KA ZKA 3KA 2KA 1KA 0KA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PKA",                   "carbohydrate"},
         { "PKA",                 "monosaccharide"},
         { "PKA",                       "pyranose"},
@@ -1777,8 +1738,6 @@ namespace
         { "0KA",                "formal-charge=0"},
         { "0KA",                          "alpha"},
         { "0KA",                       "D-isomer"},
- //    Names:    PKB QKB RKB UKB SKB VKB XKB 6KB TKB WKB YKB 4KB ZKB 3KB 2KB 1KB 0KB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PKB",                   "carbohydrate"},
         { "PKB",                 "monosaccharide"},
         { "PKB",                       "pyranose"},
@@ -1915,8 +1874,6 @@ namespace
         { "0KB",                "formal-charge=0"},
         { "0KB",                           "beta"},
         { "0KB",                       "D-isomer"},
- //    Names:    PMA QMA RMA UMA SMA VMA XMA 6MA TMA WMA YMA 4MA ZMA 3MA 2MA 1MA 0MA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "PMA",                   "carbohydrate"},
         { "PMA",                 "monosaccharide"},
         { "PMA",                       "pyranose"},
@@ -2053,8 +2010,6 @@ namespace
         { "0MA",                "formal-charge=0"},
         { "0MA",                          "alpha"},
         { "0MA",                       "D-isomer"},
- //    Names:    PMB QMB RMB UMB SMB VMB XMB 6MB TMB WMB YMB 4MB ZMB 3MB 2MB 1MB 0MB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "PMB",                   "carbohydrate"},
         { "PMB",                 "monosaccharide"},
         { "PMB",                       "pyranose"},
@@ -2191,8 +2146,6 @@ namespace
         { "0MB",                "formal-charge=0"},
         { "0MB",                           "beta"},
         { "0MB",                       "D-isomer"},
- //    Names:    TQA WQA YQA 4QA ZQA 3QA 2QA 1QA 0QA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "TQA",                   "carbohydrate"},
         { "TQA",                 "monosaccharide"},
         { "TQA",                       "pyranose"},
@@ -2265,8 +2218,6 @@ namespace
         { "0QA",                "formal-charge=0"},
         { "0QA",                          "alpha"},
         { "0QA",                       "D-isomer"},
- //    Names:    TQB WQB YQB 4QB ZQB 3QB 2QB 1QB 0QB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "TQB",                   "carbohydrate"},
         { "TQB",                 "monosaccharide"},
         { "TQB",                       "pyranose"},
@@ -2339,8 +2290,6 @@ namespace
         { "0QB",                "formal-charge=0"},
         { "0QB",                           "beta"},
         { "0QB",                       "D-isomer"},
- //    Names:    THA WHA YHA 4HA ZHA 3HA 2HA 1HA 0HA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha D-isomer
         { "THA",                   "carbohydrate"},
         { "THA",                 "monosaccharide"},
         { "THA",                       "pyranose"},
@@ -2413,8 +2362,6 @@ namespace
         { "0HA",                "formal-charge=0"},
         { "0HA",                          "alpha"},
         { "0HA",                       "D-isomer"},
- //    Names:    THB WHB YHB 4HB ZHB 3HB 2HB 1HB 0HB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta D-isomer
         { "THB",                   "carbohydrate"},
         { "THB",                 "monosaccharide"},
         { "THB",                       "pyranose"},
@@ -2487,8 +2434,6 @@ namespace
         { "0HB",                "formal-charge=0"},
         { "0HB",                           "beta"},
         { "0HB",                       "D-isomer"},
- //    Names:    PtA QtA RtA UtA StA VtA XtA 6tA TtA WtA YtA 4tA ZtA 3tA 2tA 1tA 0tA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PtA",                   "carbohydrate"},
         { "PtA",                 "monosaccharide"},
         { "PtA",                       "pyranose"},
@@ -2625,8 +2570,6 @@ namespace
         { "0tA",                "formal-charge=0"},
         { "0tA",                          "alpha"},
         { "0tA",                       "L-isomer"},
- //    Names:    PtB QtB RtB UtB StB VtB XtB 6tB TtB WtB YtB 4tB ZtB 3tB 2tB 1tB 0tB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PtB",                   "carbohydrate"},
         { "PtB",                 "monosaccharide"},
         { "PtB",                       "pyranose"},
@@ -2763,8 +2706,6 @@ namespace
         { "0tB",                "formal-charge=0"},
         { "0tB",                           "beta"},
         { "0tB",                       "L-isomer"},
- //    Names:    PnA QnA RnA UnA SnA VnA XnA 6nA TnA WnA YnA 4nA ZnA 3nA 2nA 1nA 0nA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PnA",                   "carbohydrate"},
         { "PnA",                 "monosaccharide"},
         { "PnA",                       "pyranose"},
@@ -2901,8 +2842,6 @@ namespace
         { "0nA",                "formal-charge=0"},
         { "0nA",                          "alpha"},
         { "0nA",                       "L-isomer"},
- //    Names:    PnB QnB RnB UnB SnB VnB XnB 6nB TnB WnB YnB 4nB ZnB 3nB 2nB 1nB 0nB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PnB",                   "carbohydrate"},
         { "PnB",                 "monosaccharide"},
         { "PnB",                       "pyranose"},
@@ -3039,8 +2978,6 @@ namespace
         { "0nB",                "formal-charge=0"},
         { "0nB",                           "beta"},
         { "0nB",                       "L-isomer"},
- //    Names:    PeA QeA ReA UeA SeA VeA XeA 6eA TeA WeA YeA 4eA ZeA 3eA 2eA 1eA 0eA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PeA",                   "carbohydrate"},
         { "PeA",                 "monosaccharide"},
         { "PeA",                       "pyranose"},
@@ -3177,8 +3114,6 @@ namespace
         { "0eA",                "formal-charge=0"},
         { "0eA",                          "alpha"},
         { "0eA",                       "L-isomer"},
- //    Names:    PeB QeB ReB UeB SeB VeB XeB 6eB TeB WeB YeB 4eB ZeB 3eB 2eB 1eB 0eB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PeB",                   "carbohydrate"},
         { "PeB",                 "monosaccharide"},
         { "PeB",                       "pyranose"},
@@ -3315,8 +3250,6 @@ namespace
         { "0eB",                "formal-charge=0"},
         { "0eB",                           "beta"},
         { "0eB",                       "L-isomer"},
- //    Names:    TfA WfA YfA 4fA ZfA 3fA 2fA 1fA 0fA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "TfA",                   "carbohydrate"},
         { "TfA",                 "monosaccharide"},
         { "TfA",                       "pyranose"},
@@ -3389,8 +3322,6 @@ namespace
         { "0fA",                "formal-charge=0"},
         { "0fA",                          "alpha"},
         { "0fA",                       "L-isomer"},
- //    Names:    TfB WfB YfB 4fB ZfB 3fB 2fB 1fB 0fB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "TfB",                   "carbohydrate"},
         { "TfB",                 "monosaccharide"},
         { "TfB",                       "pyranose"},
@@ -3463,8 +3394,6 @@ namespace
         { "0fB",                "formal-charge=0"},
         { "0fB",                           "beta"},
         { "0fB",                       "L-isomer"},
- //    Names:    PlA QlA RlA UlA SlA VlA XlA 6lA TlA WlA YlA 4lA ZlA 3lA 2lA 1lA 0lA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PlA",                   "carbohydrate"},
         { "PlA",                 "monosaccharide"},
         { "PlA",                       "pyranose"},
@@ -3601,8 +3530,6 @@ namespace
         { "0lA",                "formal-charge=0"},
         { "0lA",                          "alpha"},
         { "0lA",                       "L-isomer"},
- //    Names:    PlB QlB RlB UlB SlB VlB XlB 6lB TlB WlB YlB 4lB ZlB 3lB 2lB 1lB 0lB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PlB",                   "carbohydrate"},
         { "PlB",                 "monosaccharide"},
         { "PlB",                       "pyranose"},
@@ -3739,8 +3666,6 @@ namespace
         { "0lB",                "formal-charge=0"},
         { "0lB",                           "beta"},
         { "0lB",                       "L-isomer"},
- //    Names:    PgA QgA RgA UgA SgA VgA XgA 6gA TgA WgA YgA 4gA ZgA 3gA 2gA 1gA 0gA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PgA",                   "carbohydrate"},
         { "PgA",                 "monosaccharide"},
         { "PgA",                       "pyranose"},
@@ -3877,8 +3802,6 @@ namespace
         { "0gA",                "formal-charge=0"},
         { "0gA",                          "alpha"},
         { "0gA",                       "L-isomer"},
- //    Names:    PgB QgB RgB UgB SgB VgB XgB 6gB TgB WgB YgB 4gB ZgB 3gB 2gB 1gB 0gB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PgB",                   "carbohydrate"},
         { "PgB",                 "monosaccharide"},
         { "PgB",                       "pyranose"},
@@ -4015,8 +3938,6 @@ namespace
         { "0gB",                "formal-charge=0"},
         { "0gB",                           "beta"},
         { "0gB",                       "L-isomer"},
- //    Names:    PkA QkA RkA UkA SkA VkA XkA 6kA TkA WkA YkA 4kA ZkA 3kA 2kA 1kA 0kA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PkA",                   "carbohydrate"},
         { "PkA",                 "monosaccharide"},
         { "PkA",                       "pyranose"},
@@ -4153,8 +4074,6 @@ namespace
         { "0kA",                "formal-charge=0"},
         { "0kA",                          "alpha"},
         { "0kA",                       "L-isomer"},
- //    Names:    PkB QkB RkB UkB SkB VkB XkB 6kB TkB WkB YkB 4kB ZkB 3kB 2kB 1kB 0kB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PkB",                   "carbohydrate"},
         { "PkB",                 "monosaccharide"},
         { "PkB",                       "pyranose"},
@@ -4291,8 +4210,6 @@ namespace
         { "0kB",                "formal-charge=0"},
         { "0kB",                           "beta"},
         { "0kB",                       "L-isomer"},
- //    Names:    PmA QmA RmA UmA SmA VmA XmA 6mA TmA WmA YmA 4mA ZmA 3mA 2mA 1mA 0mA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "PmA",                   "carbohydrate"},
         { "PmA",                 "monosaccharide"},
         { "PmA",                       "pyranose"},
@@ -4429,8 +4346,6 @@ namespace
         { "0mA",                "formal-charge=0"},
         { "0mA",                          "alpha"},
         { "0mA",                       "L-isomer"},
- //    Names:    PmB QmB RmB UmB SmB VmB XmB 6mB TmB WmB YmB 4mB ZmB 3mB 2mB 1mB 0mB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "PmB",                   "carbohydrate"},
         { "PmB",                 "monosaccharide"},
         { "PmB",                       "pyranose"},
@@ -4567,8 +4482,6 @@ namespace
         { "0mB",                "formal-charge=0"},
         { "0mB",                           "beta"},
         { "0mB",                       "L-isomer"},
- //    Names:    TqA WqA YqA 4qA ZqA 3qA 2qA 1qA 0qA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "TqA",                   "carbohydrate"},
         { "TqA",                 "monosaccharide"},
         { "TqA",                       "pyranose"},
@@ -4641,8 +4554,6 @@ namespace
         { "0qA",                "formal-charge=0"},
         { "0qA",                          "alpha"},
         { "0qA",                       "L-isomer"},
- //    Names:    TqB WqB YqB 4qB ZqB 3qB 2qB 1qB 0qB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "TqB",                   "carbohydrate"},
         { "TqB",                 "monosaccharide"},
         { "TqB",                       "pyranose"},
@@ -4715,8 +4626,6 @@ namespace
         { "0qB",                "formal-charge=0"},
         { "0qB",                           "beta"},
         { "0qB",                       "L-isomer"},
- //    Names:    ThA WhA YhA 4hA ZhA 3hA 2hA 1hA 0hA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  alpha L-isomer
         { "ThA",                   "carbohydrate"},
         { "ThA",                 "monosaccharide"},
         { "ThA",                       "pyranose"},
@@ -4789,8 +4698,6 @@ namespace
         { "0hA",                "formal-charge=0"},
         { "0hA",                          "alpha"},
         { "0hA",                       "L-isomer"},
- //    Names:    ThB WhB YhB 4hB ZhB 3hB 2hB 1hB 0hB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0  beta L-isomer
         { "ThB",                   "carbohydrate"},
         { "ThB",                 "monosaccharide"},
         { "ThB",                       "pyranose"},
@@ -4863,8 +4770,6 @@ namespace
         { "0hB",                "formal-charge=0"},
         { "0hB",                           "beta"},
         { "0hB",                       "L-isomer"},
- //    Names:    QVA UVA VVA 6VA WVA 4VA 3VA 1VA 0VA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  alpha D-isomer
         { "QVA",                   "carbohydrate"},
         { "QVA",                 "monosaccharide"},
         { "QVA",                       "pyranose"},
@@ -4946,8 +4851,6 @@ namespace
         { "0VA",                       "N-acetyl"},
         { "0VA",                          "alpha"},
         { "0VA",                       "D-isomer"},
- //    Names:    QVB UVB VVB 6VB WVB 4VB 3VB 1VB 0VB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  beta D-isomer
         { "QVB",                   "carbohydrate"},
         { "QVB",                 "monosaccharide"},
         { "QVB",                       "pyranose"},
@@ -5029,8 +4932,6 @@ namespace
         { "0VB",                       "N-acetyl"},
         { "0VB",                           "beta"},
         { "0VB",                       "D-isomer"},
- //    Names:    QYA UYA VYA 6YA WYA 4YA 3YA 1YA 0YA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  alpha D-isomer
         { "QYA",                   "carbohydrate"},
         { "QYA",                 "monosaccharide"},
         { "QYA",                       "pyranose"},
@@ -5112,8 +5013,6 @@ namespace
         { "0YA",                       "N-acetyl"},
         { "0YA",                          "alpha"},
         { "0YA",                       "D-isomer"},
- //    Names:    QYB UYB VYB 6YB WYB 4YB 3YB 1YB 0YB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  beta D-isomer
         { "QYB",                   "carbohydrate"},
         { "QYB",                 "monosaccharide"},
         { "QYB",                       "pyranose"},
@@ -5195,8 +5094,6 @@ namespace
         { "0YB",                       "N-acetyl"},
         { "0YB",                           "beta"},
         { "0YB",                       "D-isomer"},
- //    Names:    QWA UWA VWA 6WA WWA 4WA 3WA 1WA 0WA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  alpha D-isomer
         { "QWA",                   "carbohydrate"},
         { "QWA",                 "monosaccharide"},
         { "QWA",                       "pyranose"},
@@ -5278,8 +5175,6 @@ namespace
         { "0WA",                       "N-acetyl"},
         { "0WA",                          "alpha"},
         { "0WA",                       "D-isomer"},
- //    Names:    QWB UWB VWB 6WB WWB 4WB 3WB 1WB 0WB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  beta D-isomer
         { "QWB",                   "carbohydrate"},
         { "QWB",                 "monosaccharide"},
         { "QWB",                       "pyranose"},
@@ -5361,8 +5256,6 @@ namespace
         { "0WB",                       "N-acetyl"},
         { "0WB",                           "beta"},
         { "0WB",                       "D-isomer"},
- //    Names:    QvA UvA VvA 6vA WvA 4vA 3vA 1vA 0vA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  alpha L-isomer
         { "QvA",                   "carbohydrate"},
         { "QvA",                 "monosaccharide"},
         { "QvA",                       "pyranose"},
@@ -5444,8 +5337,6 @@ namespace
         { "0vA",                       "N-acetyl"},
         { "0vA",                          "alpha"},
         { "0vA",                       "L-isomer"},
- //    Names:    QvB UvB VvB 6vB WvB 4vB 3vB 1vB 0vB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  beta L-isomer
         { "QvB",                   "carbohydrate"},
         { "QvB",                 "monosaccharide"},
         { "QvB",                       "pyranose"},
@@ -5527,8 +5418,6 @@ namespace
         { "0vB",                       "N-acetyl"},
         { "0vB",                           "beta"},
         { "0vB",                       "L-isomer"},
- //    Names:    QyA UyA VyA 6yA WyA 4yA 3yA 1yA 0yA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  alpha L-isomer
         { "QyA",                   "carbohydrate"},
         { "QyA",                 "monosaccharide"},
         { "QyA",                       "pyranose"},
@@ -5610,8 +5499,6 @@ namespace
         { "0yA",                       "N-acetyl"},
         { "0yA",                          "alpha"},
         { "0yA",                       "L-isomer"},
- //    Names:    QyB UyB VyB 6yB WyB 4yB 3yB 1yB 0yB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  beta L-isomer
         { "QyB",                   "carbohydrate"},
         { "QyB",                 "monosaccharide"},
         { "QyB",                       "pyranose"},
@@ -5693,8 +5580,6 @@ namespace
         { "0yB",                       "N-acetyl"},
         { "0yB",                           "beta"},
         { "0yB",                       "L-isomer"},
- //    Names:    QwA UwA VwA 6wA WwA 4wA 3wA 1wA 0wA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  alpha L-isomer
         { "QwA",                   "carbohydrate"},
         { "QwA",                 "monosaccharide"},
         { "QwA",                       "pyranose"},
@@ -5776,8 +5661,6 @@ namespace
         { "0wA",                       "N-acetyl"},
         { "0wA",                          "alpha"},
         { "0wA",                       "L-isomer"},
- //    Names:    QwB UwB VwB 6wB WwB 4wB 3wB 1wB 0wB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl  beta L-isomer
         { "QwB",                   "carbohydrate"},
         { "QwB",                 "monosaccharide"},
         { "QwB",                       "pyranose"},
@@ -5859,8 +5742,6 @@ namespace
         { "0wB",                       "N-acetyl"},
         { "0wB",                           "beta"},
         { "0wB",                       "L-isomer"},
- //    Names:    QYN WYN VYN 3YN UYN 4YN 6YN 1YN 0YN
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 amine D-isomer  alpha
         { "QYN",                   "carbohydrate"},
         { "QYN",                 "monosaccharide"},
         { "QYN",                       "pyranose"},
@@ -5942,8 +5823,6 @@ namespace
         { "0YN",                          "amine"},
         { "0YN",                       "D-isomer"},
         { "0YN",                          "alpha"},
- //    Names:    QYn VYn WYn 3Yn UYn 6Yn 4Yn 1Yn 0Yn
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 amine D-isomer  beta
         { "QYn",                   "carbohydrate"},
         { "QYn",                 "monosaccharide"},
         { "QYn",                       "pyranose"},
@@ -6025,9 +5904,6 @@ namespace
         { "0Yn",                          "amine"},
         { "0Yn",                       "D-isomer"},
         { "0Yn",                           "beta"},
- //    Names:    QYNP WYNP VYNP 3YNP UYNP 4YNP 6YNP 1YNP 0YNP
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=+1 amine D-isomer
-  //    protonated  alpha
         {"QYNP",                   "carbohydrate"},
         {"QYNP",                 "monosaccharide"},
         {"QYNP",                       "pyranose"},
@@ -6118,9 +5994,6 @@ namespace
         {"0YNP",                       "D-isomer"},
         {"0YNP",                     "protonated"},
         {"0YNP",                          "alpha"},
- //    Names:    QYnP UYnP VYnP 6YnP WYnP 4YnP 3YnP 1YnP 0YnP
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=+1 amine D-isomer
-  //    protonated  beta
         {"QYnP",                   "carbohydrate"},
         {"QYnP",                 "monosaccharide"},
         {"QYnP",                       "pyranose"},
@@ -6211,8 +6084,6 @@ namespace
         {"0YnP",                       "D-isomer"},
         {"0YnP",                     "protonated"},
         {"0YnP",                           "beta"},
- //    Names:    QYS UYS VYS 6YS WYS 4YS 3YS 1YS 0YS
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-sulfo  alpha D-isomer
         { "QYS",                   "carbohydrate"},
         { "QYS",                 "monosaccharide"},
         { "QYS",                       "pyranose"},
@@ -6294,8 +6165,6 @@ namespace
         { "0YS",                        "N-sulfo"},
         { "0YS",                          "alpha"},
         { "0YS",                       "D-isomer"},
- //    Names:    QYs UYs VYs 6Ys WYs 4Ys 3Ys 1Ys 0Ys
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-sulfo  beta D-isomer
         { "QYs",                   "carbohydrate"},
         { "QYs",                 "monosaccharide"},
         { "QYs",                       "pyranose"},
@@ -6377,8 +6246,6 @@ namespace
         { "0Ys",                        "N-sulfo"},
         { "0Ys",                           "beta"},
         { "0Ys",                       "D-isomer"},
- //    Names:    QyS UyS VyS 6yS WyS 4yS 3yS 1yS 0yS
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-sulfo  alpha L-isomer
         { "QyS",                   "carbohydrate"},
         { "QyS",                 "monosaccharide"},
         { "QyS",                       "pyranose"},
@@ -6460,8 +6327,6 @@ namespace
         { "0yS",                        "N-sulfo"},
         { "0yS",                          "alpha"},
         { "0yS",                       "L-isomer"},
- //    Names:    Qys Uys Vys 6ys Wys 4ys 3ys 1ys 0ys
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-sulfo  beta L-isomer
         { "Qys",                   "carbohydrate"},
         { "Qys",                 "monosaccharide"},
         { "Qys",                       "pyranose"},
@@ -6543,9 +6408,6 @@ namespace
         { "0ys",                        "N-sulfo"},
         { "0ys",                           "beta"},
         { "0ys",                       "L-isomer"},
- //    Names:    TOA WOA YOA 4OA ZOA 3OA 2OA 1OA 0OA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  alpha D-isomer
         { "TOA",                   "carbohydrate"},
         { "TOA",                 "monosaccharide"},
         { "TOA",                       "pyranose"},
@@ -6636,9 +6498,6 @@ namespace
         { "0OA",               "gauche-effect=na"},
         { "0OA",                          "alpha"},
         { "0OA",                       "D-isomer"},
- //    Names:    TOB WOB YOB 4OB ZOB 3OB 2OB 1OB 0OB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  beta D-isomer
         { "TOB",                   "carbohydrate"},
         { "TOB",                 "monosaccharide"},
         { "TOB",                       "pyranose"},
@@ -6729,9 +6588,6 @@ namespace
         { "0OB",               "gauche-effect=na"},
         { "0OB",                           "beta"},
         { "0OB",                       "D-isomer"},
- //    Names:    TZA WZA YZA 4ZA ZZA 3ZA 2ZA 1ZA 0ZA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  alpha D-isomer
         { "TZA",                   "carbohydrate"},
         { "TZA",                 "monosaccharide"},
         { "TZA",                       "pyranose"},
@@ -6822,9 +6678,6 @@ namespace
         { "0ZA",               "gauche-effect=na"},
         { "0ZA",                          "alpha"},
         { "0ZA",                       "D-isomer"},
- //    Names:    TZB WZB YZB 4ZB ZZB 3ZB 2ZB 1ZB 0ZB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  beta D-isomer
         { "TZB",                   "carbohydrate"},
         { "TZB",                 "monosaccharide"},
         { "TZB",                       "pyranose"},
@@ -6915,9 +6768,6 @@ namespace
         { "0ZB",               "gauche-effect=na"},
         { "0ZB",                           "beta"},
         { "0ZB",                       "D-isomer"},
- //    Names:    TUA WUA YUA 4UA ZUA 3UA 2UA 1UA 0UA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  alpha D-isomer
         { "TUA",                   "carbohydrate"},
         { "TUA",                 "monosaccharide"},
         { "TUA",                       "pyranose"},
@@ -7008,9 +6858,6 @@ namespace
         { "0UA",               "gauche-effect=na"},
         { "0UA",                          "alpha"},
         { "0UA",                       "D-isomer"},
- //    Names:    TUB WUB YUB 4UB ZUB 3UB 2UB 1UB 0UB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  beta D-isomer
         { "TUB",                   "carbohydrate"},
         { "TUB",                 "monosaccharide"},
         { "TUB",                       "pyranose"},
@@ -7101,9 +6948,6 @@ namespace
         { "0UB",               "gauche-effect=na"},
         { "0UB",                           "beta"},
         { "0UB",                       "D-isomer"},
- //    Names:    ToA WoA YoA 4oA ZoA 3oA 2oA 1oA 0oA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  alpha L-isomer
         { "ToA",                   "carbohydrate"},
         { "ToA",                 "monosaccharide"},
         { "ToA",                       "pyranose"},
@@ -7194,9 +7038,6 @@ namespace
         { "0oA",               "gauche-effect=na"},
         { "0oA",                          "alpha"},
         { "0oA",                       "L-isomer"},
- //    Names:    ToB WoB YoB 4oB ZoB 3oB 2oB 1oB 0oB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  beta L-isomer
         { "ToB",                   "carbohydrate"},
         { "ToB",                 "monosaccharide"},
         { "ToB",                       "pyranose"},
@@ -7287,9 +7128,6 @@ namespace
         { "0oB",               "gauche-effect=na"},
         { "0oB",                           "beta"},
         { "0oB",                       "L-isomer"},
- //    Names:    TzA WzA YzA 4zA ZzA 3zA 2zA 1zA 0zA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  alpha L-isomer
         { "TzA",                   "carbohydrate"},
         { "TzA",                 "monosaccharide"},
         { "TzA",                       "pyranose"},
@@ -7380,9 +7218,6 @@ namespace
         { "0zA",               "gauche-effect=na"},
         { "0zA",                          "alpha"},
         { "0zA",                       "L-isomer"},
- //    Names:    TzB WzB YzB 4zB ZzB 3zB 2zB 1zB 0zB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  beta L-isomer
         { "TzB",                   "carbohydrate"},
         { "TzB",                 "monosaccharide"},
         { "TzB",                       "pyranose"},
@@ -7473,9 +7308,6 @@ namespace
         { "0zB",               "gauche-effect=na"},
         { "0zB",                           "beta"},
         { "0zB",                       "L-isomer"},
- //    Names:    TuA WuA YuA 4uA ZuA 3uA 2uA 1uA 0uA 4uA3 0uA1 4uA1 4uA2
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  alpha L-isomer
         { "TuA",                   "carbohydrate"},
         { "TuA",                 "monosaccharide"},
         { "TuA",                       "pyranose"},
@@ -7606,9 +7438,6 @@ namespace
         {"4uA2",               "gauche-effect=na"},
         {"4uA2",                          "alpha"},
         {"4uA2",                       "L-isomer"},
- //    Names:    TuB WuB YuB 4uB ZuB 3uB 2uB 1uB 0uB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    gauche-effect=na  beta L-isomer
         { "TuB",                   "carbohydrate"},
         { "TuB",                 "monosaccharide"},
         { "TuB",                       "pyranose"},
@@ -7699,9 +7528,6 @@ namespace
         { "0uB",               "gauche-effect=na"},
         { "0uB",                           "beta"},
         { "0uB",                       "L-isomer"},
- //    Names:    YuAP
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 alpha L-isomer formal-charge=0 uronate
-  //    protonated gauche-effect=na
         {"YuAP",                   "carbohydrate"},
         {"YuAP",                 "monosaccharide"},
         {"YuAP",                       "pyranose"},
@@ -7713,9 +7539,6 @@ namespace
         {"YuAP",                        "uronate"},
         {"YuAP",                     "protonated"},
         {"YuAP",               "gauche-effect=na"},
- //    Names:    0ZBP
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 beta D-isomer formal-charge=0 uronate
-  //    protonated gauche-effect=na
         {"0ZBP",                   "carbohydrate"},
         {"0ZBP",                 "monosaccharide"},
         {"0ZBP",                       "pyranose"},
@@ -7727,9 +7550,6 @@ namespace
         {"0ZBP",                        "uronate"},
         {"0ZBP",                     "protonated"},
         {"0ZBP",               "gauche-effect=na"},
- //    Names:    045 245
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 uronate
-  //    unsaturated-uronate gauche-effect=na
         { "045",                   "carbohydrate"},
         { "045",                 "monosaccharide"},
         { "045",                       "pyranose"},
@@ -7748,9 +7568,6 @@ namespace
         { "245",                        "uronate"},
         { "245",            "unsaturated-uronate"},
         { "245",               "gauche-effect=na"},
- //    Names:    PNA QNA RNA UNA SNA VNA XNA 6NA TNA WNA YNA 4NA ZNA 3NA 2NA 1NA 0NA PNB QNB RNB UNB SNB VNB XNB
-  //    6NB TNB WNB YNB 4NB ZNB 3NB 2NB 1NB 0NB
-  //    Types:    gauche-effect=gluco
         { "PNA",            "gauche-effect=gluco"},
         { "QNA",            "gauche-effect=gluco"},
         { "RNA",            "gauche-effect=gluco"},
@@ -7785,9 +7602,6 @@ namespace
         { "2NB",            "gauche-effect=gluco"},
         { "1NB",            "gauche-effect=gluco"},
         { "0NB",            "gauche-effect=gluco"},
- //    Names:    PEA QEA REA UEA SEA VEA XEA 6EA TEA WEA YEA 4EA ZEA 3EA 2EA 1EA 0EA PEB QEB REB UEB SEB VEB XEB
-  //    6EB TEB WEB YEB 4EB ZEB 3EB 2EB 1EB 0EB
-  //    Types:    gauche-effect=gluco
         { "PEA",            "gauche-effect=gluco"},
         { "QEA",            "gauche-effect=gluco"},
         { "REA",            "gauche-effect=gluco"},
@@ -7822,9 +7636,6 @@ namespace
         { "2EB",            "gauche-effect=gluco"},
         { "1EB",            "gauche-effect=gluco"},
         { "0EB",            "gauche-effect=gluco"},
- //    Names:    PGA QGA RGA UGA SGA VGA XGA 6GA TGA WGA YGA 4GA ZGA 3GA 2GA 1GA 0GA PGB QGB RGB UGB SGB VGB XGB
-  //    6GB TGB WGB YGB 4GB ZGB 3GB 2GB 1GB 0GB
-  //    Types:    gauche-effect=gluco
         { "PGA",            "gauche-effect=gluco"},
         { "QGA",            "gauche-effect=gluco"},
         { "RGA",            "gauche-effect=gluco"},
@@ -7859,9 +7670,6 @@ namespace
         { "2GB",            "gauche-effect=gluco"},
         { "1GB",            "gauche-effect=gluco"},
         { "0GB",            "gauche-effect=gluco"},
- //    Names:    PMA QMA RMA UMA SMA VMA XMA 6MA TMA WMA YMA 4MA ZMA 3MA 2MA 1MA 0MA PMB QMB RMB UMB SMB VMB XMB
-  //    6MB TMB WMB YMB 4MB ZMB 3MB 2MB 1MB 0MB
-  //    Types:    gauche-effect=gluco
         { "PMA",            "gauche-effect=gluco"},
         { "QMA",            "gauche-effect=gluco"},
         { "RMA",            "gauche-effect=gluco"},
@@ -7896,8 +7704,6 @@ namespace
         { "2MB",            "gauche-effect=gluco"},
         { "1MB",            "gauche-effect=gluco"},
         { "0MB",            "gauche-effect=gluco"},
- //    Names:    QYA UYA VYA 6YA WYA 4YA 3YA 1YA 0YA QYB UYB VYB 6YB WYB 4YB 3YB 1YB 0YB
-  //    Types:    gauche-effect=gluco
         { "QYA",            "gauche-effect=gluco"},
         { "UYA",            "gauche-effect=gluco"},
         { "VYA",            "gauche-effect=gluco"},
@@ -7916,8 +7722,6 @@ namespace
         { "3YB",            "gauche-effect=gluco"},
         { "1YB",            "gauche-effect=gluco"},
         { "0YB",            "gauche-effect=gluco"},
- //    Names:    QWA UWA VWA 6WA WWA 4WA 3WA 1WA 0WA QWB UWB VWB 6WB WWB 4WB 3WB 1WB 0WB
-  //    Types:    gauche-effect=gluco
         { "QWA",            "gauche-effect=gluco"},
         { "UWA",            "gauche-effect=gluco"},
         { "VWA",            "gauche-effect=gluco"},
@@ -7936,9 +7740,6 @@ namespace
         { "3WB",            "gauche-effect=gluco"},
         { "1WB",            "gauche-effect=gluco"},
         { "0WB",            "gauche-effect=gluco"},
- //    Names:    PnA QnA RnA UnA SnA VnA XnA 6nA TnA WnA YnA 4nA ZnA 3nA 2nA 1nA 0nA PnB QnB RnB UnB SnB VnB XnB
-  //    6nB TnB WnB YnB 4nB ZnB 3nB 2nB 1nB 0nB
-  //    Types:    gauche-effect=gluco
         { "PnA",            "gauche-effect=gluco"},
         { "QnA",            "gauche-effect=gluco"},
         { "RnA",            "gauche-effect=gluco"},
@@ -7973,9 +7774,6 @@ namespace
         { "2nB",            "gauche-effect=gluco"},
         { "1nB",            "gauche-effect=gluco"},
         { "0nB",            "gauche-effect=gluco"},
- //    Names:    PeA QeA ReA UeA SeA VeA XeA 6eA TeA WeA YeA 4eA ZeA 3eA 2eA 1eA 0eA PeB QeB ReB UeB SeB VeB XeB
-  //    6eB TeB WeB YeB 4eB ZeB 3eB 2eB 1eB 0eB
-  //    Types:    gauche-effect=gluco
         { "PeA",            "gauche-effect=gluco"},
         { "QeA",            "gauche-effect=gluco"},
         { "ReA",            "gauche-effect=gluco"},
@@ -8010,9 +7808,6 @@ namespace
         { "2eB",            "gauche-effect=gluco"},
         { "1eB",            "gauche-effect=gluco"},
         { "0eB",            "gauche-effect=gluco"},
- //    Names:    PgA QgA RgA UgA SgA VgA XgA 6gA TgA WgA YgA 4gA ZgA 3gA 2gA 1gA 0gA PgB QgB RgB UgB SgB VgB XgB
-  //    6gB TgB WgB YgB 4gB ZgB 3gB 2gB 1gB 0gB
-  //    Types:    gauche-effect=gluco
         { "PgA",            "gauche-effect=gluco"},
         { "QgA",            "gauche-effect=gluco"},
         { "RgA",            "gauche-effect=gluco"},
@@ -8047,9 +7842,6 @@ namespace
         { "2gB",            "gauche-effect=gluco"},
         { "1gB",            "gauche-effect=gluco"},
         { "0gB",            "gauche-effect=gluco"},
- //    Names:    PmA QmA RmA UmA SmA VmA XmA 6mA TmA WmA YmA 4mA ZmA 3mA 2mA 1mA 0mA PmB QmB RmB UmB SmB VmB XmB
-  //    6mB TmB WmB YmB 4mB ZmB 3mB 2mB 1mB 0mB
-  //    Types:    gauche-effect=gluco
         { "PmA",            "gauche-effect=gluco"},
         { "QmA",            "gauche-effect=gluco"},
         { "RmA",            "gauche-effect=gluco"},
@@ -8084,8 +7876,6 @@ namespace
         { "2mB",            "gauche-effect=gluco"},
         { "1mB",            "gauche-effect=gluco"},
         { "0mB",            "gauche-effect=gluco"},
- //    Names:    QyA UyA VyA 6yA WyA 4yA 3yA 1yA 0yA QyB UyB VyB 6yB WyB 4yB 3yB 1yB 0yB
-  //    Types:    gauche-effect=gluco
         { "QyA",            "gauche-effect=gluco"},
         { "UyA",            "gauche-effect=gluco"},
         { "VyA",            "gauche-effect=gluco"},
@@ -8104,8 +7894,6 @@ namespace
         { "3yB",            "gauche-effect=gluco"},
         { "1yB",            "gauche-effect=gluco"},
         { "0yB",            "gauche-effect=gluco"},
- //    Names:    QwA UwA VwA 6wA WwA 4wA 3wA 1wA 0wA QwB UwB VwB 6wB WwB 4wB 3wB 1wB 0wB
-  //    Types:    gauche-effect=gluco
         { "QwA",            "gauche-effect=gluco"},
         { "UwA",            "gauche-effect=gluco"},
         { "VwA",            "gauche-effect=gluco"},
@@ -8124,8 +7912,6 @@ namespace
         { "3wB",            "gauche-effect=gluco"},
         { "1wB",            "gauche-effect=gluco"},
         { "0wB",            "gauche-effect=gluco"},
- //    Names:    QYN WYN VYN 3YN UYN 4YN 6YN 1YN 0YN
-  //    Types:    gauche-effect=gluco
         { "QYN",            "gauche-effect=gluco"},
         { "WYN",            "gauche-effect=gluco"},
         { "VYN",            "gauche-effect=gluco"},
@@ -8135,8 +7921,6 @@ namespace
         { "6YN",            "gauche-effect=gluco"},
         { "1YN",            "gauche-effect=gluco"},
         { "0YN",            "gauche-effect=gluco"},
- //    Names:    QYn VYn WYn 3Yn UYn 6Yn 4Yn 1Yn 0Yn
-  //    Types:    gauche-effect=gluco
         { "QYn",            "gauche-effect=gluco"},
         { "VYn",            "gauche-effect=gluco"},
         { "WYn",            "gauche-effect=gluco"},
@@ -8146,8 +7930,6 @@ namespace
         { "4Yn",            "gauche-effect=gluco"},
         { "1Yn",            "gauche-effect=gluco"},
         { "0Yn",            "gauche-effect=gluco"},
- //    Names:    QYNP WYNP VYNP 3YNP UYNP 4YNP 6YNP 1YNP 0YNP
-  //    Types:    gauche-effect=gluco
         {"QYNP",            "gauche-effect=gluco"},
         {"WYNP",            "gauche-effect=gluco"},
         {"VYNP",            "gauche-effect=gluco"},
@@ -8157,8 +7939,6 @@ namespace
         {"6YNP",            "gauche-effect=gluco"},
         {"1YNP",            "gauche-effect=gluco"},
         {"0YNP",            "gauche-effect=gluco"},
- //    Names:    QYnP UYnP VYnP 6YnP WYnP 4YnP 3YnP 1YnP 0YnP
-  //    Types:    gauche-effect=gluco
         {"QYnP",            "gauche-effect=gluco"},
         {"UYnP",            "gauche-effect=gluco"},
         {"VYnP",            "gauche-effect=gluco"},
@@ -8168,8 +7948,6 @@ namespace
         {"3YnP",            "gauche-effect=gluco"},
         {"1YnP",            "gauche-effect=gluco"},
         {"0YnP",            "gauche-effect=gluco"},
- //    Names:    QYS UYS VYS 6YS WYS 4YS 3YS 1YS 0YS
-  //    Types:    gauche-effect=gluco
         { "QYS",            "gauche-effect=gluco"},
         { "UYS",            "gauche-effect=gluco"},
         { "VYS",            "gauche-effect=gluco"},
@@ -8179,8 +7957,6 @@ namespace
         { "3YS",            "gauche-effect=gluco"},
         { "1YS",            "gauche-effect=gluco"},
         { "0YS",            "gauche-effect=gluco"},
- //    Names:    QYs UYs VYs 6Ys WYs 4Ys 3Ys 1Ys 0Ys
-  //    Types:    gauche-effect=gluco
         { "QYs",            "gauche-effect=gluco"},
         { "UYs",            "gauche-effect=gluco"},
         { "VYs",            "gauche-effect=gluco"},
@@ -8190,8 +7966,6 @@ namespace
         { "3Ys",            "gauche-effect=gluco"},
         { "1Ys",            "gauche-effect=gluco"},
         { "0Ys",            "gauche-effect=gluco"},
- //    Names:    QyS UyS VyS 6yS WyS 4yS 3yS 1yS 0yS
-  //    Types:    gauche-effect=gluco
         { "QyS",            "gauche-effect=gluco"},
         { "UyS",            "gauche-effect=gluco"},
         { "VyS",            "gauche-effect=gluco"},
@@ -8201,8 +7975,6 @@ namespace
         { "3yS",            "gauche-effect=gluco"},
         { "1yS",            "gauche-effect=gluco"},
         { "0yS",            "gauche-effect=gluco"},
- //    Names:    Qys Uys Vys 6ys Wys 4ys 3ys 1ys 0ys
-  //    Types:    gauche-effect=gluco
         { "Qys",            "gauche-effect=gluco"},
         { "Uys",            "gauche-effect=gluco"},
         { "Vys",            "gauche-effect=gluco"},
@@ -8212,9 +7984,6 @@ namespace
         { "3ys",            "gauche-effect=gluco"},
         { "1ys",            "gauche-effect=gluco"},
         { "0ys",            "gauche-effect=gluco"},
- //    Names:    PTA QTA RTA UTA STA VTA XTA 6TA TTA WTA YTA 4TA ZTA 3TA 2TA 1TA 0TA PTB QTB RTB UTB STB VTB XTB
-  //    6TB TTB WTB YTB 4TB ZTB 3TB 2TB 1TB 0TB
-  //    Types:    gauche-effect=galacto
         { "PTA",          "gauche-effect=galacto"},
         { "QTA",          "gauche-effect=galacto"},
         { "RTA",          "gauche-effect=galacto"},
@@ -8249,9 +8018,6 @@ namespace
         { "2TB",          "gauche-effect=galacto"},
         { "1TB",          "gauche-effect=galacto"},
         { "0TB",          "gauche-effect=galacto"},
- //    Names:    PLA QLA RLA ULA SLA VLA XLA 6LA TLA WLA YLA 4LA ZLA 3LA 2LA 1LA 0LA PLB QLB RLB ULB SLB VLB XLB
-  //    6LB TLB WLB YLB 4LB ZLB 3LB 2LB 1LB 0LB
-  //    Types:    gauche-effect=galacto
         { "PLA",          "gauche-effect=galacto"},
         { "QLA",          "gauche-effect=galacto"},
         { "RLA",          "gauche-effect=galacto"},
@@ -8286,9 +8052,6 @@ namespace
         { "2LB",          "gauche-effect=galacto"},
         { "1LB",          "gauche-effect=galacto"},
         { "0LB",          "gauche-effect=galacto"},
- //    Names:    PKA QKA RKA UKA SKA VKA XKA 6KA TKA WKA YKA 4KA ZKA 3KA 2KA 1KA 0KA PKB QKB RKB UKB SKB VKB XKB
-  //    6KB TKB WKB YKB 4KB ZKB 3KB 2KB 1KB 0KB
-  //    Types:    gauche-effect=galacto
         { "PKA",          "gauche-effect=galacto"},
         { "QKA",          "gauche-effect=galacto"},
         { "RKA",          "gauche-effect=galacto"},
@@ -8323,8 +8086,6 @@ namespace
         { "2KB",          "gauche-effect=galacto"},
         { "1KB",          "gauche-effect=galacto"},
         { "0KB",          "gauche-effect=galacto"},
- //    Names:    QVA UVA VVA 6VA WVA 4VA 3VA 1VA 0VA QVB UVB VVB 6VB WVB 4VB 3VB 1VB 0VB
-  //    Types:    gauche-effect=galacto
         { "QVA",          "gauche-effect=galacto"},
         { "UVA",          "gauche-effect=galacto"},
         { "VVA",          "gauche-effect=galacto"},
@@ -8343,9 +8104,6 @@ namespace
         { "3VB",          "gauche-effect=galacto"},
         { "1VB",          "gauche-effect=galacto"},
         { "0VB",          "gauche-effect=galacto"},
- //    Names:    PtA QtA RtA UtA StA VtA XtA 6tA TtA WtA YtA 4tA ZtA 3tA 2tA 1tA 0tA PtB QtB RtB UtB StB VtB XtB
-  //    6tB TtB WtB YtB 4tB ZtB 3tB 2tB 1tB 0tB
-  //    Types:    gauche-effect=galacto
         { "PtA",          "gauche-effect=galacto"},
         { "QtA",          "gauche-effect=galacto"},
         { "RtA",          "gauche-effect=galacto"},
@@ -8380,9 +8138,6 @@ namespace
         { "2tB",          "gauche-effect=galacto"},
         { "1tB",          "gauche-effect=galacto"},
         { "0tB",          "gauche-effect=galacto"},
- //    Names:    PlA QlA RlA UlA SlA VlA XlA 6lA TlA WlA YlA 4lA ZlA 3lA 2lA 1lA 0lA PlB QlB RlB UlB SlB VlB XlB
-  //    6lB TlB WlB YlB 4lB ZlB 3lB 2lB 1lB 0lB
-  //    Types:    gauche-effect=galacto
         { "PlA",          "gauche-effect=galacto"},
         { "QlA",          "gauche-effect=galacto"},
         { "RlA",          "gauche-effect=galacto"},
@@ -8417,9 +8172,6 @@ namespace
         { "2lB",          "gauche-effect=galacto"},
         { "1lB",          "gauche-effect=galacto"},
         { "0lB",          "gauche-effect=galacto"},
- //    Names:    PkA QkA RkA UkA SkA VkA XkA 6kA TkA WkA YkA 4kA ZkA 3kA 2kA 1kA 0kA PkB QkB RkB UkB SkB VkB XkB
-  //    6kB TkB WkB YkB 4kB ZkB 3kB 2kB 1kB 0kB
-  //    Types:    gauche-effect=galacto
         { "PkA",          "gauche-effect=galacto"},
         { "QkA",          "gauche-effect=galacto"},
         { "RkA",          "gauche-effect=galacto"},
@@ -8454,8 +8206,6 @@ namespace
         { "2kB",          "gauche-effect=galacto"},
         { "1kB",          "gauche-effect=galacto"},
         { "0kB",          "gauche-effect=galacto"},
- //    Names:    QvA UvA VvA 6vA WvA 4vA 3vA 1vA 0vA QvB UvB VvB 6vB WvB 4vB 3vB 1vB 0vB
-  //    Types:    gauche-effect=galacto
         { "QvA",          "gauche-effect=galacto"},
         { "UvA",          "gauche-effect=galacto"},
         { "VvA",          "gauche-effect=galacto"},
@@ -8474,8 +8224,6 @@ namespace
         { "3vB",          "gauche-effect=galacto"},
         { "1vB",          "gauche-effect=galacto"},
         { "0vB",          "gauche-effect=galacto"},
- //    Names:    TFA WFA YFA 4FA ZFA 3FA 2FA 1FA 0FA TFB WFB YFB 4FB ZFB 3FB 2FB 1FB 0FB
-  //    Types:    gauche-effect=na
         { "TFA",               "gauche-effect=na"},
         { "WFA",               "gauche-effect=na"},
         { "YFA",               "gauche-effect=na"},
@@ -8494,8 +8242,6 @@ namespace
         { "2FB",               "gauche-effect=na"},
         { "1FB",               "gauche-effect=na"},
         { "0FB",               "gauche-effect=na"},
- //    Names:    TQA WQA YQA 4QA ZQA 3QA 2QA 1QA 0QA TQB WQB YQB 4QB ZQB 3QB 2QB 1QB 0QB
-  //    Types:    gauche-effect=na
         { "TQA",               "gauche-effect=na"},
         { "WQA",               "gauche-effect=na"},
         { "YQA",               "gauche-effect=na"},
@@ -8514,8 +8260,6 @@ namespace
         { "2QB",               "gauche-effect=na"},
         { "1QB",               "gauche-effect=na"},
         { "0QB",               "gauche-effect=na"},
- //    Names:    THA WHA YHA 4HA ZHA 3HA 2HA 1HA 0HA THB WHB YHB 4HB ZHB 3HB 2HB 1HB 0HB
-  //    Types:    gauche-effect=na
         { "THA",               "gauche-effect=na"},
         { "WHA",               "gauche-effect=na"},
         { "YHA",               "gauche-effect=na"},
@@ -8534,8 +8278,6 @@ namespace
         { "2HB",               "gauche-effect=na"},
         { "1HB",               "gauche-effect=na"},
         { "0HB",               "gauche-effect=na"},
- //    Names:    TfA WfA YfA 4fA ZfA 3fA 2fA 1fA 0fA TfB WfB YfB 4fB ZfB 3fB 2fB 1fB 0fB
-  //    Types:    gauche-effect=na
         { "TfA",               "gauche-effect=na"},
         { "WfA",               "gauche-effect=na"},
         { "YfA",               "gauche-effect=na"},
@@ -8554,8 +8296,6 @@ namespace
         { "2fB",               "gauche-effect=na"},
         { "1fB",               "gauche-effect=na"},
         { "0fB",               "gauche-effect=na"},
- //    Names:    TqA WqA YqA 4qA ZqA 3qA 2qA 1qA 0qA TqB WqB YqB 4qB ZqB 3qB 2qB 1qB 0qB
-  //    Types:    gauche-effect=na
         { "TqA",               "gauche-effect=na"},
         { "WqA",               "gauche-effect=na"},
         { "YqA",               "gauche-effect=na"},
@@ -8574,8 +8314,6 @@ namespace
         { "2qB",               "gauche-effect=na"},
         { "1qB",               "gauche-effect=na"},
         { "0qB",               "gauche-effect=na"},
- //    Names:    ThA WhA YhA 4hA ZhA 3hA 2hA 1hA 0hA ThB WhB YhB 4hB ZhB 3hB 2hB 1hB 0hB
-  //    Types:    gauche-effect=na
         { "ThA",               "gauche-effect=na"},
         { "WhA",               "gauche-effect=na"},
         { "YhA",               "gauche-effect=na"},
@@ -8594,9 +8332,6 @@ namespace
         { "2hB",               "gauche-effect=na"},
         { "1hB",               "gauche-effect=na"},
         { "0hB",               "gauche-effect=na"},
- //    Names:    TAA WAA YAA 4AA ZAA 3AA 2AA 1AA 0AA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    D-isomer
         { "TAA",                   "carbohydrate"},
         { "TAA",                 "monosaccharide"},
         { "TAA",                       "pyranose"},
@@ -8678,9 +8413,6 @@ namespace
         { "0AA",               "gauche-effect=na"},
         { "0AA",                          "alpha"},
         { "0AA",                       "D-isomer"},
- //    Names:    TAB WAB YAB 4AB ZAB 3AB 2AB 1AB 0AB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    D-isomer
         { "TAB",                   "carbohydrate"},
         { "TAB",                 "monosaccharide"},
         { "TAB",                       "pyranose"},
@@ -8762,9 +8494,6 @@ namespace
         { "0AB",               "gauche-effect=na"},
         { "0AB",                           "beta"},
         { "0AB",                       "D-isomer"},
- //    Names:    TDA WDA YDA 4DA ZDA 3DA 2DA 1DA 0DA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    D-isomer
         { "TDA",                   "carbohydrate"},
         { "TDA",                 "monosaccharide"},
         { "TDA",                       "pyranose"},
@@ -8846,9 +8575,6 @@ namespace
         { "0DA",               "gauche-effect=na"},
         { "0DA",                          "alpha"},
         { "0DA",                       "D-isomer"},
- //    Names:    TDB WDB YDB 4DB ZDB 3DB 2DB 1DB 0DB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    D-isomer
         { "TDB",                   "carbohydrate"},
         { "TDB",                 "monosaccharide"},
         { "TDB",                       "pyranose"},
@@ -8930,9 +8656,6 @@ namespace
         { "0DB",               "gauche-effect=na"},
         { "0DB",                           "beta"},
         { "0DB",                       "D-isomer"},
- //    Names:    TRA WRA YRA 4RA ZRA 3RA 2RA 1RA 0RA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    D-isomer
         { "TRA",                   "carbohydrate"},
         { "TRA",                 "monosaccharide"},
         { "TRA",                       "pyranose"},
@@ -9014,9 +8737,6 @@ namespace
         { "0RA",               "gauche-effect=na"},
         { "0RA",                          "alpha"},
         { "0RA",                       "D-isomer"},
- //    Names:    TRB WRB YRB 4RB ZRB 3RB 2RB 1RB 0RB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    D-isomer
         { "TRB",                   "carbohydrate"},
         { "TRB",                 "monosaccharide"},
         { "TRB",                       "pyranose"},
@@ -9098,9 +8818,6 @@ namespace
         { "0RB",               "gauche-effect=na"},
         { "0RB",                           "beta"},
         { "0RB",                       "D-isomer"},
- //    Names:    TXA WXA YXA 4XA ZXA 3XA 2XA 1XA 0XA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    D-isomer
         { "TXA",                   "carbohydrate"},
         { "TXA",                 "monosaccharide"},
         { "TXA",                       "pyranose"},
@@ -9182,9 +8899,6 @@ namespace
         { "0XA",               "gauche-effect=na"},
         { "0XA",                          "alpha"},
         { "0XA",                       "D-isomer"},
- //    Names:    TXB WXB YXB 4XB ZXB 3XB 2XB 1XB 0XB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    D-isomer
         { "TXB",                   "carbohydrate"},
         { "TXB",                 "monosaccharide"},
         { "TXB",                       "pyranose"},
@@ -9266,9 +8980,6 @@ namespace
         { "0XB",               "gauche-effect=na"},
         { "0XB",                           "beta"},
         { "0XB",                       "D-isomer"},
- //    Names:    TaA WaA YaA 4aA ZaA 3aA 2aA 1aA 0aA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    L-isomer
         { "TaA",                   "carbohydrate"},
         { "TaA",                 "monosaccharide"},
         { "TaA",                       "pyranose"},
@@ -9350,9 +9061,6 @@ namespace
         { "0aA",               "gauche-effect=na"},
         { "0aA",                          "alpha"},
         { "0aA",                       "L-isomer"},
- //    Names:    TaB WaB YaB 4aB ZaB 3aB 2aB 1aB 0aB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    L-isomer
         { "TaB",                   "carbohydrate"},
         { "TaB",                 "monosaccharide"},
         { "TaB",                       "pyranose"},
@@ -9434,9 +9142,6 @@ namespace
         { "0aB",               "gauche-effect=na"},
         { "0aB",                           "beta"},
         { "0aB",                       "L-isomer"},
- //    Names:    TdA WdA YdA 4dA ZdA 3dA 2dA 1dA 0dA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    L-isomer
         { "TdA",                   "carbohydrate"},
         { "TdA",                 "monosaccharide"},
         { "TdA",                       "pyranose"},
@@ -9518,9 +9223,6 @@ namespace
         { "0dA",               "gauche-effect=na"},
         { "0dA",                          "alpha"},
         { "0dA",                       "L-isomer"},
- //    Names:    TdB WdB YdB 4dB ZdB 3dB 2dB 1dB 0dB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    L-isomer
         { "TdB",                   "carbohydrate"},
         { "TdB",                 "monosaccharide"},
         { "TdB",                       "pyranose"},
@@ -9602,9 +9304,6 @@ namespace
         { "0dB",               "gauche-effect=na"},
         { "0dB",                           "beta"},
         { "0dB",                       "L-isomer"},
- //    Names:    TrA WrA YrA 4rA ZrA 3rA 2rA 1rA 0rA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    L-isomer
         { "TrA",                   "carbohydrate"},
         { "TrA",                 "monosaccharide"},
         { "TrA",                       "pyranose"},
@@ -9686,9 +9385,6 @@ namespace
         { "0rA",               "gauche-effect=na"},
         { "0rA",                          "alpha"},
         { "0rA",                       "L-isomer"},
- //    Names:    TrB WrB YrB 4rB ZrB 3rB 2rB 1rB 0rB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    L-isomer
         { "TrB",                   "carbohydrate"},
         { "TrB",                 "monosaccharide"},
         { "TrB",                       "pyranose"},
@@ -9770,9 +9466,6 @@ namespace
         { "0rB",               "gauche-effect=na"},
         { "0rB",                           "beta"},
         { "0rB",                       "L-isomer"},
- //    Names:    TxA WxA YxA 4xA ZxA 3xA 2xA 1xA 0xA
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  alpha
-  //    L-isomer
         { "TxA",                   "carbohydrate"},
         { "TxA",                 "monosaccharide"},
         { "TxA",                       "pyranose"},
@@ -9854,9 +9547,6 @@ namespace
         { "0xA",               "gauche-effect=na"},
         { "0xA",                          "alpha"},
         { "0xA",                       "L-isomer"},
- //    Names:    TxB WxB YxB 4xB ZxB 3xB 2xB 1xB 0xB
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 gauche-effect=na  beta
-  //    L-isomer
         { "TxB",                   "carbohydrate"},
         { "TxB",                 "monosaccharide"},
         { "TxB",                       "pyranose"},
@@ -9938,9 +9628,6 @@ namespace
         { "0xB",               "gauche-effect=na"},
         { "0xB",                           "beta"},
         { "0xB",                       "L-isomer"},
- //    Names:    nAD tAD uAD 5AD ZAD 3AD 2AD 1AD 0AD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "nAD",                   "carbohydrate"},
         { "nAD",                 "monosaccharide"},
         { "nAD",                       "furanose"},
@@ -10022,9 +9709,6 @@ namespace
         { "0AD",          "gauche-effect=unknown"},
         { "0AD",                          "alpha"},
         { "0AD",                       "D-isomer"},
- //    Names:    nAU tAU uAU 5AU ZAU 3AU 2AU 1AU 0AU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "nAU",                   "carbohydrate"},
         { "nAU",                 "monosaccharide"},
         { "nAU",                       "furanose"},
@@ -10106,9 +9790,6 @@ namespace
         { "0AU",          "gauche-effect=unknown"},
         { "0AU",                           "beta"},
         { "0AU",                       "D-isomer"},
- //    Names:    nDD tDD uDD 5DD ZDD 3DD 2DD 1DD 0DD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "nDD",                   "carbohydrate"},
         { "nDD",                 "monosaccharide"},
         { "nDD",                       "furanose"},
@@ -10190,9 +9871,6 @@ namespace
         { "0DD",          "gauche-effect=unknown"},
         { "0DD",                          "alpha"},
         { "0DD",                       "D-isomer"},
- //    Names:    nDU tDU uDU 5DU ZDU 3DU 2DU 1DU 0DU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "nDU",                   "carbohydrate"},
         { "nDU",                 "monosaccharide"},
         { "nDU",                       "furanose"},
@@ -10274,9 +9952,6 @@ namespace
         { "0DU",          "gauche-effect=unknown"},
         { "0DU",                           "beta"},
         { "0DU",                       "D-isomer"},
- //    Names:    nRD tRD uRD 5RD ZRD 3RD 2RD 1RD 0RD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "nRD",                   "carbohydrate"},
         { "nRD",                 "monosaccharide"},
         { "nRD",                       "furanose"},
@@ -10358,9 +10033,6 @@ namespace
         { "0RD",          "gauche-effect=unknown"},
         { "0RD",                          "alpha"},
         { "0RD",                       "D-isomer"},
- //    Names:    nRU tRU uRU 5RU ZRU 3RU 2RU 1RU 0RU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "nRU",                   "carbohydrate"},
         { "nRU",                 "monosaccharide"},
         { "nRU",                       "furanose"},
@@ -10442,9 +10114,6 @@ namespace
         { "0RU",          "gauche-effect=unknown"},
         { "0RU",                           "beta"},
         { "0RU",                       "D-isomer"},
- //    Names:    nXD tXD uXD 5XD ZXD 3XD 2XD 1XD 0XD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "nXD",                   "carbohydrate"},
         { "nXD",                 "monosaccharide"},
         { "nXD",                       "furanose"},
@@ -10526,9 +10195,6 @@ namespace
         { "0XD",          "gauche-effect=unknown"},
         { "0XD",                          "alpha"},
         { "0XD",                       "D-isomer"},
- //    Names:    nXU tXU uXU 5XU ZXU 3XU 2XU 1XU 0XU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "nXU",                   "carbohydrate"},
         { "nXU",                 "monosaccharide"},
         { "nXU",                       "furanose"},
@@ -10610,9 +10276,6 @@ namespace
         { "0XU",          "gauche-effect=unknown"},
         { "0XU",                           "beta"},
         { "0XU",                       "D-isomer"},
- //    Names:    naD taD uaD 5aD ZaD 3aD 2aD 1aD 0aD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "naD",                   "carbohydrate"},
         { "naD",                 "monosaccharide"},
         { "naD",                       "furanose"},
@@ -10694,9 +10357,6 @@ namespace
         { "0aD",          "gauche-effect=unknown"},
         { "0aD",                          "alpha"},
         { "0aD",                       "L-isomer"},
- //    Names:    naU taU uaU 5aU ZaU 3aU 2aU 1aU 0aU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "naU",                   "carbohydrate"},
         { "naU",                 "monosaccharide"},
         { "naU",                       "furanose"},
@@ -10778,9 +10438,6 @@ namespace
         { "0aU",          "gauche-effect=unknown"},
         { "0aU",                           "beta"},
         { "0aU",                       "L-isomer"},
- //    Names:    ndD tdD udD 5dD ZdD 3dD 2dD 1dD 0dD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "ndD",                   "carbohydrate"},
         { "ndD",                 "monosaccharide"},
         { "ndD",                       "furanose"},
@@ -10862,9 +10519,6 @@ namespace
         { "0dD",          "gauche-effect=unknown"},
         { "0dD",                          "alpha"},
         { "0dD",                       "L-isomer"},
- //    Names:    ndU tdU udU 5dU ZdU 3dU 2dU 1dU 0dU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "ndU",                   "carbohydrate"},
         { "ndU",                 "monosaccharide"},
         { "ndU",                       "furanose"},
@@ -10946,9 +10600,6 @@ namespace
         { "0dU",          "gauche-effect=unknown"},
         { "0dU",                           "beta"},
         { "0dU",                       "L-isomer"},
- //    Names:    nrD trD urD 5rD ZrD 3rD 2rD 1rD 0rD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "nrD",                   "carbohydrate"},
         { "nrD",                 "monosaccharide"},
         { "nrD",                       "furanose"},
@@ -11030,9 +10681,6 @@ namespace
         { "0rD",          "gauche-effect=unknown"},
         { "0rD",                          "alpha"},
         { "0rD",                       "L-isomer"},
- //    Names:    nrU trU urU 5rU ZrU 3rU 2rU 1rU 0rU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "nrU",                   "carbohydrate"},
         { "nrU",                 "monosaccharide"},
         { "nrU",                       "furanose"},
@@ -11114,9 +10762,6 @@ namespace
         { "0rU",          "gauche-effect=unknown"},
         { "0rU",                           "beta"},
         { "0rU",                       "L-isomer"},
- //    Names:    nxD txD uxD 5xD ZxD 3xD 2xD 1xD 0xD
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "nxD",                   "carbohydrate"},
         { "nxD",                 "monosaccharide"},
         { "nxD",                       "furanose"},
@@ -11198,9 +10843,6 @@ namespace
         { "0xD",          "gauche-effect=unknown"},
         { "0xD",                          "alpha"},
         { "0xD",                       "L-isomer"},
- //    Names:    nxU txU uxU 5xU ZxU 3xU 2xU 1xU 0xU
-  //    Types:     carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "nxU",                   "carbohydrate"},
         { "nxU",                 "monosaccharide"},
         { "nxU",                       "furanose"},
@@ -11282,9 +10924,6 @@ namespace
         { "0xU",          "gauche-effect=unknown"},
         { "0xU",                           "beta"},
         { "0xU",                       "L-isomer"},
- //    Names:    YAE 2AE 4AE 1AE 0AE
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 deoxy gauche-effect=na
-  //    alpha D-isomer
         { "YAE",                   "carbohydrate"},
         { "YAE",                 "monosaccharide"},
         { "YAE",                       "pyranose"},
@@ -11335,9 +10974,6 @@ namespace
         { "0AE",               "gauche-effect=na"},
         { "0AE",                          "alpha"},
         { "0AE",                       "D-isomer"},
- //    Names:    YTV 4TV 2TV 1TV 0TV
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 deoxy gauche-effect=na
-  //    alpha D-isomer
         { "YTV",                   "carbohydrate"},
         { "YTV",                 "monosaccharide"},
         { "YTV",                       "pyranose"},
@@ -11388,9 +11024,56 @@ namespace
         { "0TV",               "gauche-effect=na"},
         { "0TV",                          "alpha"},
         { "0TV",                       "D-isomer"},
- //    Names:    YTv 4Tv 2Tv 1Tv 0Tv
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 deoxy gauche-effect=na
-  //    beta D-isomer
+        { "YAe",                   "carbohydrate"},
+        { "YAe",                 "monosaccharide"},
+        { "YAe",                       "pyranose"},
+        { "YAe",                         "aldose"},
+        { "YAe",                     "n-carbon=5"},
+        { "YAe",                "formal-charge=0"},
+        { "YAe",                          "deoxy"},
+        { "YAe",               "gauche-effect=na"},
+        { "YAe",                           "beta"},
+        { "YAe",                       "D-isomer"},
+        { "4Ae",                   "carbohydrate"},
+        { "4Ae",                 "monosaccharide"},
+        { "4Ae",                       "pyranose"},
+        { "4Ae",                         "aldose"},
+        { "4Ae",                     "n-carbon=5"},
+        { "4Ae",                "formal-charge=0"},
+        { "4Ae",                          "deoxy"},
+        { "4Ae",               "gauche-effect=na"},
+        { "4Ae",                           "beta"},
+        { "4Ae",                       "D-isomer"},
+        { "2Ae",                   "carbohydrate"},
+        { "2Ae",                 "monosaccharide"},
+        { "2Ae",                       "pyranose"},
+        { "2Ae",                         "aldose"},
+        { "2Ae",                     "n-carbon=5"},
+        { "2Ae",                "formal-charge=0"},
+        { "2Ae",                          "deoxy"},
+        { "2Ae",               "gauche-effect=na"},
+        { "2Ae",                           "beta"},
+        { "2Ae",                       "D-isomer"},
+        { "1Ae",                   "carbohydrate"},
+        { "1Ae",                 "monosaccharide"},
+        { "1Ae",                       "pyranose"},
+        { "1Ae",                         "aldose"},
+        { "1Ae",                     "n-carbon=5"},
+        { "1Ae",                "formal-charge=0"},
+        { "1Ae",                          "deoxy"},
+        { "1Ae",               "gauche-effect=na"},
+        { "1Ae",                           "beta"},
+        { "1Ae",                       "D-isomer"},
+        { "0Ae",                   "carbohydrate"},
+        { "0Ae",                 "monosaccharide"},
+        { "0Ae",                       "pyranose"},
+        { "0Ae",                         "aldose"},
+        { "0Ae",                     "n-carbon=5"},
+        { "0Ae",                "formal-charge=0"},
+        { "0Ae",                          "deoxy"},
+        { "0Ae",               "gauche-effect=na"},
+        { "0Ae",                           "beta"},
+        { "0Ae",                       "D-isomer"},
         { "YTv",                   "carbohydrate"},
         { "YTv",                 "monosaccharide"},
         { "YTv",                       "pyranose"},
@@ -11441,9 +11124,6 @@ namespace
         { "0Tv",               "gauche-effect=na"},
         { "0Tv",                           "beta"},
         { "0Tv",                       "D-isomer"},
- //    Names:    YtV 4tV 2tV 1tV 0tV
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 deoxy gauche-effect=na
-  //    alpha L-isomer
         { "YtV",                   "carbohydrate"},
         { "YtV",                 "monosaccharide"},
         { "YtV",                       "pyranose"},
@@ -11494,9 +11174,6 @@ namespace
         { "0tV",               "gauche-effect=na"},
         { "0tV",                          "alpha"},
         { "0tV",                       "L-isomer"},
- //    Names:    Ytv 4tv 2tv 1tv 0tv
-  //    Types:     carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 deoxy gauche-effect=na
-  //    beta L-isomer
         { "Ytv",                   "carbohydrate"},
         { "Ytv",                 "monosaccharide"},
         { "Ytv",                       "pyranose"},
@@ -11547,224 +11224,120 @@ namespace
         { "0tv",               "gauche-effect=na"},
         { "0tv",                           "beta"},
         { "0tv",                       "L-isomer"},
- //    Names:    1TA 1TB
-  //    Types:    aglycon
         { "1TA",                        "aglycon"},
         { "1TB",                        "aglycon"},
- //    Names:    1NA 1NB
-  //    Types:    aglycon
         { "1NA",                        "aglycon"},
         { "1NB",                        "aglycon"},
- //    Names:    1EA 1EB
-  //    Types:    aglycon
         { "1EA",                        "aglycon"},
         { "1EB",                        "aglycon"},
- //    Names:    1FA 1FB
-  //    Types:    aglycon
         { "1FA",                        "aglycon"},
         { "1FB",                        "aglycon"},
- //    Names:    1LA 1LB
-  //    Types:    aglycon
         { "1LA",                        "aglycon"},
         { "1LB",                        "aglycon"},
- //    Names:    1GA 1GB
-  //    Types:    aglycon
+        { "1LU",                        "aglycon"},
+        { "1LU",                        "aglycon"},
+        { "1LD",                        "aglycon"},
+        { "1LD",                        "aglycon"},
         { "1GA",                        "aglycon"},
         { "1GB",                        "aglycon"},
- //    Names:    1KA 1KB
-  //    Types:    aglycon
         { "1KA",                        "aglycon"},
         { "1KB",                        "aglycon"},
- //    Names:    1MA 1MB
-  //    Types:    aglycon
         { "1MA",                        "aglycon"},
         { "1MB",                        "aglycon"},
- //    Names:    1QA 1QB
-  //    Types:    aglycon
         { "1QA",                        "aglycon"},
         { "1QB",                        "aglycon"},
- //    Names:    1HA 1HB
-  //    Types:    aglycon
         { "1HA",                        "aglycon"},
         { "1HB",                        "aglycon"},
- //    Names:    1tA 1tB
-  //    Types:    aglycon
         { "1tA",                        "aglycon"},
         { "1tB",                        "aglycon"},
- //    Names:    1nA 1nB
-  //    Types:    aglycon
         { "1nA",                        "aglycon"},
         { "1nB",                        "aglycon"},
- //    Names:    1eA 1eB
-  //    Types:    aglycon
         { "1eA",                        "aglycon"},
         { "1eB",                        "aglycon"},
- //    Names:    1fA 1fB
-  //    Types:    aglycon
         { "1fA",                        "aglycon"},
         { "1fB",                        "aglycon"},
- //    Names:    1lA 1lB
-  //    Types:    aglycon
         { "1lA",                        "aglycon"},
         { "1lB",                        "aglycon"},
- //    Names:    1gA 1gB
-  //    Types:    aglycon
         { "1gA",                        "aglycon"},
         { "1gB",                        "aglycon"},
- //    Names:    1kA 1kB
-  //    Types:    aglycon
         { "1kA",                        "aglycon"},
         { "1kB",                        "aglycon"},
- //    Names:    1mA 1mB
-  //    Types:    aglycon
         { "1mA",                        "aglycon"},
         { "1mB",                        "aglycon"},
- //    Names:    1qA 1qB
-  //    Types:    aglycon
         { "1qA",                        "aglycon"},
         { "1qB",                        "aglycon"},
- //    Names:    1hA 1hB
-  //    Types:    aglycon
         { "1hA",                        "aglycon"},
         { "1hB",                        "aglycon"},
- //    Names:    1VA 1VB
-  //    Types:    aglycon
         { "1VA",                        "aglycon"},
         { "1VB",                        "aglycon"},
- //    Names:    1YA 1YB
-  //    Types:    aglycon
         { "1YA",                        "aglycon"},
         { "1YB",                        "aglycon"},
- //    Names:    1WA 1WB
-  //    Types:    aglycon
         { "1WA",                        "aglycon"},
         { "1WB",                        "aglycon"},
- //    Names:    1vA 1vB
-  //    Types:    aglycon
         { "1vA",                        "aglycon"},
         { "1vB",                        "aglycon"},
- //    Names:    1yA 1yB
-  //    Types:    aglycon
         { "1yA",                        "aglycon"},
         { "1yB",                        "aglycon"},
- //    Names:    1wA 1wB
-  //    Types:    aglycon
         { "1wA",                        "aglycon"},
         { "1wB",                        "aglycon"},
- //    Names:    1OA 1OB
-  //    Types:    aglycon
         { "1OA",                        "aglycon"},
         { "1OB",                        "aglycon"},
- //    Names:    1ZA 1ZB
-  //    Types:    aglycon
         { "1ZA",                        "aglycon"},
         { "1ZB",                        "aglycon"},
- //    Names:    1UA 1UB
-  //    Types:    aglycon
         { "1UA",                        "aglycon"},
         { "1UB",                        "aglycon"},
- //    Names:    1oA 1oB
-  //    Types:    aglycon
         { "1oA",                        "aglycon"},
         { "1oB",                        "aglycon"},
- //    Names:    1zA 1zB
-  //    Types:    aglycon
         { "1zA",                        "aglycon"},
         { "1zB",                        "aglycon"},
- //    Names:    1uA 1uB
-  //    Types:    aglycon
         { "1uA",                        "aglycon"},
         { "1uB",                        "aglycon"},
- //    Names:    1AA 1AB 1AD 1AU
-  //    Types:    aglycon
         { "1AA",                        "aglycon"},
         { "1AB",                        "aglycon"},
         { "1AD",                        "aglycon"},
         { "1AU",                        "aglycon"},
- //    Names:    1DA 1DB 1DD 1DU
-  //    Types:    aglycon
         { "1DA",                        "aglycon"},
         { "1DB",                        "aglycon"},
         { "1DD",                        "aglycon"},
         { "1DU",                        "aglycon"},
- //    Names:    1RA 1RB 1RD 1RU
-  //    Types:    aglycon
         { "1RA",                        "aglycon"},
         { "1RB",                        "aglycon"},
         { "1RD",                        "aglycon"},
         { "1RU",                        "aglycon"},
- //    Names:    1XA 1XB 1XD 1XU
-  //    Types:    aglycon
         { "1XA",                        "aglycon"},
         { "1XB",                        "aglycon"},
         { "1XD",                        "aglycon"},
         { "1XU",                        "aglycon"},
- //    Names:    1aA 1aB 1aD 1aU
-  //    Types:    aglycon
         { "1aA",                        "aglycon"},
         { "1aB",                        "aglycon"},
         { "1aD",                        "aglycon"},
         { "1aU",                        "aglycon"},
- //    Names:    1dA 1dB 1dD 1dU
-  //    Types:    aglycon
         { "1dA",                        "aglycon"},
         { "1dB",                        "aglycon"},
         { "1dD",                        "aglycon"},
         { "1dU",                        "aglycon"},
- //    Names:    1rA 1rB 1rD 1rU
-  //    Types:    aglycon
         { "1rA",                        "aglycon"},
         { "1rB",                        "aglycon"},
         { "1rD",                        "aglycon"},
         { "1rU",                        "aglycon"},
- //    Names:    1xA 1xB 1xD 1xU
-  //    Types:    aglycon
         { "1xA",                        "aglycon"},
         { "1xB",                        "aglycon"},
         { "1xD",                        "aglycon"},
         { "1xU",                        "aglycon"},
- //    Names:    1AE
-  //    Types:    aglycon
         { "1AE",                        "aglycon"},
- //    Names:    1TV
-  //    Types:    aglycon
         { "1TV",                        "aglycon"},
- //    Names:    1Tv
-  //    Types:    aglycon
+        { "1Ae",                        "aglycon"},
         { "1Tv",                        "aglycon"},
- //    Names:    1tV
-  //    Types:    aglycon
         { "1tV",                        "aglycon"},
- //    Names:    1tv
-  //    Types:    aglycon
         { "1tv",                        "aglycon"},
- //    Names:    1YN
-  //    Types:    aglycon
         { "1YN",                        "aglycon"},
- //    Names:    1Yn
-  //    Types:    aglycon
         { "1Yn",                        "aglycon"},
- //    Names:    1YNP
-  //    Types:    aglycon
         {"1YNP",                        "aglycon"},
- //    Names:    1YnP
-  //    Types:    aglycon
         {"1YnP",                        "aglycon"},
- //    Names:    1YS
-  //    Types:    aglycon
         { "1YS",                        "aglycon"},
- //    Names:    1Ys
-  //    Types:    aglycon
         { "1Ys",                        "aglycon"},
- //    Names:    1yS
-  //    Types:    aglycon
         { "1yS",                        "aglycon"},
- //    Names:    1ys
-  //    Types:    aglycon
         { "1ys",                        "aglycon"},
- //    Names:    yCA vCA nCA uCA TCA YCA ZCA 1CA xCA sCA tCA 5CA WCA 4CA 3CA 2CA 0CA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "yCA",                   "carbohydrate"},
         { "yCA",                 "monosaccharide"},
         { "yCA",                       "pyranose"},
@@ -11918,9 +11491,6 @@ namespace
         { "0CA",          "gauche-effect=unknown"},
         { "0CA",                          "alpha"},
         { "0CA",                       "D-isomer"},
- //    Names:    yCB xCB vCB sCB nCB tCB uCB 5CB TCB WCB YCB 4CB ZCB 3CB 1CB 2CB 0CB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "yCB",                   "carbohydrate"},
         { "yCB",                 "monosaccharide"},
         { "yCB",                       "pyranose"},
@@ -12074,9 +11644,6 @@ namespace
         { "0CB",          "gauche-effect=unknown"},
         { "0CB",                           "beta"},
         { "0CB",                       "D-isomer"},
- //    Names:    yPA vPA nPA uPA TPA YPA ZPA 1PA xPA sPA tPA 5PA WPA 4PA 3PA 2PA 0PA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "yPA",                   "carbohydrate"},
         { "yPA",                 "monosaccharide"},
         { "yPA",                       "pyranose"},
@@ -12230,9 +11797,6 @@ namespace
         { "0PA",          "gauche-effect=unknown"},
         { "0PA",                          "alpha"},
         { "0PA",                       "D-isomer"},
- //    Names:    yPB xPB vPB sPB nPB tPB uPB 5PB TPB WPB YPB 4PB ZPB 3PB 1PB 2PB 0PB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "yPB",                   "carbohydrate"},
         { "yPB",                 "monosaccharide"},
         { "yPB",                       "pyranose"},
@@ -12386,9 +11950,6 @@ namespace
         { "0PB",          "gauche-effect=unknown"},
         { "0PB",                           "beta"},
         { "0PB",                       "D-isomer"},
- //    Names:    yBA vBA nBA uBA TBA YBA ZBA 1BA xBA sBA tBA 5BA WBA 4BA 3BA 2BA 0BA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "yBA",                   "carbohydrate"},
         { "yBA",                 "monosaccharide"},
         { "yBA",                       "pyranose"},
@@ -12542,9 +12103,6 @@ namespace
         { "0BA",          "gauche-effect=unknown"},
         { "0BA",                          "alpha"},
         { "0BA",                       "D-isomer"},
- //    Names:    yBB xBB vBB sBB nBB tBB uBB 5BB TBB WBB YBB 4BB ZBB 3BB 1BB 2BB 0BB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "yBB",                   "carbohydrate"},
         { "yBB",                 "monosaccharide"},
         { "yBB",                       "pyranose"},
@@ -12698,9 +12256,6 @@ namespace
         { "0BB",          "gauche-effect=unknown"},
         { "0BB",                           "beta"},
         { "0BB",                       "D-isomer"},
- //    Names:    yJA vJA nJA uJA TJA YJA ZJA 1JA xJA sJA tJA 5JA WJA 4JA 3JA 2JA 0JA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "yJA",                   "carbohydrate"},
         { "yJA",                 "monosaccharide"},
         { "yJA",                       "pyranose"},
@@ -12854,9 +12409,6 @@ namespace
         { "0JA",          "gauche-effect=unknown"},
         { "0JA",                          "alpha"},
         { "0JA",                       "D-isomer"},
- //    Names:    yJB xJB vJB sJB nJB tJB uJB 5JB TJB WJB YJB 4JB ZJB 3JB 1JB 2JB 0JB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "yJB",                   "carbohydrate"},
         { "yJB",                 "monosaccharide"},
         { "yJB",                       "pyranose"},
@@ -13010,9 +12562,6 @@ namespace
         { "0JB",          "gauche-effect=unknown"},
         { "0JB",                           "beta"},
         { "0JB",                       "D-isomer"},
- //    Names:    ycA xcA vcA scA ncA tcA ucA 5cA TcA WcA YcA 4cA ZcA 3cA 1cA 2cA 0cA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "ycA",                   "carbohydrate"},
         { "ycA",                 "monosaccharide"},
         { "ycA",                       "pyranose"},
@@ -13166,9 +12715,6 @@ namespace
         { "0cA",          "gauche-effect=unknown"},
         { "0cA",                          "alpha"},
         { "0cA",                       "L-isomer"},
- //    Names:    ycB vcB ncB ucB TcB YcB ZcB 1cB xcB scB tcB 5cB WcB 4cB 3cB 2cB 0cB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "ycB",                   "carbohydrate"},
         { "ycB",                 "monosaccharide"},
         { "ycB",                       "pyranose"},
@@ -13322,9 +12868,6 @@ namespace
         { "0cB",          "gauche-effect=unknown"},
         { "0cB",                           "beta"},
         { "0cB",                       "L-isomer"},
- //    Names:    ypA xpA vpA spA npA tpA upA 5pA TpA WpA YpA 4pA ZpA 3pA 1pA 2pA 0pA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "ypA",                   "carbohydrate"},
         { "ypA",                 "monosaccharide"},
         { "ypA",                       "pyranose"},
@@ -13478,9 +13021,6 @@ namespace
         { "0pA",          "gauche-effect=unknown"},
         { "0pA",                          "alpha"},
         { "0pA",                       "L-isomer"},
- //    Names:    ypB vpB npB upB TpB YpB ZpB 1pB xpB spB tpB 5pB WpB 4pB 3pB 2pB 0pB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "ypB",                   "carbohydrate"},
         { "ypB",                 "monosaccharide"},
         { "ypB",                       "pyranose"},
@@ -13634,9 +13174,6 @@ namespace
         { "0pB",          "gauche-effect=unknown"},
         { "0pB",                           "beta"},
         { "0pB",                       "L-isomer"},
- //    Names:    ybA xbA vbA sbA nbA tbA ubA 5bA TbA WbA YbA 4bA ZbA 3bA 1bA 2bA 0bA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "ybA",                   "carbohydrate"},
         { "ybA",                 "monosaccharide"},
         { "ybA",                       "pyranose"},
@@ -13790,9 +13327,6 @@ namespace
         { "0bA",          "gauche-effect=unknown"},
         { "0bA",                          "alpha"},
         { "0bA",                       "L-isomer"},
- //    Names:    ybB vbB nbB ubB TbB YbB ZbB 1bB xbB sbB tbB 5bB WbB 4bB 3bB 2bB 0bB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "ybB",                   "carbohydrate"},
         { "ybB",                 "monosaccharide"},
         { "ybB",                       "pyranose"},
@@ -13946,9 +13480,6 @@ namespace
         { "0bB",          "gauche-effect=unknown"},
         { "0bB",                           "beta"},
         { "0bB",                       "L-isomer"},
- //    Names:    yjA xjA vjA sjA njA tjA ujA 5jA TjA WjA YjA 4jA ZjA 3jA 1jA 2jA 0jA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "yjA",                   "carbohydrate"},
         { "yjA",                 "monosaccharide"},
         { "yjA",                       "pyranose"},
@@ -14102,9 +13633,6 @@ namespace
         { "0jA",          "gauche-effect=unknown"},
         { "0jA",                          "alpha"},
         { "0jA",                       "L-isomer"},
- //    Names:    yjB vjB njB ujB TjB YjB ZjB 1jB xjB sjB tjB 5jB WjB 4jB 3jB 2jB 0jB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "yjB",                   "carbohydrate"},
         { "yjB",                 "monosaccharide"},
         { "yjB",                       "pyranose"},
@@ -14258,9 +13786,6 @@ namespace
         { "0jB",          "gauche-effect=unknown"},
         { "0jB",                           "beta"},
         { "0jB",                       "L-isomer"},
- //    Names:    PCD RCD SCD XCD TCD YCD ZCD 1CD QCD UCD VCD 6CD WCD 4CD 3CD 2CD 0CD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "PCD",                   "carbohydrate"},
         { "PCD",                 "monosaccharide"},
         { "PCD",                       "furanose"},
@@ -14414,9 +13939,6 @@ namespace
         { "0CD",          "gauche-effect=unknown"},
         { "0CD",                          "alpha"},
         { "0CD",                       "D-isomer"},
- //    Names:    PCU QCU RCU UCU SCU VCU XCU 6CU TCU WCU YCU 4CU ZCU 3CU 1CU 2CU 0CU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "PCU",                   "carbohydrate"},
         { "PCU",                 "monosaccharide"},
         { "PCU",                       "furanose"},
@@ -14570,9 +14092,6 @@ namespace
         { "0CU",          "gauche-effect=unknown"},
         { "0CU",                           "beta"},
         { "0CU",                       "D-isomer"},
- //    Names:    PPD RPD SPD XPD TPD YPD ZPD 1PD QPD UPD VPD 6PD WPD 4PD 3PD 2PD 0PD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "PPD",                   "carbohydrate"},
         { "PPD",                 "monosaccharide"},
         { "PPD",                       "furanose"},
@@ -14726,9 +14245,6 @@ namespace
         { "0PD",          "gauche-effect=unknown"},
         { "0PD",                          "alpha"},
         { "0PD",                       "D-isomer"},
- //    Names:    PPU QPU RPU UPU SPU VPU XPU 6PU TPU WPU YPU 4PU ZPU 3PU 1PU 2PU 0PU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "PPU",                   "carbohydrate"},
         { "PPU",                 "monosaccharide"},
         { "PPU",                       "furanose"},
@@ -14882,9 +14398,6 @@ namespace
         { "0PU",          "gauche-effect=unknown"},
         { "0PU",                           "beta"},
         { "0PU",                       "D-isomer"},
- //    Names:    PBD RBD SBD XBD TBD YBD ZBD 1BD QBD UBD VBD 6BD WBD 4BD 3BD 2BD 0BD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "PBD",                   "carbohydrate"},
         { "PBD",                 "monosaccharide"},
         { "PBD",                       "furanose"},
@@ -15038,9 +14551,6 @@ namespace
         { "0BD",          "gauche-effect=unknown"},
         { "0BD",                          "alpha"},
         { "0BD",                       "D-isomer"},
- //    Names:    PBU QBU RBU UBU SBU VBU XBU 6BU TBU WBU YBU 4BU ZBU 3BU 1BU 2BU 0BU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "PBU",                   "carbohydrate"},
         { "PBU",                 "monosaccharide"},
         { "PBU",                       "furanose"},
@@ -15194,9 +14704,6 @@ namespace
         { "0BU",          "gauche-effect=unknown"},
         { "0BU",                           "beta"},
         { "0BU",                       "D-isomer"},
- //    Names:    PJD RJD SJD XJD TJD YJD ZJD 1JD QJD UJD VJD 6JD WJD 4JD 3JD 2JD 0JD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha D-isomer
         { "PJD",                   "carbohydrate"},
         { "PJD",                 "monosaccharide"},
         { "PJD",                       "furanose"},
@@ -15350,9 +14857,6 @@ namespace
         { "0JD",          "gauche-effect=unknown"},
         { "0JD",                          "alpha"},
         { "0JD",                       "D-isomer"},
- //    Names:    PJU QJU RJU UJU SJU VJU XJU 6JU TJU WJU YJU 4JU ZJU 3JU 1JU 2JU 0JU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta D-isomer
         { "PJU",                   "carbohydrate"},
         { "PJU",                 "monosaccharide"},
         { "PJU",                       "furanose"},
@@ -15506,9 +15010,6 @@ namespace
         { "0JU",          "gauche-effect=unknown"},
         { "0JU",                           "beta"},
         { "0JU",                       "D-isomer"},
- //    Names:    PcD QcD RcD UcD ScD VcD XcD 6cD TcD WcD YcD 4cD ZcD 3cD 1cD 2cD 0cD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "PcD",                   "carbohydrate"},
         { "PcD",                 "monosaccharide"},
         { "PcD",                       "furanose"},
@@ -15662,9 +15163,6 @@ namespace
         { "0cD",          "gauche-effect=unknown"},
         { "0cD",                          "alpha"},
         { "0cD",                       "L-isomer"},
- //    Names:    PcU RcU ScU XcU TcU YcU ZcU 1cU QcU UcU VcU 6cU WcU 4cU 3cU 2cU 0cU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "PcU",                   "carbohydrate"},
         { "PcU",                 "monosaccharide"},
         { "PcU",                       "furanose"},
@@ -15818,9 +15316,6 @@ namespace
         { "0cU",          "gauche-effect=unknown"},
         { "0cU",                           "beta"},
         { "0cU",                       "L-isomer"},
- //    Names:    PpD QpD RpD UpD SpD VpD XpD 6pD TpD WpD YpD 4pD ZpD 3pD 1pD 2pD 0pD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "PpD",                   "carbohydrate"},
         { "PpD",                 "monosaccharide"},
         { "PpD",                       "furanose"},
@@ -15974,9 +15469,6 @@ namespace
         { "0pD",          "gauche-effect=unknown"},
         { "0pD",                          "alpha"},
         { "0pD",                       "L-isomer"},
- //    Names:    PpU RpU SpU XpU TpU YpU ZpU 1pU QpU UpU VpU 6pU WpU 4pU 3pU 2pU 0pU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "PpU",                   "carbohydrate"},
         { "PpU",                 "monosaccharide"},
         { "PpU",                       "furanose"},
@@ -16130,9 +15622,6 @@ namespace
         { "0pU",          "gauche-effect=unknown"},
         { "0pU",                           "beta"},
         { "0pU",                       "L-isomer"},
- //    Names:    PbD QbD RbD UbD SbD VbD XbD 6bD TbD WbD YbD 4bD ZbD 3bD 1bD 2bD 0bD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "PbD",                   "carbohydrate"},
         { "PbD",                 "monosaccharide"},
         { "PbD",                       "furanose"},
@@ -16286,9 +15775,6 @@ namespace
         { "0bD",          "gauche-effect=unknown"},
         { "0bD",                          "alpha"},
         { "0bD",                       "L-isomer"},
- //    Names:    PbU RbU SbU XbU TbU YbU ZbU 1bU QbU UbU VbU 6bU WbU 4bU 3bU 2bU 0bU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "PbU",                   "carbohydrate"},
         { "PbU",                 "monosaccharide"},
         { "PbU",                       "furanose"},
@@ -16442,9 +15928,6 @@ namespace
         { "0bU",          "gauche-effect=unknown"},
         { "0bU",                           "beta"},
         { "0bU",                       "L-isomer"},
- //    Names:    PjD QjD RjD UjD SjD VjD XjD 6jD TjD WjD YjD 4jD ZjD 3jD 1jD 2jD 0jD
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    alpha L-isomer
         { "PjD",                   "carbohydrate"},
         { "PjD",                 "monosaccharide"},
         { "PjD",                       "furanose"},
@@ -16598,9 +16081,6 @@ namespace
         { "0jD",          "gauche-effect=unknown"},
         { "0jD",                          "alpha"},
         { "0jD",                       "L-isomer"},
- //    Names:    PjU RjU SjU XjU TjU YjU ZjU 1jU QjU UjU VjU 6jU WjU 4jU 3jU 2jU 0jU
-  //    Types:     carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown
-  //    beta L-isomer
         { "PjU",                   "carbohydrate"},
         { "PjU",                 "monosaccharide"},
         { "PjU",                       "furanose"},
@@ -16754,9 +16234,182 @@ namespace
         { "0jU",          "gauche-effect=unknown"},
         { "0jU",                           "beta"},
         { "0jU",                       "L-isomer"},
- //    Names:    0KO
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=8 formal-charge=-1 alpha D-isomer deoxy
-  //    ulosonate gauche-effect=unknown
+        { "dKO",                   "carbohydrate"},
+        { "dKO",                 "monosaccharide"},
+        { "dKO",                       "pyranose"},
+        { "dKO",                         "ketose"},
+        { "dKO",                     "n-carbon=8"},
+        { "dKO",               "formal-charge=-1"},
+        { "dKO",                          "alpha"},
+        { "dKO",                       "D-isomer"},
+        { "dKO",                          "deoxy"},
+        { "dKO",                      "ulosonate"},
+        { "dKO",          "gauche-effect=unknown"},
+        { "kKO",                   "carbohydrate"},
+        { "kKO",                 "monosaccharide"},
+        { "kKO",                       "pyranose"},
+        { "kKO",                         "ketose"},
+        { "kKO",                     "n-carbon=8"},
+        { "kKO",               "formal-charge=-1"},
+        { "kKO",                          "alpha"},
+        { "kKO",                       "D-isomer"},
+        { "kKO",                          "deoxy"},
+        { "kKO",                      "ulosonate"},
+        { "kKO",          "gauche-effect=unknown"},
+        { "jKO",                   "carbohydrate"},
+        { "jKO",                 "monosaccharide"},
+        { "jKO",                       "pyranose"},
+        { "jKO",                         "ketose"},
+        { "jKO",                     "n-carbon=8"},
+        { "jKO",               "formal-charge=-1"},
+        { "jKO",                          "alpha"},
+        { "jKO",                       "D-isomer"},
+        { "jKO",                          "deoxy"},
+        { "jKO",                      "ulosonate"},
+        { "jKO",          "gauche-effect=unknown"},
+        { "sKO",                   "carbohydrate"},
+        { "sKO",                 "monosaccharide"},
+        { "sKO",                       "pyranose"},
+        { "sKO",                         "ketose"},
+        { "sKO",                     "n-carbon=8"},
+        { "sKO",               "formal-charge=-1"},
+        { "sKO",                          "alpha"},
+        { "sKO",                       "D-isomer"},
+        { "sKO",                          "deoxy"},
+        { "sKO",                      "ulosonate"},
+        { "sKO",          "gauche-effect=unknown"},
+        { "EKO",                   "carbohydrate"},
+        { "EKO",                 "monosaccharide"},
+        { "EKO",                       "pyranose"},
+        { "EKO",                         "ketose"},
+        { "EKO",                     "n-carbon=8"},
+        { "EKO",               "formal-charge=-1"},
+        { "EKO",                          "alpha"},
+        { "EKO",                       "D-isomer"},
+        { "EKO",                          "deoxy"},
+        { "EKO",                      "ulosonate"},
+        { "EKO",          "gauche-effect=unknown"},
+        { "KKO",                   "carbohydrate"},
+        { "KKO",                 "monosaccharide"},
+        { "KKO",                       "pyranose"},
+        { "KKO",                         "ketose"},
+        { "KKO",                     "n-carbon=8"},
+        { "KKO",               "formal-charge=-1"},
+        { "KKO",                          "alpha"},
+        { "KKO",                       "D-isomer"},
+        { "KKO",                          "deoxy"},
+        { "KKO",                      "ulosonate"},
+        { "KKO",          "gauche-effect=unknown"},
+        { "JKO",                   "carbohydrate"},
+        { "JKO",                 "monosaccharide"},
+        { "JKO",                       "pyranose"},
+        { "JKO",                         "ketose"},
+        { "JKO",                     "n-carbon=8"},
+        { "JKO",               "formal-charge=-1"},
+        { "JKO",                          "alpha"},
+        { "JKO",                       "D-isomer"},
+        { "JKO",                          "deoxy"},
+        { "JKO",                      "ulosonate"},
+        { "JKO",          "gauche-effect=unknown"},
+        { "4KO",                   "carbohydrate"},
+        { "4KO",                 "monosaccharide"},
+        { "4KO",                       "pyranose"},
+        { "4KO",                         "ketose"},
+        { "4KO",                     "n-carbon=8"},
+        { "4KO",               "formal-charge=-1"},
+        { "4KO",                          "alpha"},
+        { "4KO",                       "D-isomer"},
+        { "4KO",                          "deoxy"},
+        { "4KO",                      "ulosonate"},
+        { "4KO",          "gauche-effect=unknown"},
+        { "hKO",                   "carbohydrate"},
+        { "hKO",                 "monosaccharide"},
+        { "hKO",                       "pyranose"},
+        { "hKO",                         "ketose"},
+        { "hKO",                     "n-carbon=8"},
+        { "hKO",               "formal-charge=-1"},
+        { "hKO",                          "alpha"},
+        { "hKO",                       "D-isomer"},
+        { "hKO",                          "deoxy"},
+        { "hKO",                      "ulosonate"},
+        { "hKO",          "gauche-effect=unknown"},
+        { "qKO",                   "carbohydrate"},
+        { "qKO",                 "monosaccharide"},
+        { "qKO",                       "pyranose"},
+        { "qKO",                         "ketose"},
+        { "qKO",                     "n-carbon=8"},
+        { "qKO",               "formal-charge=-1"},
+        { "qKO",                          "alpha"},
+        { "qKO",                       "D-isomer"},
+        { "qKO",                          "deoxy"},
+        { "qKO",                      "ulosonate"},
+        { "qKO",          "gauche-effect=unknown"},
+        { "pKO",                   "carbohydrate"},
+        { "pKO",                 "monosaccharide"},
+        { "pKO",                       "pyranose"},
+        { "pKO",                         "ketose"},
+        { "pKO",                     "n-carbon=8"},
+        { "pKO",               "formal-charge=-1"},
+        { "pKO",                          "alpha"},
+        { "pKO",                       "D-isomer"},
+        { "pKO",                          "deoxy"},
+        { "pKO",                      "ulosonate"},
+        { "pKO",          "gauche-effect=unknown"},
+        { "5KO",                   "carbohydrate"},
+        { "5KO",                 "monosaccharide"},
+        { "5KO",                       "pyranose"},
+        { "5KO",                         "ketose"},
+        { "5KO",                     "n-carbon=8"},
+        { "5KO",               "formal-charge=-1"},
+        { "5KO",                          "alpha"},
+        { "5KO",                       "D-isomer"},
+        { "5KO",                          "deoxy"},
+        { "5KO",                      "ulosonate"},
+        { "5KO",          "gauche-effect=unknown"},
+        { "HKO",                   "carbohydrate"},
+        { "HKO",                 "monosaccharide"},
+        { "HKO",                       "pyranose"},
+        { "HKO",                         "ketose"},
+        { "HKO",                     "n-carbon=8"},
+        { "HKO",               "formal-charge=-1"},
+        { "HKO",                          "alpha"},
+        { "HKO",                       "D-isomer"},
+        { "HKO",                          "deoxy"},
+        { "HKO",                      "ulosonate"},
+        { "HKO",          "gauche-effect=unknown"},
+        { "7KO",                   "carbohydrate"},
+        { "7KO",                 "monosaccharide"},
+        { "7KO",                       "pyranose"},
+        { "7KO",                         "ketose"},
+        { "7KO",                     "n-carbon=8"},
+        { "7KO",               "formal-charge=-1"},
+        { "7KO",                          "alpha"},
+        { "7KO",                       "D-isomer"},
+        { "7KO",                          "deoxy"},
+        { "7KO",                      "ulosonate"},
+        { "7KO",          "gauche-effect=unknown"},
+        { "8KO",                   "carbohydrate"},
+        { "8KO",                 "monosaccharide"},
+        { "8KO",                       "pyranose"},
+        { "8KO",                         "ketose"},
+        { "8KO",                     "n-carbon=8"},
+        { "8KO",               "formal-charge=-1"},
+        { "8KO",                          "alpha"},
+        { "8KO",                       "D-isomer"},
+        { "8KO",                          "deoxy"},
+        { "8KO",                      "ulosonate"},
+        { "8KO",          "gauche-effect=unknown"},
+        { "2KO",                   "carbohydrate"},
+        { "2KO",                 "monosaccharide"},
+        { "2KO",                       "pyranose"},
+        { "2KO",                         "ketose"},
+        { "2KO",                     "n-carbon=8"},
+        { "2KO",               "formal-charge=-1"},
+        { "2KO",                          "alpha"},
+        { "2KO",                       "D-isomer"},
+        { "2KO",                          "deoxy"},
+        { "2KO",                      "ulosonate"},
+        { "2KO",          "gauche-effect=unknown"},
         { "0KO",                   "carbohydrate"},
         { "0KO",                 "monosaccharide"},
         { "0KO",                       "pyranose"},
@@ -16768,9 +16421,358 @@ namespace
         { "0KO",                          "deoxy"},
         { "0KO",                      "ulosonate"},
         { "0KO",          "gauche-effect=unknown"},
- //    Names:    0KN
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha D-isomer deoxy
-  //    ulosonate gauche-effect=unknown
+        { "aKN",                   "carbohydrate"},
+        { "aKN",                 "monosaccharide"},
+        { "aKN",                       "pyranose"},
+        { "aKN",                         "ketose"},
+        { "aKN",                     "n-carbon=9"},
+        { "aKN",               "formal-charge=-1"},
+        { "aKN",                          "alpha"},
+        { "aKN",                       "D-isomer"},
+        { "aKN",                          "deoxy"},
+        { "aKN",                      "ulosonate"},
+        { "aKN",          "gauche-effect=unknown"},
+        { "bKN",                   "carbohydrate"},
+        { "bKN",                 "monosaccharide"},
+        { "bKN",                       "pyranose"},
+        { "bKN",                         "ketose"},
+        { "bKN",                     "n-carbon=9"},
+        { "bKN",               "formal-charge=-1"},
+        { "bKN",                          "alpha"},
+        { "bKN",                       "D-isomer"},
+        { "bKN",                          "deoxy"},
+        { "bKN",                      "ulosonate"},
+        { "bKN",          "gauche-effect=unknown"},
+        { "AKN",                   "carbohydrate"},
+        { "AKN",                 "monosaccharide"},
+        { "AKN",                       "pyranose"},
+        { "AKN",                         "ketose"},
+        { "AKN",                     "n-carbon=9"},
+        { "AKN",               "formal-charge=-1"},
+        { "AKN",                          "alpha"},
+        { "AKN",                       "D-isomer"},
+        { "AKN",                          "deoxy"},
+        { "AKN",                      "ulosonate"},
+        { "AKN",          "gauche-effect=unknown"},
+        { "BKN",                   "carbohydrate"},
+        { "BKN",                 "monosaccharide"},
+        { "BKN",                       "pyranose"},
+        { "BKN",                         "ketose"},
+        { "BKN",                     "n-carbon=9"},
+        { "BKN",               "formal-charge=-1"},
+        { "BKN",                          "alpha"},
+        { "BKN",                       "D-isomer"},
+        { "BKN",                          "deoxy"},
+        { "BKN",                      "ulosonate"},
+        { "BKN",          "gauche-effect=unknown"},
+        { "zKN",                   "carbohydrate"},
+        { "zKN",                 "monosaccharide"},
+        { "zKN",                       "pyranose"},
+        { "zKN",                         "ketose"},
+        { "zKN",                     "n-carbon=9"},
+        { "zKN",               "formal-charge=-1"},
+        { "zKN",                          "alpha"},
+        { "zKN",                       "D-isomer"},
+        { "zKN",                          "deoxy"},
+        { "zKN",                      "ulosonate"},
+        { "zKN",          "gauche-effect=unknown"},
+        { "fKN",                   "carbohydrate"},
+        { "fKN",                 "monosaccharide"},
+        { "fKN",                       "pyranose"},
+        { "fKN",                         "ketose"},
+        { "fKN",                     "n-carbon=9"},
+        { "fKN",               "formal-charge=-1"},
+        { "fKN",                          "alpha"},
+        { "fKN",                       "D-isomer"},
+        { "fKN",                          "deoxy"},
+        { "fKN",                      "ulosonate"},
+        { "fKN",          "gauche-effect=unknown"},
+        { "CKN",                   "carbohydrate"},
+        { "CKN",                 "monosaccharide"},
+        { "CKN",                       "pyranose"},
+        { "CKN",                         "ketose"},
+        { "CKN",                     "n-carbon=9"},
+        { "CKN",               "formal-charge=-1"},
+        { "CKN",                          "alpha"},
+        { "CKN",                       "D-isomer"},
+        { "CKN",                          "deoxy"},
+        { "CKN",                      "ulosonate"},
+        { "CKN",          "gauche-effect=unknown"},
+        { "FKN",                   "carbohydrate"},
+        { "FKN",                 "monosaccharide"},
+        { "FKN",                       "pyranose"},
+        { "FKN",                         "ketose"},
+        { "FKN",                     "n-carbon=9"},
+        { "FKN",               "formal-charge=-1"},
+        { "FKN",                          "alpha"},
+        { "FKN",                       "D-isomer"},
+        { "FKN",                          "deoxy"},
+        { "FKN",                      "ulosonate"},
+        { "FKN",          "gauche-effect=unknown"},
+        { "cKN",                   "carbohydrate"},
+        { "cKN",                 "monosaccharide"},
+        { "cKN",                       "pyranose"},
+        { "cKN",                         "ketose"},
+        { "cKN",                     "n-carbon=9"},
+        { "cKN",               "formal-charge=-1"},
+        { "cKN",                          "alpha"},
+        { "cKN",                       "D-isomer"},
+        { "cKN",                          "deoxy"},
+        { "cKN",                      "ulosonate"},
+        { "cKN",          "gauche-effect=unknown"},
+        { "gKN",                   "carbohydrate"},
+        { "gKN",                 "monosaccharide"},
+        { "gKN",                       "pyranose"},
+        { "gKN",                         "ketose"},
+        { "gKN",                     "n-carbon=9"},
+        { "gKN",               "formal-charge=-1"},
+        { "gKN",                          "alpha"},
+        { "gKN",                       "D-isomer"},
+        { "gKN",                          "deoxy"},
+        { "gKN",                      "ulosonate"},
+        { "gKN",          "gauche-effect=unknown"},
+        { "DKN",                   "carbohydrate"},
+        { "DKN",                 "monosaccharide"},
+        { "DKN",                       "pyranose"},
+        { "DKN",                         "ketose"},
+        { "DKN",                     "n-carbon=9"},
+        { "DKN",               "formal-charge=-1"},
+        { "DKN",                          "alpha"},
+        { "DKN",                       "D-isomer"},
+        { "DKN",                          "deoxy"},
+        { "DKN",                      "ulosonate"},
+        { "DKN",          "gauche-effect=unknown"},
+        { "GKN",                   "carbohydrate"},
+        { "GKN",                 "monosaccharide"},
+        { "GKN",                       "pyranose"},
+        { "GKN",                         "ketose"},
+        { "GKN",                     "n-carbon=9"},
+        { "GKN",               "formal-charge=-1"},
+        { "GKN",                          "alpha"},
+        { "GKN",                       "D-isomer"},
+        { "GKN",                          "deoxy"},
+        { "GKN",                      "ulosonate"},
+        { "GKN",          "gauche-effect=unknown"},
+        { "iKN",                   "carbohydrate"},
+        { "iKN",                 "monosaccharide"},
+        { "iKN",                       "pyranose"},
+        { "iKN",                         "ketose"},
+        { "iKN",                     "n-carbon=9"},
+        { "iKN",               "formal-charge=-1"},
+        { "iKN",                          "alpha"},
+        { "iKN",                       "D-isomer"},
+        { "iKN",                          "deoxy"},
+        { "iKN",                      "ulosonate"},
+        { "iKN",          "gauche-effect=unknown"},
+        { "oKN",                   "carbohydrate"},
+        { "oKN",                 "monosaccharide"},
+        { "oKN",                       "pyranose"},
+        { "oKN",                         "ketose"},
+        { "oKN",                     "n-carbon=9"},
+        { "oKN",               "formal-charge=-1"},
+        { "oKN",                          "alpha"},
+        { "oKN",                       "D-isomer"},
+        { "oKN",                          "deoxy"},
+        { "oKN",                      "ulosonate"},
+        { "oKN",          "gauche-effect=unknown"},
+        { "IKN",                   "carbohydrate"},
+        { "IKN",                 "monosaccharide"},
+        { "IKN",                       "pyranose"},
+        { "IKN",                         "ketose"},
+        { "IKN",                     "n-carbon=9"},
+        { "IKN",               "formal-charge=-1"},
+        { "IKN",                          "alpha"},
+        { "IKN",                       "D-isomer"},
+        { "IKN",                          "deoxy"},
+        { "IKN",                      "ulosonate"},
+        { "IKN",          "gauche-effect=unknown"},
+        { "9KN",                   "carbohydrate"},
+        { "9KN",                 "monosaccharide"},
+        { "9KN",                       "pyranose"},
+        { "9KN",                         "ketose"},
+        { "9KN",                     "n-carbon=9"},
+        { "9KN",               "formal-charge=-1"},
+        { "9KN",                          "alpha"},
+        { "9KN",                       "D-isomer"},
+        { "9KN",                          "deoxy"},
+        { "9KN",                      "ulosonate"},
+        { "9KN",          "gauche-effect=unknown"},
+        { "dKN",                   "carbohydrate"},
+        { "dKN",                 "monosaccharide"},
+        { "dKN",                       "pyranose"},
+        { "dKN",                         "ketose"},
+        { "dKN",                     "n-carbon=9"},
+        { "dKN",               "formal-charge=-1"},
+        { "dKN",                          "alpha"},
+        { "dKN",                       "D-isomer"},
+        { "dKN",                          "deoxy"},
+        { "dKN",                      "ulosonate"},
+        { "dKN",          "gauche-effect=unknown"},
+        { "hKN",                   "carbohydrate"},
+        { "hKN",                 "monosaccharide"},
+        { "hKN",                       "pyranose"},
+        { "hKN",                         "ketose"},
+        { "hKN",                     "n-carbon=9"},
+        { "hKN",               "formal-charge=-1"},
+        { "hKN",                          "alpha"},
+        { "hKN",                       "D-isomer"},
+        { "hKN",                          "deoxy"},
+        { "hKN",                      "ulosonate"},
+        { "hKN",          "gauche-effect=unknown"},
+        { "EKN",                   "carbohydrate"},
+        { "EKN",                 "monosaccharide"},
+        { "EKN",                       "pyranose"},
+        { "EKN",                         "ketose"},
+        { "EKN",                     "n-carbon=9"},
+        { "EKN",               "formal-charge=-1"},
+        { "EKN",                          "alpha"},
+        { "EKN",                       "D-isomer"},
+        { "EKN",                          "deoxy"},
+        { "EKN",                      "ulosonate"},
+        { "EKN",          "gauche-effect=unknown"},
+        { "HKN",                   "carbohydrate"},
+        { "HKN",                 "monosaccharide"},
+        { "HKN",                       "pyranose"},
+        { "HKN",                         "ketose"},
+        { "HKN",                     "n-carbon=9"},
+        { "HKN",               "formal-charge=-1"},
+        { "HKN",                          "alpha"},
+        { "HKN",                       "D-isomer"},
+        { "HKN",                          "deoxy"},
+        { "HKN",                      "ulosonate"},
+        { "HKN",          "gauche-effect=unknown"},
+        { "jKN",                   "carbohydrate"},
+        { "jKN",                 "monosaccharide"},
+        { "jKN",                       "pyranose"},
+        { "jKN",                         "ketose"},
+        { "jKN",                     "n-carbon=9"},
+        { "jKN",               "formal-charge=-1"},
+        { "jKN",                          "alpha"},
+        { "jKN",                       "D-isomer"},
+        { "jKN",                          "deoxy"},
+        { "jKN",                      "ulosonate"},
+        { "jKN",          "gauche-effect=unknown"},
+        { "pKN",                   "carbohydrate"},
+        { "pKN",                 "monosaccharide"},
+        { "pKN",                       "pyranose"},
+        { "pKN",                         "ketose"},
+        { "pKN",                     "n-carbon=9"},
+        { "pKN",               "formal-charge=-1"},
+        { "pKN",                          "alpha"},
+        { "pKN",                       "D-isomer"},
+        { "pKN",                          "deoxy"},
+        { "pKN",                      "ulosonate"},
+        { "pKN",          "gauche-effect=unknown"},
+        { "JKN",                   "carbohydrate"},
+        { "JKN",                 "monosaccharide"},
+        { "JKN",                       "pyranose"},
+        { "JKN",                         "ketose"},
+        { "JKN",                     "n-carbon=9"},
+        { "JKN",               "formal-charge=-1"},
+        { "JKN",                          "alpha"},
+        { "JKN",                       "D-isomer"},
+        { "JKN",                          "deoxy"},
+        { "JKN",                      "ulosonate"},
+        { "JKN",          "gauche-effect=unknown"},
+        { "8KN",                   "carbohydrate"},
+        { "8KN",                 "monosaccharide"},
+        { "8KN",                       "pyranose"},
+        { "8KN",                         "ketose"},
+        { "8KN",                     "n-carbon=9"},
+        { "8KN",               "formal-charge=-1"},
+        { "8KN",                          "alpha"},
+        { "8KN",                       "D-isomer"},
+        { "8KN",                          "deoxy"},
+        { "8KN",                      "ulosonate"},
+        { "8KN",          "gauche-effect=unknown"},
+        { "kKN",                   "carbohydrate"},
+        { "kKN",                 "monosaccharide"},
+        { "kKN",                       "pyranose"},
+        { "kKN",                         "ketose"},
+        { "kKN",                     "n-carbon=9"},
+        { "kKN",               "formal-charge=-1"},
+        { "kKN",                          "alpha"},
+        { "kKN",                       "D-isomer"},
+        { "kKN",                          "deoxy"},
+        { "kKN",                      "ulosonate"},
+        { "kKN",          "gauche-effect=unknown"},
+        { "qKN",                   "carbohydrate"},
+        { "qKN",                 "monosaccharide"},
+        { "qKN",                       "pyranose"},
+        { "qKN",                         "ketose"},
+        { "qKN",                     "n-carbon=9"},
+        { "qKN",               "formal-charge=-1"},
+        { "qKN",                          "alpha"},
+        { "qKN",                       "D-isomer"},
+        { "qKN",                          "deoxy"},
+        { "qKN",                      "ulosonate"},
+        { "qKN",          "gauche-effect=unknown"},
+        { "KKN",                   "carbohydrate"},
+        { "KKN",                 "monosaccharide"},
+        { "KKN",                       "pyranose"},
+        { "KKN",                         "ketose"},
+        { "KKN",                     "n-carbon=9"},
+        { "KKN",               "formal-charge=-1"},
+        { "KKN",                          "alpha"},
+        { "KKN",                       "D-isomer"},
+        { "KKN",                          "deoxy"},
+        { "KKN",                      "ulosonate"},
+        { "KKN",          "gauche-effect=unknown"},
+        { "7KN",                   "carbohydrate"},
+        { "7KN",                 "monosaccharide"},
+        { "7KN",                       "pyranose"},
+        { "7KN",                         "ketose"},
+        { "7KN",                     "n-carbon=9"},
+        { "7KN",               "formal-charge=-1"},
+        { "7KN",                          "alpha"},
+        { "7KN",                       "D-isomer"},
+        { "7KN",                          "deoxy"},
+        { "7KN",                      "ulosonate"},
+        { "7KN",          "gauche-effect=unknown"},
+        { "sKN",                   "carbohydrate"},
+        { "sKN",                 "monosaccharide"},
+        { "sKN",                       "pyranose"},
+        { "sKN",                         "ketose"},
+        { "sKN",                     "n-carbon=9"},
+        { "sKN",               "formal-charge=-1"},
+        { "sKN",                          "alpha"},
+        { "sKN",                       "D-isomer"},
+        { "sKN",                          "deoxy"},
+        { "sKN",                      "ulosonate"},
+        { "sKN",          "gauche-effect=unknown"},
+        { "5KN",                   "carbohydrate"},
+        { "5KN",                 "monosaccharide"},
+        { "5KN",                       "pyranose"},
+        { "5KN",                         "ketose"},
+        { "5KN",                     "n-carbon=9"},
+        { "5KN",               "formal-charge=-1"},
+        { "5KN",                          "alpha"},
+        { "5KN",                       "D-isomer"},
+        { "5KN",                          "deoxy"},
+        { "5KN",                      "ulosonate"},
+        { "5KN",          "gauche-effect=unknown"},
+        { "4KN",                   "carbohydrate"},
+        { "4KN",                 "monosaccharide"},
+        { "4KN",                       "pyranose"},
+        { "4KN",                         "ketose"},
+        { "4KN",                     "n-carbon=9"},
+        { "4KN",               "formal-charge=-1"},
+        { "4KN",                          "alpha"},
+        { "4KN",                       "D-isomer"},
+        { "4KN",                          "deoxy"},
+        { "4KN",                      "ulosonate"},
+        { "4KN",          "gauche-effect=unknown"},
+        { "2KN",                   "carbohydrate"},
+        { "2KN",                 "monosaccharide"},
+        { "2KN",                       "pyranose"},
+        { "2KN",                         "ketose"},
+        { "2KN",                     "n-carbon=9"},
+        { "2KN",               "formal-charge=-1"},
+        { "2KN",                          "alpha"},
+        { "2KN",                       "D-isomer"},
+        { "2KN",                          "deoxy"},
+        { "2KN",                      "ulosonate"},
+        { "2KN",          "gauche-effect=unknown"},
         { "0KN",                   "carbohydrate"},
         { "0KN",                 "monosaccharide"},
         { "0KN",                       "pyranose"},
@@ -16782,9 +16784,6 @@ namespace
         { "0KN",                          "deoxy"},
         { "0KN",                      "ulosonate"},
         { "0KN",          "gauche-effect=unknown"},
- //    Names:    ASA BSA CSA FSA DSA GSA ISA 9SA ESA HSA JSA 8SA KSA 7SA 4SA 2SA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  D-isomer internal
         { "ASA",                   "carbohydrate"},
         { "ASA",                 "monosaccharide"},
         { "ASA",                       "pyranose"},
@@ -16977,9 +16976,6 @@ namespace
         { "2SA", "gauche-effect=sialic-acid-tail"},
         { "2SA",                       "D-isomer"},
         { "2SA",                       "internal"},
- //    Names:    0SA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  D-isomer external
         { "0SA",                   "carbohydrate"},
         { "0SA",                 "monosaccharide"},
         { "0SA",                       "pyranose"},
@@ -16992,9 +16988,6 @@ namespace
         { "0SA", "gauche-effect=sialic-acid-tail"},
         { "0SA",                       "D-isomer"},
         { "0SA",                       "external"},
- //    Names:    AGL BGL CGL FGL DGL GGL IGL 9GL EGL HGL JGL 8GL KGL 7GL 4GL 2GL
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  D-isomer internal
         { "AGL",                   "carbohydrate"},
         { "AGL",                 "monosaccharide"},
         { "AGL",                       "pyranose"},
@@ -17187,9 +17180,6 @@ namespace
         { "2GL", "gauche-effect=sialic-acid-tail"},
         { "2GL",                       "D-isomer"},
         { "2GL",                       "internal"},
- //    Names:    0GL
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  D-isomer external
         { "0GL",                   "carbohydrate"},
         { "0GL",                 "monosaccharide"},
         { "0GL",                       "pyranose"},
@@ -17202,9 +17192,6 @@ namespace
         { "0GL", "gauche-effect=sialic-acid-tail"},
         { "0GL",                       "D-isomer"},
         { "0GL",                       "external"},
- //    Names:    AsA BsA EsA HsA DsA GsA KsA 7sA CsA FsA JsA 8sA IsA 9sA 4sA 2sA 0sA
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  L-isomer
         { "AsA",                   "carbohydrate"},
         { "AsA",                 "monosaccharide"},
         { "AsA",                       "pyranose"},
@@ -17392,9 +17379,6 @@ namespace
         { "0sA",                      "ulosonate"},
         { "0sA", "gauche-effect=sialic-acid-tail"},
         { "0sA",                       "L-isomer"},
- //    Names:    AgL BgL EgL HgL DgL GgL KgL 7gL CgL FgL JgL 8gL IgL 9gL 4gL 2gL 0gL
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  L-isomer
         { "AgL",                   "carbohydrate"},
         { "AgL",                 "monosaccharide"},
         { "AgL",                       "pyranose"},
@@ -17582,9 +17566,6 @@ namespace
         { "0gL",                      "ulosonate"},
         { "0gL", "gauche-effect=sialic-acid-tail"},
         { "0gL",                       "L-isomer"},
- //    Names:    ASB BSB ESB HSB DSB GSB KSB 7SB CSB FSB JSB 8SB ISB 9SB 4SB 2SB 0SB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 beta deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  D-isomer
         { "ASB",                   "carbohydrate"},
         { "ASB",                 "monosaccharide"},
         { "ASB",                       "pyranose"},
@@ -17772,9 +17753,6 @@ namespace
         { "0SB",                      "ulosonate"},
         { "0SB", "gauche-effect=sialic-acid-tail"},
         { "0SB",                       "D-isomer"},
- //    Names:    AsB BsB CsB FsB DsB GsB IsB 9sB EsB HsB JsB 8sB KsB 7sB 4sB 2sB 0sB
-  //    Types:     carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 beta deoxy ulosonate
-  //    gauche-effect=sialic-acid-tail  L-isomer
         { "AsB",                   "carbohydrate"},
         { "AsB",                 "monosaccharide"},
         { "AsB",                       "pyranose"},
@@ -17962,50 +17940,34 @@ namespace
         { "0sB",                      "ulosonate"},
         { "0sB", "gauche-effect=sialic-acid-tail"},
         { "0sB",                       "L-isomer"},
- //    Names:    1CA 1CB 1CD 1CU
-  //    Types:    aglycon
         { "1CA",                        "aglycon"},
         { "1CB",                        "aglycon"},
         { "1CD",                        "aglycon"},
         { "1CU",                        "aglycon"},
- //    Names:    1PA 1PB 1PD 1PU
-  //    Types:    aglycon
         { "1PA",                        "aglycon"},
         { "1PB",                        "aglycon"},
         { "1PD",                        "aglycon"},
         { "1PU",                        "aglycon"},
- //    Names:    1BA 1BB 1BD 1BU
-  //    Types:    aglycon
         { "1BA",                        "aglycon"},
         { "1BB",                        "aglycon"},
         { "1BD",                        "aglycon"},
         { "1BU",                        "aglycon"},
- //    Names:    1JA 1JB 1JD 1JU
-  //    Types:    aglycon
         { "1JA",                        "aglycon"},
         { "1JB",                        "aglycon"},
         { "1JD",                        "aglycon"},
         { "1JU",                        "aglycon"},
- //    Names:    1cA 1cB 1cD 1cU
-  //    Types:    aglycon
         { "1cA",                        "aglycon"},
         { "1cB",                        "aglycon"},
         { "1cD",                        "aglycon"},
         { "1cU",                        "aglycon"},
- //    Names:    1pA 1pB 1pD 1pU
-  //    Types:    aglycon
         { "1pA",                        "aglycon"},
         { "1pB",                        "aglycon"},
         { "1pD",                        "aglycon"},
         { "1pU",                        "aglycon"},
- //    Names:    1bA 1bB 1bD 1bU
-  //    Types:    aglycon
         { "1bA",                        "aglycon"},
         { "1bB",                        "aglycon"},
         { "1bD",                        "aglycon"},
         { "1bU",                        "aglycon"},
- //    Names:    1jA 1jB 1jD 1jU
-  //    Types:    aglycon
         { "1jA",                        "aglycon"},
         { "1jB",                        "aglycon"},
         { "1jD",                        "aglycon"},
