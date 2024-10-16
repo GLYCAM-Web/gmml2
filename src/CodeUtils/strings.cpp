@@ -82,3 +82,17 @@ std::vector<std::string> codeUtils::split(const std::string& s, char delim)
     split(s, delim, std::back_inserter(elems));
     return elems;
 }
+
+std::string codeUtils::join(const std::string& delim, const std::vector<std::string>& strings)
+{
+    std::ostringstream result;
+    for (size_t n = 0; n < strings.size(); n++)
+    {
+        if (n > 0)
+        {
+            result << delim;
+        }
+        result << strings[n];
+    }
+    return result.str();
+}
