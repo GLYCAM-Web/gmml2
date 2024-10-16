@@ -52,6 +52,10 @@ namespace glycoproteinBuilder
                 {
                     gpInputs.freezeGlycositeResidueConformation = codeUtils::split(line, ':').at(1) == "true";
                 }
+                if (codeUtils::startsWith(line, "deleteIncompatibleSites:"))
+                {
+                    gpInputs.deleteSitesUntilResolved = codeUtils::split(line, ':').at(1) == "true";
+                }
                 if (codeUtils::startsWith(line, "seed:"))
                 {
                     gpInputs.isDeterministic = true;
