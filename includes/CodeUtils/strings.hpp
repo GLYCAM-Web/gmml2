@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <functional>
 
 namespace codeUtils
 {
@@ -15,6 +16,10 @@ namespace codeUtils
     int GetSizeOfIntInString(const std::string str);
     std::string& Trim(std::string& str);
     void removeMultipleSpaces(std::string& str);
+    void trimLeft(std::function<bool(const char&)> condition, std::string& str);
+    void trimRight(std::function<bool(const char&)> condition, std::string& str);
+    void trimWhitespace(std::string& str);
+    std::string trimmedOfWhitespace(std::string str);
     std::vector<std::string> split(const std::string& s, char delim);
     std::string join(const std::string& delim, const std::vector<std::string>& strings);
 

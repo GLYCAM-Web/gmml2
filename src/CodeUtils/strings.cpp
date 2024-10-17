@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <algorithm>
+#include <functional>
 #include <ctype.h> // isdigit
 
 bool codeUtils::startsWith(std::string bigString, std::string smallString)
@@ -44,8 +45,6 @@ int codeUtils::GetSizeOfIntInString(const std::string str)
     return size;
 }
 
-#include <iostream>
-
 std::string& codeUtils::Trim(std::string& str)
 {
     if (str.size() > 2)
@@ -74,6 +73,42 @@ void codeUtils::removeMultipleSpaces(std::string& str)
         str.erase(pos, 1);
         pos = str.find("  ");
     }
+}
+
+void codeUtils::trimLeft(std::function<bool(const char&)> condition, std::string& str)
+{
+    str.erase(str.begin(), std::find_if(str.begin(), str.end(),
+                                        [&condition](unsigned char ch)
+                                        {
+                                            return !condition(ch);
+                                        }));
+}
+
+void codeUtils::trimRight(std::function<bool(const char&)> condition, std::string& str)
+{
+    str.erase(std::find_if(str.rbegin(), str.rend(),
+                           [&condition](unsigned char ch)
+                           {
+                               return !condition(ch);
+                           })
+                  .base(),
+              str.end());
+}
+
+void codeUtils::trimWhitespace(std::string& str)
+{
+    auto isSpace = [](const char c)
+    {
+        return std::isspace(c);
+    };
+    trimLeft(isSpace, str);
+    trimRight(isSpace, str);
+}
+
+std::string codeUtils::trimmedOfWhitespace(std::string str)
+{
+    trimWhitespace(str);
+    return str;
 }
 
 std::vector<std::string> codeUtils::split(const std::string& s, char delim)
