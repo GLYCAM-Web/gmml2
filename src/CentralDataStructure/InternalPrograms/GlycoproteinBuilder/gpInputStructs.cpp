@@ -12,7 +12,7 @@ namespace glycoproteinBuilder
     {
         bool readingGlycanSection = false;
         GlycoproteinBuilderInputs gpInputs;
-        auto processLine = [&](const std::string& line)
+        auto processLine = [&](const std::string& line, size_t)
         {
             if (readingGlycanSection)
             {

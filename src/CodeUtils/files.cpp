@@ -71,7 +71,7 @@ std::istream& codeUtils::safeGetline(std::istream& in, std::string& out)
     return in;
 }
 
-void codeUtils::readFileLineByLine(std::string& filename, std::function<void(const std::string&)> processLine)
+void codeUtils::readFileLineByLine(std::string& filename, std::function<void(const std::string&, size_t)> processLine)
 {
     std::ifstream in(filename);
     if (!in)
@@ -80,9 +80,11 @@ void codeUtils::readFileLineByLine(std::string& filename, std::function<void(con
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw std::runtime_error(message);
     }
+    size_t lineNumber = 1;
     std::string out;
     while (!safeGetline(in, out).eof())
     {
-        processLine(out);
+        processLine(out, lineNumber);
+        lineNumber++;
     }
 }
