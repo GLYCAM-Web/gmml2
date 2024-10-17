@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/strings.hpp"
@@ -10,9 +11,20 @@ namespace glycoproteinBuilder
 {
     GlycoproteinBuilderInputs readGPInputFile(std::string inputFileName)
     {
-        static const std::string proteinGlycanSection = "ProteinResidue, GlycanName";
-        bool foundGlycanSection                       = false;
-        bool readingGlycanSection                     = false;
+        static const std::string proteinParameter                            = "Protein";
+        static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
+        static const std::string persistCyclesParameter                      = "persistCycles";
+        static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
+        static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
+        static const std::string seedParameter                               = "seed";
+        static const std::string skipMDPrepParameter                         = "skipMDPrep";
+        static const std::string proteinGlycanSectionParameter               = "ProteinResidue, GlycanName";
+        static const std::vector<std::string> requiredParameters = {proteinParameter, numberOfStructuresParameter,
+                                                                    persistCyclesParameter};
+        std::vector<std::string> foundParameters                 = {};
+
+        bool foundGlycanSection   = false;
+        bool readingGlycanSection = false;
         GlycoproteinBuilderInputs gpInputs;
         auto processLine = [&](const std::string& original, size_t lineNumber)
         {
@@ -80,7 +92,12 @@ namespace glycoproteinBuilder
                         throwError("input doesn't follow format 'parameter:value'");
                     }
                     const std::string& parameter = split[0];
-                    if (parameter == proteinGlycanSection)
+                    if (codeUtils::contains(foundParameters, parameter))
+                    {
+                        throwError("duplicate parameter '" + parameter + "'");
+                    }
+                    foundParameters.push_back(parameter);
+                    if (parameter == proteinGlycanSectionParameter)
                     {
                         foundGlycanSection   = true;
                         readingGlycanSection = true;
@@ -89,42 +106,39 @@ namespace glycoproteinBuilder
                     }
                     if (split.size() != 2)
                     {
-                        throwError("input doesn't follow format 'parameter:value' or '" + proteinGlycanSection + ":'");
+                        throwError("input doesn't follow format 'parameter:value' or '" +
+                                   proteinGlycanSectionParameter + ":'");
                     }
                     const std::string& value = split[1];
-                    if (parameter == "Protein")
+                    if (parameter == proteinParameter)
                     {
                         gpInputs.substrateFileName = value;
                     }
-                    else if (parameter == "NumberOfOutputStructures")
+                    else if (parameter == numberOfStructuresParameter)
                     {
                         gpInputs.number3DStructures = parseUlong(value);
                     }
-                    else if (parameter == "persistCycles")
+                    else if (parameter == persistCyclesParameter)
                     {
                         gpInputs.persistCycles = parseUlong(value);
                     }
-                    else if (parameter == "freezeGlycositeResidueConformation")
+                    else if (parameter == freezeGlycositeResidueConformationParameter)
                     {
                         gpInputs.freezeGlycositeResidueConformation = parseBool(value);
                     }
-                    else if (parameter == "deleteIncompatibleSites")
+                    else if (parameter == deleteIncompatibleSitesParameter)
                     {
                         gpInputs.deleteSitesUntilResolved = parseBool(value);
                     }
-                    else if (parameter == "seed")
+                    else if (parameter == seedParameter)
                     {
                         gpInputs.isDeterministic = true;
                         gpInputs.seed            = parseUlong(value);
                     }
-                    else if (parameter == "skipMDPrep")
+                    else if (parameter == skipMDPrepParameter)
                     {
                         gpInputs.skipMDPrep = parseBool(value);
                     }
-                    else if (parameter == "maxThreads")
-                    {}
-                    else if (parameter == "prepFileLocation")
-                    {}
                     else
                     {
                         throwError("unknown parameter '" + parameter + "'");
@@ -135,12 +149,20 @@ namespace glycoproteinBuilder
         codeUtils::readFileLineByLine(inputFileName, processLine);
         if (!foundGlycanSection)
         {
-            throw std::runtime_error("Error reading input file: '" + proteinGlycanSection + ":' section missing\n");
+            throw std::runtime_error("Error reading input file: '" + proteinGlycanSectionParameter +
+                                     ":' section missing\n");
         }
         if (readingGlycanSection)
         {
-            throw std::runtime_error("Error reading input file: 'END' expected to close '" + proteinGlycanSection +
-                                     ":' section'\n");
+            throw std::runtime_error("Error reading input file: 'END' expected to close '" +
+                                     proteinGlycanSectionParameter + ":' section'\n");
+        }
+        for (auto& req : requiredParameters)
+        {
+            if (!codeUtils::contains(foundParameters, req))
+            {
+                throw std::runtime_error("Error reading input file: required parameter '" + req + "' not found\n");
+            }
         }
         if (gpInputs.glycositesInputVector.empty())
         {
