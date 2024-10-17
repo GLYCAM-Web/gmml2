@@ -23,7 +23,6 @@ namespace glycoproteinBuilder
     {
         std::string substrateFileName           = "Undefined"; // Program should throw if left as "Undefined".
         ulong number3DStructures                = 1;
-        ulong maxThreads                        = 1; // ToDo Implement this.
         ulong persistCycles                     = 5;
         bool freezeGlycositeResidueConformation = false;
         bool deleteSitesUntilResolved           = false;
