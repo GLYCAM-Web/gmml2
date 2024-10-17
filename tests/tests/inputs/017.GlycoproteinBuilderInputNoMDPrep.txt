@@ -2,15 +2,11 @@ Protein:tests/inputs/017.1eer_eop_Asn.pdb
 
 NumberOfOutputStructures:2
 
-maxThreads:1
-
 persistCycles:5
 
-prepFileLocation:../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep
+skipMDPrep:true
 
 seed:0
-
-skipMDPrep:true
 
 ProteinResidue, GlycanName:
 A_24|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
