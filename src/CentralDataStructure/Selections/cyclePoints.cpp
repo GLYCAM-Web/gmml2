@@ -113,7 +113,7 @@ bool cdsSelections::FindCyclePoint(cds::Atom* previous_atom, cds::Residue* resid
                         cycle_point        = neighbor;
                     }
                 }
-                if (neighbor->getLabel().compare("VisitedByFindCyclePoint") != 0) // Don't look back!
+                if (neighbor->getLabel() != "VisitedByFindCyclePoint") // Don't look back!
                 {
                     FindCyclePoint(current_atom, residue, neighbor, atom_path, found_cycle_point, cycle_point);
                 }
@@ -132,17 +132,16 @@ cds::Atom* cdsSelections::FindCyclePointNeighbor(const std::vector<cds::Atom*> a
                                                  cds::Residue* cyclePointResidue)
 {
     cds::Atom* selected_neighbor;
-    if (cycle_point->getName().compare("CA") == 0) // This is a protein, and we always want the N atom.
+    if (cycle_point->getName() == "CA") // This is a protein, and we always want the N atom.
     {
         selected_neighbor = cyclePointResidue->FindAtom("N");
     } // If this is a C2 like in Sia, then we always want the C1 atom unless that atom is in the linkage path (like
       // fructose 1-1)
-    else if ((cycle_point->getName().compare("C2") == 0) &&
-             (!codeUtils::contains(atom_path, cyclePointResidue->FindAtom("C1"))))
+    else if ((cycle_point->getName() == "C2") && (!codeUtils::contains(atom_path, cyclePointResidue->FindAtom("C1"))))
     {
         selected_neighbor = cyclePointResidue->FindAtom("C1");
     }
-    else if (cycle_point->getName().compare("C1") == 0)
+    else if (cycle_point->getName() == "C1")
     {
         selected_neighbor =
             cyclePointResidue->FindAtom("C2"); // We can always set phi to 180 this way, regardless of alpha/beta

@@ -105,8 +105,8 @@ namespace glycoproteinBuilder
             cds::addBond(anomericAtom,
                          atomND2); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
         }
-        else if ((amino_acid_name.compare("THR") == 0) || (amino_acid_name.compare("SER") == 0) ||
-                 (amino_acid_name.compare("OLT") == 0) || (amino_acid_name.compare("OLS") == 0))
+        else if ((amino_acid_name == "THR") || (amino_acid_name == "SER") || (amino_acid_name == "OLT") ||
+                 (amino_acid_name == "OLS"))
         {
             Atom* atomOG1 = superimposition_residue->addAtom(std::make_unique<Atom>(
                 "OG", (cds::calculateCoordinateFromInternalCoords(coordC5, coordO5, coordC1, 112, 68, 1.46))));
@@ -116,14 +116,14 @@ namespace glycoproteinBuilder
             superimposition_residue->addAtom(std::make_unique<Atom>(
                 "CA", (cds::calculateCoordinateFromInternalCoords(coordC1, atomOG1->coordinate(), atomCB->coordinate(),
                                                                   109.3, 125, 1.53))));
-            if ((amino_acid_name.compare("THR") == 0) || (amino_acid_name.compare("OLT") == 0))
+            if ((amino_acid_name == "THR") || (amino_acid_name == "OLT"))
             {
                 atomOG1->setName("OG1"); // It's OG in Ser.
             }
             cds::addBond(anomericAtom,
                          atomOG1); // This is so findAnomericAtom works later, needs a foreign residue neighbor.
         }
-        else if ((amino_acid_name.compare("TYR") == 0) || (amino_acid_name.compare("OLY") == 0))
+        else if ((amino_acid_name == "TYR") || (amino_acid_name == "OLY"))
         {
             Atom* atomOH = superimposition_residue->addAtom(std::make_unique<Atom>(
                 "OH", (cds::calculateCoordinateFromInternalCoords(coordC5, coordO5, coordC1, 112, 68, 1.46))));

@@ -113,34 +113,31 @@ std::string PrepAtom::GetStringFormatOfTopologicalType() const
 
 prep::TopologicalType PrepAtom::GetTopologicalTypeFromString(std::string topological_type) const
 {
-    if (topological_type.compare("E") == 0)
+    if (topological_type == "E")
     {
         return kTopTypeE;
     }
-    if (topological_type.compare("S") == 0)
+    if (topological_type == "S")
     {
         return kTopTypeS;
     }
-    if (topological_type.compare("B") == 0)
+    if (topological_type == "B")
     {
         return kTopTypeB;
     }
-    if (topological_type.compare("3") == 0)
+    if (topological_type == "3")
     {
         return kTopType3;
     }
-    if (topological_type.compare("4") == 0)
+    if (topological_type == "4")
     {
         return kTopType4;
     }
-    if (topological_type.compare("M") == 0)
+    if (topological_type == "M")
     {
         return kTopTypeM;
     }
-    else
-    {
-        return kTopTypeE;
-    }
+    return kTopTypeE;
 }
 
 //////////////////////////////////////////////////////////

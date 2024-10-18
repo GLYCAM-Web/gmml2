@@ -227,106 +227,88 @@ std::string PrepResidue::GetStringFormatOfSectionType(SectionType section_type) 
 
 prep::CoordinateType PrepResidue::GetCoordinateTypeFromString(std::string coordinate_type) const
 {
-    if (coordinate_type.compare("INT") == 0)
+    if (coordinate_type == "INT")
     {
         return prep::kINT;
     }
-    if (coordinate_type.compare("XYZ") == 0)
+    if (coordinate_type == "XYZ")
     {
         return prep::kXYZ;
     }
-    else
-    {
-        return prep::kINT;
-    }
+    return prep::kINT;
 }
 
 prep::OutputFormat PrepResidue::GetOutputFormatFromString(std::string output_format) const
 {
-    if (output_format.compare("Formatted") == 0)
+    if (output_format == "Formatted")
     {
         return prep::kFormatted;
     }
-    if (output_format.compare("Binary") == 0)
+    if (output_format == "Binary")
     {
         return prep::kBinary;
     }
-    else
-    {
-        return prep::kBinary;
-    }
+    return prep::kBinary;
 }
 
 prep::GeometryType PrepResidue::GetGeometryTypeFromString(std::string geometry_type) const
 {
-    if (geometry_type.compare("GeometryCorrect") == 0)
+    if (geometry_type == "GeometryCorrect")
     {
         return prep::kGeometryCorrect;
     }
-    if (geometry_type.compare("GeometryChange") == 0)
+    if (geometry_type == "GeometryChange")
     {
         return prep::kGeometryChange;
     }
-    else
-    {
-        return prep::kGeometryCorrect;
-    }
+    return prep::kGeometryCorrect;
 }
 
 prep::DummyAtomPosition PrepResidue::GetDummyAtomPositionFromString(std::string dummy_atom_position) const
 {
-    if (dummy_atom_position.compare("PositionAll") == 0)
+    if (dummy_atom_position == "PositionAll")
     {
         return prep::kPositionAll;
     }
-    if (dummy_atom_position.compare("PositionBeg") == 0)
+    if (dummy_atom_position == "PositionBeg")
     {
         return prep::kPositionBeg;
     }
-    else
-    {
-        return prep::kPositionBeg;
-    }
+    return prep::kPositionBeg;
 }
 
 prep::DummyAtomOmission PrepResidue::GetDummyAtomOmissionFromString(std::string dummy_atom_omission) const
 {
-    if (dummy_atom_omission.compare("Omit") == 0)
+    if (dummy_atom_omission == "Omit")
     {
         return prep::kOmit;
     }
-    if (dummy_atom_omission.compare("Nomit") == 0)
+    if (dummy_atom_omission == "Nomit")
     {
         return prep::kNomit;
     }
-    else
-    {
-        return prep::kOmit;
-    }
+    return prep::kOmit;
 }
 
 prep::SectionType PrepResidue::GetSectionTypeFromString(std::string section_type) const
 {
-    if (section_type.compare("SectionLoop") == 0)
+    if (section_type == "SectionLoop")
     {
         return prep::kSectionLoop;
     }
-    if (section_type.compare("SectionImproper") == 0)
+    if (section_type == "SectionImproper")
     {
         return prep::kSectionImproper;
     }
-    if (section_type.compare("SectionDone") == 0)
+    if (section_type == "SectionDone")
     {
         return prep::kSectionDone;
     }
-    if (section_type.compare("SectionOther") == 0)
+    if (section_type == "SectionOther")
     {
         return prep::kSectionOther;
     }
-    else
-    {
-        return prep::kSectionOther;
-    }
+    return prep::kSectionOther;
 }
 
 std::vector<std::string> PrepResidue::GetAtomNames() const

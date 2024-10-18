@@ -18019,7 +18019,7 @@ std::vector<std::string> GlycamMetadata::getTypesForResidue(std::string query)
     // Iterate over the multimap using range based for loop
     for (auto& elem : glycam06NamesToTypesLookupMap)
     {
-        if (elem.first.compare(query) == 0)
+        if (elem.first == query)
         {
             matching_types.push_back(elem.second);
         }
