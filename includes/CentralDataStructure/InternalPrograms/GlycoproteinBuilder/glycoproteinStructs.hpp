@@ -31,6 +31,7 @@ namespace glycoproteinBuilder
 
     struct ResidueData
     {
+        std::vector<cds::ResidueType> types;
         std::vector<double> overlapWeights;
         std::vector<cds::Sphere> bounds;
     };

@@ -159,7 +159,14 @@ namespace glycoproteinBuilder
             moleculeTypes[moleculeIndex] = MoleculeType::glycan;
             glycositeIndices.push_back({site, moleculeIndex, linkageIds});
         }
+        std::vector<cds::ResidueType> residueTypes;
+        residueTypes.reserve(residues.size());
+        for (auto& res : residues)
+        {
+            residueTypes.push_back(res->GetType());
+        }
         std::vector<double> residueOverlapWeight;
+        residueOverlapWeight.reserve(residues.size());
         for (size_t molecule : graphIndices.residueMolecule)
         {
             residueOverlapWeight.push_back(moleculeTypes[molecule] == MoleculeType::protein ? overlapWeight.protein
@@ -168,7 +175,7 @@ namespace glycoproteinBuilder
 
         std::vector<cds::Sphere> residueBoundingSpheres =
             boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
-        ResidueData residueData {residueOverlapWeight, residueBoundingSpheres};
+        ResidueData residueData {residueTypes, residueOverlapWeight, residueBoundingSpheres};
         std::vector<cds::Sphere> moleculeBounds =
             boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
 

@@ -391,13 +391,27 @@ namespace glycoproteinBuilder
         cds::AtomPdbData atomPdbData(atoms, recordNames);
         cds::PdbWriterData writerData {residuePdbData, atomPdbData};
 
-        auto pdbResidues =
-            cdsSelections::selectResiduesByType(residues, {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
-                                                           cds::ResidueType::Aglycone, cds::ResidueType::Undefined});
+        std::vector<cds::ResidueType> nonProteinTypes {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
+                                                       cds::ResidueType::Aglycone, cds::ResidueType::Undefined};
+        auto isNonProteinResidue = [&data, &nonProteinTypes](size_t n)
+        {
+            return codeUtils::contains(nonProteinTypes, data.residues.types[n]);
+        };
+
+        std::vector<std::pair<size_t, size_t>> atomPairsConnectingNonProteinResidues;
+        const graph::GraphEdges& residueEdges = graphs.residues.edges;
+        for (size_t n = 0; n < residueEdges.indices.size(); n++)
+        {
+            const std::array<size_t, 2>& adj = residueEdges.nodeAdjacencies[n];
+            if (isNonProteinResidue(adj[0]) || isNonProteinResidue(adj[1]))
+            {
+                size_t atomEdgeId                   = residueEdges.indices[n];
+                const std::array<size_t, 2> atomAdj = graphs.atoms.edges.nodeAdjacencies[atomEdgeId];
+                atomPairsConnectingNonProteinResidues.push_back({atomAdj[0], atomAdj[1]});
+            }
+        }
 
         std::vector<std::pair<size_t, size_t>> noConnections = {};
-        std::vector<std::pair<size_t, size_t>> connectionIndices =
-            atomPairVectorIndices(atoms, cds::atomPairsConnectedToOtherResidues(pdbResidues));
 
         std::vector<std::vector<bool>> allResidueTER   = residueTER(moleculeResidues);
         std::vector<cds::Coordinate> initalCoordinates = extractCoordinates(data);
@@ -416,7 +430,7 @@ namespace glycoproteinBuilder
             offData.residues.numbers   = writerData.residues.numbers;
             writeOffFile(offData, outputDir + "glycoprotein");
         }
-        writePdbFile(moleculeResidues, allResidueTER, writerData, connectionIndices,
+        writePdbFile(moleculeResidues, allResidueTER, writerData, atomPairsConnectingNonProteinResidues,
                      outputDir + "glycoprotein_serialized");
 
         for (size_t count = 0; count < settings.number3DStructures; count++)
@@ -430,8 +444,8 @@ namespace glycoproteinBuilder
             std::vector<bool> currentMolecules = includedMolecules(data.glycanData.included);
             std::vector<std::vector<size_t>> currentMoleculeResidues =
                 codeUtils::maskValues(graphs.molecules.nodes.elements, currentMolecules);
-            writePdbFile(currentMoleculeResidues, residueTER(currentMoleculeResidues), writerData, connectionIndices,
-                         outputDir + prefix.str());
+            writePdbFile(currentMoleculeResidues, residueTER(currentMoleculeResidues), writerData,
+                         atomPairsConnectingNonProteinResidues, outputDir + prefix.str());
         }
     }
 
