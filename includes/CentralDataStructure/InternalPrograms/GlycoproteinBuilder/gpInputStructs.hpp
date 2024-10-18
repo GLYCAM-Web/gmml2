@@ -9,11 +9,6 @@ namespace glycoproteinBuilder
 {
     struct GlycositeInput
     {
-        // Constructor
-        GlycositeInput(std::string& proteinResidueId_, std::string& glycan)
-            : proteinResidueId(proteinResidueId_), glycanInput(glycan)
-        {}
-
         std::string proteinResidueId = ""; // E.g. ?_20_A if no chain ID and residue number is 20 and insertion code is
                                            // A. C_20_? if chain id is C and there is no insertion code.
         std::string glycanInput      = ""; // E.g. DGlcpNAcb1-4DGlcpNAcb1-OH

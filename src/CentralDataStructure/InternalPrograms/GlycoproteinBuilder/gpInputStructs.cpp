@@ -81,7 +81,7 @@ namespace glycoproteinBuilder
                         {
                             throwError("input doesn't follow format 'ProteinResidue|GlycanName' or 'END'");
                         }
-                        gpInputs.glycositesInputVector.emplace_back(splitLine[0], splitLine[1]);
+                        gpInputs.glycositesInputVector.push_back({splitLine[0], splitLine[1]});
                     }
                 }
                 else
