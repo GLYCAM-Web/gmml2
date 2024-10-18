@@ -129,22 +129,155 @@ for i in v y w; do
     echo '"' >>"${OutputFile}"
 done
 
-## bacillosamine
-TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl beta gauche-effect=na '
-# D
-echo 'i=$((i + 1))' >>"${OutputFile}"
-echo "TYPES[\${i}]=\" ${TYPE_BASE} D-isomer \" " >>"${OutputFile}"
-echo 'NAMES[${i}]="' >>"${OutputFile}"
-grep ^.Bc$ "${ResidueNames}" >>"${OutputFile}"
-grep ^.Bc$ "${ResidueNames}" >>"${ScriptHandledList}"
-echo '"' >>"${OutputFile}"
-# L
-echo 'i=$((i + 1))' >>"${OutputFile}"
-echo "TYPES[\${i}]=\" ${TYPE_BASE} L-isomer \" " >>"${OutputFile}"
-echo 'NAMES[${i}]="' >>"${OutputFile}"
-grep ^.bc$ "${ResidueNames}" >>"${OutputFile}"
-grep ^.bc$ "${ResidueNames}" >>"${ScriptHandledList}"
-echo '"' >>"${OutputFile}"
+
+## weirdos like bacillosamine
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl gauche-effect=na D-isomer '
+# Beta
+for i in Bc Fc; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+# alpha
+for i in BC FC; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+## QuiNAc4NAc
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 N-acetyl deoxy '
+for i in QF; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+for i in qF; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+## GlcNAc3NAcA
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 N-acetyl '
+for i in ZF; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+for i in zF; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+
+
+
+## DMurpNac  N-acetylmuramic acid
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=-1 N-acetyl gauche-effect=gluco D-isomer '
+# Beta
+for i in Mr; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+# alpha
+for i in MR; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+
+## Ara4N 4-amino-4-deoxy-L-arabinose
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=5 formal-charge=0 N-acetyl gauche-effect=na L-isomer '
+# Beta
+for i in an; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+# alpha
+for i in aN; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+## DDmanHep D-Glycero-D-Manno-Heptose
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=7 formal-charge=0 gauche-effect=gluco D-isomer '
+# Beta
+for i in Dh; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+# alpha
+for i in DH; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+## LDmanHep L-Glycero-D-Manno-Heptose
+TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=7 formal-charge=0 gauche-effect=gluco L-isomer '
+# Beta
+for i in Lh; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+# alpha
+for i in LH; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+
 ## glucosamine hexose monosaccharides
 TYPE_BASE=' carbohydrate monosaccharide pyranose aldose n-carbon=6 formal-charge=0 amine D-isomer '
 # alpha
@@ -335,8 +468,8 @@ for i in a d r x; do
     grep ^."${i}"B$ "${ResidueNames}" >>"${ScriptHandledList}"
     echo '"' >>"${OutputFile}"
 done
-TYPE_BASE=' carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=unknown '
-for i in A D R X; do
+TYPE_BASE=' carbohydrate monosaccharide furanose aldose n-carbon=5 formal-charge=0 gauche-effect=na '
+for i in A D R X L; do
     ## alpha D
     echo 'i=$((i + 1))' >>"${OutputFile}"
     echo "TYPES[\${i}]=\" ${TYPE_BASE} alpha D-isomer \" " >>"${OutputFile}"
@@ -433,7 +566,7 @@ done
 #####################
 
 ## Plain hexose monosaccharides
-TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown '
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=6 formal-charge=0 gauche-effect=na '
 for i in C P B J; do
     ## alpha D
     echo 'i=$((i + 1))' >>"${OutputFile}"
@@ -466,7 +599,7 @@ for i in c p b j; do
     grep ^."${i}"B$ "${ResidueNames}" >>"${ScriptHandledList}"
     echo '"' >>"${OutputFile}"
 done
-TYPE_BASE=' carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=unknown '
+TYPE_BASE=' carbohydrate monosaccharide furanose ketose n-carbon=6 formal-charge=0 gauche-effect=na '
 for i in C P B J; do
     ## alpha D
     echo 'i=$((i + 1))' >>"${OutputFile}"
@@ -504,9 +637,9 @@ done
 ## Uloses
 #####################
 ## Pyranose only
-## KDO
-TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=8 formal-charge=-1 alpha D-isomer deoxy ulosonate gauche-effect=unknown '
-for i in KO; do
+## KDO KO Leg
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=8 formal-charge=-1 alpha D-isomer ulosonate gauche-effect=na '
+for i in KO KX; do
     echo 'i=$((i + 1))' >>"${OutputFile}"
     echo "TYPES[\${i}]=\" ${TYPE_BASE} \" " >>"${OutputFile}"
     echo 'NAMES[${i}]="' >>"${OutputFile}"
@@ -514,11 +647,19 @@ for i in KO; do
     grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
     echo '"' >>"${OutputFile}"
 done
-## Ne
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=8 formal-charge=-1 beta D-isomer ulosonate gauche-effect=na '
+for i in Kx; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
 
-## KDN
-TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha D-isomer deoxy ulosonate gauche-effect=unknown'
-for i in KN; do
+# Pse Aci Fus
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha L-isomer ulosonate gauche-effect=na '
+for i in mP eC gF; do
     echo 'i=$((i + 1))' >>"${OutputFile}"
     echo "TYPES[\${i}]=\" ${TYPE_BASE} \" " >>"${OutputFile}"
     echo 'NAMES[${i}]="' >>"${OutputFile}"
@@ -526,6 +667,36 @@ for i in KN; do
     grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
     echo '"' >>"${OutputFile}"
 done
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 beta L-isomer deoxy ulosonate gauche-effect=na '
+for i in mp ec gf; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
+## KDN LEG
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha D-isomer deoxy ulosonate gauche-effect=na'
+for i in Kn Lg; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 beta D-isomer deoxy ulosonate gauche-effect=na'
+for i in KN LG; do
+    echo 'i=$((i + 1))' >>"${OutputFile}"
+    echo "TYPES[\${i}]=\" ${TYPE_BASE} \" " >>"${OutputFile}"
+    echo 'NAMES[${i}]="' >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${OutputFile}"
+    grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
+    echo '"' >>"${OutputFile}"
+done
+
 ## Neu5Ac Neu5Gc
 TYPE_BASE=' carbohydrate monosaccharide pyranose ketose n-carbon=9 formal-charge=-1 alpha deoxy ulosonate gauche-effect=sialic-acid-tail '
 for i in SA GL; do

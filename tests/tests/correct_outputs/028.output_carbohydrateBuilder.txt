@@ -1179,14 +1179,13 @@ DKDOp&Label=residue-4;a2-3&Label=link-2;[DKDNp&Label=residue-3;a2-6&Label=link-1
 Parsed and labelled 00054 with no exceptions thrown.
 
 Number of residues for this sequence is 4
-Number of likely shapes is 8
-Number of possible shapes is 12
+Number of likely shapes is 4
+Number of possible shapes is 6
 ROH_1_?_?
 VGB_2_?_?
 0KN_3_?_?
 0KO_4_?_?
 Name: DKDNpa2-6DGlcpb, LinkageIndex: 1, Res1: 3, Res2: 2
-    LikelyRotamers: Phi, t, -g
     LikelyRotamers: Omg, gg, gt
 Name: DKDOpa2-3DGlcpb, LinkageIndex: 2, Res1: 4, Res2: 2
     LikelyRotamers: Phi, t, -g
@@ -1406,6 +1405,33 @@ ROH_1_?_?
 0aU_9_?_?
 Name: LLyxfb1-6LTagfb, LinkageIndex: 5, Res1: 7, Res2: 6
     LikelyRotamers: Omg, gg, gt
+
+*********************
+Building id 00063:DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+*********************
+Input:
+DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+Interpreted:
+DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+IndexOrdered:
+DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+IndexOrderedLabeled:
+DLegp&Label=residue-8;b2-4&Label=link-6;LPsep&Label=residue-7;b2-4&Label=link-5;LAcip&Label=residue-6;b2-4&Label=link-4;LFusp&Label=residue-5;b2-3&Label=link-3;DGalf&Label=residue-4;a1-4&Label=link-2;DMurpNAc&Label=residue-3;b1-4&Label=link-1;DKo1p&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00063 with no exceptions thrown.
+
+Number of residues for this sequence is 8
+Number of likely shapes is 2
+Number of possible shapes is 2
+ROH_1_?_?
+4KX_2_?_?
+4Mr_3_?_?
+3LD_4_?_?
+4gf_5_?_?
+4ec_6_?_?
+4mp_7_?_?
+0Lg_8_?_?
+Name: DLegpb2-4LPsepb, LinkageIndex: 6, Res1: 8, Res2: 7
+    LikelyRotamers: Phi, t, -g
 00001.pdb not created.
 00002.pdb succesfully created.
 00003.pdb succesfully created.
@@ -1462,6 +1488,7 @@ Name: LLyxfb1-6LTagfb, LinkageIndex: 5, Res1: 7, Res2: 6
 00060.pdb succesfully created.
 00061.pdb succesfully created.
 00062.pdb succesfully created.
+00063.pdb succesfully created.
 00001.off not created.
 00002.off succesfully created.
 00003.off succesfully created.
@@ -1518,3 +1545,4 @@ Name: LLyxfb1-6LTagfb, LinkageIndex: 5, Res1: 7, Res2: 6
 00060.off succesfully created.
 00061.off succesfully created.
 00062.off succesfully created.
+00063.off succesfully created.

@@ -4827,7 +4827,7 @@ LastLetter is X
 glycamCode is K
 So far for 0KX we think isomer ringtype config is D_p_a
 Finding name for code: KX
-Found name is: D_KOpa_p__a
+Found name is: D_Ko1pa_p__a
 Anomer: 2
 8,7,3,4,5,
 8,7,4,5: dKX
