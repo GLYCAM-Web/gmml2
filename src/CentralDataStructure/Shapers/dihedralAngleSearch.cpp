@@ -235,8 +235,8 @@ cds::AngleOverlap cds::bestOverlapResult(const std::vector<AngleOverlap>& result
     return results[bestOverlapResultIndex(results)];
 }
 
-cds::DihedralRotationData cds::dihedralRotationInputData(RotatableDihedral& dihedral,
-                                                         const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
+cds::DihedralRotationDataContainer
+cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
 {
     auto movingAtomSpheres = atomCoordinatesWithRadii(dihedral.movingAtoms);
     auto movingAtomBounds  = boundingSphere(movingAtomSpheres);
@@ -315,9 +315,14 @@ void cds::simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<Rot
     {
         auto& dihedral = dihedrals[n];
         std::vector<size_t> index {dihedral.currentMetadataIndex};
-        auto coordinates = dihedralCoordinates(dihedral);
-        auto input       = dihedralRotationInputData(dihedral, residues);
-        auto best        = wiggleUsingRotamers(searchAngles, coordinates, index, metadata[n], preference[n], input);
+        auto coordinates                    = dihedralCoordinates(dihedral);
+        DihedralRotationDataContainer input = dihedralRotationInputData(dihedral, residues);
+        DihedralRotationData inputPointers {
+            input.atomMoving,     input.atomBounds,   input.residueBounds,
+            input.residueWeights, input.residueAtoms, {input.residueIndices[0], input.residueIndices[1]},
+            input.bonds
+        };
+        auto best = wiggleUsingRotamers(searchAngles, coordinates, index, metadata[n], preference[n], inputPointers);
         setDihedralAngle(dihedral, best.angle);
     }
 }

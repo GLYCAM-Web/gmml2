@@ -22,9 +22,16 @@ namespace glycoproteinBuilder
         using GlycamMetadata::DihedralAngleDataVector;
         using GlycamMetadata::RotamerType;
 
-        cds::DihedralRotationData toRotationInputData(const AssemblyGraphs& graphs, AssemblyData& data,
-                                                      OverlapWeight weight, size_t glycanId, size_t linkageId,
-                                                      size_t dihedralId)
+        struct PartialDihedralRotationData
+        {
+            std::vector<bool> atomMoving;
+            std::vector<double> residueWeights;
+            std::array<std::vector<size_t>, 2> residueIndices;
+        };
+
+        PartialDihedralRotationData toRotationInputData(const AssemblyGraphs& graphs, AssemblyData& data,
+                                                        OverlapWeight weight, size_t glycanId, size_t linkageId,
+                                                        size_t dihedralId)
         {
             const ResidueLinkageIndices& linkage     = graphs.residueLinkages[linkageId];
             const RotatableDihedralIndices& dihedral = graphs.rotatableDihedralIndices[dihedralId];
@@ -75,13 +82,7 @@ namespace glycoproteinBuilder
                 residueWeights[n] = weight.self;
             }
             return {
-                atomMoving,
-                atomBounds,
-                residueBounds,
-                residueWeights,
-                graphs.residues.nodes.elements,
-                {intersectingResidues, linkage.reducingResidues},
-                data.residueLinkageData.overlapBonds[linkageId]
+                atomMoving, residueWeights, {intersectingResidues, linkage.reducingResidues}
             };
         }
 
@@ -100,8 +101,15 @@ namespace glycoproteinBuilder
                 cds::AngleSearchPreference preference            = {settings.deviation, shapePreference.angles[n],
                                                                     shapePreference.metadataOrder[n]};
                 const std::array<cds::Coordinate, 4> coordinates = dihedralCoordinates(graphs, data, dihedralId);
-                cds::DihedralRotationData input =
+                PartialDihedralRotationData partial =
                     toRotationInputData(graphs, data, weight, glycanId, linkageId, dihedralId);
+                cds::DihedralRotationData input {partial.atomMoving,
+                                                 data.atoms.bounds,
+                                                 data.residues.bounds,
+                                                 partial.residueWeights,
+                                                 graphs.residues.nodes.elements,
+                                                 partial.residueIndices,
+                                                 data.residueLinkageData.overlapBonds[linkageId]};
                 const GlycamMetadata::DihedralAngleDataVector& metadataVector = metadata[n];
                 cds::AngleOverlap best =
                     cds::wiggleUsingRotamers(settings.angles, coordinates, codeUtils::indexVector(metadataVector),
@@ -140,8 +148,15 @@ namespace glycoproteinBuilder
                                                              preferenceAngles[n], order};
                     cds::DihedralCoordinates coordinates = dihedralCoordinates(graphs, data, dihedralId);
 
-                    cds::DihedralRotationData input =
+                    PartialDihedralRotationData partial =
                         toRotationInputData(graphs, data, weight, glycanId, linkageId, dihedralId);
+                    cds::DihedralRotationData input {partial.atomMoving,
+                                                     data.atoms.bounds,
+                                                     data.residues.bounds,
+                                                     partial.residueWeights,
+                                                     graphs.residues.nodes.elements,
+                                                     partial.residueIndices,
+                                                     data.residueLinkageData.overlapBonds[linkageId]};
                     cds::AngleOverlap best =
                         cds::wiggleUsingRotamers(settings.angles, coordinates, index, metadata[n], preference, input);
                     results[k][n]   = best.angle;

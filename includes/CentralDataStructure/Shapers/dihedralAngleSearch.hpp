@@ -24,7 +24,7 @@ namespace cds
         AngleWithMetadata angle;
     };
 
-    struct DihedralRotationData
+    struct DihedralRotationDataContainer
     {
         std::vector<bool> atomMoving;
         std::vector<Sphere> atomBounds;
@@ -33,6 +33,17 @@ namespace cds
         std::vector<std::vector<size_t>> residueAtoms;
         std::array<std::vector<size_t>, 2> residueIndices;
         std::vector<cds::BondedResidueOverlapInput> bonds;
+    };
+
+    struct DihedralRotationData
+    {
+        const std::vector<bool>& atomMoving;
+        const std::vector<Sphere>& atomBounds;
+        const std::vector<Sphere>& residueBounds;
+        const std::vector<double>& residueWeights;
+        const std::vector<std::vector<size_t>>& residueAtoms;
+        const std::array<std::vector<size_t>, 2>& residueIndices;
+        const std::vector<cds::BondedResidueOverlapInput>& bonds;
     };
 
     struct AngleSearchPreference
@@ -52,8 +63,8 @@ namespace cds
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
-    DihedralRotationData dihedralRotationInputData(RotatableDihedral& dihedral,
-                                                   const std::array<ResiduesWithOverlapWeight, 2>& residues);
+    DihedralRotationDataContainer dihedralRotationInputData(RotatableDihedral& dihedral,
+                                                            const std::array<ResiduesWithOverlapWeight, 2>& residues);
     AngleOverlap wiggleUsingRotamers(SearchAngles searchAngles, const DihedralCoordinates coordinates,
                                      const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
                                      const AngleSearchPreference& preference, const DihedralRotationData& input);
