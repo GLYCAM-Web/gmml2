@@ -10,7 +10,7 @@
 namespace glycoproteinBuilder
 {
     std::vector<cds::ResidueLinkageShapePreference> randomLinkageShapePreference(
-        const AssemblyGraphs graphs, const AssemblyData& data, size_t glycanId,
+        const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId,
         std::function<std::vector<size_t>(GlycamMetadata::DihedralAngleDataVector metadataVector)> randomMetadata,
         std::function<double(GlycamMetadata::DihedralAngleData metadata)> randomAngle,
         bool freezeGlycositeResidueConformation)
