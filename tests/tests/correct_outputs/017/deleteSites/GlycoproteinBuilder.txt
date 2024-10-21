@@ -1,4 +1,4 @@
-Test 017 Input file is tests/inputs/017.GlycoproteinBuilderInputDeleteSites.txt
-Test 017 Reading input file complete, on to construction
-Test 017 Resolving overlaps
-Test 017 Program got to end ok
+Input file is tests/inputs/017.GlycoproteinBuilderInputDeleteSites.txt
+Reading input file complete, on to construction
+Resolving overlaps
+Program got to end ok
