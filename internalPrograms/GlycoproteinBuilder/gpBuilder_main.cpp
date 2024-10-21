@@ -25,11 +25,11 @@ int main(int argc, char* argv[])
             std::exit(EXIT_FAILURE);
         }
         outputDir = outputDir + "/";
-        std::cout << "Test 017 Input file is " << inputFile << "\n";
+        std::cout << "Input file is " << inputFile << "\n";
         glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct = glycoproteinBuilder::readGPInputFile(inputFile);
-        std::cout << "Test 017 Reading input file complete, on to construction\n" << std::flush;
+        std::cout << "Reading input file complete, on to construction\n" << std::flush;
         glycoproteinBuilder::GlycoproteinBuilder glycoproteinBuilder(inputStruct);
-        std::cout << "Test 017 Resolving overlaps" << std::endl;
+        std::cout << "Resolving overlaps" << std::endl;
         glycoproteinBuilder.ResolveOverlaps(outputDir);
     }
     catch (const std::runtime_error& error)
@@ -48,6 +48,6 @@ int main(int argc, char* argv[])
         std::cout << message << "\n";
         std::exit(1);
     }
-    std::cout << "Test 017 Program got to end ok" << std::endl;
+    std::cout << "Program got to end ok" << std::endl;
     return 0;
 }
