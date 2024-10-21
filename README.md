@@ -77,11 +77,10 @@ The following does not require root access, but it does require one has `git` in
 
 2. Clone `gmml2` from the git repo
 ```bash
-git clone https://github.com/GLYCAM-Web/gmml2.git -b feature_ChangesForFork
+git clone https://github.com/GLYCAM-Web/gmml2.git
 ```
 
 **NOTE:** There are non-git ways to obtain gmml2. Don't do this as our tests won't compile outside of a git repo.
-**NOTE:** The -b feature_ChangesForFork should be temporary. If it's not working we likely forgot to update this doc. Try remove "-b feature_ChangesForFork" from the command.
 
 ---
 ## Compiling the Library
@@ -248,9 +247,23 @@ The `cmakeFileLists` directory contains the ouput from our `./updateCmakeFileLis
 In order to make deving on the library consistent, we must enforce coding standards. They will be added piecewise, including the appropriate tests (be them pre-commit/push hooks, ci/cd hooks, etc.) and will be outlined below.
 
 ### Git Branches that define our workflow:
-release: Updated from stable where commits get tagged with the semver e.g. 2.1.0 for use in the test, dev and actual websites.
-stable: Updated from dev. Hotfix from here. Before pushing: (spin up dev env, do tests. precommit, no skipping).
-dev: Updated from feature branches created from here. Before pushing: (pre-commit & pre-push so gmml2 level tests need to pass).
+`main`
+- Commits get tagged using SemVer (e.g. 0.1.0)
+- Latest tag used when creating test, dev or actual sites.
+- Dev env tests must pass before pushing.
+- Default branch for github.com.
+`dev`
+- feature branches created from dev.
+- gmml2 tests must pass before pushing.
+`feature`
+- Can rebase onto dev.
+- Keep a remote copy that you delete when the feature gets into dev.
+`hotfix`
+- Created from main, merged into dev and main.
+`notes`
+- Tags are tied to commits, not branches.
+- A persistent release branch is unnecessary as we do not have differences in release, but temporary release branches like hotfix branches can be useful
+- Do not rebase dev/main as it's public history, always merge between these.
 
 ### Branch Naming
 
