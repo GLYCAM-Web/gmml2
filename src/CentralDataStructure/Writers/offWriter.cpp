@@ -21,51 +21,44 @@ namespace
         return result;
     }
 
-    std::vector<std::vector<size_t>> atomChildrenIndices(const std::vector<cds::Atom*>& atoms)
+    std::vector<std::pair<size_t, size_t>> uniqueAtomBonds(const std::vector<cds::Atom*>& atoms)
     {
-        std::vector<std::vector<size_t>> result;
-        result.reserve(atoms.size());
+        std::vector<std::pair<size_t, size_t>> result;
+        result.reserve(2 * atoms.size());
         for (auto& atom : atoms)
         {
-            result.push_back(atomIndices(atoms, atom->getChildren()));
+            size_t index = cds::atomVectorIndex(atoms, atom);
+            for (auto& neighbor : atom->getChildren())
+            {
+                size_t neighborIndex = cds::atomVectorIndex(atoms, neighbor);
+                result.push_back({index, neighborIndex});
+            }
         }
         return result;
     }
 } // namespace
 
-cds::AtomOffData::AtomOffData(std::vector<int> numbers_, std::vector<std::string> names_,
-                              std::vector<std::string> types_, std::vector<int> atomicNumbers_,
-                              std::vector<double> charges_, std::vector<Coordinate> coordinates_,
-                              std::vector<std::vector<size_t>> children_)
-    : numbers(numbers_), names(names_), types(types_), atomicNumbers(atomicNumbers_), charges(charges_),
-      coordinates(coordinates_), children(children_)
-{}
-
-cds::ResidueOffData::ResidueOffData(std::vector<int> numbers_, std::vector<std::string> names_,
-                                    std::vector<ResidueType> types_, std::vector<std::vector<size_t>> atomIndices_,
-                                    std::vector<std::vector<size_t>> connections_)
-    : numbers(numbers_), names(names_), types(types_), atomIndices(atomIndices_),
-      atomsConnectedToOtherResidues(connections_)
-{}
-
 cds::OffWriterData cds::toOffWriterData(const std::vector<Residue*>& residues)
 {
     std::vector<Atom*> atoms;
-    std::vector<std::vector<int>> atomChildren;
     std::vector<std::vector<size_t>> indices;
     std::vector<std::vector<size_t>> connections;
+    std::vector<size_t> atomResidues;
+    size_t residueIndex = 0;
     for (auto& residue : residues)
     {
         std::vector<Atom*> residueAtoms = residue->getAtoms();
         indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
         std::vector<Atom*> atomsConnected = atomsConnectedToOtherResidues(residueAtoms);
         codeUtils::insertInto(atoms, residueAtoms);
+        codeUtils::insertInto(atomResidues, std::vector<size_t>(residueAtoms.size(), residueIndex));
         connections.push_back(atomIndices(atoms, atomsConnected));
+        residueIndex++;
     }
-    AtomOffData atomData(atomNumbers(atoms), atomNames(atoms), atomTypes(atoms), atomAtomicNumbers(atoms),
-                         atomCharges(atoms), atomCoordinates(atoms), atomChildrenIndices(atoms));
-    ResidueOffData residueData(residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
-                               connections);
+    AtomOffData atomData {atomNumbers(atoms), atomNames(atoms),       atomTypes(atoms), atomAtomicNumbers(atoms),
+                          atomCharges(atoms), atomCoordinates(atoms), atomResidues,     uniqueAtomBonds(atoms)};
+    ResidueOffData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
+                                connections};
     return OffWriterData {residueData, atomData};
 }
 
@@ -144,18 +137,17 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const Resi
     stream << " " << atoms.numbers[residues.atomIndices[residueIndices.back()].back()] << std::endl;
     // WriteConnectivitySection
     stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags" << std::endl;
-    for (size_t residueIndex : residueIndices)
+    std::vector<bool> residueIncluded = codeUtils::indexMask(residues.names.size(), residueIndices);
+    for (auto& bond : atoms.bonds)
     {
-        for (size_t atomIndex : residues.atomIndices[residueIndex])
+        if (residueIncluded[atoms.residues[bond.first]])
         {
-            for (auto& neighborIndex : atoms.children[atomIndex])
-            { // According to docs: (the *second* atom is the one with the larger index). So ordering
-                int neighborNumber          = atoms.numbers[neighborIndex];
-                std::pair<int, int> numbers = (atoms.numbers[atomIndex] < neighborNumber)
-                                                  ? std::pair<int, int> {atoms.numbers[atomIndex], neighborNumber}
-                                                  : std::pair<int, int> {neighborNumber, atoms.numbers[atomIndex]};
-                stream << " " << numbers.first << " " << numbers.second << " " << 1 << std::endl;
-            }
+            int number         = atoms.numbers[bond.first];
+            int neighborNumber = atoms.numbers[bond.second];
+            int min            = std::min(number, neighborNumber);
+            int max            = std::max(number, neighborNumber);
+            // According to docs: (the *second* atom is the one with the larger index). So ordering
+            stream << " " << min << " " << max << " " << 1 << std::endl;
         }
     }
     // WriteHierarchySection
