@@ -19,9 +19,8 @@ namespace glycoproteinBuilder
         static const std::string seedParameter                               = "seed";
         static const std::string skipMDPrepParameter                         = "skipMDPrep";
         static const std::string proteinGlycanSectionParameter               = "ProteinResidue, GlycanName";
-        static const std::vector<std::string> requiredParameters = {proteinParameter, numberOfStructuresParameter,
-                                                                    persistCyclesParameter};
-        std::vector<std::string> foundParameters                 = {};
+        static const std::vector<std::string> requiredParameters             = {proteinParameter};
+        std::vector<std::string> foundParameters                             = {};
 
         bool foundGlycanSection   = false;
         bool readingGlycanSection = false;
