@@ -18,7 +18,7 @@ namespace glycoproteinBuilder
         static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
         static const std::string seedParameter                               = "seed";
         static const std::string skipMDPrepParameter                         = "skipMDPrep";
-        static const std::string proteinGlycanSectionParameter               = "ProteinResidue, GlycanName";
+        static const std::string glycanSectionParameter                      = "ProteinResidue, GlycanName";
         static const std::vector<std::string> requiredParameters             = {proteinParameter};
         std::vector<std::string> foundParameters                             = {};
 
@@ -96,7 +96,7 @@ namespace glycoproteinBuilder
                         throwError("duplicate parameter '" + parameter + "'");
                     }
                     foundParameters.push_back(parameter);
-                    if (parameter == proteinGlycanSectionParameter)
+                    if (parameter == glycanSectionParameter)
                     {
                         foundGlycanSection   = true;
                         readingGlycanSection = true;
@@ -105,8 +105,8 @@ namespace glycoproteinBuilder
                     }
                     if (split.size() != 2)
                     {
-                        throwError("input doesn't follow format 'parameter:value' or '" +
-                                   proteinGlycanSectionParameter + ":'");
+                        throwError("input doesn't follow format 'parameter:value' or '" + glycanSectionParameter +
+                                   ":'");
                     }
                     const std::string& value = split[1];
                     if (parameter == proteinParameter)
@@ -148,13 +148,12 @@ namespace glycoproteinBuilder
         codeUtils::readFileLineByLine(inputFileName, processLine);
         if (!foundGlycanSection)
         {
-            throw std::runtime_error("Error reading input file: '" + proteinGlycanSectionParameter +
-                                     ":' section missing\n");
+            throw std::runtime_error("Error reading input file: '" + glycanSectionParameter + ":' section missing\n");
         }
         if (readingGlycanSection)
         {
-            throw std::runtime_error("Error reading input file: 'END' expected to close '" +
-                                     proteinGlycanSectionParameter + ":' section'\n");
+            throw std::runtime_error("Error reading input file: 'END' expected to close '" + glycanSectionParameter +
+                                     ":' section'\n");
         }
         for (auto& req : requiredParameters)
         {
