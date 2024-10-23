@@ -26,12 +26,19 @@ namespace glycoproteinBuilder
 
     struct AtomData
     {
+        std::vector<std::string> names;
+        std::vector<std::string> types;
+        std::vector<int> numbers;
+        std::vector<int> atomicNumbers;
+        std::vector<double> charges;
         std::vector<cds::Sphere> bounds;
     };
 
     struct ResidueData
     {
+        std::vector<std::string> names;
         std::vector<cds::ResidueType> types;
+        std::vector<int> numbers;
         std::vector<double> overlapWeights;
         std::vector<cds::Sphere> bounds;
     };
