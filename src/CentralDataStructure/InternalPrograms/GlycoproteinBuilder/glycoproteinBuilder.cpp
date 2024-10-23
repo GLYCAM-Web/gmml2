@@ -386,10 +386,9 @@ namespace glycoproteinBuilder
         std::vector<std::string> recordNames(atoms.size(), "ATOM");
         std::vector<std::string> chainIds(residues.size(), "");
         std::vector<std::string> insertionCodes(residues.size(), "");
-        cds::ResiduePdbData residuePdbData(residueAtoms, cds::residueNumbers(residues), cds::residueNames(residues),
-                                           chainIds, insertionCodes);
-        cds::AtomPdbData atomPdbData(atoms, recordNames);
-        cds::PdbWriterData writerData {residuePdbData, atomPdbData};
+        cds::ResiduePdbData residuePdbData {residueAtoms, cds::residueNumbers(residues),
+                                            cds::truncatedResidueNames(residues), chainIds, insertionCodes};
+        cds::PdbWriterData writerData {residuePdbData, cds::toAtomPdbData(atoms, recordNames)};
 
         std::vector<cds::ResidueType> nonProteinTypes {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
                                                        cds::ResidueType::Aglycone, cds::ResidueType::Undefined};

@@ -14,6 +14,7 @@
 #include "includes/CentralDataStructure/Editors/amberMdPrep.hpp" //all preprocessing should move to here.
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 
 using pdb::PdbModel;
@@ -405,10 +406,12 @@ void PdbModel::Write(std::ostream& stream) const
                 occupancy.push_back(pdbAtom->GetOccupancy());
                 temperatureFactor.push_back(pdbAtom->GetTemperatureFactor());
             }
-            cds::ResiduePdbData residueData({codeUtils::indexVector(atoms)}, {pdbResidue->getNumber()},
-                                            {pdbResidue->getName()}, {pdbResidue->getChainId()},
-                                            {pdbResidue->getInsertionCode()});
-            cds::AtomPdbData atomData(atoms, recordName, occupancy, temperatureFactor);
+            cds::ResiduePdbData residueData {{codeUtils::indexVector(atoms)},
+                                             {pdbResidue->getNumber()},
+                                             {cds::truncatedResidueName(pdbResidue)},
+                                             {pdbResidue->getChainId()},
+                                             {pdbResidue->getInsertionCode()}};
+            cds::AtomPdbData atomData = cds::toAtomPdbData(atoms, recordName, occupancy, temperatureFactor);
             cds::writeMoleculeToPdb(stream, {0}, {pdbResidue->HasTerCard()},
                                     cds::PdbWriterData {residueData, atomData});
         }

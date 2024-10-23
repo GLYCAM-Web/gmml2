@@ -171,6 +171,22 @@ std::vector<std::string> cds::residueNames(const std::vector<Residue*>& residues
     return result;
 }
 
+std::string cds::truncatedResidueName(const Residue* residue)
+{
+    return residue->getName().substr(0, 3);
+}
+
+std::vector<std::string> cds::truncatedResidueNames(const std::vector<Residue*>& residues)
+{
+    std::vector<std::string> result;
+    result.reserve(residues.size());
+    for (auto& residue : residues)
+    {
+        result.push_back(truncatedResidueName(residue));
+    }
+    return result;
+}
+
 std::vector<cds::ResidueType> cds::residueTypes(const std::vector<Residue*>& residues)
 {
     std::vector<ResidueType> result;

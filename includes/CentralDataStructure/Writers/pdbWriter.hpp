@@ -14,9 +14,6 @@ namespace cds
 {
     struct AtomPdbData
     {
-        AtomPdbData(std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames_,
-                    std::vector<double> occupancies_, std::vector<double> temperatureFactors_);
-        AtomPdbData(std::vector<cds::Atom*>& atoms_, std::vector<std::string> recordNames_);
         std::vector<cds::Atom*> atoms;
         std::vector<Coordinate> coordinates;
         std::vector<int> numbers;
@@ -29,10 +26,6 @@ namespace cds
 
     struct ResiduePdbData
     {
-        ResiduePdbData(std::vector<std::vector<size_t>> atomIndices_, std::vector<int> numbers_,
-                       std::vector<std::string> names_, std::vector<std::string> chainIds_,
-                       std::vector<std::string> insertionCodes_);
-
         std::vector<std::vector<size_t>> atomIndices;
         std::vector<int> numbers;
         std::vector<std::string> names;
@@ -47,6 +40,9 @@ namespace cds
     };
 
     std::vector<bool> residueTER(const std::vector<ResidueType>& types);
+    AtomPdbData toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames);
+    AtomPdbData toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
+                              std::vector<double> occupancies, std::vector<double> temperatureFactors);
     PdbWriterData toPdbWriterData(std::vector<Residue*>& residues);
 
     void writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,

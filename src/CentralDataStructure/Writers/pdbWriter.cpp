@@ -7,37 +7,7 @@
 
 namespace
 {
-    std::vector<std::string> nameSubstrings(const std::vector<std::string>& names)
-    {
-        std::vector<std::string> result;
-        result.reserve(names.size());
-        for (auto& name : names)
-        {
-            result.push_back(name.substr(0, 3));
-        }
-        return result;
-    }
 } // namespace
-
-cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms_, std::vector<std::string> recordNames_,
-                              std::vector<double> occupancies_, std::vector<double> temperatureFactors_)
-    : atoms(atoms_), coordinates(atomCoordinates(atoms_)), numbers(atomNumbers(atoms_)), names(atomNames(atoms_)),
-      elements(atomElements(atoms_)), recordNames(recordNames_), occupancies(occupancies_),
-      temperatureFactors(temperatureFactors_)
-{}
-
-cds::AtomPdbData::AtomPdbData(std::vector<cds::Atom*>& atoms_, std::vector<std::string> recordNames_)
-    : atoms(atoms_), coordinates(atomCoordinates(atoms_)), numbers(atomNumbers(atoms_)), names(atomNames(atoms_)),
-      elements(atomElements(atoms_)), recordNames(recordNames_), occupancies(std::vector<double>(atoms.size(), 1.0)),
-      temperatureFactors(std::vector<double>(atoms.size(), 0.0))
-{}
-
-cds::ResiduePdbData::ResiduePdbData(std::vector<std::vector<size_t>> atomIndices_, std::vector<int> numbers_,
-                                    std::vector<std::string> names_, std::vector<std::string> chainIds_,
-                                    std::vector<std::string> insertionCodes_)
-    : atomIndices(atomIndices_), numbers(numbers_), names(nameSubstrings(names_)), chainIds(chainIds_),
-      insertionCodes(insertionCodes_)
-{}
 
 std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
 {
@@ -58,6 +28,25 @@ std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
     return result;
 }
 
+cds::AtomPdbData cds::toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
+                                    std::vector<double> occupancies, std::vector<double> temperatureFactors)
+{
+    return {atoms,       atomCoordinates(atoms), atomNumbers(atoms), atomNames(atoms), atomElements(atoms), recordNames,
+            occupancies, temperatureFactors};
+}
+
+cds::AtomPdbData cds::toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames)
+{
+    return {atoms,
+            atomCoordinates(atoms),
+            atomNumbers(atoms),
+            atomNames(atoms),
+            atomElements(atoms),
+            recordNames,
+            std::vector<double>(atoms.size(), 1.0),
+            std::vector<double>(atoms.size(), 0.0)};
+}
+
 cds::PdbWriterData cds::toPdbWriterData(std::vector<Residue*>& residues)
 {
     std::vector<Atom*> atoms;
@@ -71,9 +60,9 @@ cds::PdbWriterData cds::toPdbWriterData(std::vector<Residue*>& residues)
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
     std::vector<std::string> chainIds(residues.size(), "");
     std::vector<std::string> insertionCodes(residues.size(), "");
-    ResiduePdbData residueData(indices, residueNumbers(residues), residueNames(residues), chainIds, insertionCodes);
-    AtomPdbData atomData(atoms, recordNames);
-    return PdbWriterData {residueData, atomData};
+    ResiduePdbData residueData {indices, residueNumbers(residues), truncatedResidueNames(residues), chainIds,
+                                insertionCodes};
+    return PdbWriterData {residueData, toAtomPdbData(atoms, recordNames)};
 }
 
 void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules)
