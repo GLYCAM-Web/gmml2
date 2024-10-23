@@ -53,13 +53,10 @@ graph::Database cds::createGraphData(GraphIndexData& indices)
     }
     for (size_t n = 0; n < atoms.size(); n++)
     {
-        for (auto& neighbor : atoms[n]->getNeighbors())
+        for (auto& neighbor : atoms[n]->getChildren())
         {
             size_t index = neighbor->getIndex();
-            if (n < index)
-            {
-                addEdge(graph, {n, index});
-            }
+            addEdge(graph, {n, index});
         }
     }
     // restore indices
