@@ -134,12 +134,14 @@ std::vector<cds::Atom*> cds::atomsConnectedToOtherResidues(std::vector<Atom*> at
     std::vector<Atom*> foundAtoms;
     for (auto& atom : atoms)
     {
+        bool connected = false;
         for (auto& neighbor : atom->getNeighbors())
         { // check if neighbor is not one of the atoms in this residue.
-            if (!codeUtils::contains(atoms, neighbor))
-            {
-                foundAtoms.push_back(atom);
-            }
+            connected = connected || !codeUtils::contains(atoms, neighbor);
+        }
+        if (connected)
+        {
+            foundAtoms.push_back(atom);
         }
     }
     return foundAtoms;
