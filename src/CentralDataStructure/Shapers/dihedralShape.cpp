@@ -102,35 +102,34 @@ void cds::setShape(std::vector<cds::RotatableDihedral>& dihedrals, const std::ve
 
 void cds::setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference)
 {
-    auto& dihedrals = linkage.rotatableDihedrals;
-    if (linkage.rotamerType == GlycamMetadata::RotamerType::conformer)
+    std::vector<RotatableDihedral>& dihedrals                        = linkage.rotatableDihedrals;
+    std::function<void(const ConformerShapePreference&)> onConformer = [&](const ConformerShapePreference& pref)
     {
-        if (!std::holds_alternative<ConformerShapePreference>(preference))
+        if (linkage.rotamerType != GlycamMetadata::RotamerType::conformer)
         {
             throw std::runtime_error("expected but did not receive ConformerShapePreference for conformer linkage");
         }
-        ConformerShapePreference pref = std::get<ConformerShapePreference>(preference);
-        size_t metadataIndex          = pref.metadataOrder[0];
+        size_t metadataIndex = pref.metadataOrder[0];
         for (size_t n = 0; n < dihedrals.size(); n++)
         {
             double angle = pref.angles[n][metadataIndex];
             setDihedralAngle(dihedrals[n], {angle, angle, metadataIndex});
         }
-    }
-    else
+    };
+    std::function<void(const PermutationShapePreference&)> onPermutation = [&](const PermutationShapePreference& pref)
     {
-        if (!std::holds_alternative<PermutationShapePreference>(preference))
+        if (linkage.rotamerType != GlycamMetadata::RotamerType::permutation)
         {
             throw std::runtime_error("expected but did not receive PermutationShapePreference for permutation linkage");
         }
-        PermutationShapePreference pref = std::get<PermutationShapePreference>(preference);
         for (size_t n = 0; n < dihedrals.size(); n++)
         {
             size_t metadataIndex = pref.metadataOrder[n][0];
             double angle         = pref.angles[n][metadataIndex];
             setDihedralAngle(dihedrals[n], {angle, angle, metadataIndex});
         }
-    }
+    };
+    return onResidueLinkageShapePreference(onConformer, onPermutation, preference);
 }
 
 void cds::setShapeToPreference(std::vector<ResidueLinkage>& linkages,
@@ -190,16 +189,16 @@ cds::ResidueLinkageShapePreference cds::selectedRotamersOnly(MetadataPreferenceS
                                                              const ResidueLinkage& linkage,
                                                              const ResidueLinkageShapePreference& preference)
 {
-    if (std::holds_alternative<ConformerShapePreference>(preference))
+    std::function<ResidueLinkageShapePreference(const ConformerShapePreference&)> onConformer =
+        [&](const ConformerShapePreference& pref)
     {
-        auto pref     = std::get<ConformerShapePreference>(preference);
         auto isFrozen = std::vector<bool>(linkage.rotatableDihedrals.size(), false);
         return ConformerShapePreference {isFrozen, pref.angles,
                                          metadataSelection(pref.metadataOrder, linkage.rotatableDihedrals[0])};
-    }
-    else if (std::holds_alternative<PermutationShapePreference>(preference))
+    };
+    std::function<ResidueLinkageShapePreference(const PermutationShapePreference&)> onPermutation =
+        [&](const PermutationShapePreference& pref)
     {
-        auto pref  = std::get<PermutationShapePreference>(preference);
         auto order = pref.metadataOrder;
         std::vector<std::vector<size_t>> selected;
         selected.reserve(order.size());
@@ -208,11 +207,8 @@ cds::ResidueLinkageShapePreference cds::selectedRotamersOnly(MetadataPreferenceS
             selected.push_back(metadataSelection(order[n], linkage.rotatableDihedrals[n]));
         }
         return PermutationShapePreference {pref.angles, selected};
-    }
-    else
-    {
-        throw std::runtime_error("unhandled linkage shape preference in cds::selectedRotamersOnly");
-    }
+    };
+    return onResidueLinkageShapePreference(onConformer, onPermutation, preference);
 }
 
 cds::ResidueLinkageShapePreference cds::firstRotamerOnly(const ResidueLinkage& linkage,

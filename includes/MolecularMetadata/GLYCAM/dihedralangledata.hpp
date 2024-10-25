@@ -2,8 +2,10 @@
 #define INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 
 #include <string>
+#include <functional>
 #include <variant>
 #include <vector>
+#include <stdexcept>
 
 namespace GlycamMetadata
 {
@@ -25,13 +27,15 @@ namespace GlycamMetadata
         double upperDeviationStd;
     };
 
+    typedef std::variant<AngleLimit, AngleStd> AngleDeviation;
+
     struct DihedralAngleData
     {
         std::string linking_atom1_;
         std::string linking_atom2_;
         std::string dihedral_angle_name_;
         double default_angle;
-        std::variant<AngleLimit, AngleStd> angle_deviation;
+        AngleDeviation angle_deviation;
         double weight_;
         RotamerType rotamer_type_; // permutation or conformer
         std::string rotamer_name_;
@@ -74,5 +78,23 @@ namespace GlycamMetadata
                                                                                const std::string residue2Name);
     std::vector<double> dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector);
     DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
+
+    template<typename T>
+    T onAngleDeviation(std::function<T(const AngleLimit&)>& onLimit, std::function<T(const AngleStd&)>& onStd,
+                       const AngleDeviation& deviation)
+    {
+        if (std::holds_alternative<AngleLimit>(deviation))
+        {
+            return onLimit(std::get<AngleLimit>(deviation));
+        }
+        else if (std::holds_alternative<AngleStd>(deviation))
+        {
+            return onStd(std::get<AngleStd>(deviation));
+        }
+        else
+        {
+            throw std::runtime_error("unhandled angle deviation in GlycamMetadata::onAngleDeviation");
+        }
+    };
 } // namespace GlycamMetadata
 #endif

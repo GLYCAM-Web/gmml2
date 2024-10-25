@@ -345,9 +345,9 @@ std::vector<double> cds::evenlySpacedAngles(double preference, double lowerDevia
 std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(double deviation,
                                                                    const ResidueLinkageShapePreference& preference)
 {
-    if (std::holds_alternative<ConformerShapePreference>(preference))
+    std::function<std::vector<cds::AngleSearchPreference>(const ConformerShapePreference&)> onConformer =
+        [&](const ConformerShapePreference& pref)
     {
-        auto pref = std::get<ConformerShapePreference>(preference);
         if (pref.metadataOrder.size() != 1)
         {
             throw std::runtime_error(
@@ -360,11 +360,10 @@ std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(double deviat
             result.push_back({deviation, a, pref.metadataOrder});
         }
         return result;
-    }
-    else if (std::holds_alternative<PermutationShapePreference>(preference))
+    };
+    std::function<std::vector<cds::AngleSearchPreference>(const PermutationShapePreference&)> onPermutation =
+        [&](const PermutationShapePreference& pref)
     {
-
-        auto pref = std::get<PermutationShapePreference>(preference);
         std::vector<AngleSearchPreference> result;
         result.reserve(pref.angles.size());
         for (size_t n = 0; n < pref.angles.size(); n++)
@@ -372,11 +371,8 @@ std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(double deviat
             result.push_back({deviation, pref.angles[n], pref.metadataOrder[n]});
         }
         return result;
-    }
-    else
-    {
-        throw std::runtime_error("unhandled linkage shape preference in cds::angleSearchPreference");
-    }
+    };
+    return onResidueLinkageShapePreference(onConformer, onPermutation, preference);
 }
 
 std::vector<std::vector<cds::AngleSearchPreference>>

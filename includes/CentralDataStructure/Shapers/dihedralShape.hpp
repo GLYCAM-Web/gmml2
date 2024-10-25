@@ -51,6 +51,25 @@ namespace cds
 
     typedef std::variant<ConformerShapePreference, PermutationShapePreference> ResidueLinkageShapePreference;
 
+    template<typename T>
+    T onResidueLinkageShapePreference(std::function<T(const ConformerShapePreference&)>& onConformer,
+                                      std::function<T(const PermutationShapePreference&)>& onPermutation,
+                                      const ResidueLinkageShapePreference& preference)
+    {
+        if (std::holds_alternative<ConformerShapePreference>(preference))
+        {
+            return onConformer(std::get<ConformerShapePreference>(preference));
+        }
+        else if (std::holds_alternative<PermutationShapePreference>(preference))
+        {
+            return onPermutation(std::get<PermutationShapePreference>(preference));
+        }
+        else
+        {
+            throw std::runtime_error("unhandled linkage shape preference in cds::onResidueLinkageShapePreference");
+        }
+    };
+
     void setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata target);
     bool setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
                           std::string dihedralName, std::string selectedRotamer);

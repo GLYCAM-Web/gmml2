@@ -6,6 +6,8 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include <functional>
 #include <variant>
 #include <vector>
 #include <string>
@@ -16,22 +18,18 @@ namespace cdsCondensedSequence
         [](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
     {
         double increment = 1.0;
-        auto angle       = metadata.angle_deviation;
-        if (std::holds_alternative<GlycamMetadata::AngleLimit>(angle))
+        std::function<std::vector<double>(const GlycamMetadata::AngleLimit&)> onLimit =
+            [&](const GlycamMetadata::AngleLimit& dev)
         {
-            auto dev = std::get<GlycamMetadata::AngleLimit>(angle);
             return cds::evenlySpacedAngles(preference, dev.lowerDeviationLimit, dev.upperDeviationLimit, increment);
-        }
-        else if (std::holds_alternative<GlycamMetadata::AngleStd>(angle))
+        };
+        std::function<std::vector<double>(const GlycamMetadata::AngleStd&)> onStd =
+            [&](const GlycamMetadata::AngleStd& dev)
         {
-            auto dev = std::get<GlycamMetadata::AngleStd>(angle);
             return cds::evenlySpacedAngles(preference, deviation * dev.lowerDeviationStd,
                                            deviation * dev.upperDeviationStd, increment);
-        }
-        else
-        {
-            throw std::runtime_error("unknown dihedral angle type");
-        }
+        };
+        return GlycamMetadata::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
     };
     const cds::AngleSearchSettings defaultSearchSettings = {1.0, defaultSearchAngles};
 

@@ -180,24 +180,20 @@ namespace glycoproteinBuilder
         auto standardDeviation =
             [&preferenceDeviation, &searchDeviation](const GlycamMetadata::DihedralAngleData& metadata)
         {
-            auto angle = metadata.angle_deviation;
-            if (std::holds_alternative<GlycamMetadata::AngleLimit>(angle))
+            std::function<std::pair<double, double>(const GlycamMetadata::AngleLimit&)> onLimit =
+                [&](const GlycamMetadata::AngleLimit& dev)
             {
-                auto dev         = std::get<GlycamMetadata::AngleLimit>(angle);
                 double max_std   = preferenceDeviation + searchDeviation;
                 double lower_std = dev.lowerDeviationLimit / max_std;
                 double upper_std = dev.upperDeviationLimit / max_std;
                 return std::pair<double, double> {lower_std, upper_std};
-            }
-            else if (std::holds_alternative<GlycamMetadata::AngleStd>(angle))
+            };
+            std::function<std::pair<double, double>(const GlycamMetadata::AngleStd&)> onStd =
+                [&](const GlycamMetadata::AngleStd& dev)
             {
-                auto dev = std::get<GlycamMetadata::AngleStd>(angle);
                 return std::pair<double, double> {dev.lowerDeviationStd, dev.upperDeviationStd};
-            }
-            else
-            {
-                throw std::runtime_error("unknown angle deviation type");
-            }
+            };
+            return GlycamMetadata::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
         };
         auto searchAngles = [&standardDeviation, &searchIncrement](const GlycamMetadata::DihedralAngleData& metadata,
                                                                    double preference, double deviation)

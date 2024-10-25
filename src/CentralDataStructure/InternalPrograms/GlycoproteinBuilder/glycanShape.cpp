@@ -1,8 +1,9 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
-
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/CentralDataStructure/Geometry/types.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CodeUtils/containers.hpp"
+
+#include <functional>
 
 namespace glycoproteinBuilder
 {
@@ -113,30 +114,32 @@ namespace glycoproteinBuilder
     void setLinkageShapeToPreference(const AssemblyGraphs& graphs, AssemblyData& data, size_t linkageId,
                                      const cds::ResidueLinkageShapePreference& preference)
     {
-        const std::vector<size_t>& dihedrals = graphs.residueLinkages[linkageId].rotatableDihedrals;
-        if (data.residueLinkageData.rotamerTypes[linkageId] == GlycamMetadata::RotamerType::conformer)
+        GlycamMetadata::RotamerType rotamerType = data.residueLinkageData.rotamerTypes[linkageId];
+        const std::vector<size_t>& dihedrals    = graphs.residueLinkages[linkageId].rotatableDihedrals;
+
+        std::function<void(const cds::ConformerShapePreference&)> onConformer =
+            [&](const cds::ConformerShapePreference& pref)
         {
-            if (!std::holds_alternative<cds::ConformerShapePreference>(preference))
+            if (rotamerType != GlycamMetadata::RotamerType::conformer)
             {
                 throw std::runtime_error("expected but did not receive ConformerShapePreference for conformer linkage");
             }
-            cds::ConformerShapePreference pref = std::get<cds::ConformerShapePreference>(preference);
-            size_t metadataIndex               = pref.metadataOrder[0];
+            size_t metadataIndex = pref.metadataOrder[0];
             for (size_t n = 0; n < dihedrals.size(); n++)
             {
                 double angle = pref.angles[n][metadataIndex];
                 cds::AngleWithMetadata am {angle, angle, metadataIndex};
                 setDihedralAngle(graphs, data, linkageId, dihedrals[n], am);
             }
-        }
-        else
+        };
+        std::function<void(const cds::PermutationShapePreference&)> onPermutation =
+            [&](const cds::PermutationShapePreference& pref)
         {
-            if (!std::holds_alternative<cds::PermutationShapePreference>(preference))
+            if (rotamerType != GlycamMetadata::RotamerType::permutation)
             {
                 throw std::runtime_error(
                     "expected but did not receive PermutationShapePreference for permutation linkage");
             }
-            cds::PermutationShapePreference pref = std::get<cds::PermutationShapePreference>(preference);
             for (size_t n = 0; n < dihedrals.size(); n++)
             {
                 size_t metadataIndex = pref.metadataOrder[n][0];
@@ -144,6 +147,7 @@ namespace glycoproteinBuilder
                 cds::AngleWithMetadata am {angle, angle, metadataIndex};
                 setDihedralAngle(graphs, data, linkageId, dihedrals[n], am);
             }
-        }
+        };
+        return onResidueLinkageShapePreference(onConformer, onPermutation, preference);
     }
 } // namespace glycoproteinBuilder
