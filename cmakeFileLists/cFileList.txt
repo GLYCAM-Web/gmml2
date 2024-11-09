@@ -79,6 +79,8 @@
 ./src/CodeUtils/random.cpp
 ./src/CodeUtils/strings.cpp
 ./src/CodeUtils/threads.cpp
+./src/Graph/cdsToGraph.cpp
+./src/Graph/graphDataLayer.cpp
 ./src/Graph/manipulation.cpp
 ./src/Graph/traversable.cpp
 ./src/MolecularMetadata/GLYCAM/dihedralangledata.cpp
