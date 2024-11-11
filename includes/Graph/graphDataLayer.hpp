@@ -19,7 +19,9 @@ namespace graph
     };
 
     struct ResidueLinkageStruct
-    {};
+    {
+        std::vector<size_t> rotatableDihedrals;
+    };
 
     struct MoleculeLinkageStruct
     {};

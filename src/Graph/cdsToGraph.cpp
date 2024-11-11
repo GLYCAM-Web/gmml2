@@ -44,7 +44,8 @@ namespace graph
                 bool sameResidue  = atomResidue[n] == atomResidue[k];
                 bool sameMolecule = residueMolecule[atomResidue[n]] == residueMolecule[atomResidue[k]];
                 std::optional<ResidueLinkageStruct> residueLinkage =
-                    sameResidue ? std::nullopt : std::optional<ResidueLinkageStruct>(ResidueLinkageStruct {});
+                    sameResidue ? std::nullopt
+                                : std::optional<ResidueLinkageStruct>(ResidueLinkageStruct {std::vector<size_t>()});
                 std::optional<MoleculeLinkageStruct> moleculeLinkage =
                     sameMolecule ? std::nullopt : std::optional<MoleculeLinkageStruct>(MoleculeLinkageStruct {});
                 result.addBond(n, k, BondType::covalent, residueLinkage, moleculeLinkage);

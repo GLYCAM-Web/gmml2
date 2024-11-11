@@ -179,19 +179,25 @@ namespace graph
         }
 
         structure.residueLinkageGraphData.residues.reserve(residueLinkageCount);
+        structure.residueLinkageGraphData.atomLinkages.reserve(residueLinkageCount);
         for (size_t n = 0; n < residueLinkageCount; n++)
         {
             std::array<size_t, 2> nodes = residueGraph.edges.nodeAdjacencies[n];
             structure.residueLinkageGraphData.residues.push_back(
                 {&structure.residues[nodes[0]], &structure.residues[nodes[1]]});
+            structure.residueLinkageGraphData.atomLinkages.push_back(
+                &structure.atomLinkages[residueGraph.edges.indices[n]]);
         }
 
         structure.moleculeLinkageGraphData.molecules.reserve(moleculeLinkageCount);
+        structure.moleculeLinkageGraphData.residueLinkages.reserve(moleculeLinkageCount);
         for (size_t n = 0; n < moleculeLinkageCount; n++)
         {
             std::array<size_t, 2> nodes = moleculeGraph.edges.nodeAdjacencies[n];
             structure.moleculeLinkageGraphData.molecules.push_back(
                 {&structure.molecules[nodes[0]], &structure.molecules[nodes[1]]});
+            structure.moleculeLinkageGraphData.residueLinkages.push_back(
+                &structure.residueLinkages[moleculeGraph.edges.indices[n]]);
         }
     }
 } // namespace graph

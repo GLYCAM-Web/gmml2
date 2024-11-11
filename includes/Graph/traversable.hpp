@@ -67,6 +67,7 @@ namespace graph
     struct ResidueLinkageGraphData
     {
         std::vector<std::array<Residue*, 2>> residues;
+        std::vector<AtomLinkage*> atomLinkages;
     };
 
     struct MoleculeData
@@ -90,6 +91,7 @@ namespace graph
     struct MoleculeLinkageGraphData
     {
         std::vector<std::array<Molecule*, 2>> molecules;
+        std::vector<ResidueLinkage*> residueLinkages;
     };
 
     class AtomLinkage
@@ -108,6 +110,16 @@ namespace graph
             return graph->atoms.at(graphIndex);
         }
 
+        inline Atom* source() const
+        {
+            return atoms()[0];
+        }
+
+        inline Atom* target() const
+        {
+            return atoms()[1];
+        }
+
       private:
         size_t dataIndex;
         AtomLinkageData* data;
@@ -122,22 +134,37 @@ namespace graph
                        ResidueLinkageGraphData* graph_)
             : dataIndex(dataIndex_), data(data_), graphIndex(graphIndex_), graph(graph_) {};
 
-        const ResidueLinkageStruct& stuff() const
+        inline std::array<Residue*, 2> residues() const
         {
-            return data->structs->at(dataIndex).value();
+            return graph->residues.at(graphIndex);
         }
 
         inline Residue* source() const
         {
-            return graph->residues.at(graphIndex)[0];
+            return residues()[0];
         }
 
         inline Residue* target() const
         {
-            return graph->residues.at(graphIndex)[1];
+            return residues()[1];
+        }
+
+        inline const std::vector<size_t>& rotatableDihedrals() const
+        {
+            return getStruct().rotatableDihedrals;
+        }
+
+        inline const AtomLinkage* atomLinkage() const
+        {
+            return graph->atomLinkages.at(graphIndex);
         }
 
       private:
+        inline const ResidueLinkageStruct& getStruct() const
+        {
+            return data->structs->at(dataIndex).value();
+        }
+
         size_t dataIndex;
         ResidueLinkageData* data;
         size_t graphIndex;
@@ -151,22 +178,37 @@ namespace graph
                         MoleculeLinkageGraphData* graph_)
             : dataIndex(dataIndex_), data(data_), graphIndex(graphIndex_), graph(graph_) {};
 
-        const MoleculeLinkageStruct& stuff() const
+        inline std::array<Molecule*, 2> molecules() const
         {
-            return data->structs->at(dataIndex).value();
+            return graph->molecules.at(graphIndex);
         }
 
         inline Molecule* source() const
         {
-            return graph->molecules.at(graphIndex)[0];
+            return molecules()[0];
         }
 
         inline Molecule* target() const
         {
-            return graph->molecules.at(graphIndex)[1];
+            return molecules()[1];
+        }
+
+        inline const ResidueLinkage* residueLinkage() const
+        {
+            return graph->residueLinkages.at(graphIndex);
+        }
+
+        inline const AtomLinkage* atomLinkage() const
+        {
+            return residueLinkage()->atomLinkage();
         }
 
       private:
+        inline const MoleculeLinkageStruct& getStruct() const
+        {
+            return data->structs->at(dataIndex).value();
+        }
+
         size_t dataIndex;
         MoleculeLinkageData* data;
         size_t graphIndex;
@@ -338,10 +380,10 @@ namespace graph
         std::vector<MoleculeLinkage> moleculeLinkages;
 
         AtomGraphData atomGraphData;
-        AtomLinkageGraphData atomLinkageGraphData;
         ResidueGraphData residueGraphData;
-        ResidueLinkageGraphData residueLinkageGraphData;
         MoleculeGraphData moleculeGraphData;
+        AtomLinkageGraphData atomLinkageGraphData;
+        ResidueLinkageGraphData residueLinkageGraphData;
         MoleculeLinkageGraphData moleculeLinkageGraphData;
     };
 
