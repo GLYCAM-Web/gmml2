@@ -60,7 +60,7 @@ namespace graph
         }
 
         std::vector<size_t>& residueLinkageGraphIndices = residueGraph.edges.indices;
-        size_t residueLinkageCount                      = residueGraphIndices.size();
+        size_t residueLinkageCount                      = residueLinkageGraphIndices.size();
         structure.residueLinkages.reserve(residueLinkageCount);
         for (size_t n = 0; n < residueLinkageCount; n++)
         {
@@ -179,7 +179,7 @@ namespace graph
         }
 
         structure.residueLinkageGraphData.residues.reserve(residueLinkageCount);
-        for (size_t n = 0; n < atomLinkageCount; n++)
+        for (size_t n = 0; n < residueLinkageCount; n++)
         {
             std::array<size_t, 2> nodes = residueGraph.edges.nodeAdjacencies[n];
             structure.residueLinkageGraphData.residues.push_back(
@@ -187,7 +187,7 @@ namespace graph
         }
 
         structure.moleculeLinkageGraphData.molecules.reserve(moleculeLinkageCount);
-        for (size_t n = 0; n < atomLinkageCount; n++)
+        for (size_t n = 0; n < moleculeLinkageCount; n++)
         {
             std::array<size_t, 2> nodes = moleculeGraph.edges.nodeAdjacencies[n];
             structure.moleculeLinkageGraphData.molecules.push_back(
