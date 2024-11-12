@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 3.13.4)
 
 #you always have to create a project. This is what your files
 #are named, how you create objects, etc.
-project(gmml2 VERSION 1.0.0 DESCRIPTION "GLYCAM Molecular Modeling Library")
+file (STRINGS "version.txt" GMML_VERSION)
+project(gmml2 VERSION ${GMML_VERSION} DESCRIPTION "GLYCAM Molecular Modeling Library")
 
 ################## BEGIN GETTING TOOLING TOGETHER ###################
 
@@ -40,6 +41,10 @@ if (NOT ${DEBUG_NO_WRAP})
 endif()
 find_package(Eigen3 REQUIRED)
 
+message("")
+message(STATUS "Building GMML2 version ${GMML_VERSION}")
+message("")
+
 #include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 #Show user what compiler they using
 message("################## TOOLS CMAKE IS USING ###################\n")
@@ -59,7 +64,6 @@ message("")
 #wrap skip thing, we also want to skip over places that try to reference
 #packages we are not sure we have
 if (NOT ${DEBUG_NO_WRAP})
-    message("")
     message(STATUS "Swig Executable:\t${SWIG_EXECUTABLE}")
     message(STATUS "Swig Version:\t${SWIG_VERSION}")
     message(STATUS "Swig Library Dir:\t${SWIG_DIR}")
