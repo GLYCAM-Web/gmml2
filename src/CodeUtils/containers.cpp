@@ -9,8 +9,7 @@ std::string codeUtils::FindStringInStringMap(const std::string& s,
 
 std::vector<bool> codeUtils::vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB)
 {
-    std::vector<bool> result;
-    result.reserve(vecA.size());
+    std::vector<bool> result(vecA.size(), false);
     for (size_t n = 0; n < vecA.size(); n++)
     {
         result[n] = vecA[n] && vecB[n];
