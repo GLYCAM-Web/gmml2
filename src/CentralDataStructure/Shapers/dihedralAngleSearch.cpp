@@ -150,7 +150,7 @@ namespace
         return result;
     }
 
-    void moveFirstResidueCoords(size_t side, const cds::RotationMatrix matrix, const cds::DihedralRotationData& input,
+    void moveFirstResidueCoords(size_t side, const cds::RotationMatrix& matrix, const cds::DihedralRotationData& input,
                                 std::vector<cds::Sphere>& atomBounds, std::vector<cds::Sphere>& residueBounds)
     {
         size_t residue = input.residueIndices[side][0];

@@ -29,7 +29,7 @@ namespace
         }
     }
 
-    void insertIntersection(std::vector<cds::Sphere>& result, const cds::Sphere sphere,
+    void insertIntersection(std::vector<cds::Sphere>& result, const cds::Sphere& sphere,
                             const std::vector<cds::Sphere>& bounds, const std::vector<size_t>& indices)
     {
         result.reserve(indices.size());
@@ -100,7 +100,7 @@ namespace
     }
 } // namespace
 
-void cds::insertIndicesOfIntersection(std::vector<size_t>& result, const Sphere sphere,
+void cds::insertIndicesOfIntersection(std::vector<size_t>& result, const Sphere& sphere,
                                       const std::vector<Sphere>& coords, const std::vector<size_t>& indices)
 {
     result.reserve(indices.size());
@@ -114,7 +114,7 @@ void cds::insertIndicesOfIntersection(std::vector<size_t>& result, const Sphere 
     }
 }
 
-std::vector<size_t> cds::intersectingIndices(cds::Sphere sphere, const std::vector<cds::Sphere>& coords,
+std::vector<size_t> cds::intersectingIndices(const cds::Sphere& sphere, const std::vector<cds::Sphere>& coords,
                                              const std::vector<size_t>& indices)
 {
     std::vector<size_t> result;

@@ -3,9 +3,10 @@
 #include "includes/CodeUtils/logging.hpp"
 #include <stdexcept>
 
-std::string GlycamMetadata::Glycam06ResidueNameGenerator(std::string linkages, std::string isomer,
-                                                         std::string inputResName, std::string ringType,
-                                                         std::string residueModifier, std::string configuration)
+std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& linkages, const std::string& isomer,
+                                                         const std::string& inputResName, const std::string& ringType,
+                                                         const std::string& residueModifier,
+                                                         const std::string& configuration)
 {
     /* 	Example inputs:
                         linkages: "2,3" , "1" , "Terminal" , "4,7"

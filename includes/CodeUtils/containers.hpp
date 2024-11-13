@@ -19,7 +19,7 @@ namespace codeUtils
         return std::find(vector.begin(), vector.end(), element) - vector.begin();
     }
 
-    template<class T> bool contains(const std::vector<T> vector, const T element)
+    template<class T> bool contains(const std::vector<T>& vector, const T element)
     {
         return indexOf(vector, element) < vector.size();
     }
@@ -51,9 +51,10 @@ namespace codeUtils
         std::fill(into.begin(), into.end(), value);
     }
 
-    template<class T> std::vector<T> vectorAppend(const std::vector<T> vecA, const std::vector<T> vecB)
+    template<class T> std::vector<T> vectorAppend(const std::vector<T>& vecA, const std::vector<T>& vecB)
     {
         std::vector<T> result;
+        result.reserve(vecA.size() + vecB.size());
         insertInto(result, vecA);
         insertInto(result, vecB);
         return result;

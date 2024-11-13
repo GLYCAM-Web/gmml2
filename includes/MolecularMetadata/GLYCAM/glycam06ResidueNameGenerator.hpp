@@ -7,8 +7,8 @@
 
 namespace GlycamMetadata
 {
-    std::string Glycam06ResidueNameGenerator(std::string linkages, std::string isomer, std::string inputResName,
-                                             std::string ringType, std::string residueModifier,
-                                             std::string configuration);
+    std::string Glycam06ResidueNameGenerator(const std::string& linkages, const std::string& isomer,
+                                             const std::string& inputResName, const std::string& ringType,
+                                             const std::string& residueModifier, const std::string& configuration);
 } // namespace GlycamMetadata
 #endif

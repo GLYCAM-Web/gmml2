@@ -30,7 +30,7 @@ namespace glycoproteinBuilder
         };
 
         PartialDihedralRotationData toRotationInputData(const AssemblyGraphs& graphs, AssemblyData& data,
-                                                        OverlapWeight weight, size_t glycanId, size_t linkageId,
+                                                        const OverlapWeight& weight, size_t glycanId, size_t linkageId,
                                                         size_t dihedralId)
         {
             const ResidueLinkageIndices& linkage     = graphs.residueLinkages[linkageId];
@@ -87,7 +87,8 @@ namespace glycoproteinBuilder
         }
 
         void wigglePermutationLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
-                                      size_t linkageId, const cds::AngleSearchSettings& settings, OverlapWeight weight,
+                                      size_t linkageId, const cds::AngleSearchSettings& settings,
+                                      const OverlapWeight& weight,
                                       const cds::PermutationShapePreference& shapePreference)
         {
             const std::vector<size_t>& dihedrals       = graphs.residueLinkages[linkageId].rotatableDihedrals;
@@ -119,7 +120,7 @@ namespace glycoproteinBuilder
         }
 
         void wiggleConformerLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId, size_t linkageId,
-                                    const cds::AngleSearchSettings& settings, OverlapWeight weight,
+                                    const cds::AngleSearchSettings& settings, const OverlapWeight& weight,
                                     const cds::ConformerShapePreference& shapePreference)
         {
             const std::vector<size_t>& dihedrals       = graphs.residueLinkages[linkageId].rotatableDihedrals;
@@ -175,7 +176,7 @@ namespace glycoproteinBuilder
     } // namespace
 
     void wiggleLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId, size_t linkageId,
-                       const cds::AngleSearchSettings& searchSettings, OverlapWeight weight,
+                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                        const cds::ResidueLinkageShapePreference& shapePreference)
     {
         switch (data.residueLinkageData.rotamerTypes[linkageId])
@@ -198,7 +199,7 @@ namespace glycoproteinBuilder
     }
 
     void wiggleGlycan(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
-                      const cds::AngleSearchSettings& searchSettings, OverlapWeight weight,
+                      const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences)
     {
         const std::vector<size_t>& linkages = graphs.glycans[glycanId].linkages;
@@ -216,8 +217,8 @@ namespace glycoproteinBuilder
 
     GlycoproteinState randomDescent(pcg32 rng, GlycanShapeRandomizer randomizeShape,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
-                                    OverlapWeight overlapWeight, const AssemblyGraphs& graphs, AssemblyData& data,
-                                    const GlycoproteinState& initialState)
+                                    const OverlapWeight& overlapWeight, const AssemblyGraphs& graphs,
+                                    AssemblyData& data, const GlycoproteinState& initialState)
     {
         std::stringstream logss;
         logss << "Random Decent, persisting for " << persistCycles << " cycles.\n";

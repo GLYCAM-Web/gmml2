@@ -239,8 +239,8 @@ namespace
     // Most entries have "none" for condition. This checks first if condition is "none", and therefore satisfied.
     // Otherwise (else if) it checks if any of the residue_types match the condition for the entry, e.g.
     // gauche_effect=galacto.
-    bool checkIfResidueConditionsAreSatisfied(const std::vector<std::string> residue_types,
-                                              const std::vector<std::string> entry_conditions)
+    bool checkIfResidueConditionsAreSatisfied(const std::vector<std::string>& residue_types,
+                                              const std::vector<std::string>& entry_conditions)
     {
         for (auto& entry_condition : entry_conditions)
         {
@@ -255,8 +255,8 @@ namespace
 
 // Pass in the two atoms on either side the residue-residue linkage
 std::vector<DihedralAngleDataVector>
-GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string atom1Name, const std::string residue1Name,
-                                                      const std::string atom2Name, const std::string residue2Name)
+GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name, const std::string& residue1Name,
+                                                      const std::string& atom2Name, const std::string& residue2Name)
 {
     DihedralAngleDataVector matching_entries;
     std::vector<std::string> residue1_types = getTypesForResidue(residue1Name);

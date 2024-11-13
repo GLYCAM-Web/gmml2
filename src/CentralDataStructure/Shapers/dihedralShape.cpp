@@ -178,7 +178,7 @@ cds::ResidueLinkageShapePreference cds::defaultShapePreference(const ResidueLink
     {
         return codeUtils::indexVector(metadataVector);
     };
-    auto defaultAngle = [](const DihedralAngleData metadata)
+    auto defaultAngle = [](const DihedralAngleData& metadata)
     {
         return metadata.default_angle;
     };

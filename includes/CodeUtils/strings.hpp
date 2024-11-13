@@ -9,11 +9,11 @@
 namespace codeUtils
 {
     // Functions
-    bool startsWith(std::string bigString, std::string smallString);
+    bool startsWith(const std::string& bigString, const std::string& smallString);
     std::string RemoveWhiteSpace(std::string str);
     void RemoveSpaces(std::string& str);
     void RemoveQuotes(std::string& str);
-    int GetSizeOfIntInString(const std::string str);
+    int GetSizeOfIntInString(const std::string& str);
     std::string& Trim(std::string& str);
     void removeMultipleSpaces(std::string& str);
     void trimLeft(std::function<bool(const char&)> condition, std::string& str);

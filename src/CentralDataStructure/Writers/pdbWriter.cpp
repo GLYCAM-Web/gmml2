@@ -65,7 +65,7 @@ cds::PdbWriterData cds::toPdbWriterData(std::vector<Residue*>& residues)
     return PdbWriterData {residueData, toAtomPdbData(atoms, recordNames)};
 }
 
-void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules)
+void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules)
 {
     size_t modelCount = molecules.at(0)->getAtoms().at(0)->getNumberOfCoordinateSets();
     for (size_t coordinateSet = 0; coordinateSet < modelCount; coordinateSet++)

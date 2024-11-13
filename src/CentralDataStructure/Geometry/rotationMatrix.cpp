@@ -17,7 +17,7 @@ void RotationMatrix::rotateCoordinates(std::vector<CoordinateReference> coords)
     }
 }
 
-RotationMatrix cds::rotationAroundPoint(const Coordinate point, const Coordinate axis, double angle)
+RotationMatrix cds::rotationAroundPoint(const Coordinate& point, const Coordinate& axis, double angle)
 {
     double cosA = std::cos(angle);
     double sinA = std::sin(angle);

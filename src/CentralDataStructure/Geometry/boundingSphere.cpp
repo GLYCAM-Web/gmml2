@@ -80,7 +80,7 @@ namespace
     }
 } // namespace
 
-cds::Sphere cds::boundingSphereIncluding(Sphere sphere, const Sphere include)
+cds::Sphere cds::boundingSphereIncluding(Sphere sphere, const Sphere& include)
 {
     Coordinate diff   = center(include) - sphere.center;
     double diffLength = length(diff);
@@ -94,7 +94,7 @@ cds::Sphere cds::boundingSphereIncluding(Sphere sphere, const Sphere include)
     return sphere;
 }
 
-cds::Sphere cds::boundingSphereCenteredOnLine(Sphere sphere, Coordinate& point1, Coordinate& point2)
+cds::Sphere cds::boundingSphereCenteredOnLine(const Sphere& sphere, const Coordinate& point1, const Coordinate& point2)
 {
     Coordinate direction          = point2 - point1;
     Coordinate closestPointOnAxis = point1 + projection(sphere.center - point1, direction);

@@ -45,7 +45,7 @@ unsigned int cdsSelections::findHighestResidueNumber(std::vector<Residue*> resid
 
 // Not having Atom know which Residue it is in makes this funky. Make a decision about whether that happens or not.
 Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* queryResidue,
-                                                                    const std::string queryAtomName)
+                                                                    const std::string& queryAtomName)
 {
     cds::Atom* queryAtom = queryResidue->FindAtom(queryAtomName);
     if (queryAtom == nullptr)

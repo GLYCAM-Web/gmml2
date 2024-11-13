@@ -5,7 +5,7 @@
 #include <functional>
 #include <ctype.h> // isdigit
 
-bool codeUtils::startsWith(std::string bigString, std::string smallString)
+bool codeUtils::startsWith(const std::string& bigString, const std::string& smallString)
 {
     return (bigString.compare(0, smallString.length(), smallString) == 0);
 }
@@ -28,7 +28,7 @@ void codeUtils::RemoveQuotes(std::string& str)
     str.erase(std::remove(str.begin(), str.end(), '\"'), str.end());
 }
 
-int codeUtils::GetSizeOfIntInString(const std::string str)
+int codeUtils::GetSizeOfIntInString(const std::string& str)
 {
     int size = 0;
     for (const char& c : str)

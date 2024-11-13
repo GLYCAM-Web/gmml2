@@ -7,8 +7,8 @@
 namespace biology
 {
     const std::vector<std::pair<std::string, std::string>>& getBackboneBonding();
-    const std::vector<std::pair<std::string, std::string>>& getSidechainBonding(std::string queryResidueName);
-    const std::string equivalentResidueNameLookup(const std::string queryResidueName);
+    const std::vector<std::pair<std::string, std::string>>& getSidechainBonding(const std::string& queryResidueName);
+    const std::string equivalentResidueNameLookup(const std::string& queryResidueName);
 } // namespace biology
 
 #endif

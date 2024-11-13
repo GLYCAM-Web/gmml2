@@ -193,7 +193,7 @@ namespace
     };
 } // namespace
 
-std::string GlycamMetadata::GetGlycam06ResidueLinkageCode(const std::string query)
+std::string GlycamMetadata::GetGlycam06ResidueLinkageCode(const std::string& query)
 { // If something like 3,2,6 or 6,4,2 comes in, we need to sort it first.
     std::vector<std::string> queryLinkages = codeUtils::split(query, ',');
     std::sort(queryLinkages.begin(), queryLinkages.end());
@@ -207,7 +207,7 @@ std::string GlycamMetadata::GetGlycam06ResidueLinkageCode(const std::string quer
     return codeUtils::FindStringInStringMap(sortedQuery, Glycam06LinkageCodeLookup);
 }
 
-std::string GlycamMetadata::GetNameForCode(const std::string query)
+std::string GlycamMetadata::GetNameForCode(const std::string& query)
 {
     for (auto& entry : ResidueNameCodeLookup)
     {
@@ -219,7 +219,7 @@ std::string GlycamMetadata::GetNameForCode(const std::string query)
     return "";
 }
 
-std::string GlycamMetadata::GetCodeForName(const std::string query)
+std::string GlycamMetadata::GetCodeForName(const std::string& query)
 {
     // e.g. input = Fuc, output = F.
     for (auto& entry : ResidueNameCodeLookup)
@@ -232,7 +232,7 @@ std::string GlycamMetadata::GetCodeForName(const std::string query)
     return "";
 }
 
-std::string GlycamMetadata::GetTypeForCode(const std::string query)
+std::string GlycamMetadata::GetTypeForCode(const std::string& query)
 {
     // e.g. input = Fuc, output = F.
     for (auto& entry : ResidueNameCodeLookup)
@@ -245,7 +245,7 @@ std::string GlycamMetadata::GetTypeForCode(const std::string query)
     return "";
 }
 
-std::string GlycamMetadata::GetDescriptiveNameForGlycamResidueName(const std::string residueNameInGLYCAMFormat)
+std::string GlycamMetadata::GetDescriptiveNameForGlycamResidueName(const std::string& residueNameInGLYCAMFormat)
 {
     if (residueNameInGLYCAMFormat.length() < 3)
     {
@@ -307,7 +307,7 @@ std::string GlycamMetadata::GetDescriptiveNameForGlycamResidueName(const std::st
     return configurationDvsL + name;
 }
 
-double GlycamMetadata::GetAdjustmentCharge(std::string queryResidueName)
+double GlycamMetadata::GetAdjustmentCharge(const std::string& queryResidueName)
 { // e.g. input = SO3, output = +0.008.
     for (const auto& entry : ChargeAdjustments)
     {
@@ -319,7 +319,7 @@ double GlycamMetadata::GetAdjustmentCharge(std::string queryResidueName)
     return 0.0;
 }
 
-std::string GlycamMetadata::GetAdjustmentAtom(std::string queryResidueName)
+std::string GlycamMetadata::GetAdjustmentAtom(const std::string& queryResidueName)
 { // e.g. input = SO3, output = O.
     for (const auto& entry : ChargeAdjustments)
     {
@@ -331,7 +331,7 @@ std::string GlycamMetadata::GetAdjustmentAtom(std::string queryResidueName)
     return "O";
 }
 
-std::string GlycamMetadata::GetConnectionAtomForResidue(const std::string query)
+std::string GlycamMetadata::GetConnectionAtomForResidue(const std::string& query)
 {
     std::string result = codeUtils::FindStringInStringMap(query, glycam06DerivativeAglyconeConnectionAtomLookup_);
     if (result.empty())

@@ -33,6 +33,6 @@ namespace cds
         RotationMatrixInternals matrix_;
     };
 
-    RotationMatrix rotationAroundPoint(const Coordinate point, const Coordinate axis, double angle);
+    RotationMatrix rotationAroundPoint(const Coordinate& point, const Coordinate& axis, double angle);
 } // namespace cds
 #endif

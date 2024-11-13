@@ -6,7 +6,7 @@
 
 namespace GlycamMetadata
 {
-    std::vector<std::string> getTypesForResidue(std::string query);
+    std::vector<std::string> getTypesForResidue(const std::string& query);
 }
 
 #endif

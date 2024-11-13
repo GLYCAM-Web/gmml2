@@ -17,7 +17,7 @@ namespace glycoproteinBuilder
         std::vector<std::vector<cds::ResidueLinkageShapePreference>> preferences;
     };
 
-    typedef std::function<void(const AssemblyGraphs&, AssemblyData&, size_t glycanId, OverlapWeight,
+    typedef std::function<void(const AssemblyGraphs&, AssemblyData&, size_t glycanId, const OverlapWeight&,
                                std::vector<cds::ResidueLinkageShapePreference>&)>
         WiggleGlycan;
 
@@ -26,14 +26,14 @@ namespace glycoproteinBuilder
         GlycanShapeRandomizer;
 
     void wiggleLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId, size_t linkageId,
-                       const cds::AngleSearchSettings& searchSettings, OverlapWeight weight,
+                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                        const cds::ResidueLinkageShapePreference& shapePreference);
     void wiggleGlycan(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
-                      const cds::AngleSearchSettings& searchSettings, OverlapWeight weight,
+                      const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences);
     GlycoproteinState randomDescent(pcg32 rng, GlycanShapeRandomizer randomizeShape,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
-                                    OverlapWeight overlapWeight, const AssemblyGraphs& graphs, AssemblyData& data,
-                                    const GlycoproteinState& initialState);
+                                    const OverlapWeight& overlapWeight, const AssemblyGraphs& graphs,
+                                    AssemblyData& data, const GlycoproteinState& initialState);
 } // namespace glycoproteinBuilder
 #endif

@@ -15,7 +15,7 @@ const std::vector<std::pair<std::string, std::string>>& biology::getBackboneBond
     return backboneBonding;
 }
 
-const std::string biology::equivalentResidueNameLookup(const std::string queryResidueName)
+const std::string biology::equivalentResidueNameLookup(const std::string& queryResidueName)
 {
     static const std::unordered_map<std::string, std::string> proteinNameMap = {
         {"HIE", "HIS"},
@@ -42,7 +42,8 @@ const std::string biology::equivalentResidueNameLookup(const std::string queryRe
     return convertedName;
 }
 
-const std::vector<std::pair<std::string, std::string>>& biology::getSidechainBonding(std::string queryResidueName)
+const std::vector<std::pair<std::string, std::string>>&
+biology::getSidechainBonding(const std::string& queryResidueName)
 {
     static const std::unordered_map<std::string, std::vector<std::pair<std::string, std::string>>> sidechainBonding = {
         {"ALA",                                                                        {{"CA", "CB"}}               },
@@ -98,15 +99,15 @@ const std::vector<std::pair<std::string, std::string>>& biology::getSidechainBon
         {"SEC",                                                                         {{"CA", "CB"}, {"CB", "SE"}}},
         {"MSE",                                             {{"CA", "CB"}, {"CB", "CG"}, {"CG", "SE"}, {"SE", "CE"}}},
     };
-    queryResidueName =
+    std::string convertedQueryResidueName =
         biology::equivalentResidueNameLookup(queryResidueName); // returns same string if didn't find conversion.
-    if (sidechainBonding.find(queryResidueName) == sidechainBonding.end())
+    if (sidechainBonding.find(convertedQueryResidueName) == sidechainBonding.end())
     {
         throw std::runtime_error("Oliver! Each query residue residue should be in biology::proteinResidueNames (you "
                                  "need to confirm this before calling this code), or if it's there then it needs an "
                                  "entry in this table. Git gud son. This was the problem residue: " +
-                                 queryResidueName);
+                                 convertedQueryResidueName);
     }
     // gmml::log(__LINE__, __FILE__, gmml::INF, "Found sidechain bonding info for " + queryResidueName);
-    return (sidechainBonding.at(queryResidueName));
+    return (sidechainBonding.at(convertedQueryResidueName));
 }

@@ -51,7 +51,7 @@ namespace cds
                         const AtomPdbData& atoms, size_t atomIndex);
     void writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
                           std::vector<std::pair<size_t, size_t>> connectionIndices);
-    void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*> molecules);
+    void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules);
 
 } // namespace cds
 #endif

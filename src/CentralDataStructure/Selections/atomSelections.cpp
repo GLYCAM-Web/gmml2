@@ -8,7 +8,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
 
-Atom* cdsSelections::getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, const std::string queryNumber)
+Atom* cdsSelections::getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, const std::string& queryNumber)
 {
     for (auto& atom : atoms)
     { // Assumes atom names like C2, O2 or N2. Nothing else should match.
@@ -39,7 +39,7 @@ void cdsSelections::FindConnectedAtoms(std::vector<Atom*>& visitedAtoms, Atom* c
 }
 
 // ToDo ensure all nodes have names, do this up there.
-Atom* cdsSelections::getNeighborNamed(const Atom* queryAtom, const std::string neighborName)
+Atom* cdsSelections::getNeighborNamed(const Atom* queryAtom, const std::string& neighborName)
 {
     return codeUtils::findElementWithName(queryAtom->getNeighbors(), neighborName);
 }

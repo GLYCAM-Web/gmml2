@@ -12,9 +12,9 @@ using cds::Residue;
 
 namespace cdsSelections
 {
-    Atom* getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, const std::string queryNumber);
+    Atom* getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, const std::string& queryNumber);
     void FindConnectedAtoms(std::vector<Atom*>& visitedAtoms, Atom* currentAtom);
-    Atom* getNeighborNamed(const Atom* queryAtom, const std::string neighborName);
+    Atom* getNeighborNamed(const Atom* queryAtom, const std::string& neighborName);
     Atom* selectNeighborNotInAtomVector(const Atom* atomWithNeighbors, std::vector<Atom*> queryAtoms);
     std::vector<Atom*> findCycleAtoms(cds::Atom* const starterAtom);
     Atom* guessAnomericAtomByForeignNeighbor(const Residue* queryResidue);

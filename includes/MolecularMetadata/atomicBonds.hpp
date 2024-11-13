@@ -8,7 +8,7 @@
 namespace MolecularMetadata
 {
     double maxBondLengthByAtomType(Element atom1Element, Element atom2Element);
-    double specificBondLength(std::string query1, std::string query2);
+    double specificBondLength(const std::string& query1, const std::string& query2);
 
 } // namespace MolecularMetadata
 

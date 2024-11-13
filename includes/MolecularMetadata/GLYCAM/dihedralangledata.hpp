@@ -72,10 +72,10 @@ namespace GlycamMetadata
     typedef std::vector<DihedralAngleData> DihedralAngleDataVector;
 
     // Pass in the two atoms on either side the residue-residue linkage
-    std::vector<DihedralAngleDataVector> getDihedralAngleDataEntriesForLinkage(const std::string atom1Name,
-                                                                               const std::string residue1Name,
-                                                                               const std::string atom2Name,
-                                                                               const std::string residue2Name);
+    std::vector<DihedralAngleDataVector> getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name,
+                                                                               const std::string& residue1Name,
+                                                                               const std::string& atom2Name,
+                                                                               const std::string& residue2Name);
     std::vector<double> dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector);
     DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
 

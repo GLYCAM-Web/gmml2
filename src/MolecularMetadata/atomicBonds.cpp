@@ -130,7 +130,7 @@ double MolecularMetadata::maxBondLengthByAtomType(Element atom1Element, Element 
     return result.second;
 }
 
-double MolecularMetadata::specificBondLength(std::string query1, std::string query2)
+double MolecularMetadata::specificBondLength(const std::string& query1, const std::string& query2)
 {
     for (auto& entry : specificBondLengths)
     { // Search bidirectionally e.g Cg-Os, Os-Cg
