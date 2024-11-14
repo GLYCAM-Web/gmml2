@@ -35,9 +35,9 @@ namespace
 
         for (size_t k = 1; k < spheres.size(); k++)
         {
-            auto& a       = spheres[k];
-            Coordinate pt = center(a);
-            double r      = radius(a);
+            const Sphere& a = spheres[k];
+            Coordinate pt   = center(a);
+            double r        = radius(a);
             for (size_t n = 0; n < 3; n++)
             {
                 double nth = pt.nth(n);
@@ -57,16 +57,16 @@ namespace
         double maxSpan  = 0.0;
         for (size_t n = 0; n < 3; n++)
         {
-            auto& minp  = spheres[minId[n]];
-            auto& maxp  = spheres[maxId[n]];
-            double span = cds::distance(center(minp), center(maxp)) + radius(minp) + radius(maxp);
+            const Sphere& minp = spheres[minId[n]];
+            const Sphere& maxp = spheres[maxId[n]];
+            double span        = cds::distance(center(minp), center(maxp)) + radius(minp) + radius(maxp);
             if (span > maxSpan)
             {
                 maxSpan  = span;
                 maxSpanN = n;
             }
         }
-        auto finalCenter = cds::scaleBy(0.5, center(spheres[minId[maxSpanN]]) + center(spheres[maxId[maxSpanN]]));
+        Coordinate finalCenter = cds::scaleBy(0.5, center(spheres[minId[maxSpanN]]) + center(spheres[maxId[maxSpanN]]));
         return Sphere {0.5 * maxSpan, finalCenter};
     }
 

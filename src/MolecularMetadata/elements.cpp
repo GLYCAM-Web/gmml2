@@ -172,7 +172,7 @@ MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
 
 double MolecularMetadata::vanDerWaalsRadius(Element element)
 {
-    auto& result = atomRadii[element];
+    const radius& result = atomRadii[element];
     if (!result.valid)
     {
         std::string message = "No valid radius for element: " + std::to_string(element);
@@ -184,7 +184,7 @@ double MolecularMetadata::vanDerWaalsRadius(Element element)
 
 MolecularMetadata::Element MolecularMetadata::findElementAtomicNumber(const std::string& queryElement)
 {
-    auto result = toElement(queryElement);
+    Element result = toElement(queryElement);
     if (result != Element::Unknown)
     {
         return result;

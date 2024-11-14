@@ -131,19 +131,19 @@ cds::Overlap cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, c
     std::vector<Sphere> boundsA;
     std::vector<Sphere> boundsB;
     double tolerance = constants::overlapTolerance;
-    auto properties  = OverlapProperties {constants::clashWeightBase, tolerance};
+    OverlapProperties properties {constants::clashWeightBase, tolerance};
     Overlap overlap {0.0, 0.0};
     for (size_t n = 0; n < residuesA.size(); n++)
     {
-        size_t aIndex        = residuesA[n];
-        auto& residueBoundsA = residueBounds[aIndex];
+        size_t aIndex                = residuesA[n];
+        const Sphere& residueBoundsA = residueBounds[aIndex];
         for (size_t k = 0; k < residuesB.size(); k++)
         {
-            size_t bIndex        = residuesB[k];
-            auto& residueBoundsB = residueBounds[bIndex];
-            auto& atomsA         = residueAtoms[aIndex];
-            auto& atomsB         = residueAtoms[bIndex];
-            double weight        = residueWeights[aIndex] * residueWeights[bIndex];
+            size_t bIndex                     = residuesB[k];
+            const Sphere& residueBoundsB      = residueBounds[bIndex];
+            const std::vector<size_t>& atomsA = residueAtoms[aIndex];
+            const std::vector<size_t>& atomsB = residueAtoms[bIndex];
+            double weight                     = residueWeights[aIndex] * residueWeights[bIndex];
             boundsA.clear();
             boundsB.clear();
             size_t bondIndex = findBondIndex(bonds, aIndex, bIndex);
@@ -185,11 +185,11 @@ cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residue
             // residues aren't bonded in certain cases, use a default if so
             return (origin == nullptr) ? std::vector<bool>(atoms.size(), false) : atomsBondedTo(origin, atoms);
         };
-        auto atomsA     = residuesA.residues[0]->getAtoms();
-        auto atomsB     = residuesB.residues[0]->getAtoms();
-        auto bondedPair = bondedAtomPair(atomsA, atomsB);
-        auto inputA     = toOverlapInput(residuesA, bondedAtoms(bondedPair[0], atomsA));
-        auto inputB     = toOverlapInput(residuesB, bondedAtoms(bondedPair[1], atomsB));
+        std::vector<Atom*> atomsA       = residuesA.residues[0]->getAtoms();
+        std::vector<Atom*> atomsB       = residuesB.residues[0]->getAtoms();
+        std::array<Atom*, 2> bondedPair = bondedAtomPair(atomsA, atomsB);
+        ResidueAtomOverlapInput inputA  = toOverlapInput(residuesA, bondedAtoms(bondedPair[0], atomsA));
+        ResidueAtomOverlapInput inputB  = toOverlapInput(residuesB, bondedAtoms(bondedPair[1], atomsB));
 
         size_t atomOffset                              = inputA.atomCoordinates.size();
         size_t residueOffset                           = inputA.boundingSpheres.size();
@@ -218,10 +218,10 @@ cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residue
 
 cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
-    auto coordsA = atomCoordinatesWithRadii(atomsA);
-    auto coordsB = atomCoordinatesWithRadii(atomsB);
+    std::vector<Sphere> coordsA = atomCoordinatesWithRadii(atomsA);
+    std::vector<Sphere> coordsB = atomCoordinatesWithRadii(atomsB);
 
-    auto properties = OverlapProperties {constants::clashWeightBase, constants::overlapTolerance};
+    OverlapProperties properties {constants::clashWeightBase, constants::overlapTolerance};
     Overlap overlap {0, 0.0};
     for (auto& coordA : coordsA)
     {

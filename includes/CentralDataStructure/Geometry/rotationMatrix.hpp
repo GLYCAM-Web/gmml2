@@ -21,7 +21,7 @@ namespace cds
         {
             auto col = [&](int n)
             {
-                auto& m = matrix_[n];
+                const std::array<double, 4>& m = matrix_[n];
                 return dotProduct(coord, {m[0], m[1], m[2]}) + m[3];
             };
             return {col(0), col(1), col(2)};
