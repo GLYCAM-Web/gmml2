@@ -1,0 +1,13 @@
+./016.test.DrawGlycan.sh
+./017.test.GlycoproteinBuilder.sh
+./018.test.GlycoproteinBuilderTable.sh
+./019.test.newPDBClass.sh
+./020.test.parameterFiles.sh
+./022.test.libraryFileReader.sh
+./023.test.carbohydrateBuilder.sh
+./024.test.wiggleToSite.sh
+./026.test.editPdbFile.sh
+./027.test.glycamResidueCombinator.sh
+./028.test.cdsCarbBuilderAll.sh
+./030.test.gmPreProcessor.sh
+./031.test.iupac.sh

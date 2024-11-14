@@ -11,8 +11,8 @@ GMML_TEST_JOBS=4
 #Get base list of all files we want so we dont need to deal with
 #figuring out file list more than once, we want to take advantage of output splitting
 #here so we can hit the list ez pz
-# shellcheck disable=SC2207
-GMML_TEST_FILE_LIST=($(ls ./*.test.*.sh))
+# shellcheck disable=SC2207=
+readarray -t GMML_TEST_FILE_LIST < ./testList.txt
 #This is mostly to make sure that we actually keep track of our failed tests.
 GMML_FAILED_TESTS=0
 #Just to keep track for our cool output at the end.
