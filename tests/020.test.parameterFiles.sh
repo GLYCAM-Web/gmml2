@@ -26,7 +26,7 @@ for file in "${fileList[@]}"; do
     fi
     rm "${file}"
 done
-echo -e "Test passed.\n"
+printf "Test passed.\n"
 rm loadParameters
 echo "Exit Code: 0"
 

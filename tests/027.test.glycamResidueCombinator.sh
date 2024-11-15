@@ -49,7 +49,7 @@ if ! cmp -s $outputFile tests/correct_outputs/$outputFile; then
     return 1    
 fi
     
-echo -e "Test passed.\n"
+printf "Test passed.\n"
 rm 027.glycamResiduecombinator.exe $outputFile libEntries.txt prepEntriesList.txt $file
 echo "Exit Code: 0"
 

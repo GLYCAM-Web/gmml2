@@ -95,7 +95,7 @@ START_TIME=$(date +%s)
 
 echo -e "
 ${INFO_STYLE}#### Beginning GMML tests ####${RESET_STYLE}
-Number of tests found:\t${#GMML_TEST_FILE_LIST[@]}
+Number of tests found: ${#GMML_TEST_FILE_LIST[@]}
 "
 
 mkdir -v ./tempTestOutputs

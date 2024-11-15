@@ -17,7 +17,7 @@ if ! cmp -s 031.output.txt tests/correct_outputs/031.output.txt; then
     echo "Exit Code: 1"
     return 1
 fi
-echo -e "Test passed.\n"
+printf "Test passed.\n"
 rm iupac 031.output.txt
 echo "Exit Code: 0"
 
