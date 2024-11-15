@@ -224,7 +224,7 @@ namespace glycoproteinBuilder
         {
             for (size_t k = 0; k < glycans.size(); k++)
             {
-                double avoidDoubleCount = k > n || !justMoved[k];
+                bool avoidDoubleCount = k > n || !justMoved[k];
                 if (included[k] && (k != n) && avoidDoubleCount && !(glycanOverlap[n] && glycanOverlap[k]))
                 {
                     if (moleculeOverlaps(graphs, data, glycans[n].glycanMolecule, glycans[k].glycanMolecule).count >
