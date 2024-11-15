@@ -77,7 +77,11 @@ jobs:
         make -j 3
         ccache -svv
 
+    - name: Compile programs
+      run: |
+        ./compilePrograms.sh
+
     - name: Run Bare Metal Tests
       run: |
-        bash ./compile_run_tests.bash -j 3 -d bare_metal
+        bash ./compile_run_tests.bash -d bare_metal
       working-directory: ${{ github.workspace }}/tests

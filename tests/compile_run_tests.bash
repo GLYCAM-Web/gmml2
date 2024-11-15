@@ -7,7 +7,6 @@
 TEST_SKIP_LIST=("./016.test.DrawGlycan.sh")
 SKIP_TIME=0
 
-GMML_TEST_JOBS=4
 #Get base list of all files we want so we dont need to deal with
 #figuring out file list more than once, we want to take advantage of output splitting
 #here so we can hit the list ez pz
@@ -46,7 +45,6 @@ test just change the file name of test you would like to disable
 so it does not match that glob.
 *************************************************************
 Options are as follows:
-\t-j <NUM_JOBS>\t\tRun <NUM_JOBS> scripts at once
 \t-d bare_metal\t\tSkip tests that dont work on bare metal and need
 \t\t\t\tbe run in the docker container
 \t-h \t\t\tPrint this msg
@@ -64,16 +62,6 @@ Exiting"
 #The lack of a colon after h means that said flag does not accept any "input"
 while getopts "j:hd:" option; do
     case "${option}" in
-        j)
-            jIn=${OPTARG}
-            #Whenever you are doing anything like regex, dealing with arithmatic checks, etc.
-            #you use [[ .... ]], if we are just comparing two strings tho you can use [ ... ]
-            if [[ ${jIn} =~ ^[1-9][0-9]*$ ]]; then
-                GMML_TEST_JOBS=${jIn}
-            else
-                printHelp
-            fi
-            ;;
         h)
             printHelp
             ;;
@@ -108,7 +96,6 @@ START_TIME=$(date +%s)
 echo -e "
 ${INFO_STYLE}#### Beginning GMML tests ####${RESET_STYLE}
 Number of tests found:\t${#GMML_TEST_FILE_LIST[@]}
-Number of testing jobs:\t${GMML_TEST_JOBS}
 "
 
 mkdir -v ./tempTestOutputs
@@ -121,80 +108,10 @@ trap "rm -rf ./tempTestOutputs" EXIT
 
 #Gonna be used in the main loop, here so its close to first usage.
 #These are set up as empty arrays
-JOB_PIDS=()
 JOB_OUTPUT_FILES=()
 FAILED_JOB_OUTPUTS=()
 
-cleaningUpJobs()
-{
-    #first check if we be in sync, if not, we abort and freak out
-    #${#JOB_PIDS[@]} returns the amount of indicies the array has
-    if [ ${#JOB_PIDS[@]} != ${#JOB_OUTPUT_FILES[@]} ]; then
-        echo -e "${ERROR_STYLE}!!!! WARNING PID LIST AND FILE LIST OUT OF SYNC ABORTING !!!!${RESET_STYLE}"
-        #nuke all running subshells that were spawned in this script, very important
-        kill 0
-        exit 1
-    fi
-    #now loop through our array, check the PIDs in our job array, if job
-    #is done we nuke the data in the array, note we start at the end of the
-    #array cause 0 is our base line index, so mutating array size wont cause
-    #a bork if we do it this way (hopefully)
-    for ((CURR_INDEX = ${#JOB_PIDS[@]} - 1; CURR_INDEX >= 0; CURR_INDEX--)); do
-        #if our process is NOT running then we go ahead and get rid
-        #of both the PID in the array and the file being held onto in
-        #our output file array
-        if ! ps -p "${JOB_PIDS[${CURR_INDEX}]}" >/dev/null; then
-            #now we need to extract the exit code from the file itself, this will
-            #be the last line of the file. I store as a variable cause we know we
-            #gonna have to run the tail command at least once, and possibly more,
-            #so just take the hit once and we are good. Gotta use 2 cause include newline
-            DUMB_EXIT_CODE=$(tail -c -2 "${JOB_OUTPUT_FILES[${CURR_INDEX}]}")
-            #Since we are checking arithmatic values, we need to use [[ .... ]] so bash doesnt
-            #treat whats in the brackets as a string
-            if [[ ${DUMB_EXIT_CODE} == 0 ]]; then
-                #When we actually DO arithmatic we need to surround our code with ((....)) in order
-                #to let bash know we are dealing with numbers and adding them
-                ((GMML_PASSED_TESTS++))
-                echo -e "${PASSED_STYLE}"
-            elif [[ ${DUMB_EXIT_CODE} == 1 ]]; then
-                ((GMML_FAILED_TESTS++))
-                FAILED_JOB_OUTPUTS+=("${JOB_OUTPUT_FILES[${CURR_INDEX}]}")
-                echo -e "${ERROR_STYLE}"
-            else
-                echo -e "${ERROR_STYLE}!!!! WARNING: EXIT CODE LINE INCORRECT, EXITING WHOLE SCRIPT !!!!${RESET_STYLE}"
-                echo "FROM FILE: ${JOB_OUTPUT_FILES[${CURR_INDEX}]}"
-                echo "EXIT CODE GRABBED: ${DUMB_EXIT_CODE}"
-                echo "----- FILE DUMP BELOW -----"
-                cat "${JOB_OUTPUT_FILES[${CURR_INDEX}]}"
-                #nuke all subshells
-                kill 0
-                exit 1
-            fi
-            cat "${JOB_OUTPUT_FILES[${CURR_INDEX}]}"
-            echo -ne "${RESET_STYLE}"
-
-            #Now remove the PID from our "scheduler" array, ngl more of a tracker
-            unset "JOB_PIDS[${CURR_INDEX}]"
-            #Now remove the job output from list
-            unset "JOB_OUTPUT_FILES[${CURR_INDEX}]"
-
-            #Now we have to clean up our arrays, this kinda sucks and am unsure better way to fix
-            JOB_PIDS=("${JOB_PIDS[@]}")
-            JOB_OUTPUT_FILES=("${JOB_OUTPUT_FILES[@]}")
-        fi
-    done
-}
-
 for CURRENT_TEST in "${GMML_TEST_FILE_LIST[@]}"; do
-    #When we have all our wanted jobs running, we wait for 1 or more to exit then clean up our finished jobs
-    if [ ${#JOB_PIDS[@]} == "${GMML_TEST_JOBS}" ] && [ ${#JOB_OUTPUT_FILES[@]} == "${GMML_TEST_JOBS}" ]; then
-        #This waits for 1, or more, job(s) to complete
-        #Once a job completes, we then need to go ahead and clean up our dirty job scheduler/tracker
-        wait -n
-        #after a script finishes we know we gotta take care of it, so we call the cleaningUpJobs function
-        cleaningUpJobs
-        echo ""
-    fi
     #let user know whats going on
     echo -e "${INFO_STYLE}Beginning test:${RESET_STYLE} ${CURRENT_TEST}"
 
@@ -217,23 +134,35 @@ for CURRENT_TEST in "${GMML_TEST_FILE_LIST[@]}"; do
     #that will not block this script. This means that instead of waiting for the command to complete, we just
     #spawn it in a subshell and continue running this script while the subshell does its thing.
     source "${CURRENT_TEST}" &>"${CURRENT_TEST_OUTPUT_FILENAME}" &
-
-    #NOTE: Both below MUST ALWAYS BE IN SYNC, lazy way of doing some
-    #instability to try and catch bad behavior..... bad idea? who knows!
-    #Add the most recent job PID to our PID array. $! is the most recent ***SUBSHELL*** PID that this script
-    #created. If we wanted the PID of THIS script (not the subshell) we would use $$ but that is useless in
-    #this context
-    JOB_PIDS+=($!)
+    
     #Add corresponding output file to our output file array
     JOB_OUTPUT_FILES+=("${CURRENT_TEST_OUTPUT_FILENAME}")
 done
-#wait for all remaining files in pid to complete then clean....
-#this has to be done because the wait -n just waits for one or more jobs
-#to complete, at the end of the for loop there is a possibility of us having
-#other jobs in the process of completing so we just wait for all the remaining
-#jobs then we run the clean up then we done.
+
+#wait for all jobs to complete....
 wait
-cleaningUpJobs
+
+for JOB_OUTPUT in "${JOB_OUTPUT_FILES[@]}"; do
+    #now we need to extract the exit code from the file itself, this will
+    #be the last line of the file. I store as a variable cause we know we
+    #gonna have to run the tail command at least once, and possibly more,
+    #so just take the hit once and we are good. Gotta use 2 cause include newline
+    DUMB_EXIT_CODE=$(tail -c -2 "${JOB_OUTPUT}")
+    #Since we are checking arithmatic values, we need to use [[ .... ]] so bash doesnt
+    #treat whats in the brackets as a string
+    if [[ ${DUMB_EXIT_CODE} == 0 ]]; then
+        #When we actually DO arithmatic we need to surround our code with ((....)) in order
+        #to let bash know we are dealing with numbers and adding them
+        ((GMML_PASSED_TESTS++))
+        echo -e "${PASSED_STYLE}"
+    elif [[ ${DUMB_EXIT_CODE} == 1 ]]; then
+        ((GMML_FAILED_TESTS++))
+        FAILED_JOB_OUTPUTS+=("${JOB_OUTPUT}")
+        echo -e "${ERROR_STYLE}"
+    fi
+    cat "${JOB_OUTPUT}"
+    echo -ne "${RESET_STYLE}"
+done
 
 case "${GMML_PASSED_TESTS}" in
     #if we passed as many tests as we have, we know we passed all tests thus we

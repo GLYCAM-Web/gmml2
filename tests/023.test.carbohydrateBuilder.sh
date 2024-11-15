@@ -2,16 +2,16 @@
 printf "Testing 023.carbohydrateBuilder... "
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
+BIN_PATH=${GMML_ROOT_DIR}/bin/carbohydrateBuilder
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 023 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
     exit 1
 fi
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ ../internalPrograms/CarbohydrateBuilder/main.cpp -lgmml2 -pthread -o carbohydrateBuilder
 rm -r 023.outputs/ >/dev/null 2>&1
 mkdir 023.outputs/
-./carbohydrateBuilder tests/inputs/023.smallLibrary.txt _ 023.outputs >023.output_carbohydrateBuilder.txt 2>&1
+eval "${BIN_PATH} tests/inputs/023.smallLibrary.txt _ 023.outputs >023.output_carbohydrateBuilder.txt 2>&1"
 
 for i in $(cut -d _ -f1 tests/inputs/023.smallLibrary.txt); do
     if [ -f 023.outputs/"${i}".pdb ]; then
@@ -53,7 +53,7 @@ if ! cmp 023.output_carbohydrateBuilder.txt tests/correct_outputs/023.output_car
     return 1
 else
     printf "Test passed.\n"
-    rm -r 023.outputs/ carbohydrateBuilder 023.output_carbohydrateBuilder.txt
+    rm -r 023.outputs/ 023.output_carbohydrateBuilder.txt
     echo "Exit Code: 0"
     return 0
 fi

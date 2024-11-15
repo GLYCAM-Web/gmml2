@@ -1,6 +1,7 @@
 #!/bin/bash
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
+BIN_PATH="${GMML_ROOT_DIR}/bin/gpBuilder"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 017 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
@@ -13,7 +14,7 @@ test_case()
     input=$2
     directory=$3
     mkdir -p ${directory}
-    ./gpBuilder ${input} ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1
+    eval "${BIN_PATH} ${input} ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1"
     fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "0_glycoprotein.pdb" "1_glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "GlycoproteinBuilder.txt")
     for file in "${fileList[@]}"; do
         output="${directory}/${file}"
@@ -35,7 +36,6 @@ test_case()
 }
 
 printf "Testing 017.test.GlycoproteinBuilder.cpp... "
-g++ -std=c++17 -g -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
 rm -r 017/ >/dev/null 2>&1
 
 test_case "Standard " "tests/inputs/017.GlycoproteinBuilderInput.txt" "017/standard"
@@ -62,7 +62,7 @@ fi
 
 output=017.failure.txt
 correct=tests/correct_outputs/$output
-./gpBuilder tests/inputs/017.GlycoproteinBuilderInputDosAndError.txt > $output 2>&1
+eval "${BIN_PATH} tests/inputs/017.GlycoproteinBuilderInputDosAndError.txt > $output 2>&1"
 if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
     echo -e "Failure test failed to fail as expected!\n ${output} is different from ${correct}\n"
     echo "Exit Code: 1"
@@ -72,6 +72,5 @@ rm $output
 
 rm -r 017/ >/dev/null 2>&1
 printf "Test passed.\n"
-rm gpBuilder
 echo "Exit Code: 0"
 return 0
