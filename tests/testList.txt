@@ -1,5 +1,6 @@
 ./016.test.DrawGlycan.sh
 ./017.test.GlycoproteinBuilder.sh
+./017b.test.GlycoproteinBuilderFailure.sh
 ./018.test.GlycoproteinBuilderTable.sh
 ./019.test.newPDBClass.sh
 ./020.test.parameterFiles.sh

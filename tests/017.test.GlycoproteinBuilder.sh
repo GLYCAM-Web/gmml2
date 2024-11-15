@@ -13,6 +13,7 @@ test_case()
     prefix=$1
     input=$2
     directory=$3
+    rm -r ${directory} >/dev/null 2>&1
     mkdir -p ${directory}
     eval "${BIN_PATH} ${input} ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1"
     fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "0_glycoprotein.pdb" "1_glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "GlycoproteinBuilder.txt")
@@ -32,11 +33,11 @@ test_case()
             return 1
         fi
     done
+    rm -r ${directory} >/dev/null 2>&1
     failed=0
 }
 
 printf "Testing 017.test.GlycoproteinBuilder.cpp... "
-rm -r 017/ >/dev/null 2>&1
 
 test_case "Standard " "tests/inputs/017.GlycoproteinBuilderInput.txt" "017/standard"
 if [ "$failed" == 1 ]; then
@@ -59,18 +60,6 @@ if [ "$failed" == 1 ]; then
     return 1
 fi
 
-
-output=017.failure.txt
-correct=tests/correct_outputs/$output
-eval "${BIN_PATH} tests/inputs/017.GlycoproteinBuilderInputDosAndError.txt > $output 2>&1"
-if ! cmp "${output}" "${correct}" >/dev/null 2>&1; then
-    echo -e "Failure test failed to fail as expected!\n ${output} is different from ${correct}\n"
-    echo "Exit Code: 1"
-    return 1
-fi
-rm $output
-
-rm -r 017/ >/dev/null 2>&1
 printf "Test passed.\n"
 echo "Exit Code: 0"
 return 0
