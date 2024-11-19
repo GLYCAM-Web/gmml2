@@ -215,7 +215,7 @@ namespace
         try
         {
             size_t numberStart       = repeatCharacterStartLocation + 1;
-            std::string stringNumber = inputSequence.substr(numberStart, (repeatCharacterEndLocation - numberStart));
+            std::string stringNumber = substr(inputSequence, numberStart, repeatCharacterEndLocation);
             numberRepeats            = std::stoi(stringNumber);
         }
         catch (...) // if e.g. stoi throws
@@ -223,15 +223,14 @@ namespace
             throw std::runtime_error("Number of repeating units not specified correctly in repeating unit: " +
                                      inputSequence);
         }
-        size_t i = repeatCharacterStartLocation;
+        size_t repeatEnd = repeatCharacterStartLocation - 1;
         // Ensure next char is the ] of the repeating unit
-        if (inputSequence[--i] != ']')
+        if (inputSequence[repeatEnd] != ']')
         {
             throw std::runtime_error("Missing or incorrect usage of ']' in repeating sequence: " + inputSequence);
         }
         // Ok now go find the position of the start of the repeating unit, considering branches
-        size_t repeatEnd         = i;
-        size_t repeatStart       = seekRepeatStart(inputSequence, i);
+        size_t repeatStart       = seekRepeatStart(inputSequence, repeatEnd);
         std::string beforeRepeat = inputSequence.substr(0, repeatStart);
         // Check if using the old nomenclature. i.e. DGlcpa1-[4DGlcpa1-]<4> was old, DGlcpa1-4[4DGlcpa1-]<3> is new.
         if (inputSequence.find("-[") != std::string::npos)
@@ -247,7 +246,7 @@ namespace
 
         std::string firstRepeat = inputSequence.substr(
             repeatStart + 2, (repeatEnd - repeatStart - 2)); // firstRepeat does not have the e.g. 4 in 4DGlcpa1-
-        std::string repeat = inputSequence.substr(repeatStart + 1, (repeatEnd - repeatStart - 1));
+        std::string repeat = substr(inputSequence, repeatStart + 1, repeatEnd);
         std::string after  = inputSequence.substr(repeatCharacterEndLocation + 1);
         std::string newInputString;
         newInputString += beforeRepeat;
@@ -262,13 +261,13 @@ namespace
         if (after.find('>') != std::string::npos)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Sequence with some repeats processed: " + newInputString);
-            newInputString = parseRepeatingUnits(newInputString);
+            return parseRepeatingUnits(newInputString);
         }
         else
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Sequence with all repeats processed: " + newInputString);
+            return newInputString;
         }
-        return newInputString;
     }
 } // namespace
 
