@@ -167,10 +167,8 @@ std::string ParsedResidue::GetLinkageName(const bool withLabels) const
     return ""; // aglycones like ROH and OME will not have linkage info.
 }
 
-void ParsedResidue::ParseResidueStringIntoComponents(std::string residueString, ResidueType specifiedType)
+void ParsedResidue::ParseResidueStringIntoComponents(const std::string& residueString, ResidueType specifiedType)
 {
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "PARSING RESIDUE: " + residueString);
-    this->SetType(specifiedType);
     if ((residueString.find('-') != std::string::npos) || (specifiedType == ResidueType::Sugar))
     { // E.g. DManpNAca1-4 . Isomer (D or L), residueName (ManNAc), ring type (f or p), configuration (a or b), linkage
       // (1-4)
@@ -217,8 +215,6 @@ void ParsedResidue::ParseResidueStringIntoComponents(std::string residueString, 
         }
         // Find any special modifiers e.g. NAc, Gc, A in DGlcpAa1-OH NAc in DGlcpNAca1-2
         size_t modifierLength = (modifierEnd - modifierStart);
-        // logss << "modifierLength is " << modifierLength << ", dashPosition was " << dashPosition << ", ringPosition
-        // was " << ringPosition << std::endl;
         if (modifierLength > 100)
         {
             std::string message = "This is a non-standard residue string that gmml can't handle: " + residueString;
@@ -243,6 +239,7 @@ void ParsedResidue::ParseResidueStringIntoComponents(std::string residueString, 
     }
     else if (specifiedType == ResidueType::Aglycone)
     { // A terminal
+        this->SetType(ResidueType::Aglycone);
         this->SetResidueName(residueString);
     }
     else
@@ -251,7 +248,6 @@ void ParsedResidue::ParseResidueStringIntoComponents(std::string residueString, 
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw std::runtime_error(message);
     }
-    // gmml::log(__LINE__, __FILE__, gmml::INF, this->PrintToString());
 }
 
 std::string ParsedResidue::PrintToString() const

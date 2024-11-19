@@ -1,7 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <sstream>
@@ -84,46 +83,55 @@ namespace
         throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
     }
 
-    ParsedResidue* saveResidue(cds::Molecule* molecule, std::vector<std::string>& savedDerivatives,
-                               std::string residueString, ParsedResidue* parent)
+    std::string withoutBranches(const std::string& residueString)
     {
         //  Splice out anything within [ and ].
-        if (residueString.find('[') != std::string::npos)
+        size_t branch_start = residueString.find_first_of('[');
+        if (branch_start != std::string::npos)
         {
-            size_t branch_start   = residueString.find_first_of('[');
             size_t branch_finish  = residueString.find_last_of(']') + 1;
             std::string firstPart = residueString.substr(0, branch_start);
             std::string lastPart  = residueString.substr(branch_finish);
-            residueString         = firstPart + lastPart;
+            return firstPart + lastPart;
         }
-        if (residueString.find('-') != std::string::npos)
+        else
         {
-            molecule->addResidue(std::make_unique<ParsedResidue>(residueString, parent));
-            ParsedResidue* newRes = codeUtils::erratic_cast<ParsedResidue*>(molecule->getResidues().back());
-            if (!savedDerivatives.empty())
-            {
-                for (auto& derivative : savedDerivatives)
-                {
-                    molecule->addResidue(std::make_unique<ParsedResidue>(derivative, newRes));
-                }
-                savedDerivatives.clear();
-            }
-            return newRes;
+            return residueString;
         }
-        else // A derivatve. The parent residue doesn't exist yet, so save it.
+    }
+
+    ParsedResidue* saveResidue(std::vector<std::unique_ptr<ParsedResidue>>& savedResidues,
+                               std::vector<std::string>& savedDerivatives, std::string residueString,
+                               ParsedResidue* parent)
+    {
+        bool isDerivative = residueString.find('-') == std::string::npos;
+        if (isDerivative)
         {
             savedDerivatives.push_back(residueString);
             return parent;
         }
+        else
+        {
+            savedResidues.emplace_back(std::make_unique<ParsedResidue>(residueString, parent));
+            ParsedResidue* newRes = savedResidues.back().get();
+            for (auto& derivative : savedDerivatives)
+            {
+                savedResidues.emplace_back(std::make_unique<ParsedResidue>(derivative, newRes));
+            }
+            savedDerivatives.clear();
+            return newRes;
+        }
     }
 
-    void recurveParseAlt(cds::Molecule* molecule, std::vector<std::string>& savedDerivatives, size_t& i,
-                         const std::string& sequence, ParsedResidue* parent)
+    size_t recurveParseAlt(std::vector<std::unique_ptr<ParsedResidue>>& residues,
+                           std::vector<std::string>& savedDerivatives, size_t i, const std::string& sequence,
+                           ParsedResidue* parent)
     {
         auto save =
-            [&molecule, &savedDerivatives, &sequence](size_t windowStart, size_t windowEnd, ParsedResidue* parent)
+            [&residues, &savedDerivatives, &sequence](size_t windowStart, size_t windowEnd, ParsedResidue* parent)
         {
-            return saveResidue(molecule, savedDerivatives, substr(sequence, windowStart, windowEnd), parent);
+            std::string residueString = withoutBranches(substr(sequence, windowStart, windowEnd));
+            return saveResidue(residues, savedDerivatives, residueString, parent);
         };
         size_t windowEnd = i;
         while (i > 0)
@@ -138,24 +146,24 @@ namespace
             { // Start of branch: recurve. Maybe save if have read enough.
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
-                    parent = save(i + 1, windowEnd, parent);
-                    recurveParseAlt(molecule, savedDerivatives, i, sequence, parent);
+                    parent    = save(i + 1, windowEnd, parent);
+                    i         = recurveParseAlt(residues, savedDerivatives, i, sequence, parent);
                     windowEnd = i;
                 }
                 else if ((windowEnd - i) > 1) // and not > 5
                 {                             // Derivative. Note that windowEnd does not move.
-                    recurveParseAlt(molecule, savedDerivatives, i, sequence, parent);
+                    i = recurveParseAlt(residues, savedDerivatives, i, sequence, parent);
                 }
                 else
                 { // Return from branch and find new one. e.g. [Gal][Gal]
-                    recurveParseAlt(molecule, savedDerivatives, i, sequence, parent);
+                    i         = recurveParseAlt(residues, savedDerivatives, i, sequence, parent);
                     windowEnd = i;
                 }
             }
             else if (sequence[i] == '[')
             { // End of branch
                 save(i + 1, windowEnd, parent);
-                return;
+                return i;
             }
             else if (sequence[i] == ',')
             { // , in derivative list
@@ -167,11 +175,11 @@ namespace
                 parent = save(i, windowEnd, parent);
             }
         }
-        return;
+        return i;
     }
 
-    bool parseCondensedSequence(cds::Molecule* molecule, std::vector<std::string>& savedDerivatives,
-                                const std::string& sequence)
+    bool parseCondensedSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues,
+                                std::vector<std::string>& savedDerivatives, const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
         size_t i = (sequence.find_last_of('-') + 1);
@@ -182,14 +190,14 @@ namespace
             {
                 ++i;
             }
-            molecule->addResidue(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Sugar));
+            residues.emplace_back(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Sugar));
         }
         else
         { // e.g. DGlcpa1-OH
-            molecule->addResidue(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Aglycone));
+            residues.emplace_back(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Aglycone));
         }
-        ParsedResidue* terminal = codeUtils::erratic_cast<ParsedResidue*>(molecule->getResidues().back());
-        recurveParseAlt(molecule, savedDerivatives, i, sequence, terminal);
+        ParsedResidue* terminal = residues.back().get();
+        recurveParseAlt(residues, savedDerivatives, i, sequence, terminal);
         return true;
     }
 
@@ -292,7 +300,12 @@ void cdsCondensedSequence::parseSequence(cds::Molecule* molecule, std::string in
             gmml::log(
                 __LINE__, __FILE__, gmml::INF,
                 "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
-            parseCondensedSequence(molecule, savedDerivatives, inputSequence);
+            std::vector<std::unique_ptr<ParsedResidue>> residues;
+            parseCondensedSequence(residues, savedDerivatives, inputSequence);
+            for (auto& res : residues)
+            {
+                molecule->addResidue(std::move(res));
+            }
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "parseSequence complete");

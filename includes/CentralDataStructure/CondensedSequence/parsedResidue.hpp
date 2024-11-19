@@ -116,7 +116,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        void ParseResidueStringIntoComponents(std::string residueString,
+        void ParseResidueStringIntoComponents(const std::string& residueString,
                                               ResidueType specifiedType = ResidueType::Undefined);
         void ExciseRingShapeFromModifier();
 
