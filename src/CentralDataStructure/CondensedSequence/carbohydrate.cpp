@@ -31,6 +31,42 @@ using cdsCondensedSequence::Carbohydrate;
 
 namespace
 {
+    std::string getGlycamResidueName(cdsCondensedSequence::ParsedResidue* residue)
+    {
+        if (residue->GetType() == cds::ResidueType::Deoxy)
+        {
+            gmml::log(__LINE__, __FILE__, gmml::WAR,
+                      "Bad idea: We asked for Glycam Residue Name of a deoxy type residue (e.g. the 6D of Glc[6D]) "
+                      "with name: " +
+                          residue->GetResidueName());
+            return "";
+        }
+        std::string linkages = "";
+        if (residue->GetType() == cds::ResidueType::Sugar)
+        {
+            linkages = residue->GetChildLinkagesForGlycamResidueNaming();
+        }
+        std::string code = GlycamMetadata::Glycam06ResidueNameGenerator(
+            linkages, residue->GetIsomer(), residue->GetResidueName(), residue->GetRingType(),
+            residue->GetResidueModifier() + residue->GetRingShape(), residue->GetConfiguration());
+        return code;
+    }
+
+    std::vector<std::string> getGlycamNamesOfResidues(const std::vector<cds::Residue*>& residues)
+    {
+        std::vector<std::string> names;
+        names.reserve(residues.size());
+        for (auto& residue : residues)
+        {
+            if (residue->GetType() != cds::ResidueType::Deoxy)
+            {
+                names.push_back(
+                    getGlycamResidueName(codeUtils::erratic_cast<cdsCondensedSequence::ParsedResidue*>(residue)));
+            }
+        }
+        return names;
+    }
+
     cds::Coordinate guessCoordinateOfMissingNeighbor(const cds::Atom* centralAtom, double distance)
     {
         if (centralAtom->getNeighbors().size() < 1)
@@ -74,14 +110,13 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     this->setName("CONDENSEDSEQUENCE");
     reorderSequence(this); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
                            // Gala1-3[Fuca1-2]Glca. Same 3D structure.
-    cdsParameters::ParameterManager parameterManager(this->GetGlycamNamesOfResidues());
-    // prep::PrepFile glycamPrepFileSelect(prepFilePath, this->GetGlycamNamesOfResidues());
+    cdsParameters::ParameterManager parameterManager(getGlycamNamesOfResidues(this->getResidues()));
     for (auto& cdsResidue : this->getResidues())
     { // Move atoms from prep file into parsedResidues.
         if (cdsResidue->GetType() != cds::ResidueType::Deoxy)
         {
             ParsedResidue* parsedResidue = codeUtils::erratic_cast<ParsedResidue*>(cdsResidue);
-            parameterManager.createAtomsForResidue(cdsResidue, this->GetGlycamResidueName(parsedResidue));
+            parameterManager.createAtomsForResidue(cdsResidue, getGlycamResidueName(parsedResidue));
             if (parsedResidue->GetType() == cds::ResidueType::Derivative)
             { // Deal with adjusting charges for derivatives
                 this->DerivativeChargeAdjustment(parsedResidue);
@@ -342,9 +377,8 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // Now get child atom
     if (childResidue->GetType() == ResidueType::Derivative)
     {
-        std::string glycamNameForResidue =
-            this->GetGlycamResidueName(codeUtils::erratic_cast<ParsedResidue*>(childResidue));
-        childAtomName = GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
+        std::string glycamNameForResidue = getGlycamResidueName(codeUtils::erratic_cast<ParsedResidue*>(childResidue));
+        childAtomName                    = GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
     }
     else if (childResidue->GetType() == ResidueType::Sugar)
     {
@@ -434,40 +468,6 @@ void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentPar
         this->DepthFirstSetConnectivityAndGeometry(child, searchSettings);
     }
     return;
-}
-
-std::vector<std::string> Carbohydrate::GetGlycamNamesOfResidues() const
-{
-    std::vector<std::string> names(this->getResidues().size()); // set size of vec for speed.
-    for (auto& residue : this->getResidues())
-    {
-        if (residue->GetType() != cds::ResidueType::Deoxy)
-        {
-            names.push_back(this->GetGlycamResidueName(codeUtils::erratic_cast<ParsedResidue*>(residue)));
-        }
-    }
-    return names;
-}
-
-std::string Carbohydrate::GetGlycamResidueName(ParsedResidue* residue) const
-{
-    if (residue->GetType() == cds::ResidueType::Deoxy)
-    {
-        gmml::log(
-            __LINE__, __FILE__, gmml::WAR,
-            "Bad idea: We asked for Glycam Residue Name of a deoxy type residue (e.g. the 6D of Glc[6D]) with name: " +
-                residue->GetResidueName());
-        return "";
-    }
-    std::string linkages = "";
-    if (residue->GetType() == cds::ResidueType::Sugar)
-    {
-        linkages = residue->GetChildLinkagesForGlycamResidueNaming();
-    }
-    std::string code = GlycamMetadata::Glycam06ResidueNameGenerator(
-        linkages, residue->GetIsomer(), residue->GetResidueName(), residue->GetRingType(),
-        residue->GetResidueModifier() + residue->GetRingShape(), residue->GetConfiguration());
-    return code;
 }
 
 void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
