@@ -11,7 +11,6 @@ namespace cdsCondensedSequence
     {
       public:
         Sequence(std::string glycamCondensedString);
-        std::string ReorderSequence();
         void LabelSequence();
         std::string Print(const bool withLabels = false) const;
         std::string PrintIupac() const;

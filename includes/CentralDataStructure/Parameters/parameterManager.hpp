@@ -34,7 +34,5 @@ namespace cdsParameters
 
     // Separate cause it can be
     bool setChargeForAtom(cds::Atom* queryAtom, std::vector<cds::Atom*> referenceAtoms);
-    // bool setCharges(cds::Residue* queryResidue, std::vector<cds::Residue*> referenceResidues);
-    void setCharges(std::vector<cds::Residue*> queryResidues);
 } // namespace cdsParameters
 #endif

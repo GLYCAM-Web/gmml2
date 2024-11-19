@@ -83,7 +83,6 @@ namespace cdsCondensedSequence
         ParsedResidue* GetParent() const;
         std::string GetChildLinkagesForGlycamResidueNaming() const;
         std::string PrintToString() const;
-        std::string GetGraphVizLine(std::string SnfgFilePath = "") const;
         std::string GetMonosaccharideName() const;
 
         //////////////////////////////////////////////////////////
