@@ -143,14 +143,14 @@ Atom* Residue::addAtomToFront(std::unique_ptr<Atom> myAtom)
 bool Residue::moveAtomToLastPosition(const Atom* atom)
 { // Passing in a raw ptr, but the vector is unique_ptr so gotta use i->get() to compare raws.
     auto i = this->FindPositionOfAtom(atom); // auto makes my life easier
-    if (*i == atoms_.back())
-    {
-        return true; // already in last position
-    }
     if (i == atoms_.end())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Could not find atom in Residue to move to last position");
         return false; // atom not found maybe throw is better?
+    }
+    if (i == atoms_.end() - 1)
+    {
+        return true; // already in last position
     }
     std::iter_swap(i, atoms_.end() - 1);
     return true;
