@@ -18,7 +18,7 @@ namespace
         return str.substr(windowStart, (windowEnd - windowStart));
     }
 
-    bool checkSequenceSanity(std::string sequence)
+    bool checkSequenceSanity(const std::string& sequence)
     {
         if (sequence.empty())
         {
@@ -118,7 +118,7 @@ namespace
     }
 
     void recurveParseAlt(cds::Molecule* molecule, std::vector<std::string>& savedDerivatives, size_t& i,
-                         const std::string sequence, ParsedResidue* parent)
+                         const std::string& sequence, ParsedResidue* parent)
     {
         auto save =
             [&molecule, &savedDerivatives, &sequence](size_t windowStart, size_t windowEnd, ParsedResidue* parent)
@@ -171,7 +171,7 @@ namespace
     }
 
     bool parseCondensedSequence(cds::Molecule* molecule, std::vector<std::string>& savedDerivatives,
-                                const std::string sequence)
+                                const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
         size_t i = (sequence.find_last_of('-') + 1);
@@ -202,7 +202,7 @@ namespace
     // Repeats within repeats?
     // DGlcpa1-4[4[DGalpa1-3]DGlcpa1-3[DAllpb1-2]DManpa1-]<3>OH Repeats with branches on the leftmost Residue?
     // DGlcpa1-[4DGlcpa1-3DManpa1-]<3>4DGalpa1-OH // Tails that aren't OH
-    std::string parseRepeatingUnits(const std::string inputSequence)
+    std::string parseRepeatingUnits(const std::string& inputSequence)
     {
         size_t repeatCharacterEndLocation   = inputSequence.find_first_of('>');
         size_t repeatCharacterStartLocation = inputSequence.find_first_of('<');
