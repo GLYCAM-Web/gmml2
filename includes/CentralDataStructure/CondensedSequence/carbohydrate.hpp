@@ -83,7 +83,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void ApplyDeoxy(ParsedResidue* deoxyResidue);
         void DerivativeChargeAdjustment(ParsedResidue* parsedResidue);
-        void ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue,
+        void ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residue* parentResidue,
                                    const cds::AngleSearchSettings& searchSettings);
         std::vector<std::string> GetGlycamNamesOfResidues() const;
         std::string GetGlycamResidueName(ParsedResidue* residue) const;
