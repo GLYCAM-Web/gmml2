@@ -281,7 +281,6 @@ namespace
 
 void cdsCondensedSequence::parseSequence(cds::Molecule* molecule, std::string inputSequence)
 {
-    std::vector<std::string> savedDerivatives;
     if (inputSequence.find('<') != std::string::npos)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Found repeating unit in input\n");
@@ -301,6 +300,7 @@ void cdsCondensedSequence::parseSequence(cds::Molecule* molecule, std::string in
                 __LINE__, __FILE__, gmml::INF,
                 "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
             std::vector<std::unique_ptr<ParsedResidue>> residues;
+            std::vector<std::string> savedDerivatives;
             parseCondensedSequence(residues, savedDerivatives, inputSequence);
             for (auto& res : residues)
             {

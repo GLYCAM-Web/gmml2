@@ -33,13 +33,12 @@ namespace
             return ss.str();
         }
         // Sugar
-        std::string label     = "";
         std::string imageFile = configs.svg_directory_path_ + residue.GetMonosaccharideName() + ".svg";
         logss << "Searching for image: " << imageFile << "\n";
         if (file_exists(imageFile.c_str()))
         {
             logss << "FOUND IT\n";
-            (residue.GetRingType() == "f") ? label = "f" : label = "";
+            std::string label = (residue.GetRingType() == "f") ? "f" : "";
             ss << "label=\"" << label << "\" height=\"0.7\" image=\"" << imageFile << "\"];\n";
         }
         else

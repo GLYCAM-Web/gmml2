@@ -296,11 +296,11 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // Now go figure out how which Atoms to bond to each other in the residues.
     // Rule: Can't ever have a child aglycone or a parent derivative.
     Atom* parentAtom         = nullptr;
-    std::string childAtomName, parentAtomName;
+    std::string childAtomName;
     if (parentResidue->GetType() == ResidueType::Aglycone)
     {
-        parentAtomName = GlycamMetadata::GetConnectionAtomForResidue(parentResidue->getName());
-        parentAtom     = parentResidue->FindAtom(parentAtomName);
+        std::string parentAtomName = GlycamMetadata::GetConnectionAtomForResidue(parentResidue->getName());
+        parentAtom                 = parentResidue->FindAtom(parentAtomName);
     }
     else if (parentResidue->GetType() == ResidueType::Sugar)
     { // Linkage example: childb1-4parent, it's never parentb1-4child
