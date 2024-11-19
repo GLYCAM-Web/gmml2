@@ -168,6 +168,100 @@ namespace
             throw std::runtime_error(message);
         }
     }
+
+    void connectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue)
+    {
+        std::string linkageLabel =
+            codeUtils::erratic_cast<cdsCondensedSequence::ParsedResidue*>(childResidue)->GetLinkageName();
+        // This is using the new Node<Residue> functionality and the old AtomNode
+        // Now go figure out how which Atoms to bond to each other in the residues.
+        // Rule: Can't ever have a child aglycone or a parent derivative.
+        Atom* parentAtom = findParentAtom(parentResidue, childResidue, linkageLabel);
+        if (parentAtom == nullptr)
+        {
+            std::string message = "Did not find connection atom in residue: " + parentResidue->getStringId();
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+        // Now get child atom
+        std::string childAtomName = findChildAtomName(childResidue, linkageLabel);
+        Atom* childAtom           = childResidue->FindAtom(childAtomName);
+        if (childAtom == nullptr)
+        {
+            std::string message =
+                "Did not find child atom named " + childAtomName + " in child residue: " + childResidue->getStringId();
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+        // Geometry
+        moveConnectedAtomsAccordingToBondLength(parentAtom, childAtom);
+        //   Now bond the atoms. This could also set distance?, and angle? if passed to function?
+        cds::addBond(childAtom, parentAtom); // parentAtom also connected to childAtom. Fancy.
+        for (auto& parentAtomNeighbor : parentAtom->getNeighbors())
+        {
+            if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
+            {
+                auto matrix =
+                    cds::rotationTo(std::array<Coordinate, 3> {parentAtomNeighbor->coordinate(),
+                                                               parentAtom->coordinate(), childAtom->coordinate()},
+                                    constants::toRadians(constants::DEFAULT_ANGLE));
+                auto childResidueAtoms = childResidue->mutableAtoms();
+                matrix.rotateCoordinates(cds::atomCoordinateReferences(childResidueAtoms));
+                break;
+            }
+        }
+    }
+
+    void initialWiggleLinkage(cds::ResidueLinkage& linkage, const cds::AngleSearchSettings& searchSettings,
+                              cds::Residue* parentResidue, cds::Residue* childResidue)
+    {
+        // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after
+        // more residues are added.
+        auto shapePreference = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
+        cds::setShapeToPreference(linkage, shapePreference);
+        auto searchPreference  = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
+        auto residueWithWeight = [](cds::Residue* residue)
+        {
+            auto residues = std::vector<cds::Residue*> {residue};
+            auto weights  = std::vector<double> {1.0};
+            return cds::ResiduesWithOverlapWeight {residues, weights};
+        };
+        cds::simpleWiggleCurrentRotamers(searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
+                                         searchPreference,
+                                         {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
+    }
+
+    // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
+    void depthFirstSetConnectivityAndGeometry(std::vector<cds::ResidueLinkage>& glycosidicLinkages,
+                                              const cds::AngleSearchSettings& searchSettings,
+                                              cds::Residue* currentParent)
+    {
+        // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
+
+        // Additional code to sort neighbors by lowest index.
+        // Only required so that numbers match those assigned in condensed sequence class
+        // Should not be done this way, need a generic graph structure and then to centralize everything.
+        // MolecularModeling::ResidueVector neighbors =
+        // selection::SortResidueNeighborsByAcendingConnectionAtomNumber(to_this_residue2->GetNode()->GetResidueNodeConnectingAtoms());
+        // End addtional sorting code.
+        // Breath first code
+        // for(auto &neighbor : neighbors)
+        // {
+        //     if(neighbor->GetIndex() != from_this_residue1->GetIndex()) // If not the previous residue
+        //     {
+        //         residue_linkages->emplace_back(neighbor, to_this_residue2);
+        //     }
+        // }
+        // End Breath first code
+        for (auto& child : currentParent->getChildren())
+        {
+            connectAndSetGeometry(currentParent, child);
+            cds::ResidueLink link        = cds::findResidueLink({child, currentParent});
+            cds::ResidueLinkage& linkage = glycosidicLinkages.emplace_back(cds::createResidueLinkage(link));
+            initialWiggleLinkage(linkage, searchSettings, currentParent, child);
+            depthFirstSetConnectivityAndGeometry(glycosidicLinkages, searchSettings, child);
+        }
+    }
 } // namespace
 
 //////////////////////////////////////////////////////////
@@ -204,8 +298,8 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     cds::serializeNumbers(this->getAtoms());
     auto searchSettings = defaultSearchSettings;
     // Set 3D structure
-    this->DepthFirstSetConnectivityAndGeometry(terminalResidue(getResidues()),
-                                               searchSettings); // recurve start with terminal
+    depthFirstSetConnectivityAndGeometry(glycosidicLinkages_, searchSettings,
+                                         terminalResidue(getResidues())); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.
@@ -387,96 +481,6 @@ void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
 
     cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
     atomToAdjust->setCharge(atomToAdjust->getCharge() + GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
-    return;
-}
-
-void Carbohydrate::ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue,
-                                         const cds::AngleSearchSettings& searchSettings)
-{
-    using cds::Atom;
-    using cds::ResidueType;
-    std::string linkageLabel = codeUtils::erratic_cast<ParsedResidue*>(childResidue)->GetLinkageName();
-    // This is using the new Node<Residue> functionality and the old AtomNode
-    // Now go figure out how which Atoms to bond to each other in the residues.
-    // Rule: Can't ever have a child aglycone or a parent derivative.
-    Atom* parentAtom         = findParentAtom(parentResidue, childResidue, linkageLabel);
-    if (parentAtom == nullptr)
-    {
-        std::string message = "Did not find connection atom in residue: " + parentResidue->getStringId();
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
-    // Now get child atom
-    std::string childAtomName = findChildAtomName(childResidue, linkageLabel);
-    Atom* childAtom           = childResidue->FindAtom(childAtomName);
-    if (childAtom == nullptr)
-    {
-        std::string message =
-            "Did not find child atom named " + childAtomName + " in child residue: " + childResidue->getStringId();
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
-    // Geometry
-    moveConnectedAtomsAccordingToBondLength(parentAtom, childAtom);
-    //   Now bond the atoms. This could also set distance?, and angle? if passed to function?
-    cds::addBond(childAtom, parentAtom); // parentAtom also connected to childAtom. Fancy.
-    for (auto& parentAtomNeighbor : parentAtom->getNeighbors())
-    {
-        if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
-        {
-            auto matrix            = cds::rotationTo(std::array<Coordinate, 3> {parentAtomNeighbor->coordinate(),
-                                                                                parentAtom->coordinate(), childAtom->coordinate()},
-                                                     constants::toRadians(constants::DEFAULT_ANGLE));
-            auto childResidueAtoms = childResidue->mutableAtoms();
-            matrix.rotateCoordinates(cds::atomCoordinateReferences(childResidueAtoms));
-            break;
-        }
-    }
-    // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after more
-    // residues are added.
-    cds::ResidueLink link        = cds::findResidueLink({childResidue, parentResidue});
-    cds::ResidueLinkage& linkage = glycosidicLinkages_.emplace_back(cds::createResidueLinkage(link));
-    auto shapePreference         = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
-    cds::setShapeToPreference(linkage, shapePreference);
-    auto searchPreference  = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
-    auto residueWithWeight = [](cds::Residue* residue)
-    {
-        auto residues = std::vector<cds::Residue*> {residue};
-        auto weights  = std::vector<double> {1.0};
-        return cds::ResiduesWithOverlapWeight {residues, weights};
-    };
-    cds::simpleWiggleCurrentRotamers(searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
-                                     searchPreference,
-                                     {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
-    return;
-}
-
-// Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
-void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent,
-                                                        const cds::AngleSearchSettings& searchSettings)
-{
-    // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
-
-    // Additional code to sort neighbors by lowest index.
-    // Only required so that numbers match those assigned in condensed sequence class
-    // Should not be done this way, need a generic graph structure and then to centralize everything.
-    // MolecularModeling::ResidueVector neighbors =
-    // selection::SortResidueNeighborsByAcendingConnectionAtomNumber(to_this_residue2->GetNode()->GetResidueNodeConnectingAtoms());
-    // End addtional sorting code.
-    // Breath first code
-    // for(auto &neighbor : neighbors)
-    // {
-    //     if(neighbor->GetIndex() != from_this_residue1->GetIndex()) // If not the previous residue
-    //     {
-    //         residue_linkages->emplace_back(neighbor, to_this_residue2);
-    //     }
-    // }
-    // End Breath first code
-    for (auto& child : currentParent->getChildren())
-    {
-        this->ConnectAndSetGeometry(currentParent, child, searchSettings);
-        this->DepthFirstSetConnectivityAndGeometry(child, searchSettings);
-    }
     return;
 }
 
