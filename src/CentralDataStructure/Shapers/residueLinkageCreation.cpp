@@ -84,7 +84,7 @@ namespace
             if (!currentMetadata.empty())
             {
                 rotatableDihedrals.emplace_back(
-                    cds::RotatableDihedral {dihedralAtoms[n].isBranching, dihedralAtoms[n].atoms});
+                    cds::RotatableDihedral {dihedralAtoms[n].isBranching, dihedralAtoms[n].atoms, {}, 0});
             }
             else
             {
@@ -286,8 +286,8 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
     }
 
     auto rotamerType = metadata[0][0].rotamer_type_;
-    ResidueLinkage linkage(link, dihedrals, metadata, rotamerType, index, name, reducingOverlapResidues,
-                           nonReducingOverlapResidues);
+    ResidueLinkage linkage {
+        link, dihedrals, metadata, rotamerType, index, name, reducingOverlapResidues, nonReducingOverlapResidues};
 
     validateRotamerTypes(linkage);
     if (rotamerType == GlycamMetadata::RotamerType::conformer)

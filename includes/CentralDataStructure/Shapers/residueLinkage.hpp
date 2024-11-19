@@ -41,9 +41,6 @@ namespace cds
 
     struct RotatableDihedral
     {
-        RotatableDihedral(bool isBranchingLinkage, const std::array<Atom*, 4>& atoms_)
-            : isBranchingLinkage(isBranchingLinkage), atoms(atoms_), currentMetadataIndex(0) {};
-
         bool isBranchingLinkage;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
         std::array<Atom*, 4> atoms;
@@ -57,14 +54,6 @@ namespace cds
 
     struct ResidueLinkage
     {
-        ResidueLinkage(ResidueLink& link_, std::vector<RotatableDihedral>& dihedrals,
-                       std::vector<DihedralAngleDataVector>& metadata, GlycamMetadata::RotamerType rotamerType_,
-                       unsigned long long index_, std::string name_, std::vector<Residue*> reducingOverlapResidues_,
-                       std::vector<Residue*> nonReducingOverlapResidues_)
-            : link(link_), rotatableDihedrals(dihedrals), dihedralMetadata(metadata), rotamerType(rotamerType_),
-              index(index_), name(name_), reducingOverlapResidues(reducingOverlapResidues_),
-              nonReducingOverlapResidues(nonReducingOverlapResidues_) {};
-
         ResidueLink link;
         std::vector<RotatableDihedral> rotatableDihedrals;
         std::vector<DihedralAngleDataVector> dihedralMetadata;
