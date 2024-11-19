@@ -99,6 +99,75 @@ namespace
             coord.set(coord.get() + cToParent);
         }
     }
+
+    cds::Atom* findParentAtom(cds::Residue* parentResidue, cds::Residue* childResidue, const std::string& linkageLabel)
+    {
+        if (parentResidue->GetType() == cds::ResidueType::Aglycone)
+        {
+            std::string parentAtomName = GlycamMetadata::GetConnectionAtomForResidue(parentResidue->getName());
+            return parentResidue->FindAtom(parentAtomName);
+        }
+        else if (parentResidue->GetType() == cds::ResidueType::Sugar)
+        { // Linkage example: childb1-4parent, it's never parentb1-4child
+            size_t linkPosition = 3;
+            if (childResidue->GetType() == cds::ResidueType::Derivative)
+            { // label will be just a single number.
+                linkPosition = 0;
+            }
+            else if (linkageLabel.size() < 4)
+            {
+                std::string message =
+                    "The deduced linkageLabel is too small:\n" + linkageLabel +
+                    ".\nWe require anomer, start atom number, a dash, and connecting atom number. Example:\na1-4";
+                gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+                throw std::runtime_error(message);
+            }
+            if (!isdigit(linkageLabel.substr(linkPosition).at(0)))
+            {
+                std::string message = "Could not convert the last linkage number to an integer: " + linkageLabel;
+                gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+                throw std::runtime_error(message);
+            }
+            return cdsSelections::getNonCarbonHeavyAtomNumbered(parentResidue->getAtoms(),
+                                                                linkageLabel.substr(linkPosition));
+        }
+        else
+        {
+            std::string message = "Error: parent residue: " + parentResidue->getName() +
+                                  " isn't either Aglycone or Sugar, and derivatives cannot be parents.";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+    }
+
+    std::string findChildAtomName(cds::Residue* childResidue, const std::string& linkageLabel)
+    {
+        std::string childAtomName;
+        if (childResidue->GetType() == cds::ResidueType::Derivative)
+        {
+            std::string glycamNameForResidue =
+                getGlycamResidueName(codeUtils::erratic_cast<cdsCondensedSequence::ParsedResidue*>(childResidue));
+            return GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
+        }
+        else if (childResidue->GetType() == cds::ResidueType::Sugar)
+        {
+            std::string childLinkageNumber = linkageLabel.substr(1, 1);
+            if (!isdigit(childLinkageNumber.at(0)))
+            {
+                std::string message = "Could not convert the first linkage number to an integer: " + childLinkageNumber;
+                gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+                throw std::runtime_error(message);
+            }
+            return "C" + childLinkageNumber;
+        }
+        else
+        {
+            std::string message = "Error: child residue: " + childResidue->getName() +
+                                  " is neither derivative or Sugar (aglycones cannot be children)";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+    }
 } // namespace
 
 //////////////////////////////////////////////////////////
@@ -321,7 +390,7 @@ void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
     return;
 }
 
-void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residue* parentResidue,
+void Carbohydrate::ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue,
                                          const cds::AngleSearchSettings& searchSettings)
 {
     using cds::Atom;
@@ -330,44 +399,7 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
     // This is using the new Node<Residue> functionality and the old AtomNode
     // Now go figure out how which Atoms to bond to each other in the residues.
     // Rule: Can't ever have a child aglycone or a parent derivative.
-    Atom* parentAtom         = nullptr;
-    std::string childAtomName;
-    if (parentResidue->GetType() == ResidueType::Aglycone)
-    {
-        std::string parentAtomName = GlycamMetadata::GetConnectionAtomForResidue(parentResidue->getName());
-        parentAtom                 = parentResidue->FindAtom(parentAtomName);
-    }
-    else if (parentResidue->GetType() == ResidueType::Sugar)
-    { // Linkage example: childb1-4parent, it's never parentb1-4child
-        size_t linkPosition = 3;
-        if (childResidue->GetType() == ResidueType::Derivative)
-        { // label will be just a single number.
-            linkPosition = 0;
-        }
-        else if (linkageLabel.size() < 4)
-        {
-            std::string message =
-                "The deduced linkageLabel is too small:\n" + linkageLabel +
-                ".\nWe require anomer, start atom number, a dash, and connecting atom number. Example:\na1-4";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
-        }
-        if (!isdigit(linkageLabel.substr(linkPosition).at(0)))
-        {
-            std::string message = "Could not convert the last linkage number to an integer: " + linkageLabel;
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
-        }
-        parentAtom =
-            cdsSelections::getNonCarbonHeavyAtomNumbered(parentResidue->getAtoms(), linkageLabel.substr(linkPosition));
-    }
-    else
-    {
-        std::string message = "Error: parent residue: " + parentResidue->getName() +
-                              " isn't either Aglycone or Sugar, and derivatives cannot be parents.";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
+    Atom* parentAtom         = findParentAtom(parentResidue, childResidue, linkageLabel);
     if (parentAtom == nullptr)
     {
         std::string message = "Did not find connection atom in residue: " + parentResidue->getStringId();
@@ -375,30 +407,8 @@ void Carbohydrate::ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residu
         throw std::runtime_error(message);
     }
     // Now get child atom
-    if (childResidue->GetType() == ResidueType::Derivative)
-    {
-        std::string glycamNameForResidue = getGlycamResidueName(codeUtils::erratic_cast<ParsedResidue*>(childResidue));
-        childAtomName                    = GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
-    }
-    else if (childResidue->GetType() == ResidueType::Sugar)
-    {
-        std::string childLinkageNumber = linkageLabel.substr(1, 1);
-        if (!isdigit(childLinkageNumber.at(0)))
-        {
-            std::string message = "Could not convert the first linkage number to an integer: " + childLinkageNumber;
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
-        }
-        childAtomName = "C" + childLinkageNumber;
-    }
-    else
-    {
-        std::string message = "Error: child residue: " + childResidue->getName() +
-                              " is neither derivative or Sugar (aglycones cannot be children)";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
-    Atom* childAtom = childResidue->FindAtom(childAtomName);
+    std::string childAtomName = findChildAtomName(childResidue, linkageLabel);
+    Atom* childAtom           = childResidue->FindAtom(childAtomName);
     if (childAtom == nullptr)
     {
         std::string message =
@@ -464,7 +474,7 @@ void Carbohydrate::DepthFirstSetConnectivityAndGeometry(cds::Residue* currentPar
     // End Breath first code
     for (auto& child : currentParent->getChildren())
     {
-        this->ConnectAndSetGeometry(child, currentParent, searchSettings);
+        this->ConnectAndSetGeometry(currentParent, child, searchSettings);
         this->DepthFirstSetConnectivityAndGeometry(child, searchSettings);
     }
     return;

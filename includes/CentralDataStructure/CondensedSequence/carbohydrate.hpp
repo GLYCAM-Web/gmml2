@@ -83,7 +83,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void ApplyDeoxy(ParsedResidue* deoxyResidue);
         void DerivativeChargeAdjustment(ParsedResidue* parsedResidue);
-        void ConnectAndSetGeometry(cds::Residue* childResidue, cds::Residue* parentResidue,
+        void ConnectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue,
                                    const cds::AngleSearchSettings& searchSettings);
         void DepthFirstSetConnectivityAndGeometry(cds::Residue* currentParent,
                                                   const cds::AngleSearchSettings& searchSettings);
