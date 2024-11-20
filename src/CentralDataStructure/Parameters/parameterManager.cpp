@@ -86,7 +86,8 @@ void ParameterManager::setAtomChargesForResidues(std::vector<cds::Residue*> quer
     }
 }
 
-void ParameterManager::createAtomsForResidue(cds::Residue* queryResidue, const std::string glycamNameForResidue) const
+void ParameterManager::createAtomsForResidue(cdsCondensedSequence::ParsedResidue* queryResidue,
+                                             const std::string glycamNameForResidue) const
 {
     try
     {

@@ -6,6 +6,7 @@
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
@@ -52,7 +53,7 @@ namespace
         return code;
     }
 
-    std::vector<std::string> getGlycamNamesOfResidues(const std::vector<cds::Residue*>& residues)
+    std::vector<std::string> getGlycamNamesOfResidues(const std::vector<cdsCondensedSequence::ParsedResidue*>& residues)
     {
         std::vector<std::string> names;
         names.reserve(residues.size());
@@ -60,8 +61,7 @@ namespace
         {
             if (residue->GetType() != cds::ResidueType::Deoxy)
             {
-                names.push_back(
-                    getGlycamResidueName(codeUtils::erratic_cast<cdsCondensedSequence::ParsedResidue*>(residue)));
+                names.push_back(getGlycamResidueName(residue));
             }
         }
         return names;
@@ -100,12 +100,20 @@ namespace
         }
     }
 
-    void applyDeoxy(Carbohydrate* carbohydrate, cdsCondensedSequence::ParsedResidue* deoxyResidue)
+    void applyDeoxy(std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>>& residues,
+                    cdsCondensedSequence::ParsedResidue* deoxyResidue)
     {
         cdsCondensedSequence::ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
         residueToBeDeoxified->MakeDeoxy(deoxyResidue->GetLink());
-        carbohydrate->deleteResidue(deoxyResidue); // Remove the deoxy derivative now.
-        return;
+        auto it = std::find_if(residues.begin(), residues.end(),
+                               [&](auto& i)
+                               {
+                                   return deoxyResidue == i.get();
+                               });
+        if (it != residues.end())
+        {
+            it = residues.erase(it);
+        }
     }
 
     void derivativeChargeAdjustment(cdsCondensedSequence::ParsedResidue* parsedResidue)
@@ -287,37 +295,45 @@ namespace
 //////////////////////////////////////////////////////////
 Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
 {
-    parseSequence(this, inputSequence);
-    this->setName("CONDENSEDSEQUENCE");
-    reorderSequence(this); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
-                           // Gala1-3[Fuca1-2]Glca. Same 3D structure.
-    cdsParameters::ParameterManager parameterManager(getGlycamNamesOfResidues(this->getResidues()));
-    for (auto& cdsResidue : this->getResidues())
-    { // Move atoms from prep file into parsedResidues.
-        if (cdsResidue->GetType() != cds::ResidueType::Deoxy)
-        {
-            ParsedResidue* parsedResidue = codeUtils::erratic_cast<ParsedResidue*>(cdsResidue);
-            parameterManager.createAtomsForResidue(cdsResidue, getGlycamResidueName(parsedResidue));
-            if (parsedResidue->GetType() == cds::ResidueType::Derivative)
-            { // Deal with adjusting charges for derivatives
-                derivativeChargeAdjustment(parsedResidue);
+    {
+        std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
+        parseSequence(residuePtrs, inputSequence);
+        reorderSequence(residuePtrs); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
+                                      // Gala1-3[Fuca1-2]Glca. Same 3D structure.
+        std::vector<ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
+        cdsParameters::ParameterManager parameterManager(getGlycamNamesOfResidues(residues));
+        for (auto& residue : residues)
+        { // Move atoms from prep file into parsedResidues.
+            if (residue->GetType() != cds::ResidueType::Deoxy)
+            {
+                parameterManager.createAtomsForResidue(residue, getGlycamResidueName(residue));
+                if (residue->GetType() == cds::ResidueType::Derivative)
+                { // Deal with adjusting charges for derivatives
+                    derivativeChargeAdjustment(residue);
+                }
             }
         }
-    }
-    for (auto& cdsResidue : this->getResidues())
-    { // Apply any deoxy
-        if (cdsResidue->GetType() == cds::ResidueType::Deoxy)
+        for (auto& residue : residues)
+        { // Apply any deoxy
+            if (residue->GetType() == cds::ResidueType::Deoxy)
+            {
+                applyDeoxy(residuePtrs, residue);
+            }
+        }
+        setIndexByConnectivity(residues); // For reporting residue index numbers to the user
+        for (auto& res : residuePtrs)
         {
-            applyDeoxy(this, codeUtils::erratic_cast<ParsedResidue*>(cdsResidue));
+            this->addResidue(std::move(res));
         }
     }
+    this->setName("CONDENSEDSEQUENCE");
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
-    setIndexByConnectivity(getResidues()); // For reporting residue index numbers to the user
+
     cds::serializeNumbers(this->getAtoms());
     auto searchSettings = defaultSearchSettings;
     // Set 3D structure
     depthFirstSetConnectivityAndGeometry(glycosidicLinkages_, searchSettings,
-                                         terminalResidue(getResidues())); // recurve start with terminal
+                                         getResidues().front()); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.

@@ -3,21 +3,20 @@
 
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
 
+#include <memory>
 #include <vector>
 #include <string>
 
 namespace cdsCondensedSequence
 {
-    std::vector<ParsedResidue*> parsedResiduesOrderedByConnectivity(std::vector<cds::Residue*> residues);
-    void setIndexByConnectivity(std::vector<cds::Residue*> residues);
-    void labelSequence(std::vector<cds::Residue*> residues);
-    std::string printGraphViz(GraphVizDotConfig& configs, std::vector<cds::Residue*> residues);
-    std::string printSequence(std::vector<cds::Residue*> residues, bool withLabels = false,
+    std::vector<ParsedResidue*> parsedResiduesOrderedByConnectivity(std::vector<ParsedResidue*> residues);
+    void setIndexByConnectivity(std::vector<cdsCondensedSequence::ParsedResidue*> residues);
+    void labelSequence(std::vector<ParsedResidue*> residues);
+    std::string printGraphViz(GraphVizDotConfig& configs, std::vector<ParsedResidue*> residues);
+    std::string printSequence(std::vector<ParsedResidue*> residues, bool withLabels = false,
                               bool iupacCondensed = false);
-    std::string reorderSequence(cds::Molecule* molecule);
-    ParsedResidue* terminalResidue(std::vector<cds::Residue*> residues);
+    std::string reorderSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues);
+    ParsedResidue* terminalResidue(std::vector<ParsedResidue*> residues);
 } // namespace cdsCondensedSequence
 #endif

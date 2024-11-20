@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_PARAMETERS_PARAMETERMANAGER_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -20,7 +21,8 @@ namespace cdsParameters
         cds::Residue* findParameterResidue(const std::string name) const;
         bool setAtomChargesForResidue(cds::Residue* queryResidue) const;
         void setAtomChargesForResidues(std::vector<cds::Residue*> queryResidues) const;
-        void createAtomsForResidue(cds::Residue* queryResidue, const std::string glycamNameForResidue) const;
+        void createAtomsForResidue(cdsCondensedSequence::ParsedResidue* queryResidue,
+                                   const std::string glycamNameForResidue) const;
 
       private:
         // Functions

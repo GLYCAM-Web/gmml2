@@ -1,32 +1,32 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser2.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 using cdsCondensedSequence::Sequence;
 
-Sequence::Sequence(std::string glycamCondensedString) : cds::Molecule()
+Sequence::Sequence(std::string glycamCondensedString)
 {
-    parseSequence(this, glycamCondensedString);
-    this->setName("CONDENSEDSEQUENCE");
-    reorderSequence(this);
+    parseSequence(residues, glycamCondensedString);
+    reorderSequence(residues);
 }
 
 void Sequence::LabelSequence()
 {
-    labelSequence(this->getResidues());
+    labelSequence(codeUtils::pointerToUniqueVector(residues));
 }
 
-std::string Sequence::Print(const bool withLabels) const
+std::string Sequence::Print(const bool withLabels)
 {
-    return printSequence(this->getResidues(), withLabels);
+    return printSequence(codeUtils::pointerToUniqueVector(residues), withLabels);
 }
 
-std::string Sequence::PrintIupac() const
+std::string Sequence::PrintIupac()
 {
-    return printSequence(this->getResidues(), false, true);
+    return printSequence(codeUtils::pointerToUniqueVector(residues), false, true);
 }
 
 std::string Sequence::PrintGraphViz(GraphVizDotConfig& configs)
 {
-    return printGraphViz(configs, this->getResidues());
+    return printGraphViz(configs, codeUtils::pointerToUniqueVector(residues));
 }

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <memory>
 
 namespace codeUtils
 {
@@ -67,6 +68,17 @@ namespace codeUtils
         for (auto& a : vec)
         {
             result.push_back(&a);
+        }
+        return result;
+    }
+
+    template<class T> std::vector<T*> pointerToUniqueVector(std::vector<std::unique_ptr<T>>& vec)
+    {
+        std::vector<T*> result;
+        result.reserve(vec.size());
+        for (auto& a : vec)
+        {
+            result.push_back(a.get());
         }
         return result;
     }

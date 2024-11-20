@@ -1,7 +1,8 @@
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
-#include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include <sstream>
 #include <sys/stat.h> // for checking if file exists
@@ -213,7 +214,7 @@ namespace
     }
 } // namespace
 
-std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std::vector<cds::Residue*> residues)
+std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std::vector<ParsedResidue*> residues)
 {
     setIndexByConnectivity(residues);
     std::stringstream ss;
@@ -239,11 +240,11 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
 }
 
 std::vector<ParsedResidue*>
-cdsCondensedSequence::parsedResiduesOrderedByConnectivity(std::vector<cds::Residue*> residues)
+cdsCondensedSequence::parsedResiduesOrderedByConnectivity(std::vector<ParsedResidue*> residues)
 {
     std::vector<ParsedResidue*> rawResidues;
     // Go via Graph so order decided by connectivity, depth first traversal:
-    glygraph::Graph<cds::Residue> sequenceGraph(cdsCondensedSequence::terminalResidue(residues));
+    glygraph::Graph<cds::Residue> sequenceGraph(terminalResidue(residues));
     for (auto& node : sequenceGraph.getNodes())
     {
         rawResidues.push_back(codeUtils::erratic_cast<ParsedResidue*>(node->getDerivedClass()));
@@ -251,7 +252,7 @@ cdsCondensedSequence::parsedResiduesOrderedByConnectivity(std::vector<cds::Resid
     return rawResidues;
 }
 
-void cdsCondensedSequence::setIndexByConnectivity(std::vector<cds::Residue*> residues)
+void cdsCondensedSequence::setIndexByConnectivity(std::vector<ParsedResidue*> residues)
 {
     unsigned long long linkIndex    = 0; // Convention to start form 0 for linkages.
     unsigned long long residueIndex = 1; // Convention to start from 1 for residues.
@@ -270,11 +271,11 @@ void cdsCondensedSequence::setIndexByConnectivity(std::vector<cds::Residue*> res
     return;
 }
 
-void cdsCondensedSequence::labelSequence(std::vector<cds::Residue*> residues)
+void cdsCondensedSequence::labelSequence(std::vector<ParsedResidue*> residues)
 {
-    cdsCondensedSequence::setIndexByConnectivity(residues);
+    setIndexByConnectivity(residues);
     std::stringstream ss;
-    for (auto& residue : cdsCondensedSequence::parsedResiduesOrderedByConnectivity(residues))
+    for (auto& residue : parsedResiduesOrderedByConnectivity(residues))
     {
         ss << residue->GetName() << "&Label=residue-" << residue->getIndex() << ";";
         residue->addLabel(ss.str());
@@ -291,7 +292,7 @@ void cdsCondensedSequence::labelSequence(std::vector<cds::Residue*> residues)
     return;
 }
 
-std::string cdsCondensedSequence::printSequence(std::vector<cds::Residue*> residues, bool withLabels,
+std::string cdsCondensedSequence::printSequence(std::vector<ParsedResidue*> residues, bool withLabels,
                                                 bool iupacCondensed)
 {
     std::vector<std::string> output;
@@ -314,23 +315,33 @@ std::string cdsCondensedSequence::printSequence(std::vector<cds::Residue*> resid
     return ss.str();
 }
 
-std::string cdsCondensedSequence::reorderSequence(cds::Molecule* molecule)
+std::string cdsCondensedSequence::reorderSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues)
 { // Just doing the default by ascending link number for now.
-    for (auto& residue : molecule->getResidues())
+    for (auto& residue : residues)
     {
-        ParsedResidue* brian = codeUtils::erratic_cast<ParsedResidue*>(residue);
-        brian->sortOutEdgesBySourceTObjectComparator();
+        residue.get()->sortOutEdgesBySourceTObjectComparator();
     }
-    glygraph::Graph<cds::Residue> sequenceGraph(terminalResidue(molecule->getResidues()));
-    int position = 0;
+    glygraph::Graph<cds::Residue> sequenceGraph(residues.front().get());
+    size_t newPosition = 0;
     for (auto& node : sequenceGraph.getNodes())
     {
-        molecule->swapResiduePosition(node->getDerivedClass(), position++);
+        for (size_t oldPosition = 0; oldPosition < residues.size(); oldPosition++)
+        {
+            if (residues[oldPosition].get() == node->getDerivedClass())
+            {
+                if (oldPosition != newPosition)
+                {
+                    std::swap(residues[oldPosition], residues[newPosition]);
+                }
+                break;
+            }
+        }
+        newPosition++;
     }
-    return printSequence(molecule->getResidues(), false);
+    return printSequence(codeUtils::pointerToUniqueVector(residues), false);
 }
 
-ParsedResidue* cdsCondensedSequence::terminalResidue(std::vector<cds::Residue*> residues)
+ParsedResidue* cdsCondensedSequence::terminalResidue(std::vector<ParsedResidue*> residues)
 {
-    return codeUtils::erratic_cast<ParsedResidue*>(residues.front());
+    return residues.front();
 }

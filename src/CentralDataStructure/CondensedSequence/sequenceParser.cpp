@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <sstream>
@@ -279,7 +278,8 @@ namespace
     }
 } // namespace
 
-void cdsCondensedSequence::parseSequence(cds::Molecule* molecule, std::string inputSequence)
+void cdsCondensedSequence::parseSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues,
+                                         std::string inputSequence)
 {
     if (inputSequence.find('<') != std::string::npos)
     {
@@ -299,13 +299,8 @@ void cdsCondensedSequence::parseSequence(cds::Molecule* molecule, std::string in
             gmml::log(
                 __LINE__, __FILE__, gmml::INF,
                 "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
-            std::vector<std::unique_ptr<ParsedResidue>> residues;
             std::vector<std::string> savedDerivatives;
             parseCondensedSequence(residues, savedDerivatives, inputSequence);
-            for (auto& res : residues)
-            {
-                molecule->addResidue(std::move(res));
-            }
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "parseSequence complete");
