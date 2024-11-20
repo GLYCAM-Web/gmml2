@@ -27,14 +27,13 @@ std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
 cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
                                             std::vector<double> occupancies, std::vector<double> temperatureFactors)
 {
-    return {atoms,       atomCoordinates(atoms), atomNumbers(atoms), atomNames(atoms), atomElements(atoms), recordNames,
-            occupancies, temperatureFactors};
+    return {atomCoordinates(atoms), atomNumbers(atoms), atomNames(atoms), atomElements(atoms), recordNames, occupancies,
+            temperatureFactors};
 }
 
 cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames)
 {
-    return {atoms,
-            atomCoordinates(atoms),
+    return {atomCoordinates(atoms),
             atomNumbers(atoms),
             atomNames(atoms),
             atomElements(atoms),

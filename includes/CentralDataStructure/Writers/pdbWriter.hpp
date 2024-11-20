@@ -14,7 +14,6 @@ namespace cds
 {
     struct PdbFileAtomData
     {
-        std::vector<cds::Atom*> atoms;
         std::vector<Coordinate> coordinates;
         std::vector<int> numbers;
         std::vector<std::string> names;
