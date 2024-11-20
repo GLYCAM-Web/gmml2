@@ -12,13 +12,9 @@
 
 namespace CondensedSequence
 {
-    class DrawGlycan
-    {
-      public:
-        DrawGlycan(cdsCondensedSequence::GraphVizDotConfig configs,
-                   std::string condensedSequence =
-                       "DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]"
-                       "b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH");
-    };
+    void drawGlycan(cdsCondensedSequence::GraphVizDotConfig configs,
+                    std::string condensedSequence =
+                        "DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]"
+                        "b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH");
 } // namespace CondensedSequence
 #endif

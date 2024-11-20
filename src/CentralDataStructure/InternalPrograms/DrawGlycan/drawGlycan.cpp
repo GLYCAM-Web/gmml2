@@ -8,9 +8,7 @@
 #include <string>
 #include <vector>
 
-using CondensedSequence::DrawGlycan;
-
-DrawGlycan::DrawGlycan(cdsCondensedSequence::GraphVizDotConfig configs, std::string condensedSequence)
+void CondensedSequence::drawGlycan(cdsCondensedSequence::GraphVizDotConfig configs, std::string condensedSequence)
 {
     std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residues;
     cdsCondensedSequence::parseSequence(residues, condensedSequence);

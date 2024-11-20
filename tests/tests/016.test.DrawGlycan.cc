@@ -38,7 +38,7 @@ int main()
         //    	CondensedSequence::SequenceManipulator manipulator(sequence);
         cdsCondensedSequence::GraphVizDotConfig config;
         config.file_name_ = std::to_string(count) + ".dot";
-        CondensedSequence::DrawGlycan(config, sequence);
+        CondensedSequence::drawGlycan(config, sequence);
         //    	std::cout << manipulator.PrintGraphViz(config) << std::endl;
         count++;
     }
