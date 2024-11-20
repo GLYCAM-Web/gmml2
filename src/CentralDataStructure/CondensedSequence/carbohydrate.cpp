@@ -100,6 +100,24 @@ namespace
         }
     }
 
+    void applyDeoxy(Carbohydrate* carbohydrate, cdsCondensedSequence::ParsedResidue* deoxyResidue)
+    {
+        cdsCondensedSequence::ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
+        residueToBeDeoxified->MakeDeoxy(deoxyResidue->GetLink());
+        carbohydrate->deleteResidue(deoxyResidue); // Remove the deoxy derivative now.
+        return;
+    }
+
+    void derivativeChargeAdjustment(cdsCondensedSequence::ParsedResidue* parsedResidue)
+    {
+        std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
+        adjustAtomName             += parsedResidue->GetLinkageName().substr(0, 1);
+
+        cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
+        atomToAdjust->setCharge(atomToAdjust->getCharge() +
+                                GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
+    }
+
     cds::Atom* findParentAtom(cds::Residue* parentResidue, cds::Residue* childResidue, const std::string& linkageLabel)
     {
         if (parentResidue->GetType() == cds::ResidueType::Aglycone)
@@ -282,7 +300,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
             parameterManager.createAtomsForResidue(cdsResidue, getGlycamResidueName(parsedResidue));
             if (parsedResidue->GetType() == cds::ResidueType::Derivative)
             { // Deal with adjusting charges for derivatives
-                this->DerivativeChargeAdjustment(parsedResidue);
+                derivativeChargeAdjustment(parsedResidue);
             }
         }
     }
@@ -290,7 +308,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     { // Apply any deoxy
         if (cdsResidue->GetType() == cds::ResidueType::Deoxy)
         {
-            this->ApplyDeoxy(codeUtils::erratic_cast<ParsedResidue*>(cdsResidue));
+            applyDeoxy(this, codeUtils::erratic_cast<ParsedResidue*>(cdsResidue));
         }
     }
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
@@ -466,23 +484,6 @@ cds::Atom* Carbohydrate::GetAnomericAtom()
 //////////////////////////////////////////////////////////
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
-void Carbohydrate::ApplyDeoxy(ParsedResidue* deoxyResidue)
-{
-    ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
-    residueToBeDeoxified->MakeDeoxy(deoxyResidue->GetLink());
-    this->deleteResidue(deoxyResidue); // Remove the deoxy derivative now.
-    return;
-}
-
-void Carbohydrate::DerivativeChargeAdjustment(ParsedResidue* parsedResidue)
-{
-    std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
-    adjustAtomName             += parsedResidue->GetLinkageName().substr(0, 1);
-
-    cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
-    atomToAdjust->setCharge(atomToAdjust->getCharge() + GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
-    return;
-}
 
 void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
 {

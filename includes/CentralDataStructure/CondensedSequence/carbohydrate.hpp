@@ -79,11 +79,6 @@ namespace cdsCondensedSequence
 
       private:
         //////////////////////////////////////////////////////////
-        //                       FUNCTIONS                      //
-        //////////////////////////////////////////////////////////
-        void ApplyDeoxy(ParsedResidue* deoxyResidue);
-        void DerivativeChargeAdjustment(ParsedResidue* parsedResidue);
-        //////////////////////////////////////////////////////////
         //                 PRIVATE MEMBERS                      //
         //////////////////////////////////////////////////////////
         std::string inputSequenceString_;
