@@ -5,10 +5,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include <iomanip> // setw
 
-namespace
-{
-} // namespace
-
 std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
 {
     std::vector<bool> result;
@@ -28,14 +24,14 @@ std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
     return result;
 }
 
-cds::AtomPdbData cds::toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
-                                    std::vector<double> occupancies, std::vector<double> temperatureFactors)
+cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
+                                            std::vector<double> occupancies, std::vector<double> temperatureFactors)
 {
     return {atoms,       atomCoordinates(atoms), atomNumbers(atoms), atomNames(atoms), atomElements(atoms), recordNames,
             occupancies, temperatureFactors};
 }
 
-cds::AtomPdbData cds::toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames)
+cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames)
 {
     return {atoms,
             atomCoordinates(atoms),
@@ -47,7 +43,7 @@ cds::AtomPdbData cds::toAtomPdbData(const std::vector<cds::Atom*>& atoms, std::v
             std::vector<double>(atoms.size(), 0.0)};
 }
 
-cds::PdbWriterData cds::toPdbWriterData(std::vector<Residue*>& residues)
+cds::PdbFileData cds::toPdbFileData(std::vector<Residue*>& residues)
 {
     std::vector<Atom*> atoms;
     std::vector<std::vector<size_t>> indices;
@@ -60,9 +56,9 @@ cds::PdbWriterData cds::toPdbWriterData(std::vector<Residue*>& residues)
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
     std::vector<std::string> chainIds(residues.size(), "");
     std::vector<std::string> insertionCodes(residues.size(), "");
-    ResiduePdbData residueData {indices, residueNumbers(residues), truncatedResidueNames(residues), chainIds,
-                                insertionCodes};
-    return PdbWriterData {residueData, toAtomPdbData(atoms, recordNames)};
+    PdbFileResidueData residueData {indices, residueNumbers(residues), truncatedResidueNames(residues), chainIds,
+                                    insertionCodes};
+    return PdbFileData {residueData, toPdbFileAtomData(atoms, recordNames)};
 }
 
 void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules)
@@ -80,7 +76,7 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
             }
             std::vector<cds::ResidueType> types = residueTypes(residues);
             std::vector<bool> ter               = residueTER(types);
-            PdbWriterData data                  = toPdbWriterData(residues);
+            PdbFileData data                    = toPdbFileData(residues);
             cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
         }
         stream << "ENDMDL\n";
@@ -88,10 +84,10 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
 }
 
 void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
-                             const std::vector<bool>& residueTER, const PdbWriterData& data)
+                             const std::vector<bool>& residueTER, const PdbFileData& data)
 {
-    const ResiduePdbData& residues = data.residues;
-    const AtomPdbData& atoms       = data.atoms;
+    const PdbFileResidueData& residues = data.residues;
+    const PdbFileAtomData& atoms       = data.atoms;
     for (size_t n = 0; n < residueIndices.size(); n++)
     {
         size_t residueIndex = residueIndices[n];
@@ -107,8 +103,8 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& re
 }
 
 // Used by the PdbAtom class and cds classes. Thus what it takes as input is a bit odd.
-void cds::writeAtomToPdb(std::ostream& stream, const ResiduePdbData& residues, size_t residueIndex,
-                         const AtomPdbData& atoms, size_t atomIndex)
+void cds::writeAtomToPdb(std::ostream& stream, const PdbFileResidueData& residues, size_t residueIndex,
+                         const PdbFileAtomData& atoms, size_t atomIndex)
 {
     std::string residueAlternativeLocation = ""; // don't know if this should live in residue or atom..
     const cds::Coordinate& coord           = atoms.coordinates[atomIndex];

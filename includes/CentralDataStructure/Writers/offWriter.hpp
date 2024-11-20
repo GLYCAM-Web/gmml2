@@ -9,7 +9,7 @@
 
 namespace cds
 {
-    struct AtomOffData
+    struct OffFileAtomData
     {
         std::vector<int> numbers;
         std::vector<std::string> names;
@@ -21,7 +21,7 @@ namespace cds
         std::vector<std::pair<size_t, size_t>> bonds;
     };
 
-    struct ResidueOffData
+    struct OffFileResidueData
     {
         std::vector<int> numbers;
         std::vector<std::string> names;
@@ -30,18 +30,18 @@ namespace cds
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
     };
 
-    struct OffWriterData
+    struct OffFileData
     {
-        ResidueOffData residues;
-        AtomOffData atoms;
+        OffFileResidueData residues;
+        OffFileAtomData atoms;
     };
 
-    OffWriterData toOffWriterData(const std::vector<Residue*>& residues);
+    OffFileData toOffFileData(const std::vector<Residue*>& residues);
     void serializeResiduesIndividually(std::vector<cds::Residue*>& residues);
     std::string getOffType(const cds::ResidueType queryType);
-    void WriteOffFileUnit(const std::vector<size_t>& residueIndices, const ResidueOffData& residues,
-                          const AtomOffData& atoms, std::ostream& stream, const std::string& unitName);
-    void WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffWriterData& data);
-    void WriteResiduesTogetherToOffFile(std::ostream& stream, const OffWriterData& data, const std::string& unitName);
+    void WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffFileResidueData& residues,
+                          const OffFileAtomData& atoms, std::ostream& stream, const std::string& unitName);
+    void WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffFileData& data);
+    void WriteResiduesTogetherToOffFile(std::ostream& stream, const OffFileData& data, const std::string& unitName);
 } // namespace cds
 #endif

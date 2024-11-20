@@ -38,7 +38,7 @@ namespace
     }
 } // namespace
 
-cds::OffWriterData cds::toOffWriterData(const std::vector<Residue*>& residues)
+cds::OffFileData cds::toOffFileData(const std::vector<Residue*>& residues)
 {
     std::vector<Atom*> atoms;
     std::vector<std::vector<size_t>> indices;
@@ -55,11 +55,11 @@ cds::OffWriterData cds::toOffWriterData(const std::vector<Residue*>& residues)
         connections.push_back(atomIndices(atoms, atomsConnected));
         residueIndex++;
     }
-    AtomOffData atomData {atomNumbers(atoms), atomNames(atoms),       atomTypes(atoms), atomAtomicNumbers(atoms),
-                          atomCharges(atoms), atomCoordinates(atoms), atomResidues,     uniqueAtomBonds(atoms)};
-    ResidueOffData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
-                                connections};
-    return OffWriterData {residueData, atomData};
+    OffFileAtomData atomData {atomNumbers(atoms), atomNames(atoms),       atomTypes(atoms), atomAtomicNumbers(atoms),
+                              atomCharges(atoms), atomCoordinates(atoms), atomResidues,     uniqueAtomBonds(atoms)};
+    OffFileResidueData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
+                                    connections};
+    return OffFileData {residueData, atomData};
 }
 
 void cds::serializeResiduesIndividually(std::vector<cds::Residue*>& residues)
@@ -84,8 +84,8 @@ std::string cds::getOffType(const cds::ResidueType queryType)
     return "?";
 }
 
-void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const ResidueOffData& residues,
-                           const AtomOffData& atoms, std::ostream& stream, const std::string& unitName)
+void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffFileResidueData& residues,
+                           const OffFileAtomData& atoms, std::ostream& stream, const std::string& unitName)
 {
     // WriteAtomSection
     const std::string FLAG = "131072";
@@ -260,7 +260,7 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const Resi
     return;
 }
 
-void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffWriterData& data)
+void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffFileData& data)
 { // For writing each residue separately
     size_t residueCount = data.residues.names.size();
     stream << "!!index array str" << std::endl;
@@ -274,7 +274,7 @@ void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffWrit
     }
 }
 
-void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const OffWriterData& data, const std::string& unitName)
+void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const OffFileData& data, const std::string& unitName)
 { // For writing residues together as a molecule
     stream << "!!index array str" << std::endl;
     stream << " \"" << unitName << "\"" << std::endl;

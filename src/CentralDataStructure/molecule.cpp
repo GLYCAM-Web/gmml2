@@ -183,7 +183,7 @@ void Molecule::WritePdb(std::ostream& stream) const
     std::vector<Residue*> residues = getResidues();
     std::vector<ResidueType> types = residueTypes(residues);
     std::vector<bool> ter          = residueTER(types);
-    PdbWriterData data             = toPdbWriterData(residues);
+    PdbFileData data               = toPdbFileData(residues);
     cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
     using cds::ResidueType; // to help readability of the Sugar, etc below
     std::vector<Residue*> selectedResidues =
@@ -199,6 +199,6 @@ void Molecule::WriteOff(std::ostream& stream)
     std::vector<Atom*> atoms       = getAtoms();
     cds::serializeNumbers(atoms);
     cds::serializeNumbers(residues);
-    cds::OffWriterData data = cds::toOffWriterData(residues);
+    cds::OffFileData data = cds::toOffFileData(residues);
     cds::WriteResiduesTogetherToOffFile(stream, data, getName());
 }

@@ -288,7 +288,7 @@ namespace glycoproteinBuilder
             return extractCoordinates(data);
         };
 
-        auto writeOffFile = [](const cds::OffWriterData& data, const std::string& prefix)
+        auto writeOffFile = [](const cds::OffFileData& data, const std::string& prefix)
         {
             std::string fileName = prefix + ".off";
             std::ofstream outFileStream;
@@ -298,7 +298,7 @@ namespace glycoproteinBuilder
         };
 
         auto writePdbFile = [](const std::vector<std::vector<size_t>>& residueIndices,
-                               const std::vector<std::vector<bool>>& residueTER, const cds::PdbWriterData& data,
+                               const std::vector<std::vector<bool>>& residueTER, const cds::PdbFileData& data,
                                const std::vector<std::pair<size_t, size_t>>& connectionIndices,
                                const std::string& prefix)
         {
@@ -403,7 +403,7 @@ namespace glycoproteinBuilder
 
         std::vector<std::vector<bool>> allResidueTER   = residueTER(moleculeResidues);
         std::vector<cds::Coordinate> initalCoordinates = extractCoordinates(data);
-        cds::PdbWriterData pdbData                     = toPdbWriterData(graphs, data);
+        cds::PdbFileData pdbData                       = toPdbFileData(graphs, data);
         writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein_initial");
         std::vector<cds::Coordinate> resolvedCoords =
             resolveOverlapsWithWiggler(graphs, data, initalCoordinates, false);
@@ -415,8 +415,8 @@ namespace glycoproteinBuilder
         pdbData.atoms.numbers    = data.atoms.numbers;
         pdbData.residues.numbers = data.residues.numbers;
         {
-            cds::OffWriterData offData = toOffWriterData(graphs, data);
-            offData.atoms.coordinates  = resolvedCoords;
+            cds::OffFileData offData  = toOffFileData(graphs, data);
+            offData.atoms.coordinates = resolvedCoords;
             writeOffFile(offData, outputDir + "glycoprotein");
         }
         writePdbFile(moleculeResidues, allResidueTER, pdbData, atomPairsConnectingNonProteinResidues,

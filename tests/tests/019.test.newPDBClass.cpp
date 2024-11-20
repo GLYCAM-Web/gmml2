@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
             auto atoms              = assembly.getAtoms();
             cds::serializeNumbers(atoms);
             cds::serializeNumbers(residues);
-            cds::WriteResiduesTogetherToOffFile(outFileStream, cds::toOffWriterData(residues), outFileName.c_str());
+            cds::WriteResiduesTogetherToOffFile(outFileStream, cds::toOffFileData(residues), outFileName.c_str());
             outFileStream.close();
         }
         catch (std::runtime_error& error)

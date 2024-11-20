@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
             //            std::string fileName = residue->getName() + "_original.pdb";
             //            outFileStream.open(fileName.c_str());
             //            std::vector<cds::Residue*> vec = {residue};
-            //            cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
+            //            cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbFileData({vec}));
             //            outFileStream.close();
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
             residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     //    	std::string fileName = combiRes->getName() + ".pdb";
     //    	outFileStream.open(fileName.c_str());
     //    	std::vector<cds::Residue*> vec = {combiRes};
-    //    	cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbWriterData({vec}));
+    //    	cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbFileData({vec}));
     //    	outFileStream.close();
     //    }
 
@@ -102,6 +102,6 @@ int main(int argc, char* argv[])
     std::string fileName = "GLYCAM_06k.lib";
     outFileStream.open(fileName.c_str());
     cds::serializeResiduesIndividually(allGeneratedResidues);
-    cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffWriterData(allGeneratedResidues));
+    cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffFileData(allGeneratedResidues));
     outFileStream.close();
 }

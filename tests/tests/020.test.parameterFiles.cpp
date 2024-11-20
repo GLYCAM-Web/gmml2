@@ -35,7 +35,7 @@ int main()
         outFileStream.open(fileName.c_str());
         std::vector<cds::Residue*> residues = glycamPrepFileSelect.getResidues();
         cds::serializeResiduesIndividually(residues);
-        cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffWriterData(residues));
+        cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffFileData(residues));
         outFileStream.close();
     }
     catch (...)
@@ -52,7 +52,7 @@ int main()
         outFileStream.open(fileName.c_str());
         std::vector<cds::Residue*> residues = glycamPrepFileSelect.getResidues();
         cds::serializeResiduesIndividually(residues);
-        cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffWriterData(residues));
+        cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffFileData(residues));
         outFileStream.close();
     }
     catch (...)

@@ -406,14 +406,13 @@ void PdbModel::Write(std::ostream& stream) const
                 occupancy.push_back(pdbAtom->GetOccupancy());
                 temperatureFactor.push_back(pdbAtom->GetTemperatureFactor());
             }
-            cds::ResiduePdbData residueData {{codeUtils::indexVector(atoms)},
-                                             {pdbResidue->getNumber()},
-                                             {cds::truncatedResidueName(pdbResidue)},
-                                             {pdbResidue->getChainId()},
-                                             {pdbResidue->getInsertionCode()}};
-            cds::AtomPdbData atomData = cds::toAtomPdbData(atoms, recordName, occupancy, temperatureFactor);
-            cds::writeMoleculeToPdb(stream, {0}, {pdbResidue->HasTerCard()},
-                                    cds::PdbWriterData {residueData, atomData});
+            cds::PdbFileResidueData residueData {{codeUtils::indexVector(atoms)},
+                                                 {pdbResidue->getNumber()},
+                                                 {cds::truncatedResidueName(pdbResidue)},
+                                                 {pdbResidue->getChainId()},
+                                                 {pdbResidue->getInsertionCode()}};
+            cds::PdbFileAtomData atomData = cds::toPdbFileAtomData(atoms, recordName, occupancy, temperatureFactor);
+            cds::writeMoleculeToPdb(stream, {0}, {pdbResidue->HasTerCard()}, cds::PdbFileData {residueData, atomData});
         }
         if (!residues.empty())
         { // Sometimes you get empty chains after things have been deleted I guess.

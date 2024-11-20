@@ -57,7 +57,7 @@ int main()
         outFileStream.open(fileName.c_str());
         std::vector<cds::Residue*> residues = libFile.getResidues();
         cds::serializeResiduesIndividually(residues);
-        cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffWriterData(residues));
+        cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffFileData(residues));
         outFileStream.close();
     }
     catch (...)

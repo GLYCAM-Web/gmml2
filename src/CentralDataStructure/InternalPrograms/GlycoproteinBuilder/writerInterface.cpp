@@ -10,7 +10,7 @@
 
 namespace glycoproteinBuilder
 {
-    cds::OffWriterData toOffWriterData(const AssemblyGraphs& graphs, const AssemblyData& data)
+    cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
     {
         size_t atomCount = graphs.indices.atoms.size();
         std::vector<cds::Coordinate> coordinates;
@@ -26,7 +26,7 @@ namespace glycoproteinBuilder
             bonds.push_back({adj[0], adj[1]});
         }
 
-        cds::AtomOffData atomData {
+        cds::OffFileAtomData atomData {
             data.atoms.numbers, data.atoms.names, data.atoms.types,           data.atoms.atomicNumbers,
             data.atoms.charges, coordinates,      graphs.indices.atomResidue, bonds};
 
@@ -48,12 +48,12 @@ namespace glycoproteinBuilder
         {
             std::sort(vec.begin(), vec.end());
         }
-        cds::ResidueOffData residueData {data.residues.numbers, data.residues.names, data.residues.types,
-                                         graphs.residues.nodes.elements, atomsConnectedToOtherResidues};
-        return cds::OffWriterData {residueData, atomData};
+        cds::OffFileResidueData residueData {data.residues.numbers, data.residues.names, data.residues.types,
+                                             graphs.residues.nodes.elements, atomsConnectedToOtherResidues};
+        return cds::OffFileData {residueData, atomData};
     }
 
-    cds::PdbWriterData toPdbWriterData(const AssemblyGraphs& graphs, const AssemblyData& data)
+    cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
     {
         size_t atomCount    = graphs.indices.atoms.size();
         size_t residueCount = graphs.indices.residues.size();
@@ -61,9 +61,9 @@ namespace glycoproteinBuilder
         std::vector<std::string> chainIds(residueCount, "");
         std::vector<std::string> insertionCodes(residueCount, "");
 
-        cds::ResiduePdbData residuePdbData {graphs.residues.nodes.elements,
-                                            cds::residueNumbers(graphs.indices.residues), data.residues.names, chainIds,
-                                            insertionCodes};
-        return cds::PdbWriterData {residuePdbData, cds::toAtomPdbData(graphs.indices.atoms, recordNames)};
+        cds::PdbFileResidueData residuePdbData {graphs.residues.nodes.elements,
+                                                cds::residueNumbers(graphs.indices.residues), data.residues.names,
+                                                chainIds, insertionCodes};
+        return cds::PdbFileData {residuePdbData, cds::toPdbFileAtomData(graphs.indices.atoms, recordNames)};
     }
 } // namespace glycoproteinBuilder
