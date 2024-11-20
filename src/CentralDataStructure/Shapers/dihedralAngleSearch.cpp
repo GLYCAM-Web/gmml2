@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"

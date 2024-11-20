@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 
-#include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"

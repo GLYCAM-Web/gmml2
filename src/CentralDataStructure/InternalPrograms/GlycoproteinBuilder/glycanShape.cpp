@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/containers.hpp"
 

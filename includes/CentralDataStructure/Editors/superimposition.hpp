@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_EDITORS_SUPERIMPOSITION_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_SUPERIMPOSITION_HPP
 
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/references.hpp"
 
 #include <vector>

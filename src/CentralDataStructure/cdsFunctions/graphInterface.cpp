@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/Graph/types.hpp"
 #include "includes/Graph/manipulation.hpp"
 

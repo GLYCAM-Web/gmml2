@@ -1,7 +1,7 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_FUNCTIONS_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_FUNCTIONS_HPP
+#ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_GEOMETRYFUNCTIONS_HPP
+#define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_GEOMETRYFUNCTIONS_HPP
 
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 
 #include <array>
 #include <vector>

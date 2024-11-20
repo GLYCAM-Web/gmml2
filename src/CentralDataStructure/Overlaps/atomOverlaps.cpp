@@ -3,8 +3,8 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
-#include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 

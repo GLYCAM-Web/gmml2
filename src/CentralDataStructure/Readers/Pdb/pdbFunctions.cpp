@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 

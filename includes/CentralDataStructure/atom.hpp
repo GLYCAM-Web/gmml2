@@ -3,7 +3,7 @@
 
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/constants.hpp" // dNotSet
 #include "includes/CodeUtils/references.hpp"
 

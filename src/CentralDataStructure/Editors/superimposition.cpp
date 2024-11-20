@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/references.hpp"
 #include <eigen3/Eigen/Geometry>
 

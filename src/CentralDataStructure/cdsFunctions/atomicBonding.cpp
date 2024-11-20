@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/Geometry/functions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 

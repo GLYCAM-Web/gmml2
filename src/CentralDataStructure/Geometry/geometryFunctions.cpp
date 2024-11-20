@@ -1,5 +1,5 @@
-#include "includes/CentralDataStructure/Geometry/functions.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 
 #include <cmath>
 #include <vector>

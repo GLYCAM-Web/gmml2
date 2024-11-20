@@ -7,7 +7,7 @@
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Editors/superimposition.cpp
 ./src/CentralDataStructure/Geometry/boundingSphere.cpp
-./src/CentralDataStructure/Geometry/functions.cpp
+./src/CentralDataStructure/Geometry/geometryFunctions.cpp
 ./src/CentralDataStructure/Geometry/orientation.cpp
 ./src/CentralDataStructure/Geometry/overlap.cpp
 ./src/CentralDataStructure/Geometry/rotationMatrix.cpp

@@ -13,7 +13,7 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // For the ClearAtomLabels sillyness.
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"

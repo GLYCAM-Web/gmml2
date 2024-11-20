@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CentralDataStructure/Geometry/types.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 
 #include <ctype.h> // isalpha
 #include <sstream>
