@@ -8,11 +8,13 @@ TEST_SKIP_LIST=("./016.test.DrawGlycan.sh")
 SKIP_TIME=0
 
 GMML_TEST_JOBS=4
+
 #Get base list of all files we want so we dont need to deal with
 #figuring out file list more than once, we want to take advantage of output splitting
 #here so we can hit the list ez pz
-# shellcheck disable=SC2207=
-readarray -t GMML_TEST_FILE_LIST < ./testList.txt
+# shellcheck disable=SC2207
+GMML_TEST_FILE_LIST=()
+
 #This is mostly to make sure that we actually keep track of our failed tests.
 GMML_FAILED_TESTS=0
 #Just to keep track for our cool output at the end.
@@ -47,6 +49,7 @@ so it does not match that glob.
 *************************************************************
 Options are as follows:
 \t-j <NUM_JOBS>\t\tRun <NUM_JOBS> scripts at once
+\t-i <FILE_PATH>\t\tRun tests present within the given file
 \t-d bare_metal\t\tSkip tests that dont work on bare metal and need
 \t\t\t\tbe run in the docker container
 \t-h \t\t\tPrint this msg
@@ -62,7 +65,7 @@ Exiting"
 #./compile_run_tests.bash -j 11 will allow us to run the script with 11 jobs.
 #The colon after j (in the while decleration) means that said flag expects an "input"
 #The lack of a colon after h means that said flag does not accept any "input"
-while getopts "j:hd:" option; do
+while getopts "j:hd:i:" option; do
     case "${option}" in
         j)
             jIn=${OPTARG}
@@ -74,12 +77,30 @@ while getopts "j:hd:" option; do
                 printHelp
             fi
             ;;
+        i)
+            #NOTE: This option is bugprone if people fuck up, both path and
+            #the file itself
+            if [ ! -f "${OPTARG}" ]; then
+                echo "ERROR: Test file list does not exist!"
+                echo "ghost-path:  ${OPTARG}"
+                echo "Exiting..."
+                exit 1
+            fi
+            #not doing any checking to ensure format is correct
+            #dont fuck up.....
+            while read -r line; do
+                GMML_TEST_FILE_LIST+=("${line}")
+            done <"${OPTARG}"
+            ;;
         h)
             printHelp
             ;;
         #we need a wildcard case so that our script will print out the help msg
         #if a user passes an unexpected flag
         d)
+            #NOTE: Bugprone when using an input list and also this. Possibility of race
+            #condition where we input tests from filethat should be skipped after the
+            #test list is pruned
             dIn="${OPTARG}"
             if [ "${dIn}" == "bare_metal" ]; then
                 for TEST_SKIP in "${TEST_SKIP_LIST[@]}"; do
@@ -100,6 +121,14 @@ while getopts "j:hd:" option; do
             ;;
     esac
 done
+
+#default filling of test file list dude. Glob all our test shell scripts to run
+#NOTE: Bug prone considering future usage
+if [ ${#GMML_TEST_FILE_LIST[@]} == 0 ]; then
+    # shellcheck disable=SC2207
+    GMML_TEST_FILE_LIST=($(ls ./*.test.*.sh))
+fi
+
 #$(....) runs the command in the subshell, strips trailing whitespaces, newlines, etc.
 #and once all completes in the subshell it outputs the final info that would be sent to
 #the stdout buffer and sets the variable to said value
@@ -185,7 +214,11 @@ cleaningUpJobs()
     done
 }
 
-for CURRENT_TEST in "${GMML_TEST_FILE_LIST[@]}"; do
+for CURRENT_TEST_LINE in "${GMML_TEST_FILE_LIST[@]}"; do
+    #format the CURRENT_TEST variable as an array using whitespace
+    #as a delimeter
+    CURRENT_TEST=(${CURRENT_TEST_LINE})
+
     #When we have all our wanted jobs running, we wait for 1 or more to exit then clean up our finished jobs
     if [ ${#JOB_PIDS[@]} == "${GMML_TEST_JOBS}" ] && [ ${#JOB_OUTPUT_FILES[@]} == "${GMML_TEST_JOBS}" ]; then
         #This waits for 1, or more, job(s) to complete
@@ -196,7 +229,7 @@ for CURRENT_TEST in "${GMML_TEST_FILE_LIST[@]}"; do
         echo ""
     fi
     #let user know whats going on
-    echo -e "${INFO_STYLE}Beginning test:${RESET_STYLE} ${CURRENT_TEST}"
+    echo -e "${INFO_STYLE}Beginning test:${RESET_STYLE} ${CURRENT_TEST[@]}"
 
     #Wanted to do below but couldnt figure out force check that the only .sh
     #we would be replacing would be at the very end like I can with sed....
@@ -210,7 +243,7 @@ for CURRENT_TEST in "${GMML_TEST_FILE_LIST[@]}"; do
     #matching is .sh, the $ as the end means that we are only matching .sh when it is at the END of the string, we then
     #have our delimeter / again in order to change to the bit where we define what the .sh is going to be replaced with,
     #finally the final / just means we are done with the pattern dealio
-    CURRENT_TEST_OUTPUT_FILENAME="./tempTestOutputs/"$(echo "${CURRENT_TEST}" | sed -e "s/\.sh$/.output.txt/")
+    CURRENT_TEST_OUTPUT_FILENAME="./tempTestOutputs/"$(echo "${CURRENT_TEST[0]}" | sed -e "s/\.sh$/.output.txt/")
 
     #actually run the script we currently want to run, the &> redirects the stderr output and the stdout
     #output from our script to the file we define. Finally the & at the end runs the command in a subshell
