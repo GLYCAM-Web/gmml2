@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
+#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"

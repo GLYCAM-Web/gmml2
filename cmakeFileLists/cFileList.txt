@@ -6,6 +6,7 @@
 ./src/CentralDataStructure/Editors/amberMdPrep.cpp
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Editors/superimposition.cpp
+./src/CentralDataStructure/FileFormats/offFileWriter.cpp
 ./src/CentralDataStructure/FileFormats/pdbFileWriter.cpp
 ./src/CentralDataStructure/Geometry/boundingSphere.cpp
 ./src/CentralDataStructure/Geometry/geometryFunctions.cpp
