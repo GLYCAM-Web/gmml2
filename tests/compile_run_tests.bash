@@ -214,10 +214,11 @@ cleaningUpJobs()
     done
 }
 
-for CURRENT_TEST_LINE in "${GMML_TEST_FILE_LIST[@]}"; do
+for ((CURR_FILE_INDEX = 0; CURR_FILE_INDEX < ${#GMML_TEST_FILE_LIST[@]}; CURR_FILE_INDEX++)); do
+    #for CURRENT_TEST_LINE in "${GMML_TEST_FILE_LIST[@]}"; do
     #format the CURRENT_TEST variable as an array using whitespace
     #as a delimeter
-    CURRENT_TEST=(${CURRENT_TEST_LINE})
+    CURRENT_TEST=(${GMML_TEST_FILE_LIST[${CURR_FILE_INDEX}]})
 
     #When we have all our wanted jobs running, we wait for 1 or more to exit then clean up our finished jobs
     if [ ${#JOB_PIDS[@]} == "${GMML_TEST_JOBS}" ] && [ ${#JOB_OUTPUT_FILES[@]} == "${GMML_TEST_JOBS}" ]; then
@@ -229,7 +230,7 @@ for CURRENT_TEST_LINE in "${GMML_TEST_FILE_LIST[@]}"; do
         echo ""
     fi
     #let user know whats going on
-    echo -e "${INFO_STYLE}Beginning test:${RESET_STYLE} ${CURRENT_TEST[@]}"
+    echo -e "${INFO_STYLE}Beginning test:${RESET_STYLE} ${CURRENT_TEST[*]}"
 
     #Wanted to do below but couldnt figure out force check that the only .sh
     #we would be replacing would be at the very end like I can with sed....
@@ -243,13 +244,13 @@ for CURRENT_TEST_LINE in "${GMML_TEST_FILE_LIST[@]}"; do
     #matching is .sh, the $ as the end means that we are only matching .sh when it is at the END of the string, we then
     #have our delimeter / again in order to change to the bit where we define what the .sh is going to be replaced with,
     #finally the final / just means we are done with the pattern dealio
-    CURRENT_TEST_OUTPUT_FILENAME="./tempTestOutputs/"$(echo "${CURRENT_TEST[0]}" | sed -e "s/\.sh$/.output.txt/")
+    CURRENT_TEST_OUTPUT_FILENAME="./tempTestOutputs/"$(echo "${CURRENT_TEST[0]}" | sed -e "s/\.sh$/.output${CURR_FILE_INDEX}.txt/")
 
     #actually run the script we currently want to run, the &> redirects the stderr output and the stdout
     #output from our script to the file we define. Finally the & at the end runs the command in a subshell
     #that will not block this script. This means that instead of waiting for the command to complete, we just
     #spawn it in a subshell and continue running this script while the subshell does its thing.
-    source "${CURRENT_TEST}" &>"${CURRENT_TEST_OUTPUT_FILENAME}" &
+    source "${CURRENT_TEST[@]}" &>"${CURRENT_TEST_OUTPUT_FILENAME}" &
 
     #NOTE: Both below MUST ALWAYS BE IN SYNC, lazy way of doing some
     #instability to try and catch bad behavior..... bad idea? who knows!
