@@ -2,6 +2,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbChain.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
+#include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CodeUtils/casting.hpp"

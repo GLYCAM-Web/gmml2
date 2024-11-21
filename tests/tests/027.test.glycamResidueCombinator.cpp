@@ -1,7 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 
 #include <vector>

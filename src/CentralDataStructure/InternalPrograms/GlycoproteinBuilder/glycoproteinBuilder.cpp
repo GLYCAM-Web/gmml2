@@ -11,6 +11,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
+#include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"

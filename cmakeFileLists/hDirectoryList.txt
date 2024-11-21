@@ -2,6 +2,7 @@
 ./includes/CentralDataStructure
 ./includes/CentralDataStructure/CondensedSequence
 ./includes/CentralDataStructure/Editors
+./includes/CentralDataStructure/FileFormats
 ./includes/CentralDataStructure/Geometry
 ./includes/CentralDataStructure/InternalPrograms
 ./includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder
