@@ -1,10 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/writerInterface.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -63,9 +60,21 @@ namespace glycoproteinBuilder
         std::vector<std::string> chainIds(residueCount, "");
         std::vector<std::string> insertionCodes(residueCount, "");
 
-        cds::PdbFileResidueData residuePdbData {graphs.residues.nodes.elements,
-                                                cds::residueNumbers(graphs.indices.residues), data.residues.names,
-                                                chainIds, insertionCodes};
-        return cds::PdbFileData {residuePdbData, cds::toPdbFileAtomData(graphs.indices.atoms, recordNames)};
+        cds::PdbFileResidueData residuePdbData {graphs.residues.nodes.elements, data.residues.numbers,
+                                                data.residues.names, chainIds, insertionCodes};
+        std::vector<cds::Coordinate> atomCoordinates;
+        atomCoordinates.reserve(atomCount);
+        for (auto& bound : data.atoms.bounds)
+        {
+            atomCoordinates.push_back(bound.center);
+        }
+        cds::PdbFileAtomData atomPdbData {atomCoordinates,
+                                          data.atoms.numbers,
+                                          data.atoms.names,
+                                          data.atoms.elements,
+                                          recordNames,
+                                          std::vector<double>(atomCount, 1.0),
+                                          std::vector<double>(atomCount, 0.0)};
+        return cds::PdbFileData {residuePdbData, atomPdbData};
     }
 } // namespace glycoproteinBuilder

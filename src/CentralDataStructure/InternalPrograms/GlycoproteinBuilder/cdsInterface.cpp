@@ -27,8 +27,9 @@ namespace glycoproteinBuilder
         std::vector<cds::Residue*>& residues = graphIndices.residues;
 
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
-        AtomData atomData {cds::atomNames(atoms),         cds::atomTypes(atoms),   cds::atomNumbers(atoms),
-                           cds::atomAtomicNumbers(atoms), cds::atomCharges(atoms), atomBoundingSpheres};
+        AtomData atomData {
+            cds::atomNames(atoms),    cds::atomTypes(atoms),   cds::atomNumbers(atoms), cds::atomAtomicNumbers(atoms),
+            cds::atomElements(atoms), cds::atomCharges(atoms), atomBoundingSpheres};
 
         auto boundingSpheresOf =
             [](const std::vector<cds::Sphere>& spheres, const std::vector<std::vector<size_t>>& indexVector)
