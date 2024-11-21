@@ -218,9 +218,10 @@ namespace glycoproteinBuilder
             return randomLinkageShapePreference(graphs, data, linkageId, randomMetadata, randomAngle,
                                                 freezeGlycositeResidueConformation);
         };
-        auto extractCoordinates = [](const AssemblyData& data)
+
+        auto atomCoordinates = [](const AtomData& data)
         {
-            const std::vector<cds::Sphere>& bounds = data.atoms.bounds;
+            const std::vector<cds::Sphere>& bounds = data.bounds;
             std::vector<cds::Coordinate> result;
             result.reserve(bounds.size());
             for (size_t n = 0; n < bounds.size(); n++)
@@ -288,7 +289,7 @@ namespace glycoproteinBuilder
                 }
             }
             gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
-            return extractCoordinates(data);
+            return atomCoordinates(data.atoms);
         };
 
         auto writeOffFile = [](const cds::OffFileData& data, const std::string& prefix)
@@ -405,7 +406,7 @@ namespace glycoproteinBuilder
         std::vector<std::pair<size_t, size_t>> noConnections = {};
 
         std::vector<std::vector<bool>> allResidueTER   = residueTER(moleculeResidues);
-        std::vector<cds::Coordinate> initalCoordinates = extractCoordinates(data);
+        std::vector<cds::Coordinate> initalCoordinates = atomCoordinates(data.atoms);
         cds::PdbFileData pdbData                       = toPdbFileData(graphs, data);
         writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein_initial");
         std::vector<cds::Coordinate> resolvedCoords =
