@@ -1,5 +1,5 @@
-#include "includes/Graph/manipulation.hpp"
-#include "includes/Graph/types.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/Graph/graphTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <cstddef>

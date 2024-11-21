@@ -1,5 +1,5 @@
-#ifndef INCLUDES_GRAPH_TYPES_HPP
-#define INCLUDES_GRAPH_TYPES_HPP
+#ifndef INCLUDES_GRAPH_GRAPHTYPES_HPP
+#define INCLUDES_GRAPH_GRAPHTYPES_HPP
 
 #include <cstddef>
 #include <array>

@@ -4,7 +4,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/Graph/types.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <vector>
 

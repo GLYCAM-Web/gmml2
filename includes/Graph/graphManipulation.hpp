@@ -1,7 +1,7 @@
-#ifndef INCLUDES_GRAPH_MANIPULATION_HPP
-#define INCLUDES_GRAPH_MANIPULATION_HPP
+#ifndef INCLUDES_GRAPH_GRAPHMANIPULATION_HPP
+#define INCLUDES_GRAPH_GRAPHMANIPULATION_HPP
 
-#include "includes/Graph/types.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <cstddef>
 #include <array>

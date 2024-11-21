@@ -6,8 +6,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/containers.hpp"
-#include "includes/Graph/types.hpp"
-#include "includes/Graph/manipulation.hpp"
+#include "includes/Graph/graphTypes.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 
 #include <array>
 #include <vector>

@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 
-#include "includes/Graph/types.hpp"
+#include "includes/Graph/graphTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"

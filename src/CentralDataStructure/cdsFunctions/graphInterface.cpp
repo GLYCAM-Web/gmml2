@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/Graph/types.hpp"
-#include "includes/Graph/manipulation.hpp"
+#include "includes/Graph/graphTypes.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 
 #include <vector>
 
