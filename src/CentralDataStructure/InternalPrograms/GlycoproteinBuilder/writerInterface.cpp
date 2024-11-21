@@ -49,8 +49,9 @@ namespace glycoproteinBuilder
         {
             std::sort(vec.begin(), vec.end());
         }
-        cds::OffFileResidueData residueData {data.residues.numbers, data.residues.names, data.residues.types,
-                                             graphs.residues.nodes.elements, atomsConnectedToOtherResidues};
+        cds::OffFileResidueData residueData {data.residues.numbers, data.residues.names,
+                                             residueOffTypes(data.residues.types), graphs.residues.nodes.elements,
+                                             atomsConnectedToOtherResidues};
         return cds::OffFileData {residueData, atomData};
     }
 

@@ -25,7 +25,7 @@ namespace cds
     {
         std::vector<int> numbers;
         std::vector<std::string> names;
-        std::vector<ResidueType> types;
+        std::vector<std::string> types;
         std::vector<std::vector<size_t>> atomIndices;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
     };
@@ -36,9 +36,9 @@ namespace cds
         OffFileAtomData atoms;
     };
 
+    std::vector<std::string> residueOffTypes(const std::vector<ResidueType>& residues);
     OffFileData toOffFileData(const std::vector<Residue*>& residues);
     void serializeResiduesIndividually(std::vector<cds::Residue*>& residues);
-    std::string getOffType(const cds::ResidueType queryType);
     void WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffFileResidueData& residues,
                           const OffFileAtomData& atoms, std::ostream& stream, const std::string& unitName);
     void WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffFileData& data);
