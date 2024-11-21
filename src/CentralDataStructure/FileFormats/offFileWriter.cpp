@@ -1,10 +1,27 @@
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
+#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 #include <string>
 #include <iomanip>
+
+namespace
+{
+    std::string residueOffType(const cds::ResidueType queryType)
+    {
+        if (queryType == cds::ResidueType::Protein)
+        {
+            return "p";
+        }
+        else if (queryType == cds::ResidueType::Solvent)
+        {
+            return "w";
+        }
+        return "?";
+    }
+} // namespace
 
 void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffFileResidueData& residues,
                            const OffFileAtomData& atoms, std::ostream& stream, const std::string& unitName)
@@ -146,7 +163,7 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffF
         const std::vector<size_t>& atomIndices = residues.atomIndices[residueIndex];
         unsigned int childseq                  = atomIndices.size() + 1;
         unsigned int startatomx                = atoms.numbers[atomIndices.front()];
-        const std::string& restype             = residues.types[residueIndex];
+        std::string restype                    = residueOffType(residues.types[residueIndex]);
         unsigned int imagingx                  = 0;
         stream << " \"" << residues.names[residueIndex] << "\""
                << " " << residues.numbers[residueIndex] << " " << childseq << " " << startatomx << " "

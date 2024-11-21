@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_FILEFORMATS_OFFFILEDATA_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/residueTypes.hpp"
 
 #include <vector>
 #include <string>
@@ -24,7 +25,7 @@ namespace cds
     {
         std::vector<int> numbers;
         std::vector<std::string> names;
-        std::vector<std::string> types;
+        std::vector<ResidueType> types;
         std::vector<std::vector<size_t>> atomIndices;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
     };

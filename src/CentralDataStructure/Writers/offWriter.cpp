@@ -38,31 +38,7 @@ namespace
         }
         return result;
     }
-
-    std::string residueOffType(const cds::ResidueType queryType)
-    {
-        if (queryType == cds::ResidueType::Protein)
-        {
-            return "p";
-        }
-        else if (queryType == cds::ResidueType::Solvent)
-        {
-            return "w";
-        }
-        return "?";
-    }
 } // namespace
-
-std::vector<std::string> cds::residueOffTypes(const std::vector<ResidueType>& types)
-{
-    std::vector<std::string> result;
-    result.reserve(types.size());
-    for (auto& type : types)
-    {
-        result.push_back(residueOffType(type));
-    }
-    return result;
-}
 
 cds::OffFileData cds::toOffFileData(const std::vector<Residue*>& residues)
 {
@@ -83,8 +59,8 @@ cds::OffFileData cds::toOffFileData(const std::vector<Residue*>& residues)
     }
     OffFileAtomData atomData {atomNumbers(atoms), atomNames(atoms),       atomTypes(atoms), atomAtomicNumbers(atoms),
                               atomCharges(atoms), atomCoordinates(atoms), atomResidues,     uniqueAtomBonds(atoms)};
-    OffFileResidueData residueData {residueNumbers(residues), residueNames(residues),
-                                    residueOffTypes(residueTypes(residues)), indices, connections};
+    OffFileResidueData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
+                                    connections};
     return OffFileData {residueData, atomData};
 }
 

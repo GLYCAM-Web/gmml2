@@ -1,6 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
 
+#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // getId
@@ -15,18 +16,6 @@ using cds::Coordinate;
 
 namespace cds
 {
-    enum ResidueType
-    {
-        Protein,
-        Sugar,
-        Aglycone,
-        Derivative,
-        Solvent,
-        Deoxy,
-        ProteinCappingGroup,
-        Undefined
-    };
-
     class Residue : public glygraph::Node<Residue>
     {
       public:
