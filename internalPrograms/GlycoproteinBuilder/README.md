@@ -14,19 +14,19 @@ Has been tested on linux, but might install on both Mac and Windows.
 You'll need GMML2: [Click here for installation instructions](https://github.com/GLYCAM-Web/gmml2#readme)
 
 ### Installation of GlycoProteinBuilder
-    cd gmml2/
-    GMML_ROOT_DIR=$(git rev-parse --show-toplevel) # assumes you have cloned the gmml repo using git.
-    g++ -std=c++17 -g -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ "${GMML_ROOT_DIR}"/internalPrograms/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o gpBuilder
+The GlycoproteinBuilder will be compiled to gmml2/bin/gpBuilder after running the gmml2 make.sh script
 
 ### Testing
-Once compiled, you can run:
+Once compiled, a sample call to the program can look as follows
 
-./gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt 
+    cd gmml2/tests
+    mkdir output
+    ../bin/gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt output
 
 ### Setup
-Edit or create an input.txt file. See tests/inputs/017.GlycoproteinBuilderInput.txt for an example.
+Edit or create an input.txt file. See gmml2/tests/tests/inputs/017.GlycoproteinBuilderInput.txt for an example.
 
-You must provide:
+Required input:
 
     A protein 3D structure
     A Glycan 3D structure(s) or sequences in GLYCAM condensed nomenclature (just like the carb builder here: glycam.org/cb)
@@ -35,7 +35,9 @@ You must provide:
         the protein residue numbers you want to attach to (no automatic detection of sequons)
         the glycan you want to attach in Glycam condensed sequence format.
 
-NumberOfOutputStructures -> produces different shapes for the glycan at each site.
-maxThreads -> currently does nothing.
-persistCycles -> how long to keep trying to find an improvement in overlap. A higher value takes more time, but may better resolve overlaps.
-seed:0 -> means you will get the same result every time you run the program with the same inputs. Useful for testing and reproducibility. You can delete this line if you want it to be random.
+Optional input : default values
+* NumberOfOutputStructures:1 -> each output structure is an independent sample, where shapes of glycans at each site are randomized according to their statistical likelihood. 
+* persistCycles:5 -> how long the algorithm keeps trying to find an improvement in overlap. A higher value takes more time, but may better resolve overlaps.
+* seed:0 -> any number will yield a different result from other numbers, but will be reproducible across multiple runs. Delete this line for true randomness
+* freezeGlycositeResidueConformation:false -> if true, chi1 and chi2 angles of protein-glycan linkages will be preserved according to their shape in the protein file
+* deleteIncompatibleSites:false -> if true, algorithm will delete glycans where overlaps fail to resolve one at a time and start over, until all overlaps can be resolved. If false, all glycans will be preserved in each sample, even if the resulting structure has overlaps
