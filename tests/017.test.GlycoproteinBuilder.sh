@@ -8,11 +8,11 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-printf "Testing 017.test.GlycoproteinBuilder.cpp... "
-
 prefix=$1
 input=$2
 directory=$3
+
+printf "Testing 017.test.GlycoproteinBuilder.cpp ${prefix}... "
 rm -r "${directory}" >/dev/null 2>&1
 mkdir -p "${directory}"
 eval "${BIN_PATH} ${input} ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1"
