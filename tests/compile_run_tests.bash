@@ -89,7 +89,9 @@ while getopts "j:hd:i:" option; do
             #not doing any checking to ensure format is correct
             #dont fuck up.....
             while read -r line; do
-                GMML_TEST_FILE_LIST+=("${line}")
+                if [ "$line" ]; then
+                    GMML_TEST_FILE_LIST+=("${line}")
+                fi
             done <"${OPTARG}"
             ;;
         h)
