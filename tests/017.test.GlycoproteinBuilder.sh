@@ -12,7 +12,7 @@ prefix=$1
 input=$2
 directory=$3
 
-printf "Testing 017.test.GlycoproteinBuilder.cpp ${prefix}... "
+printf "Testing 017.test.GlycoproteinBuilder.cpp %s... " "$prefix"
 rm -r "${directory}" >/dev/null 2>&1
 mkdir -p "${directory}"
 eval "${BIN_PATH} ${input} ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1"
