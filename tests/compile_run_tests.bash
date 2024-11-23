@@ -89,7 +89,7 @@ while getopts "j:hd:i:" option; do
             #not doing any checking to ensure format is correct
             #dont fuck up.....
             while read -r line; do
-                if [ "$line" ]; then
+                if [ -n "${line}" ]; then
                     GMML_TEST_FILE_LIST+=("${line}")
                 fi
             done <"${OPTARG}"
@@ -219,7 +219,9 @@ cleaningUpJobs()
 for ((CURR_FILE_INDEX = 0; CURR_FILE_INDEX < ${#GMML_TEST_FILE_LIST[@]}; CURR_FILE_INDEX++)); do
     #for CURRENT_TEST_LINE in "${GMML_TEST_FILE_LIST[@]}"; do
     #format the CURRENT_TEST variable as an array using whitespace
-    #as a delimeter
+    #as a delimeter. Ignore shellcheck cause we wanna split this dude into an array
+    #and I am too stupid to use read -a
+    # shellcheck disable=SC2206
     CURRENT_TEST=(${GMML_TEST_FILE_LIST[${CURR_FILE_INDEX}]})
 
     #When we have all our wanted jobs running, we wait for 1 or more to exit then clean up our finished jobs
@@ -246,12 +248,14 @@ for ((CURR_FILE_INDEX = 0; CURR_FILE_INDEX < ${#GMML_TEST_FILE_LIST[@]}; CURR_FI
     #matching is .sh, the $ as the end means that we are only matching .sh when it is at the END of the string, we then
     #have our delimeter / again in order to change to the bit where we define what the .sh is going to be replaced with,
     #finally the final / just means we are done with the pattern dealio
+    # shellcheck disable=SC2001
     CURRENT_TEST_OUTPUT_FILENAME="./tempTestOutputs/"$(echo "${CURRENT_TEST[0]}" | sed -e "s/\.sh$/.output${CURR_FILE_INDEX}.txt/")
 
     #actually run the script we currently want to run, the &> redirects the stderr output and the stdout
     #output from our script to the file we define. Finally the & at the end runs the command in a subshell
     #that will not block this script. This means that instead of waiting for the command to complete, we just
     #spawn it in a subshell and continue running this script while the subshell does its thing.
+    # shellcheck disable=SC1090
     source "${CURRENT_TEST[@]}" &>"${CURRENT_TEST_OUTPUT_FILENAME}" &
 
     #NOTE: Both below MUST ALWAYS BE IN SYNC, lazy way of doing some

@@ -12,10 +12,10 @@ prefix=$1
 input=$2
 directory=$3
 
-printf "Testing 017.test.GlycoproteinBuilder.cpp %s... " "$prefix"
+echo -n "Testing 017.test.GlycoproteinBuilder.cpp ${prefix}..."
 rm -r "${directory}" >/dev/null 2>&1
 mkdir -p "${directory}"
-eval "${BIN_PATH} ${input} ${directory} >${directory}/GlycoproteinBuilder.txt 2>&1"
+"${BIN_PATH}" "${input}" "${directory}" > "${directory}"/GlycoproteinBuilder.txt 2>&1
 fileList=("glycoprotein_initial.pdb" "glycoprotein.pdb" "0_glycoprotein.pdb" "1_glycoprotein.pdb" "glycoprotein.off" "glycoprotein_serialized.pdb" "GlycoproteinBuilder.txt")
 for file in "${fileList[@]}"; do
     output="${directory}/${file}"
