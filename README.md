@@ -80,6 +80,17 @@ You can either use the `libgmml2.so` file within the `lib` directory or the `lib
 Please enter `./make.sh -h` for help regarding the make script.
 
 ---
+## Using the Internal Programs:
+
+The GMML2 internal programs will be available in gmml2/bin/ after running the make.sh script
+
+It is recommended that you test them (see next section) before use
+
+[Glycoprotein Builder Instructions](internalPrograms/GlycoproteinBuilder/README.md)
+
+[Carbohydrate Builder Instructions](internalPrograms/CarbohydrateBuilder/README.md)
+
+---
 ## Testing the Library
 
 From within the `gmml2` directory, you must change your current working directory to the `gmml2/tests` directory. Note that `<NUM_JOBS>` is however many tests you want to run at once.
@@ -187,10 +198,6 @@ Exit Code: 1
 ```
 
 Note that test 016 will fail outside of the developer environment and that's ok. If any other tests fail then something is wrong.
-
-## Using the Glycoprotein Builder:
-[Glycoprotein Builder Instructions](internalPrograms/GlycoproteinBuilder/README.md)
-
 
 ## Developers only (other users can ignore below here): 
 
