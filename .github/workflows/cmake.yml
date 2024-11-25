@@ -1,4 +1,4 @@
-name: Baby Bare Metal
+name: Bare Metal gmml2
 
 on:
   push:
