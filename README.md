@@ -97,29 +97,33 @@ The output will tell you whether or not the library is behaving appropriately an
 $ bash compile_run_tests.bash -j4
 
 #### Beginning GMML tests ####
-Number of tests found:	13
+Number of tests found:	14
 Number of testing jobs:	4
 
 mkdir: created directory './tempTestOutputs'
 
 Beginning test: ./016.test.DrawGlycan.sh
 Beginning test: ./017.test.GlycoproteinBuilder.sh
+Beginning test: ./017b.test.GlycoproteinBuilderFailure.sh
 Beginning test: ./018.test.GlycoproteinBuilderTable.sh
+
+Testing 017b.test.GlycoproteinBuilderFailure.cpp... Test passed.
+Exit Code: 0
+
 Beginning test: ./019.test.newPDBClass.sh
+
+Testing 018.test.createGlycosylationTables.cpp... Test passed.
+Exit Code: 0
+
+Beginning test: ./020.test.parameterFiles.sh
 
 Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
 Test FAILED! Output file 0.svg different to tests/correct_outputs/016.output_SVGs/0.svg
 Exit Code: 1
 
-Beginning test: ./020.test.parameterFiles.sh
-
-Testing 018.test.createGlycosylationTables.cpp... Test passed.
-Exit Code: 0
-
 Beginning test: ./022.test.libraryFileReader.sh
 
 Testing 020.test.parameterFiles.cpp... Test passed.
-
 Exit Code: 0
 
 Beginning test: ./023.test.carbohydrateBuilder.sh
@@ -147,49 +151,42 @@ Beginning test: ./028.test.cdsCarbBuilderAll.sh
 Testing 023.carbohydrateBuilder... Test passed.
 Exit Code: 0
 
-Beginning test: ./029.test.graph.sh
-
-Testing 029.graph...Test FAILED! Output file different. Try
-diff 029.output_graph.txt tests/correct_outputs/029.output_graph.txt
-Exit Code: 1
-
 Beginning test: ./030.test.gmPreProcessor.sh
 
 Testing 030.test.gmPreProcessor.cpp... ~3 seconds. Test passed.
+Exit Code: 0
+
+Beginning test: ./031.test.iupac.sh
+
+Testing 031.test.iupac.cpp... Test passed.
 Exit Code: 0
 
 Testing 028.test.cdsCarbBuilderAll.cpp...Test passed.
 Exit Code: 0
 
 Testing 027.test.glycamResidueCombinator.cpp... Test passed.
-
 Exit Code: 0
 
 Testing 019.test.newPDBClass.cpp... ~30 seconds. Test passed.
 Exit Code: 0
 
 ######## GMML TESTS COMPLETED ########
-Required tests:	13
-Passed tests:	11
-Failed tests:	2
+Required tests:	14
+Passed tests:	13
+Failed tests:	1
 Time taken:	11 seconds
 ######################################
 
-!!! OUTPUT OF THE 2 GMML TEST(S) THAT FAILED !!!
+!!! OUTPUT OF THE 1 GMML TEST(S) THAT FAILED !!!
 
 Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
 Test FAILED! Output file 0.svg different to tests/correct_outputs/016.output_SVGs/0.svg
 Exit Code: 1
 
-Testing 029.graph...Test FAILED! Output file different. Try
-diff 029.output_graph.txt tests/correct_outputs/029.output_graph.txt
-Exit Code: 1
-
 !!! FINISHED PRINTING FAILED TESTS !!!
-
 ```
-Note that both test 016 and 029 fail outside of the developer environment and that's ok. If any other tests fail the something is wrong.
 
+Note that test 016 will fail outside of the developer environment and that's ok. If any other tests fail then something is wrong.
 
 ## Using the Glycoprotein Builder:
 [Glycoprotein Builder Instructions](internalPrograms/GlycoproteinBuilder/README.md)
