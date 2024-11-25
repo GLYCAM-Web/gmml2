@@ -1,7 +1,7 @@
 # GMML2
 The GLYCAM Molecular Modeling Library (GMML) is a C++ library created by the Woods Group. This is the scientific code underlying much of GLYCAM-Web (glycam.org). 
 GMML2 is a new version of GMML that has replaced much of the old codebase. Some tools like Glyfinder (glycam.org/gf) and the glycomimetic builder use the original GMML.
-Note that the GMMl2 code was originally developed within GMML1. We then forked to this repo and deleted the old code from here.
+Note that the GMML2 code was originally developed within GMML1. We then forked to this repo and deleted the old code from here.
 
 [Overview](#overview)
 
@@ -14,8 +14,6 @@ Note that the GMMl2 code was originally developed within GMML1. We then forked t
 [Testing the Library](#testing-the-library)
 
 [Coding Standards](#coding-standards)
-
-[Documentation](#documentation)
 
 ---
 ## Overview
@@ -33,45 +31,31 @@ This code also serves as the main molecular modeling engine for GLYCAM-Web.
 We are very grateful to our funders.  
 [Please check them out!](https://github.com/GLYCAM-Web/website/blob/master/funding.md)
 
-
 ## Prerequisites
 
-### Building GMML
+### Building GMML2
 
-In order to build GMML, you are required to have the following software available on your system:
+In order to build GMML2, you are required to have the following software available on your system:
 
 * `cmake` (Version >= `3.13.4`)
 * `g++` (Version >= `7.0`)
 * `make`
-* `python3.9` (Version `3.9.12`)
-* `python3.9-dev` (Version `3.9.12`)
 * `git`
-* `swig` (Version `4.0.2`)
 * `libeigen3-dev` (Version >= `3.3.7`)
 
 Installation instructions will vary according to what package manager your distro uses. If you are using apt as a package manager on a linux system, you should be able to use a command like this:
 
 ```bash
 sudo apt-get update &&\
-sudo apt-get install git python3.9 python3.9-dev cmake g++ git-all libeigen3-dev
+sudo apt-get install git git-all cmake g++ libeigen3-dev
 ```
 For other linux distros, please follow the instructions for the package managment software included with your system.
-
-Most linux distros have swig 4.0. Otherwise swig 4.0.2 must be installed from [their website](https://www.swig.org/download.html). 
-
-### Contributing to GMML
-
-If you want to contribute to `gmml2` you will also need to install the following packages:
-
-* `clang-tidy-15`
-* `shellcheck`
-* `shfmt`
 
 ---
 ## Obtaining the software
 The following does not require root access, but it does require one has `git` installed.
 
-1. Navigate to the directory that you would like to have `gmml2` live. Please note that in order to use the produced library with [`gems`](https://github.com/glycam-web/gems/) the `gmml2` directory must be placed within the `gems` directory.
+1. Navigate to the directory that you would like to have `gmml2` live.
 
 2. Clone `gmml2` from the git repo
 ```bash
@@ -82,30 +66,16 @@ git clone https://github.com/GLYCAM-Web/gmml2.git
 
 ---
 ## Compiling the Library
-```
+
 Make sure you are in the gmml2 folder. To control the number of processors used during the *`make`* process, use the `-j` flag for our `make.sh`, so to run with 8 cores we would run `./make.sh -j 8`.
-
-Also, we have the option to wrap our code into python using `swig`. If you are not using GEMS you can skip this step.
-There are two methods to do this.
-
-1. Once the makefile is generated using `cmake`, you can go into the `cmakeBuild` directory (or wherever you threw the makefile) and use the `gmml_wrapped` make target.
-
-2. You can just call, from the base `GMML` directory, `./make.sh -w` 
-
-Now all one must do is run the make script.
-
-```bash
-$./make.sh
-```
 
 This will create the needed `cmake` files and will add the following directories within the `gmml2` directory:
 
-* `lib` (Contains: the `gmml2` shared object libary, `libgmml2.so`)
-* `cmakeBuild` (Contains: all files produced by the `cmake` command, a `compile_commands.json` file to be used with tools of your choice, and all files contained within the directories listed above)
+* `lib` (Contains the `gmml2` shared object libary, `libgmml2.so`)
+* `bin` (Contains the compiled gmml2-dependent programs: carbohydrateBuilder, gpBuilder (glycoprotein builder), gpBuilderTable (glycosylation site finder), wiggleToSite)
+* `cmakeBuild` (Contains all files produced by the `cmake` command, a `compile_commands.json` file to be used with tools of your choice, and all files contained within the directories listed above)
 
 You can either use the `libgmml2.so` file within the `lib` directory or the `libgmml2.so` file within the `cmakeBuild` directory. They are the exact same.
-
-Both the `build` and `lib` directories must remain untouched because `gems` utilizes them both and expects both to be in the state that `./make.sh` leaves them.
 
 Please enter `./make.sh -h` for help regarding the make script.
 
@@ -119,7 +89,7 @@ gmml2$ cd tests/
 gmml2/tests$ ./compile_run_tests.bash -j <NUM_JOBS>
 ```
 
-Please note that running GMML bare metal will cause test 016 (svg drawing) to fail, this is due to not setting the created svgs correctly and will eventually be fixed but for now don't worry if `016.test.DrawGlycan.sh` fails while running on bare metal; if you are utilizing the dev enviroment all tests are expected to pass. This is of no concern because these tests need some extra things running to check, but those are internal for now.
+Please note that running GMML2 bare metal will cause test 016 (svg drawing) to fail, this is due to not setting the created svgs correctly and will eventually be fixed but for now don't worry if `016.test.DrawGlycan.sh` fails while running on bare metal; if you are utilizing the dev enviroment all tests are expected to pass. This is of no concern because these tests need some extra things running to check, but those are internal for now.
 
 The output will tell you whether or not the library is behaving appropriately and if all tests are passed the output will look similar to the following:
 
@@ -227,7 +197,15 @@ Note that both test 016 and 029 fail outside of the developer environment and th
 
 ## Developers only (other users can ignore below here): 
 
-###Updating file lists and whatnot
+### Contributing to GMML2
+
+If you want to contribute to `gmml2` you will also need to install the following packages:
+
+* `clang-tidy-15`
+* `shellcheck`
+* `shfmt`
+
+### Updating file lists and whatnot
 
 **DO NOT JUST FIRE THE `updateCmakeFileList.sh` SCRIPT AND NOT KNOW WHAT IS GOING ON. The method implemented is done in order to avoid a taxing typical cmake pattern; if the script is just fired off too many times we will have to remove it in order to avoid possible undefined behavior**. Please note that not only for cmake, but for all compilers, one should not just grab every file present and compile; these type of things must have some thought to them. The reason why one should never just glob files that one *thinks* are what one needs to compile is due to the huge increase in chances of introducing unknown behavior.
 
@@ -281,7 +259,7 @@ Some examples of good branch names are:
 
 ### Pre-Commit Hooks
 
-We run various pre-commit hooks to help ensure `gmml`'s commit history remains as clean and readable as possible.
+We run various pre-commit hooks to help ensure `gmml2`'s commit history remains as clean and readable as possible.
 
 #### Hooks for C-Files
 
@@ -315,4 +293,37 @@ user@host:.../gmml2$ shellcheck --enable=require-variable-braces,quote-safe-vari
 
 ---
 
-To compile and use the programs that are based on gmml2 (e.g. the carbohydrate or glycoprotein builders) go to their subfolders (e.g. internalPrograms/GlycoproteinBuilder/) and follow the compilation instructions in the readme there.
+## Wrapping with SWIG and GEMS
+
+### Building GMML2
+
+In order to wrap GMML2 with SWIG, the following software is required:
+
+* `python3.9` (Version `3.9.12`)
+* `python3.9-dev` (Version `3.9.12`)
+* `swig` (Version `4.0.2`)
+
+```
+sudo apt-get update &&\
+sudo apt-get install python3.9 python3.9-dev
+```
+
+Most linux distros have swig 4.0. Otherwise swig 4.0.2 must be installed from [their website](https://www.swig.org/download.html). 
+
+Please note that in order to use the produced library with [`gems`](https://github.com/glycam-web/gems/) the `gmml2` directory must be placed within the `gems` directory.
+
+### Wrapping with SWIG
+
+There are two methods to do this.
+
+1. Once the makefile is generated using `cmake`, you can go into the `cmakeBuild` directory (or wherever you threw the makefile) and use the `gmml_wrapped` make target.
+
+2. You can just call, from the base `GMML2` directory, `./make.sh -w` 
+
+Now all one must do is run the make script.
+
+```bash
+$./make.sh
+```
+
+After building, both the `build` and `lib` directories must remain untouched because `gems` utilizes them both and expects both to be in the state that `./make.sh` leaves them.
