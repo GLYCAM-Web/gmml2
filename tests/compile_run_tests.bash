@@ -190,7 +190,7 @@ for CURRENT_TEST in "${GMML_TEST_FILE_LIST[@]}"; do
     if [ ${#JOB_PIDS[@]} == "${GMML_TEST_JOBS}" ] && [ ${#JOB_OUTPUT_FILES[@]} == "${GMML_TEST_JOBS}" ]; then
         #This waits for 1, or more, job(s) to complete
         #Once a job completes, we then need to go ahead and clean up our dirty job scheduler/tracker
-        wait -n
+        wait -n "${JOB_PIDS[@]}"
         #after a script finishes we know we gotta take care of it, so we call the cleaningUpJobs function
         cleaningUpJobs
         echo ""
