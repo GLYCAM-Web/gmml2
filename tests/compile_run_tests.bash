@@ -15,7 +15,7 @@ GMML_TEST_JOBS=4
 # shellcheck disable=SC2207
 GMML_TEST_FILE_LIST=()
 INPUT_FILE_LIST=()
-declare -a DEFAULT_FILES_WHEN_NONE_PROVIDED=("testList.txt" "base_test.txt")
+declare -a DEFAULT_FILES_WHEN_NONE_PROVIDED=("testsBase.txt" "testsGpBuilder.txt")
 
 read_into_test_list()
 {
