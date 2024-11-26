@@ -14,6 +14,26 @@ GMML_TEST_JOBS=4
 #here so we can hit the list ez pz
 # shellcheck disable=SC2207
 GMML_TEST_FILE_LIST=()
+INPUT_FILE_LIST=()
+declare -a DEFAULT_FILES_WHEN_NONE_PROVIDED=("testsBase.txt" "testsGpBuilder.txt")
+
+read_into_test_list()
+{
+    if [ ! -f "$1" ]; then
+        echo "ERROR: Test file list does not exist!"
+        echo "ghost-path:  $1"
+        echo "Exiting..."
+        exit 1
+    fi
+    INPUT_FILE_LIST+=("$1")
+    #not doing any checking to ensure format is correct
+    #dont fuck up.....
+    while read -r line || [[ $line ]]; do
+        if [ -n "${line}" ]; then
+            GMML_TEST_FILE_LIST+=("${line}")
+        fi
+    done <"$1"
+}
 
 #This is mostly to make sure that we actually keep track of our failed tests.
 GMML_FAILED_TESTS=0
@@ -80,19 +100,7 @@ while getopts "j:hd:i:" option; do
         i)
             #NOTE: This option is bugprone if people fuck up, both path and
             #the file itself
-            if [ ! -f "${OPTARG}" ]; then
-                echo "ERROR: Test file list does not exist!"
-                echo "ghost-path:  ${OPTARG}"
-                echo "Exiting..."
-                exit 1
-            fi
-            #not doing any checking to ensure format is correct
-            #dont fuck up.....
-            while read -r line; do
-                if [ -n "${line}" ]; then
-                    GMML_TEST_FILE_LIST+=("${line}")
-                fi
-            done <"${OPTARG}"
+            read_into_test_list "${OPTARG}"
             ;;
         h)
             printHelp
@@ -127,8 +135,10 @@ done
 #default filling of test file list dude. Glob all our test shell scripts to run
 #NOTE: Bug prone considering future usage
 if [ ${#GMML_TEST_FILE_LIST[@]} == 0 ]; then
-    # shellcheck disable=SC2207
-    GMML_TEST_FILE_LIST=($(ls ./*.test.*.sh))
+    for filename in "${DEFAULT_FILES_WHEN_NONE_PROVIDED[@]}"
+    do
+        read_into_test_list "${filename}"
+    done
 fi
 
 #$(....) runs the command in the subshell, strips trailing whitespaces, newlines, etc.
@@ -137,7 +147,13 @@ fi
 START_TIME=$(date +%s)
 
 echo -e "
-${INFO_STYLE}#### Beginning GMML tests ####${RESET_STYLE}
+${INFO_STYLE}#### Beginning GMML tests ####"
+echo -e -n "Loaded tests from:${RESET_STYLE}"
+for filename in "${INPUT_FILE_LIST[@]}"
+do
+    echo -n " ${filename}"
+done
+echo -e "
 Number of tests found:\t${#GMML_TEST_FILE_LIST[@]}
 Number of testing jobs:\t${GMML_TEST_JOBS}
 "
