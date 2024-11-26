@@ -28,7 +28,7 @@ read_into_test_list()
     INPUT_FILE_LIST+=("$1")
     #not doing any checking to ensure format is correct
     #dont fuck up.....
-    while read -r line; do
+    while read -r line || [[ $line ]]; do
         if [ -n "${line}" ]; then
             GMML_TEST_FILE_LIST+=("${line}")
         fi
