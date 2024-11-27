@@ -1,0 +1,4 @@
+Input file is tests/inputs/017c.JFRLDelete.txt
+Reading input file complete, on to construction
+Resolving overlaps
+Program got to end ok

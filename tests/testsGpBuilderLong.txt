@@ -1,0 +1,2 @@
+./017.test.GlycoproteinBuilder.sh JFRL_Delete tests/inputs/017c.JFRLDelete.txt 017c/JFRLDelete
+./017.test.GlycoproteinBuilder.sh JFRL_Freeze tests/inputs/017c.JFRLFreeze.txt 017c/JFRLFreeze
