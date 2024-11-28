@@ -83,5 +83,5 @@ jobs:
 
     - name: Run Bare Metal Tests
       run: |
-        bash ./compile_run_tests.bash -j 3 -d bare_metal
+        bash ./compile_run_tests.bash -j 3 -i testsBase.txt -i testsGpBuilder.txt -i testsGpBuilderLong.txt
       working-directory: ${{ github.workspace }}/tests
