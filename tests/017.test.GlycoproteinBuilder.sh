@@ -29,9 +29,7 @@ DIFF=$(diff -qr "${directory}" "${expected}")
 if [ "$DIFF" ]
 then
     echo "Test FAILED"
-    echo "Difference between actual and expected output"
-    echo "Run the following command for details:"
-    echo "    diff -qr ${directory} ${expected}"
+    echo "${DIFF}"
     echo "Exit Code: 1"
     return 1
 fi
