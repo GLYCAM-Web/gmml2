@@ -50,6 +50,7 @@ namespace glycoproteinBuilder
         cds::OffFileResidueData residueData {data.residues.numbers, data.residues.names, data.residues.types,
                                              graphs.residues.nodes.elements, atomsConnectedToOtherResidues};
         cds::OffFileFormat format;
+        format.coordinate.decimals.precision = 5;
         return cds::OffFileData {format, residueData, atomData};
     }
 
