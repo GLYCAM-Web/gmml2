@@ -11,8 +11,8 @@ namespace cds
 {
     void writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
                             const std::vector<bool>& residueTER, const PdbFileData& data);
-    void writeAtomToPdb(std::ostream& stream, const PdbFileResidueData& residues, size_t residueIndex,
-                        const PdbFileAtomData& atoms, size_t atomIndex);
+    void writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, const PdbFileResidueData& residues,
+                        size_t residueIndex, const PdbFileAtomData& atoms, size_t atomIndex);
     void writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
                           std::vector<std::pair<size_t, size_t>> connectionIndices);
 

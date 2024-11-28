@@ -414,7 +414,9 @@ void PdbModel::Write(std::ostream& stream) const
                                                  {pdbResidue->getChainId()},
                                                  {pdbResidue->getInsertionCode()}};
             cds::PdbFileAtomData atomData = cds::toPdbFileAtomData(atoms, recordName, occupancy, temperatureFactor);
-            cds::writeMoleculeToPdb(stream, {0}, {pdbResidue->HasTerCard()}, cds::PdbFileData {residueData, atomData});
+            cds::PdbFileFormat format;
+            cds::writeMoleculeToPdb(stream, {0}, {pdbResidue->HasTerCard()},
+                                    cds::PdbFileData {format, residueData, atomData});
         }
         if (!residues.empty())
         { // Sometimes you get empty chains after things have been deleted I guess.

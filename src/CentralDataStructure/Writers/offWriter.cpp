@@ -61,7 +61,8 @@ cds::OffFileData cds::toOffFileData(const std::vector<Residue*>& residues)
                               atomCharges(atoms), atomCoordinates(atoms), atomResidues,     uniqueAtomBonds(atoms)};
     OffFileResidueData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
                                     connections};
-    return OffFileData {residueData, atomData};
+    OffFileFormat format;
+    return OffFileData {format, residueData, atomData};
 }
 
 void cds::serializeResiduesIndividually(std::vector<cds::Residue*>& residues)

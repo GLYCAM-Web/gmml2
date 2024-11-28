@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/residueTypes.hpp"
+#include "includes/CodeUtils/formatting.hpp"
 
 #include <vector>
 #include <string>
@@ -30,8 +31,19 @@ namespace cds
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
     };
 
+    struct OffFileFormat
+    {
+        codeUtils::floatFormat coordinate = {
+            codeUtils::textAlignment::left, 7, {6, 6}
+        };
+        codeUtils::floatFormat charge = {
+            codeUtils::textAlignment::left, 7, {6, 6}
+        };
+    };
+
     struct OffFileData
     {
+        OffFileFormat format;
         OffFileResidueData residues;
         OffFileAtomData atoms;
     };

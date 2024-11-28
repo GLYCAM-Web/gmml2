@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_FILEFORMATS_PDBFILEDATA_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CodeUtils/formatting.hpp"
 
 #include <string>
 #include <vector>
@@ -28,8 +29,22 @@ namespace cds
         std::vector<std::string> insertionCodes;
     };
 
+    struct PdbFileFormat
+    {
+        codeUtils::floatFormat coordinate = {
+            codeUtils::textAlignment::right, 8, {3, 3}
+        };
+        codeUtils::floatFormat occupancy = {
+            codeUtils::textAlignment::right, 6, {2, 2}
+        };
+        codeUtils::floatFormat temperatureFactor = {
+            codeUtils::textAlignment::right, 6, {2, 2}
+        };
+    };
+
     struct PdbFileData
     {
+        PdbFileFormat format;
         PdbFileResidueData residues;
         PdbFileAtomData atoms;
     };

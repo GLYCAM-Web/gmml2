@@ -49,7 +49,8 @@ namespace glycoproteinBuilder
         }
         cds::OffFileResidueData residueData {data.residues.numbers, data.residues.names, data.residues.types,
                                              graphs.residues.nodes.elements, atomsConnectedToOtherResidues};
-        return cds::OffFileData {residueData, atomData};
+        cds::OffFileFormat format;
+        return cds::OffFileData {format, residueData, atomData};
     }
 
     cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
@@ -75,6 +76,7 @@ namespace glycoproteinBuilder
                                           recordNames,
                                           std::vector<double>(atomCount, 1.0),
                                           std::vector<double>(atomCount, 0.0)};
-        return cds::PdbFileData {residuePdbData, atomPdbData};
+        cds::PdbFileFormat format;
+        return cds::PdbFileData {format, residuePdbData, atomPdbData};
     }
 } // namespace glycoproteinBuilder

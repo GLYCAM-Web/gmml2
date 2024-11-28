@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
+#include "includes/CodeUtils/formatting.hpp"
 
 #include <iomanip>
 #include <ostream>
@@ -16,7 +17,7 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& re
         size_t residueIndex = residueIndices[n];
         for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            cds::writeAtomToPdb(stream, residues, residueIndex, atoms, atomIndex);
+            cds::writeAtomToPdb(stream, data.format, residues, residueIndex, atoms, atomIndex);
         }
         if (residueTER[n])
         {
@@ -26,8 +27,8 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& re
 }
 
 // Used by the PdbAtom class and cds classes. Thus what it takes as input is a bit odd.
-void cds::writeAtomToPdb(std::ostream& stream, const PdbFileResidueData& residues, size_t residueIndex,
-                         const PdbFileAtomData& atoms, size_t atomIndex)
+void cds::writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, const PdbFileResidueData& residues,
+                         size_t residueIndex, const PdbFileAtomData& atoms, size_t atomIndex)
 {
     std::string residueAlternativeLocation = ""; // don't know if this should live in residue or atom..
     const cds::Coordinate& coord           = atoms.coordinates[atomIndex];
@@ -39,12 +40,12 @@ void cds::writeAtomToPdb(std::ostream& stream, const PdbFileResidueData& residue
     stream << std::left << std::setw(1) << residues.chainIds[residueIndex];
     stream << std::right << std::setw(4) << residues.numbers[residueIndex];
     stream << std::left << std::setw(1) << residues.insertionCodes[residueIndex] << std::left << std::setw(3) << " ";
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetX();
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetY();
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << coord.GetZ();
-    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << atoms.occupancies[atomIndex];
-    stream << std::right << std::setw(6) << std::fixed << std::setprecision(2) << atoms.temperatureFactors[atomIndex]
-           << std::left << std::setw(10) << " ";
+    codeUtils::writeFloat(stream, format.coordinate, coord.GetX());
+    codeUtils::writeFloat(stream, format.coordinate, coord.GetY());
+    codeUtils::writeFloat(stream, format.coordinate, coord.GetZ());
+    codeUtils::writeFloat(stream, format.occupancy, atoms.occupancies[atomIndex]);
+    codeUtils::writeFloat(stream, format.temperatureFactor, atoms.temperatureFactors[atomIndex]);
+    stream << std::left << std::setw(10) << " ";
     stream << std::right << std::setw(2) << atoms.elements[atomIndex];
     //    We probably don't want to write charges into pdb file. Width allowed is 2
     stream << std::endl;

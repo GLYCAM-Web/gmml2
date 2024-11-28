@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/formatting.hpp"
 
 #include <vector>
 #include <string>
@@ -23,14 +24,15 @@ namespace
     }
 } // namespace
 
-void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffFileResidueData& residues,
-                           const OffFileAtomData& atoms, std::ostream& stream, const std::string& unitName)
+void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, const OffFileResidueData& residues,
+                           const OffFileAtomData& atoms, const std::vector<size_t>& residueIndices,
+                           const std::string& unitName)
 {
     // WriteAtomSection
     const std::string FLAG = "131072";
     stream << "!entry." << unitName
            << ".unit.atoms table  str name  str type  int typex  int resx  int flags  int seq  int elmnt  dbl chg"
-           << std::endl;
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
         unsigned int atomNumberInResidue = 1;
@@ -38,44 +40,54 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffF
         {
             stream << " \"" << atoms.names[atomIndex] << "\" "
                    << "\"" << atoms.types[atomIndex] << "\" "
-                   << "0"
-                   << " " << residues.numbers[residueIndex] << " " << FLAG << " " << atomNumberInResidue << " "
-                   << atoms.atomicNumbers[atomIndex] << " " << std::fixed << std::setprecision(6)
-                   << atoms.charges[atomIndex] << std::endl;
+                   << "0 " << residues.numbers[residueIndex] << " " << FLAG << " " << atomNumberInResidue << " "
+                   << atoms.atomicNumbers[atomIndex] << " ";
+            codeUtils::writeFloat(stream, format.charge, atoms.charges[atomIndex]);
+            stream << "\n";
             atomNumberInResidue++;
         }
     }
     // WriteAtomPertInfoSection
     stream << "!entry." << unitName
-           << ".unit.atomspertinfo table  str pname  str ptype  int ptypex  int pelmnt  dbl pchg" << std::endl;
+           << ".unit.atomspertinfo table  str pname  str ptype  int ptypex  int pelmnt  dbl pchg"
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
         for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            stream << " \"" << atoms.names[atomIndex] << "\" "
-                   << "\"" << atoms.types[atomIndex] << "\" " << 0 << " " << -1 << " " << std::setprecision(1) << 0.0
-                   << std::endl;
+            stream << " \"" << atoms.names[atomIndex] << "\""
+                   << " \"" << atoms.types[atomIndex] << "\" 0 -1 0.0"
+                   << "\n";
         }
     }
     // WriteBoundBoxSection
-    stream << "!entry." << unitName << ".unit.boundbox array dbl" << std::endl;
-    stream << " "
-           << "-1.000000" << std::endl;
-    stream << " " << 0.0 << std::endl;
-    stream << " " << 0.0 << std::endl;
-    stream << " " << 0.0 << std::endl;
-    stream << " " << 0.0 << std::endl;
+    stream << "!entry." << unitName << ".unit.boundbox array dbl"
+           << "\n";
+    stream << " -1.000000"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
     // WriteChildSequenceSection
-    stream << "!entry." << unitName << ".unit.childsequence single int" << std::endl;
-    stream << " " << residueIndices.size() + 1 << std::endl;
+    stream << "!entry." << unitName << ".unit.childsequence single int"
+           << "\n";
+    stream << " " << residueIndices.size() + 1 << "\n";
     // WriteConnectSection
     //  Note: this is silly but fine for most cases. If you're reading this it's because it mattered and you need to
     //  make it better.
-    stream << "!entry." << unitName << ".unit.connect array int" << std::endl;
-    stream << " " << 1 << std::endl;
-    stream << " " << atoms.numbers[residues.atomIndices[residueIndices.back()].back()] << std::endl;
+    stream << "!entry." << unitName << ".unit.connect array int"
+           << "\n";
+    stream << " 1"
+           << "\n";
+    stream << " " << atoms.numbers[residues.atomIndices[residueIndices.back()].back()] << "\n";
     // WriteConnectivitySection
-    stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags" << std::endl;
+    stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags"
+           << "\n";
     std::vector<bool> residueIncluded = codeUtils::indexMask(residues.names.size(), residueIndices);
     for (auto& bond : atoms.bonds)
     {
@@ -86,51 +98,46 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffF
             int min            = std::min(number, neighborNumber);
             int max            = std::max(number, neighborNumber);
             // According to docs: (the *second* atom is the one with the larger index). So ordering
-            stream << " " << min << " " << max << " " << 1 << std::endl;
+            stream << " " << min << " " << max << " 1"
+                   << "\n";
         }
     }
     // WriteHierarchySection
     stream << "!entry." << unitName << ".unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx"
-           << std::endl;
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
-        stream << " \""
-               << "U"
-               << "\""
-               << " " << 0 << " "
-               << "\""
-               << "R"
-               << "\""
-               << " " << residues.numbers[residueIndex] << std::endl;
+        stream << " \"U\" 0 \"R\" " << residues.numbers[residueIndex] << "\n";
         for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
-            stream << " \""
-                   << "R"
-                   << "\""
-                   << " " << residues.numbers[residueIndex] << " "
-                   << "\""
-                   << "A"
-                   << "\""
-                   << " " << atoms.numbers[atomIndex] << std::endl;
+            stream << " \"R\" " << residues.numbers[residueIndex] << " \"A\" " << atoms.numbers[atomIndex] << "\n";
         }
     }
     // WriteNameSection
-    stream << "!entry." << unitName << ".unit.name single str" << std::endl;
-    stream << " \"" << unitName << "\"" << std::endl;
+    stream << "!entry." << unitName << ".unit.name single str"
+           << "\n";
+    stream << " \"" << unitName << "\""
+           << "\n";
     // WritePositionSection
-    stream << "!entry." << unitName << ".unit.positions table  dbl x  dbl y  dbl z" << std::endl;
+    stream << "!entry." << unitName << ".unit.positions table  dbl x  dbl y  dbl z"
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
         for (size_t atomIndex : residues.atomIndices[residueIndex])
         {
             Coordinate coord = atoms.coordinates[atomIndex];
-            stream << std::setprecision(6) << std::fixed << " " << coord.GetX() << " " << coord.GetY() << " "
-                   << coord.GetZ() << std::endl;
+            for (size_t n = 0; n < 3; n++)
+            {
+                stream << " ";
+                codeUtils::writeFloat(stream, format.coordinate, coord.nth(n));
+            }
+            stream << "\n";
         }
     }
     // WriteResidueConnectSection // Every residue needs a head/tail regardless of reality. tleap uses this info.
     stream << "!entry." << unitName
-           << ".unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x" << std::endl;
+           << ".unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x"
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
         std::vector<size_t> connectedAtoms = residues.atomsConnectedToOtherResidues[residueIndex];
@@ -149,15 +156,14 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffF
         int columnsWithZero = 6 - connectedAtoms.size();
         for (int i = 0; i < columnsWithZero; ++i)
         {
-            stream << " "
-                   << "0";
+            stream << " 0";
         }
-        stream << std::endl;
+        stream << "\n";
     }
     // WriteResiduesSection
     stream << "!entry." << unitName
            << ".unit.residues table  str name  int seq  int childseq  int startatomx  str restype  int imagingx"
-           << std::endl;
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
         const std::vector<size_t>& atomIndices = residues.atomIndices[residueIndex];
@@ -168,32 +174,30 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffF
         stream << " \"" << residues.names[residueIndex] << "\""
                << " " << residues.numbers[residueIndex] << " " << childseq << " " << startatomx << " "
                << "\"" << restype << "\""
-               << " " << imagingx << std::endl;
+               << " " << imagingx << "\n";
     }
     // WriteSolventCapSection
-    stream << "!entry." << unitName << ".unit.solventcap array dbl" << std::endl;
-    stream << " "
-           << "-1.000000" << std::endl;
-    stream << " "
-           << "0.0" << std::endl;
-    stream << " "
-           << "0.0" << std::endl;
-    stream << " "
-           << "0.0" << std::endl;
-    stream << " "
-           << "0.0" << std::endl;
+    stream << "!entry." << unitName << ".unit.solventcap array dbl"
+           << "\n";
+    stream << " -1.000000"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
+    stream << " 0.0"
+           << "\n";
     // WriteVelocitiesSection
-    stream << "!entry." << unitName << ".unit.velocities table  dbl x  dbl y  dbl z" << std::endl;
+    stream << "!entry." << unitName << ".unit.velocities table  dbl x  dbl y  dbl z"
+           << "\n";
     for (size_t residueIndex : residueIndices)
     {
         for (size_t n = 0; n < residues.atomIndices[residueIndex].size(); n++)
         { // Maybe later we'll want to deal with atom velocities...
-            stream << " "
-                   << "0.0"
-                   << " "
-                   << "0.0"
-                   << " "
-                   << "0.0" << std::endl;
+            stream << " 0.0 0.0 0.0"
+                   << "\n";
         }
     }
     return;
@@ -202,20 +206,25 @@ void cds::WriteOffFileUnit(const std::vector<size_t>& residueIndices, const OffF
 void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const OffFileData& data)
 { // For writing each residue separately
     size_t residueCount = data.residues.names.size();
-    stream << "!!index array str" << std::endl;
+    stream << "!!index array str"
+           << "\n";
     for (size_t n = 0; n < residueCount; n++)
     {
-        stream << " \"" << data.residues.names[n] << "\"" << std::endl;
+        stream << " \"" << data.residues.names[n] << "\""
+               << "\n";
     }
     for (size_t n = 0; n < residueCount; n++)
     {
-        cds::WriteOffFileUnit({n}, data.residues, data.atoms, stream, data.residues.names[n]);
+        cds::WriteOffFileUnit(stream, data.format, data.residues, data.atoms, {n}, data.residues.names[n]);
     }
 }
 
 void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const OffFileData& data, const std::string& unitName)
 { // For writing residues together as a molecule
-    stream << "!!index array str" << std::endl;
-    stream << " \"" << unitName << "\"" << std::endl;
-    cds::WriteOffFileUnit(codeUtils::indexVector(data.residues.names), data.residues, data.atoms, stream, unitName);
+    stream << "!!index array str"
+           << "\n";
+    stream << " \"" << unitName << "\""
+           << "\n";
+    cds::WriteOffFileUnit(stream, data.format, data.residues, data.atoms, codeUtils::indexVector(data.residues.names),
+                          unitName);
 }
