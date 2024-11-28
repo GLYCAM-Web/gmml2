@@ -11,11 +11,12 @@ fi
 prefix=$1
 input=$2
 directory=$3
+output="output/${directory}"
 
 echo -n "Testing 017.test.GlycoproteinBuilder.cpp ${prefix}..."
-rm -r "${directory}" >/dev/null 2>&1
-mkdir -p "${directory}"
-"${BIN_PATH}" "${input}" "${directory}" > "${directory}"/GlycoproteinBuilder.txt 2>&1
+rm -r "${output}" >/dev/null 2>&1
+mkdir -p "${output}"
+"${BIN_PATH}" "${input}" "${output}" > "${output}"/GlycoproteinBuilder.txt 2>&1
 expected="tests/correct_outputs/${directory}"
 
 if [ ! -d "${expected}" ]; then
@@ -25,7 +26,7 @@ if [ ! -d "${expected}" ]; then
     return 1
 fi
 # note: if diff starts being slow, consider comparing checksums of directory contents instead
-DIFF=$(diff -qr "${directory}" "${expected}")
+DIFF=$(diff -qr "${output}" "${expected}")
 if [ "$DIFF" ]
 then
     echo "Test FAILED"
@@ -34,7 +35,7 @@ then
     return 1
 fi
 
-rm -r "${directory}" >/dev/null 2>&1
+rm -r "${output}" >/dev/null 2>&1
 printf "Test passed.\n"
 echo "Exit Code: 0"
 return 0

@@ -17,6 +17,10 @@ GMML_TEST_FILE_LIST=()
 INPUT_FILE_LIST=()
 declare -a DEFAULT_FILES_WHEN_NONE_PROVIDED=("testsBase.txt" "testsGpBuilder.txt")
 
+# Ideally we should store all test output in here
+# It's useful to be able to upload failed output from github workflows
+mkdir output/
+
 read_into_test_list()
 {
     if [ ! -f "$1" ]; then
