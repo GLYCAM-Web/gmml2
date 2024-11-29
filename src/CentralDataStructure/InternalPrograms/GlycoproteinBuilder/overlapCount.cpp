@@ -72,7 +72,8 @@ namespace glycoproteinBuilder
         }
     } // namespace
 
-    cds::Overlap intraGlycanOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId)
+    cds::Overlap intraGlycanOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                     const MutableData& mutableData, size_t glycanId)
     {
         const std::vector<size_t>& glycanLinkages = graphs.indices.glycans[glycanId].linkages;
         cds::Overlap overlap                      = {0.0, 0.0};
@@ -85,18 +86,18 @@ namespace glycoproteinBuilder
             const std::vector<size_t>& residuesB = linkage.reducingResidues;
 
             std::vector<cds::BondedResidueOverlapInput> bonds = residueBonds(graphs, residueA, residuesB[0]);
-            overlap +=
-                cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
-                                           data.residues.overlapWeights, bonds, {residueA}, residuesB);
+            overlap += cds::CountOverlappingAtoms(mutableData.atomBounds, mutableData.residueBounds,
+                                                  graphs.residues.nodes.elements, data.residues.overlapWeights, bonds,
+                                                  {residueA}, residuesB);
         }
         return overlap;
     }
 
-    cds::Overlap moleculeOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t moleculeA,
-                                  size_t moleculeB)
+    cds::Overlap moleculeOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                  const MutableData& mutableData, size_t moleculeA, size_t moleculeB)
     {
-        const cds::Sphere& boundsA = data.molecules.bounds[moleculeA];
-        const cds::Sphere& boundsB = data.molecules.bounds[moleculeB];
+        const cds::Sphere& boundsA = mutableData.moleculeBounds[moleculeA];
+        const cds::Sphere& boundsB = mutableData.moleculeBounds[moleculeB];
         if (!cds::spheresOverlap(constants::overlapTolerance, boundsA, boundsB))
         {
             return cds::Overlap {0.0, 0.0};
@@ -106,20 +107,21 @@ namespace glycoproteinBuilder
             std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graphs, moleculeA, moleculeB);
             std::vector<size_t> residuesA;
             std::vector<size_t> residuesB;
-            cds::insertIndicesOfIntersection(residuesA, boundsB, data.residues.bounds,
+            cds::insertIndicesOfIntersection(residuesA, boundsB, mutableData.residueBounds,
                                              moleculeResidues(graphs, moleculeA));
-            cds::insertIndicesOfIntersection(residuesB, boundsA, data.residues.bounds,
+            cds::insertIndicesOfIntersection(residuesB, boundsA, mutableData.residueBounds,
                                              moleculeResidues(graphs, moleculeB));
-            return cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
-                                              data.residues.overlapWeights, bonds, residuesA, residuesB);
+            return cds::CountOverlappingAtoms(mutableData.atomBounds, mutableData.residueBounds,
+                                              graphs.residues.nodes.elements, data.residues.overlapWeights, bonds,
+                                              residuesA, residuesB);
         }
     }
 
-    cds::Overlap moleculeResidueOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, size_t molecule,
-                                         size_t residue)
+    cds::Overlap moleculeResidueOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                         const MutableData& mutableData, size_t molecule, size_t residue)
     {
-        const cds::Sphere& moleculeBounds = data.molecules.bounds[molecule];
-        const cds::Sphere& residueBounds  = data.residues.bounds[residue];
+        const cds::Sphere& moleculeBounds = mutableData.moleculeBounds[molecule];
+        const cds::Sphere& residueBounds  = mutableData.residueBounds[residue];
         if (!cds::spheresOverlap(constants::overlapTolerance, moleculeBounds, residueBounds))
         {
             return cds::Overlap {0.0, 0.0};
@@ -128,33 +130,35 @@ namespace glycoproteinBuilder
         {
             size_t residueMolecule                            = graphs.indices.residueMolecule[residue];
             std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graphs, molecule, residueMolecule);
-            return cds::CountOverlappingAtoms(data.atoms.bounds, data.residues.bounds, graphs.residues.nodes.elements,
-                                              data.residues.overlapWeights, bonds, {residue},
-                                              moleculeResidues(graphs, molecule));
+            return cds::CountOverlappingAtoms(mutableData.atomBounds, mutableData.residueBounds,
+                                              graphs.residues.nodes.elements, data.residues.overlapWeights, bonds,
+                                              {residue}, moleculeResidues(graphs, molecule));
         }
     }
 
-    cds::Overlap totalOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, OverlapWeight weight)
+    cds::Overlap totalOverlaps(const AssemblyGraphs& graphs, const AssemblyData& data, const MutableData& mutableData,
+                               OverlapWeight weight)
     {
         cds::Overlap overlap {0.0, 0.0};
         const std::vector<GlycanIndices>& glycans = graphs.indices.glycans;
-        const std::vector<bool>& included         = data.glycanData.included;
+        const std::vector<bool>& included         = mutableData.glycanIncluded;
 
         for (size_t n = 0; n < glycans.size(); n++)
         {
             if (included[n])
             {
                 size_t glycanMolecule = glycans[n].glycanMolecule;
-                overlap               += intraGlycanOverlaps(graphs, data, n) * weight.self;
+                overlap               += intraGlycanOverlaps(graphs, data, mutableData, n) * weight.self;
                 for (size_t k : graphs.indices.proteinMolecules)
                 {
-                    overlap += moleculeOverlaps(graphs, data, glycanMolecule, k);
+                    overlap += moleculeOverlaps(graphs, data, mutableData, glycanMolecule, k);
                 }
                 for (size_t k = n + 1; k < glycans.size(); k++)
                 {
                     if (included[k])
                     {
-                        overlap += moleculeOverlaps(graphs, data, glycanMolecule, glycans[k].glycanMolecule);
+                        overlap +=
+                            moleculeOverlaps(graphs, data, mutableData, glycanMolecule, glycans[k].glycanMolecule);
                     }
                 }
             }
@@ -163,46 +167,46 @@ namespace glycoproteinBuilder
         return overlap;
     }
 
-    cds::Overlap localOverlap(const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId,
-                              double selfWeight)
+    cds::Overlap localOverlap(const AssemblyGraphs& graphs, const AssemblyData& data, const MutableData& mutableData,
+                              size_t glycanId, double selfWeight)
     {
         const std::vector<GlycanIndices>& glycans = graphs.indices.glycans;
         const GlycanIndices& thisGlycan           = glycans[glycanId];
-        cds::Overlap overlap                      = intraGlycanOverlaps(graphs, data, glycanId) * selfWeight;
+        cds::Overlap overlap = intraGlycanOverlaps(graphs, data, mutableData, glycanId) * selfWeight;
         for (size_t n : graphs.indices.proteinMolecules)
         {
-            overlap += moleculeOverlaps(graphs, data, n, thisGlycan.glycanMolecule);
+            overlap += moleculeOverlaps(graphs, data, mutableData, n, thisGlycan.glycanMolecule);
         }
 
         for (size_t n = 0; n < glycans.size(); n++)
         {
-            if (data.glycanData.included[n] && n != glycanId)
+            if (mutableData.glycanIncluded[n] && n != glycanId)
             {
                 size_t other = glycans[n].glycanMolecule;
-                overlap      += moleculeOverlaps(graphs, data, thisGlycan.glycanMolecule, other);
-                overlap      += moleculeResidueOverlaps(graphs, data, other, thisGlycan.attachmentResidue);
+                overlap      += moleculeOverlaps(graphs, data, mutableData, thisGlycan.glycanMolecule, other);
+                overlap      += moleculeResidueOverlaps(graphs, data, mutableData, other, thisGlycan.attachmentResidue);
             }
         }
         return overlap;
     };
 
     std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites, const AssemblyGraphs& graphs,
-                                                  const AssemblyData& data)
+                                                  const AssemblyData& data, const MutableData& mutableData)
     {
         const std::vector<GlycanIndices>& glycans = graphs.indices.glycans;
-        const std::vector<bool>& included         = data.glycanData.included;
+        const std::vector<bool>& included         = mutableData.glycanIncluded;
         auto hasProteinOverlap                    = [&](size_t n)
         {
             cds::Overlap overlap {0.0, 0.0};
             for (size_t k : graphs.indices.proteinMolecules)
             {
-                overlap += moleculeOverlaps(graphs, data, k, glycans[n].glycanMolecule);
+                overlap += moleculeOverlaps(graphs, data, mutableData, k, glycans[n].glycanMolecule);
             }
             return overlap.count > 0;
         };
         auto hasSelfOverlap = [&](size_t n)
         {
-            auto overlap = intraGlycanOverlaps(graphs, data, n);
+            auto overlap = intraGlycanOverlaps(graphs, data, mutableData, n);
             return overlap.count > 0;
         };
         std::vector<size_t> sitesToCheck;
@@ -227,9 +231,11 @@ namespace glycoproteinBuilder
                 bool avoidDoubleCount = k > n || !justMoved[k];
                 if (included[k] && (k != n) && avoidDoubleCount && !(glycanOverlap[n] && glycanOverlap[k]))
                 {
-                    if (moleculeOverlaps(graphs, data, glycans[n].glycanMolecule, glycans[k].glycanMolecule).count >
-                            0 ||
-                        moleculeResidueOverlaps(graphs, data, glycans[k].glycanMolecule, glycans[n].attachmentResidue)
+                    if (moleculeOverlaps(graphs, data, mutableData, glycans[n].glycanMolecule,
+                                         glycans[k].glycanMolecule)
+                                .count > 0 ||
+                        moleculeResidueOverlaps(graphs, data, mutableData, glycans[k].glycanMolecule,
+                                                glycans[n].attachmentResidue)
                                 .count > 0)
                     {
                         glycanOverlap[n] = true;

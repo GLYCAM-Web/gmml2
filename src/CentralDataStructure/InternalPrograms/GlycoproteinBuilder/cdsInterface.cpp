@@ -28,9 +28,8 @@ namespace glycoproteinBuilder
         std::vector<cds::Residue*>& residues = graphIndices.residues;
 
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
-        AtomData atomData {
-            cds::atomNames(atoms),    cds::atomTypes(atoms),   cds::atomNumbers(atoms), cds::atomAtomicNumbers(atoms),
-            cds::atomElements(atoms), cds::atomCharges(atoms), atomBoundingSpheres};
+        AtomData atomData {cds::atomNames(atoms),         cds::atomTypes(atoms),    cds::atomNumbers(atoms),
+                           cds::atomAtomicNumbers(atoms), cds::atomElements(atoms), cds::atomCharges(atoms)};
 
         auto boundingSpheresOf =
             [](const std::vector<cds::Sphere>& spheres, const std::vector<std::vector<size_t>>& indexVector)
@@ -172,19 +171,16 @@ namespace glycoproteinBuilder
 
         std::vector<cds::Sphere> residueBoundingSpheres =
             boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
-        ResidueData residueData {
-            cds::residueNames(residues),   cds::residueTypes(residues), cds::residueStringIds(residues),
-            cds::residueNumbers(residues), residueOverlapWeight,        residueBoundingSpheres};
+        ResidueData residueData {cds::residueNames(residues), cds::residueTypes(residues),
+                                 cds::residueStringIds(residues), cds::residueNumbers(residues), residueOverlapWeight};
         std::vector<cds::Sphere> moleculeBounds =
             boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
 
-        MoleculeData moleculeData {moleculeTypes, moleculeBounds};
-        RotatableDihedralData rotatableDihedralData {rotatableDihedralCurrentShape};
+        MoleculeData moleculeData {moleculeTypes};
         ResidueLinkagedata residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds,
                                                linkageBranching};
-        GlycanData glycanData {std::vector<bool>(glycosites.size(), true)};
 
-        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, glycanData};
+        AssemblyData data {atomData, residueData, moleculeData, residueLinkageData};
 
         std::vector<size_t> proteinMolecules;
         for (size_t n = 0; n < moleculeTypes.size(); n++)
@@ -206,6 +202,11 @@ namespace glycoproteinBuilder
                                  glycositeIndices};
 
         AssemblyGraphs graphs {indices, atomGraph, residueGraph, moleculeGraph};
-        return GlycoproteinAssembly {graphs, data};
+
+        std::vector<bool> glycanIncluded(glycosites.size(), true);
+        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds,
+                                 rotatableDihedralCurrentShape, glycanIncluded};
+
+        return GlycoproteinAssembly {graphs, data, mutableData};
     }
 } // namespace glycoproteinBuilder

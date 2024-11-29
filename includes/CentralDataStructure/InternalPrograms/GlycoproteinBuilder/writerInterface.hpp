@@ -7,7 +7,9 @@
 
 namespace glycoproteinBuilder
 {
-    cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data);
-    cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data);
+    cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                   const MutableData& mutableData);
+    cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                   const MutableData& mutableData);
 } // namespace glycoproteinBuilder
 #endif

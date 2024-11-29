@@ -11,7 +11,8 @@
 namespace glycoproteinBuilder
 {
     std::vector<cds::ResidueLinkageShapePreference> randomLinkageShapePreference(
-        pcg32& rng, const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId,
+        pcg32& rng, const AssemblyGraphs& graphs, const AssemblyData& data, const MutableData& mutableData,
+        size_t glycanId,
         std::function<std::vector<size_t>(pcg32&, GlycamMetadata::DihedralAngleDataVector metadataVector)>
             randomMetadata,
         std::function<double(pcg32&, GlycamMetadata::DihedralAngleData metadata)> randomAngle,
@@ -49,9 +50,9 @@ namespace glycoproteinBuilder
                         if ((name == "Chi1") || (name == "Chi2"))
                         {
                             pref.isFrozen[n] = true;
-                            size_t metadata  = data.rotatableDihedralData.currentShape[dihedralId].metadataIndex;
+                            size_t metadata  = mutableData.currentDihedralShape[dihedralId].metadataIndex;
                             pref.angles[n][metadata] =
-                                constants::toDegrees(cds::angle(dihedralCoordinates(graphs, data, dihedralId)));
+                                constants::toDegrees(cds::angle(dihedralCoordinates(graphs, mutableData, dihedralId)));
                             pref.metadataOrder = {metadata};
                         }
                     }

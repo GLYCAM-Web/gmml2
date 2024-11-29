@@ -9,12 +9,13 @@
 
 namespace glycoproteinBuilder
 {
-    cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
+    cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                   const MutableData& mutableData)
     {
         size_t atomCount = graphs.indices.atomCount;
         std::vector<cds::Coordinate> coordinates;
         coordinates.reserve(atomCount);
-        for (auto& bounds : data.atoms.bounds)
+        for (auto& bounds : mutableData.atomBounds)
         {
             coordinates.push_back(bounds.center);
         }
@@ -54,7 +55,8 @@ namespace glycoproteinBuilder
         return cds::OffFileData {format, residueData, atomData};
     }
 
-    cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
+    cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
+                                   const MutableData& mutableData)
     {
         size_t atomCount    = graphs.indices.atomCount;
         size_t residueCount = graphs.indices.residueCount;
@@ -66,7 +68,7 @@ namespace glycoproteinBuilder
                                                 data.residues.names, chainIds, insertionCodes};
         std::vector<cds::Coordinate> atomCoordinates;
         atomCoordinates.reserve(atomCount);
-        for (auto& bound : data.atoms.bounds)
+        for (auto& bound : mutableData.atomBounds)
         {
             atomCoordinates.push_back(bound.center);
         }

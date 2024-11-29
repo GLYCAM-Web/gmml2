@@ -31,7 +31,6 @@ namespace glycoproteinBuilder
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
         std::vector<double> charges;
-        std::vector<cds::Sphere> bounds;
     };
 
     struct ResidueData
@@ -41,18 +40,11 @@ namespace glycoproteinBuilder
         std::vector<std::string> ids;
         std::vector<int> numbers;
         std::vector<double> overlapWeights;
-        std::vector<cds::Sphere> bounds;
     };
 
     struct MoleculeData
     {
         std::vector<MoleculeType> types;
-        std::vector<cds::Sphere> bounds;
-    };
-
-    struct RotatableDihedralData
-    {
-        std::vector<cds::AngleWithMetadata> currentShape;
     };
 
     struct ResidueLinkagedata
@@ -63,19 +55,12 @@ namespace glycoproteinBuilder
         std::vector<bool> branching;
     };
 
-    struct GlycanData
-    {
-        std::vector<bool> included;
-    };
-
     struct AssemblyData
     {
         AtomData atoms;
         ResidueData residues;
         MoleculeData molecules;
-        RotatableDihedralData rotatableDihedralData;
         ResidueLinkagedata residueLinkageData;
-        GlycanData glycanData;
     };
 
     struct RotatableDihedralIndices
@@ -121,10 +106,20 @@ namespace glycoproteinBuilder
         graph::Graph molecules;
     };
 
+    struct MutableData
+    {
+        std::vector<cds::Sphere> atomBounds;
+        std::vector<cds::Sphere> residueBounds;
+        std::vector<cds::Sphere> moleculeBounds;
+        std::vector<cds::AngleWithMetadata> currentDihedralShape;
+        std::vector<bool> glycanIncluded;
+    };
+
     struct GlycoproteinAssembly
     {
         AssemblyGraphs graphs;
         AssemblyData data;
+        MutableData mutableData;
     };
 
     inline const std::vector<size_t>& residueAtoms(const AssemblyGraphs& graphs, size_t residueId)

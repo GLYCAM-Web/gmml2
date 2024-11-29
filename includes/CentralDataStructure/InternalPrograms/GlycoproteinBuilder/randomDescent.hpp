@@ -17,23 +17,24 @@ namespace glycoproteinBuilder
         std::vector<std::vector<cds::ResidueLinkageShapePreference>> preferences;
     };
 
-    typedef std::function<void(const AssemblyGraphs&, AssemblyData&, size_t glycanId, const OverlapWeight&,
+    typedef std::function<void(const AssemblyGraphs&, const AssemblyData&, size_t glycanId, const OverlapWeight&,
                                std::vector<cds::ResidueLinkageShapePreference>&)>
         WiggleGlycan;
 
-    typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(pcg32& rng, const AssemblyGraphs&,
-                                                                          const AssemblyData&, size_t glycanId)>
+    typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(
+        pcg32& rng, const AssemblyGraphs&, const AssemblyData&, const MutableData&, size_t glycanId)>
         GlycanShapeRandomizer;
 
-    void wiggleLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId, size_t linkageId,
-                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
-                       const cds::ResidueLinkageShapePreference& shapePreference);
-    void wiggleGlycan(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId,
+    void wiggleLinkage(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                       size_t glycanId, size_t linkageId, const cds::AngleSearchSettings& searchSettings,
+                       const OverlapWeight& weight, const cds::ResidueLinkageShapePreference& shapePreference);
+    void wiggleGlycan(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData, size_t glycanId,
                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences);
     GlycoproteinState randomDescent(pcg32 rng, GlycanShapeRandomizer randomizeShape,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const AssemblyGraphs& graphs,
-                                    AssemblyData& data, const GlycoproteinState& initialState);
+                                    const AssemblyData& data, MutableData& mutableData,
+                                    const GlycoproteinState& initialState);
 } // namespace glycoproteinBuilder
 #endif
