@@ -232,9 +232,10 @@ namespace glycoproteinBuilder
             return result;
         };
 
-        auto restoreAllGlycans = [](MutableData& mutableData)
+        auto copyInitialState = [](const MutableData& initial)
         {
-            codeUtils::fill(mutableData.glycanIncluded, true);
+            return MutableData {initial.atomBounds, initial.residueBounds, initial.moleculeBounds,
+                                initial.currentDihedralShape, initial.glycanIncluded};
         };
 
         auto deleteGlycan = [](MutableData& mutableData, size_t glycanId)
@@ -364,7 +365,8 @@ namespace glycoproteinBuilder
         AssemblyGraphs& graphs        = assembly.graphs;
         std::vector<std::vector<size_t>>& moleculeResidues = graphs.molecules.nodes.elements;
         const AssemblyData& data                           = assembly.data;
-        MutableData& mutableData                           = assembly.mutableData;
+        const MutableData& initialState                    = assembly.mutableData;
+        std::vector<cds::Coordinate> initalCoordinates     = atomCoordinates(initialState);
 
         auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
         {
@@ -416,31 +418,36 @@ namespace glycoproteinBuilder
         std::vector<int> serializedAtomNumbers               = cds::serializedNumberVector(graphs.indices.atomCount);
         std::vector<int> serializedResidueNumbers            = cds::serializedNumberVector(graphs.indices.residueCount);
 
-        std::vector<std::vector<bool>> allResidueTER   = residueTER(moleculeResidues);
-        std::vector<cds::Coordinate> initalCoordinates = atomCoordinates(mutableData);
-        cds::PdbFileData pdbData                       = toPdbFileData(graphs, data, mutableData);
-        writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein_initial");
-        std::vector<cds::Coordinate> resolvedCoords =
-            resolveOverlapsWithWiggler(mainRng, graphs, data, mutableData, initalCoordinates, false);
-        pdbData.atoms.coordinates = resolvedCoords;
-        printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
-        writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein");
-        pdbData.atoms.numbers    = serializedAtomNumbers;
-        pdbData.residues.numbers = serializedResidueNumbers;
         {
-            cds::OffFileData offData  = toOffFileData(graphs, data, mutableData);
-            offData.atoms.coordinates = resolvedCoords;
-            offData.atoms.numbers     = serializedAtomNumbers;
-            offData.residues.numbers  = serializedResidueNumbers;
-            writeOffFile(offData, outputDir + "glycoprotein");
+            MutableData mutableData                      = copyInitialState(initialState);
+            std::vector<std::vector<bool>> allResidueTER = residueTER(moleculeResidues);
+            cds::PdbFileData pdbData                     = toPdbFileData(graphs, data, mutableData);
+            writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein_initial");
+            std::vector<cds::Coordinate> resolvedCoords =
+                resolveOverlapsWithWiggler(mainRng, graphs, data, mutableData, initalCoordinates, false);
+            pdbData.atoms.coordinates = resolvedCoords;
+            printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
+            writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein");
+            pdbData.atoms.numbers    = serializedAtomNumbers;
+            pdbData.residues.numbers = serializedResidueNumbers;
+            {
+                cds::OffFileData offData  = toOffFileData(graphs, data, mutableData);
+                offData.atoms.coordinates = resolvedCoords;
+                offData.atoms.numbers     = serializedAtomNumbers;
+                offData.residues.numbers  = serializedResidueNumbers;
+                writeOffFile(offData, outputDir + "glycoprotein");
+            }
+            writePdbFile(moleculeResidues, allResidueTER, pdbData, atomPairsConnectingNonProteinResidues,
+                         outputDir + "glycoprotein_serialized");
         }
-        writePdbFile(moleculeResidues, allResidueTER, pdbData, atomPairsConnectingNonProteinResidues,
-                     outputDir + "glycoprotein_serialized");
 
         for (size_t count = 0; count < settings.number3DStructures; count++)
         {
             pcg32 rng(rngSeeds[count]);
-            restoreAllGlycans(mutableData);
+            MutableData mutableData   = copyInitialState(initialState);
+            cds::PdbFileData pdbData  = toPdbFileData(graphs, data, mutableData);
+            pdbData.atoms.numbers     = serializedAtomNumbers;
+            pdbData.residues.numbers  = serializedResidueNumbers;
             pdbData.atoms.coordinates = resolveOverlapsWithWiggler(rng, graphs, data, mutableData, initalCoordinates,
                                                                    settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
