@@ -186,8 +186,10 @@ namespace
         {        "Acipb",  "Ec", "Saccharide"}, // Bacterial Ferran.
         {        "Fuspa",  "GF", "Saccharide"}, // Bacterial Ferran.
         {        "Fuspb",  "Gf", "Saccharide"}, // Bacterial Ferran.
-        {        "Ko1pa",  "KX", "Saccharide"}, // Bacterial Ferran.
-        {        "Ko1pb",  "Kx", "Saccharide"}, // Bacterial Ferran.
+        {        "AATpa",  "FC", "Saccharide"}, // Bacterial Ferran.
+        {        "AATpb",  "Fc", "Saccharide"}, // Bacterial Ferran.
+        {        "K3Opa",  "KX", "Saccharide"}, // Bacterial Ferran.
+        {        "K3Opb",  "Kx", "Saccharide"}, // Bacterial Ferran.
         {        "Legpa",  "LG", "Saccharide"}, // Bacterial Ferran.
         {        "Legpb",  "Lg", "Saccharide"}, // Bacterial Ferran.
         {        "Psepa",  "MP", "Saccharide"}, // Bacterial Ferran.
