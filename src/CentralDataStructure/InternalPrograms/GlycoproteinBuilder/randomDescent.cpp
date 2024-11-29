@@ -10,7 +10,6 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/random.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
-#include "includes/External_Libraries/PCG/pcg_extras.h"
 
 #include <sstream>
 
@@ -239,7 +238,7 @@ namespace glycoproteinBuilder
             {
                 const std::vector<size_t>& linkageIds = graphs.glycans[glycanId].linkages;
                 cds::Overlap previousOverlap          = localOverlap(graphs, data, glycanId, overlapWeight.self);
-                auto preferences                      = randomizeShape(graphs, data, glycanId);
+                auto preferences                      = randomizeShape(rng, graphs, data, glycanId);
                 lastShape                             = data.rotatableDihedralData.currentShape;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {

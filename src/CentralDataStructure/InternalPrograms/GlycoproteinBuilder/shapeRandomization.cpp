@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CodeUtils/constants.hpp"
+#include "includes/External_Libraries/PCG/pcg_random.h"
 
 #include <functional>
 #include <vector>
@@ -10,9 +11,10 @@
 namespace glycoproteinBuilder
 {
     std::vector<cds::ResidueLinkageShapePreference> randomLinkageShapePreference(
-        const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId,
-        std::function<std::vector<size_t>(GlycamMetadata::DihedralAngleDataVector metadataVector)> randomMetadata,
-        std::function<double(GlycamMetadata::DihedralAngleData metadata)> randomAngle,
+        pcg32& rng, const AssemblyGraphs& graphs, const AssemblyData& data, size_t glycanId,
+        std::function<std::vector<size_t>(pcg32&, GlycamMetadata::DihedralAngleDataVector metadataVector)>
+            randomMetadata,
+        std::function<double(pcg32&, GlycamMetadata::DihedralAngleData metadata)> randomAngle,
         bool freezeGlycositeResidueConformation)
     {
         const GlycanIndices& glycan = graphs.glycans[glycanId];
@@ -28,13 +30,13 @@ namespace glycoproteinBuilder
             {
                 for (auto& metadata : linkageMetadata[k])
                 {
-                    angles[k].push_back(randomAngle(metadata));
+                    angles[k].push_back(randomAngle(rng, metadata));
                 }
             }
             if (data.residueLinkageData.rotamerTypes[linkageId] == GlycamMetadata::RotamerType::conformer)
             {
                 const std::vector<size_t>& rotatableDihedrals = graphs.residueLinkages[linkageId].rotatableDihedrals;
-                auto order                                    = randomMetadata(linkageMetadata[0]);
+                auto order                                    = randomMetadata(rng, linkageMetadata[0]);
                 auto isFrozen                                 = std::vector<bool>(rotatableDihedrals.size(), false);
                 cds::ConformerShapePreference pref            = {isFrozen, angles, order};
                 if (isFirstLinkage && freezeGlycositeResidueConformation)
@@ -61,7 +63,7 @@ namespace glycoproteinBuilder
                 order.reserve(linkageMetadata.size());
                 for (auto& metadataVector : linkageMetadata)
                 {
-                    order.push_back(randomMetadata(metadataVector));
+                    order.push_back(randomMetadata(rng, metadataVector));
                 }
                 result.push_back(cds::PermutationShapePreference {angles, order});
             }

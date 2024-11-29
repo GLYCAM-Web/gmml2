@@ -21,8 +21,8 @@ namespace glycoproteinBuilder
                                std::vector<cds::ResidueLinkageShapePreference>&)>
         WiggleGlycan;
 
-    typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(const AssemblyGraphs&, const AssemblyData&,
-                                                                          size_t glycanId)>
+    typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(pcg32& rng, const AssemblyGraphs&,
+                                                                          const AssemblyData&, size_t glycanId)>
         GlycanShapeRandomizer;
 
     void wiggleLinkage(const AssemblyGraphs& graphs, AssemblyData& data, size_t glycanId, size_t linkageId,

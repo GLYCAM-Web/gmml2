@@ -36,7 +36,6 @@
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
-#include "includes/External_Libraries/PCG/pcg_extras.h"
 
 #include <variant>
 #include <vector>
@@ -169,9 +168,9 @@ namespace glycoproteinBuilder
         OverlapWeight overlapWeight = {proteinWeight, glycanWeight, selfWeight};
 
         uint64_t seed = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
-        pcg32 rng(seed);
+        pcg32 seedingRng(seed);
 
-        auto randomMetadata = [&rng](GlycamMetadata::DihedralAngleDataVector metadataVector)
+        auto randomMetadata = [](pcg32& rng, GlycamMetadata::DihedralAngleDataVector metadataVector)
         {
             auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
             return codeUtils::weightedRandomOrder(rng, weights);
@@ -205,7 +204,8 @@ namespace glycoproteinBuilder
             return cds::evenlySpacedAngles(preference, deviation * std.first, deviation * std.second, searchIncrement);
         };
         cds::AngleSearchSettings searchSettings = cds::AngleSearchSettings {searchDeviation, searchAngles};
-        auto randomAngle = [&rng, &standardDeviation, &preferenceDeviation](GlycamMetadata::DihedralAngleData metadata)
+        auto randomAngle =
+            [&standardDeviation, &preferenceDeviation](pcg32& rng, GlycamMetadata::DihedralAngleData metadata)
         {
             double stdCutoff = preferenceDeviation;
             double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
@@ -213,9 +213,9 @@ namespace glycoproteinBuilder
             return metadata.default_angle + num * (num < 0 ? std.first : std.second);
         };
         auto randomizeShape = [&randomMetadata, &randomAngle, &freezeGlycositeResidueConformation](
-                                  const AssemblyGraphs& graphs, const AssemblyData& data, size_t linkageId)
+                                  pcg32& rng, const AssemblyGraphs& graphs, const AssemblyData& data, size_t linkageId)
         {
-            return randomLinkageShapePreference(graphs, data, linkageId, randomMetadata, randomAngle,
+            return randomLinkageShapePreference(rng, graphs, data, linkageId, randomMetadata, randomAngle,
                                                 freezeGlycositeResidueConformation);
         };
 
@@ -241,14 +241,14 @@ namespace glycoproteinBuilder
             data.glycanData.included[glycanId] = false;
         };
 
-        auto resolveOverlapsWithWiggler = [&](const AssemblyGraphs& graphs, AssemblyData& data,
+        auto resolveOverlapsWithWiggler = [&](pcg32& rng, const AssemblyGraphs& graphs, AssemblyData& data,
                                               const std::vector<cds::Coordinate>& initialCoordinates,
                                               bool deleteSitesUntilResolved)
         {
             std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
             for (size_t glycanId = 0; glycanId < graphs.glycans.size(); glycanId++)
             {
-                auto preference                       = randomizeShape(graphs, data, glycanId);
+                auto preference                       = randomizeShape(rng, graphs, data, glycanId);
                 const std::vector<size_t>& linkageIds = graphs.glycans[glycanId].linkages;
                 for (size_t k = 0; k < linkageIds.size(); k++)
                 {
@@ -403,6 +403,14 @@ namespace glycoproteinBuilder
             }
         }
 
+        pcg32 mainRng(codeUtils::generateRandomSeed(seedingRng));
+        std::vector<uint64_t> rngSeeds;
+        rngSeeds.reserve(settings.number3DStructures);
+        for (size_t n = 0; n < settings.number3DStructures; n++)
+        {
+            rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
+        }
+
         std::vector<std::pair<size_t, size_t>> noConnections = {};
 
         std::vector<std::vector<bool>> allResidueTER   = residueTER(moleculeResidues);
@@ -410,7 +418,7 @@ namespace glycoproteinBuilder
         cds::PdbFileData pdbData                       = toPdbFileData(graphs, data);
         writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein_initial");
         std::vector<cds::Coordinate> resolvedCoords =
-            resolveOverlapsWithWiggler(graphs, data, initalCoordinates, false);
+            resolveOverlapsWithWiggler(mainRng, graphs, data, initalCoordinates, false);
         pdbData.atoms.coordinates = resolvedCoords;
         printDihedralAnglesAndOverlapOfGlycosites(graphs, data);
         writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein");
@@ -428,9 +436,10 @@ namespace glycoproteinBuilder
 
         for (size_t count = 0; count < settings.number3DStructures; count++)
         {
+            pcg32 rng(rngSeeds[count]);
             restoreAllGlycans(data);
             pdbData.atoms.coordinates =
-                resolveOverlapsWithWiggler(graphs, data, initalCoordinates, settings.deleteSitesUntilResolved);
+                resolveOverlapsWithWiggler(rng, graphs, data, initalCoordinates, settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
