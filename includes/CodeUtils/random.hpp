@@ -15,6 +15,12 @@ namespace codeUtils
         return (uint64_t(rdev()) << 32) | rdev();
     }
 
+    inline uint64_t generateRandomSeed(pcg32& rng)
+    {
+        std::uniform_int_distribution<uint64_t> distr(0, uint64_t(-1));
+        return distr(rng);
+    }
+
     template<class T> int uniformRandomVectorIndex(pcg32& rng, const std::vector<T>& vec)
     {
         std::uniform_int_distribution<> distr(0, (vec.size() - 1));
