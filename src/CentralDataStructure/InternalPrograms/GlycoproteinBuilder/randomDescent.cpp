@@ -214,7 +214,7 @@ namespace glycoproteinBuilder
         updateGlycanBounds(graphs, mutableData, glycanId);
     }
 
-    GlycoproteinState randomDescent(pcg32 rng, GlycanShapeRandomizer randomizeShape,
+    GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const AssemblyGraphs& graphs,
                                     const AssemblyData& data, MutableData& mutableData,

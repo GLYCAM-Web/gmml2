@@ -31,7 +31,7 @@ namespace glycoproteinBuilder
     void wiggleGlycan(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData, size_t glycanId,
                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences);
-    GlycoproteinState randomDescent(pcg32 rng, GlycanShapeRandomizer randomizeShape,
+    GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const AssemblyGraphs& graphs,
                                     const AssemblyData& data, MutableData& mutableData,
