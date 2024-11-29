@@ -35,6 +35,7 @@ namespace cds
     std::vector<double> atomCharges(const std::vector<Atom*>& atoms);
     std::vector<int> residueNumbers(const std::vector<Residue*>& residues);
     std::vector<std::string> residueNames(const std::vector<Residue*>& residues);
+    std::vector<std::string> residueStringIds(const std::vector<Residue*>& residues);
     std::string truncatedResidueName(const Residue* residue);
     std::vector<std::string> truncatedResidueNames(const std::vector<Residue*>& residues);
     std::vector<ResidueType> residueTypes(const std::vector<Residue*>& residues);
