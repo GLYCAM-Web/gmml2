@@ -279,7 +279,6 @@ namespace glycoproteinBuilder
                     size_t indexToRemove = codeUtils::randomIndex(rng, overlapSites);
                     size_t glycan        = overlapSites[indexToRemove];
                     deleteGlycan(mutableData, glycan);
-                    overlapSites.erase(overlapSites.begin() + indexToRemove);
                     size_t proteinResidue = graphs.indices.glycans[glycan].attachmentResidue;
                     // restore atoms to initial shape
                     for (size_t n : residueAtoms(graphs, proteinResidue))
@@ -288,6 +287,8 @@ namespace glycoproteinBuilder
                     }
                     updateResidueBounds(graphs, mutableData, proteinResidue);
                     updateResidueMoleculeBounds(graphs, mutableData, proteinResidue);
+                    overlapSites = determineSitesWithOverlap(codeUtils::indexVector(graphs.indices.glycans), graphs,
+                                                             data, mutableData);
                 }
             }
             gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
