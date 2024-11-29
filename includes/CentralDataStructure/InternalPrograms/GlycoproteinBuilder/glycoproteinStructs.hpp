@@ -3,7 +3,6 @@
 
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
@@ -39,6 +38,7 @@ namespace glycoproteinBuilder
     {
         std::vector<std::string> names;
         std::vector<cds::ResidueType> types;
+        std::vector<std::string> ids;
         std::vector<int> numbers;
         std::vector<double> overlapWeights;
         std::vector<cds::Sphere> bounds;
@@ -100,16 +100,25 @@ namespace glycoproteinBuilder
         std::vector<size_t> linkages;
     };
 
+    struct AssemblyIndices
+    {
+        size_t atomCount;
+        size_t residueCount;
+        size_t moleculeCount;
+        std::vector<size_t> atomResidue;
+        std::vector<size_t> residueMolecule;
+        std::vector<size_t> proteinMolecules;
+        std::vector<RotatableDihedralIndices> rotatableDihedrals;
+        std::vector<ResidueLinkageIndices> residueLinkages;
+        std::vector<GlycanIndices> glycans;
+    };
+
     struct AssemblyGraphs
     {
-        cds::GraphIndexData indices;
+        AssemblyIndices indices;
         graph::Graph atoms;
         graph::Graph residues;
         graph::Graph molecules;
-        std::vector<size_t> proteinMolecules;
-        std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
-        std::vector<ResidueLinkageIndices> residueLinkages;
-        std::vector<GlycanIndices> glycans;
     };
 
     struct GlycoproteinAssembly

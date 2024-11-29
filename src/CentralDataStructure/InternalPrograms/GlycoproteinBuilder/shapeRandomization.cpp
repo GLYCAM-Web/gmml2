@@ -17,7 +17,7 @@ namespace glycoproteinBuilder
         std::function<double(pcg32&, GlycamMetadata::DihedralAngleData metadata)> randomAngle,
         bool freezeGlycositeResidueConformation)
     {
-        const GlycanIndices& glycan = graphs.glycans[glycanId];
+        const GlycanIndices& glycan = graphs.indices.glycans[glycanId];
         std::vector<cds::ResidueLinkageShapePreference> result;
         for (size_t n = 0; n < glycan.linkages.size(); n++)
         {
@@ -35,10 +35,11 @@ namespace glycoproteinBuilder
             }
             if (data.residueLinkageData.rotamerTypes[linkageId] == GlycamMetadata::RotamerType::conformer)
             {
-                const std::vector<size_t>& rotatableDihedrals = graphs.residueLinkages[linkageId].rotatableDihedrals;
-                auto order                                    = randomMetadata(rng, linkageMetadata[0]);
-                auto isFrozen                                 = std::vector<bool>(rotatableDihedrals.size(), false);
-                cds::ConformerShapePreference pref            = {isFrozen, angles, order};
+                const std::vector<size_t>& rotatableDihedrals =
+                    graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
+                auto order                         = randomMetadata(rng, linkageMetadata[0]);
+                auto isFrozen                      = std::vector<bool>(rotatableDihedrals.size(), false);
+                cds::ConformerShapePreference pref = {isFrozen, angles, order};
                 if (isFirstLinkage && freezeGlycositeResidueConformation)
                 {
                     for (size_t n = 0; n < rotatableDihedrals.size(); n++)

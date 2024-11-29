@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
@@ -171,8 +172,9 @@ namespace glycoproteinBuilder
 
         std::vector<cds::Sphere> residueBoundingSpheres =
             boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
-        ResidueData residueData {cds::residueNames(residues), cds::residueTypes(residues),
-                                 cds::residueNumbers(residues), residueOverlapWeight, residueBoundingSpheres};
+        ResidueData residueData {
+            cds::residueNames(residues),   cds::residueTypes(residues), cds::residueStringIds(residues),
+            cds::residueNumbers(residues), residueOverlapWeight,        residueBoundingSpheres};
         std::vector<cds::Sphere> moleculeBounds =
             boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
 
@@ -193,9 +195,17 @@ namespace glycoproteinBuilder
             }
         }
 
-        AssemblyGraphs graphs {graphIndices,    atomGraph,        residueGraph,
-                               moleculeGraph,   proteinMolecules, rotatableDihedralIndices,
-                               residueLinkages, glycositeIndices};
+        AssemblyIndices indices {atoms.size(),
+                                 residues.size(),
+                                 molecules.size(),
+                                 graphIndices.atomResidue,
+                                 graphIndices.residueMolecule,
+                                 proteinMolecules,
+                                 rotatableDihedralIndices,
+                                 residueLinkages,
+                                 glycositeIndices};
+
+        AssemblyGraphs graphs {indices, atomGraph, residueGraph, moleculeGraph};
         return GlycoproteinAssembly {graphs, data};
     }
 } // namespace glycoproteinBuilder

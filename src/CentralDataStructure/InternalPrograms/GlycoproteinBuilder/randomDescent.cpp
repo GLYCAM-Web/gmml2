@@ -32,10 +32,10 @@ namespace glycoproteinBuilder
                                                         const OverlapWeight& weight, size_t glycanId, size_t linkageId,
                                                         size_t dihedralId)
         {
-            const ResidueLinkageIndices& linkage     = graphs.residueLinkages[linkageId];
-            const RotatableDihedralIndices& dihedral = graphs.rotatableDihedralIndices[dihedralId];
-            const std::vector<size_t>& movingAtoms   = graphs.rotatableDihedralIndices[dihedralId].movingAtoms;
-            std::vector<bool> atomMoving(graphs.indices.atoms.size(), false);
+            const ResidueLinkageIndices& linkage     = graphs.indices.residueLinkages[linkageId];
+            const RotatableDihedralIndices& dihedral = graphs.indices.rotatableDihedrals[dihedralId];
+            const std::vector<size_t>& movingAtoms   = graphs.indices.rotatableDihedrals[dihedralId].movingAtoms;
+            std::vector<bool> atomMoving(graphs.indices.atomCount, false);
             for (size_t atom : movingAtoms)
             {
                 atomMoving[atom] = true;
@@ -49,10 +49,10 @@ namespace glycoproteinBuilder
             cds::Sphere movementBounds   = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
 
             std::vector<size_t> intersectingResidues;
-            intersectingResidues.reserve(graphs.indices.residues.size());
+            intersectingResidues.reserve(graphs.indices.residueCount);
             codeUtils::insertInto(intersectingResidues, linkage.nonReducingResidues);
-            size_t glycanMolecule = graphs.glycans[glycanId].glycanMolecule;
-            for (size_t n : graphs.proteinMolecules)
+            size_t glycanMolecule = graphs.indices.glycans[glycanId].glycanMolecule;
+            for (size_t n : graphs.indices.proteinMolecules)
             {
                 if (cds::spheresOverlap(constants::overlapTolerance, movementBounds, data.molecules.bounds[n]))
                 {
@@ -60,9 +60,9 @@ namespace glycoproteinBuilder
                                                      moleculeResidues(graphs, n));
                 }
             }
-            for (size_t n = 0; n < graphs.glycans.size(); n++)
+            for (size_t n = 0; n < graphs.indices.glycans.size(); n++)
             {
-                size_t otherMolecule = graphs.glycans[n].glycanMolecule;
+                size_t otherMolecule = graphs.indices.glycans[n].glycanMolecule;
                 if (data.glycanData.included[n] && (otherMolecule != glycanMolecule) &&
                     cds::spheresOverlap(constants::overlapTolerance, movementBounds,
                                         data.molecules.bounds[otherMolecule]))
@@ -90,7 +90,7 @@ namespace glycoproteinBuilder
                                       const OverlapWeight& weight,
                                       const cds::PermutationShapePreference& shapePreference)
         {
-            const std::vector<size_t>& dihedrals       = graphs.residueLinkages[linkageId].rotatableDihedrals;
+            const std::vector<size_t>& dihedrals       = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
             const cds::DihedralAngleMetadata& metadata = data.residueLinkageData.metadata[linkageId];
             //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
             //  rotatable bond in Asn outwards
@@ -122,7 +122,7 @@ namespace glycoproteinBuilder
                                     const cds::AngleSearchSettings& settings, const OverlapWeight& weight,
                                     const cds::ConformerShapePreference& shapePreference)
         {
-            const std::vector<size_t>& dihedrals       = graphs.residueLinkages[linkageId].rotatableDihedrals;
+            const std::vector<size_t>& dihedrals       = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
             const cds::DihedralAngleMetadata& metadata = data.residueLinkageData.metadata[linkageId];
             size_t numberOfMetadata                    = shapePreference.metadataOrder.size();
             const std::vector<std::vector<double>>& preferenceAngles = shapePreference.angles;
@@ -201,13 +201,13 @@ namespace glycoproteinBuilder
                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences)
     {
-        const std::vector<size_t>& linkages = graphs.glycans[glycanId].linkages;
+        const std::vector<size_t>& linkages = graphs.indices.glycans[glycanId].linkages;
         // wiggling twice gives the first linkages a second chance to resolve in a better structure
         for (size_t k = 0; k < 2; k++)
         {
             for (size_t n = 0; n < linkages.size(); n++)
             {
-                size_t linkageId = graphs.glycans[glycanId].linkages[n];
+                size_t linkageId = graphs.indices.glycans[glycanId].linkages[n];
                 wiggleLinkage(graphs, data, glycanId, linkageId, searchSettings, weight, preferences[n]);
             }
         }
@@ -236,7 +236,7 @@ namespace glycoproteinBuilder
             cds::Overlap newGlobalOverlap = globalOverlap;
             for (auto& glycanId : codeUtils::shuffleVector(rng, overlapSites))
             {
-                const std::vector<size_t>& linkageIds = graphs.glycans[glycanId].linkages;
+                const std::vector<size_t>& linkageIds = graphs.indices.glycans[glycanId].linkages;
                 cds::Overlap previousOverlap          = localOverlap(graphs, data, glycanId, overlapWeight.self);
                 auto preferences                      = randomizeShape(rng, graphs, data, glycanId);
                 lastShape                             = data.rotatableDihedralData.currentShape;

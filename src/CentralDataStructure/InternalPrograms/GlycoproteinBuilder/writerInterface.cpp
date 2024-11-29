@@ -11,7 +11,7 @@ namespace glycoproteinBuilder
 {
     cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
     {
-        size_t atomCount = graphs.indices.atoms.size();
+        size_t atomCount = graphs.indices.atomCount;
         std::vector<cds::Coordinate> coordinates;
         coordinates.reserve(atomCount);
         for (auto& bounds : data.atoms.bounds)
@@ -29,7 +29,7 @@ namespace glycoproteinBuilder
             data.atoms.numbers, data.atoms.names, data.atoms.types,           data.atoms.atomicNumbers,
             data.atoms.charges, coordinates,      graphs.indices.atomResidue, bonds};
 
-        size_t residueCount = graphs.indices.residues.size();
+        size_t residueCount = graphs.indices.residueCount;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
         atomsConnectedToOtherResidues.resize(residueCount);
         for (size_t n = 0; n < graphs.residues.edges.indices.size(); n++)
@@ -56,8 +56,8 @@ namespace glycoproteinBuilder
 
     cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data)
     {
-        size_t atomCount    = graphs.indices.atoms.size();
-        size_t residueCount = graphs.indices.residues.size();
+        size_t atomCount    = graphs.indices.atomCount;
+        size_t residueCount = graphs.indices.residueCount;
         std::vector<std::string> recordNames(atomCount, "ATOM");
         std::vector<std::string> chainIds(residueCount, "");
         std::vector<std::string> insertionCodes(residueCount, "");

@@ -246,10 +246,10 @@ namespace glycoproteinBuilder
                                               bool deleteSitesUntilResolved)
         {
             std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
-            for (size_t glycanId = 0; glycanId < graphs.glycans.size(); glycanId++)
+            for (size_t glycanId = 0; glycanId < graphs.indices.glycans.size(); glycanId++)
             {
                 auto preference                       = randomizeShape(rng, graphs, data, glycanId);
-                const std::vector<size_t>& linkageIds = graphs.glycans[glycanId].linkages;
+                const std::vector<size_t>& linkageIds = graphs.indices.glycans[glycanId].linkages;
                 for (size_t k = 0; k < linkageIds.size(); k++)
                 {
                     setLinkageShapeToPreference(graphs, data, linkageIds[k], preference[k]);
@@ -257,13 +257,13 @@ namespace glycoproteinBuilder
                 updateGlycanBounds(graphs, data, glycanId);
                 glycositePreferences.push_back(preference);
             }
-            for (size_t glycanId : codeUtils::shuffleVector(rng, codeUtils::indexVector(graphs.glycans)))
+            for (size_t glycanId : codeUtils::shuffleVector(rng, codeUtils::indexVector(graphs.indices.glycans)))
             {
                 wiggleGlycan(graphs, data, glycanId, searchSettings, overlapWeight, glycositePreferences[glycanId]);
             }
             GlycoproteinState currentState;
             std::vector<size_t> overlapSites =
-                determineSitesWithOverlap(codeUtils::indexVector(graphs.glycans), graphs, data);
+                determineSitesWithOverlap(codeUtils::indexVector(graphs.indices.glycans), graphs, data);
             for (bool done = false; !done; done = overlapSites.empty() || !deleteSitesUntilResolved)
             {
                 cds::Overlap initialOverlap = totalOverlaps(graphs, data, overlapWeight);
@@ -278,7 +278,7 @@ namespace glycoproteinBuilder
                     size_t glycan        = overlapSites[indexToRemove];
                     deleteGlycan(data, glycan);
                     overlapSites.erase(overlapSites.begin() + indexToRemove);
-                    size_t proteinResidue = graphs.glycans[glycan].attachmentResidue;
+                    size_t proteinResidue = graphs.indices.glycans[glycan].attachmentResidue;
                     // restore atoms to initial shape
                     for (size_t n : residueAtoms(graphs, proteinResidue))
                     {
@@ -319,23 +319,23 @@ namespace glycoproteinBuilder
 
         auto printDihedralAnglesAndOverlapOfGlycosites = [](const AssemblyGraphs& graphs, const AssemblyData& data)
         {
-            const std::vector<GlycanIndices>& glycans = graphs.glycans;
+            const std::vector<GlycanIndices>& glycans = graphs.indices.glycans;
             const std::vector<bool>& included         = data.glycanData.included;
             for (size_t n = 0; n < glycans.size(); n++)
             {
                 std::stringstream logss;
-                const GlycanIndices& glycan = graphs.glycans[n];
-                std::string residueID       = graphs.indices.residues[glycan.attachmentResidue]->getStringId();
+                const GlycanIndices& glycan = graphs.indices.glycans[n];
+                std::string residueID       = data.residues.ids[glycan.attachmentResidue];
                 if (included[n])
                 {
                     cds::Overlap selfOverlap = intraGlycanOverlaps(graphs, data, n);
                     cds::Overlap proteinOverlap {0.0, 0.0};
-                    for (size_t k : graphs.proteinMolecules)
+                    for (size_t k : graphs.indices.proteinMolecules)
                     {
                         proteinOverlap += moleculeOverlaps(graphs, data, k, glycan.glycanMolecule);
                     }
                     cds::Overlap glycanOverlap {0.0, 0.0};
-                    for (size_t k = 0; k < graphs.glycans.size(); k++)
+                    for (size_t k = 0; k < graphs.indices.glycans.size(); k++)
                     {
                         if (included[k] && k != n)
                         {
@@ -356,18 +356,14 @@ namespace glycoproteinBuilder
 
         std::vector<cds::Molecule*> molecules = getGlycoprotein()->getMolecules();
 
-        GlycoproteinAssembly assembly        = toGlycoproteinAssemblyStructs(molecules, glycosites_, overlapWeight);
-        AssemblyGraphs& graphs               = assembly.graphs;
-        std::vector<cds::Residue*>& residues = graphs.indices.residues;
-        std::vector<cds::Atom*>& atoms       = graphs.indices.atoms;
+        GlycoproteinAssembly assembly = toGlycoproteinAssemblyStructs(molecules, glycosites_, overlapWeight);
+        AssemblyGraphs& graphs        = assembly.graphs;
         std::vector<std::vector<size_t>>& moleculeResidues = graphs.molecules.nodes.elements;
         AssemblyData& data                                 = assembly.data;
 
-        std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
-
         auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
         {
-            std::vector<bool> moleculeIncluded(graphs.proteinMolecules.size(), true);
+            std::vector<bool> moleculeIncluded(graphs.indices.proteinMolecules.size(), true);
             codeUtils::insertInto(moleculeIncluded, includedGlycans);
             return moleculeIncluded;
         };
@@ -378,7 +374,7 @@ namespace glycoproteinBuilder
             result.reserve(moleculeResidues.size());
             for (auto& indices : moleculeResidues)
             {
-                result.push_back(cds::residueTER(codeUtils::indexValues(residueTypes, indices)));
+                result.push_back(cds::residueTER(codeUtils::indexValues(data.residues.types, indices)));
             }
             return result;
         };
@@ -412,6 +408,8 @@ namespace glycoproteinBuilder
         }
 
         std::vector<std::pair<size_t, size_t>> noConnections = {};
+        std::vector<int> serializedAtomNumbers               = cds::serializedNumberVector(graphs.indices.atomCount);
+        std::vector<int> serializedResidueNumbers            = cds::serializedNumberVector(graphs.indices.residueCount);
 
         std::vector<std::vector<bool>> allResidueTER   = residueTER(moleculeResidues);
         std::vector<cds::Coordinate> initalCoordinates = atomCoordinates(data.atoms);
@@ -422,13 +420,13 @@ namespace glycoproteinBuilder
         pdbData.atoms.coordinates = resolvedCoords;
         printDihedralAnglesAndOverlapOfGlycosites(graphs, data);
         writePdbFile(moleculeResidues, allResidueTER, pdbData, noConnections, outputDir + "glycoprotein");
-        data.atoms.numbers       = cds::serializedNumberVector(atoms.size());
-        data.residues.numbers    = cds::serializedNumberVector(residues.size());
-        pdbData.atoms.numbers    = data.atoms.numbers;
-        pdbData.residues.numbers = data.residues.numbers;
+        pdbData.atoms.numbers    = serializedAtomNumbers;
+        pdbData.residues.numbers = serializedResidueNumbers;
         {
             cds::OffFileData offData  = toOffFileData(graphs, data);
             offData.atoms.coordinates = resolvedCoords;
+            offData.atoms.numbers     = serializedAtomNumbers;
+            offData.residues.numbers  = serializedResidueNumbers;
             writeOffFile(offData, outputDir + "glycoprotein");
         }
         writePdbFile(moleculeResidues, allResidueTER, pdbData, atomPairsConnectingNonProteinResidues,
