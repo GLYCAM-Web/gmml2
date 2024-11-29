@@ -370,9 +370,8 @@ namespace glycoproteinBuilder
 
         auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
         {
-            std::vector<bool> moleculeIncluded(graphs.indices.proteinMolecules.size(), true);
-            codeUtils::insertInto(moleculeIncluded, includedGlycans);
-            return moleculeIncluded;
+            std::vector<bool> proteinIncluded(graphs.indices.proteinMolecules.size(), true);
+            return codeUtils::vectorAppend(proteinIncluded, includedGlycans);
         };
 
         auto residueTER = [&](const std::vector<std::vector<size_t>>& moleculeResidues)
