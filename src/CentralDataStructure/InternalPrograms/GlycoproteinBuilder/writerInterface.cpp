@@ -10,15 +10,9 @@
 namespace glycoproteinBuilder
 {
     cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
-                                   const MutableData& mutableData)
+                                   const std::vector<cds::Coordinate>& atomCoordinates)
     {
         size_t atomCount = graphs.indices.atomCount;
-        std::vector<cds::Coordinate> coordinates;
-        coordinates.reserve(atomCount);
-        for (auto& bounds : mutableData.atomBounds)
-        {
-            coordinates.push_back(bounds.center);
-        }
         std::vector<std::pair<size_t, size_t>> bonds;
         bonds.reserve(graphs.atoms.edges.nodeAdjacencies.size());
         for (auto& adj : graphs.atoms.edges.nodeAdjacencies)
@@ -27,8 +21,8 @@ namespace glycoproteinBuilder
         }
 
         cds::OffFileAtomData atomData {
-            data.atoms.numbers, data.atoms.names, data.atoms.types,           data.atoms.atomicNumbers,
-            data.atoms.charges, coordinates,      graphs.indices.atomResidue, bonds};
+            data.atoms.serializedNumbers, data.atoms.names, data.atoms.types,           data.atoms.atomicNumbers,
+            data.atoms.charges,           atomCoordinates,  graphs.indices.atomResidue, bonds};
 
         size_t residueCount = graphs.indices.residueCount;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
@@ -48,7 +42,7 @@ namespace glycoproteinBuilder
         {
             std::sort(vec.begin(), vec.end());
         }
-        cds::OffFileResidueData residueData {data.residues.numbers, data.residues.names, data.residues.types,
+        cds::OffFileResidueData residueData {data.residues.serializedNumbers, data.residues.names, data.residues.types,
                                              graphs.residues.nodes.elements, atomsConnectedToOtherResidues};
         cds::OffFileFormat format;
         format.coordinate.decimals.precision = 5;
@@ -56,7 +50,8 @@ namespace glycoproteinBuilder
     }
 
     cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
-                                   const MutableData& mutableData)
+                                   const std::vector<cds::Coordinate>& atomCoordinates,
+                                   const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers)
     {
         size_t atomCount    = graphs.indices.atomCount;
         size_t residueCount = graphs.indices.residueCount;
@@ -64,16 +59,10 @@ namespace glycoproteinBuilder
         std::vector<std::string> chainIds(residueCount, "");
         std::vector<std::string> insertionCodes(residueCount, "");
 
-        cds::PdbFileResidueData residuePdbData {graphs.residues.nodes.elements, data.residues.numbers,
-                                                data.residues.names, chainIds, insertionCodes};
-        std::vector<cds::Coordinate> atomCoordinates;
-        atomCoordinates.reserve(atomCount);
-        for (auto& bound : mutableData.atomBounds)
-        {
-            atomCoordinates.push_back(bound.center);
-        }
+        cds::PdbFileResidueData residuePdbData {graphs.residues.nodes.elements, residueNumbers, data.residues.names,
+                                                chainIds, insertionCodes};
         cds::PdbFileAtomData atomPdbData {atomCoordinates,
-                                          data.atoms.numbers,
+                                          atomNumbers,
                                           data.atoms.names,
                                           data.atoms.elements,
                                           recordNames,

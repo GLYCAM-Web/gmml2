@@ -28,6 +28,7 @@ namespace glycoproteinBuilder
         std::vector<std::string> names;
         std::vector<std::string> types;
         std::vector<int> numbers;
+        std::vector<int> serializedNumbers;
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
         std::vector<double> charges;
@@ -39,6 +40,7 @@ namespace glycoproteinBuilder
         std::vector<cds::ResidueType> types;
         std::vector<std::string> ids;
         std::vector<int> numbers;
+        std::vector<int> serializedNumbers;
         std::vector<double> overlapWeights;
     };
 

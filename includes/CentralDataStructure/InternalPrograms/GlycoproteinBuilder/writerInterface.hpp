@@ -8,8 +8,9 @@
 namespace glycoproteinBuilder
 {
     cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
-                                   const MutableData& mutableData);
+                                   const std::vector<cds::Coordinate>& atomCoordinates);
     cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
-                                   const MutableData& mutableData);
+                                   const std::vector<cds::Coordinate>& atomCoordinates,
+                                   const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers);
 } // namespace glycoproteinBuilder
 #endif
