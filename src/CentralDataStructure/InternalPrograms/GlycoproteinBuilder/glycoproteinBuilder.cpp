@@ -232,12 +232,6 @@ namespace glycoproteinBuilder
             return result;
         };
 
-        auto copyInitialState = [](const MutableData& initial)
-        {
-            return MutableData {initial.atomBounds, initial.residueBounds, initial.moleculeBounds,
-                                initial.currentDihedralShape, initial.glycanIncluded};
-        };
-
         auto deleteGlycan = [](MutableData& mutableData, size_t glycanId)
         {
             mutableData.glycanIncluded[glycanId] = false;
@@ -422,7 +416,7 @@ namespace glycoproteinBuilder
         writePdbFile(graphs, data, initalCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                      allResidueTER, noConnections, outputDir + "glycoprotein_initial");
         {
-            MutableData mutableData = copyInitialState(initialState);
+            MutableData mutableData = initialState;
             std::vector<cds::Coordinate> resolvedCoords =
                 resolveOverlapsWithWiggler(mainRng, graphs, data, mutableData, initalCoordinates, false);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
@@ -437,7 +431,7 @@ namespace glycoproteinBuilder
         for (size_t count = 0; count < settings.number3DStructures; count++)
         {
             pcg32 rng(rngSeeds[count]);
-            MutableData mutableData                  = copyInitialState(initialState);
+            MutableData mutableData                  = initialState;
             std::vector<cds::Coordinate> coordinates = resolveOverlapsWithWiggler(
                 rng, graphs, data, mutableData, initalCoordinates, settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
