@@ -37,6 +37,7 @@
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
+#include <omp.h>
 #include <variant>
 #include <vector>
 #include <string>
@@ -447,6 +448,8 @@ namespace glycoproteinBuilder
             rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
         }
 
+// clang format doesn't align pragmas
+/*    */#pragma omp parallel for
         for (size_t count = 0; count < totalStructures; count++)
         {
             pcg32 rng(rngSeeds[count]);
