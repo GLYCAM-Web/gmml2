@@ -405,20 +405,11 @@ namespace glycoproteinBuilder
             }
         }
 
-        pcg32 mainRng(codeUtils::generateRandomSeed(seedingRng));
-        std::vector<uint64_t> rngSeeds;
-        rngSeeds.reserve(settings.number3DStructures);
-        for (size_t n = 0; n < settings.number3DStructures; n++)
-        {
-            rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
-        }
-
-        writePdbFile(graphs, data, initalCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,
-                     allResidueTER, noConnections, outputDir + "glycoprotein_initial");
+        auto runInitial = [&](pcg32 rng)
         {
             MutableData mutableData = initialState;
             std::vector<cds::Coordinate> resolvedCoords =
-                resolveOverlapsWithWiggler(mainRng, graphs, data, mutableData, initalCoordinates, false);
+                resolveOverlapsWithWiggler(rng, graphs, data, mutableData, initalCoordinates, false);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
             writePdbFile(graphs, data, resolvedCoords, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                          allResidueTER, noConnections, outputDir + "glycoprotein");
@@ -426,11 +417,10 @@ namespace glycoproteinBuilder
             writePdbFile(graphs, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          moleculeResidues, allResidueTER, atomPairsConnectingNonProteinResidues,
                          outputDir + "glycoprotein_serialized");
-        }
+        };
 
-        for (size_t count = 0; count < settings.number3DStructures; count++)
+        auto runIteration = [&](pcg32 rng, size_t count)
         {
-            pcg32 rng(rngSeeds[count]);
             MutableData mutableData                  = initialState;
             std::vector<cds::Coordinate> coordinates = resolveOverlapsWithWiggler(
                 rng, graphs, data, mutableData, initalCoordinates, settings.deleteSitesUntilResolved);
@@ -443,7 +433,31 @@ namespace glycoproteinBuilder
             writePdbFile(graphs, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          currentMoleculeResidues, residueTER(currentMoleculeResidues),
                          atomPairsConnectingNonProteinResidues, outputDir + prefix.str());
+        };
+
+        writePdbFile(graphs, data, initalCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,
+                     allResidueTER, noConnections, outputDir + "glycoprotein_initial");
+
+        // order of parallel for loop is undefined, so we generate all seeds up front for determinism
+        size_t totalStructures = settings.number3DStructures + 1;
+        std::vector<uint64_t> rngSeeds;
+        rngSeeds.reserve(totalStructures);
+        for (size_t n = 0; n < totalStructures; n++)
+        {
+            rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
+        }
+
+        for (size_t count = 0; count < totalStructures; count++)
+        {
+            pcg32 rng(rngSeeds[count]);
+            if (count == 0)
+            {
+                runInitial(rng);
+            }
+            else
+            {
+                runIteration(rng, count - 1);
+            }
         }
     }
-
 } // namespace glycoproteinBuilder
