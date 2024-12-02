@@ -103,9 +103,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 #2. Debug: `-O0 -g`
 #3. RelWithDebInfo: `-O2 -g -DNDEBUG`
 #4. MinSizeRel: `-Os -DNDEBUG`
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -fopenmp -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fopenmp -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0 -fopenmp -DNDEBUG")
 
 ################## END SETTING BASE COMPILE FLAGS ###################
 
@@ -167,7 +167,13 @@ add_dependencies(${PROJECT_NAME} versionHeader)
 
 #Add eigen lib
 target_include_directories(${PROJECT_NAME} PUBLIC ${EIGEN3_INCLUDE_DIRS})
-	
+
+# OpenMP
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+endif()
+
 #Add the headers to our specific gmml target
 target_include_directories(${PROJECT_NAME} PUBLIC
 	"${CMAKE_SOURCE_DIR}" "${HDIRECTORIES}")
@@ -180,7 +186,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
 #for the project object value this passes -fpic which is needed
 #to make our files into a shared libary
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -W)
-target_link_libraries(${PROJECT_NAME} stdc++fs)
+target_link_libraries(${PROJECT_NAME} PUBLIC stdc++fs)
 ################## END SETTING UP GMML TARGET ###################
 
 
