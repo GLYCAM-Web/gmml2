@@ -365,12 +365,12 @@ namespace glycoproteinBuilder
 
         std::vector<cds::Molecule*> molecules = getGlycoprotein()->getMolecules();
 
-        GlycoproteinAssembly assembly = toGlycoproteinAssemblyStructs(molecules, glycosites_, overlapWeight);
-        AssemblyGraphs& graphs        = assembly.graphs;
-        std::vector<std::vector<size_t>>& moleculeResidues = graphs.molecules.nodes.elements;
-        const AssemblyData& data                           = assembly.data;
-        const MutableData& initialState                    = assembly.mutableData;
-        std::vector<cds::Coordinate> initalCoordinates     = atomCoordinates(initialState);
+        const GlycoproteinAssembly assembly = toGlycoproteinAssemblyStructs(molecules, glycosites_, overlapWeight);
+        const AssemblyGraphs& graphs        = assembly.graphs;
+        const std::vector<std::vector<size_t>>& moleculeResidues = graphs.molecules.nodes.elements;
+        const AssemblyData& data                                 = assembly.data;
+        const MutableData& initialState                          = assembly.mutableData;
+        std::vector<cds::Coordinate> initalCoordinates           = atomCoordinates(initialState);
 
         auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
         {
