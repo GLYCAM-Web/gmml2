@@ -40,7 +40,7 @@ namespace glycoproteinBuilder
             result.reserve(indexVector.size());
             for (auto& indices : indexVector)
             {
-                result.push_back(cds::boundingSphere(codeUtils::indexValues(spheres, indices)));
+                result.push_back(cds::boundingSphere(codeUtils::indicesToValues(spheres, indices)));
             }
             return result;
         };

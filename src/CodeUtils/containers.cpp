@@ -26,7 +26,7 @@ std::vector<size_t> codeUtils::offsetIndices(size_t offset, std::vector<size_t> 
     return indices;
 }
 
-std::vector<bool> codeUtils::indexMask(size_t size, const std::vector<size_t>& indices)
+std::vector<bool> codeUtils::indicesToBools(size_t size, const std::vector<size_t>& indices)
 {
     std::vector<bool> result(size, false);
     for (size_t n : indices)
@@ -36,7 +36,7 @@ std::vector<bool> codeUtils::indexMask(size_t size, const std::vector<size_t>& i
     return result;
 }
 
-std::vector<size_t> codeUtils::maskIndices(const std::vector<bool>& mask)
+std::vector<size_t> codeUtils::boolsToIndices(const std::vector<bool>& mask)
 {
     size_t count = 0;
     for (bool b : mask)

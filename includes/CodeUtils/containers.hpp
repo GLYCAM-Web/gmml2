@@ -12,8 +12,8 @@ namespace codeUtils
     std::string FindStringInStringMap(const std::string& s, const std::unordered_map<std::string, std::string>& sMap);
     std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
     std::vector<size_t> offsetIndices(size_t offset, std::vector<size_t> indices);
-    std::vector<bool> indexMask(size_t size, const std::vector<size_t>& indices);
-    std::vector<size_t> maskIndices(const std::vector<bool>& mask);
+    std::vector<bool> indicesToBools(size_t size, const std::vector<size_t>& indices);
+    std::vector<size_t> boolsToIndices(const std::vector<bool>& mask);
 
     template<class T> size_t indexOf(const std::vector<T>& vector, const T element)
     {
@@ -99,7 +99,7 @@ namespace codeUtils
         return indexVectorWithOffset(0, vec);
     }
 
-    template<class T> std::vector<T> indexValues(const std::vector<T>& values, const std::vector<size_t>& indices)
+    template<class T> std::vector<T> indicesToValues(const std::vector<T>& values, const std::vector<size_t>& indices)
     {
         std::vector<T> result;
         result.reserve(indices.size());
@@ -110,7 +110,7 @@ namespace codeUtils
         return result;
     }
 
-    template<class T> std::vector<T> maskValues(const std::vector<T>& values, const std::vector<bool>& mask)
+    template<class T> std::vector<T> boolsToValues(const std::vector<T>& values, const std::vector<bool>& mask)
     {
         std::vector<T> result;
         result.reserve(mask.size());

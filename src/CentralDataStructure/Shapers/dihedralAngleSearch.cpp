@@ -145,7 +145,7 @@ namespace
         result.reserve(residueAtoms.size());
         for (size_t n = 0; n < residueAtoms.size(); n++)
         {
-            result.push_back(boundingSphere(codeUtils::indexValues(atomBounds, residueAtoms[n])));
+            result.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms[n])));
         }
         return result;
     }
@@ -267,8 +267,8 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<Res
     std::vector<Sphere> atomBounds                = atomCoordinatesWithRadii(atoms);
     std::vector<Sphere> residueBounds             = toResidueBounds(atomBounds, residueAtoms);
 
-    auto atomsA      = codeUtils::indexValues(atoms, residueAtoms[residueIndices[0][0]]);
-    auto atomsB      = codeUtils::indexValues(atoms, residueAtoms[residueIndices[1][0]]);
+    auto atomsA      = codeUtils::indicesToValues(atoms, residueAtoms[residueIndices[0][0]]);
+    auto atomsB      = codeUtils::indicesToValues(atoms, residueAtoms[residueIndices[1][0]]);
     auto residueBond = bondedAtomPair(atomsA, atomsB);
     auto bonds       = std::vector<cds::BondedResidueOverlapInput> {
         {{residueIndices[0][0], residueIndices[1][0]},

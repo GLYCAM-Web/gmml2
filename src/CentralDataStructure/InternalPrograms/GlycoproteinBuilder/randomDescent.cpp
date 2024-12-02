@@ -44,7 +44,7 @@ namespace glycoproteinBuilder
             const std::vector<cds::Sphere>& residueBounds  = mutableData.residueBounds;
             const std::vector<cds::Sphere>& moleculeBounds = mutableData.moleculeBounds;
             std::vector<double> residueWeights             = data.residues.overlapWeights;
-            cds::Sphere movingAtomBounds = cds::boundingSphere(codeUtils::indexValues(atomBounds, movingAtoms));
+            cds::Sphere movingAtomBounds = cds::boundingSphere(codeUtils::indicesToValues(atomBounds, movingAtoms));
             Coordinate pointA            = atomBounds[dihedral.atoms[1]].center;
             Coordinate pointB            = atomBounds[dihedral.atoms[2]].center;
             cds::Sphere movementBounds   = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);

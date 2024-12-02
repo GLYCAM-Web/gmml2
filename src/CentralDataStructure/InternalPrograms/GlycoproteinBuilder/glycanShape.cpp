@@ -23,7 +23,7 @@ namespace glycoproteinBuilder
     void updateResidueBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index)
     {
         mutableData.residueBounds[index] =
-            cds::boundingSphere(codeUtils::indexValues(mutableData.atomBounds, residueAtoms(graphs, index)));
+            cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graphs, index)));
     }
 
     void updateResidueMoleculeBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index)
@@ -36,7 +36,7 @@ namespace glycoproteinBuilder
     void updateMoleculeBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index)
     {
         mutableData.moleculeBounds[index] =
-            cds::boundingSphere(codeUtils::indexValues(mutableData.residueBounds, moleculeResidues(graphs, index)));
+            cds::boundingSphere(codeUtils::indicesToValues(mutableData.residueBounds, moleculeResidues(graphs, index)));
     }
 
     void updateGlycanBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t glycanId)
@@ -89,7 +89,7 @@ namespace glycoproteinBuilder
         for (size_t n : residueIds)
         {
             mutableData.residueBounds[n] =
-                cds::boundingSphere(codeUtils::indexValues(mutableData.atomBounds, residueAtoms(graphs, n)));
+                cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graphs, n)));
         }
 
         mutableData.currentDihedralShape[dihedralId] = target;

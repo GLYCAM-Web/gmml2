@@ -378,7 +378,7 @@ namespace glycoproteinBuilder
             result.reserve(moleculeResidues.size());
             for (auto& indices : moleculeResidues)
             {
-                result.push_back(cds::residueTER(codeUtils::indexValues(data.residues.types, indices)));
+                result.push_back(cds::residueTER(codeUtils::indicesToValues(data.residues.types, indices)));
             }
             return result;
         };
@@ -439,7 +439,7 @@ namespace glycoproteinBuilder
             prefix << count << "_glycoprotein";
             std::vector<bool> currentMolecules = includedMolecules(mutableData.glycanIncluded);
             std::vector<std::vector<size_t>> currentMoleculeResidues =
-                codeUtils::maskValues(graphs.molecules.nodes.elements, currentMolecules);
+                codeUtils::boolsToValues(graphs.molecules.nodes.elements, currentMolecules);
             writePdbFile(graphs, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          currentMoleculeResidues, residueTER(currentMoleculeResidues),
                          atomPairsConnectingNonProteinResidues, outputDir + prefix.str());

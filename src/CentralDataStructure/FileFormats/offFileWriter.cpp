@@ -88,7 +88,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     // WriteConnectivitySection
     stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags"
            << "\n";
-    std::vector<bool> residueIncluded = codeUtils::indexMask(residues.names.size(), residueIndices);
+    std::vector<bool> residueIncluded = codeUtils::indicesToBools(residues.names.size(), residueIndices);
     for (auto& bond : atoms.bonds)
     {
         if (residueIncluded[atoms.residues[bond.first]])
