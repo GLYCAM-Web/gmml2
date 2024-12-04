@@ -98,6 +98,7 @@ namespace glycoproteinBuilder
         std::vector<std::vector<GlycamMetadata::DihedralAngleDataVector>> linkageMetadata;
         std::vector<std::vector<cds::BondedResidueOverlapInput>> linkageOverlapBonds;
         std::vector<bool> linkageBranching;
+        std::vector<bool> isGlycositeLinkage;
         std::vector<GlycanIndices> glycositeIndices;
         for (size_t n = 0; n < glycosites.size(); n++)
         {
@@ -106,8 +107,10 @@ namespace glycoproteinBuilder
                 codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycosites[n].GetGlycan()));
             const std::vector<cds::ResidueLinkage>& linkages = glycosidicLinkages[n];
             std::vector<size_t> linkageIds = codeUtils::indexVectorWithOffset(residueLinkages.size(), linkages);
-            for (auto& linkage : linkages)
+            for (size_t k = 0; k < linkages.size(); k++)
             {
+                isGlycositeLinkage.push_back(k == 0);
+                const cds::ResidueLinkage& linkage                          = linkages[k];
                 const std::vector<cds::RotatableDihedral>& linkageDihedrals = linkage.rotatableDihedrals;
                 std::vector<size_t> dihedralIndices =
                     codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
@@ -184,7 +187,7 @@ namespace glycoproteinBuilder
 
         MoleculeData moleculeData {moleculeTypes};
         ResidueLinkagedata residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds,
-                                               linkageBranching};
+                                               linkageBranching, isGlycositeLinkage};
 
         AssemblyData data {atomData, residueData, moleculeData, residueLinkageData};
 

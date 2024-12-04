@@ -55,6 +55,7 @@ namespace glycoproteinBuilder
         std::vector<std::vector<GlycamMetadata::DihedralAngleDataVector>> metadata;
         std::vector<std::vector<cds::BondedResidueOverlapInput>> overlapBonds;
         std::vector<bool> branching;
+        std::vector<bool> isGlycositeLinkage;
     };
 
     struct AssemblyData

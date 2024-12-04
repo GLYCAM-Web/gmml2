@@ -22,8 +22,8 @@ namespace glycoproteinBuilder
         std::vector<cds::ResidueLinkageShapePreference> result;
         for (size_t n = 0; n < glycan.linkages.size(); n++)
         {
-            size_t linkageId    = glycan.linkages[n];
-            bool isFirstLinkage = n == 0;
+            size_t linkageId        = glycan.linkages[n];
+            bool isGlycositeLinkage = data.residueLinkageData.isGlycositeLinkage[linkageId];
             std::vector<std::vector<double>> angles;
             auto& linkageMetadata = data.residueLinkageData.metadata[linkageId];
             angles.resize(linkageMetadata.size());
@@ -41,7 +41,7 @@ namespace glycoproteinBuilder
                 auto order                         = randomMetadata(rng, linkageMetadata[0]);
                 auto isFrozen                      = std::vector<bool>(rotatableDihedrals.size(), false);
                 cds::ConformerShapePreference pref = {isFrozen, angles, order};
-                if (isFirstLinkage && freezeGlycositeResidueConformation)
+                if (isGlycositeLinkage && freezeGlycositeResidueConformation)
                 {
                     for (size_t n = 0; n < rotatableDihedrals.size(); n++)
                     {
