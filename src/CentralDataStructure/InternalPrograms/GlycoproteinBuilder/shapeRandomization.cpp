@@ -47,10 +47,10 @@ namespace glycoproteinBuilder
             }
             if (data.residueLinkageData.rotamerTypes[linkageId] == GlycamMetadata::RotamerType::conformer)
             {
-                size_t firstDihedralId             = rotatableDihedrals[0];
-                auto order                         = randomMetadata(rng, dihedralMetadata[firstDihedralId]);
-                auto isFrozen                      = std::vector<bool>(rotatableDihedrals.size(), false);
-                cds::ConformerShapePreference pref = {isFrozen, angles, order};
+                size_t firstDihedralId    = rotatableDihedrals[0];
+                std::vector<size_t> order = randomMetadata(rng, dihedralMetadata[firstDihedralId]);
+                std::vector<bool> isFrozen(rotatableDihedrals.size(), false);
+                cds::ConformerShapePreference pref {isFrozen, angles, order};
                 if (isGlycositeLinkage && freezeGlycositeResidueConformation)
                 {
                     for (size_t n = 0; n < rotatableDihedrals.size(); n++)
