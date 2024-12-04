@@ -12,7 +12,6 @@ namespace glycoproteinBuilder
     cds::OffFileData toOffFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates)
     {
-        size_t atomCount = graphs.indices.atomCount;
         std::vector<std::pair<size_t, size_t>> bonds;
         bonds.reserve(graphs.atoms.edges.nodeAdjacencies.size());
         for (auto& adj : graphs.atoms.edges.nodeAdjacencies)
