@@ -116,9 +116,9 @@ namespace glycoproteinBuilder
                 for (auto& dihedral : linkageDihedrals)
                 {
                     std::array<size_t, 4> dihedralAtoms;
-                    for (size_t n = 0; n < 4; n++)
+                    for (size_t i = 0; i < 4; i++)
                     {
-                        dihedralAtoms[n] = codeUtils::indexOf(atoms, dihedral.atoms[n]);
+                        dihedralAtoms[i] = codeUtils::indexOf(atoms, dihedral.atoms[i]);
                     }
                     rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
                 }
