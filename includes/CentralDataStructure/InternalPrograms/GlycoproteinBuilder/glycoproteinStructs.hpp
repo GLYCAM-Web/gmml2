@@ -49,10 +49,14 @@ namespace glycoproteinBuilder
         std::vector<MoleculeType> types;
     };
 
+    struct RotatableDihedralData
+    {
+        std::vector<GlycamMetadata::DihedralAngleDataVector> metadata;
+    };
+
     struct ResidueLinkageData
     {
         std::vector<GlycamMetadata::RotamerType> rotamerTypes;
-        std::vector<std::vector<GlycamMetadata::DihedralAngleDataVector>> metadata;
         std::vector<std::vector<cds::BondedResidueOverlapInput>> overlapBonds;
         std::vector<bool> branching;
         std::vector<bool> isGlycositeLinkage;
@@ -63,6 +67,7 @@ namespace glycoproteinBuilder
         AtomData atoms;
         ResidueData residues;
         MoleculeData molecules;
+        RotatableDihedralData rotatableDihedralData;
         ResidueLinkageData residueLinkageData;
     };
 

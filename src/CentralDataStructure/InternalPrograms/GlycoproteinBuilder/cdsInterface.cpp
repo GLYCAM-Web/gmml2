@@ -95,7 +95,7 @@ namespace glycoproteinBuilder
         std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
         std::vector<ResidueLinkageIndices> residueLinkages;
         std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
-        std::vector<std::vector<GlycamMetadata::DihedralAngleDataVector>> linkageMetadata;
+        std::vector<GlycamMetadata::DihedralAngleDataVector> dihedralMetadata;
         std::vector<std::vector<cds::BondedResidueOverlapInput>> linkageOverlapBonds;
         std::vector<bool> linkageBranching;
         std::vector<bool> isGlycositeLinkage;
@@ -116,14 +116,16 @@ namespace glycoproteinBuilder
                     codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
                 codeUtils::insertInto(rotatableDihedralCurrentShape,
                                       cds::currentShape(linkage.rotatableDihedrals, linkage.dihedralMetadata));
-                for (auto& dihedral : linkageDihedrals)
+                for (size_t q = 0; q < linkageDihedrals.size(); q++)
                 {
+                    const cds::RotatableDihedral& dihedral = linkageDihedrals[q];
                     std::array<size_t, 4> dihedralAtoms;
                     for (size_t i = 0; i < 4; i++)
                     {
                         dihedralAtoms[i] = codeUtils::indexOf(atoms, dihedral.atoms[i]);
                     }
                     rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
+                    dihedralMetadata.push_back(linkage.dihedralMetadata[q]);
                 }
                 auto onlyThisMolecule = [&](const std::vector<size_t>& indices)
                 {
@@ -157,7 +159,6 @@ namespace glycoproteinBuilder
 
                 residueLinkages.push_back({edgeId, dihedralIndices, bondedAtoms, nonReducing, reducing});
                 linkageRotamerTypes.push_back(linkage.rotamerType);
-                linkageMetadata.push_back(linkage.dihedralMetadata);
                 linkageOverlapBonds.push_back({
                     {residueIds, bondedAtoms}
                 });
@@ -186,10 +187,11 @@ namespace glycoproteinBuilder
             boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
 
         MoleculeData moleculeData {moleculeTypes};
-        ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds,
-                                               linkageBranching, isGlycositeLinkage};
+        RotatableDihedralData rotatableDihedralData {dihedralMetadata};
+        ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageOverlapBonds, linkageBranching,
+                                               isGlycositeLinkage};
 
-        AssemblyData data {atomData, residueData, moleculeData, residueLinkageData};
+        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData};
 
         std::vector<size_t> proteinMolecules;
         for (size_t n = 0; n < moleculeTypes.size(); n++)

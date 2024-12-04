@@ -90,8 +90,8 @@ namespace glycoproteinBuilder
                                       const OverlapWeight& weight,
                                       const cds::PermutationShapePreference& shapePreference)
         {
-            const std::vector<size_t>& dihedrals       = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
-            const cds::DihedralAngleMetadata& metadata = data.residueLinkageData.metadata[linkageId];
+            const std::vector<size_t>& dihedrals = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
+            const std::vector<cds::DihedralAngleDataVector>& dihedralMetadata = data.rotatableDihedralData.metadata;
             //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
             //  rotatable bond in Asn outwards
             for (size_t rn = 0; rn < dihedrals.size(); rn++)
@@ -110,10 +110,9 @@ namespace glycoproteinBuilder
                                                  graphs.residues.nodes.elements,
                                                  partial.residueIndices,
                                                  data.residueLinkageData.overlapBonds[linkageId]};
-                const GlycamMetadata::DihedralAngleDataVector& metadataVector = metadata[n];
-                cds::AngleOverlap best =
-                    cds::wiggleUsingRotamers(settings.angles, coordinates, codeUtils::indexVector(metadataVector),
-                                             metadataVector, preference, input);
+                const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
+                cds::AngleOverlap best                                  = cds::wiggleUsingRotamers(
+                    settings.angles, coordinates, codeUtils::indexVector(metadata), metadata, preference, input);
                 setDihedralAngle(graphs, mutableData, linkageId, dihedralId, best.angle);
             }
         }
@@ -122,16 +121,16 @@ namespace glycoproteinBuilder
                                     size_t glycanId, size_t linkageId, const cds::AngleSearchSettings& settings,
                                     const OverlapWeight& weight, const cds::ConformerShapePreference& shapePreference)
         {
-            const std::vector<size_t>& dihedrals       = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
-            const cds::DihedralAngleMetadata& metadata = data.residueLinkageData.metadata[linkageId];
-            size_t numberOfMetadata                    = shapePreference.metadataOrder.size();
-            const std::vector<std::vector<double>>& preferenceAngles = shapePreference.angles;
-            const std::vector<bool>& isFrozen                        = shapePreference.isFrozen;
+            const std::vector<size_t>& dihedrals = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
+            const std::vector<cds::DihedralAngleDataVector>& dihedralMetadata = data.rotatableDihedralData.metadata;
+            size_t numberOfMetadata                                           = shapePreference.metadataOrder.size();
+            const std::vector<std::vector<double>>& preferenceAngles          = shapePreference.angles;
+            const std::vector<bool>& isFrozen                                 = shapePreference.isFrozen;
             std::vector<std::vector<cds::AngleWithMetadata>> results;
             results.resize(numberOfMetadata);
             std::vector<cds::AngleOverlap> bestOverlaps;
             bestOverlaps.resize(numberOfMetadata);
-            std::vector<size_t> index = codeUtils::indexVector(metadata[0]);
+            std::vector<size_t> index = codeUtils::indexVector(dihedralMetadata[dihedrals[0]]);
             for (size_t k = 0; k < numberOfMetadata; k++)
             {
                 results[k].resize(dihedrals.size());
@@ -157,10 +156,10 @@ namespace glycoproteinBuilder
                                                      graphs.residues.nodes.elements,
                                                      partial.residueIndices,
                                                      data.residueLinkageData.overlapBonds[linkageId]};
-                    cds::AngleOverlap best =
-                        cds::wiggleUsingRotamers(settings.angles, coordinates, index, metadata[n], preference, input);
-                    results[k][n]   = best.angle;
-                    bestOverlaps[k] = best;
+                    cds::AngleOverlap best = cds::wiggleUsingRotamers(settings.angles, coordinates, index,
+                                                                      dihedralMetadata[dihedralId], preference, input);
+                    results[k][n]          = best.angle;
+                    bestOverlaps[k]        = best;
                     setDihedralAngle(graphs, mutableData, linkageId, dihedralId, best.angle);
                 }
             }
