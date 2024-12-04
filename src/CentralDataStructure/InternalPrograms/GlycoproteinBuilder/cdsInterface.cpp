@@ -104,11 +104,11 @@ namespace glycoproteinBuilder
             size_t site = codeUtils::indexOf(residues, glycosites[n].GetResidue());
             size_t moleculeIndex =
                 codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycosites[n].GetGlycan()));
-            auto& linkages                 = glycosidicLinkages[n];
+            const std::vector<cds::ResidueLinkage>& linkages = glycosidicLinkages[n];
             std::vector<size_t> linkageIds = codeUtils::indexVectorWithOffset(residueLinkages.size(), linkages);
             for (auto& linkage : linkages)
             {
-                auto& linkageDihedrals = linkage.rotatableDihedrals;
+                const std::vector<cds::RotatableDihedral>& linkageDihedrals = linkage.rotatableDihedrals;
                 std::vector<size_t> dihedralIndices =
                     codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
                 codeUtils::insertInto(rotatableDihedralCurrentShape,
