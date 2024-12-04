@@ -8,6 +8,14 @@
 #include <functional>
 #include <vector>
 
+namespace
+{
+    bool isChiAngle(const std::string& str)
+    {
+        return (str == "Chi1") || (str == "Chi2");
+    }
+} // namespace
+
 namespace glycoproteinBuilder
 {
     std::vector<cds::ResidueLinkageShapePreference> randomLinkageShapePreference(
@@ -48,8 +56,7 @@ namespace glycoproteinBuilder
                     for (size_t n = 0; n < rotatableDihedrals.size(); n++)
                     {
                         size_t dihedralId = rotatableDihedrals[n];
-                        auto& name        = data.rotatableDihedralData.metadata[dihedralId][0].dihedral_angle_name_;
-                        if ((name == "Chi1") || (name == "Chi2"))
+                        if (isChiAngle(dihedralMetadata[dihedralId][0].dihedral_angle_name_))
                         {
                             pref.isFrozen[n] = true;
                             size_t metadata  = mutableData.currentDihedralShape[dihedralId].metadataIndex;
