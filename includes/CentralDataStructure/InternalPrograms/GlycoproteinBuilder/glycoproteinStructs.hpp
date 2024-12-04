@@ -49,7 +49,7 @@ namespace glycoproteinBuilder
         std::vector<MoleculeType> types;
     };
 
-    struct ResidueLinkagedata
+    struct ResidueLinkageData
     {
         std::vector<GlycamMetadata::RotamerType> rotamerTypes;
         std::vector<std::vector<GlycamMetadata::DihedralAngleDataVector>> metadata;
@@ -63,7 +63,7 @@ namespace glycoproteinBuilder
         AtomData atoms;
         ResidueData residues;
         MoleculeData molecules;
-        ResidueLinkagedata residueLinkageData;
+        ResidueLinkageData residueLinkageData;
     };
 
     struct RotatableDihedralIndices

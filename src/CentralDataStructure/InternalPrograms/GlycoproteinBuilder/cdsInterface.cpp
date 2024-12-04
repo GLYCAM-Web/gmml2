@@ -186,7 +186,7 @@ namespace glycoproteinBuilder
             boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
 
         MoleculeData moleculeData {moleculeTypes};
-        ResidueLinkagedata residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds,
+        ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageMetadata, linkageOverlapBonds,
                                                linkageBranching, isGlycositeLinkage};
 
         AssemblyData data {atomData, residueData, moleculeData, residueLinkageData};
