@@ -3,6 +3,7 @@
 #include "includes/CodeUtils/strings.hpp"
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <stdexcept>
 
@@ -10,7 +11,8 @@ namespace codeUtils
 {
     Arguments readArguments(int argc, char* argv[])
     {
-        std::vector<std::string> arguments(argv + 1, argv + argc);
+        std::vector<std::string> arguments(argv, argv + argc);
+        std::string programName = arguments[0];
 
         std::vector<std::string> unnamed;
         std::vector<std::string> optionNames;
@@ -18,8 +20,9 @@ namespace codeUtils
         std::vector<bool> optionHasValue;
         std::vector<std::string> errors;
 
-        for (auto& arg : arguments)
+        for (size_t n = 1; n < arguments.size(); n++)
         {
+            const std::string& arg = arguments[n];
             if (startsWith(arg, "--"))
             {
                 std::vector<std::string> nameValue = split(arg, '=');
@@ -50,7 +53,7 @@ namespace codeUtils
                 unnamed.push_back(arg);
             }
         }
-        return {unnamed, optionNames, optionValues, optionHasValue};
+        return {programName, unnamed, optionNames, optionValues, optionHasValue};
     }
 
     void validateArgumentCount(const Arguments& arguments, const std::vector<ArgDef>& defs)
@@ -121,5 +124,55 @@ namespace codeUtils
                 throw std::runtime_error("unknown argument " + names[n]);
             }
         }
+    }
+
+    std::string helpString(const std::string& programName, const std::vector<ArgDef>& defs)
+    {
+        std::pair<std::string, std::string> emptyBrace {"", ""};
+        std::pair<std::string, std::string> brackets {"[", "]"};
+        auto braceType = [&](ArgReq req)
+        {
+            switch (req)
+            {
+                case ArgReq::optional:
+                    return brackets;
+                case ArgReq::required:
+                    return emptyBrace;
+            }
+        };
+        std::string initial = "usage: " + programName + " ";
+        std::string indent(initial.size(), ' ');
+        size_t widthLimit = 60;
+        std::ostringstream ss;
+        ss << initial;
+        size_t accum = 0;
+        for (auto& def : defs)
+        {
+            if (def.type != ArgType::unnamed)
+            {
+                const std::pair<std::string, std::string>& brace = braceType(def.requirement);
+                std::string str                                  = brace.first + def.name +
+                                  (def.type == ArgType::option ? ("=" + def.defaultValue) : "") + brace.second;
+                ss << str << " ";
+                accum += str.size() + 1;
+                if (accum >= widthLimit)
+                {
+                    ss << "\n" << indent;
+                    accum = 0;
+                }
+            }
+        }
+        ss << "\n" << indent;
+        for (auto& def : defs)
+        {
+            if (def.type == ArgType::unnamed)
+            {
+                const std::pair<std::string, std::string>& brace = braceType(def.requirement);
+                std::string str                                  = brace.first + def.name + brace.second;
+                ss << str << " ";
+            }
+        }
+        ss << "\n";
+        return ss.str();
     }
 } // namespace codeUtils
