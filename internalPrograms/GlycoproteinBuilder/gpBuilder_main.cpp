@@ -2,22 +2,28 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 #include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 
 #include <string>
 #include <iostream>
+#include <optional>
+#include <stdexcept>
 
 int main(int argc, char* argv[])
 {
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
+    int numThreads                                     = 1;
+    std::string threadOption                           = "--num-threads";
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
-        {ArgReq::required, ArgType::unnamed,       "input-file", ""},
-        {ArgReq::optional, ArgType::unnamed, "output-directory", ""},
-        {ArgReq::optional,    ArgType::flag,           "--help", ""},
-        {ArgReq::optional,    ArgType::flag,        "--version", ""}
+        {ArgReq::required, ArgType::unnamed,       "input-file",                         ""},
+        {ArgReq::optional, ArgType::unnamed, "output-directory",                         ""},
+        {ArgReq::optional,    ArgType::flag,           "--help",                         ""},
+        {ArgReq::optional,    ArgType::flag,        "--version",                         ""},
+        {ArgReq::optional,  ArgType::option,       threadOption, std::to_string(numThreads)}
     };
     codeUtils::Arguments arguments;
     try
@@ -60,12 +66,25 @@ int main(int argc, char* argv[])
             std::exit(EXIT_FAILURE);
         }
         outputDir = outputDir + "/";
+        if (codeUtils::contains(arguments.names, threadOption))
+        {
+            size_t index           = codeUtils::indexOf(arguments.names, threadOption);
+            const std::string& str = arguments.values[index];
+            std::optional<int> opt = codeUtils::parseInt(str);
+            if (!opt.has_value() || opt.value() <= 0)
+            {
+                throw std::runtime_error(str + " is not a valid value for " + threadOption +
+                                         ", must be a positive integer\n");
+            }
+            numThreads = opt.value();
+            std::cout << "Number of threads set to " << numThreads << std::endl;
+        }
         std::cout << "Input file is " << inputFile << "\n";
         glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct = glycoproteinBuilder::readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
         glycoproteinBuilder::GlycoproteinBuilder glycoproteinBuilder(inputStruct);
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder.ResolveOverlaps(outputDir);
+        glycoproteinBuilder.ResolveOverlaps(outputDir, numThreads);
     }
     catch (const std::runtime_error& error)
     {

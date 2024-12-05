@@ -24,7 +24,7 @@ namespace glycoproteinBuilder
             return glycoprotein_;
         }
 
-        void ResolveOverlaps(std::string outputDir);
+        void ResolveOverlaps(std::string outputDir, int numThreads);
 
       private:
         pdb::PdbFile pdbFile;

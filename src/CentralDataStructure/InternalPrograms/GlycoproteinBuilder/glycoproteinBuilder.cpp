@@ -161,7 +161,7 @@ namespace glycoproteinBuilder
         return;
     }
 
-    void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir)
+    void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir, int numThreads)
     {
         double selfWeight           = 1000000.0;
         double proteinWeight        = 1000.0;
@@ -448,6 +448,7 @@ namespace glycoproteinBuilder
             rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
         }
 
+        omp_set_num_threads(numThreads);
 // clang format doesn't align pragmas
 /*    */#pragma omp parallel for
         for (size_t count = 0; count < totalStructures; count++)
