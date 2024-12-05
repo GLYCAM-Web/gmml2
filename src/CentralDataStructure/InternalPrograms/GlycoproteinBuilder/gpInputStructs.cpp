@@ -3,9 +3,12 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 
 #include <vector>
 #include <string>
+#include <optional>
+#include <stdexcept>
 
 namespace glycoproteinBuilder
 {
@@ -34,35 +37,21 @@ namespace glycoproteinBuilder
             };
             auto parseUlong = [&](const std::string& str)
             {
-                if (!std::all_of(str.begin(), str.end(), ::isdigit))
+                std::optional<ulong> opt = codeUtils::parseUlong(str);
+                if (!opt.has_value())
                 {
                     throwError("'" + str + "' is not a valid non-negative integer");
                 }
-                try
-                {
-                    return std::stoul(str);
-                }
-                catch (...)
-                {
-                    throwError("'" + str + "' is not a valid non-negative integer");
-                }
-                return ulong(0);
+                return opt.value();
             };
             auto parseBool = [&](const std::string& str)
             {
-                if (str == "true")
-                {
-                    return true;
-                }
-                else if (str == "false")
-                {
-                    return false;
-                }
-                else
+                std::optional<bool> opt = codeUtils::parseBool(str);
+                if (!opt.has_value())
                 {
                     throwError("'" + str + "' expected to be 'true' or 'false'");
                 }
-                return false;
+                return opt.value();
             };
             const std::string line = codeUtils::trimmedOfWhitespace(original);
             if (!line.empty())
