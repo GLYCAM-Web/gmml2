@@ -132,13 +132,7 @@ namespace codeUtils
         std::pair<std::string, std::string> brackets {"[", "]"};
         auto braceType = [&](ArgReq req)
         {
-            switch (req)
-            {
-                case ArgReq::optional:
-                    return brackets;
-                case ArgReq::required:
-                    return emptyBrace;
-            }
+            return (req == ArgReq::optional) ? brackets : emptyBrace;
         };
         std::string initial = "usage: " + programName + " ";
         std::string indent(initial.size(), ' ');
