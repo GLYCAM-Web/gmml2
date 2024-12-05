@@ -1,5 +1,8 @@
+#include "includes/CodeUtils/arguments.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 
@@ -8,16 +11,48 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc < 2)
-    {
-        std::cout << "Usage: " << argv[0] << " inputFile outputDirectory\n";
-        std::cout << "Exmpl: " << argv[0] << " input.txt output\n";
-        std::exit(1);
-    }
+    using codeUtils::ArgReq;
+    using codeUtils::ArgType;
+    std::vector<codeUtils::ArgDef> argumentDefinitions = {
+        {ArgReq::required, ArgType::unnamed,       "input-file", ""},
+        {ArgReq::optional, ArgType::unnamed, "output-directory", ""},
+        {ArgReq::optional,    ArgType::flag,           "--help", ""},
+        {ArgReq::optional,    ArgType::flag,        "--version", ""}
+    };
+    codeUtils::Arguments arguments;
     try
     {
-        std::string inputFile = argv[1];
-        std::string outputDir = (argc >= 3) ? argv[2] : ".";
+        arguments = codeUtils::readArguments(argc, argv);
+        codeUtils::validateFlagsAndOptions(arguments, argumentDefinitions);
+        std::string helpFlag = "--help";
+        if (codeUtils::contains(arguments.names, helpFlag))
+        {
+            std::cout << codeUtils::helpString(arguments.programName, argumentDefinitions);
+            std::cout << "\n"
+                      << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
+            std::exit(0);
+        }
+        std::string versionFlag = "--version";
+        if (codeUtils::contains(arguments.names, versionFlag))
+        {
+            std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
+            std::exit(0);
+        }
+        codeUtils::validateArgumentCount(arguments, argumentDefinitions);
+    }
+    catch (const std::runtime_error& error)
+    {
+        std::cout << "error in program arguments\n";
+        std::cout << error.what() << "\n";
+        std::cout << "\n";
+        std::cout << codeUtils::helpString(arguments.programName, argumentDefinitions);
+        std::exit(1);
+    }
+
+    try
+    {
+        std::string inputFile = arguments.unnamed[0];
+        std::string outputDir = arguments.unnamed.size() > 1 ? arguments.unnamed[1] : ".";
         struct stat info;
         if (stat(outputDir.c_str(), &info) != 0)
         {
