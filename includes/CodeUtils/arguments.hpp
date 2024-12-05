@@ -6,13 +6,36 @@
 
 namespace codeUtils
 {
+    enum class ArgType
+    {
+        unnamed,
+        flag,
+        option
+    };
+    enum class ArgReq
+    {
+        optional,
+        required
+    };
+
+    struct ArgDef
+    {
+        ArgReq requirement;
+        ArgType type;
+        std::string name         = "";
+        std::string defaultValue = "";
+    };
+
     struct Arguments
     {
         std::vector<std::string> unnamed;
-        std::vector<std::string> flags;
-        std::vector<std::pair<std::string, std::string>> options;
+        std::vector<std::string> names;
+        std::vector<std::string> values;
+        std::vector<bool> hasValue;
     };
 
     Arguments readArguments(int argc, char* argv[]);
+    void validateArgumentCount(const Arguments& arguments, const std::vector<ArgDef>& defs);
+    void validateFlagsAndOptions(const Arguments& arguments, const std::vector<ArgDef>& defs);
 } // namespace codeUtils
 #endif
