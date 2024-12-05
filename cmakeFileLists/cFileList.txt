@@ -73,6 +73,7 @@
 ./src/CentralDataStructure/cdsFunctions/graphInterface.cpp
 ./src/CentralDataStructure/molecule.cpp
 ./src/CentralDataStructure/residue.cpp
+./src/CodeUtils/arguments.cpp
 ./src/CodeUtils/containers.cpp
 ./src/CodeUtils/directories.cpp
 ./src/CodeUtils/files.cpp
