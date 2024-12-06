@@ -39,6 +39,7 @@ In order to build GMML2, you are required to have the following software availab
 
 * `cmake` (Version >= `3.13.4`)
 * `g++` (Version >= `7.0`)
+* `openmp`
 * `make`
 * `git`
 * `libeigen3-dev` (Version >= `3.3.7`)
@@ -47,7 +48,7 @@ Installation instructions will vary according to what package manager your distr
 
 ```bash
 sudo apt-get update &&\
-sudo apt-get install git git-all cmake g++ libeigen3-dev
+sudo apt-get install git git-all cmake g++ libgomp1 libeigen3-dev
 ```
 For other linux distros, please follow the instructions for the package managment software included with your system.
 
@@ -220,6 +221,14 @@ The `cmakeFileLists` directory contains the ouput from our `./updateCmakeFileLis
 * `cFileList.txt` - this contains all of our cpp files and where they be
 
 * `hDirectoryList.txt` - this contains all of the directories that OUR source headers are. In the compiler this gets passed `-I` flag
+
+### Clang
+
+GMML2 uses GCC per default, but will also compile with Clang if you wish to use associated tools. To do so, openmp will have to be installed for Clang aswell. Using apt, this can be done as follows
+```bash
+sudo apt-get update &&\
+sudo apt-get install libomp-dev
+```
 
 ---
 ## Coding Standards
