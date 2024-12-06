@@ -201,9 +201,18 @@ namespace
                 cds::CountOverlappingAtoms(atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
                                            input.bonds, fixedResidueIndices, movingResidueIndices);
 
-            results.push_back({
+            cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
-            });
+            };
+            if (overlaps.count <= 0.0)
+            {
+                // requires that the angles are sorted in order of closest to preference
+                return current;
+            }
+            else
+            {
+                results.push_back(current);
+            }
         }
         return bestOverlapResult(results);
     }
@@ -338,6 +347,7 @@ std::vector<double> cds::evenlySpacedAngles(double preference, double lowerDevia
     auto upperRange            = evenlySpaced(preference + upperDeviation, preference, increment);
     std::vector<double> result = codeUtils::vectorAppend(lowerRange, upperRange);
     result.push_back(preference);
+    // sorted angles enable early return from angle search when 0 overlaps found
     std::sort(result.begin(), result.end(), closerToPreference);
     return result;
 }
