@@ -22,9 +22,9 @@ namespace codeUtils
     {
         ArgReq requirement;
         ArgType type;
-        std::string name         = "";
-        std::string defaultValue = "";
-        std::string help         = "";
+        std::string name        = "";
+        std::string nameOfValue = "";
+        std::string help        = "";
     };
 
     struct Arguments

@@ -146,7 +146,7 @@ namespace codeUtils
             {
                 const std::pair<std::string, std::string>& brace = braceType(def.requirement);
                 std::string str                                  = brace.first + def.name +
-                                  (def.type == ArgType::option ? ("=" + def.defaultValue) : "") + brace.second;
+                                  (def.type == ArgType::option ? ("=<" + def.nameOfValue + ">") : "") + brace.second;
                 ss << str << " ";
                 accum += str.size() + 1;
                 if (accum >= widthLimit)

@@ -19,11 +19,11 @@ int main(int argc, char* argv[])
     int numThreads                                     = 1;
     std::string threadOption                           = "--num-threads";
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
-        {ArgReq::required, ArgType::unnamed,       "input-file",                         ""},
-        {ArgReq::optional, ArgType::unnamed, "output-directory",                         ""},
-        {ArgReq::optional,    ArgType::flag,           "--help",                         ""},
-        {ArgReq::optional,    ArgType::flag,        "--version",                         ""},
-        {ArgReq::optional,  ArgType::option,       threadOption, std::to_string(numThreads)}
+        {ArgReq::required, ArgType::unnamed,       "input-file",      ""},
+        {ArgReq::optional, ArgType::unnamed, "output-directory",      ""},
+        {ArgReq::optional,    ArgType::flag,           "--help",      ""},
+        {ArgReq::optional,    ArgType::flag,        "--version",      ""},
+        {ArgReq::optional,  ArgType::option,       threadOption, "value"}
     };
     codeUtils::Arguments arguments;
     try
