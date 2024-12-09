@@ -2,6 +2,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
+#include <algorithm>
 #include <string>
 #include <sstream>
 #include <vector>
@@ -9,51 +10,126 @@
 
 namespace codeUtils
 {
-    Arguments readArguments(int argc, char* argv[])
+    std::string programName(char* argv[])
     {
-        std::vector<std::string> arguments(argv, argv + argc);
-        std::string programName = arguments[0];
+        std::vector<std::string> arguments(argv, argv + 1);
+        return arguments[0];
+    }
+
+    Arguments readArguments(int argc, char* argv[], const std::vector<ArgDef>& defs)
+    {
+        std::vector<std::string> arguments(argv + 1, argv + argc);
 
         std::vector<std::string> unnamed;
         std::vector<std::string> optionNames;
+        std::vector<int> optionIds;
         std::vector<std::string> optionValues;
-        std::vector<bool> optionHasValue;
-        std::vector<std::string> errors;
+        std::vector<bool> defFound(defs.size(), false);
+        std::vector<std::string> defFoundStr(defs.size(), "");
 
-        for (size_t n = 1; n < arguments.size(); n++)
+        auto addDef = [&](size_t index, const std::string& value, const std::string name)
+        {
+            if (defFound[index])
+            {
+                throw std::runtime_error("duplicate arguments: " + defFoundStr[index] + ", " + name);
+            }
+            defFound[index]    = true;
+            defFoundStr[index] = name;
+            optionNames.push_back(name);
+            optionIds.push_back(defs[index].id);
+            optionValues.push_back(value);
+        };
+
+        for (size_t n = 0; n < arguments.size(); n++)
         {
             const std::string& arg = arguments[n];
             if (startsWith(arg, "--"))
             {
-                std::vector<std::string> nameValue = split(arg, '=');
-                if (nameValue.size() == 1)
+                std::string name = arg.substr(2, arg.size() - 2);
+                auto hasName     = [&](const ArgDef& def)
                 {
-                    optionNames.push_back(nameValue[0]);
-                    optionValues.push_back("");
-                    optionHasValue.push_back(false);
+                    return def.longName == name;
+                };
+                auto it = std::find_if(defs.begin(), defs.end(), hasName);
+                if (it == defs.end())
+                {
+                    throw std::runtime_error("unknown argument " + arg);
                 }
-                else if (nameValue.size() == 2)
+                size_t index      = it - defs.begin();
+                const ArgDef& def = defs[index];
+                switch (def.type)
                 {
-                    optionNames.push_back(nameValue[0]);
-                    optionValues.push_back(nameValue[1]);
-                    optionHasValue.push_back(true);
-                }
-                else
-                {
-                    throw std::runtime_error("could not parse argument " + arg + "\n" +
-                                             "expected --name or --name=value");
+                    case ArgType::flag:
+                        {
+                            addDef(index, "", arg);
+                            break;
+                        }
+                    case ArgType::option:
+                        {
+                            n++;
+                            if (n >= arguments.size())
+                            {
+                                throw std::runtime_error("no value provided for argument " + arg);
+                            }
+                            addDef(index, arguments[n], arg);
+                            break;
+                        }
+                    default:
+                        throw std::runtime_error("erroneous argument type in " + arg + ". This is not a user error");
                 }
             }
             else if (startsWith(arg, "-"))
             {
-                throw std::runtime_error("could not parse argument " + arg + "\n" + "did you mean -" + arg);
+                std::string chars = arg.substr(1, arg.size() - 1);
+                for (size_t k = 0; k < chars.size(); k++)
+                {
+                    char c = chars[k];
+                    std::string dashArg {'-', c};
+                    auto hasName = [&](const ArgDef& def)
+                    {
+                        return def.shortName == c;
+                    };
+                    auto it = std::find_if(defs.begin(), defs.end(), hasName);
+                    if (it == defs.end())
+                    {
+                        throw std::runtime_error("unknown argument " + dashArg);
+                    }
+                    size_t index      = it - defs.begin();
+                    const ArgDef& def = defs[index];
+                    switch (def.type)
+                    {
+                        case ArgType::flag:
+                            {
+                                addDef(index, "", dashArg);
+                                break;
+                            }
+                        case ArgType::option:
+                            {
+                                if (chars.size() > 1)
+                                {
+                                    throw std::runtime_error("cannot group non-flag argument " + dashArg + " with -" +
+                                                             chars + "\ntry " + dashArg + " <" + def.nameOfValue + ">");
+                                }
+                                n++;
+                                if (n >= arguments.size())
+                                {
+                                    throw std::runtime_error("no value provided for argument " + dashArg);
+                                }
+                                addDef(index, arguments[n], dashArg);
+                                break;
+                            }
+                        default:
+                            throw std::runtime_error("erroneous argument type in " + dashArg +
+                                                     ". This is not a user error");
+                    }
+                }
             }
             else
             {
                 unnamed.push_back(arg);
             }
         }
-        return {programName, unnamed, optionNames, optionValues, optionHasValue};
+        return {unnamed, optionNames, optionIds, optionValues};
     }
 
     void validateArgumentCount(const Arguments& arguments, const std::vector<ArgDef>& defs)
@@ -79,53 +155,6 @@ namespace codeUtils
         }
     }
 
-    void validateFlagsAndOptions(const Arguments& arguments, const std::vector<ArgDef>& defs)
-    {
-        const std::vector<std::string>& names = arguments.names;
-        std::vector<bool> nameFound(names.size(), false);
-        for (auto& def : defs)
-        {
-            if (def.type != ArgType::unnamed)
-            {
-                bool required = def.requirement == ArgReq::required;
-                auto iter     = std::find(names.begin(), names.end(), def.name);
-                bool found    = iter != names.end();
-                if (required && !found)
-                {
-                    throw std::runtime_error("missing required argument " + def.name);
-                }
-                else if (found)
-                {
-                    size_t index = iter - names.begin();
-                    if (nameFound[index])
-                    {
-                        throw std::runtime_error("duplicate argument " + def.name);
-                    }
-                    bool hasValue = def.type == ArgType::option;
-                    if (arguments.hasValue[index] != hasValue)
-                    {
-                        if (hasValue)
-                        {
-                            throw std::runtime_error("value required for argument " + def.name);
-                        }
-                        else
-                        {
-                            throw std::runtime_error("no value expected for argument " + def.name);
-                        }
-                    }
-                    nameFound[index] = true;
-                }
-            }
-        }
-        for (size_t n = 0; n < nameFound.size(); n++)
-        {
-            if (!nameFound[n])
-            {
-                throw std::runtime_error("unknown argument " + names[n]);
-            }
-        }
-    }
-
     std::string helpString(const std::string& programName, const std::vector<ArgDef>& defs)
     {
         std::pair<std::string, std::string> emptyBrace {"", ""};
@@ -144,16 +173,21 @@ namespace codeUtils
         {
             if (def.type != ArgType::unnamed)
             {
-                const std::pair<std::string, std::string>& brace = braceType(def.requirement);
-                std::string str                                  = brace.first + def.name +
-                                  (def.type == ArgType::option ? ("=<" + def.nameOfValue + ">") : "") + brace.second;
-                ss << str << " ";
-                accum += str.size() + 1;
                 if (accum >= widthLimit)
                 {
                     ss << "\n" << indent;
                     accum = 0;
                 }
+                bool hasShortName     = def.shortName != ' ';
+                bool hasLongName      = def.longName != "";
+                std::string valueStr  = (def.type == ArgType::option ? (" <" + def.nameOfValue + ">") : "");
+                std::string shortStr  = hasShortName ? "-" + std::string {def.shortName} + valueStr : "";
+                std::string longStr   = hasLongName ? "--" + def.longName + valueStr : "";
+                std::string separator = (hasShortName && hasLongName ? " | " : "");
+                std::pair<std::string, std::string> brace = braceType(def.requirement);
+                std::string str                           = brace.first + shortStr + separator + longStr + brace.second;
+                ss << str << " ";
+                accum += str.size() + 1;
             }
         }
         ss << "\n" << indent;
@@ -161,8 +195,8 @@ namespace codeUtils
         {
             if (def.type == ArgType::unnamed)
             {
-                const std::pair<std::string, std::string>& brace = braceType(def.requirement);
-                std::string str                                  = brace.first + def.name + brace.second;
+                std::pair<std::string, std::string> brace = braceType(def.requirement);
+                std::string str                           = brace.first + def.nameOfValue + brace.second;
                 ss << str << " ";
             }
         }

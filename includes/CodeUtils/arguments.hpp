@@ -22,23 +22,24 @@ namespace codeUtils
     {
         ArgReq requirement;
         ArgType type;
-        std::string name        = "";
+        int id;
+        std::string longName    = "";
+        char shortName          = ' ';
         std::string nameOfValue = "";
         std::string help        = "";
     };
 
     struct Arguments
     {
-        std::string programName;
         std::vector<std::string> unnamed;
         std::vector<std::string> names;
+        std::vector<int> ids;
         std::vector<std::string> values;
-        std::vector<bool> hasValue;
     };
 
-    Arguments readArguments(int argc, char* argv[]);
+    std::string programName(char* argv[]);
+    Arguments readArguments(int argc, char* argv[], const std::vector<ArgDef>& defs);
     void validateArgumentCount(const Arguments& arguments, const std::vector<ArgDef>& defs);
-    void validateFlagsAndOptions(const Arguments& arguments, const std::vector<ArgDef>& defs);
     std::string helpString(const std::string& programName, const std::vector<ArgDef>& defs);
 } // namespace codeUtils
 #endif

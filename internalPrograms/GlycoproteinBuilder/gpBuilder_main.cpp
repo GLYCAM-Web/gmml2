@@ -14,35 +14,49 @@
 
 int main(int argc, char* argv[])
 {
+    enum ARGUMENTS
+    {
+        INPUT_FILE,
+        OUTPUT_DIR,
+        HELP,
+        VERSION,
+        NUM_THREADS
+    };
+
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
     int numThreads                                     = 1;
-    std::string threadOption                           = "--num-threads";
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
-        {ArgReq::required, ArgType::unnamed,       "input-file",      ""},
-        {ArgReq::optional, ArgType::unnamed, "output-directory",      ""},
-        {ArgReq::optional,    ArgType::flag,           "--help",      ""},
-        {ArgReq::optional,    ArgType::flag,        "--version",      ""},
-        {ArgReq::optional,  ArgType::option,       threadOption, "value"}
+        {ArgReq::required, ArgType::unnamed,  INPUT_FILE,            "", ' ',       "input-file"},
+        {ArgReq::optional, ArgType::unnamed,  OUTPUT_DIR,            "", ' ', "output-directory"},
+        {ArgReq::optional,    ArgType::flag,        HELP,        "help", 'h',                 ""},
+        {ArgReq::optional,    ArgType::flag,     VERSION,     "version", 'v',                 ""},
+        {ArgReq::optional,  ArgType::option, NUM_THREADS, "num-threads", 'p',            "value"}
     };
+    std::string programName = codeUtils::programName(argv);
     codeUtils::Arguments arguments;
     try
     {
-        arguments = codeUtils::readArguments(argc, argv);
-        codeUtils::validateFlagsAndOptions(arguments, argumentDefinitions);
-        std::string helpFlag = "--help";
-        if (codeUtils::contains(arguments.names, helpFlag))
+        arguments = codeUtils::readArguments(argc, argv, argumentDefinitions);
+        for (int id : arguments.ids)
         {
-            std::cout << codeUtils::helpString(arguments.programName, argumentDefinitions);
-            std::cout << "\n"
-                      << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
-            std::exit(0);
-        }
-        std::string versionFlag = "--version";
-        if (codeUtils::contains(arguments.names, versionFlag))
-        {
-            std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
-            std::exit(0);
+            switch (id)
+            {
+                case HELP:
+                    {
+                        std::cout << codeUtils::helpString(programName, argumentDefinitions);
+                        std::cout << "\n"
+                                  << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
+                        std::exit(0);
+                    }
+                case VERSION:
+                    {
+                        std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
+                        std::exit(0);
+                    }
+                default:
+                    break;
+            }
         }
         codeUtils::validateArgumentCount(arguments, argumentDefinitions);
     }
@@ -51,7 +65,7 @@ int main(int argc, char* argv[])
         std::cout << "error in program arguments\n";
         std::cout << error.what() << "\n";
         std::cout << "\n";
-        std::cout << codeUtils::helpString(arguments.programName, argumentDefinitions);
+        std::cout << codeUtils::helpString(programName, argumentDefinitions);
         std::exit(1);
     }
 
@@ -66,14 +80,14 @@ int main(int argc, char* argv[])
             std::exit(EXIT_FAILURE);
         }
         outputDir = outputDir + "/";
-        if (codeUtils::contains(arguments.names, threadOption))
+        if (codeUtils::contains<int>(arguments.ids, NUM_THREADS))
         {
-            size_t index           = codeUtils::indexOf(arguments.names, threadOption);
-            const std::string& str = arguments.values[index];
+            size_t k               = codeUtils::indexOf<int>(arguments.ids, NUM_THREADS);
+            const std::string& str = arguments.values[k];
             std::optional<int> opt = codeUtils::parseInt(str);
             if (!opt.has_value() || opt.value() <= 0)
             {
-                throw std::runtime_error(str + " is not a valid value for " + threadOption +
+                throw std::runtime_error(str + " is not a valid value for " + arguments.names[k] +
                                          ", must be a positive integer\n");
             }
             numThreads = opt.value();
