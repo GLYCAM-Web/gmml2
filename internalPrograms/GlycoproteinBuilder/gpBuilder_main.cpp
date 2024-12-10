@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
 
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
-    int numThreads                                     = 1;
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed,  INPUT_FILE,            "", ' ',       "input-file"},
         {ArgReq::optional, ArgType::unnamed,  OUTPUT_DIR,            "", ' ', "output-directory"},
@@ -63,27 +62,44 @@ int main(int argc, char* argv[])
 
     try
     {
-        std::string inputFile = arguments.unnamed[0];
-        std::string outputDir = arguments.unnamed.size() > 1 ? arguments.unnamed[1] : ".";
-        struct stat info;
-        if (stat(outputDir.c_str(), &info) != 0)
+        std::string inputFile = "";
+        std::string outputDir = ".";
+        int numThreads        = 1;
+        for (const auto& arg : arguments.args)
         {
-            std::cerr << "Folder " << outputDir << "/ does not exist and it isn't my job to make it.\n";
-            std::exit(EXIT_FAILURE);
-        }
-        outputDir = outputDir + "/";
-        if (codeUtils::contains<int>(arguments.ids, NUM_THREADS))
-        {
-            size_t k               = codeUtils::indexOf<int>(arguments.ids, NUM_THREADS);
-            const std::string& str = arguments.values[k];
-            std::optional<int> opt = codeUtils::parseInt(str);
-            if (!opt.has_value() || opt.value() <= 0)
+            switch (arg.id)
             {
-                throw std::runtime_error(str + " is not a valid value for " + arguments.names[k] +
-                                         ", must be a positive integer\n");
+                case ARGUMENTS::INPUT_FILE:
+                    {
+                        inputFile = arg.value;
+                        break;
+                    }
+                case ARGUMENTS::OUTPUT_DIR:
+                    {
+                        outputDir = arg.value;
+                        struct stat info;
+                        if (stat(outputDir.c_str(), &info) != 0)
+                        {
+                            std::cerr << "Folder " << outputDir << "/ does not exist and it isn't my job to make it.\n";
+                            std::exit(EXIT_FAILURE);
+                        }
+                        break;
+                    }
+                case ARGUMENTS::NUM_THREADS:
+                    {
+                        std::optional<int> opt = codeUtils::parseInt(arg.value);
+                        if (!opt.has_value() || opt.value() <= 0)
+                        {
+                            throw std::runtime_error(arg.value + " is not a valid value for " + arg.name +
+                                                     ", must be a positive integer\n");
+                        }
+                        numThreads = opt.value();
+                        std::cout << "Number of threads set to " << numThreads << std::endl;
+                        break;
+                    }
+                default:
+                    break;
             }
-            numThreads = opt.value();
-            std::cout << "Number of threads set to " << numThreads << std::endl;
         }
         std::cout << "Input file is " << inputFile << "\n";
         glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct = glycoproteinBuilder::readGPInputFile(inputFile);

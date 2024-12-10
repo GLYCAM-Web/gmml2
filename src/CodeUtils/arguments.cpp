@@ -35,9 +35,9 @@ namespace codeUtils
         std::vector<std::string> arguments(argv + 1, argv + argc);
 
         std::vector<std::string> unnamed;
-        std::vector<std::string> optionNames;
-        std::vector<int> optionIds;
-        std::vector<std::string> optionValues;
+        std::vector<int> argIds;
+        std::vector<std::string> argNames;
+        std::vector<std::string> argValues;
         std::vector<bool> defFound(defs.size(), false);
         std::vector<std::string> defFoundStr(defs.size(), "");
 
@@ -49,9 +49,9 @@ namespace codeUtils
             }
             defFound[index]    = true;
             defFoundStr[index] = name;
-            optionNames.push_back(name);
-            optionIds.push_back(defs[index].id);
-            optionValues.push_back(value);
+            argIds.push_back(defs[index].id);
+            argNames.push_back(name);
+            argValues.push_back(value);
         };
 
         for (size_t n = 0; n < arguments.size(); n++)
@@ -144,7 +144,30 @@ namespace codeUtils
                 unnamed.push_back(arg);
             }
         }
-        return {defFound, unnamed, optionNames, optionIds, optionValues};
+
+        // extract ids of unnamed args, or ignore if too many
+        // validate later to make sure to catch edge cases
+        auto isUnnamed = [](const ArgDef& def)
+        {
+            return def.type == ArgType::unnamed;
+        };
+        auto unnamedIt = std::find_if(defs.begin(), defs.end(), isUnnamed);
+        for (auto& value : unnamed)
+        {
+            if (unnamedIt != defs.end())
+            {
+                addDef(unnamedIt - defs.begin(), value, "");
+                unnamedIt = std::find_if(unnamedIt + 1, defs.end(), isUnnamed);
+            }
+        }
+
+        std::vector<Argument> result;
+        result.reserve(argIds.size());
+        for (size_t n = 0; n < argIds.size(); n++)
+        {
+            result.push_back({argIds[n], argNames[n], argValues[n]});
+        }
+        return {unnamed, defFound, argIds, result};
     }
 
     void validateRequiredArguments(const Arguments& arguments, const std::vector<ArgDef>& defs)

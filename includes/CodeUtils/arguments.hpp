@@ -29,13 +29,19 @@ namespace codeUtils
         std::string help        = "";
     };
 
+    struct Argument
+    {
+        int id;
+        std::string name;
+        std::string value;
+    };
+
     struct Arguments
     {
-        std::vector<bool> found;
         std::vector<std::string> unnamed;
-        std::vector<std::string> names;
+        std::vector<bool> found;
         std::vector<int> ids;
-        std::vector<std::string> values;
+        std::vector<Argument> args;
     };
 
     std::string programName(char* argv[]);
