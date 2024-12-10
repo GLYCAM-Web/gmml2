@@ -38,25 +38,17 @@ int main(int argc, char* argv[])
     try
     {
         arguments = codeUtils::readArguments(argc, argv, argumentDefinitions);
-        for (int id : arguments.ids)
+        if (codeUtils::contains<int>(arguments.ids, HELP))
         {
-            switch (id)
-            {
-                case HELP:
-                    {
-                        std::cout << codeUtils::helpString(programName, argumentDefinitions);
-                        std::cout << "\n"
-                                  << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
-                        std::exit(0);
-                    }
-                case VERSION:
-                    {
-                        std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
-                        std::exit(0);
-                    }
-                default:
-                    break;
-            }
+            std::cout << codeUtils::helpString(programName, argumentDefinitions);
+            std::cout << "\n"
+                      << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
+            std::exit(0);
+        }
+        if (codeUtils::contains<int>(arguments.ids, VERSION))
+        {
+            std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
+            std::exit(0);
         }
         codeUtils::validateArguments(arguments, argumentDefinitions);
     }
