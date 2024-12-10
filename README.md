@@ -11,9 +11,15 @@ Note that the GMML2 code was originally developed within GMML1. We then forked t
 
 [Compiling the Library](#compiling-the-library)
 
+[Using the Internal Programs](#using-the-internal-programs)
+
 [Testing the Library](#testing-the-library)
 
+[For Developers](#for-developers)
+
 [Coding Standards](#coding-standards)
+
+[Wrapping with SWIG and GEMS](#wrapping-with-swig-and-gems)
 
 ---
 ## Overview
@@ -81,7 +87,7 @@ You can either use the `libgmml2.so` file within the `lib` directory or the `lib
 Please enter `./make.sh -h` for help regarding the make script.
 
 ---
-## Using the Internal Programs:
+## Using the Internal Programs
 
 The GMML2 internal programs will be available in gmml2/bin/ after running the make.sh script
 
@@ -200,7 +206,8 @@ Exit Code: 1
 
 Note that test 016 will fail outside of the developer environment and that's ok. If any other tests fail then something is wrong.
 
-## Developers only (other users can ignore below here): 
+---
+## For Developers
 
 ### Contributing to GMML2
 
