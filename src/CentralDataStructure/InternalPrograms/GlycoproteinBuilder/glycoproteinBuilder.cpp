@@ -161,7 +161,8 @@ namespace glycoproteinBuilder
         return;
     }
 
-    void GlycoproteinBuilder::ResolveOverlaps(std::string outputDir, int numThreads)
+    void GlycoproteinBuilder::ResolveOverlaps(const std::string& outputDir, const std::vector<std::string>& headerLines,
+                                              int numThreads)
     {
         double selfWeight           = 1000000.0;
         double proteinWeight        = 1000.0;
@@ -302,15 +303,18 @@ namespace glycoproteinBuilder
             outFileStream.close();
         };
 
-        auto writePdbFile =
-            [&outputDir](const AssemblyGraphs& graphs, const AssemblyData& data,
-                         const std::vector<cds::Coordinate>& coordinates, const std::vector<int>& atomNumbers,
-                         const std::vector<int>& residueNumbers, const std::vector<std::vector<size_t>>& residueIndices,
-                         const std::vector<std::vector<bool>>& residueTER,
-                         const std::vector<std::pair<size_t, size_t>>& connectionIndices, const std::string& prefix)
+        auto writePdbFile = [&outputDir, &headerLines](const AssemblyGraphs& graphs, const AssemblyData& data,
+                                                       const std::vector<cds::Coordinate>& coordinates,
+                                                       const std::vector<int>& atomNumbers,
+                                                       const std::vector<int>& residueNumbers,
+                                                       const std::vector<std::vector<size_t>>& residueIndices,
+                                                       const std::vector<std::vector<bool>>& residueTER,
+                                                       const std::vector<std::pair<size_t, size_t>>& connectionIndices,
+                                                       const std::string& prefix)
         {
-            cds::PdbFileData pdbData = toPdbFileData(graphs, data, coordinates, atomNumbers, residueNumbers);
-            std::string fileName     = outputDir + "/" + prefix + ".pdb";
+            cds::PdbFileData pdbData =
+                toPdbFileData(graphs, data, coordinates, atomNumbers, residueNumbers, headerLines);
+            std::string fileName = outputDir + "/" + prefix + ".pdb";
             std::ofstream outFileStream;
             outFileStream.open(fileName.c_str());
             cds::writeAssemblyToPdb(outFileStream, residueIndices, residueTER, connectionIndices, pdbData);

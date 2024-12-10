@@ -11,6 +11,7 @@ namespace glycoproteinBuilder
                                    const std::vector<cds::Coordinate>& atomCoordinates);
     cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates,
-                                   const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers);
+                                   const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers,
+                                   const std::vector<std::string>& headerLines);
 } // namespace glycoproteinBuilder
 #endif

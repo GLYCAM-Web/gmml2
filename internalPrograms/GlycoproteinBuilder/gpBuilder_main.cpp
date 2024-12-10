@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
         OUTPUT_DIR,
         HELP,
         VERSION,
+        TEST_MODE,
         NUM_THREADS
     };
 
@@ -30,6 +31,7 @@ int main(int argc, char* argv[])
         {ArgReq::optional, ArgType::unnamed,  OUTPUT_DIR,            "", ' ', "output-directory"},
         {ArgReq::optional,    ArgType::flag,        HELP,        "help", 'h',                 ""},
         {ArgReq::optional,    ArgType::flag,     VERSION,     "version", 'v',                 ""},
+        {  ArgReq::hidden,    ArgType::flag,   TEST_MODE,   "test-mode", ' ',                 ""},
         {ArgReq::optional,  ArgType::option, NUM_THREADS, "num-threads", 'p',            "value"}
     };
     std::string programName = codeUtils::programName(argv);
@@ -46,7 +48,7 @@ int main(int argc, char* argv[])
         }
         if (codeUtils::contains<int>(arguments.ids, VERSION))
         {
-            std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
+            std::cout << "Glycoprotein Builder & GMML version " << GMML_VERSION << "\n";
             std::exit(0);
         }
         codeUtils::validateArguments(arguments, argumentDefinitions);
@@ -62,9 +64,11 @@ int main(int argc, char* argv[])
 
     try
     {
-        std::string inputFile = "";
-        std::string outputDir = ".";
-        int numThreads        = 1;
+        std::string inputFile        = "";
+        std::string outputDir        = ".";
+        std::string headerBaseString = "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)";
+        std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
+        int numThreads = 1;
         for (const auto& arg : arguments.args)
         {
             switch (arg.id)
@@ -83,6 +87,12 @@ int main(int argc, char* argv[])
                             std::cerr << "Folder " << outputDir << "/ does not exist and it isn't my job to make it.\n";
                             std::exit(EXIT_FAILURE);
                         }
+                        break;
+                    }
+                case ARGUMENTS::TEST_MODE:
+                    {
+                        headerLines = {headerBaseString + " in test mode"};
+                        std::cout << "Running in test mode\n";
                         break;
                     }
                 case ARGUMENTS::NUM_THREADS:
@@ -106,7 +116,7 @@ int main(int argc, char* argv[])
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
         glycoproteinBuilder::GlycoproteinBuilder glycoproteinBuilder(inputStruct);
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder.ResolveOverlaps(outputDir, numThreads);
+        glycoproteinBuilder.ResolveOverlaps(outputDir, headerLines, numThreads);
     }
     catch (const std::runtime_error& error)
     {

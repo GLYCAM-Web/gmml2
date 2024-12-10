@@ -16,7 +16,7 @@ output="output/${directory}"
 echo -n "Testing 017.test.GlycoproteinBuilder.cpp ${prefix}..."
 rm -r "${output}" >/dev/null 2>&1
 mkdir -p "${output}"
-"${BIN_PATH}" "${input}" "${output}" > "${output}"/GlycoproteinBuilder.txt 2>&1
+"${BIN_PATH}" "${input}" "${output}" "--test-mode" > "${output}"/GlycoproteinBuilder.txt 2>&1
 expected="tests/correct_outputs/${directory}"
 
 if [ ! -d "${expected}" ]; then

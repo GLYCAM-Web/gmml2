@@ -51,7 +51,8 @@ namespace glycoproteinBuilder
 
     cds::PdbFileData toPdbFileData(const AssemblyGraphs& graphs, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates,
-                                   const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers)
+                                   const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers,
+                                   const std::vector<std::string>& headerLines)
     {
         size_t atomCount    = graphs.indices.atomCount;
         size_t residueCount = graphs.indices.residueCount;
@@ -69,6 +70,6 @@ namespace glycoproteinBuilder
                                           std::vector<double>(atomCount, 1.0),
                                           std::vector<double>(atomCount, 0.0)};
         cds::PdbFileFormat format;
-        return cds::PdbFileData {format, {}, residuePdbData, atomPdbData};
+        return cds::PdbFileData {format, headerLines, residuePdbData, atomPdbData};
     }
 } // namespace glycoproteinBuilder
