@@ -106,7 +106,8 @@ namespace codeUtils
                     auto it = std::find_if(defs.begin(), defs.end(), hasName);
                     if (it == defs.end())
                     {
-                        throw std::runtime_error("unknown argument " + dashArg);
+                        throw std::runtime_error("unknown argument " + dashArg +
+                                                 (chars.size() > 1 ? (" in " + arg) : ""));
                     }
                     size_t index      = it - defs.begin();
                     const ArgDef& def = defs[index];
