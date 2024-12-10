@@ -1,3 +1,4 @@
+Running in test mode
 Input file is tests/inputs/017.GlycoproteinBuilderInputFreezeGSConformation.txt
 Reading input file complete, on to construction
 Resolving overlaps
