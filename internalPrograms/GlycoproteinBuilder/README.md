@@ -19,9 +19,18 @@ The GlycoproteinBuilder will be compiled to gmml2/bin/gpBuilder after running th
 ### Testing
 Once compiled, a sample call to the program can look as follows
 
-    cd gmml2/tests
-    mkdir output
-    ../bin/gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt output
+```
+cd gmml2/tests
+mkdir output
+../bin/gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt output
+```
+
+You can run `../bin/gpBuilder --help` for a list of options
+
+```
+usage: ../bin/gpBuilder [-h | --help] [-v | --version] [-p <value> | --num-threads <value>] 
+                        input-file [output-directory]
+```
 
 ### Setup
 Edit or create an input.txt file. See gmml2/tests/tests/inputs/017.GlycoproteinBuilderInput.txt for an example.
@@ -38,6 +47,6 @@ Required input:
 Optional input : default values
 * NumberOfOutputStructures:1 -> each output structure is an independent sample, where shapes of glycans at each site are randomized according to their statistical likelihood. 
 * persistCycles:5 -> how long the algorithm keeps trying to find an improvement in overlap. A higher value takes more time, but may better resolve overlaps.
-* seed:0 -> any number will yield a different result from other numbers, but will be reproducible across multiple runs. Delete this line for true randomness
+* seed:<random> -> any number will yield a different result from other numbers, but will be reproducible across multiple runs. Delete this line for true randomness
 * freezeGlycositeResidueConformation:false -> if true, chi1 and chi2 angles of protein-glycan linkages will be preserved according to their shape in the protein file
 * deleteIncompatibleSites:false -> if true, algorithm will delete glycans where overlaps fail to resolve one at a time and start over, until all overlaps can be resolved. If false, all glycans will be preserved in each sample, even if the resulting structure has overlaps
