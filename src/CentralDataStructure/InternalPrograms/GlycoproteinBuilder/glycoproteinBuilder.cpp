@@ -291,11 +291,11 @@ namespace glycoproteinBuilder
             return atomCoordinates(mutableData);
         };
 
-        auto writeOffFile = [](const AssemblyGraphs& graphs, const AssemblyData& data,
-                               const std::vector<cds::Coordinate>& coordinates, const std::string& prefix)
+        auto writeOffFile = [&outputDir](const AssemblyGraphs& graphs, const AssemblyData& data,
+                                         const std::vector<cds::Coordinate>& coordinates, const std::string& prefix)
         {
             cds::OffFileData offData = toOffFileData(graphs, data, coordinates);
-            std::string fileName     = prefix + ".off";
+            std::string fileName     = outputDir + "/" + prefix + ".off";
             std::ofstream outFileStream;
             outFileStream.open(fileName.c_str());
             cds::WriteResiduesTogetherToOffFile(outFileStream, offData, "GLYCOPROTEINBUILDER");
@@ -303,13 +303,14 @@ namespace glycoproteinBuilder
         };
 
         auto writePdbFile =
-            [](const AssemblyGraphs& graphs, const AssemblyData& data, const std::vector<cds::Coordinate>& coordinates,
-               const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers,
-               const std::vector<std::vector<size_t>>& residueIndices, const std::vector<std::vector<bool>>& residueTER,
-               const std::vector<std::pair<size_t, size_t>>& connectionIndices, const std::string& prefix)
+            [&outputDir](const AssemblyGraphs& graphs, const AssemblyData& data,
+                         const std::vector<cds::Coordinate>& coordinates, const std::vector<int>& atomNumbers,
+                         const std::vector<int>& residueNumbers, const std::vector<std::vector<size_t>>& residueIndices,
+                         const std::vector<std::vector<bool>>& residueTER,
+                         const std::vector<std::pair<size_t, size_t>>& connectionIndices, const std::string& prefix)
         {
             cds::PdbFileData pdbData = toPdbFileData(graphs, data, coordinates, atomNumbers, residueNumbers);
-            std::string fileName     = prefix + ".pdb";
+            std::string fileName     = outputDir + "/" + prefix + ".pdb";
             std::ofstream outFileStream;
             outFileStream.open(fileName.c_str());
             for (size_t n = 0; n < residueIndices.size(); n++)
@@ -413,11 +414,11 @@ namespace glycoproteinBuilder
                 resolveOverlapsWithWiggler(rng, graphs, data, mutableData, initalCoordinates, false);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
             writePdbFile(graphs, data, resolvedCoords, data.atoms.numbers, data.residues.numbers, moleculeResidues,
-                         allResidueTER, noConnections, outputDir + "glycoprotein");
-            writeOffFile(graphs, data, resolvedCoords, outputDir + "glycoprotein");
+                         allResidueTER, noConnections, "glycoprotein");
+            writeOffFile(graphs, data, resolvedCoords, "glycoprotein");
             writePdbFile(graphs, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          moleculeResidues, allResidueTER, atomPairsConnectingNonProteinResidues,
-                         outputDir + "glycoprotein_serialized");
+                         "glycoprotein_serialized");
         };
 
         auto runIteration = [&](pcg32 rng, size_t count)
@@ -433,11 +434,11 @@ namespace glycoproteinBuilder
                 codeUtils::boolsToValues(graphs.molecules.nodes.elements, currentMolecules);
             writePdbFile(graphs, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          currentMoleculeResidues, residueTER(currentMoleculeResidues),
-                         atomPairsConnectingNonProteinResidues, outputDir + prefix.str());
+                         atomPairsConnectingNonProteinResidues, prefix.str());
         };
 
         writePdbFile(graphs, data, initalCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,
-                     allResidueTER, noConnections, outputDir + "glycoprotein_initial");
+                     allResidueTER, noConnections, "glycoprotein_initial");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
         size_t totalStructures = settings.number3DStructures + 1;
