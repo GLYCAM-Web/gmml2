@@ -9,6 +9,9 @@
 
 namespace cds
 {
+    void writeAssemblyToPdb(std::ostream& stream, const std::vector<std::vector<size_t>>& residueIndices,
+                            const std::vector<std::vector<bool>>& residueTER,
+                            const std::vector<std::pair<size_t, size_t>>& connectionIndices, const PdbFileData& data);
     void writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
                             const std::vector<bool>& residueTER, const PdbFileData& data);
     void writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, const PdbFileResidueData& residues,

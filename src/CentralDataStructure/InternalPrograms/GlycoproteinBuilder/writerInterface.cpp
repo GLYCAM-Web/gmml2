@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/version.h"
 
 #include <vector>
 
@@ -68,6 +69,6 @@ namespace glycoproteinBuilder
                                           std::vector<double>(atomCount, 1.0),
                                           std::vector<double>(atomCount, 0.0)};
         cds::PdbFileFormat format;
-        return cds::PdbFileData {format, residuePdbData, atomPdbData};
+        return cds::PdbFileData {format, {}, residuePdbData, atomPdbData};
     }
 } // namespace glycoproteinBuilder

@@ -313,11 +313,7 @@ namespace glycoproteinBuilder
             std::string fileName     = outputDir + "/" + prefix + ".pdb";
             std::ofstream outFileStream;
             outFileStream.open(fileName.c_str());
-            for (size_t n = 0; n < residueIndices.size(); n++)
-            {
-                cds::writeMoleculeToPdb(outFileStream, residueIndices[n], residueTER[n], pdbData);
-            }
-            cds::writeConectCards(outFileStream, pdbData.atoms.numbers, connectionIndices);
+            cds::writeAssemblyToPdb(outFileStream, residueIndices, residueTER, connectionIndices, pdbData);
             outFileStream.close();
         };
 

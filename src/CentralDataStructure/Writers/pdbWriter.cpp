@@ -63,7 +63,7 @@ cds::PdbFileData cds::toPdbFileData(std::vector<Residue*>& residues)
     PdbFileResidueData residueData {indices, residueNumbers(residues), truncatedResidueNames(residues), chainIds,
                                     insertionCodes};
     PdbFileFormat format;
-    return PdbFileData {format, residueData, toPdbFileAtomData(atoms, recordNames)};
+    return PdbFileData {format, {}, residueData, toPdbFileAtomData(atoms, recordNames)};
 }
 
 void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules)

@@ -7,6 +7,21 @@
 #include <string>
 #include <vector>
 
+void cds::writeAssemblyToPdb(std::ostream& stream, const std::vector<std::vector<size_t>>& residueIndices,
+                             const std::vector<std::vector<bool>>& residueTER,
+                             const std::vector<std::pair<size_t, size_t>>& connectionIndices, const PdbFileData& data)
+{
+    for (auto& line : data.headerLines)
+    {
+        stream << "HEADER    " << line << "\n";
+    }
+    for (size_t n = 0; n < residueIndices.size(); n++)
+    {
+        cds::writeMoleculeToPdb(stream, residueIndices[n], residueTER[n], data);
+    }
+    cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
+}
+
 void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
                              const std::vector<bool>& residueTER, const PdbFileData& data)
 {

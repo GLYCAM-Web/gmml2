@@ -45,6 +45,7 @@ namespace cds
     struct PdbFileData
     {
         PdbFileFormat format;
+        std::vector<std::string> headerLines;
         PdbFileResidueData residues;
         PdbFileAtomData atoms;
     };
