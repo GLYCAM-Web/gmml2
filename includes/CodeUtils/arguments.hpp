@@ -14,8 +14,9 @@ namespace codeUtils
     };
     enum class ArgReq
     {
+        required,
         optional,
-        required
+        hidden
     };
 
     struct ArgDef

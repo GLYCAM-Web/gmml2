@@ -226,7 +226,7 @@ namespace codeUtils
         size_t accum = 0;
         for (auto& def : defs)
         {
-            if (def.type != ArgType::unnamed)
+            if (def.type != ArgType::unnamed && def.requirement != ArgReq::hidden)
             {
                 if (accum >= widthLimit)
                 {
@@ -242,7 +242,7 @@ namespace codeUtils
         ss << "\n" << indent;
         for (auto& def : defs)
         {
-            if (def.type == ArgType::unnamed)
+            if (def.type == ArgType::unnamed && def.requirement != ArgReq::hidden)
             {
                 std::pair<std::string, std::string> brace = braceType(def.requirement);
                 std::string str                           = brace.first + def.nameOfValue + brace.second;
