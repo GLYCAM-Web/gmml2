@@ -8,6 +8,20 @@
 #include <vector>
 #include <stdexcept>
 
+namespace
+{
+    std::string argHelpString(const codeUtils::ArgDef& def)
+    {
+        bool hasShortName     = def.shortName != ' ';
+        bool hasLongName      = def.longName != "";
+        std::string valueStr  = (def.type == codeUtils::ArgType::option ? (" <" + def.nameOfValue + ">") : "");
+        std::string shortStr  = hasShortName ? "-" + std::string {def.shortName} + valueStr : "";
+        std::string longStr   = hasLongName ? "--" + def.longName + valueStr : "";
+        std::string separator = (hasShortName && hasLongName ? " | " : "");
+        return shortStr + separator + longStr;
+    }
+} // namespace
+
 namespace codeUtils
 {
     std::string programName(char* argv[])
@@ -129,7 +143,18 @@ namespace codeUtils
                 unnamed.push_back(arg);
             }
         }
-        return {unnamed, optionNames, optionIds, optionValues};
+        return {defFound, unnamed, optionNames, optionIds, optionValues};
+    }
+
+    void validateRequiredArguments(const Arguments& arguments, const std::vector<ArgDef>& defs)
+    {
+        for (size_t n = 0; n < defs.size(); n++)
+        {
+            if ((defs[n].type != ArgType::unnamed) && (defs[n].requirement == ArgReq::required) && !arguments.found[n])
+            {
+                throw std::runtime_error("missing required argument " + argHelpString(defs[n]));
+            }
+        }
     }
 
     void validateArgumentCount(const Arguments& arguments, const std::vector<ArgDef>& defs)
@@ -155,6 +180,12 @@ namespace codeUtils
         }
     }
 
+    void validateArguments(const Arguments& arguments, const std::vector<ArgDef>& defs)
+    {
+        validateArgumentCount(arguments, defs);
+        validateRequiredArguments(arguments, defs);
+    }
+
     std::string helpString(const std::string& programName, const std::vector<ArgDef>& defs)
     {
         std::pair<std::string, std::string> emptyBrace {"", ""};
@@ -178,14 +209,8 @@ namespace codeUtils
                     ss << "\n" << indent;
                     accum = 0;
                 }
-                bool hasShortName     = def.shortName != ' ';
-                bool hasLongName      = def.longName != "";
-                std::string valueStr  = (def.type == ArgType::option ? (" <" + def.nameOfValue + ">") : "");
-                std::string shortStr  = hasShortName ? "-" + std::string {def.shortName} + valueStr : "";
-                std::string longStr   = hasLongName ? "--" + def.longName + valueStr : "";
-                std::string separator = (hasShortName && hasLongName ? " | " : "");
-                std::pair<std::string, std::string> brace = braceType(def.requirement);
-                std::string str                           = brace.first + shortStr + separator + longStr + brace.second;
+                std::pair<std::string, std::string> brace = braceType(ArgReq::optional);
+                std::string str                           = brace.first + argHelpString(def) + brace.second;
                 ss << str << " ";
                 accum += str.size() + 1;
             }

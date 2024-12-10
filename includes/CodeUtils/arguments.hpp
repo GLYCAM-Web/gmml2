@@ -31,6 +31,7 @@ namespace codeUtils
 
     struct Arguments
     {
+        std::vector<bool> found;
         std::vector<std::string> unnamed;
         std::vector<std::string> names;
         std::vector<int> ids;
@@ -39,7 +40,9 @@ namespace codeUtils
 
     std::string programName(char* argv[]);
     Arguments readArguments(int argc, char* argv[], const std::vector<ArgDef>& defs);
+    void validateRequiredArguments(const Arguments& arguments, const std::vector<ArgDef>& defs);
     void validateArgumentCount(const Arguments& arguments, const std::vector<ArgDef>& defs);
+    void validateArguments(const Arguments& arguments, const std::vector<ArgDef>& defs);
     std::string helpString(const std::string& programName, const std::vector<ArgDef>& defs);
 } // namespace codeUtils
 #endif

@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
                     break;
             }
         }
-        codeUtils::validateArgumentCount(arguments, argumentDefinitions);
+        codeUtils::validateArguments(arguments, argumentDefinitions);
     }
     catch (const std::runtime_error& error)
     {
