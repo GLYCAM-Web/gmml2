@@ -44,6 +44,19 @@ namespace codeUtils
         return ulong(0);
     }
 
+    std::optional<double> parseDouble(const std::string& str)
+    {
+        try
+        {
+            return std::stod(str);
+        }
+        catch (...)
+        {
+            return std::nullopt;
+        }
+        return double(0);
+    }
+
     std::optional<bool> parseBool(const std::string& str)
     {
         if (str == "true")
