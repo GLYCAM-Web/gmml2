@@ -3,6 +3,7 @@
 
 namespace codeUtils
 {
-    unsigned long calculateNumberOfThreads(const unsigned long length);
+    bool isOpenMpDefined();
+    void setOpenMpNumberOfThreads(int num);
 } // namespace codeUtils
 #endif

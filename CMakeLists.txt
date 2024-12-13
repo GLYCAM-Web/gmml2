@@ -103,9 +103,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 #2. Debug: `-O0 -g`
 #3. RelWithDebInfo: `-O2 -g -DNDEBUG`
 #4. MinSizeRel: `-Os -DNDEBUG`
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -fopenmp -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fopenmp -DNDEBUG")
-set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0 -fopenmp -DNDEBUG")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O0 -DNDEBUG")
 
 ################## END SETTING BASE COMPILE FLAGS ###################
 
@@ -172,6 +172,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${EIGEN3_INCLUDE_DIRS})
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
     target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 endif()
 
 #Add the headers to our specific gmml target

@@ -32,12 +32,12 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/random.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/threads.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
-#include <omp.h>
 #include <variant>
 #include <vector>
 #include <string>
@@ -449,7 +449,7 @@ namespace glycoproteinBuilder
             rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
         }
 
-        omp_set_num_threads(numThreads);
+        codeUtils::setOpenMpNumberOfThreads(numThreads);
 // clang format doesn't align pragmas
 /*    */#pragma omp parallel for
         for (size_t count = 0; count < totalStructures; count++)

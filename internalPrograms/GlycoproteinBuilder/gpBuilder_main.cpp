@@ -3,6 +3,7 @@
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/threads.hpp"
 #include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
@@ -103,8 +104,15 @@ int main(int argc, char* argv[])
                             throw std::runtime_error(arg.value + " is not a valid value for " + arg.name +
                                                      ", must be a positive integer\n");
                         }
-                        numThreads = opt.value();
-                        std::cout << "Number of threads set to " << numThreads << std::endl;
+                        if (codeUtils::isOpenMpDefined())
+                        {
+                            numThreads = opt.value();
+                            std::cout << "Number of threads set to " << numThreads << std::endl;
+                        }
+                        else
+                        {
+                            std::cout << "OpenMP not available, running on a single thread" << std::endl;
+                        }
                         break;
                     }
                 default:
