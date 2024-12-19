@@ -30,6 +30,7 @@ namespace
     {
         const MolecularMetadata::MoleculeDefinition aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
         addBonds(proteinRes, aminoAcid.bonds);
+        addBonds(proteinRes, MolecularMetadata::carboxylBonds());
     }
 
     bool autoConnectSuccessiveResidues(cds::Residue* cTermRes, cds::Residue* nTermRes)

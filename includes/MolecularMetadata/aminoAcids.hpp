@@ -16,6 +16,7 @@ namespace MolecularMetadata
     const std::vector<std::string>& aminoAcidNames();
     const std::vector<MoleculeDefinition>& aminoAcids();
     const MoleculeDefinition& aminoAcid(const std::string& name);
+    const std::vector<std::pair<std::string, std::string>>& carboxylBonds();
 } // namespace MolecularMetadata
 
 #endif

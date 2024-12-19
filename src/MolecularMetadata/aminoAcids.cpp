@@ -98,6 +98,9 @@ namespace
     const MoleculeDefinition backbone                 = definitionWithBackbone({});
     const std::vector<std::string> names              = namesOnly(sidechainBonds);
     const std::vector<MoleculeDefinition> definitions = withBackbones(sidechainBonds);
+    const BondVector carboxylBond {
+        {"C", "OXT"}
+    };
 
 } // namespace
 
@@ -127,4 +130,9 @@ const MoleculeDefinition& MolecularMetadata::aminoAcid(const std::string& name)
                                  name);
     }
     return definitions[index];
+}
+
+const std::vector<std::pair<std::string, std::string>>& MolecularMetadata::carboxylBonds()
+{
+    return carboxylBond;
 }
