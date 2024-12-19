@@ -87,7 +87,7 @@
 ./src/MolecularMetadata/GLYCAM/glycam06Functions.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06residueinfo.cpp
+./src/MolecularMetadata/aminoAcids.cpp
 ./src/MolecularMetadata/atomicBonds.cpp
 ./src/MolecularMetadata/elements.cpp
 ./src/MolecularMetadata/glycoprotein.cpp
-./src/MolecularMetadata/proteinBonding.cpp

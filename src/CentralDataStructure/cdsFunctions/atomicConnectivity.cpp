@@ -5,7 +5,7 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/MolecularMetadata/proteinBonding.hpp"
+#include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -13,27 +13,23 @@
 
 namespace
 {
+    void addBonds(cds::Residue* proteinRes, const std::vector<std::pair<std::string, std::string>>& bonds)
+    {
+        for (auto& bondPair : bonds)
+        {
+            cds::Atom* firstAtom  = proteinRes->FindAtom(bondPair.first);
+            cds::Atom* secondAtom = proteinRes->FindAtom(bondPair.second);
+            if (firstAtom != nullptr && secondAtom != nullptr)
+            {
+                addBond(firstAtom, secondAtom);
+            }
+        }
+    }
+
     void setBondingForAminoAcid(cds::Residue* proteinRes)
     {
-        for (auto& bondPair : biology::getBackboneBonding())
-        {
-            cds::Atom* firstAtom  = proteinRes->FindAtom(bondPair.first);
-            cds::Atom* secondAtom = proteinRes->FindAtom(bondPair.second);
-            if (firstAtom != nullptr && secondAtom != nullptr)
-            {
-                addBond(firstAtom, secondAtom);
-            }
-        }
-        for (auto& bondPair : biology::getSidechainBonding(proteinRes->getName()))
-        {
-            cds::Atom* firstAtom  = proteinRes->FindAtom(bondPair.first);
-            cds::Atom* secondAtom = proteinRes->FindAtom(bondPair.second);
-            if (firstAtom != nullptr && secondAtom != nullptr)
-            {
-                addBond(firstAtom, secondAtom);
-            }
-        }
-        return;
+        const MolecularMetadata::MoleculeDefinition aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
+        addBonds(proteinRes, aminoAcid.bonds);
     }
 
     bool autoConnectSuccessiveResidues(cds::Residue* cTermRes, cds::Residue* nTermRes)
