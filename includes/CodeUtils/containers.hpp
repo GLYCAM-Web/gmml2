@@ -124,5 +124,14 @@ namespace codeUtils
         return result;
     }
 
+    template<class T> std::vector<T> uniqueOnly(const std::vector<T>& values)
+    {
+        std::vector<T> result = values;
+        std::sort(result.begin(), result.end());
+        auto last = std::unique(result.begin(), result.end());
+        result.erase(last, result.end());
+        return result;
+    }
+
 } // namespace codeUtils
 #endif
