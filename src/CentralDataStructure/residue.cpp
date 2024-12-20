@@ -7,6 +7,10 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/biology.hpp"
 
+#include <string>
+#include <vector>
+#include <functional>
+
 using cds::Atom;
 using cds::Residue;
 
@@ -65,15 +69,46 @@ Residue& Residue::operator=(Residue other)
 //                    ACCESSOR                          //
 //////////////////////////////////////////////////////////
 
-std::vector<Atom*> Residue::getAtoms() const
+std::vector<Atom*> Residue::getAtomsConditional(std::function<bool(Atom*)> condition) const
 {
     std::vector<Atom*> atoms;
     atoms.reserve(atoms_.size());
     for (auto& atomPtr : atoms_)
     {
-        atoms.push_back(atomPtr.get());
+        Atom* atom = atomPtr.get();
+        if (condition(atom))
+        {
+            atoms.push_back(atom);
+        }
     }
     return atoms;
+}
+
+std::vector<Atom*> Residue::getAtoms() const
+{
+    auto all = [](Atom*)
+    {
+        return true;
+    };
+    return getAtomsConditional(all);
+}
+
+std::vector<Atom*> Residue::getHydrogenAtoms() const
+{
+    auto hydrogen = [](Atom* atom)
+    {
+        return atom->cachedElement() == MolecularMetadata::Element::H;
+    };
+    return getAtomsConditional(hydrogen);
+}
+
+std::vector<Atom*> Residue::getNonHydrogenAtoms() const
+{
+    auto nonHydrogen = [](Atom* atom)
+    {
+        return atom->cachedElement() != MolecularMetadata::Element::H;
+    };
+    return getAtomsConditional(nonHydrogen);
 }
 
 std::vector<Atom*> Residue::mutableAtoms()

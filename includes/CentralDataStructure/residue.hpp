@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>    // unique_ptr
 #include <algorithm> //swap
+#include <functional>
 
 using cds::Coordinate;
 
@@ -43,6 +44,8 @@ namespace cds
 
         const std::string GetParmName() const;
         std::vector<Atom*> getAtoms() const;
+        std::vector<Atom*> getHydrogenAtoms() const;
+        std::vector<Atom*> getNonHydrogenAtoms() const;
         std::vector<Atom*> mutableAtoms();
         std::vector<std::string> getAtomNames() const;
         std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
@@ -152,6 +155,7 @@ namespace cds
         }
 
       private:
+        std::vector<Atom*> getAtomsConditional(std::function<bool(Atom*)> condition) const;
         //////////////////////////////////////////////////////////
         //                    ATTRIBUTES                        //
         //////////////////////////////////////////////////////////

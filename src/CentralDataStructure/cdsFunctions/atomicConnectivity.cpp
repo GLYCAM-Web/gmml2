@@ -5,7 +5,9 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
+#include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
@@ -28,10 +30,53 @@ namespace
         }
     }
 
+    void bondHydrogenAtomsToClosestNonHydrogen(std::vector<cds::Atom*>& hydrogenAtoms,
+                                               std::vector<cds::Atom*>& nonHydrogenAtoms)
+    {
+        double hydrogenCutoff = MolecularMetadata::hydrogenCovalentBondMaxLength();
+        for (cds::Atom* hydrogen : hydrogenAtoms)
+        {
+            cds::Coordinate coord = hydrogen->coordinate();
+            size_t closest        = 0;
+            double minDistance    = cds::distance(coord, nonHydrogenAtoms[0]->coordinate());
+            for (size_t n = 1; n < nonHydrogenAtoms.size(); n++)
+            {
+                double distance = cds::distance(coord, nonHydrogenAtoms[n]->coordinate());
+                if (distance < minDistance)
+                {
+                    if (minDistance < hydrogenCutoff)
+                    {
+                        gmml::log(__LINE__, __FILE__, gmml::WAR,
+                                  "Hydrogen atom within " + std::to_string(minDistance) +
+                                      " Å of multiple non-hydrogen atoms in residue");
+                    }
+                    minDistance = distance;
+                    closest     = n;
+                }
+            }
+            if (minDistance < hydrogenCutoff)
+            {
+                addBond(nonHydrogenAtoms[closest], hydrogen);
+            }
+            else
+            {
+                gmml::log(__LINE__, __FILE__, gmml::WAR,
+                          "Hydrogen atom not within " + std::to_string(hydrogenCutoff) +
+                              " Å of any non-hydrogen atom in residue");
+            }
+        }
+    }
+
     void setBondingForAminoAcid(cds::Residue* proteinRes)
     {
         const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
+        std::vector<cds::Atom*> nonHydrogenAtoms      = proteinRes->getNonHydrogenAtoms();
         addBonds(proteinRes, aminoAcid.zwitterion.bonds);
+        if (nonHydrogenAtoms.size() > 0)
+        {
+            std::vector<cds::Atom*> hydrogenAtoms = proteinRes->getHydrogenAtoms();
+            bondHydrogenAtomsToClosestNonHydrogen(hydrogenAtoms, nonHydrogenAtoms);
+        }
     }
 
     bool autoConnectSuccessiveResidues(cds::Residue* cTermRes, cds::Residue* nTermRes)
