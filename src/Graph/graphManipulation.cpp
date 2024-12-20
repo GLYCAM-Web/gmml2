@@ -99,6 +99,19 @@ void graph::removeEdge(Database& graph, size_t index)
     graph.edgeAlive[index] = false;
 }
 
+void graph::reserveNodes(Database& graph, size_t size)
+{
+    graph.nodes.reserve(size);
+    graph.nodeAlive.reserve(size);
+}
+
+void graph::reserveEdges(Database& graph, size_t size)
+{
+    graph.edges.reserve(size);
+    graph.edgeNodes.reserve(size);
+    graph.edgeAlive.reserve(size);
+}
+
 graph::Database graph::asData(const Graph& graph)
 {
     std::vector<size_t> nodes = codeUtils::indexVector(graph.nodes.indices);

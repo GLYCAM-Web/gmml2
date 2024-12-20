@@ -14,6 +14,9 @@ namespace graph
     void removeNode(Database& graph, size_t index);
     void removeEdge(Database& graph, size_t index);
 
+    void reserveNodes(Database& graph, size_t size);
+    void reserveEdges(Database& graph, size_t size);
+
     Database asData(const Graph& graph);
     Graph selectedQuotientAliveOrNot(const Database& graph, const std::vector<size_t>& nodeGroup,
                                      const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge);
