@@ -133,5 +133,11 @@ namespace codeUtils
         return result;
     }
 
+    template<class T> std::vector<T> sorted(std::vector<T> values)
+    {
+        std::sort(values.begin(), values.end());
+        return values;
+    }
+
 } // namespace codeUtils
 #endif
