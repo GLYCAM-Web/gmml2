@@ -71,7 +71,12 @@ namespace
     {
         const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
         std::vector<cds::Atom*> nonHydrogenAtoms      = proteinRes->getNonHydrogenAtoms();
+        std::vector<std::string> nonHydrogenNames     = codeUtils::sorted(cds::atomNames(nonHydrogenAtoms));
         addBonds(proteinRes, aminoAcid.zwitterion.bonds);
+        if (!(nonHydrogenNames == aminoAcid.standard.names || nonHydrogenNames == aminoAcid.zwitterion.names))
+        {
+            proteinRes->setHasAllExpectedAtoms(false);
+        }
         if (nonHydrogenAtoms.size() > 0)
         {
             std::vector<cds::Atom*> hydrogenAtoms = proteinRes->getHydrogenAtoms();

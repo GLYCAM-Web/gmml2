@@ -65,6 +65,11 @@ namespace cds
             return number_;
         }
 
+        inline bool hasAllExpectedAtoms()
+        {
+            return hasAllExpectedAtoms_;
+        }
+
         virtual pdb::ResidueId getId() const;
 
         //////////////////////////////////////////////////////////
@@ -78,6 +83,11 @@ namespace cds
         inline void setAtoms(std::vector<std::unique_ptr<Atom>> v)
         {
             atoms_ = std::move(v);
+        }
+
+        inline void setHasAllExpectedAtoms(bool b)
+        {
+            hasAllExpectedAtoms_ = b;
         }
 
         Atom* addAtom(std::unique_ptr<Atom> myAtom);
@@ -164,6 +174,7 @@ namespace cds
         ResidueType type_ = Undefined; // enum Type. See enum above.
         int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
+        bool hasAllExpectedAtoms_ = true;
     };
 } // namespace cds
 #endif
