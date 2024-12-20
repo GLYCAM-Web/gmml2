@@ -12,11 +12,15 @@ namespace MolecularMetadata
         std::vector<std::pair<std::string, std::string>> bonds;
     };
 
-    const MoleculeDefinition& proteinBackbone();
+    struct AminoAcid
+    {
+        MoleculeDefinition standard;
+        MoleculeDefinition zwitterion;
+    };
+
     const std::vector<std::string>& aminoAcidNames();
-    const std::vector<MoleculeDefinition>& aminoAcids();
-    const MoleculeDefinition& aminoAcid(const std::string& name);
-    const std::vector<std::pair<std::string, std::string>>& carboxylBonds();
+    const std::vector<AminoAcid>& aminoAcids();
+    const AminoAcid& aminoAcid(const std::string& name);
 } // namespace MolecularMetadata
 
 #endif

@@ -8,8 +8,10 @@
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <vector>
+#include <stdexcept>
 
 namespace
 {
@@ -28,16 +30,16 @@ namespace
 
     void setBondingForAminoAcid(cds::Residue* proteinRes)
     {
-        const MolecularMetadata::MoleculeDefinition aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
-        addBonds(proteinRes, aminoAcid.bonds);
-        addBonds(proteinRes, MolecularMetadata::carboxylBonds());
+        const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
+        addBonds(proteinRes, aminoAcid.zwitterion.bonds);
     }
 
     bool autoConnectSuccessiveResidues(cds::Residue* cTermRes, cds::Residue* nTermRes)
     {
-        cds::Atom* cAtom = cTermRes->FindAtom("C");
-        cds::Atom* nAtom = nTermRes->FindAtom("N");
-        if (cAtom != nullptr && nAtom != nullptr && isWithinBondingDistance(cAtom, nAtom))
+        cds::Atom* cAtom   = cTermRes->FindAtom("C");
+        cds::Atom* oxtAtom = cTermRes->FindAtom("OXT");
+        cds::Atom* nAtom   = nTermRes->FindAtom("N");
+        if ((cAtom != nullptr) && (nAtom != nullptr) && (oxtAtom == nullptr) && isWithinBondingDistance(cAtom, nAtom))
         {
             addBond(cAtom, nAtom);
             cTermRes->addNeighbor(nTermRes->getStringId() + "-" + cTermRes->getStringId(), nTermRes);

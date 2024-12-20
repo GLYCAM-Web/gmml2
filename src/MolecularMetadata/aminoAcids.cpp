@@ -7,6 +7,7 @@
 
 namespace
 {
+    using MolecularMetadata::AminoAcid;
     using MolecularMetadata::MoleculeDefinition;
 
     typedef std::vector<std::pair<std::string, std::string>> BondVector;
@@ -15,6 +16,10 @@ namespace
         {"CA",  "C"},
         { "C",  "O"}
     };
+    const BondVector carboxylBonds {
+        {"C", "OXT"}
+    };
+    const BondVector carboxylBackboneBonds = codeUtils::vectorAppend(backboneBonds, carboxylBonds);
 
     std::vector<std::string> uniqueAtomNamesPresentInBonds(const BondVector& bonds)
     {
@@ -25,22 +30,23 @@ namespace
             atomNames.push_back(bond.first);
             atomNames.push_back(bond.second);
         }
-        return codeUtils::uniqueOnly(atomNames);
+        return codeUtils::sorted(codeUtils::uniqueOnly(atomNames));
     }
 
-    MoleculeDefinition definitionWithBackbone(const BondVector& sidechainBonds)
+    MoleculeDefinition definitionWithBackbone(const BondVector& backboneBonds, const BondVector& sidechainBonds)
     {
         BondVector bonds = codeUtils::vectorAppend(backboneBonds, sidechainBonds);
         return {uniqueAtomNamesPresentInBonds(bonds), bonds};
     }
 
-    std::vector<MoleculeDefinition> withBackbones(const std::vector<std::pair<std::string, BondVector>>& sidechains)
+    std::vector<AminoAcid> withBackbones(const std::vector<std::pair<std::string, BondVector>>& sidechains)
     {
-        std::vector<MoleculeDefinition> result;
+        std::vector<AminoAcid> result;
         result.reserve(sidechains.size());
         for (auto& sidechain : sidechains)
         {
-            result.emplace_back(definitionWithBackbone(sidechain.second));
+            result.push_back({definitionWithBackbone(backboneBonds, sidechain.second),
+                              definitionWithBackbone(carboxylBackboneBonds, sidechain.second)});
         }
         return result;
     }
@@ -95,31 +101,22 @@ namespace
         {"MSE", {{"CA", "CB"}, {"CB", "CG"}, {"CG", "SE"}, {"SE", "CE"}}}};
     // clang-format on
 
-    const MoleculeDefinition backbone                 = definitionWithBackbone({});
-    const std::vector<std::string> names              = namesOnly(sidechainBonds);
-    const std::vector<MoleculeDefinition> definitions = withBackbones(sidechainBonds);
-    const BondVector carboxylBond {
-        {"C", "OXT"}
-    };
+    const std::vector<std::string> names     = namesOnly(sidechainBonds);
+    const std::vector<AminoAcid> definitions = withBackbones(sidechainBonds);
 
 } // namespace
-
-const MoleculeDefinition& MolecularMetadata::proteinBackbone()
-{
-    return backbone;
-}
 
 const std::vector<std::string>& MolecularMetadata::aminoAcidNames()
 {
     return names;
 }
 
-const std::vector<MoleculeDefinition>& MolecularMetadata::aminoAcids()
+const std::vector<AminoAcid>& MolecularMetadata::aminoAcids()
 {
     return definitions;
 }
 
-const MoleculeDefinition& MolecularMetadata::aminoAcid(const std::string& name)
+const AminoAcid& MolecularMetadata::aminoAcid(const std::string& name)
 {
     size_t index = codeUtils::indexOf(aminoAcidNames(), name);
     if (index >= aminoAcidNames().size())
@@ -130,9 +127,4 @@ const MoleculeDefinition& MolecularMetadata::aminoAcid(const std::string& name)
                                  name);
     }
     return definitions[index];
-}
-
-const std::vector<std::pair<std::string, std::string>>& MolecularMetadata::carboxylBonds()
-{
-    return carboxylBond;
 }
