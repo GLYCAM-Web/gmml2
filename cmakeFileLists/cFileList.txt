@@ -83,6 +83,7 @@
 ./src/CodeUtils/strings.cpp
 ./src/CodeUtils/threads.cpp
 ./src/Graph/graphManipulation.cpp
+./src/Graph/graphMatching.cpp
 ./src/MolecularMetadata/GLYCAM/dihedralangledata.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06Functions.cpp
 ./src/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.cpp
