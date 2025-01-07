@@ -179,6 +179,7 @@ namespace glycoproteinBuilder
             boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
         ResidueData residueData {cds::residueNames(residues),
                                  cds::residueTypes(residues),
+                                 cds::residuesHaveAllExpectedAtoms(residues),
                                  cds::residueStringIds(residues),
                                  cds::residueNumbers(residues),
                                  cds::serializedNumberVector(residues.size()),

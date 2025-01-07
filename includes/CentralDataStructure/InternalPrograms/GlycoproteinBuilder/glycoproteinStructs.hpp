@@ -38,6 +38,7 @@ namespace glycoproteinBuilder
     {
         std::vector<std::string> names;
         std::vector<cds::ResidueType> types;
+        std::vector<bool> hasAllExpectedAtoms;
         std::vector<std::string> ids;
         std::vector<int> numbers;
         std::vector<int> serializedNumbers;
