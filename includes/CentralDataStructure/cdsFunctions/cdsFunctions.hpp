@@ -26,6 +26,7 @@ namespace cds
     std::vector<int> atomNumbers(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomNames(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomElements(const std::vector<Atom*>& atoms);
+    std::vector<MolecularMetadata::Element> atomElementEnums(const std::vector<Atom*>& atoms);
     std::vector<int> atomAtomicNumbers(const std::vector<Atom*>& atoms);
     std::vector<double> atomRadii(const std::vector<cds::Atom*>& atoms);
     std::vector<Coordinate> atomCoordinates(const std::vector<Atom*>& atoms);

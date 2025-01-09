@@ -71,6 +71,17 @@ std::vector<std::string> cds::atomElements(const std::vector<Atom*>& atoms)
     return result;
 }
 
+std::vector<MolecularMetadata::Element> cds::atomElementEnums(const std::vector<Atom*>& atoms)
+{
+    std::vector<MolecularMetadata::Element> result;
+    result.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        result.push_back(atom->cachedElement());
+    }
+    return result;
+}
+
 std::vector<int> cds::atomAtomicNumbers(const std::vector<Atom*>& atoms)
 {
     std::vector<int> result;
