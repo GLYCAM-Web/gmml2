@@ -2,6 +2,7 @@
 #define INCLUDES_CODEUTILS_CONTAINERS_HPP
 
 #include <algorithm>
+#include <functional>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -40,6 +41,14 @@ namespace codeUtils
     {
         std::reverse(vec.begin(), vec.end());
         return vec;
+    }
+
+    template<class T> std::vector<T> filter(std::function<bool(T)>& condition, const std::vector<T>& vec)
+    {
+        std::vector<T> result;
+        result.reserve(vec.size());
+        std::copy_if(vec.begin(), vec.end(), std::back_inserter(result), condition);
+        return result;
     }
 
     template<class T> void insertInto(std::vector<T>& into, const std::vector<T>& other)
