@@ -220,17 +220,6 @@ std::vector<cds::ResidueType> cds::residueTypes(const std::vector<Residue*>& res
     return result;
 }
 
-std::vector<bool> cds::residuesHaveAllExpectedAtoms(const std::vector<Residue*>& residues)
-{
-    std::vector<bool> result;
-    result.reserve(residues.size());
-    for (auto& residue : residues)
-    {
-        result.push_back(residue->hasAllExpectedAtoms());
-    }
-    return result;
-}
-
 std::array<cds::Atom*, 2> cds::bondedAtomPair(std::vector<Atom*>& atomsA, std::vector<Atom*>& atomsB)
 {
     for (auto& a : atomsA)

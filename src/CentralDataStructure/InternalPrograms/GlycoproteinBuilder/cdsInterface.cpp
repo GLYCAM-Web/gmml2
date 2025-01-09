@@ -9,6 +9,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
+#include "includes/MolecularMetadata/aminoAcids.hpp"
 
 #include <array>
 #include <vector>
@@ -19,6 +20,8 @@ namespace glycoproteinBuilder
                                                        std::vector<GlycosylationSite>& glycosites,
                                                        const OverlapWeight overlapWeight)
     {
+        using MolecularMetadata::Element;
+
         cds::GraphIndexData graphIndices = cds::toIndexData(molecules);
         graph::Database atomGraphData    = cds::createGraphData(graphIndices);
         graph::Graph atomGraph           = graph::identity(atomGraphData);
@@ -27,10 +30,14 @@ namespace glycoproteinBuilder
         std::vector<cds::Atom*>& atoms   = graphIndices.atoms;
         std::vector<cds::Residue*>& residues = graphIndices.residues;
 
+        std::vector<std::string> atomNames           = cds::atomNames(atoms);
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
-        AtomData atomData {cds::atomNames(atoms),         cds::atomTypes(atoms),
-                           cds::atomNumbers(atoms),       cds::serializedNumberVector(atoms.size()),
-                           cds::atomAtomicNumbers(atoms), cds::atomElements(atoms),
+        AtomData atomData {atomNames,
+                           cds::atomTypes(atoms),
+                           cds::atomNumbers(atoms),
+                           cds::serializedNumberVector(atoms.size()),
+                           cds::atomAtomicNumbers(atoms),
+                           cds::atomElements(atoms),
                            cds::atomCharges(atoms)};
 
         auto boundingSpheresOf =
@@ -175,11 +182,32 @@ namespace glycoproteinBuilder
                                                                                             : overlapWeight.glycan);
         }
 
+        std::vector<std::string> residueNames      = cds::residueNames(residues);
+        std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
         std::vector<cds::Sphere> residueBoundingSpheres =
             boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
-        ResidueData residueData {cds::residueNames(residues),
-                                 cds::residueTypes(residues),
-                                 cds::residuesHaveAllExpectedAtoms(residues),
+        std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
+        std::vector<Element> atomElementEnums   = cds::atomElementEnums(atoms);
+        std::function<bool(size_t)> nonHydrogen = [&](size_t n)
+        {
+            return atomElementEnums[n] != Element::H;
+        };
+
+        for (size_t n = 0; n < residues.size(); n++)
+        {
+            if (residueTypes[n] == cds::ResidueType::Protein)
+            {
+                const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(residueNames[n]);
+                std::vector<size_t> nonHydrogenAtoms = codeUtils::filter(nonHydrogen, residueGraph.nodes.elements[n]);
+                std::vector<std::string> nonHydrogenNames =
+                    codeUtils::sorted(codeUtils::indicesToValues(atomNames, nonHydrogenAtoms));
+                residuesHaveAllExpectedAtoms[n] = (nonHydrogenNames == aminoAcid.standard.names);
+            }
+        }
+
+        ResidueData residueData {residueNames,
+                                 residueTypes,
+                                 residuesHaveAllExpectedAtoms,
                                  cds::residueStringIds(residues),
                                  cds::residueNumbers(residues),
                                  cds::serializedNumberVector(residues.size()),
