@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
@@ -187,10 +188,21 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> residueBoundingSpheres =
             boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
         std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
+        std::vector<double> phiAngles(residues.size(), 0.0);
+        std::vector<double> psiAngles(residues.size(), 0.0);
         std::vector<Element> atomElementEnums   = cds::atomElementEnums(atoms);
         std::function<bool(size_t)> nonHydrogen = [&](size_t n)
         {
             return atomElementEnums[n] != Element::H;
+        };
+
+        auto dihedralCoordinates = [&](const std::array<size_t, 4>& arr)
+        {
+            auto coord = [&](size_t n)
+            {
+                return atomBoundingSpheres[arr[n]].center;
+            };
+            return std::array<cds::Coordinate, 4> {coord(0), coord(1), coord(2), coord(3)};
         };
 
         for (size_t n = 0; n < residues.size(); n++)
@@ -199,15 +211,45 @@ namespace glycoproteinBuilder
             {
                 const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(residueNames[n]);
                 std::vector<size_t> nonHydrogenAtoms = codeUtils::filter(nonHydrogen, residueGraph.nodes.elements[n]);
-                std::vector<std::string> nonHydrogenNames =
-                    codeUtils::sorted(codeUtils::indicesToValues(atomNames, nonHydrogenAtoms));
-                residuesHaveAllExpectedAtoms[n] = (nonHydrogenNames == aminoAcid.standard.names);
+                std::vector<std::string> nonHydrogenNames = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
+                auto atomIndex                            = [&](const std::string& str)
+                {
+                    return nonHydrogenAtoms[codeUtils::indexOf(nonHydrogenNames, str)];
+                };
+                size_t atomN          = atomIndex("N");
+                size_t atomCA         = atomIndex("CA");
+                size_t atomC          = atomIndex("C");
+                bool hasExpectedAtoms = (codeUtils::sorted(nonHydrogenNames) == aminoAcid.standard.names);
+                bool isNTerminal      = true;
+                bool isCTerminal      = true;
+                for (size_t residueBondId : residueGraph.nodes.edgeAdjacencies[n])
+                {
+                    bool direction                        = (n == residueGraph.edges.nodeAdjacencies[residueBondId][0]);
+                    size_t atomBondId                     = residueGraph.edges.indices[residueBondId];
+                    const std::array<size_t, 2>& atomBond = atomGraph.edges.nodeAdjacencies[atomBondId];
+                    size_t thisAtom                       = atomBond[0 == direction];
+                    size_t otherAtom                      = atomBond[1 == direction];
+                    std::string otherName                 = atomNames[otherAtom];
+                    if ((thisAtom == atomC) && (otherName == "N"))
+                    {
+                        isCTerminal  = false;
+                        psiAngles[n] = cds::angle(dihedralCoordinates({atomN, atomCA, atomC, otherAtom}));
+                    }
+                    else if ((thisAtom == atomN) && (otherName == "C"))
+                    {
+                        isNTerminal  = false;
+                        phiAngles[n] = cds::angle(dihedralCoordinates({otherAtom, atomN, atomCA, atomC}));
+                    }
+                }
+                residuesHaveAllExpectedAtoms[n] = hasExpectedAtoms && !(isNTerminal || isCTerminal);
             }
         }
 
         ResidueData residueData {residueNames,
                                  residueTypes,
                                  residuesHaveAllExpectedAtoms,
+                                 phiAngles,
+                                 psiAngles,
                                  cds::residueStringIds(residues),
                                  cds::residueNumbers(residues),
                                  cds::serializedNumberVector(residues.size()),
