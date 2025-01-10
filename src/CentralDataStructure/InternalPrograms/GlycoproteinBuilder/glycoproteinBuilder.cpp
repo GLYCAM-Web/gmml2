@@ -366,7 +366,7 @@ namespace glycoproteinBuilder
         const std::vector<std::vector<size_t>>& moleculeResidues = graphs.molecules.nodes.elements;
         const AssemblyData& data                                 = assembly.data;
         const MutableData& initialState                          = assembly.mutableData;
-        std::vector<cds::Coordinate> initalCoordinates           = atomCoordinates(initialState);
+        std::vector<cds::Coordinate> initialCoordinates          = atomCoordinates(initialState);
 
         auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
         {
@@ -411,7 +411,7 @@ namespace glycoproteinBuilder
         {
             MutableData mutableData = initialState;
             std::vector<cds::Coordinate> resolvedCoords =
-                resolveOverlapsWithWiggler(rng, graphs, data, mutableData, initalCoordinates, false);
+                resolveOverlapsWithWiggler(rng, graphs, data, mutableData, initialCoordinates, false);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
             writePdbFile(graphs, data, resolvedCoords, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                          allResidueTER, noConnections, "glycoprotein");
@@ -425,7 +425,7 @@ namespace glycoproteinBuilder
         {
             MutableData mutableData                  = initialState;
             std::vector<cds::Coordinate> coordinates = resolveOverlapsWithWiggler(
-                rng, graphs, data, mutableData, initalCoordinates, settings.deleteSitesUntilResolved);
+                rng, graphs, data, mutableData, initialCoordinates, settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graphs, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
@@ -437,7 +437,7 @@ namespace glycoproteinBuilder
                          atomPairsConnectingNonProteinResidues, prefix.str());
         };
 
-        writePdbFile(graphs, data, initalCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,
+        writePdbFile(graphs, data, initialCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                      allResidueTER, noConnections, "glycoprotein_initial");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
