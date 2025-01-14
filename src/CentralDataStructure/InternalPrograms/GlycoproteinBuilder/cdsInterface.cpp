@@ -31,16 +31,6 @@ namespace glycoproteinBuilder
         std::vector<cds::Atom*>& atoms   = graphIndices.atoms;
         std::vector<cds::Residue*>& residues = graphIndices.residues;
 
-        std::vector<std::string> atomNames           = cds::atomNames(atoms);
-        std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
-        AtomData atomData {atomNames,
-                           cds::atomTypes(atoms),
-                           cds::atomNumbers(atoms),
-                           cds::serializedNumberVector(atoms.size()),
-                           cds::atomAtomicNumbers(atoms),
-                           cds::atomElements(atoms),
-                           cds::atomCharges(atoms)};
-
         auto boundingSpheresOf =
             [](const std::vector<cds::Sphere>& spheres, const std::vector<std::vector<size_t>>& indexVector)
         {
@@ -182,6 +172,18 @@ namespace glycoproteinBuilder
             residueOverlapWeight.push_back(moleculeTypes[molecule] == MoleculeType::protein ? overlapWeight.protein
                                                                                             : overlapWeight.glycan);
         }
+
+        std::vector<std::string> atomNames           = cds::atomNames(atoms);
+        std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
+        std::vector<bool> partOfMovableSidechain(atoms.size(), false);
+        AtomData atomData {atomNames,
+                           cds::atomTypes(atoms),
+                           cds::atomNumbers(atoms),
+                           cds::serializedNumberVector(atoms.size()),
+                           cds::atomAtomicNumbers(atoms),
+                           cds::atomElements(atoms),
+                           cds::atomCharges(atoms),
+                           partOfMovableSidechain};
 
         std::vector<std::string> residueNames      = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);

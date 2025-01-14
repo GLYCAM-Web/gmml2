@@ -32,6 +32,7 @@ namespace glycoproteinBuilder
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
         std::vector<double> charges;
+        std::vector<bool> partOfMovableSidechain;
     };
 
     struct ResidueData
