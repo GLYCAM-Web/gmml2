@@ -37,7 +37,10 @@ namespace codeUtils
         std::string item;
         while (std::getline(ss, item, delim))
         {
-            *(result++) = item;
+            if (item.size() >= 1 && !(item.size() == 1 && item[0] == delim))
+            {
+                *(result++) = item;
+            }
         }
     }
 
