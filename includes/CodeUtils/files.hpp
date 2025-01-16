@@ -12,6 +12,6 @@ namespace codeUtils
     void ensureFileExists(const std::string& fileName);
     std::string SplitFilename(const std::string& str);
     std::istream& safeGetline(std::istream& in, std::string& out);
-    void readFileLineByLine(std::string& filename, std::function<void(const std::string&, size_t)> processLine);
+    void readFileLineByLine(const std::string& filename, std::function<void(const std::string&, size_t)> processLine);
 } // namespace codeUtils
 #endif

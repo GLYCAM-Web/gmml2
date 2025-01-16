@@ -71,7 +71,8 @@ std::istream& codeUtils::safeGetline(std::istream& in, std::string& out)
     return in;
 }
 
-void codeUtils::readFileLineByLine(std::string& filename, std::function<void(const std::string&, size_t)> processLine)
+void codeUtils::readFileLineByLine(const std::string& filename,
+                                   std::function<void(const std::string&, size_t)> processLine)
 {
     std::ifstream in(filename);
     if (!in)
