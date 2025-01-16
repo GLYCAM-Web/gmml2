@@ -192,8 +192,8 @@ namespace glycoproteinBuilder
         std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
         std::vector<double> phiAngles(residues.size(), 0.0);
         std::vector<double> psiAngles(residues.size(), 0.0);
-        std::vector<Element> atomElementEnums   = cds::atomElementEnums(atoms);
-        std::function<bool(size_t)> nonHydrogen = [&](size_t n)
+        std::vector<Element> atomElementEnums          = cds::atomElementEnums(atoms);
+        std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
         {
             return atomElementEnums[n] != Element::H;
         };
