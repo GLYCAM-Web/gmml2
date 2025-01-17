@@ -8,6 +8,7 @@
 #include <istream>
 #include <fstream>
 #include <functional>
+#include <stdexcept>
 
 bool codeUtils::doesFileExist(const std::string& fileName)
 {
@@ -20,7 +21,7 @@ void codeUtils::ensureFileExists(const std::string& fileName)
     if (!codeUtils::doesFileExist(fileName))
     {
         gmml::log(__LINE__, __FILE__, gmml::ERR, "File " + fileName + " does not exist");
-        throw "File " + fileName + " does not exist";
+        throw std::runtime_error("File " + fileName + " does not exist");
     }
 }
 
