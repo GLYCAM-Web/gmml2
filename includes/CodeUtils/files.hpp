@@ -5,6 +5,7 @@
 #include <string>
 #include <istream>
 #include <functional>
+#include <vector>
 
 namespace codeUtils
 {
@@ -13,5 +14,6 @@ namespace codeUtils
     std::string SplitFilename(const std::string& str);
     std::istream& safeGetline(std::istream& in, std::string& out);
     void readFileLineByLine(const std::string& filename, std::function<void(const std::string&, size_t)> processLine);
+    std::vector<char> readEntireFile(const std::string& filename);
 } // namespace codeUtils
 #endif

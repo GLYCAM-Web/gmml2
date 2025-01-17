@@ -89,3 +89,19 @@ void codeUtils::readFileLineByLine(const std::string& filename,
         lineNumber++;
     }
 }
+
+std::vector<char> codeUtils::readEntireFile(const std::string& filename)
+{
+    std::ifstream file(filename, std::ios::ate);
+    // this works on text file with \n line endings on linux
+    // might fail on other platforms, but the intent is to only use files we've generated ourselves
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    std::vector<char> buffer(size);
+    if (!file.read(buffer.data(), size))
+    {
+        throw std::runtime_error("failed to read file " + filename);
+    }
+    return buffer;
+}
