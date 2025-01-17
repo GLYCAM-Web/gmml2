@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
         std::string errorMessage(error.what());
         std::string message = "glycoproteinBuilder: " + errorMessage;
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        std::cout << message;
+        std::cout << message << "\n";
         std::exit(1);
     }
     catch (...)
