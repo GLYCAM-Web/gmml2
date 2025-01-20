@@ -3,6 +3,7 @@
 #include <sys/stat.h>  // To check if file exists using stat
 #include <sys/types.h> // The s_IFDIR
 #include <string>
+#include <vector>
 #include <filesystem>
 
 // #include "includes/CodeUtils/logging.hpp"
@@ -18,8 +19,15 @@ namespace codeUtils
 #define GetCurrentDir getcwd
 #endif
 
+    struct Path
+    {
+        bool absolute;
+        std::vector<std::string> elements;
+    };
+
     std::string Find_Program_Installation_Directory();
     std::string Find_Program_workingDirectory();
+    Path toPath(const std::string& str);
     bool doesDirectoryExist(const std::string& pathName);
     void ensureDirectoryExists(const std::string& pathName);
     std::string getEnvVar(const std::string& key);

@@ -1,9 +1,12 @@
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <sys/param.h> // for MIN function
 #include <cstring>     // strlen
+#include <string>
+#include <vector>
 
 std::string codeUtils::Find_Program_Installation_Directory()
 { // A way to get the program name plus working directory
@@ -31,6 +34,12 @@ std::string codeUtils::Find_Program_workingDirectory()
     cCurrentPath[strlen(cCurrentPath)] = '/';  // Add a / at the end.
     cCurrentPath[strlen(cCurrentPath)] = '\0'; // Above overwrites the null, the null is important. Respect the nu
     return cCurrentPath;
+}
+
+codeUtils::Path codeUtils::toPath(const std::string& str)
+{
+    bool absolute = str[0] == '/';
+    return Path {absolute, split(str, '/')};
 }
 
 bool codeUtils::doesDirectoryExist(const std::string& pathName)
