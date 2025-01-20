@@ -26,6 +26,18 @@ namespace codeUtils
         return indexOf(vector, element) < vector.size();
     }
 
+    template<class T> std::vector<T> take(size_t count, const std::vector<T>& vec)
+    {
+        std::vector<T> result;
+        count = std::min(count, vec.size());
+        result.reserve(count);
+        for (size_t n = 0; n < count; n++)
+        {
+            result.push_back(vec[n]);
+        }
+        return result;
+    }
+
     template<class T> void eraseNth(size_t n, std::vector<T>& vec)
     {
         vec.erase(vec.begin() + n);
