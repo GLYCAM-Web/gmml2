@@ -54,3 +54,14 @@ std::vector<size_t> codeUtils::boolsToIndices(const std::vector<bool>& mask)
     }
     return result;
 }
+
+std::vector<size_t> codeUtils::indexVectorWithOffset(size_t offset, size_t count)
+{
+    std::vector<size_t> result;
+    result.reserve(count);
+    for (size_t n = 0; n < count; n++)
+    {
+        result.push_back(n + offset);
+    }
+    return result;
+}

@@ -92,6 +92,8 @@ namespace codeUtils
         return result;
     }
 
+    std::vector<size_t> indexVectorWithOffset(size_t offset, size_t count);
+
     template<class T> std::vector<size_t> indexVectorWithOffset(size_t offset, const std::vector<T>& vec)
     {
         std::vector<size_t> result;
