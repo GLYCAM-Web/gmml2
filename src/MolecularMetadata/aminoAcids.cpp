@@ -10,18 +10,16 @@
 namespace
 {
     using MolecularMetadata::AminoAcid;
-    using MolecularMetadata::MoleculeDefinition;
+    using MolecularMetadata::BondVector;
 
-    typedef std::vector<std::pair<std::string, std::string>> BondVector;
-    const BondVector backboneBonds {
+    const BondVector backboneBondVector {
         { "N", "CA"},
         {"CA",  "C"},
         { "C",  "O"}
     };
-    const BondVector carboxylBonds {
+    const BondVector carboxylBondVector {
         {"C", "OXT"}
     };
-    const BondVector carboxylBackboneBonds = codeUtils::vectorAppend(backboneBonds, carboxylBonds);
 
     std::vector<std::string> uniqueAtomNamesPresentInBonds(const BondVector& bonds)
     {
@@ -35,7 +33,7 @@ namespace
         return codeUtils::sorted(codeUtils::uniqueOnly(atomNames));
     }
 
-    MoleculeDefinition definitionWithBackbone(const BondVector& backboneBonds, const BondVector& sidechainBonds)
+    AminoAcid definitionWithBackbone(const BondVector& backboneBonds, const BondVector& sidechainBonds)
     {
         BondVector bonds = codeUtils::vectorAppend(backboneBonds, sidechainBonds);
         return {uniqueAtomNamesPresentInBonds(bonds), bonds};
@@ -47,8 +45,7 @@ namespace
         result.reserve(sidechains.size());
         for (auto& sidechain : sidechains)
         {
-            result.push_back({definitionWithBackbone(backboneBonds, sidechain.second),
-                              definitionWithBackbone(carboxylBackboneBonds, sidechain.second)});
+            result.push_back(definitionWithBackbone(backboneBondVector, sidechain.second));
         }
         return result;
     }
@@ -90,7 +87,7 @@ namespace
                 std::array<std::string, 4> atoms {split[0], split[1], split[2], split[3]};
                 for (auto& atom : atoms)
                 {
-                    if (!codeUtils::contains(definition.standard.names, atom))
+                    if (!codeUtils::contains(definition.atomNames, atom))
                     {
                         throw std::runtime_error("unknown atom " + atom + " in dihedral metadata for amino acid " +
                                                  name);
@@ -175,6 +172,11 @@ namespace
         dihedralAtomsInOrder(names, definitions, sidechainDihedralAtoms);
 
 } // namespace
+
+const MolecularMetadata::BondVector& MolecularMetadata::carboxylBonds()
+{
+    return carboxylBondVector;
+}
 
 const std::vector<std::string>& MolecularMetadata::aminoAcidNames()
 {

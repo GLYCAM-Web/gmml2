@@ -221,7 +221,7 @@ namespace glycoproteinBuilder
                 size_t atomN          = atomIndex("N");
                 size_t atomCA         = atomIndex("CA");
                 size_t atomC          = atomIndex("C");
-                bool hasExpectedAtoms = (codeUtils::sorted(nonHydrogenNames) == aminoAcid.standard.names);
+                bool hasExpectedAtoms = (codeUtils::sorted(nonHydrogenNames) == aminoAcid.atomNames);
                 bool isNTerminal      = true;
                 bool isCTerminal      = true;
                 for (size_t residueBondId : residueGraph.nodes.edgeAdjacencies[n])

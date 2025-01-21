@@ -7,18 +7,15 @@
 
 namespace MolecularMetadata
 {
-    struct MoleculeDefinition
-    {
-        std::vector<std::string> names;
-        std::vector<std::pair<std::string, std::string>> bonds;
-    };
+    typedef std::vector<std::pair<std::string, std::string>> BondVector;
 
     struct AminoAcid
     {
-        MoleculeDefinition standard;
-        MoleculeDefinition zwitterion;
+        std::vector<std::string> atomNames;
+        BondVector bonds;
     };
 
+    const BondVector& carboxylBonds();
     const std::vector<std::string>& aminoAcidNames();
     const std::vector<AminoAcid>& aminoAcids();
     const AminoAcid& aminoAcid(size_t index);
