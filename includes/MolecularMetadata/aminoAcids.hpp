@@ -15,6 +15,7 @@ namespace MolecularMetadata
         BondVector bonds;
     };
 
+    std::string originalResidueName(const std::string& str);
     const BondVector& carboxylBonds();
     const std::vector<std::string>& aminoAcidNames();
     const std::vector<AminoAcid>& aminoAcids();

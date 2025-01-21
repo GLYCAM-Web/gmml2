@@ -12,6 +12,22 @@ namespace
     using MolecularMetadata::AminoAcid;
     using MolecularMetadata::BondVector;
 
+    const std::vector<std::pair<std::string, std::string>> originalResidueNames = {
+        {"HIE", "HIS"},
+        {"HID", "HIS"},
+        {"HIP", "HIS"},
+        {"CYX", "CYS"},
+        {"CYM", "CYS"},
+        {"NLN", "ASN"},
+        {"OLS", "SER"},
+        {"OLT", "THR"},
+        {"OLY", "TYR"},
+        {"ARN", "ARG"},
+        {"ASH", "ASP"},
+        {"GLH", "GLU"},
+        {"LYN", "LYS"},
+    };
+
     const BondVector backboneBondVector {
         { "N", "CA"},
         {"CA",  "C"},
@@ -172,6 +188,20 @@ namespace
         dihedralAtomsInOrder(names, definitions, sidechainDihedralAtoms);
 
 } // namespace
+
+std::string MolecularMetadata::originalResidueName(const std::string& str)
+{
+    auto iter = std::find_if(originalResidueNames.begin(), originalResidueNames.end(),
+                             [&](const std::pair<std::string, std::string>& pair)
+                             {
+                                 return pair.first == str;
+                             });
+    if (iter != originalResidueNames.end())
+    {
+        return iter->second;
+    }
+    return str;
+}
 
 const MolecularMetadata::BondVector& MolecularMetadata::carboxylBonds()
 {
