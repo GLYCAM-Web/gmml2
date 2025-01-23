@@ -199,7 +199,7 @@ namespace
             }
             cds::Overlap overlaps =
                 cds::CountOverlappingAtoms(atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
-                                           input.bonds, fixedResidueIndices, movingResidueIndices);
+                                           input.atomIgnored, input.bonds, fixedResidueIndices, movingResidueIndices);
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -259,6 +259,7 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<Res
     std::vector<cds::Atom*> atoms       = atomVecs.first;
     std::vector<size_t> atomResidues    = atomVecs.second;
     std::vector<bool> atomMoving        = toAtomMoving(atoms, dihedral.movingAtoms);
+    std::vector<bool> atomIgnored(atoms.size(), false);
     std::vector<bool> residueMoving(residues.size(), false);
     for (size_t n = 0; n < atomResidues.size(); n++)
     {
@@ -284,9 +285,13 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<Res
          {atomsBondedTo(residueBond[0], atomsA), atomsBondedTo(residueBond[1], atomsB)}}
     };
     return {
-        atomMoving,    atomBounds,
-        residueBounds, residueWeights,
-        residueAtoms,  {residueIndices[0], cds::intersectingIndices(movementBounds, residueBounds, residueIndices[1])},
+        atomMoving,
+        atomIgnored,
+        atomBounds,
+        residueBounds,
+        residueWeights,
+        residueAtoms,
+        {residueIndices[0], cds::intersectingIndices(movementBounds, residueBounds, residueIndices[1])},
         bonds
     };
 }
@@ -327,8 +332,13 @@ void cds::simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<Rot
         auto coordinates                    = dihedralCoordinates(dihedral);
         DihedralRotationDataContainer input = dihedralRotationInputData(dihedral, residues);
         DihedralRotationData inputPointers {
-            input.atomMoving,     input.atomBounds,   input.residueBounds,
-            input.residueWeights, input.residueAtoms, {input.residueIndices[0], input.residueIndices[1]},
+            input.atomMoving,
+            input.atomIgnored,
+            input.atomBounds,
+            input.residueBounds,
+            input.residueWeights,
+            input.residueAtoms,
+            {input.residueIndices[0], input.residueIndices[1]},
             input.bonds
         };
         auto best = wiggleUsingRotamers(searchAngles, coordinates, index, metadata[n], preference[n], inputPointers);

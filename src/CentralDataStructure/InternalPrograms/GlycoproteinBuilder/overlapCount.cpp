@@ -87,8 +87,8 @@ namespace glycoproteinBuilder
 
             std::vector<cds::BondedResidueOverlapInput> bonds = residueBonds(graphs, residueA, residuesB[0]);
             overlap += cds::CountOverlappingAtoms(mutableData.atomBounds, mutableData.residueBounds,
-                                                  graphs.residues.nodes.elements, data.residues.overlapWeights, bonds,
-                                                  {residueA}, residuesB);
+                                                  graphs.residues.nodes.elements, data.residues.overlapWeights,
+                                                  mutableData.atomIgnored, bonds, {residueA}, residuesB);
         }
         return overlap;
     }
@@ -112,8 +112,8 @@ namespace glycoproteinBuilder
             cds::insertIndicesOfIntersection(residuesB, boundsA, mutableData.residueBounds,
                                              moleculeResidues(graphs, moleculeB));
             return cds::CountOverlappingAtoms(mutableData.atomBounds, mutableData.residueBounds,
-                                              graphs.residues.nodes.elements, data.residues.overlapWeights, bonds,
-                                              residuesA, residuesB);
+                                              graphs.residues.nodes.elements, data.residues.overlapWeights,
+                                              mutableData.atomIgnored, bonds, residuesA, residuesB);
         }
     }
 
@@ -131,8 +131,9 @@ namespace glycoproteinBuilder
             size_t residueMolecule                            = graphs.indices.residueMolecule[residue];
             std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graphs, molecule, residueMolecule);
             return cds::CountOverlappingAtoms(mutableData.atomBounds, mutableData.residueBounds,
-                                              graphs.residues.nodes.elements, data.residues.overlapWeights, bonds,
-                                              {residue}, moleculeResidues(graphs, molecule));
+                                              graphs.residues.nodes.elements, data.residues.overlapWeights,
+                                              mutableData.atomIgnored, bonds, {residue},
+                                              moleculeResidues(graphs, molecule));
         }
     }
 

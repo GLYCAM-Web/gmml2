@@ -40,10 +40,10 @@ namespace cds
     Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
     Overlap CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
                                   const std::vector<std::vector<size_t>>& residueAtoms,
-                                  const std::vector<double>& residueWeights,
+                                  const std::vector<double>& residueWeights, const std::vector<bool>& ignoredAtoms,
                                   const std::vector<BondedResidueOverlapInput>& bonds,
                                   const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
     Overlap CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
-                                  const ResiduesWithOverlapWeight& residuesB);
+                                  const ResiduesWithOverlapWeight& residuesB, const std::vector<bool>& ignoredAtoms);
 } // namespace cds
 #endif

@@ -124,6 +124,7 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> residueBounds;
         std::vector<cds::Sphere> moleculeBounds;
         std::vector<cds::AngleWithMetadata> currentDihedralShape;
+        std::vector<bool> atomIgnored;
         std::vector<bool> glycanIncluded;
     };
 
