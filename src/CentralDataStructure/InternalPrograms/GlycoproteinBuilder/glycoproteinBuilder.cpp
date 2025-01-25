@@ -117,7 +117,7 @@ namespace glycoproteinBuilder
                               " and glycan " + glycositeInput.glycanInput);
                 unsigned int highestResidueNumber =
                     cdsSelections::findHighestResidueNumber(glycoprotein->getResidues());
-                glycosites.emplace_back(glycositeResidue, carb, highestResidueNumber);
+                glycosites.emplace_back(glycositeResidue, carb, glycositeInput, highestResidueNumber);
                 for (auto& linkage : carb->GetGlycosidicLinkages())
                 {
                     cds::determineResiduesForOverlapCheck(linkage); // Now that the protein residue is attached.

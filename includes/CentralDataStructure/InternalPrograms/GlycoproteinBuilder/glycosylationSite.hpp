@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 
 using cds::Atom;
 using cds::Residue;
@@ -18,7 +19,8 @@ namespace glycoproteinBuilder
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        GlycosylationSite(Residue* residue, Carbohydrate* carbohydrate, unsigned int glycanStartResidueNumber);
+        GlycosylationSite(Residue* residue, Carbohydrate* carbohydrate, GlycositeInput input,
+                          unsigned int glycanStartResidueNumber);
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
@@ -38,6 +40,11 @@ namespace glycoproteinBuilder
             return residue_;
         }
 
+        inline const GlycositeInput& GetInput() const
+        {
+            return input_;
+        }
+
       private:
         //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
@@ -53,6 +60,7 @@ namespace glycoproteinBuilder
         //////////////////////////////////////////////////////////
         Residue* residue_; /*!< A pointer back to the residue for this glycosite >*/
         Carbohydrate* glycan_;
+        GlycositeInput input_;
     };
 } // namespace glycoproteinBuilder
 #endif

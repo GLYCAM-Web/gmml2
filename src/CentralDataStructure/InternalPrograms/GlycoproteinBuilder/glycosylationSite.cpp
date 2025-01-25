@@ -26,9 +26,9 @@ namespace glycoproteinBuilder
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
-    GlycosylationSite::GlycosylationSite(Residue* residue, Carbohydrate* carbohydrate,
+    GlycosylationSite::GlycosylationSite(Residue* residue, Carbohydrate* carbohydrate, GlycositeInput input,
                                          unsigned int glycanStartResidueNumber)
-        : residue_(residue), glycan_(carbohydrate)
+        : residue_(residue), glycan_(carbohydrate), input_(input)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching glycan!");
         this->AttachGlycan(glycanStartResidueNumber);
@@ -138,10 +138,12 @@ namespace glycoproteinBuilder
         }
         else
         {
-            std::string message = "Problem creating glycosylation site. The amino acid requested: " + amino_acid_name +
-                                  " has name that isn't supported. Currently you can glycosylate ASN, THR, SER or TYR. "
-                                  "Email us to request " +
-                                  "others. Ideally include examples of 3D structures we can use as a template.";
+            std::string message =
+                "Problem creating glycosylation site. The amino acid requested: " + GetInput().proteinResidueId +
+                " has name (" + amino_acid_name +
+                ") that isn't supported. Currently you can glycosylate ASN, THR, SER or TYR. "
+                "Email us to request " +
+                "others. Ideally include examples of 3D structures we can use as a template.";
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }
