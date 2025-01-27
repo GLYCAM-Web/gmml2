@@ -55,6 +55,17 @@ namespace codeUtils
         return vec;
     }
 
+    template<class A, class B> std::vector<A> mapVector(std::function<A(const B&)>& func, const std::vector<B>& vec)
+    {
+        std::vector<A> result;
+        result.reserve(vec.size());
+        for (auto& a : vec)
+        {
+            result.push_back(func(a));
+        }
+        return result;
+    }
+
     template<class T> std::vector<T> filter(std::function<bool(const T&)>& condition, const std::vector<T>& vec)
     {
         std::vector<T> result;
