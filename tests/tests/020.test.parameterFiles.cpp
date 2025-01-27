@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 #include <fstream>
@@ -20,7 +21,7 @@ int main()
     try
     {
         outFileStream.open(fileName.c_str());
-        glycamPrepFileSelect.WritePdb(outFileStream);
+        cds::WritePdb(outFileStream, &glycamPrepFileSelect);
         outFileStream.close();
     }
     catch (...)

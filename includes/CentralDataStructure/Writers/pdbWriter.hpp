@@ -21,5 +21,6 @@ namespace cds
     PdbFileData toPdbFileData(std::vector<Residue*>& residues);
 
     void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules);
+    void WritePdb(std::ostream& stream, cds::Molecule* molecule);
 } // namespace cds
 #endif

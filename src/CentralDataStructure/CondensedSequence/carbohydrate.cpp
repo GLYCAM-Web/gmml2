@@ -22,6 +22,7 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include <sstream>
 #include <fstream>
@@ -402,12 +403,12 @@ void Carbohydrate::Generate3DStructureFiles(std::string fileOutputDirectory, std
         std::string completeFileName = PathAndFileName + ".pdb";
         std::ofstream outFileStream;
         outFileStream.open(completeFileName.c_str());
-        this->WritePdb(outFileStream);
+        WritePdb(outFileStream, this);
         outFileStream.close();
         // Off file
         completeFileName = PathAndFileName + ".off";
         outFileStream.open(completeFileName.c_str());
-        this->WriteOff(outFileStream);
+        WriteOff(outFileStream, this);
         outFileStream.close();
     }
     catch (const std::string& exceptionMessage)

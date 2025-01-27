@@ -1,16 +1,6 @@
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
-#include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
-#include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 using cds::Atom;
@@ -179,44 +169,4 @@ void Molecule::renumberResidues(int newStartNumber)
     {
         residue->setNumber(newStartNumber++);
     }
-}
-
-//////////////////////////////////////////////////////////
-//                    DISPLAY                           //
-//////////////////////////////////////////////////////////
-void Molecule::WritePdb(std::ostream& stream)
-{
-    GraphIndexData indices          = toIndexData({this});
-    assembly::Graph graph           = createAssemblyGraph(indices);
-    std::vector<Residue*>& residues = indices.residues;
-    std::vector<ResidueType> types  = residueTypes(residues);
-    std::vector<bool> ter           = residueTER(types);
-    PdbFileData data                = toPdbFileData(residues);
-    cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
-    std::vector<ResidueType> selectedResidueTypes {Sugar, Derivative, Aglycone, Undefined};
-    std::function<bool(const ResidueType&)> selectResidue = [&](const ResidueType& type)
-    {
-        return codeUtils::contains(selectedResidueTypes, type);
-    };
-    std::vector<bool> residueSelected = codeUtils::mapVector(selectResidue, types);
-    std::vector<std::array<size_t, 2>> connectionIndices;
-    for (size_t n = 0; n < graph.residues.edges.indices.size(); n++)
-    {
-        auto& adj = graph.residues.edges.nodeAdjacencies[n];
-        if (residueSelected[adj[0]] && residueSelected[adj[1]])
-        {
-            size_t atomEdgeIndex = residueEdgeToAtomEdgeIndex(graph, n);
-            connectionIndices.push_back(graph.atoms.edges.nodeAdjacencies[atomEdgeIndex]);
-        }
-    }
-    cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
-}
-
-void Molecule::WriteOff(std::ostream& stream)
-{
-    GraphIndexData indices = toIndexData({this});
-    cds::OffFileData data  = cds::toOffFileData(indices.residues);
-    data.atoms.numbers     = serializedNumberVector(indices.atoms.size());
-    data.residues.numbers  = serializedNumberVector(indices.residues.size());
-    cds::WriteResiduesTogetherToOffFile(stream, data, getName());
 }

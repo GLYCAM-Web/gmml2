@@ -76,11 +76,6 @@ namespace cds
         Residue* getResidue(const std::string& queryName);
         void deleteResidue(Residue*);
         void renumberResidues(int newStartNumber = 1);
-        //////////////////////////////////////////////////////////
-        //                    DISPLAY                           //
-        //////////////////////////////////////////////////////////
-        void WritePdb(std::ostream& stream);
-        void WriteOff(std::ostream& stream);
 
       private:
         //////////////////////////////////////////////////////////

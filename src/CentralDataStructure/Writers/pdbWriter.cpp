@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <iomanip>
@@ -86,4 +88,32 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
         }
         stream << "ENDMDL\n";
     }
+}
+
+void cds::WritePdb(std::ostream& stream, cds::Molecule* molecule)
+{
+    GraphIndexData indices          = toIndexData({molecule});
+    assembly::Graph graph           = createAssemblyGraph(indices);
+    std::vector<Residue*>& residues = indices.residues;
+    std::vector<ResidueType> types  = residueTypes(residues);
+    std::vector<bool> ter           = residueTER(types);
+    PdbFileData data                = toPdbFileData(residues);
+    cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
+    std::vector<ResidueType> selectedResidueTypes {Sugar, Derivative, Aglycone, Undefined};
+    std::function<bool(const ResidueType&)> selectResidue = [&](const ResidueType& type)
+    {
+        return codeUtils::contains(selectedResidueTypes, type);
+    };
+    std::vector<bool> residueSelected = codeUtils::mapVector(selectResidue, types);
+    std::vector<std::array<size_t, 2>> connectionIndices;
+    for (size_t n = 0; n < graph.residues.edges.indices.size(); n++)
+    {
+        auto& adj = graph.residues.edges.nodeAdjacencies[n];
+        if (residueSelected[adj[0]] && residueSelected[adj[1]])
+        {
+            size_t atomEdgeIndex = residueEdgeToAtomEdgeIndex(graph, n);
+            connectionIndices.push_back(graph.atoms.edges.nodeAdjacencies[atomEdgeIndex]);
+        }
+    }
+    cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }

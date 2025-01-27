@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 
 #include <vector>
 #include <string>
@@ -12,5 +13,6 @@ namespace cds
 {
     OffFileData toOffFileData(const std::vector<Residue*>& residues);
     void serializeResiduesIndividually(std::vector<cds::Residue*>& residues);
+    void WriteOff(std::ostream& stream, cds::Molecule* molecule);
 } // namespace cds
 #endif

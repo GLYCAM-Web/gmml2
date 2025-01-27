@@ -1,6 +1,7 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include <iostream>
 #include <fstream>
@@ -26,7 +27,7 @@ int main()
     try
     {
         outFileStream.open(fileName.c_str());
-        libFile.WritePdb(outFileStream);
+        cds::WritePdb(outFileStream, &libFile);
         outFileStream.close();
     }
     catch (...)
@@ -41,7 +42,7 @@ int main()
     {
         std::ofstream outFileStream;
         outFileStream.open(fileName.c_str());
-        libFile.WriteOff(outFileStream);
+        cds::WriteOff(outFileStream, &libFile);
         outFileStream.close();
     }
     catch (...)

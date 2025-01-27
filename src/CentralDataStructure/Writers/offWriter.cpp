@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
@@ -72,4 +74,13 @@ void cds::serializeResiduesIndividually(std::vector<cds::Residue*>& residues)
         residue->setNumber(1);
         cds::serializeNumbers(residue->getAtoms());
     }
+}
+
+void cds::WriteOff(std::ostream& stream, cds::Molecule* molecule)
+{
+    GraphIndexData indices = toIndexData({molecule});
+    cds::OffFileData data  = cds::toOffFileData(indices.residues);
+    data.atoms.numbers     = serializedNumberVector(indices.atoms.size());
+    data.residues.numbers  = serializedNumberVector(indices.residues.size());
+    cds::WriteResiduesTogetherToOffFile(stream, data, molecule->getName());
 }
