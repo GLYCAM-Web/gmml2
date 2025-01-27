@@ -9,6 +9,7 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 using cds::Atom;
@@ -182,13 +183,14 @@ void Molecule::renumberResidues(int newStartNumber)
 //////////////////////////////////////////////////////////
 //                    DISPLAY                           //
 //////////////////////////////////////////////////////////
-void Molecule::WritePdb(std::ostream& stream) const
+void Molecule::WritePdb(std::ostream& stream)
 {
-    std::vector<Residue*> residues = getResidues();
-    std::vector<ResidueType> types = residueTypes(residues);
-    std::vector<bool> ter          = residueTER(types);
-    std::vector<Atom*> atoms       = getAtoms();
-    PdbFileData data               = toPdbFileData(residues);
+    GraphIndexData indices          = toIndexData({this});
+    std::vector<Residue*>& residues = indices.residues;
+    std::vector<Atom*>& atoms       = indices.atoms;
+    std::vector<ResidueType> types  = residueTypes(residues);
+    std::vector<bool> ter           = residueTER(types);
+    PdbFileData data                = toPdbFileData(residues);
     cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
     using cds::ResidueType; // to help readability of the Sugar, etc below
     std::vector<Residue*> selectedResidues =
@@ -200,10 +202,9 @@ void Molecule::WritePdb(std::ostream& stream) const
 
 void Molecule::WriteOff(std::ostream& stream)
 {
-    std::vector<Residue*> residues = getResidues();
-    std::vector<Atom*> atoms       = getAtoms();
-    cds::serializeNumbers(atoms);
-    cds::serializeNumbers(residues);
-    cds::OffFileData data = cds::toOffFileData(residues);
+    GraphIndexData indices = toIndexData({this});
+    cds::OffFileData data  = cds::toOffFileData(indices.residues);
+    data.atoms.numbers     = serializedNumberVector(indices.atoms.size());
+    data.residues.numbers  = serializedNumberVector(indices.residues.size());
     cds::WriteResiduesTogetherToOffFile(stream, data, getName());
 }

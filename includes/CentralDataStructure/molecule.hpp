@@ -79,7 +79,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    DISPLAY                           //
         //////////////////////////////////////////////////////////
-        void WritePdb(std::ostream& stream) const;
+        void WritePdb(std::ostream& stream);
         void WriteOff(std::ostream& stream);
 
       private:
