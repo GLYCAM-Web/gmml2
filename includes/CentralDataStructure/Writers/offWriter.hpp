@@ -10,7 +10,6 @@
 
 namespace cds
 {
-    std::vector<std::string> residueOffTypes(const std::vector<ResidueType>& residues);
     OffFileData toOffFileData(const std::vector<Residue*>& residues);
     void serializeResiduesIndividually(std::vector<cds::Residue*>& residues);
 } // namespace cds
