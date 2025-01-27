@@ -9,7 +9,6 @@
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
-#include "includes/Graph/graphManipulation.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 
@@ -24,12 +23,9 @@ namespace glycoproteinBuilder
     {
         using MolecularMetadata::Element;
 
-        cds::GraphIndexData graphIndices = cds::toIndexData(molecules);
-        graph::Database atomGraphData    = cds::createGraphData(graphIndices);
-        graph::Graph atomGraph           = graph::identity(atomGraphData);
-        graph::Graph residueGraph        = graph::quotient(atomGraphData, graphIndices.atomResidue);
-        graph::Graph moleculeGraph       = graph::quotient(graph::asData(residueGraph), graphIndices.residueMolecule);
-        std::vector<cds::Atom*>& atoms   = graphIndices.atoms;
+        cds::GraphIndexData graphIndices     = cds::toIndexData(molecules);
+        assembly::Graph graph                = cds::createAssemblyGraph(graphIndices);
+        std::vector<cds::Atom*>& atoms       = graphIndices.atoms;
         std::vector<cds::Residue*>& residues = graphIndices.residues;
 
         auto boundingSpheresOf =
@@ -72,11 +68,11 @@ namespace glycoproteinBuilder
             {
                 throw std::runtime_error("bork");
             }
-            const std::vector<size_t>& elements = residueGraph.nodes.elements[residueId];
+            const std::vector<size_t>& elements = residueAtoms(graph, residueId);
             std::vector<bool> result(elements.size(), false);
             for (size_t n = 0; n < elements.size(); n++)
             {
-                const std::vector<size_t>& adjacencies = atomGraph.nodes.nodeAdjacencies[atomId];
+                const std::vector<size_t>& adjacencies = graph.atoms.nodes.nodeAdjacencies[atomId];
                 size_t id                              = elements[n];
                 result[n]                              = (id == atomId) || codeUtils::contains(adjacencies, id);
             }
@@ -143,16 +139,16 @@ namespace glycoproteinBuilder
                 std::vector<size_t> reducing    = onlyThisMolecule(indexOfResidues(linkage.reducingOverlapResidues));
                 size_t firstResidue             = codeUtils::indexOf(residues, linkage.link.residues.first);
                 size_t secondResidue            = codeUtils::indexOf(residues, linkage.link.residues.second);
-                const std::vector<size_t>& adjacencies = residueGraph.nodes.nodeAdjacencies[firstResidue];
+                const std::vector<size_t>& adjacencies = graph.residues.nodes.nodeAdjacencies[firstResidue];
                 size_t edgeN                           = codeUtils::indexOf(adjacencies, secondResidue);
                 if (edgeN >= adjacencies.size())
                 {
                     throw std::runtime_error("no residue adjacency");
                 }
-                size_t edgeId                    = residueGraph.nodes.edgeAdjacencies[firstResidue][edgeN];
-                std::array<size_t, 2> residueIds = residueGraph.edges.nodeAdjacencies[edgeId];
-                std::array<size_t, 2> atomIds    = atomGraph.edges.nodeAdjacencies[residueGraph.edges.indices[edgeId]];
-                bool direction                   = graphIndices.atomResidue[atomIds[0]] == residueIds[1];
+                size_t edgeId                    = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
+                std::array<size_t, 2> residueIds = graph.residues.edges.nodeAdjacencies[edgeId];
+                std::array<size_t, 2> atomIds = graph.atoms.edges.nodeAdjacencies[graph.residues.edges.indices[edgeId]];
+                bool direction                = graphIndices.atomResidue[atomIds[0]] == residueIds[1];
                 std::array<std::vector<bool>, 2> bondedAtoms = {closelyBondedAtoms(residueIds[0], atomIds[direction]),
                                                                 closelyBondedAtoms(residueIds[1], atomIds[!direction])};
 
@@ -189,7 +185,7 @@ namespace glycoproteinBuilder
         std::vector<std::string> residueNames      = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
         std::vector<cds::Sphere> residueBoundingSpheres =
-            boundingSpheresOf(atomBoundingSpheres, residueGraph.nodes.elements);
+            boundingSpheresOf(atomBoundingSpheres, graph.residues.nodes.elements);
         std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
         std::vector<double> phiAngles(residues.size(), 0.0);
         std::vector<double> psiAngles(residues.size(), 0.0);
@@ -213,9 +209,9 @@ namespace glycoproteinBuilder
             if (residueTypes[n] == cds::ResidueType::Protein)
             {
                 const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(residueNames[n]);
-                std::vector<size_t> nonHydrogenAtoms = codeUtils::filter(nonHydrogen, residueGraph.nodes.elements[n]);
-                std::vector<std::string> nonHydrogenNames = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
-                auto atomIndex                            = [&](const std::string& str)
+                std::vector<size_t> nonHydrogenAtoms          = codeUtils::filter(nonHydrogen, residueAtoms(graph, n));
+                std::vector<std::string> nonHydrogenNames     = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
+                auto atomIndex                                = [&](const std::string& str)
                 {
                     return nonHydrogenAtoms[codeUtils::indexOf(nonHydrogenNames, str)];
                 };
@@ -225,11 +221,11 @@ namespace glycoproteinBuilder
                 bool hasExpectedAtoms = (codeUtils::sorted(nonHydrogenNames) == aminoAcid.atomNames);
                 bool isNTerminal      = true;
                 bool isCTerminal      = true;
-                for (size_t residueBondId : residueGraph.nodes.edgeAdjacencies[n])
+                for (size_t residueBondId : graph.residues.nodes.edgeAdjacencies[n])
                 {
-                    bool direction                        = (n == residueGraph.edges.nodeAdjacencies[residueBondId][0]);
-                    size_t atomBondId                     = residueGraph.edges.indices[residueBondId];
-                    const std::array<size_t, 2>& atomBond = atomGraph.edges.nodeAdjacencies[atomBondId];
+                    bool direction    = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);
+                    size_t atomBondId = graph.residues.edges.indices[residueBondId];
+                    const std::array<size_t, 2>& atomBond = graph.atoms.edges.nodeAdjacencies[atomBondId];
                     size_t thisAtom                       = atomBond[0 == direction];
                     size_t otherAtom                      = atomBond[1 == direction];
                     std::string otherName                 = atomNames[otherAtom];
@@ -258,7 +254,7 @@ namespace glycoproteinBuilder
                                  cds::serializedNumberVector(residues.size()),
                                  residueOverlapWeight};
         std::vector<cds::Sphere> moleculeBounds =
-            boundingSpheresOf(residueBoundingSpheres, moleculeGraph.nodes.elements);
+            boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.elements);
 
         MoleculeData moleculeData {moleculeTypes};
         RotatableDihedralData rotatableDihedralData {dihedralMetadata};
@@ -277,10 +273,6 @@ namespace glycoproteinBuilder
         AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages, glycositeIndices};
 
         AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
-
-        assembly::Graph graph {
-            atoms.size(), residues.size(), molecules.size(), graphIndices.atomResidue, graphIndices.residueMolecule,
-            atomGraph,    residueGraph,    moleculeGraph};
 
         std::vector<bool> atomIgnored(atoms.size(), false);
         std::vector<bool> glycanIncluded(glycosites.size(), true);

@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 
@@ -65,4 +66,20 @@ graph::Database cds::createGraphData(GraphIndexData& indices)
         indices.atoms[n]->setIndex(initialIndices[n]);
     }
     return graph;
+}
+
+assembly::Graph cds::createAssemblyGraph(GraphIndexData& indices)
+{
+    graph::Database atomGraphData = cds::createGraphData(indices);
+    graph::Graph atomGraph        = graph::identity(atomGraphData);
+    graph::Graph residueGraph     = graph::quotient(atomGraphData, indices.atomResidue);
+    graph::Graph moleculeGraph    = graph::quotient(graph::asData(residueGraph), indices.residueMolecule);
+    return assembly::Graph {indices.atoms.size(),
+                            indices.residues.size(),
+                            indices.molecules.size(),
+                            indices.atomResidue,
+                            indices.residueMolecule,
+                            atomGraph,
+                            residueGraph,
+                            moleculeGraph};
 }
