@@ -19,22 +19,20 @@ namespace
 namespace glycoproteinBuilder
 {
     std::vector<cds::ResidueLinkageShapePreference> randomLinkageShapePreference(
-        pcg32& rng, const AssemblyGraphs& graphs, const AssemblyData& data, const MutableData& mutableData,
-        size_t glycanId,
+        pcg32& rng, const AssemblyData& data, const MutableData& mutableData, size_t glycanId,
         std::function<std::vector<size_t>(pcg32&, GlycamMetadata::DihedralAngleDataVector metadataVector)>
             randomMetadata,
         std::function<double(pcg32&, GlycamMetadata::DihedralAngleData metadata)> randomAngle,
         bool freezeGlycositeResidueConformation)
     {
-        const GlycanIndices& glycan                                       = graphs.indices.glycans[glycanId];
+        const GlycanIndices& glycan                                       = data.indices.glycans[glycanId];
         const std::vector<cds::DihedralAngleDataVector>& dihedralMetadata = data.rotatableDihedralData.metadata;
         std::vector<cds::ResidueLinkageShapePreference> result;
         for (size_t n = 0; n < glycan.linkages.size(); n++)
         {
-            size_t linkageId = glycan.linkages[n];
-            const std::vector<size_t>& rotatableDihedrals =
-                graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
-            bool isGlycositeLinkage = data.residueLinkageData.isGlycositeLinkage[linkageId];
+            size_t linkageId                              = glycan.linkages[n];
+            const std::vector<size_t>& rotatableDihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
+            bool isGlycositeLinkage                       = data.residueLinkageData.isGlycositeLinkage[linkageId];
             std::vector<std::vector<double>> angles;
             angles.resize(rotatableDihedrals.size());
             for (size_t k = 0; k < rotatableDihedrals.size(); k++)
@@ -61,7 +59,7 @@ namespace glycoproteinBuilder
                             pref.isFrozen[n] = true;
                             size_t metadata  = mutableData.currentDihedralShape[dihedralId].metadataIndex;
                             pref.angles[n][metadata] =
-                                constants::toDegrees(cds::angle(dihedralCoordinates(graphs, mutableData, dihedralId)));
+                                constants::toDegrees(cds::angle(dihedralCoordinates(data, mutableData, dihedralId)));
                             pref.metadataOrder = {metadata};
                         }
                     }

@@ -264,8 +264,6 @@ namespace glycoproteinBuilder
         ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageOverlapBonds, linkageBranching,
                                                isGlycositeLinkage};
 
-        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData};
-
         std::vector<size_t> proteinMolecules;
         for (size_t n = 0; n < moleculeTypes.size(); n++)
         {
@@ -275,17 +273,13 @@ namespace glycoproteinBuilder
             }
         }
 
-        AssemblyIndices indices {atoms.size(),
-                                 residues.size(),
-                                 molecules.size(),
-                                 graphIndices.atomResidue,
-                                 graphIndices.residueMolecule,
-                                 proteinMolecules,
-                                 rotatableDihedralIndices,
-                                 residueLinkages,
-                                 glycositeIndices};
+        AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages, glycositeIndices};
 
-        AssemblyGraphs graphs {indices, atomGraph, residueGraph, moleculeGraph};
+        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
+
+        AssemblyGraphs graphs {
+            atoms.size(), residues.size(), molecules.size(), graphIndices.atomResidue, graphIndices.residueMolecule,
+            atomGraph,    residueGraph,    moleculeGraph};
 
         std::vector<bool> atomIgnored(atoms.size(), false);
         std::vector<bool> glycanIncluded(glycosites.size(), true);

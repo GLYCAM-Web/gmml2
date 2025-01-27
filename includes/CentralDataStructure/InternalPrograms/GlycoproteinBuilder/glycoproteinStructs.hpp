@@ -66,15 +66,6 @@ namespace glycoproteinBuilder
         std::vector<bool> isGlycositeLinkage;
     };
 
-    struct AssemblyData
-    {
-        AtomData atoms;
-        ResidueData residues;
-        MoleculeData molecules;
-        RotatableDihedralData rotatableDihedralData;
-        ResidueLinkageData residueLinkageData;
-    };
-
     struct RotatableDihedralIndices
     {
         std::array<size_t, 4> atoms;
@@ -99,20 +90,29 @@ namespace glycoproteinBuilder
 
     struct AssemblyIndices
     {
-        size_t atomCount;
-        size_t residueCount;
-        size_t moleculeCount;
-        std::vector<size_t> atomResidue;
-        std::vector<size_t> residueMolecule;
         std::vector<size_t> proteinMolecules;
         std::vector<RotatableDihedralIndices> rotatableDihedrals;
         std::vector<ResidueLinkageIndices> residueLinkages;
         std::vector<GlycanIndices> glycans;
     };
 
+    struct AssemblyData
+    {
+        AtomData atoms;
+        ResidueData residues;
+        MoleculeData molecules;
+        RotatableDihedralData rotatableDihedralData;
+        ResidueLinkageData residueLinkageData;
+        AssemblyIndices indices;
+    };
+
     struct AssemblyGraphs
     {
-        AssemblyIndices indices;
+        size_t atomCount;
+        size_t residueCount;
+        size_t moleculeCount;
+        std::vector<size_t> atomResidue;
+        std::vector<size_t> residueMolecule;
         graph::Graph atoms;
         graph::Graph residues;
         graph::Graph molecules;

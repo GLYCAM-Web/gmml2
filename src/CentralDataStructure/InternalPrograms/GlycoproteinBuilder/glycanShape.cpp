@@ -28,7 +28,7 @@ namespace glycoproteinBuilder
 
     void updateResidueMoleculeBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index)
     {
-        size_t moleculeIndex = graphs.indices.residueMolecule[index];
+        size_t moleculeIndex = graphs.residueMolecule[index];
         mutableData.moleculeBounds[moleculeIndex] =
             cds::boundingSphereIncluding(mutableData.moleculeBounds[moleculeIndex], mutableData.residueBounds[index]);
     }
@@ -39,9 +39,10 @@ namespace glycoproteinBuilder
             cds::boundingSphere(codeUtils::indicesToValues(mutableData.residueBounds, moleculeResidues(graphs, index)));
     }
 
-    void updateGlycanBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t glycanId)
+    void updateGlycanBounds(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                            size_t glycanId)
     {
-        const GlycanIndices& glycan = graphs.indices.glycans[glycanId];
+        const GlycanIndices& glycan = data.indices.glycans[glycanId];
         size_t siteResidue          = glycan.attachmentResidue;
         updateResidueBounds(graphs, mutableData, siteResidue);
         updateResidueMoleculeBounds(graphs, mutableData, siteResidue);
@@ -53,10 +54,10 @@ namespace glycoproteinBuilder
         updateMoleculeBounds(graphs, mutableData, moleculeId);
     }
 
-    std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyGraphs& graphs, const MutableData& mutableData,
+    std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const MutableData& mutableData,
                                                        size_t dihedralId)
     {
-        const std::array<size_t, 4>& atoms = graphs.indices.rotatableDihedrals[dihedralId].atoms;
+        const std::array<size_t, 4>& atoms = data.indices.rotatableDihedrals[dihedralId].atoms;
         auto coord                         = [&](size_t n)
         {
             return mutableData.atomBounds[atoms[n]].center;
@@ -64,21 +65,21 @@ namespace glycoproteinBuilder
         return {coord(3), coord(2), coord(1), coord(0)};
     }
 
-    void setDihedralAngle(const AssemblyGraphs& graphs, MutableData& mutableData, size_t linkageId, size_t dihedralId,
-                          const cds::AngleWithMetadata& target)
+    void setDihedralAngle(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                          size_t linkageId, size_t dihedralId, const cds::AngleWithMetadata& target)
     {
-        const RotatableDihedralIndices& dihedral      = graphs.indices.rotatableDihedrals[dihedralId];
-        std::array<cds::Coordinate, 4> dihedralCoords = dihedralCoordinates(graphs, mutableData, dihedralId);
+        const RotatableDihedralIndices& dihedral      = data.indices.rotatableDihedrals[dihedralId];
+        std::array<cds::Coordinate, 4> dihedralCoords = dihedralCoordinates(data, mutableData, dihedralId);
         auto matrix = cds::rotationTo(dihedralCoords, constants::toRadians(target.value));
         for (size_t atom : dihedral.movingAtoms)
         {
             cds::Coordinate& coord = mutableData.atomBounds[atom].center;
             coord                  = matrix * coord;
         }
-        size_t edgeId                           = graphs.indices.residueLinkages[linkageId].residueEdge;
+        size_t edgeId                           = data.indices.residueLinkages[linkageId].residueEdge;
         const std::array<size_t, 2>& residueIds = graphs.residues.edges.nodeAdjacencies[edgeId];
-        std::vector<bool> residueMoving         = groupContains(graphs.indices.atomResidue, dihedral.movingAtoms);
-        for (size_t n = 0; n < graphs.indices.residueCount; n++)
+        std::vector<bool> residueMoving         = groupContains(graphs.atomResidue, dihedral.movingAtoms);
+        for (size_t n = 0; n < graphs.residueCount; n++)
         {
             if (residueMoving[n] && (n != residueIds[0]) && (n != residueIds[1]))
             {
@@ -95,18 +96,18 @@ namespace glycoproteinBuilder
         mutableData.currentDihedralShape[dihedralId] = target;
     }
 
-    void setLinkageShape(const AssemblyGraphs& graphs, MutableData& mutableData, size_t glycanId,
-                         const std::vector<cds::AngleWithMetadata>& recordedShape)
+    void setLinkageShape(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                         size_t glycanId, const std::vector<cds::AngleWithMetadata>& recordedShape)
     {
-        const std::vector<size_t>& linkages = graphs.indices.glycans[glycanId].linkages;
+        const std::vector<size_t>& linkages = data.indices.glycans[glycanId].linkages;
         for (size_t n = 0; n < linkages.size(); n++)
         {
             size_t linkageId                     = linkages[n];
-            const std::vector<size_t>& dihedrals = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
+            const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
             for (size_t k = 0; k < dihedrals.size(); k++)
             {
                 size_t dihedralId = dihedrals[k];
-                setDihedralAngle(graphs, mutableData, linkageId, dihedralId, recordedShape[dihedralId]);
+                setDihedralAngle(graphs, data, mutableData, linkageId, dihedralId, recordedShape[dihedralId]);
             }
         }
     }
@@ -115,7 +116,7 @@ namespace glycoproteinBuilder
                                      size_t linkageId, const cds::ResidueLinkageShapePreference& preference)
     {
         GlycamMetadata::RotamerType rotamerType = data.residueLinkageData.rotamerTypes[linkageId];
-        const std::vector<size_t>& dihedrals    = graphs.indices.residueLinkages[linkageId].rotatableDihedrals;
+        const std::vector<size_t>& dihedrals    = data.indices.residueLinkages[linkageId].rotatableDihedrals;
 
         std::function<void(const cds::ConformerShapePreference&)> onConformer =
             [&](const cds::ConformerShapePreference& pref)
@@ -129,7 +130,7 @@ namespace glycoproteinBuilder
             {
                 double angle = pref.angles[n][metadataIndex];
                 cds::AngleWithMetadata am {angle, angle, metadataIndex};
-                setDihedralAngle(graphs, mutableData, linkageId, dihedrals[n], am);
+                setDihedralAngle(graphs, data, mutableData, linkageId, dihedrals[n], am);
             }
         };
         std::function<void(const cds::PermutationShapePreference&)> onPermutation =
@@ -145,7 +146,7 @@ namespace glycoproteinBuilder
                 size_t metadataIndex = pref.metadataOrder[n][0];
                 double angle         = pref.angles[n][metadataIndex];
                 cds::AngleWithMetadata am {angle, angle, metadataIndex};
-                setDihedralAngle(graphs, mutableData, linkageId, dihedrals[n], am);
+                setDihedralAngle(graphs, data, mutableData, linkageId, dihedrals[n], am);
             }
         };
         return onResidueLinkageShapePreference(onConformer, onPermutation, preference);

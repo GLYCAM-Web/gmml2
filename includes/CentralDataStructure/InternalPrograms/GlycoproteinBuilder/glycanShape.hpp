@@ -13,13 +13,14 @@ namespace glycoproteinBuilder
     void updateResidueBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index);
     void updateResidueMoleculeBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index);
     void updateMoleculeBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t index);
-    void updateGlycanBounds(const AssemblyGraphs& graphs, MutableData& mutableData, size_t glycanId);
-    std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyGraphs& graphs, const MutableData& mutableData,
+    void updateGlycanBounds(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                            size_t glycanId);
+    std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const MutableData& mutableData,
                                                        size_t dihedralId);
-    void setDihedralAngle(const AssemblyGraphs& graphs, MutableData& data, size_t linkageId, size_t dihedralId,
-                          const cds::AngleWithMetadata& target);
-    void setLinkageShape(const AssemblyGraphs& graphs, MutableData& mutableData, size_t glycanId,
-                         const std::vector<cds::AngleWithMetadata>& recordedShape);
+    void setDihedralAngle(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                          size_t linkageId, size_t dihedralId, const cds::AngleWithMetadata& target);
+    void setLinkageShape(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
+                         size_t glycanId, const std::vector<cds::AngleWithMetadata>& recordedShape);
     void setLinkageShapeToPreference(const AssemblyGraphs& graphs, const AssemblyData& data, MutableData& mutableData,
                                      size_t linkageId, const cds::ResidueLinkageShapePreference& preference);
 } // namespace glycoproteinBuilder
