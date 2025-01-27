@@ -1,4 +1,5 @@
 ./includes
+./includes/Assembly
 ./includes/CentralDataStructure
 ./includes/CentralDataStructure/CondensedSequence
 ./includes/CentralDataStructure/Editors

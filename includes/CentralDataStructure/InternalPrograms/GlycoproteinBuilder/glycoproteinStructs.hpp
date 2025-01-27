@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 
 #include "includes/Graph/graphTypes.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
@@ -106,18 +107,6 @@ namespace glycoproteinBuilder
         AssemblyIndices indices;
     };
 
-    struct AssemblyGraphs
-    {
-        size_t atomCount;
-        size_t residueCount;
-        size_t moleculeCount;
-        std::vector<size_t> atomResidue;
-        std::vector<size_t> residueMolecule;
-        graph::Graph atoms;
-        graph::Graph residues;
-        graph::Graph molecules;
-    };
-
     struct MutableData
     {
         std::vector<cds::Sphere> atomBounds;
@@ -130,26 +119,10 @@ namespace glycoproteinBuilder
 
     struct GlycoproteinAssembly
     {
-        AssemblyGraphs graphs;
+        assembly::Graph graph;
         AssemblyData data;
         MutableData mutableData;
     };
-
-    inline const std::vector<size_t>& residueAtoms(const AssemblyGraphs& graphs, size_t residueId)
-    {
-        return graphs.residues.nodes.elements[residueId];
-    };
-
-    inline const std::vector<size_t>& moleculeResidues(const AssemblyGraphs& graphs, size_t moleculeId)
-    {
-        return graphs.molecules.nodes.elements[moleculeId];
-    };
-
-    inline size_t moleculeEdgeToAtomEdgeIndex(const AssemblyGraphs& graphs, size_t moleculeEdgeId)
-    {
-        size_t residueBondIndex = graphs.molecules.edges.indices[moleculeEdgeId];
-        return graphs.residues.edges.indices[residueBondIndex];
-    }
 
 } // namespace glycoproteinBuilder
 #endif

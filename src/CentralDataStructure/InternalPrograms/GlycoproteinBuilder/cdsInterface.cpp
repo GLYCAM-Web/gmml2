@@ -10,6 +10,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 
 #include <array>
@@ -277,7 +278,7 @@ namespace glycoproteinBuilder
 
         AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
 
-        AssemblyGraphs graphs {
+        assembly::Graph graph {
             atoms.size(), residues.size(), molecules.size(), graphIndices.atomResidue, graphIndices.residueMolecule,
             atomGraph,    residueGraph,    moleculeGraph};
 
@@ -287,6 +288,6 @@ namespace glycoproteinBuilder
                                  moleculeBounds,      rotatableDihedralCurrentShape,
                                  atomIgnored,         glycanIncluded};
 
-        return GlycoproteinAssembly {graphs, data, mutableData};
+        return GlycoproteinAssembly {graph, data, mutableData};
     }
 } // namespace glycoproteinBuilder
