@@ -31,7 +31,7 @@ namespace glycoproteinBuilder
         for (size_t n = 0; n < graph.residues.edges.indices.size(); n++)
         {
             std::array<size_t, 2> residueAdj = graph.residues.edges.nodeAdjacencies[n];
-            size_t atomEdge                  = graph.residues.edges.indices[n];
+            size_t atomEdge                  = residueEdgeToAtomEdgeIndex(graph, n);
             std::array<size_t, 2> atomAdj    = graph.atoms.edges.nodeAdjacencies[atomEdge];
             for (size_t k = 0; k < 2; k++)
             {

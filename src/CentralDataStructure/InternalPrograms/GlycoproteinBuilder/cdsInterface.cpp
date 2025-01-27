@@ -147,8 +147,9 @@ namespace glycoproteinBuilder
                 }
                 size_t edgeId                    = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
                 std::array<size_t, 2> residueIds = graph.residues.edges.nodeAdjacencies[edgeId];
-                std::array<size_t, 2> atomIds = graph.atoms.edges.nodeAdjacencies[graph.residues.edges.indices[edgeId]];
-                bool direction                = graphIndices.atomResidue[atomIds[0]] == residueIds[1];
+                std::array<size_t, 2> atomIds =
+                    graph.atoms.edges.nodeAdjacencies[residueEdgeToAtomEdgeIndex(graph, edgeId)];
+                bool direction                               = graphIndices.atomResidue[atomIds[0]] == residueIds[1];
                 std::array<std::vector<bool>, 2> bondedAtoms = {closelyBondedAtoms(residueIds[0], atomIds[direction]),
                                                                 closelyBondedAtoms(residueIds[1], atomIds[!direction])};
 
@@ -224,7 +225,7 @@ namespace glycoproteinBuilder
                 for (size_t residueBondId : graph.residues.nodes.edgeAdjacencies[n])
                 {
                     bool direction    = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);
-                    size_t atomBondId = graph.residues.edges.indices[residueBondId];
+                    size_t atomBondId = residueEdgeToAtomEdgeIndex(graph, residueBondId);
                     const std::array<size_t, 2>& atomBond = graph.atoms.edges.nodeAdjacencies[atomBondId];
                     size_t thisAtom                       = atomBond[0 == direction];
                     size_t otherAtom                      = atomBond[1 == direction];

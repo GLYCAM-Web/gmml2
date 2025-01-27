@@ -51,7 +51,7 @@ namespace glycoproteinBuilder
             if (adjacencyIndex < adjacencies.size())
             {
                 size_t edgeIndex = graph.residues.nodes.edgeAdjacencies[residueA][adjacencyIndex];
-                size_t bondIndex = graph.residues.edges.indices[edgeIndex];
+                size_t bondIndex = residueEdgeToAtomEdgeIndex(graph, edgeIndex);
                 bonds.push_back(bondedResidueOverlapInput(graph, bondIndex));
             }
             return bonds;

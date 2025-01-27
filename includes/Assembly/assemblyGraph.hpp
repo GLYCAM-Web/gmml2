@@ -29,10 +29,14 @@ namespace assembly
         return graph.molecules.nodes.elements[moleculeId];
     };
 
-    inline size_t moleculeEdgeToAtomEdgeIndex(const Graph& graph, size_t moleculeEdgeId)
+    inline size_t residueEdgeToAtomEdgeIndex(const Graph& graph, size_t edgeId)
     {
-        size_t residueBondIndex = graph.molecules.edges.indices[moleculeEdgeId];
-        return graph.residues.edges.indices[residueBondIndex];
+        return graph.residues.edges.indices[edgeId];
+    }
+
+    inline size_t moleculeEdgeToAtomEdgeIndex(const Graph& graph, size_t edgeId)
+    {
+        return residueEdgeToAtomEdgeIndex(graph, graph.molecules.edges.indices[edgeId]);
     }
 } // namespace assembly
 
