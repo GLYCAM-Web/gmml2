@@ -304,14 +304,13 @@ namespace glycoproteinBuilder
             outFileStream.close();
         };
 
-        auto writePdbFile = [&outputDir, &headerLines](const assembly::Graph& graph, const AssemblyData& data,
-                                                       const std::vector<cds::Coordinate>& coordinates,
-                                                       const std::vector<int>& atomNumbers,
-                                                       const std::vector<int>& residueNumbers,
-                                                       const std::vector<std::vector<size_t>>& residueIndices,
-                                                       const std::vector<std::vector<bool>>& residueTER,
-                                                       const std::vector<std::pair<size_t, size_t>>& connectionIndices,
-                                                       const std::string& prefix)
+        auto writePdbFile = [&outputDir, &headerLines](
+                                const assembly::Graph& graph, const AssemblyData& data,
+                                const std::vector<cds::Coordinate>& coordinates, const std::vector<int>& atomNumbers,
+                                const std::vector<int>& residueNumbers,
+                                const std::vector<std::vector<size_t>>& residueIndices,
+                                const std::vector<std::vector<bool>>& residueTER,
+                                const std::vector<std::array<size_t, 2>>& connectionIndices, const std::string& prefix)
         {
             cds::PdbFileData pdbData =
                 toPdbFileData(graph, data, coordinates, atomNumbers, residueNumbers, headerLines);
@@ -393,9 +392,9 @@ namespace glycoproteinBuilder
             return codeUtils::contains(nonProteinTypes, data.residues.types[n]);
         };
 
-        std::vector<std::pair<size_t, size_t>> noConnections = {};
-        std::vector<std::vector<bool>> allResidueTER         = residueTER(moleculeResidues);
-        std::vector<std::pair<size_t, size_t>> atomPairsConnectingNonProteinResidues;
+        std::vector<std::array<size_t, 2>> noConnections = {};
+        std::vector<std::vector<bool>> allResidueTER     = residueTER(moleculeResidues);
+        std::vector<std::array<size_t, 2>> atomPairsConnectingNonProteinResidues;
         const graph::GraphEdges& residueEdges = graph.residues.edges;
         for (size_t n = 0; n < residueEdges.indices.size(); n++)
         {
@@ -404,7 +403,7 @@ namespace glycoproteinBuilder
             {
                 size_t atomEdgeId                   = residueEdges.indices[n];
                 const std::array<size_t, 2> atomAdj = graph.atoms.edges.nodeAdjacencies[atomEdgeId];
-                atomPairsConnectingNonProteinResidues.push_back({atomAdj[0], atomAdj[1]});
+                atomPairsConnectingNonProteinResidues.push_back(atomAdj);
             }
         }
 

@@ -193,8 +193,8 @@ void Molecule::WritePdb(std::ostream& stream) const
     using cds::ResidueType; // to help readability of the Sugar, etc below
     std::vector<Residue*> selectedResidues =
         cdsSelections::selectResiduesByType(residues, {Sugar, Derivative, Aglycone, Undefined});
-    std::vector<std::pair<Atom*, Atom*>> connectedAtoms      = atomPairsConnectedToOtherResidues(selectedResidues);
-    std::vector<std::pair<size_t, size_t>> connectionIndices = atomPairVectorIndices(atoms, connectedAtoms);
+    std::vector<std::pair<Atom*, Atom*>> connectedAtoms  = atomPairsConnectedToOtherResidues(selectedResidues);
+    std::vector<std::array<size_t, 2>> connectionIndices = atomPairVectorIndices(atoms, connectedAtoms);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }
 

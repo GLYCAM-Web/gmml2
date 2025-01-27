@@ -12,6 +12,7 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
+#include <array>
 #include <vector>
 #include <stdexcept>
 
@@ -135,10 +136,10 @@ std::vector<std::pair<int, int>> cds::atomPairNumbers(const std::vector<std::pai
     return result;
 }
 
-std::vector<std::pair<size_t, size_t>> cds::atomPairVectorIndices(const std::vector<Atom*>& atoms,
-                                                                  const std::vector<std::pair<Atom*, Atom*>>& pairs)
+std::vector<std::array<size_t, 2>> cds::atomPairVectorIndices(const std::vector<Atom*>& atoms,
+                                                              const std::vector<std::pair<Atom*, Atom*>>& pairs)
 {
-    std::vector<std::pair<size_t, size_t>> result;
+    std::vector<std::array<size_t, 2>> result;
     result.reserve(pairs.size());
     for (auto& pair : pairs)
     {

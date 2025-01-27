@@ -5,11 +5,12 @@
 #include <iomanip>
 #include <ostream>
 #include <string>
+#include <array>
 #include <vector>
 
 void cds::writeAssemblyToPdb(std::ostream& stream, const std::vector<std::vector<size_t>>& residueIndices,
                              const std::vector<std::vector<bool>>& residueTER,
-                             const std::vector<std::pair<size_t, size_t>>& connectionIndices, const PdbFileData& data)
+                             const std::vector<std::array<size_t, 2>>& connectionIndices, const PdbFileData& data)
 {
     for (auto& line : data.headerLines)
     {
@@ -67,14 +68,18 @@ void cds::writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, cons
 }
 
 void cds::writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
-                           std::vector<std::pair<size_t, size_t>> connectionIndices)
+                           const std::vector<std::array<size_t, 2>>& connectionIndices)
 { // These are only written for atoms connecting residues. The numbers overflow/truncate when longer than 5, but the
   // format is what the format is.
     for (auto& atomPair : connectionIndices)
     {
-        stream << "CONECT" << std::right << std::setw(5) << atomNumbers[atomPair.first] << std::right << std::setw(5)
-               << atomNumbers[atomPair.second] << "\n";
-        stream << "CONECT" << std::right << std::setw(5) << atomNumbers[atomPair.second] << std::right << std::setw(5)
-               << atomNumbers[atomPair.first] << "\n";
+        auto writeLine = [&](int a, int b)
+        {
+            stream << "CONECT" << std::right << std::setw(5) << a << std::right << std::setw(5) << b << "\n";
+        };
+        int first  = atomNumbers[atomPair[0]];
+        int second = atomNumbers[atomPair[1]];
+        writeLine(first, second);
+        writeLine(second, first);
     }
 }
