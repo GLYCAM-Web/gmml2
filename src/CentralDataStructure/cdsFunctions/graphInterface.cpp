@@ -6,7 +6,7 @@
 
 #include <vector>
 
-cds::GraphIndexData cds::toIndexData(std::vector<Molecule*> molecules)
+cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
 {
     size_t moleculeIndex = 0;
     size_t residueIndex  = 0;
@@ -37,7 +37,7 @@ cds::GraphIndexData cds::toIndexData(std::vector<Molecule*> molecules)
     return {atoms, residues, molecules, atomResidue, residueMolecule};
 }
 
-graph::Database cds::createGraphData(GraphIndexData& indices)
+graph::Database cds::createGraphData(const GraphIndexData& indices)
 {
     std::vector<uint> initialIndices;
     // save indices
@@ -68,7 +68,7 @@ graph::Database cds::createGraphData(GraphIndexData& indices)
     return graph;
 }
 
-assembly::Graph cds::createAssemblyGraph(GraphIndexData& indices)
+assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices)
 {
     graph::Database atomGraphData = cds::createGraphData(indices);
     graph::Graph atomGraph        = graph::identity(atomGraphData);

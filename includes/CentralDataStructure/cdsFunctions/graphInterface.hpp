@@ -27,9 +27,9 @@ namespace cds
         std::vector<size_t> residueMolecule;
     };
 
-    GraphIndexData toIndexData(std::vector<Molecule*> molecules);
-    graph::Database createGraphData(GraphIndexData& indices);
-    assembly::Graph createAssemblyGraph(GraphIndexData& indices);
+    GraphIndexData toIndexData(const std::vector<Molecule*> molecules);
+    graph::Database createGraphData(const GraphIndexData& indices);
+    assembly::Graph createAssemblyGraph(const GraphIndexData& indices);
 } // namespace cds
 
 #endif
