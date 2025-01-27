@@ -75,7 +75,6 @@ namespace cds
         std::vector<Residue*> getResidues(std::vector<std::string> queryNames);
         Residue* getResidue(const std::string& queryName);
         void deleteResidue(Residue*);
-        void renumberResidues(int newStartNumber = 1);
 
       private:
         //////////////////////////////////////////////////////////

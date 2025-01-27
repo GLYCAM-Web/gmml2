@@ -162,11 +162,3 @@ void Molecule::deleteResidue(Residue* residue)
     }
     return;
 }
-
-void Molecule::renumberResidues(int newStartNumber)
-{
-    for (auto& residue : this->getResidues())
-    {
-        residue->setNumber(newStartNumber++);
-    }
-}
