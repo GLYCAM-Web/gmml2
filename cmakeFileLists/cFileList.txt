@@ -64,6 +64,7 @@
 ./src/CentralDataStructure/Shapers/residueLinkageCreation.cpp
 ./src/CentralDataStructure/Writers/offWriter.cpp
 ./src/CentralDataStructure/Writers/pdbWriter.cpp
+./src/CentralDataStructure/Writers/print.cpp
 ./src/CentralDataStructure/assembly.cpp
 ./src/CentralDataStructure/atom.cpp
 ./src/CentralDataStructure/cdsFunctions/atomicBonding.cpp

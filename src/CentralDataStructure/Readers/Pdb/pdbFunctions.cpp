@@ -68,9 +68,3 @@ void pdb::expandLine(std::string& line, int length)
         line = ss.str();
     }
 }
-
-void pdb::print(const cds::Coordinate& coord, std::ostream& out)
-{
-    out << std::setw(10) << coord.GetX() << ", " << std::setw(10) << coord.GetY() << ", " << std::setw(10)
-        << coord.GetZ();
-}

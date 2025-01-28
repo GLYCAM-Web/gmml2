@@ -157,12 +157,3 @@ bool Atom::operator!=(const Atom& otherAtom)
 {
     return !(operator==(otherAtom));
 }
-
-//////////////////////////////////////////////////////////
-//                       DISPLAY FUNCTION               //
-//////////////////////////////////////////////////////////
-void Atom::Print(std::ostream& out) const
-{
-    out << this->getName() << ", ";
-    return;
-}

@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/Writers/print.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
@@ -384,7 +385,7 @@ void PdbModel::Print(std::ostream& out) const
 {
     for (auto& residue : this->getResidues())
     {
-        residue->Print(out);
+        cds::print(out, *residue);
     }
 }
 

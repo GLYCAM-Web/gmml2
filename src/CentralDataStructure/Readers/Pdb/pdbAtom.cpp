@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Writers/print.hpp"
 #include "includes/CodeUtils/constants.hpp" // gmml::iNotSet
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -221,7 +222,7 @@ void PdbAtom::Print(std::ostream& out) const
         out << residueSequenceNumber_;
     }
     out << ", Inserion Code: " << insertionCode_ << ", Coordinate: ";
-    print(coordinate(), out);
+    cds::print(out, coordinate());
     out << ", Occupancy: ";
     if (occupancy_ == constants::dNotSet)
     {

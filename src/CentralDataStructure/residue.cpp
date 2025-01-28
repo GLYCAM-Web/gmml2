@@ -270,17 +270,3 @@ cds::ResidueType Residue::determineType(const std::string& residueName)
     // ToDo we want to figure out solvent, aglycone etc here too?.
     return ResidueType::Undefined;
 }
-
-//////////////////////////////////////////////////////////
-//                    DISPLAY                           //
-//////////////////////////////////////////////////////////
-void Residue::Print(std::ostream& out) const
-{
-    out << "Name: " << this->getName() << ", index:" << this->getIndex() << ":\n";
-    for (auto& atom : this->getAtoms())
-    {
-        atom->Print(out);
-        out << "\n";
-    }
-    out << "\n";
-}
