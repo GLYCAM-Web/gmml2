@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
         {ArgReq::required, ArgType::unnamed,       FILENAME,               "", ' ', "filename"},
         {ArgReq::optional,    ArgType::flag,           HELP,           "help", 'h',         ""},
         {ArgReq::optional,    ArgType::flag,        VERSION,        "version", 'v',         ""},
-        {ArgReq::optional,  ArgType::option,       BASE_DIR,       "base-dir", ' ',         ""},
+        {ArgReq::optional,  ArgType::option,       BASE_DIR,       "base-dir", ' ',     "path"},
         {ArgReq::optional,    ArgType::flag, RELATIVE_PATHS, "relative-paths", ' ',         ""}
     };
     std::string programName = codeUtils::programName(argv);
