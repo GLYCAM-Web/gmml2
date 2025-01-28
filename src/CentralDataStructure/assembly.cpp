@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/assembly.hpp"
 
-#include "../../includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 
