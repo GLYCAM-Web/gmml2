@@ -15,16 +15,20 @@ int main(int argc, char* argv[])
         SEQUENCE,
         FILENAME,
         HELP,
-        VERSION
+        VERSION,
+        BASE_DIR,
+        RELATIVE_PATHS
     };
 
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
-        {ArgReq::required, ArgType::unnamed, SEQUENCE,        "", ' ', "sequence"},
-        {ArgReq::required, ArgType::unnamed, FILENAME,        "", ' ', "filename"},
-        {ArgReq::optional,    ArgType::flag,     HELP,    "help", 'h',         ""},
-        {ArgReq::optional,    ArgType::flag,  VERSION, "version", 'v',         ""}
+        {ArgReq::required, ArgType::unnamed,       SEQUENCE,               "", ' ', "sequence"},
+        {ArgReq::required, ArgType::unnamed,       FILENAME,               "", ' ', "filename"},
+        {ArgReq::optional,    ArgType::flag,           HELP,           "help", 'h',         ""},
+        {ArgReq::optional,    ArgType::flag,        VERSION,        "version", 'v',         ""},
+        {ArgReq::optional,  ArgType::option,       BASE_DIR,       "base-dir", ' ',         ""},
+        {ArgReq::optional,    ArgType::flag, RELATIVE_PATHS, "relative-paths", ' ',         ""}
     };
     std::string programName = codeUtils::programName(argv);
     codeUtils::Arguments arguments;
@@ -55,7 +59,10 @@ int main(int argc, char* argv[])
     }
 
     std::string sequence;
-    std::string filename;
+    std::string basePath  = codeUtils::gmmlHomeDirPath;
+    std::string directory = codeUtils::relativeSnfgSymbolDirPath;
+    std::string filename  = "";
+    bool relative         = false;
 
     for (const auto& arg : arguments.args)
     {
@@ -71,13 +78,28 @@ int main(int argc, char* argv[])
                     filename = arg.value;
                     break;
                 }
+            case ARGUMENTS::BASE_DIR:
+                {
+                    basePath = arg.value;
+                    break;
+                }
+            case ARGUMENTS::RELATIVE_PATHS:
+                {
+                    relative = true;
+                }
             default:
                 break;
         }
     }
 
-    cdsCondensedSequence::GraphVizDotConfig config;
-    config.file_name_ = filename;
+    if (!relative)
+    {
+        directory = basePath + directory;
+        basePath  = "";
+    }
+
+    cdsCondensedSequence::GraphVizDotConfig config(basePath, directory, filename);
+
     CondensedSequence::drawGlycan(config, sequence);
     return 0;
 }

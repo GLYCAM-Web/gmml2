@@ -36,7 +36,7 @@ namespace
         // Sugar
         std::string imageFile = configs.svg_directory_path_ + residue.GetMonosaccharideName() + ".svg";
         logss << "Searching for image: " << imageFile << "\n";
-        if (file_exists(imageFile.c_str()))
+        if (file_exists((configs.base_path_ + imageFile).c_str()))
         {
             logss << "FOUND IT\n";
             std::string label = (residue.GetRingType() == "f") ? "f" : "";

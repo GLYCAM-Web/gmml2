@@ -42,8 +42,11 @@ namespace codeUtils
     static const std::filesystem::path gemsHomeDirPath =
         std::filesystem::path(gmmlHomeDirPath).parent_path().parent_path().string() + "/";
 
+    static const std::filesystem::path relativeSnfgSymbolDirPath =
+        "includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/";
+
     static const std::filesystem::path snfgSymbolsDirPath =
-        std::filesystem::path(gmmlHomeDirPath).string() + "includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/";
+        std::filesystem::path(gmmlHomeDirPath).string() + relativeSnfgSymbolDirPath.string();
 
 } // namespace codeUtils
 #endif
