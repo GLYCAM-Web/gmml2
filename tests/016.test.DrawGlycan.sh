@@ -1,39 +1,31 @@
 #!/bin/bash
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
+BIN_PATH="${GMML_ROOT_DIR}/bin/drawGlycan"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 016 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
     exit 1
 fi
 
-printf "Testing 016.test.DrawGlycan.cc..."
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/016.test.DrawGlycan.cc -lgmml2 -pthread -o drawGlycan
-./drawGlycan >016.output_drawGlycan.txt
-for dotFile in $(ls *.dot); do
-    cat "${dotFile}" >>016.output_drawGlycan.txt
-    dotFileName="${dotFile%.*}"
-    dot -Tsvg:cairo:cairo "${dotFile}" -o "${dotFileName}".svg >/dev/null 2>&1
-    rm "${dotFile}"
-done
+filename=$1
+sequence=$2
+directory="016"
+output="output/${directory}/${filename}"
 
-for svgFile in $(ls *.svg); do
-    cmp "${svgFile}" tests/correct_outputs/016.output_SVGs/"${svgFile}"
-    if ! cmp "${svgFile}" tests/correct_outputs/016.output_SVGs/"${svgFile}" >/dev/null 2>&1; then
-        printf "Test FAILED! Output file %s different to tests/correct_outputs/016.output_SVGs/%s\n" "${svgFile}" "${svgFile}"
-        echo "Exit Code: 1"
-        return 1
-    fi
-    rm "${svgFile}"
-done
+echo -n "Testing 016 drawGlycan ${sequence}... "
 
-if ! cmp 016.output_drawGlycan.txt tests/correct_outputs/016.output_drawGlycan.txt >/dev/null 2>&1; then
-    printf "Test FAILED! Output file different\n"
+rm "${output}" >/dev/null 2>&1
+mkdir -p "output/${directory}"
+"${BIN_PATH}" "${sequence}" "${output}" --base-dir "${GMML_ROOT_DIR}/" --relative-paths 2>&1
+
+if ! cmp "${output}" "tests/correct_outputs/${directory}/${filename}" >/dev/null 2>&1; then
+    echo "Test FAILED! Output file different"
     echo "Exit Code: 1"
     return 1
 else
-    printf "Test passed.\n"
-    rm drawGlycan 016.output_drawGlycan.txt
+    echo "Test passed."
+    rm "${output}"
     echo "Exit Code: 0"
     return 0
 fi
