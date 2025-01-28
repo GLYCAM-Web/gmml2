@@ -18,3 +18,5 @@ echo -e "Carbohydrate builder"
 g++ -std=c++17 -g -I ./ -L"${BIN_PATH}" -Wl,-rpath,"${BIN_PATH}" internalPrograms/CarbohydrateBuilder/main.cpp -lgmml2 -pthread -o bin/carbohydrateBuilder
 echo -e "Wiggle to site"
 g++ -std=c++17 -g -I ./ -L"${BIN_PATH}" -Wl,-rpath,"${BIN_PATH}" internalPrograms/WiggleToSite/wiggleToSiteDriver.cpp -lgmml2 -pthread -o bin/wiggleToSite
+echo -e "Draw glycan"
+g++ -std=c++17 -g -I ./ -L"${BIN_PATH}" -Wl,-rpath,"${BIN_PATH}" internalPrograms/DrawGlycan/drawGlycanMain.cpp -lgmml2 -pthread -o bin/drawGlycan
