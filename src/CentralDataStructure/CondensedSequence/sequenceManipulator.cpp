@@ -84,10 +84,16 @@ namespace
         return ss.str();
     }
 
-    std::string graphVizLinkageLine(const GraphVizLinkage& linkage)
+    std::string graphVizLinkageLine(const std::vector<GraphVizResidueNode>& nodes, const GraphVizLinkage& linkage)
     {
+        std::array<std::string, 2> clip;
+        for (size_t n = 0; n < 2; n++)
+        {
+            clip[n] = nodes[linkage.nodeIndices[n]].image.found ? "false" : "true";
+        }
         std::stringstream ss;
-        ss << linkage.nodeIndices[0] << "--" << linkage.nodeIndices[1] << " [label=\"" << linkage.label << "\"];\n";
+        ss << nodes[linkage.nodeIndices[0]].index << "--" << nodes[linkage.nodeIndices[1]].index << " [label=\""
+           << linkage.label << "\" headclip=" << clip[1] << " tailclip=" << clip[0] << "];\n";
         return ss.str();
     }
 
@@ -239,7 +245,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
         std::string derivativeStr      = codeUtils::join(" ", derivativeStrings);
         std::string monosaccharideName = residue->GetMonosaccharideName();
         GraphVizImage image = findImage(configs, monosaccharideName, (residue->GetRingType() == "f") ? "f" : "");
-        size_t index        = codeUtils::indexOf(residues, residue);
+        size_t index        = codeUtils::indexOf(nonDerivatives, residue);
         nodes.push_back({index, image, monosaccharideName, residue->GetType(), derivativeStr});
         for (auto parent : residue->GetParents())
         {
@@ -253,14 +259,14 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
                 label += residue->GetLinkage();
             }
             linkages.push_back({
-                {index, codeUtils::indexOf(residues, parent)},
+                {index, codeUtils::indexOf(nonDerivatives, parent)},
                 label
             });
         }
     }
 
     std::stringstream ss;
-    ss << "graph G {graph [splines=false dpi=" << configs.dpi_ << "];\n";
+    ss << "graph G {graph [splines=false dpi=" << configs.dpi_ << " outputorder=\"edgesfirst\"];\n";
     ss << "node [shape=\"none\" fontname=DejaVuSans labelfontsize=12 ";
     ss << "label=\"none\" size=50 fixedsize=\"true\" scale=\"true\"];\n";
     ss << "edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];\n";
@@ -271,7 +277,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
     }
     for (auto& linkage : linkages)
     {
-        ss << graphVizLinkageLine(linkage);
+        ss << graphVizLinkageLine(nodes, linkage);
     }
     ss << "}\n";
     // Open and overwrite.
