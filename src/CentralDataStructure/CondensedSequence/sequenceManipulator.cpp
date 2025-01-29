@@ -4,6 +4,7 @@
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 #include <sstream>
 #include <sys/stat.h> // for checking if file exists
 #include <fstream>    // writing outputDotFile
@@ -18,80 +19,79 @@ namespace
         return (stat(filename, &buffer) == 0);
     }
 
-    std::string getGraphVizLineForResidue(ParsedResidue& residue, cdsCondensedSequence::GraphVizDotConfig& configs)
+    struct GraphVizImage
     {
-        std::stringstream logss;
-        logss << "Getting GraphVizLine for " << residue.GetName() << "\n";
-        gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
-        logss.str(std::string());
-        logss.clear(); // Must do both of these to clear the stream;
-        std::stringstream ss;
-        ss << residue.getIndex() << " [";
-        // Aglycone
-        if (residue.GetType() == cds::ResidueType::Aglycone)
+        bool found;
+        std::string path;
+        std::string label;
+    };
+
+    struct GraphVizLinkage
+    {
+        std::array<size_t, 2> nodeIndices;
+        std::string label;
+    };
+
+    struct GraphVizResidueNode
+    {
+        size_t index;
+        GraphVizImage image;
+        std::string label;
+        cds::ResidueType type;
+        std::string floatingLabel;
+    };
+
+    GraphVizImage findImage(const cdsCondensedSequence::GraphVizDotConfig& configs, const std::string& name,
+                            const std::string& label)
+    {
+        std::string imageFile = configs.svg_directory_path_ + name + ".svg";
+        if (file_exists((configs.base_path_ + imageFile).c_str()))
         {
-            ss << "shape=box label=\"" << residue.GetMonosaccharideName() << "\"]";
+            return GraphVizImage {true, imageFile, label};
+        }
+        return GraphVizImage {false, "", ""};
+    }
+
+    std::string graphVizNodeLine(const GraphVizResidueNode& node)
+    {
+        // Aglycone
+        if (node.type == cds::ResidueType::Aglycone)
+        {
+            std::stringstream ss;
+            ss << node.index << " [shape=box label=\"" << node.label << "\"]\n";
             return ss.str();
         }
         // Sugar
-        std::string imageFile = configs.svg_directory_path_ + residue.GetMonosaccharideName() + ".svg";
-        logss << "Searching for image: " << imageFile << "\n";
-        if (file_exists((configs.base_path_ + imageFile).c_str()))
-        {
-            logss << "FOUND IT\n";
-            std::string label = (residue.GetRingType() == "f") ? "f" : "";
-            ss << "label=\"" << label << "\" height=\"0.7\" image=\"" << imageFile << "\"];\n";
-        }
         else
         {
-            logss << "Not image available, using circle\n";
-            ss << "shape=circle height=\"0.7\" label=\"" << residue.GetMonosaccharideName() << "\"];\n";
-        }
-        // Derivatives
-        std::string derivativeStr = "";
-        for (auto& childLink : residue.GetChildren())
-        {
-            if (childLink->GetType() == cds::ResidueType::Derivative)
+            std::stringstream ss;
+            ss << node.index << " [";
+            if (node.image.found)
             {
-                derivativeStr += childLink->GetLinkageName() + childLink->GetName() + " ";
+                ss << "label=\"" << node.image.label << "\" height=\"0.7\" image=\"" << node.image.path << "\"];\n";
             }
-        }
-        if (!derivativeStr.empty())
-        {
-            ss << "\n"
-               << "b" << residue.getIndex();
-            ss << "[ shape=\"plaintext\",fontsize=\"12\",forcelabels=\"true\"; height = \"0.3\"; labelloc = b;  "
-                  "label=\"";
-            ss << derivativeStr << "\"];\n";
-            ss << "{ rank=\"same\"; b" << residue.getIndex() << " " << residue.getIndex() << "};\n";
-            ss << "{nodesep=\"0.2\";b" << residue.getIndex() << ";" << residue.getIndex() << "};\n";
-            ss << "b" << residue.getIndex() << "--" << residue.getIndex() << " [style=invis];\n";
-        }
-        // Linkage
-        for (auto& parent : residue.GetParents())
-        { // There is either 1 or 0 parents, this covers both cases.
-            ss << residue.getIndex() << "--" << parent->getIndex() << "[label=\"";
-            if (configs.show_config_labels_)
+            else
             {
-                ss << residue.GetConfiguration();
+                ss << "shape=circle height=\"0.7\" label=\"" << node.label << "\"];\n";
             }
-            if (configs.show_position_labels_)
+            // Derivatives
+            if (!node.floatingLabel.empty())
             {
-                ss << residue.GetLinkage();
+                ss << "b" << node.index;
+                ss << " [shape=\"plaintext\" fontsize=\"12\" height=\"0.3\" labelloc=b label=\"";
+                ss << node.floatingLabel << "\"];\n";
+                ss << "{rank=\"same\" b" << node.index << " " << node.index << "};\n";
+                ss << "{nodesep=\"0.2\" b" << node.index << " " << node.index << "};\n";
+                ss << "b" << node.index << "--" << node.index << " [style=invis];\n";
             }
-            ss << "\"];\n";
-            if (configs.show_edge_labels_)
-            {
-                for (auto& linkage : residue.getOutEdges())
-                {
-                    ss << residue.getIndex() << "--" << parent->getIndex();
-                    ss << "[taillabel=< <B>" << linkage->getIndex() << "</B>>, ";
-                    ss << "labelfontsize = 14, labeldistance = 2.0, labelangle = -35";
-                    ss << "];\n";
-                }
-            }
+            return ss.str();
         }
-        gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
+    }
+
+    std::string graphVizLinkageLine(const GraphVizLinkage& linkage)
+    {
+        std::stringstream ss;
+        ss << linkage.nodeIndices[0] << "--" << linkage.nodeIndices[1] << " [label=\"" << linkage.label << "\"];\n";
         return ss.str();
     }
 
@@ -216,26 +216,72 @@ namespace
 
 std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std::vector<ParsedResidue*> residues)
 {
-    setIndexByConnectivity(residues);
-    std::stringstream ss;
-    ss << "graph G {graph [splines=false forcelabels=true  dpi=" << configs.dpi_ << "];\n";
-    ss << "node [ shape=\"none\" fontname=DejaVuSans labelfontsize=12 forcelabels=\"true\";\n";
-    ss << "label=\"none\" size=50 fixedsize=\"true\" scale=\"true\"];\n";
-    ss << "edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle = 320.0];\n";
-    ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
+    //    setIndexByConnectivity(residues);
+    std::vector<ParsedResidue*> nonDerivatives;
+    nonDerivatives.reserve(residues.size());
     for (auto& residue : parsedResiduesOrderedByConnectivity(residues))
     {
         if (residue->GetType() != cds::ResidueType::Derivative)
         {
-            ss << getGraphVizLineForResidue(*residue, configs) << "\n";
+            nonDerivatives.push_back(residue);
         }
+    }
+    std::vector<GraphVizResidueNode> nodes;
+    std::vector<GraphVizLinkage> linkages;
+    for (auto& residue : nonDerivatives)
+    {
+        std::vector<cdsCondensedSequence::ParsedResidue*> children = residue->GetChildren();
+        std::vector<std::string> derivativeStrings;
+        derivativeStrings.reserve(children.size());
+        for (auto& child : children)
+        {
+            if (child->GetType() == cds::ResidueType::Derivative)
+            {
+                derivativeStrings.push_back(child->GetLinkageName() + child->GetName());
+            }
+        }
+        std::string derivativeStr      = codeUtils::join(" ", derivativeStrings);
+        std::string monosaccharideName = residue->GetMonosaccharideName();
+        GraphVizImage image = findImage(configs, monosaccharideName, (residue->GetRingType() == "f") ? "f" : "");
+        size_t index        = codeUtils::indexOf(residues, residue);
+        nodes.push_back({index, image, monosaccharideName, residue->GetType(), derivativeStr});
+        for (auto parent : residue->GetParents())
+        {
+            std::string label = "";
+            if (configs.show_config_labels_)
+            {
+                label += residue->GetConfiguration();
+            }
+            if (configs.show_position_labels_)
+            {
+                label += residue->GetLinkage();
+            }
+            linkages.push_back({
+                {index, codeUtils::indexOf(residues, parent)},
+                label
+            });
+        }
+    }
+
+    std::stringstream ss;
+    ss << "graph G {graph [splines=false dpi=" << configs.dpi_ << "];\n";
+    ss << "node [shape=\"none\" fontname=DejaVuSans labelfontsize=12 ";
+    ss << "label=\"none\" size=50 fixedsize=\"true\" scale=\"true\"];\n";
+    ss << "edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];\n";
+    ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
+    for (auto& node : nodes)
+    {
+        ss << graphVizNodeLine(node);
+    }
+    for (auto& linkage : linkages)
+    {
+        ss << graphVizLinkageLine(linkage);
     }
     ss << "}\n";
     // Open and overwrite.
     std::ofstream outputDotFile(configs.file_name_, std::ios::trunc);
     outputDotFile << ss.str();
     outputDotFile.close();
-    gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     return ss.str();
 }
 
