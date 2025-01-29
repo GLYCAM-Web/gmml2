@@ -52,40 +52,36 @@ namespace
         return GraphVizImage {false, "", ""};
     }
 
-    std::string graphVizNodeLine(const GraphVizResidueNode& node)
+    std::string graphVizAglyconeNode(const GraphVizResidueNode& node)
     {
-        // Aglycone
-        if (node.type == cds::ResidueType::Aglycone)
+        std::stringstream ss;
+        ss << node.index << " [shape=box label=\"" << node.label << "\"]\n";
+        return ss.str();
+    }
+
+    std::string graphVizSugarNode(const GraphVizResidueNode& node)
+    {
+        std::stringstream ss;
+        ss << node.index;
+        if (node.image.found)
         {
-            std::stringstream ss;
-            ss << node.index << " [shape=box label=\"" << node.label << "\"]\n";
-            return ss.str();
+            ss << " [label=\"" << node.image.label << "\" height=\"0.7\" image=\"" << node.image.path << "\"];\n";
         }
-        // Sugar
         else
         {
-            std::stringstream ss;
-            ss << node.index << " [";
-            if (node.image.found)
-            {
-                ss << "label=\"" << node.image.label << "\" height=\"0.7\" image=\"" << node.image.path << "\"];\n";
-            }
-            else
-            {
-                ss << "shape=circle height=\"0.7\" label=\"" << node.label << "\"];\n";
-            }
-            // Derivatives
-            if (!node.floatingLabel.empty())
-            {
-                ss << "b" << node.index;
-                ss << " [shape=\"plaintext\" fontsize=\"12\" height=\"0.3\" labelloc=b label=\"";
-                ss << node.floatingLabel << "\"];\n";
-                ss << "{rank=\"same\" b" << node.index << " " << node.index << "};\n";
-                ss << "{nodesep=\"0.2\" b" << node.index << " " << node.index << "};\n";
-                ss << "b" << node.index << "--" << node.index << " [style=invis];\n";
-            }
-            return ss.str();
+            ss << " [shape=circle height=\"0.7\" label=\"" << node.label << "\"];\n";
         }
+        // Derivatives
+        if (!node.floatingLabel.empty())
+        {
+            ss << "b" << node.index;
+            ss << " [shape=\"plaintext\" fontsize=\"12\" height=\"0.3\" labelloc=b label=\"";
+            ss << node.floatingLabel << "\"];\n";
+            ss << "{rank=\"same\" b" << node.index << " " << node.index << "};\n";
+            ss << "{nodesep=\"0.2\" b" << node.index << " " << node.index << "};\n";
+            ss << "b" << node.index << "--" << node.index << " [style=invis];\n";
+        }
+        return ss.str();
     }
 
     std::string graphVizLinkageLine(const GraphVizLinkage& linkage)
@@ -271,7 +267,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
     ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
     for (auto& node : nodes)
     {
-        ss << graphVizNodeLine(node);
+        ss << (node.type == cds::ResidueType::Aglycone ? graphVizAglyconeNode(node) : graphVizSugarNode(node));
     }
     for (auto& linkage : linkages)
     {
