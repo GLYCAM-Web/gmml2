@@ -13,7 +13,7 @@ sequence=$2
 directory="016"
 output="output/${directory}/${filename}"
 
-echo -n "Testing 016 drawGlycan ${sequence}... "
+echo -n "Testing 016 drawGlycan ${filename} ${sequence}... "
 
 rm "${output}" >/dev/null 2>&1
 mkdir -p "output/${directory}"
