@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 
 namespace CondensedSequence
 {

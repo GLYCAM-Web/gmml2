@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEMANIPULATOR_HPP
 
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 
 #include <memory>
 #include <vector>

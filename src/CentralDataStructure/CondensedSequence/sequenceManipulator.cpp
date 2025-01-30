@@ -1,102 +1,18 @@
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <sstream>
-#include <sys/stat.h> // for checking if file exists
-#include <fstream>    // writing outputDotFile
+#include <fstream> // writing outputDotFile
 
 using cdsCondensedSequence::ParsedResidue;
 
 namespace
 {
-    bool file_exists(const char* filename)
-    {
-        struct stat buffer;
-        return (stat(filename, &buffer) == 0);
-    }
-
-    struct GraphVizImage
-    {
-        bool found;
-        std::string path;
-        std::string label;
-    };
-
-    struct GraphVizLinkage
-    {
-        std::array<size_t, 2> nodeIndices;
-        std::string label;
-    };
-
-    struct GraphVizResidueNode
-    {
-        size_t index;
-        GraphVizImage image;
-        std::string label;
-        cds::ResidueType type;
-        std::string floatingLabel;
-    };
-
-    GraphVizImage findImage(const cdsCondensedSequence::GraphVizDotConfig& configs, const std::string& name,
-                            const std::string& label)
-    {
-        std::string imageFile = configs.svg_directory_path_ + name + ".svg";
-        if (file_exists((configs.base_path_ + imageFile).c_str()))
-        {
-            return GraphVizImage {true, imageFile, label};
-        }
-        return GraphVizImage {false, "", ""};
-    }
-
-    std::string graphVizAglyconeNode(const GraphVizResidueNode& node)
-    {
-        std::stringstream ss;
-        ss << node.index << " [shape=box label=\"" << node.label << "\"]\n";
-        return ss.str();
-    }
-
-    std::string graphVizSugarNode(const GraphVizResidueNode& node)
-    {
-        std::stringstream ss;
-        ss << node.index;
-        if (node.image.found)
-        {
-            ss << " [label=\"" << node.image.label << "\" height=\"0.7\" image=\"" << node.image.path << "\"];\n";
-        }
-        else
-        {
-            ss << " [shape=circle height=\"0.7\" label=\"" << node.label << "\"];\n";
-        }
-        // Derivatives
-        if (!node.floatingLabel.empty())
-        {
-            ss << "b" << node.index;
-            ss << " [shape=\"plaintext\" fontsize=\"12\" height=\"0.3\" labelloc=b label=\"";
-            ss << node.floatingLabel << "\"];\n";
-            ss << "{rank=\"same\" b" << node.index << " " << node.index << "};\n";
-            ss << "{nodesep=\"0.2\" b" << node.index << " " << node.index << "};\n";
-            ss << "b" << node.index << "--" << node.index << " [style=invis];\n";
-        }
-        return ss.str();
-    }
-
-    std::string graphVizLinkageLine(const std::vector<GraphVizResidueNode>& nodes, const GraphVizLinkage& linkage)
-    {
-        std::array<std::string, 2> clip;
-        for (size_t n = 0; n < 2; n++)
-        {
-            clip[n] = nodes[linkage.nodeIndices[n]].image.found ? "false" : "true";
-        }
-        std::stringstream ss;
-        ss << nodes[linkage.nodeIndices[0]].index << "--" << nodes[linkage.nodeIndices[1]].index << " [label=\""
-           << linkage.label << "\" headclip=" << clip[1] << " tailclip=" << clip[0] << "];\n";
-        return ss.str();
-    }
-
     void recurvePrintIupac(ParsedResidue* currentResidue, int& branchStackSize, std::vector<std::string>& output)
     {
         auto neighbors                  = currentResidue->GetChildren();
@@ -218,7 +134,6 @@ namespace
 
 std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std::vector<ParsedResidue*> residues)
 {
-    //    setIndexByConnectivity(residues);
     std::vector<ParsedResidue*> nonDerivatives;
     nonDerivatives.reserve(residues.size());
     for (auto& residue : parsedResiduesOrderedByConnectivity(residues))
@@ -228,6 +143,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
             nonDerivatives.push_back(residue);
         }
     }
+    std::vector<cds::ResidueType> residueTypes;
     std::vector<GraphVizResidueNode> nodes;
     std::vector<GraphVizLinkage> linkages;
     for (auto& residue : nonDerivatives)
@@ -246,7 +162,8 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
         std::string monosaccharideName = residue->GetMonosaccharideName();
         GraphVizImage image = findImage(configs, monosaccharideName, (residue->GetRingType() == "f") ? "f" : "");
         size_t index        = codeUtils::indexOf(nonDerivatives, residue);
-        nodes.push_back({index, image, monosaccharideName, residue->GetType(), derivativeStr});
+        nodes.push_back({index, image, monosaccharideName, derivativeStr});
+        residueTypes.push_back(residue->GetType());
         for (auto parent : residue->GetParents())
         {
             std::string label = "";
@@ -271,9 +188,10 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
     ss << "label=\"none\" size=50 fixedsize=\"true\" scale=\"true\"];\n";
     ss << "edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];\n";
     ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
-    for (auto& node : nodes)
+    for (size_t n = 0; n < nodes.size(); n++)
     {
-        ss << (node.type == cds::ResidueType::Aglycone ? graphVizAglyconeNode(node) : graphVizSugarNode(node));
+        ss << (residueTypes[n] == cds::ResidueType::Aglycone ? graphVizAglyconeNode(nodes[n])
+                                                             : graphVizSugarNode(nodes[n]));
     }
     for (auto& linkage : linkages)
     {

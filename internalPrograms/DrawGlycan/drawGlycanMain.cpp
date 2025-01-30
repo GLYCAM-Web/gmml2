@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/version.h"

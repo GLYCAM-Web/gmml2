@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPARSER2_HPP_
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPARSER2_HPP_
 
-#include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 
 #include <memory>
