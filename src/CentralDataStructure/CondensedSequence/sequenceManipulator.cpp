@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceGraph.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
@@ -134,52 +135,33 @@ namespace
 
 std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std::vector<ParsedResidue*> residues)
 {
-    std::vector<ParsedResidue*> nonDerivatives;
-    nonDerivatives.reserve(residues.size());
-    for (auto& residue : parsedResiduesOrderedByConnectivity(residues))
-    {
-        if (residue->GetType() != cds::ResidueType::Derivative)
-        {
-            nonDerivatives.push_back(residue);
-        }
-    }
-    std::vector<cds::ResidueType> residueTypes;
+    SequenceGraph sequence = condensedSequenceGraph(toSequenceGraph(residues));
+
     std::vector<GraphVizResidueNode> nodes;
+    nodes.reserve(sequence.graph.nodes.indices.size());
     std::vector<GraphVizLinkage> linkages;
-    for (auto& residue : nonDerivatives)
+    linkages.reserve(sequence.graph.edges.indices.size());
+
+    for (size_t n = 0; n < sequence.graph.nodes.indices.size(); n++)
     {
-        std::vector<cdsCondensedSequence::ParsedResidue*> children = residue->GetChildren();
-        std::vector<std::string> derivativeStrings;
-        derivativeStrings.reserve(children.size());
-        for (auto& child : children)
-        {
-            if (child->GetType() == cds::ResidueType::Derivative)
-            {
-                derivativeStrings.push_back(child->GetLinkageName() + child->GetName());
-            }
-        }
-        std::string derivativeStr      = codeUtils::join(" ", derivativeStrings);
-        std::string monosaccharideName = residue->GetMonosaccharideName();
-        GraphVizImage image = findImage(configs, monosaccharideName, (residue->GetRingType() == "f") ? "f" : "");
-        size_t index        = codeUtils::indexOf(nonDerivatives, residue);
-        nodes.push_back({index, image, monosaccharideName, derivativeStr});
-        residueTypes.push_back(residue->GetType());
-        for (auto parent : residue->GetParents())
-        {
-            std::string label = "";
-            if (configs.show_config_labels_)
-            {
-                label += residue->GetConfiguration();
-            }
-            if (configs.show_position_labels_)
-            {
-                label += residue->GetLinkage();
-            }
-            linkages.push_back({
-                {index, codeUtils::indexOf(nonDerivatives, parent)},
-                label
-            });
-        }
+        size_t index                    = sequence.graph.nodes.indices[n];
+        std::string& monosaccharideName = sequence.monosaccharideNames[index];
+        GraphVizImage image = findImage(configs, monosaccharideName, (sequence.ringTypes[index] == "f") ? "f" : "");
+        nodes.push_back({n, image, monosaccharideName, sequence.derivatives[index]});
+    }
+
+    for (size_t n = 0; n < sequence.graph.edges.indices.size(); n++)
+    {
+        std::array<size_t, 2>& adj = sequence.graph.edges.nodeAdjacencies[n];
+        size_t parent              = adj[0];
+        size_t child               = adj[1];
+        size_t childIndex          = sequence.graph.nodes.indices[child];
+        std::string label          = (configs.show_config_labels_ ? sequence.configurations[childIndex] : "") +
+                            (configs.show_position_labels_ ? sequence.linkages[childIndex] : "");
+        linkages.push_back({
+            {child, parent},
+            label
+        });
     }
 
     std::stringstream ss;
@@ -190,8 +172,9 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
     ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
     for (size_t n = 0; n < nodes.size(); n++)
     {
-        ss << (residueTypes[n] == cds::ResidueType::Aglycone ? graphVizAglyconeNode(nodes[n])
-                                                             : graphVizSugarNode(nodes[n]));
+        size_t nodeIndex = sequence.graph.nodes.indices[n];
+        bool isAglycone  = sequence.types[nodeIndex] == cds::ResidueType::Aglycone;
+        ss << (isAglycone ? graphVizAglyconeNode(nodes[n]) : graphVizSugarNode(nodes[n]));
     }
     for (auto& linkage : linkages)
     {
