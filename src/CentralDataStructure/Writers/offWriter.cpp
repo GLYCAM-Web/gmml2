@@ -24,44 +24,22 @@ namespace
         }
         return result;
     }
-
-    std::vector<std::pair<size_t, size_t>> uniqueAtomBonds(const std::vector<cds::Atom*>& atoms)
-    {
-        std::vector<std::pair<size_t, size_t>> result;
-        result.reserve(2 * atoms.size());
-        for (auto& atom : atoms)
-        {
-            size_t index = cds::atomVectorIndex(atoms, atom);
-            for (auto& neighbor : atom->getChildren())
-            {
-                size_t neighborIndex = cds::atomVectorIndex(atoms, neighbor);
-                result.push_back({index, neighborIndex});
-            }
-        }
-        return result;
-    }
 } // namespace
 
 cds::OffFileData cds::toOffFileData(const std::vector<Residue*>& residues)
 {
     std::vector<Atom*> atoms;
-    std::vector<std::vector<size_t>> indices;
     std::vector<std::vector<size_t>> connections;
-    std::vector<size_t> atomResidues;
-    size_t residueIndex = 0;
     for (auto& residue : residues)
     {
-        std::vector<Atom*> residueAtoms = residue->getAtoms();
-        indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
+        std::vector<Atom*> residueAtoms   = residue->getAtoms();
         std::vector<Atom*> atomsConnected = atomsConnectedToOtherResidues(residueAtoms);
         codeUtils::insertInto(atoms, residueAtoms);
-        codeUtils::insertInto(atomResidues, std::vector<size_t>(residueAtoms.size(), residueIndex));
         connections.push_back(atomIndices(atoms, atomsConnected));
-        residueIndex++;
     }
-    OffFileAtomData atomData {atomNumbers(atoms), atomNames(atoms),       atomTypes(atoms), atomAtomicNumbers(atoms),
-                              atomCharges(atoms), atomCoordinates(atoms), atomResidues,     uniqueAtomBonds(atoms)};
-    OffFileResidueData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues), indices,
+    OffFileAtomData atomData {atomNumbers(atoms),       atomNames(atoms),   atomTypes(atoms),
+                              atomAtomicNumbers(atoms), atomCharges(atoms), atomCoordinates(atoms)};
+    OffFileResidueData residueData {residueNumbers(residues), residueNames(residues), residueTypes(residues),
                                     connections};
     OffFileFormat format;
     return OffFileData {format, residueData, atomData};
@@ -79,8 +57,9 @@ void cds::serializeResiduesIndividually(std::vector<cds::Residue*>& residues)
 void cds::WriteOff(std::ostream& stream, cds::Molecule* molecule)
 {
     GraphIndexData indices = toIndexData({molecule});
+    assembly::Graph graph  = createAssemblyGraph(indices);
     cds::OffFileData data  = cds::toOffFileData(indices.residues);
     data.atoms.numbers     = serializedNumberVector(indices.atoms.size());
     data.residues.numbers  = serializedNumberVector(indices.residues.size());
-    cds::WriteResiduesTogetherToOffFile(stream, data, molecule->getName());
+    cds::WriteResiduesTogetherToOffFile(stream, graph, data, molecule->getName());
 }

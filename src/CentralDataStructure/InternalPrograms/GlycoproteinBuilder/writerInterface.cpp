@@ -14,16 +14,8 @@ namespace glycoproteinBuilder
     cds::OffFileData toOffFileData(const assembly::Graph& graph, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates)
     {
-        std::vector<std::pair<size_t, size_t>> bonds;
-        bonds.reserve(graph.atoms.edges.nodeAdjacencies.size());
-        for (auto& adj : graph.atoms.edges.nodeAdjacencies)
-        {
-            bonds.push_back({adj[0], adj[1]});
-        }
-
-        cds::OffFileAtomData atomData {
-            data.atoms.serializedNumbers, data.atoms.names, data.atoms.types,  data.atoms.atomicNumbers,
-            data.atoms.charges,           atomCoordinates,  graph.atomResidue, bonds};
+        cds::OffFileAtomData atomData {data.atoms.serializedNumbers, data.atoms.names,   data.atoms.types,
+                                       data.atoms.atomicNumbers,     data.atoms.charges, atomCoordinates};
 
         size_t residueCount = graph.residueCount;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
@@ -44,7 +36,7 @@ namespace glycoproteinBuilder
             std::sort(vec.begin(), vec.end());
         }
         cds::OffFileResidueData residueData {data.residues.serializedNumbers, data.residues.names, data.residues.types,
-                                             graph.residues.nodes.elements, atomsConnectedToOtherResidues};
+                                             atomsConnectedToOtherResidues};
         cds::OffFileFormat format;
         format.coordinate.decimals.precision = 5;
         return cds::OffFileData {format, residueData, atomData};

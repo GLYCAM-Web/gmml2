@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 
 #include <vector>
 #include <string>
@@ -102,6 +104,8 @@ int main(int argc, char* argv[])
     std::string fileName = "GLYCAM_06k.lib";
     outFileStream.open(fileName.c_str());
     cds::serializeResiduesIndividually(allGeneratedResidues);
-    cds::WriteResiduesIndividuallyToOffFile(outFileStream, cds::toOffFileData(allGeneratedResidues));
+    cds::GraphIndexData indices = cds::toIndexData(allGeneratedResidues);
+    assembly::Graph graph       = cds::createAssemblyGraph(indices);
+    cds::WriteResiduesIndividuallyToOffFile(outFileStream, graph, cds::toOffFileData(allGeneratedResidues));
     outFileStream.close();
 }

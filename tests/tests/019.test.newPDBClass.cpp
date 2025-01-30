@@ -4,6 +4,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -30,12 +32,13 @@ int main(int argc, char* argv[])
         {
             std::ofstream outFileStream;
             outFileStream.open("outputOffFile.off");
-            std::string outFileName = "Assembly";
-            auto residues           = assembly.getResidues();
-            auto atoms              = assembly.getAtoms();
-            cds::serializeNumbers(atoms);
-            cds::serializeNumbers(residues);
-            cds::WriteResiduesTogetherToOffFile(outFileStream, cds::toOffFileData(residues), outFileName.c_str());
+            std::string outFileName     = "Assembly";
+            cds::GraphIndexData indices = cds::toIndexData(assembly.getMolecules());
+            assembly::Graph graph       = cds::createAssemblyGraph(indices);
+            cds::OffFileData data       = cds::toOffFileData(indices.residues);
+            cds::serializeNumbers(indices.atoms);
+            cds::serializeNumbers(indices.residues);
+            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, data, outFileName.c_str());
             outFileStream.close();
         }
         catch (std::runtime_error& error)

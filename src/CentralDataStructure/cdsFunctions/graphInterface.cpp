@@ -1,10 +1,39 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 
 #include <vector>
+
+cds::GraphIndexData cds::toIndexData(const std::vector<Residue*> inputResidues)
+{
+    size_t residueIndex = 0;
+    size_t atomIndex    = 0;
+
+    std::vector<Atom*> atoms;
+    std::vector<Residue*> residues;
+    std::vector<size_t> atomResidue;
+    std::vector<size_t> residueMolecule;
+
+    for (auto& residue : inputResidues)
+    {
+        for (auto& atom : residue->getAtoms())
+        {
+            atomResidue.push_back(residueIndex);
+            atoms.push_back(atom);
+            atomIndex++;
+        }
+        residueMolecule.push_back(0);
+        residues.push_back(residue);
+        residueIndex++;
+    }
+
+    return {atoms, residues, {}, atomResidue, residueMolecule};
+}
 
 cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
 {

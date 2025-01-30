@@ -1,8 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include <string>

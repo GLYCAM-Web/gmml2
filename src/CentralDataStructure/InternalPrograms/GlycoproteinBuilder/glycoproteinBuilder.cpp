@@ -300,7 +300,7 @@ namespace glycoproteinBuilder
             std::string fileName     = outputDir + "/" + prefix + ".off";
             std::ofstream outFileStream;
             outFileStream.open(fileName.c_str());
-            cds::WriteResiduesTogetherToOffFile(outFileStream, offData, "GLYCOPROTEINBUILDER");
+            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, offData, "GLYCOPROTEINBUILDER");
             outFileStream.close();
         };
 

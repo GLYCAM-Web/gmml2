@@ -18,8 +18,6 @@ namespace cds
         std::vector<int> atomicNumbers;
         std::vector<double> charges;
         std::vector<Coordinate> coordinates;
-        std::vector<size_t> residues;
-        std::vector<std::pair<size_t, size_t>> bonds;
     };
 
     struct OffFileResidueData
@@ -27,7 +25,6 @@ namespace cds
         std::vector<int> numbers;
         std::vector<std::string> names;
         std::vector<ResidueType> types;
-        std::vector<std::vector<size_t>> atomIndices;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
     };
 
