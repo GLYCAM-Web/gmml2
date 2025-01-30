@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"

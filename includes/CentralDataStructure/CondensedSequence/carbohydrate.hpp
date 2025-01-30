@@ -1,9 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 
-#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
