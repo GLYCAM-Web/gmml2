@@ -167,6 +167,17 @@ std::vector<double> cds::atomCharges(const std::vector<Atom*>& atoms)
     return result;
 }
 
+std::vector<bool> cds::atomVisibility(const std::vector<Atom*>& atoms)
+{
+    std::vector<bool> result;
+    result.reserve(atoms.size());
+    for (auto& atom : atoms)
+    {
+        result.push_back(atom->isVisible());
+    }
+    return result;
+}
+
 std::vector<int> cds::residueNumbers(const std::vector<Residue*>& residues)
 {
     std::vector<int> result;

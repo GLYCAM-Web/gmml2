@@ -60,6 +60,11 @@ namespace cds
             return number_;
         }
 
+        inline bool isVisible() const
+        {
+            return isVisible_;
+        }
+
         unsigned int getNumberFromName() const;
 
         //////////////////////////////////////////////////////////
@@ -78,6 +83,11 @@ namespace cds
         inline void setNumber(const int i)
         {
             number_ = i;
+        }
+
+        inline void makeInvisible()
+        {
+            isVisible_ = false;
         }
 
         void setCoordinate(const Coordinate& c);
@@ -107,6 +117,7 @@ namespace cds
         int number_                         = constants::iNotSet;
         MolecularMetadata::Element element_ = MolecularMetadata::Element::Unknown;
         bool gotElement_                    = false;
+        bool isVisible_                     = true;
     };
 } // namespace cds
 #endif

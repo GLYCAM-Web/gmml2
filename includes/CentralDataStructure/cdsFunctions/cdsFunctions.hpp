@@ -35,6 +35,7 @@ namespace cds
     std::vector<CoordinateReference> atomCoordinateReferences(std::vector<Atom*>& atoms);
     std::vector<std::string> atomTypes(const std::vector<Atom*>& atoms);
     std::vector<double> atomCharges(const std::vector<Atom*>& atoms);
+    std::vector<bool> atomVisibility(const std::vector<Atom*>& atoms);
     std::vector<int> residueNumbers(const std::vector<Residue*>& residues);
     std::vector<std::string> residueNames(const std::vector<Residue*>& residues);
     std::vector<std::string> residueStringIds(const std::vector<Residue*>& residues);
