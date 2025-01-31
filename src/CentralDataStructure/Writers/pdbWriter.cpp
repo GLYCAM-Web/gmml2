@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Graph/graphTypes.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <iomanip>
@@ -104,16 +106,15 @@ void cds::WritePdb(std::ostream& stream, cds::Molecule* molecule)
     {
         return codeUtils::contains(selectedResidueTypes, type);
     };
-    std::vector<bool> residueSelected = codeUtils::mapVector(selectResidue, types);
-    std::vector<std::array<size_t, 2>> connectionIndices;
-    for (size_t n = 0; n < graph.residues.edges.indices.size(); n++)
+    std::vector<bool> residueSelected             = codeUtils::mapVector(selectResidue, types);
+    std::function<bool(const size_t&)> selectAtom = [&](const size_t& atomResidue)
     {
-        auto& adj = graph.residues.edges.nodeAdjacencies[n];
-        if (residueSelected[adj[0]] && residueSelected[adj[1]])
-        {
-            size_t atomEdgeIndex = residueEdgeToAtomEdgeIndex(graph, n);
-            connectionIndices.push_back(graph.atoms.edges.nodeAdjacencies[atomEdgeIndex]);
-        }
-    }
+        return residueSelected[atomResidue];
+    };
+    std::vector<bool> atomSelected = codeUtils::mapVector(selectAtom, indices.atomResidue);
+    graph::Database& db            = graph.atoms.source;
+    graph::Graph subgraph          = graph::selectedQuotient(db, indices.atomResidue, atomSelected, db.edgeAlive);
+    std::vector<std::array<size_t, 2>> connectionIndices =
+        codeUtils::indicesToValues(graph.atoms.edges.nodeAdjacencies, subgraph.edges.indices);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }
