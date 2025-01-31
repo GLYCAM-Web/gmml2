@@ -1432,6 +1432,30 @@ ROH_1_?_?
 0Lg_8_?_?
 Name: DLegpb2-4LPsepb, LinkageIndex: 6, Res1: 8, Res2: 7
     LikelyRotamers: Phi, t, -g
+
+*********************
+Building id 00064:DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
+*********************
+Input:
+DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
+Interpreted:
+DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
+IndexOrdered:
+DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
+IndexOrderedLabeled:
+DXylp&Label=residue-4;[4&Label=link-3;S&Label=residue-5;]a1-6&Label=link-2;DManpNAc&Label=residue-3;b1-4&Label=link-1;DManpNAc&Label=residue-2;a1-2&Label=link-0;DFrup&Label=residue-1;
+Parsed and labelled 00064 with no exceptions thrown.
+
+Number of residues for this sequence is 5
+Number of likely shapes is 2
+Number of possible shapes is 3
+2CA_1_?_?
+4WA_2_?_?
+6WB_3_?_?
+4XA_4_?_?
+SO3_5_?_?
+Name: DXylpa1-6DManNAcpb, LinkageIndex: 2, Res1: 4, Res2: 3
+    LikelyRotamers: Omg, gg, gt
 00001.pdb not created.
 00002.pdb succesfully created.
 00003.pdb succesfully created.
@@ -1489,6 +1513,7 @@ Name: DLegpb2-4LPsepb, LinkageIndex: 6, Res1: 8, Res2: 7
 00061.pdb succesfully created.
 00062.pdb succesfully created.
 00063.pdb succesfully created.
+00064.pdb succesfully created.
 00001.off not created.
 00002.off succesfully created.
 00003.off succesfully created.
@@ -1546,3 +1571,4 @@ Name: DLegpb2-4LPsepb, LinkageIndex: 6, Res1: 8, Res2: 7
 00061.off succesfully created.
 00062.off succesfully created.
 00063.off succesfully created.
+00064.off succesfully created.

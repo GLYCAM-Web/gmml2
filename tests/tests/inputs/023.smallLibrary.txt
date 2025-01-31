@@ -57,3 +57,5 @@
 00061_DArafb1-3DFrufb2-2DLyxfb1-6DTagfb2-4LSorfb2-3DRibfb1-3DXylfb1-3DPsifb2-OH
 00062_LArafb1-3LFrufb2-2LLyxfb1-6LTagfb2-4DSorfb2-3LRibfb1-3LXylfb1-3LPsifb2-OH
 00063_DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+
+00064_DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
