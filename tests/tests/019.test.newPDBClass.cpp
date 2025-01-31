@@ -32,10 +32,11 @@ int main(int argc, char* argv[])
         {
             std::ofstream outFileStream;
             outFileStream.open("outputOffFile.off");
-            std::string outFileName     = "Assembly";
-            cds::GraphIndexData indices = cds::toIndexData(assembly.getMolecules());
-            assembly::Graph graph       = cds::createAssemblyGraph(indices);
-            cds::OffFileData data       = cds::toOffFileData(indices.residues);
+            std::string outFileName         = "Assembly";
+            cds::GraphIndexData indices     = cds::toIndexData(assembly.getMolecules());
+            std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
+            assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
+            cds::OffFileData data           = cds::toOffFileData(indices.residues);
             cds::serializeNumbers(indices.atoms);
             cds::serializeNumbers(indices.residues);
             cds::WriteResiduesTogetherToOffFile(outFileStream, graph, data, outFileName.c_str());

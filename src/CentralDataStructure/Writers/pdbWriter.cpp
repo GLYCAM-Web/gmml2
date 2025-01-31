@@ -72,8 +72,9 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
         stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
         for (auto& molecule : molecules)
         {
-            GraphIndexData indices              = toIndexData({molecule});
-            assembly::Graph graph               = createAssemblyGraph(indices);
+            GraphIndexData indices = toIndexData({molecule});
+            std::vector<bool> includedAtoms(indices.atoms.size(), true);
+            assembly::Graph graph               = createAssemblyGraph(indices, includedAtoms);
             std::vector<cds::Residue*> residues = molecule->getResidues();
             for (auto& atom : molecule->getAtoms())
             {
@@ -90,7 +91,8 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
 
 void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
 {
-    assembly::Graph graph                 = createAssemblyGraph(indices);
+    std::vector<bool> includedAtoms       = cds::atomVisibility(indices.atoms);
+    assembly::Graph graph                 = createAssemblyGraph(indices, includedAtoms);
     const std::vector<Residue*>& residues = indices.residues;
     std::vector<ResidueType> types        = residueTypes(residues);
     std::vector<bool> ter                 = residueTER(types);

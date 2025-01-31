@@ -39,7 +39,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
         unsigned int atomNumberInResidue = 1;
         for (size_t residueAtom : assembly::residueAtoms(graph, residueIndex))
         {
-            size_t atomIndex = graph.atoms.nodes.indices[residueAtom];
+            size_t atomIndex = graph.residues.source.nodes[residueAtom];
             stream << " \"" << atoms.names[atomIndex] << "\" "
                    << "\"" << atoms.types[atomIndex] << "\" "
                    << "0 " << residues.numbers[residueIndex] << " " << FLAG << " " << atomNumberInResidue << " "
@@ -57,7 +57,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     {
         for (size_t residueAtom : assembly::residueAtoms(graph, residueIndex))
         {
-            size_t atomIndex = graph.atoms.nodes.indices[residueAtom];
+            size_t atomIndex = graph.residues.source.nodes[residueAtom];
             stream << " \"" << atoms.names[atomIndex] << "\""
                    << " \"" << atoms.types[atomIndex] << "\" 0 -1 0.0"
                    << "\n";
@@ -88,7 +88,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     stream << " 1"
            << "\n";
     size_t lastAtom = assembly::residueAtoms(graph, residueIndices.back()).back();
-    stream << " " << atoms.numbers[graph.atoms.nodes.indices[lastAtom]] << "\n";
+    stream << " " << atoms.numbers[graph.residues.source.nodes[lastAtom]] << "\n";
     // WriteConnectivitySection
     stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags"
            << "\n";
@@ -116,7 +116,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
         stream << " \"U\" 0 \"R\" " << residues.numbers[residueIndex] << "\n";
         for (size_t residueAtom : assembly::residueAtoms(graph, residueIndex))
         {
-            size_t atomIndex = graph.atoms.nodes.indices[residueAtom];
+            size_t atomIndex = graph.residues.source.nodes[residueAtom];
             stream << " \"R\" " << residues.numbers[residueIndex] << " \"A\" " << atoms.numbers[atomIndex] << "\n";
         }
     }
@@ -132,7 +132,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     {
         for (size_t residueAtom : assembly::residueAtoms(graph, residueIndex))
         {
-            size_t atomIndex = graph.atoms.nodes.indices[residueAtom];
+            size_t atomIndex = graph.residues.source.nodes[residueAtom];
             Coordinate coord = atoms.coordinates[atomIndex];
             for (size_t n = 0; n < 3; n++)
             {
@@ -176,7 +176,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     {
         const std::vector<size_t>& atomIndices = assembly::residueAtoms(graph, residueIndex);
         unsigned int childseq                  = atomIndices.size() + 1;
-        unsigned int startatomx                = atoms.numbers[graph.atoms.nodes.indices[atomIndices.front()]];
+        unsigned int startatomx                = atoms.numbers[graph.residues.source.nodes[atomIndices.front()]];
         std::string restype                    = residueOffType(residues.types[residueIndex]);
         unsigned int imagingx                  = 0;
         stream << " \"" << residues.names[residueIndex] << "\""

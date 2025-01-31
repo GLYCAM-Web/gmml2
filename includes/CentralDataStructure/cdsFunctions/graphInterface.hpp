@@ -30,7 +30,7 @@ namespace cds
     GraphIndexData toIndexData(const std::vector<Residue*> inputResidues);
     GraphIndexData toIndexData(const std::vector<Molecule*> molecules);
     graph::Database createGraphData(const GraphIndexData& indices);
-    assembly::Graph createAssemblyGraph(const GraphIndexData& indices);
+    assembly::Graph createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms);
 } // namespace cds
 
 #endif

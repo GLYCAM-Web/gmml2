@@ -101,9 +101,10 @@ graph::Database cds::createGraphData(const GraphIndexData& indices)
     return graph;
 }
 
-assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices)
+assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms)
 {
     graph::Database atomGraphData = cds::createGraphData(indices);
+    atomGraphData.nodeAlive       = includedAtoms;
     graph::Graph atomGraph        = graph::identity(atomGraphData);
     graph::Graph residueGraph     = graph::quotient(atomGraphData, indices.atomResidue);
     graph::Graph moleculeGraph    = graph::quotient(graph::asData(residueGraph), indices.residueMolecule);

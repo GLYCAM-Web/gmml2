@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 
@@ -62,8 +63,9 @@ int main()
     {
         std::ofstream outFileStream;
         outFileStream.open(fileName.c_str());
-        cds::GraphIndexData indices = cds::toIndexData(libFile.getResidues());
-        assembly::Graph graph       = cds::createAssemblyGraph(indices);
+        cds::GraphIndexData indices     = cds::toIndexData(libFile.getResidues());
+        std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
+        assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
         cds::serializeResiduesIndividually(indices.residues);
         cds::WriteResiduesIndividuallyToOffFile(outFileStream, graph, cds::toOffFileData(indices.residues));
         outFileStream.close();
