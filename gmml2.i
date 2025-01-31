@@ -25,7 +25,7 @@ try	{
 %{
 #define SWIG_FILE_WITH_INIT
 
-#include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
@@ -47,7 +47,7 @@ std::ostream & get_cout() { return std::cout; }
 //%include "includes/CodeUtils/constants.hpp"
 
 // DrawGlycan
-%include "includes/CentralDataStructure/CondensedSequence/graphVizDotConfig.hpp"
+%include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 %include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 %include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
 // MDPrep
