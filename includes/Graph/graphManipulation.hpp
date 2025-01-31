@@ -22,6 +22,7 @@ namespace graph
                                      const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge);
     Graph selectedQuotient(const Database& graph, const std::vector<size_t>& nodeGroup,
                            const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge);
+    Graph subgraph(const Database& graph, const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge);
     Graph quotient(const Database& graph, const std::vector<size_t>& nodeGroup);
     Graph identity(const Database& graph);
 } // namespace graph

@@ -168,6 +168,12 @@ graph::Graph graph::selectedQuotient(const Database& graph, const std::vector<si
                                       codeUtils::vectorAnd(graph.edgeAlive, includeEdge));
 }
 
+graph::Graph graph::subgraph(const Database& graph, const std::vector<bool>& includeNode,
+                             const std::vector<bool>& includeEdge)
+{
+    return selectedQuotient(graph, graph.nodes, includeNode, includeEdge);
+}
+
 graph::Graph graph::quotient(const Database& graph, const std::vector<size_t>& nodeGroup)
 {
     return selectedQuotient(graph, nodeGroup, graph.nodeAlive, graph.edgeAlive);
