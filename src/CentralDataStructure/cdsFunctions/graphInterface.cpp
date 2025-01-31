@@ -6,6 +6,7 @@
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 
@@ -85,8 +86,11 @@ graph::Database cds::createGraphData(const GraphIndexData& indices)
     {
         for (auto& neighbor : atoms[n]->getChildren())
         {
-            size_t index = neighbor->getIndex();
-            addEdge(graph, {n, index});
+            if (codeUtils::contains(indices.atoms, neighbor))
+            {
+                size_t index = neighbor->getIndex();
+                addEdge(graph, {n, index});
+            }
         }
     }
     // restore indices
