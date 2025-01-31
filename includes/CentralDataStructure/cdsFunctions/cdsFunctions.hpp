@@ -20,6 +20,7 @@ namespace cds
         return;
     }
 
+    std::vector<int> serializedNumberVector(const std::vector<bool>& included);
     std::vector<int> serializedNumberVector(size_t count);
     size_t atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* find);
     cds::Sphere coordinateWithRadius(Atom* atom);

@@ -10,15 +10,22 @@
 #include <array>
 #include <vector>
 
-std::vector<int> cds::serializedNumberVector(size_t count)
+std::vector<int> cds::serializedNumberVector(const std::vector<bool>& included)
 {
     std::vector<int> result;
-    result.reserve(count);
-    for (size_t n = 0; n < count; n++)
+    result.reserve(included.size());
+    int count = 0;
+    for (bool b : included)
     {
-        result.push_back(n + 1);
+        result.push_back(b ? count + 1 : 0);
+        count += b;
     }
     return result;
+}
+
+std::vector<int> cds::serializedNumberVector(size_t count)
+{
+    return serializedNumberVector(std::vector<bool>(count, true));
 }
 
 size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* find)
