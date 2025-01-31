@@ -30,7 +30,8 @@ int main()
     try
     {
         outFileStream.open(fileName.c_str());
-        cds::WritePdb(outFileStream, &libFile);
+        cds::GraphIndexData indices = cds::toIndexData({&libFile});
+        cds::WritePdb(outFileStream, indices);
         outFileStream.close();
     }
     catch (...)
@@ -45,7 +46,8 @@ int main()
     {
         std::ofstream outFileStream;
         outFileStream.open(fileName.c_str());
-        cds::WriteOff(outFileStream, &libFile);
+        cds::GraphIndexData indices = cds::toIndexData({&libFile});
+        cds::WriteOff(outFileStream, libFile.getName(), indices);
         outFileStream.close();
     }
     catch (...)

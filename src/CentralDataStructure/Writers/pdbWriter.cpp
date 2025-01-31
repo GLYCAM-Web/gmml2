@@ -88,14 +88,13 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
     }
 }
 
-void cds::WritePdb(std::ostream& stream, cds::Molecule* molecule)
+void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
 {
-    GraphIndexData indices          = toIndexData({molecule});
-    assembly::Graph graph           = createAssemblyGraph(indices);
-    std::vector<Residue*>& residues = indices.residues;
-    std::vector<ResidueType> types  = residueTypes(residues);
-    std::vector<bool> ter           = residueTER(types);
-    PdbFileData data                = toPdbFileData(indices);
+    assembly::Graph graph                 = createAssemblyGraph(indices);
+    const std::vector<Residue*>& residues = indices.residues;
+    std::vector<ResidueType> types        = residueTypes(residues);
+    std::vector<bool> ter                 = residueTER(types);
+    PdbFileData data                      = toPdbFileData(indices);
     cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, data);
     std::vector<ResidueType> selectedResidueTypes {Sugar, Derivative, Aglycone, Undefined};
     std::function<bool(const ResidueType&)> selectResidue = [&](const ResidueType& type)

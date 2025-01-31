@@ -403,12 +403,13 @@ void Carbohydrate::Generate3DStructureFiles(std::string fileOutputDirectory, std
         std::string completeFileName = PathAndFileName + ".pdb";
         std::ofstream outFileStream;
         outFileStream.open(completeFileName.c_str());
-        WritePdb(outFileStream, this);
+        cds::GraphIndexData indices = cds::toIndexData({this});
+        WritePdb(outFileStream, indices);
         outFileStream.close();
         // Off file
         completeFileName = PathAndFileName + ".off";
         outFileStream.open(completeFileName.c_str());
-        WriteOff(outFileStream, this);
+        WriteOff(outFileStream, getName(), indices);
         outFileStream.close();
     }
     catch (const std::string& exceptionMessage)

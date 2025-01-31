@@ -24,7 +24,8 @@ int main()
     try
     {
         outFileStream.open(fileName.c_str());
-        cds::WritePdb(outFileStream, &glycamPrepFileSelect);
+        cds::GraphIndexData indices = cds::toIndexData({&glycamPrepFileSelect});
+        cds::WritePdb(outFileStream, indices);
         outFileStream.close();
     }
     catch (...)

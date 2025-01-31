@@ -21,6 +21,6 @@ namespace cds
     PdbFileData toPdbFileData(const cds::GraphIndexData& indices);
 
     void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules);
-    void WritePdb(std::ostream& stream, cds::Molecule* molecule);
+    void WritePdb(std::ostream& stream, const GraphIndexData& indices);
 } // namespace cds
 #endif
