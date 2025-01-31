@@ -44,6 +44,7 @@ void cds::createHydrogenForPsiAngles(Residue* residue, std::vector<DihedralAtoms
                     Coordinate newCoord = coordinateOppositeToNeighborAverage(
                         atom->coordinate(), atomCoordinates(atom->getNeighbors()), 1.0);
                     std::unique_ptr<Atom> newAtom = std::make_unique<Atom>("HHH", newCoord);
+                    newAtom->makeInvisible();
                     addBond(atom, newAtom.get());
                     residue->addAtom(std::move(newAtom));
                 }
