@@ -110,6 +110,6 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
     graph::Database& db            = graph.atoms.source;
     graph::Graph subgraph          = graph::selectedQuotient(db, indices.atomResidue, atomSelected, db.edgeAlive);
     std::vector<std::array<size_t, 2>> connectionIndices =
-        codeUtils::indicesToValues(graph.atoms.edges.nodeAdjacencies, subgraph.edges.indices);
+        codeUtils::indicesToValues(subgraph.source.edgeNodes, subgraph.edges.indices);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }
