@@ -53,8 +53,7 @@ namespace glycoproteinBuilder
         std::vector<std::string> chainIds(residueCount, "");
         std::vector<std::string> insertionCodes(residueCount, "");
 
-        cds::PdbFileResidueData residuePdbData {graph.residues.nodes.elements, residueNumbers, data.residues.names,
-                                                chainIds, insertionCodes};
+        cds::PdbFileResidueData residuePdbData {residueNumbers, data.residues.names, chainIds, insertionCodes};
         cds::PdbFileAtomData atomPdbData {atomCoordinates,
                                           atomNumbers,
                                           data.atoms.names,

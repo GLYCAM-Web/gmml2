@@ -18,7 +18,9 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 
 using pdb::PdbModel;
 
@@ -397,6 +399,8 @@ void PdbModel::Write(std::ostream& stream) const
         std::vector<cds::Residue*> residues = pdbChain->getResidues();
         for (auto& residue : residues)
         {
+            cds::GraphIndexData indices   = cds::toIndexData({residue});
+            assembly::Graph graph         = cds::createAssemblyGraph(indices);
             PdbResidue* pdbResidue        = codeUtils::erratic_cast<PdbResidue*>(residue);
             std::vector<cds::Atom*> atoms = pdbResidue->getAtoms();
             std::vector<std::string> recordName;
@@ -409,15 +413,14 @@ void PdbModel::Write(std::ostream& stream) const
                 occupancy.push_back(pdbAtom->GetOccupancy());
                 temperatureFactor.push_back(pdbAtom->GetTemperatureFactor());
             }
-            cds::PdbFileResidueData residueData {{codeUtils::indexVector(atoms)},
-                                                 {pdbResidue->getNumber()},
+            cds::PdbFileResidueData residueData {{pdbResidue->getNumber()},
                                                  {cds::truncatedResidueName(pdbResidue)},
                                                  {pdbResidue->getChainId()},
                                                  {pdbResidue->getInsertionCode()}};
             cds::PdbFileAtomData atomData = cds::toPdbFileAtomData(atoms, recordName, occupancy, temperatureFactor);
             cds::PdbFileFormat format;
             cds::PdbFileData writerData {format, {}, residueData, atomData};
-            cds::writeAssemblyToPdb(stream, {{0}}, {{pdbResidue->HasTerCard()}}, {}, writerData);
+            cds::writeAssemblyToPdb(stream, graph, {{0}}, {{pdbResidue->HasTerCard()}}, {}, writerData);
         }
         if (!residues.empty())
         { // Sometimes you get empty chains after things have been deleted I guess.

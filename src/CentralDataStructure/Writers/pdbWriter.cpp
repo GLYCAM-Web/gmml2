@@ -51,20 +51,14 @@ cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms
             std::vector<double>(atoms.size(), 0.0)};
 }
 
-cds::PdbFileData cds::toPdbFileData(std::vector<Residue*>& residues)
+cds::PdbFileData cds::toPdbFileData(const cds::GraphIndexData& indices)
 {
-    std::vector<Atom*> atoms;
-    std::vector<std::vector<size_t>> indices;
-    for (auto& residue : residues)
-    {
-        std::vector<Atom*> residueAtoms = residue->getAtoms();
-        indices.push_back(codeUtils::indexVectorWithOffset(atoms.size(), residueAtoms));
-        codeUtils::insertInto(atoms, residueAtoms);
-    }
+    const std::vector<cds::Atom*>& atoms       = indices.atoms;
+    const std::vector<cds::Residue*>& residues = indices.residues;
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
     std::vector<std::string> chainIds(residues.size(), "");
     std::vector<std::string> insertionCodes(residues.size(), "");
-    PdbFileResidueData residueData {indices, residueNumbers(residues), truncatedResidueNames(residues), chainIds,
+    PdbFileResidueData residueData {residueNumbers(residues), truncatedResidueNames(residues), chainIds,
                                     insertionCodes};
     PdbFileFormat format;
     return PdbFileData {format, {}, residueData, toPdbFileAtomData(atoms, recordNames)};
@@ -78,6 +72,8 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
         stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
         for (auto& molecule : molecules)
         {
+            GraphIndexData indices              = toIndexData({molecule});
+            assembly::Graph graph               = createAssemblyGraph(indices);
             std::vector<cds::Residue*> residues = molecule->getResidues();
             for (auto& atom : molecule->getAtoms())
             {
@@ -85,8 +81,8 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
             }
             std::vector<cds::ResidueType> types = residueTypes(residues);
             std::vector<bool> ter               = residueTER(types);
-            PdbFileData data                    = toPdbFileData(residues);
-            cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
+            PdbFileData data                    = toPdbFileData(indices);
+            cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, data);
         }
         stream << "ENDMDL\n";
     }
@@ -99,8 +95,8 @@ void cds::WritePdb(std::ostream& stream, cds::Molecule* molecule)
     std::vector<Residue*>& residues = indices.residues;
     std::vector<ResidueType> types  = residueTypes(residues);
     std::vector<bool> ter           = residueTER(types);
-    PdbFileData data                = toPdbFileData(residues);
-    cds::writeMoleculeToPdb(stream, codeUtils::indexVector(residues), ter, data);
+    PdbFileData data                = toPdbFileData(indices);
+    cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, data);
     std::vector<ResidueType> selectedResidueTypes {Sugar, Derivative, Aglycone, Undefined};
     std::function<bool(const ResidueType&)> selectResidue = [&](const ResidueType& type)
     {

@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/formatting.hpp"
 
 #include <iomanip>
@@ -8,7 +9,8 @@
 #include <array>
 #include <vector>
 
-void cds::writeAssemblyToPdb(std::ostream& stream, const std::vector<std::vector<size_t>>& residueIndices,
+void cds::writeAssemblyToPdb(std::ostream& stream, const assembly::Graph& graph,
+                             const std::vector<std::vector<size_t>>& residueIndices,
                              const std::vector<std::vector<bool>>& residueTER,
                              const std::vector<std::array<size_t, 2>>& connectionIndices, const PdbFileData& data)
 {
@@ -18,20 +20,21 @@ void cds::writeAssemblyToPdb(std::ostream& stream, const std::vector<std::vector
     }
     for (size_t n = 0; n < residueIndices.size(); n++)
     {
-        cds::writeMoleculeToPdb(stream, residueIndices[n], residueTER[n], data);
+        cds::writeMoleculeToPdb(stream, graph, residueIndices[n], residueTER[n], data);
     }
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }
 
-void cds::writeMoleculeToPdb(std::ostream& stream, const std::vector<size_t>& residueIndices,
-                             const std::vector<bool>& residueTER, const PdbFileData& data)
+void cds::writeMoleculeToPdb(std::ostream& stream, const assembly::Graph& graph,
+                             const std::vector<size_t>& residueIndices, const std::vector<bool>& residueTER,
+                             const PdbFileData& data)
 {
     const PdbFileResidueData& residues = data.residues;
     const PdbFileAtomData& atoms       = data.atoms;
     for (size_t n = 0; n < residueIndices.size(); n++)
     {
         size_t residueIndex = residueIndices[n];
-        for (size_t atomIndex : residues.atomIndices[residueIndex])
+        for (size_t atomIndex : graph.residues.nodes.elements[residueIndex])
         {
             cds::writeAtomToPdb(stream, data.format, residues, residueIndex, atoms, atomIndex);
         }

@@ -22,7 +22,6 @@ namespace cds
 
     struct PdbFileResidueData
     {
-        std::vector<std::vector<size_t>> atomIndices;
         std::vector<int> numbers;
         std::vector<std::string> names;
         std::vector<std::string> chainIds;
