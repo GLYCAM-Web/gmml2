@@ -107,7 +107,9 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices, const st
     atomGraphData.nodeAlive       = includedAtoms;
     graph::Graph atomGraph        = graph::identity(atomGraphData);
     graph::Graph residueGraph     = graph::quotient(atomGraphData, indices.atomResidue);
-    graph::Graph moleculeGraph    = graph::quotient(graph::asData(residueGraph), indices.residueMolecule);
+    graph::Database residueData   = graph::asData(residueGraph);
+    graph::Graph moleculeGraph =
+        graph::quotient(residueData, codeUtils::indicesToValues(indices.residueMolecule, residueData.nodes));
     return assembly::Graph {indices.atoms.size(),
                             indices.residues.size(),
                             indices.molecules.size(),
