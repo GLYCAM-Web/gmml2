@@ -103,12 +103,12 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
     {
         return codeUtils::contains(selectedResidueTypes, type);
     };
-    std::vector<bool> residueSelected             = codeUtils::mapVector(selectResidue, types);
+    std::vector<bool> residueSelected             = codeUtils::vectorMap(selectResidue, types);
     std::function<bool(const size_t&)> selectAtom = [&](const size_t& atomResidue)
     {
         return residueSelected[atomResidue];
     };
-    std::vector<bool> atomSelected = codeUtils::mapVector(selectAtom, indices.atomResidue);
+    std::vector<bool> atomSelected = codeUtils::vectorMap(selectAtom, indices.atomResidue);
     graph::Database& db            = graph.atoms.source;
     graph::Graph subgraph          = graph::selectedQuotient(db, indices.atomResidue, atomSelected, db.edgeAlive);
     std::vector<std::array<size_t, 2>> connectionIndices =

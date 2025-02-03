@@ -75,7 +75,7 @@ cdsCondensedSequence::SequenceGraph cdsCondensedSequence::condensedSequenceGraph
         }
     }
     graph::Database db   = sequence.graph.source;
-    db.nodeAlive         = codeUtils::mapVector(keepNode, sequence.types);
+    db.nodeAlive         = codeUtils::vectorMap(keepNode, sequence.types);
     SequenceGraph result = sequence;
     result.derivatives   = derivatives;
     result.graph         = graph::identity(db);

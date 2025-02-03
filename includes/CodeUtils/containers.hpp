@@ -55,7 +55,7 @@ namespace codeUtils
         return vec;
     }
 
-    template<class A, class B> std::vector<A> mapVector(std::function<A(const B&)>& func, const std::vector<B>& vec)
+    template<class A, class B> std::vector<A> vectorMap(std::function<A(const B&)>& func, const std::vector<B>& vec)
     {
         std::vector<A> result;
         result.reserve(vec.size());
