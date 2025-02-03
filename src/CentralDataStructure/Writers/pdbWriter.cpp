@@ -98,20 +98,15 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
     std::vector<bool> ter                 = residueTER(types);
     PdbFileData data                      = toPdbFileData(indices);
     cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, data);
-    std::vector<ResidueType> selectedResidueTypes {Sugar, Derivative, Aglycone, Undefined};
-    std::function<bool(const ResidueType&)> selectResidue = [&](const ResidueType& type)
+    std::vector<bool> selectedResidueTypes(ResidueTypeCount, false);
+    for (auto type : {Sugar, Derivative, Aglycone, Undefined})
     {
-        return codeUtils::contains(selectedResidueTypes, type);
-    };
-    std::vector<bool> residueSelected             = codeUtils::vectorMap(selectResidue, types);
-    std::function<bool(const size_t&)> selectAtom = [&](const size_t& atomResidue)
-    {
-        return residueSelected[atomResidue];
-    };
-    std::vector<bool> atomSelected = codeUtils::vectorMap(selectAtom, indices.atomResidue);
-    graph::Database& db            = graph.atoms.source;
-    graph::Graph subgraph          = graph::selectedQuotient(db, indices.atomResidue, atomSelected, db.edgeAlive);
+        selectedResidueTypes[type] = true;
+    }
+    std::vector<bool> residueSelected = codeUtils::indicesToValues(selectedResidueTypes, types);
+    std::vector<bool> atomSelected    = codeUtils::indicesToValues(residueSelected, indices.atomResidue);
+    assembly::Graph subgraph          = createAssemblyGraph(indices, codeUtils::vectorAnd(includedAtoms, atomSelected));
     std::vector<std::array<size_t, 2>> connectionIndices =
-        codeUtils::indicesToValues(subgraph.source.edgeNodes, subgraph.edges.indices);
+        codeUtils::indicesToValues(subgraph.residues.source.edgeNodes, subgraph.residues.edges.indices);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }
