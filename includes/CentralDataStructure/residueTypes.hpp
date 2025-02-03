@@ -12,7 +12,8 @@ namespace cds
         Solvent,
         Deoxy,
         ProteinCappingGroup,
-        Undefined
+        Undefined,
+        ResidueTypeCount
     };
 } // namespace cds
 #endif
