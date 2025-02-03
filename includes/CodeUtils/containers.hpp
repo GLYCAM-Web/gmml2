@@ -133,11 +133,12 @@ namespace codeUtils
         return indexVectorWithOffset(0, vec);
     }
 
-    template<class T> std::vector<T> indicesToValues(const std::vector<T>& values, const std::vector<size_t>& indices)
+    template<class T, class K>
+    std::vector<T> indicesToValues(const std::vector<T>& values, const std::vector<K>& indices)
     {
         std::vector<T> result;
         result.reserve(indices.size());
-        for (size_t n : indices)
+        for (K n : indices)
         {
             result.push_back(values[n]);
         }
