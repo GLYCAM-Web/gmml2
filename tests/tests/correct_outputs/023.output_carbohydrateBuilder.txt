@@ -262,6 +262,10 @@ Building DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
 *********************
 Building DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 *********************
+
+*********************
+Building DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
+*********************
 00001.pdb not created.
 00002.pdb succesfully created.
 00003.pdb succesfully created.
@@ -320,6 +324,7 @@ Building DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 00062.pdb succesfully created.
 00063.pdb succesfully created.
 00064.pdb succesfully created.
+00065.pdb succesfully created.
 00001.off not created.
 00002.off succesfully created.
 00003.off succesfully created.
@@ -378,3 +383,4 @@ Building DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 00062.off succesfully created.
 00063.off succesfully created.
 00064.off succesfully created.
+00065.off succesfully created.

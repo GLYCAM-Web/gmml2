@@ -1456,6 +1456,43 @@ Number of possible shapes is 3
 SO3_5_?_?
 Name: DXylpa1-6DManNAcpb, LinkageIndex: 2, Res1: 4, Res2: 3
     LikelyRotamers: Omg, gg, gt
+
+*********************
+Building id 00065:DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
+*********************
+Input:
+DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
+Interpreted:
+DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4DManpa1-2DManpa1-2DManpa1-2DManpa1-2LFucpa1-4LFucpa1-2LFrupa
+IndexOrdered:
+DManp[6S]a1-6DManpa1-4[DManp[2A]a1-6DManpa1-6]DGlcpa1-4DManpa1-2DManpa1-2DManpa1-2DManpa1-2LFucpa1-4LFucpa1-2LFrupa
+IndexOrderedLabeled:
+DManp&Label=residue-13;[6&Label=link-12;S&Label=residue-14;]a1-6&Label=link-11;DManp&Label=residue-12;a1-4&Label=link-10;[DManp&Label=residue-10;[2&Label=link-9;A&Label=residue-11;]a1-6&Label=link-8;DManp&Label=residue-9;a1-6&Label=link-7;]DGlcp&Label=residue-8;a1-4&Label=link-6;DManp&Label=residue-7;a1-2&Label=link-5;DManp&Label=residue-6;a1-2&Label=link-4;DManp&Label=residue-5;a1-2&Label=link-3;DManp&Label=residue-4;a1-2&Label=link-2;LFucp&Label=residue-3;a1-4&Label=link-1;LFucp&Label=residue-2;a1-2&Label=link-0;LFrup&Label=residue-1;
+Parsed and labelled 00065 with no exceptions thrown.
+
+Number of residues for this sequence is 14
+Number of likely shapes is 8
+Number of possible shapes is 27
+2cA_1_?_?
+4fA_2_?_?
+2fA_3_?_?
+2MA_4_?_?
+2MA_5_?_?
+2MA_6_?_?
+4MA_7_?_?
+UGA_8_?_?
+6MA_9_?_?
+2MA_10_?_?
+ACX_11_?_?
+6MA_12_?_?
+6MA_13_?_?
+SO3_14_?_?
+Name: DManpa1-6DGlcpa, LinkageIndex: 7, Res1: 9, Res2: 8
+    LikelyRotamers: Omg, gg, gt
+Name: DManpa1-6DManpa, LinkageIndex: 8, Res1: 10, Res2: 9
+    LikelyRotamers: Omg, gg, gt
+Name: DManpa1-6DManpa, LinkageIndex: 11, Res1: 13, Res2: 12
+    LikelyRotamers: Omg, gg, gt
 00001.pdb not created.
 00002.pdb succesfully created.
 00003.pdb succesfully created.
@@ -1514,6 +1551,7 @@ Name: DXylpa1-6DManNAcpb, LinkageIndex: 2, Res1: 4, Res2: 3
 00062.pdb succesfully created.
 00063.pdb succesfully created.
 00064.pdb succesfully created.
+00065.pdb succesfully created.
 00001.off not created.
 00002.off succesfully created.
 00003.off succesfully created.
@@ -1572,3 +1610,4 @@ Name: DXylpa1-6DManNAcpb, LinkageIndex: 2, Res1: 4, Res2: 3
 00062.off succesfully created.
 00063.off succesfully created.
 00064.off succesfully created.
+00065.off succesfully created.
