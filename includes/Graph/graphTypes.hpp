@@ -36,6 +36,21 @@ namespace graph
         GraphEdges edges;
         Database source;
     };
+
+    inline size_t nodeCount(const Graph& graph)
+    {
+        return graph.nodes.indices.size();
+    }
+
+    inline size_t edgeCount(const Graph& graph)
+    {
+        return graph.edges.indices.size();
+    }
+
+    inline size_t sourceNodeIndex(const Graph& graph, size_t n)
+    {
+        return graph.nodes.indices[n];
+    }
 } // namespace graph
 
 #endif

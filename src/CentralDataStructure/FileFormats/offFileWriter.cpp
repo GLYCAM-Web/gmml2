@@ -95,8 +95,8 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     std::vector<bool> residueIncluded = codeUtils::indicesToBools(residues.names.size(), residueIndices);
     for (auto& bond : graph.atoms.edges.nodeAdjacencies)
     {
-        size_t first  = graph.atoms.nodes.indices[bond[0]];
-        size_t second = graph.atoms.nodes.indices[bond[1]];
+        size_t first  = sourceNodeIndex(graph.atoms, bond[0]);
+        size_t second = sourceNodeIndex(graph.atoms, bond[1]);
         if (residueIncluded[graph.atomResidue[first]])
         {
             int number         = atoms.numbers[first];

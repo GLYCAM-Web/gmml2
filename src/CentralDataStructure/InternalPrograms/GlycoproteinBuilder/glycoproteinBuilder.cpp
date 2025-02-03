@@ -396,7 +396,7 @@ namespace glycoproteinBuilder
         std::vector<std::vector<bool>> allResidueTER     = residueTER(moleculeResidues);
         std::vector<std::array<size_t, 2>> atomPairsConnectingNonProteinResidues;
         const graph::GraphEdges& residueEdges = graph.residues.edges;
-        for (size_t n = 0; n < residueEdges.indices.size(); n++)
+        for (size_t n = 0; n < edgeCount(graph.residues); n++)
         {
             const std::array<size_t, 2>& adj = residueEdges.nodeAdjacencies[n];
             if (isNonProteinResidue(adj[0]) || isNonProteinResidue(adj[1]))

@@ -20,7 +20,7 @@ namespace glycoproteinBuilder
         size_t residueCount = graph.residueCount;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
         atomsConnectedToOtherResidues.resize(residueCount);
-        for (size_t n = 0; n < graph.residues.edges.indices.size(); n++)
+        for (size_t n = 0; n < edgeCount(graph.residues); n++)
         {
             std::array<size_t, 2> residueAdj = graph.residues.edges.nodeAdjacencies[n];
             size_t atomEdge                  = residueEdgeToAtomEdgeIndex(graph, n);

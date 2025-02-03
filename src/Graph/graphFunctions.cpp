@@ -7,9 +7,9 @@
 
 std::vector<size_t> graph::reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting)
 {
-    std::vector<bool> reachable(graph.nodes.indices.size(), false);
+    std::vector<bool> reachable(nodeCount(graph), false);
     std::vector<size_t> toVisit;
-    toVisit.reserve(graph.nodes.indices.size());
+    toVisit.reserve(nodeCount(graph));
     toVisit.push_back(starting);
     reachable[starting] = !excluded[starting];
     while (!toVisit.empty())

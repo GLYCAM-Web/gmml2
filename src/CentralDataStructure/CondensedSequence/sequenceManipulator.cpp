@@ -138,24 +138,24 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
     SequenceGraph sequence = condensedSequenceGraph(toSequenceGraph(residues));
 
     std::vector<GraphVizResidueNode> nodes;
-    nodes.reserve(sequence.graph.nodes.indices.size());
+    nodes.reserve(nodeCount(sequence.graph));
     std::vector<GraphVizLinkage> linkages;
-    linkages.reserve(sequence.graph.edges.indices.size());
+    linkages.reserve(edgeCount(sequence.graph));
 
-    for (size_t n = 0; n < sequence.graph.nodes.indices.size(); n++)
+    for (size_t n = 0; n < nodeCount(sequence.graph); n++)
     {
-        size_t index                    = sequence.graph.nodes.indices[n];
+        size_t index                    = sourceNodeIndex(sequence.graph, n);
         std::string& monosaccharideName = sequence.monosaccharideNames[index];
         GraphVizImage image = findImage(configs, monosaccharideName, (sequence.ringTypes[index] == "f") ? "f" : "");
         nodes.push_back({n, image, monosaccharideName, sequence.derivatives[index]});
     }
 
-    for (size_t n = 0; n < sequence.graph.edges.indices.size(); n++)
+    for (size_t n = 0; n < edgeCount(sequence.graph); n++)
     {
         std::array<size_t, 2>& adj = sequence.graph.edges.nodeAdjacencies[n];
         size_t parent              = adj[0];
         size_t child               = adj[1];
-        size_t childIndex          = sequence.graph.nodes.indices[child];
+        size_t childIndex          = sourceNodeIndex(sequence.graph, child);
         std::string label          = (configs.show_config_labels_ ? sequence.configurations[childIndex] : "") +
                             (configs.show_position_labels_ ? sequence.linkages[childIndex] : "");
         linkages.push_back({
@@ -172,7 +172,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
     ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
     for (size_t n = 0; n < nodes.size(); n++)
     {
-        size_t nodeIndex = sequence.graph.nodes.indices[n];
+        size_t nodeIndex = sourceNodeIndex(sequence.graph, n);
         bool isAglycone  = sequence.types[nodeIndex] == cds::ResidueType::Aglycone;
         ss << (isAglycone ? graphVizAglyconeNode(nodes[n]) : graphVizSugarNode(nodes[n]));
     }
