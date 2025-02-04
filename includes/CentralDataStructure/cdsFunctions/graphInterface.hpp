@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
@@ -13,22 +14,18 @@ namespace cds
 {
     struct GraphIndexData
     {
-        GraphIndexData(const std::vector<Atom*>& atoms_, const std::vector<Residue*>& residues_,
-                       const std::vector<Molecule*>& molecules_, const std::vector<size_t>& atomResidue_,
-                       const std::vector<size_t>& residueMolecule_)
-            : atoms(atoms_), residues(residues_), molecules(molecules_), atomResidue(atomResidue_),
-              residueMolecule(residueMolecule_)
-        {}
-
         std::vector<Atom*> atoms;
         std::vector<Residue*> residues;
         std::vector<Molecule*> molecules;
+        std::vector<Assembly*> assemblies;
         std::vector<size_t> atomResidue;
         std::vector<size_t> residueMolecule;
+        std::vector<size_t> moleculeAssembly;
     };
 
     GraphIndexData toIndexData(const std::vector<Residue*> inputResidues);
     GraphIndexData toIndexData(const std::vector<Molecule*> molecules);
+    GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
     graph::Database createGraphData(const GraphIndexData& indices);
     assembly::Graph createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms);
 } // namespace cds

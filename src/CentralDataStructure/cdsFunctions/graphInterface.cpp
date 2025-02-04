@@ -19,6 +19,7 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Residue*> inputResidues)
     std::vector<Residue*> residues;
     std::vector<size_t> atomResidue;
     std::vector<size_t> residueMolecule;
+    std::vector<size_t> moleculeAssembly {0};
 
     for (auto& residue : inputResidues)
     {
@@ -33,7 +34,7 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Residue*> inputResidues)
         residueIndex++;
     }
 
-    return {atoms, residues, {}, atomResidue, residueMolecule};
+    return {atoms, residues, {}, {}, atomResidue, residueMolecule, moleculeAssembly};
 }
 
 cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
@@ -46,6 +47,7 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
     std::vector<Residue*> residues;
     std::vector<size_t> atomResidue;
     std::vector<size_t> residueMolecule;
+    std::vector<size_t> moleculeAssembly;
 
     for (auto& molecule : molecules)
     {
@@ -61,10 +63,51 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
             residues.push_back(residue);
             residueIndex++;
         }
+        moleculeAssembly.push_back(0);
         moleculeIndex++;
     }
 
-    return {atoms, residues, molecules, atomResidue, residueMolecule};
+    return {atoms, residues, molecules, {}, atomResidue, residueMolecule, moleculeAssembly};
+}
+
+cds::GraphIndexData cds::toIndexData(const std::vector<Assembly*> assemblies)
+{
+    size_t assemblyIndex = 0;
+    size_t moleculeIndex = 0;
+    size_t residueIndex  = 0;
+    size_t atomIndex     = 0;
+
+    std::vector<Atom*> atoms;
+    std::vector<Residue*> residues;
+    std::vector<Molecule*> molecules;
+    std::vector<size_t> atomResidue;
+    std::vector<size_t> residueMolecule;
+    std::vector<size_t> moleculeAssembly;
+
+    for (auto& assembly : assemblies)
+    {
+        for (auto& molecule : assembly->getMolecules())
+        {
+            for (auto& residue : molecule->getResidues())
+            {
+                for (auto& atom : residue->getAtoms())
+                {
+                    atomResidue.push_back(residueIndex);
+                    atoms.push_back(atom);
+                    atomIndex++;
+                }
+                residueMolecule.push_back(moleculeIndex);
+                residues.push_back(residue);
+                residueIndex++;
+            }
+            moleculeAssembly.push_back(assemblyIndex);
+            molecules.push_back(molecule);
+            moleculeIndex++;
+        }
+        assemblyIndex++;
+    }
+
+    return {atoms, residues, molecules, assemblies, atomResidue, residueMolecule, moleculeAssembly};
 }
 
 graph::Database cds::createGraphData(const GraphIndexData& indices)
@@ -110,12 +153,18 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices, const st
     graph::Database residueData   = graph::asData(residueGraph);
     graph::Graph moleculeGraph =
         graph::quotient(residueData, codeUtils::indicesToValues(indices.residueMolecule, residueData.nodes));
+    graph::Database moleculeData = graph::asData(moleculeGraph);
+    graph::Graph assemblyGraph =
+        graph::quotient(moleculeData, codeUtils::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
     return assembly::Graph {indices.atoms.size(),
                             indices.residues.size(),
                             indices.molecules.size(),
+                            indices.assemblies.size(),
                             indices.atomResidue,
                             indices.residueMolecule,
+                            indices.moleculeAssembly,
                             atomGraph,
                             residueGraph,
-                            moleculeGraph};
+                            moleculeGraph,
+                            assemblyGraph};
 }
