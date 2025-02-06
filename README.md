@@ -37,6 +37,16 @@ This code also serves as the main molecular modeling engine for GLYCAM-Web.
 We are very grateful to our funders.  
 [Please check them out!](https://github.com/GLYCAM-Web/website/blob/master/funding.md)
 
+### Acknowledgements
+
+GMML2 includes the following third-party data and source code:
+
+A curated data set of the [Smooth Backbone-Dependent Rotamer Library 2010](http://dunbrack.fccc.edu/lab/bbdep2010) licensed under [Creative Commons CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode)
+
+The [PCG Library](https://www.pcg-random.org/index.html), licensed under the [Apache License](https://www.apache.org/licenses/LICENSE-2.0)
+
+The [Eigen C++ template library](https://eigen.tuxfamily.org/index.php?title=Main_Page), licensed under [MPL2](https://www.mozilla.org/en-US/MPL/2.0/)
+
 ## Prerequisites
 
 ### Building GMML2
