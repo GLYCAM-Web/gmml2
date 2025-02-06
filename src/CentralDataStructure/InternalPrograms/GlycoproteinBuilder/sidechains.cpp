@@ -105,6 +105,49 @@ void glycoproteinBuilder::updateSidechainRotation(const MolecularMetadata::Sidec
         cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graph, residue)));
 }
 
+bool glycoproteinBuilder::sidechainInitialStateHasOverlap(const assembly::Graph& graph, const AssemblyData& data,
+                                                          const std::vector<cds::Coordinate>& initialCoords,
+                                                          MutableData& mutableData, size_t sidechainResidue)
+{
+    const std::vector<size_t>& sidechainAtoms = data.residues.sidechainDihedrals[sidechainResidue][0].movingAtoms;
+    std::vector<cds::Sphere> coords           = mutableData.atomBounds;
+    for (size_t n : sidechainAtoms)
+    {
+        coords[n].center = initialCoords[n];
+    }
+    cds::Sphere bounds               = cds::boundingSphere(codeUtils::indicesToValues(coords, sidechainAtoms));
+    auto overlapsWithSidechainBounds = [&](const cds::Sphere& sphere)
+    {
+        return cds::spheresOverlap(constants::overlapTolerance, bounds, sphere);
+    };
+    for (size_t molecule = 0; molecule < graph.moleculeCount; molecule++)
+    {
+        if (overlapsWithSidechainBounds(mutableData.moleculeBounds[molecule]))
+        {
+            for (size_t residue : moleculeResidues(graph, molecule))
+            {
+                if ((residue != sidechainResidue) && overlapsWithSidechainBounds(mutableData.residueBounds[residue]))
+                {
+                    for (size_t atom : residueAtoms(graph, residue))
+                    {
+                        if (overlapsWithSidechainBounds(mutableData.atomBounds[atom]))
+                        {
+                            for (size_t n : sidechainAtoms)
+                            {
+                                if (cds::spheresOverlap(constants::overlapTolerance, coords[atom], coords[n]))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}
+
 size_t glycoproteinBuilder::lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                                            const assembly::Graph& graph, const AssemblyData& data,
                                                            MutableData& mutableData, size_t sidechainResidue,

@@ -15,6 +15,9 @@ namespace glycoproteinBuilder
     void updateSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                  const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                                  size_t sidechainResidue, size_t rotation);
+    bool sidechainInitialStateHasOverlap(const assembly::Graph& graph, const AssemblyData& data,
+                                         const std::vector<cds::Coordinate>& initialCoords, MutableData& mutableData,
+                                         size_t sidechainResidue);
     size_t lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                           const assembly::Graph& graph, const AssemblyData& data,
                                           MutableData& mutableData, size_t sidechainResidue,

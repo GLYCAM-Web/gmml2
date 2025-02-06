@@ -244,6 +244,7 @@ namespace glycoproteinBuilder
 
         SidechainAdjustment adjustSidechains =
             [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
+                const std::vector<cds::Coordinate>& initialCoordinates,
                 const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences)
         {
             mutableData.atomIgnored = data.atoms.none;
@@ -259,7 +260,8 @@ namespace glycoproteinBuilder
                     sidechainResiduesWithGlycanOverlap.push_back(residue);
                 }
             }
-            for (size_t residue : codeUtils::shuffleVector(rng, sidechainResiduesWithGlycanOverlap))
+            std::vector<size_t> sidechainsToAdjust = codeUtils::shuffleVector(rng, sidechainResiduesWithGlycanOverlap);
+            for (size_t residue : sidechainsToAdjust)
             {
                 std::vector<size_t> potentialOverlaps =
                     atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
@@ -272,19 +274,28 @@ namespace glycoproteinBuilder
                 wiggleGlycan(graph, data, mutableData, glycanId, searchSettings, overlapWeight,
                              glycositePreferences[glycanId]);
             }
+            for (size_t residue : codeUtils::reverse(sidechainsToAdjust))
+            {
+                if (!sidechainInitialStateHasOverlap(graph, data, initialCoordinates, mutableData, residue))
+                {
+                    for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
+                    {
+                        mutableData.atomBounds[atom].center = initialCoordinates[atom];
+                    }
+                }
+            }
             mutableData.atomIgnored = data.atoms.partOfMovableSidechain;
         };
 
         SidechainAdjustment noSidechainAdjustment =
-            [&](pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
+            [&](pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&, const std::vector<cds::Coordinate>&,
                 const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&)
         {
             return;
         };
 
         auto resolveOverlapsWithWiggler =
-            [&](pcg32& rng, SidechainAdjustment adjustSidechains, const assembly::Graph& graph,
-                const AssemblyData& data, MutableData& mutableData,
+            [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                 const std::vector<cds::Coordinate>& initialCoordinates, bool deleteSitesUntilResolved)
         {
             std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
@@ -304,7 +315,7 @@ namespace glycoproteinBuilder
                 wiggleGlycan(graph, data, mutableData, glycanId, searchSettings, overlapWeight,
                              glycositePreferences[glycanId]);
             }
-            adjustSidechains(rng, graph, data, mutableData, glycositePreferences);
+            adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences);
             GlycoproteinState currentState;
             std::vector<size_t> overlapSites =
                 determineSitesWithOverlap(codeUtils::indexVector(data.indices.glycans), graph, data, mutableData);
@@ -315,7 +326,7 @@ namespace glycoproteinBuilder
                 GlycoproteinState initialState = {initialOverlap, overlapSites, glycositePreferences};
                 currentState =
                     randomDescent(rng, randomizeShape, adjustSidechains, searchSettings, settings.persistCycles,
-                                  overlapWeight, graph, data, mutableData, initialState);
+                                  overlapWeight, graph, data, mutableData, initialCoordinates, initialState);
                 overlapSites = currentState.overlapSites;
                 if (deleteSitesUntilResolved && !overlapSites.empty())
                 {
@@ -458,10 +469,9 @@ namespace glycoproteinBuilder
 
         auto runInitial = [&](pcg32 rng)
         {
-            MutableData mutableData                     = initialState;
-            std::vector<cds::Coordinate> resolvedCoords = resolveOverlapsWithWiggler(
-                rng, settings.allowSidechainAdjustment ? adjustSidechains : noSidechainAdjustment, graph, data,
-                mutableData, initialCoordinates, false);
+            MutableData mutableData = initialState;
+            std::vector<cds::Coordinate> resolvedCoords =
+                resolveOverlapsWithWiggler(rng, graph, data, mutableData, initialCoordinates, false);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                          allResidueTER, noConnections, "glycoprotein");
@@ -475,8 +485,7 @@ namespace glycoproteinBuilder
         {
             MutableData mutableData                  = initialState;
             std::vector<cds::Coordinate> coordinates = resolveOverlapsWithWiggler(
-                rng, settings.allowSidechainAdjustment ? adjustSidechains : noSidechainAdjustment, graph, data,
-                mutableData, initialCoordinates, settings.deleteSitesUntilResolved);
+                rng, graph, data, mutableData, initialCoordinates, settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";

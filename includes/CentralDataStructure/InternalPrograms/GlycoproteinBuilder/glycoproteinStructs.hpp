@@ -137,6 +137,7 @@ namespace glycoproteinBuilder
     };
 
     typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
+                               const std::vector<cds::Coordinate>&,
                                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&)>
         SidechainAdjustment;
 

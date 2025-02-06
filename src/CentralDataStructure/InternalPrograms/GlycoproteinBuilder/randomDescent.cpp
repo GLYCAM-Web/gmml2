@@ -215,6 +215,7 @@ namespace glycoproteinBuilder
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,
+                                    const std::vector<cds::Coordinate>& initialCoordinates,
                                     const GlycoproteinState& initialState)
     {
         std::stringstream logss;
@@ -260,7 +261,7 @@ namespace glycoproteinBuilder
                 }
             }
 
-            adjustSidechains(rng, graph, data, mutableData, glycositePreferences);
+            adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences);
 
             if (cds::compareOverlaps(globalOverlap, newGlobalOverlap) > 0)
             {
