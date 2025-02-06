@@ -96,3 +96,4 @@
 ./src/MolecularMetadata/atomicBonds.cpp
 ./src/MolecularMetadata/elements.cpp
 ./src/MolecularMetadata/glycoprotein.cpp
+./src/MolecularMetadata/sidechainRotamers.cpp
