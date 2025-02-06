@@ -211,6 +211,7 @@ namespace glycoproteinBuilder
     }
 
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
+                                    SidechainAdjustment adjustSidechains,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,
@@ -258,6 +259,9 @@ namespace glycoproteinBuilder
                               "RandomDescent accepted a change of " + std::to_string(diff.count));
                 }
             }
+
+            adjustSidechains(rng, graph, data, mutableData, glycositePreferences);
+
             if (cds::compareOverlaps(globalOverlap, newGlobalOverlap) > 0)
             {
                 cycle = 0;

@@ -20,6 +20,7 @@ namespace glycoproteinBuilder
         ulong number3DStructures                = 1;
         ulong persistCycles                     = 5;
         bool freezeGlycositeResidueConformation = false;
+        bool allowSidechainAdjustment           = false;
         bool deleteSitesUntilResolved           = false;
         bool isDeterministic                    = false;
         uint64_t seed                           = 0;

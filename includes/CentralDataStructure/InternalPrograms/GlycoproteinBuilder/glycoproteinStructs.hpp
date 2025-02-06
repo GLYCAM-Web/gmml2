@@ -6,7 +6,9 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/External_Libraries/PCG/pcg_random.h"
 
+#include <functional>
 #include <vector>
 
 namespace glycoproteinBuilder
@@ -33,7 +35,14 @@ namespace glycoproteinBuilder
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
         std::vector<double> charges;
+        std::vector<bool> none;
         std::vector<bool> partOfMovableSidechain;
+    };
+
+    struct SidechainDihedral
+    {
+        std::array<size_t, 4> atoms;
+        std::vector<size_t> movingAtoms;
     };
 
     struct ResidueData
@@ -47,6 +56,9 @@ namespace glycoproteinBuilder
         std::vector<int> numbers;
         std::vector<int> serializedNumbers;
         std::vector<double> overlapWeights;
+        std::vector<std::vector<SidechainDihedral>> sidechainDihedrals;
+        std::vector<std::vector<size_t>> sidechainRotations;
+        std::vector<cds::Sphere> sidechainPotentialBounds;
     };
 
     struct MoleculeData
@@ -123,6 +135,10 @@ namespace glycoproteinBuilder
         AssemblyData data;
         MutableData mutableData;
     };
+
+    typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
+                               const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&)>
+        SidechainAdjustment;
 
 } // namespace glycoproteinBuilder
 #endif

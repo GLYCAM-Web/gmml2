@@ -25,6 +25,7 @@
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/randomDescent.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/shapeRandomization.cpp
+./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/writerInterface.cpp
 ./src/CentralDataStructure/InternalPrograms/Sequence/sequence.cpp
 ./src/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.cpp

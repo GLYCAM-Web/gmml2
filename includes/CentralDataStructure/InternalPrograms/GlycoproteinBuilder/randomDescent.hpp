@@ -33,6 +33,7 @@ namespace glycoproteinBuilder
                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences);
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
+                                    SidechainAdjustment adjustSidechains,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,

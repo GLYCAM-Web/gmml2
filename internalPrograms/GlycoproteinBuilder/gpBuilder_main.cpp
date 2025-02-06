@@ -3,15 +3,19 @@
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/threads.hpp"
 #include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
+#include "includes/MolecularMetadata/sidechainRotamers.hpp"
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include <optional>
 #include <stdexcept>
+#include <libgen.h>
 
 int main(int argc, char* argv[])
 {
@@ -36,6 +40,14 @@ int main(int argc, char* argv[])
         {ArgReq::optional,  ArgType::option, NUM_THREADS, "num-threads", 'p',            "value"}
     };
     std::string programName = codeUtils::programName(argv);
+    codeUtils::Path path    = codeUtils::toPath(argv[0]);
+    size_t pathSize         = path.elements.size();
+    if (pathSize < 3 || path.elements[pathSize - 2] != std::string("bin"))
+    {
+        throw std::runtime_error("expected application to be located in bin/" + path.elements[pathSize - 1] +
+                                 ", actually located in " + programName);
+    }
+
     codeUtils::Arguments arguments;
     try
     {
@@ -119,12 +131,19 @@ int main(int argc, char* argv[])
                     break;
             }
         }
+        MolecularMetadata::SidechainRotamerData sidechainRotamers;
+        {
+            std::string basePath = (path.absolute ? "/" : "") +
+                                   codeUtils::join("/", codeUtils::take(path.elements.size() - 2, path.elements));
+            std::string dunbrackLib = basePath + "/dat/dunbrack/sidechainRotamers.txt";
+            sidechainRotamers       = MolecularMetadata::readSidechainRotamerData(dunbrackLib);
+        }
         std::cout << "Input file is " << inputFile << "\n";
         glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct = glycoproteinBuilder::readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
         glycoproteinBuilder::GlycoproteinBuilder glycoproteinBuilder(inputStruct);
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder.ResolveOverlaps(outputDir, headerLines, numThreads);
+        glycoproteinBuilder.ResolveOverlaps(sidechainRotamers, outputDir, headerLines, numThreads);
     }
     catch (const std::runtime_error& error)
     {

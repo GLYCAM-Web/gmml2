@@ -18,6 +18,7 @@ namespace glycoproteinBuilder
         static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
         static const std::string persistCyclesParameter                      = "persistCycles";
         static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
+        static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
         static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
         static const std::string seedParameter                               = "seed";
         static const std::string skipMDPrepParameter                         = "skipMDPrep";
@@ -113,6 +114,10 @@ namespace glycoproteinBuilder
                     else if (parameter == freezeGlycositeResidueConformationParameter)
                     {
                         gpInputs.freezeGlycositeResidueConformation = parseBool(value);
+                    }
+                    else if (parameter == allowSidechainAdjustmentParameter)
+                    {
+                        gpInputs.allowSidechainAdjustment = parseBool(value);
                     }
                     else if (parameter == deleteIncompatibleSitesParameter)
                     {

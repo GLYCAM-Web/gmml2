@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
+#include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include <string>
 
 namespace glycoproteinBuilder
@@ -24,7 +25,8 @@ namespace glycoproteinBuilder
             return glycoprotein_;
         }
 
-        void ResolveOverlaps(const std::string& outputDir, const std::vector<std::string>& headerLines, int numThreads);
+        void ResolveOverlaps(const MolecularMetadata::SidechainRotamerData& sidechainRotamers,
+                             const std::string& outputDir, const std::vector<std::string>& headerLines, int numThreads);
 
       private:
         pdb::PdbFile pdbFile;

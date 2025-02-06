@@ -183,6 +183,7 @@ namespace glycoproteinBuilder
                            cds::atomAtomicNumbers(atoms),
                            cds::atomElements(atoms),
                            cds::atomCharges(atoms),
+                           std::vector<bool>(atoms.size(), false),
                            partOfMovableSidechain};
 
         std::vector<std::string> residueNames      = cds::residueNames(residues);
@@ -247,6 +248,12 @@ namespace glycoproteinBuilder
             }
         }
 
+        std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(residues.size());
+        std::vector<std::vector<size_t>> sidechainRotations(residues.size());
+        std::vector<cds::Sphere> sidechainPotentialBounds(residues.size(), cds::Sphere {
+                                                                               0.0, cds::Coordinate {0.0, 0.0, 0.0}
+        });
+
         ResidueData residueData {residueNames,
                                  residueTypes,
                                  residuesHaveAllExpectedAtoms,
@@ -255,7 +262,10 @@ namespace glycoproteinBuilder
                                  cds::residueStringIds(residues),
                                  cds::residueNumbers(residues),
                                  cds::serializedNumberVector(residues.size()),
-                                 residueOverlapWeight};
+                                 residueOverlapWeight,
+                                 sidechainDihedrals,
+                                 sidechainRotations,
+                                 sidechainPotentialBounds};
         std::vector<cds::Sphere> moleculeBounds =
             boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.elements);
 
@@ -277,11 +287,9 @@ namespace glycoproteinBuilder
 
         AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
 
-        std::vector<bool> atomIgnored(atoms.size(), false);
         std::vector<bool> glycanIncluded(glycosites.size(), true);
-        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres,
-                                 moleculeBounds,      rotatableDihedralCurrentShape,
-                                 atomIgnored,         glycanIncluded};
+        MutableData mutableData {atomBoundingSpheres,           residueBoundingSpheres, moleculeBounds,
+                                 rotatableDihedralCurrentShape, atomData.none,          glycanIncluded};
 
         return GlycoproteinAssembly {graph, data, mutableData};
     }
