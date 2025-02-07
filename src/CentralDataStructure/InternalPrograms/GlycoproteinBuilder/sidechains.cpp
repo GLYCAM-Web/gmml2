@@ -176,14 +176,14 @@ size_t glycoproteinBuilder::lowestOverlapSidechainRotation(const MolecularMetada
         overlaps.push_back(overlap);
     }
     size_t lowestIndex = 0;
-    for (size_t n = 1; n < overlaps.size(); n++)
+    for (size_t n = 1; n < rotations.size(); n++)
     {
         if (cds::compareOverlaps(overlaps[lowestIndex], overlaps[n]) > 0)
         {
             lowestIndex = n;
         }
     }
-    return lowestIndex;
+    return rotations[lowestIndex];
 }
 
 std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(const assembly::Graph& graph,
