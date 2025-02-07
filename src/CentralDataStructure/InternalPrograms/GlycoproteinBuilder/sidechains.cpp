@@ -27,8 +27,8 @@ namespace
         return result;
     }
 
-    std::array<cds::Coordinate, 4> dihedralCoordinates(const std::vector<cds::Sphere>& coords,
-                                                       const std::array<size_t, 4>& indices)
+    std::array<cds::Coordinate, 4> sidechainDihedralCoordinates(const std::vector<cds::Sphere>& coords,
+                                                                const std::array<size_t, 4>& indices)
     {
         auto coord = [&](size_t n)
         {
@@ -52,8 +52,8 @@ namespace
     {
         for (size_t k = 0; k < dihedrals.size(); k++)
         {
-            cds::RotationMatrix matrix =
-                cds::rotationTo(dihedralCoordinates(coords, dihedrals[k].atoms), constants::toRadians(rotation.chi[k]));
+            cds::RotationMatrix matrix = cds::rotationTo(sidechainDihedralCoordinates(coords, dihedrals[k].atoms),
+                                                         constants::toRadians(rotation.chi[k]));
             moveSphereCenters(coords, matrix, dihedrals[k].movingAtoms);
         }
     }
@@ -317,7 +317,7 @@ glycoproteinBuilder::sidechainPotentialBounds(const assembly::Graph& graph, cons
             initialAngles.reserve(dihedrals.size());
             for (auto& dihedral : dihedrals)
             {
-                initialAngles.push_back(cds::angle(dihedralCoordinates(initialCoords, dihedral.atoms)));
+                initialAngles.push_back(cds::angle(sidechainDihedralCoordinates(initialCoords, dihedral.atoms)));
             }
             const std::vector<size_t>& firstDihedralMovingAtoms = dihedrals[0].movingAtoms;
             cds::Sphere bounds =
