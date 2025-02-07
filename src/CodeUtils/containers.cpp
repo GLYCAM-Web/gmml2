@@ -65,3 +65,8 @@ std::vector<size_t> codeUtils::indexVectorWithOffset(size_t offset, size_t count
     }
     return result;
 }
+
+std::vector<size_t> codeUtils::indexVector(size_t count)
+{
+    return indexVectorWithOffset(0, count);
+}
