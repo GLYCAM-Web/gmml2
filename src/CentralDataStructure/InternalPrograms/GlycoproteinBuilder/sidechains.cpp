@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
@@ -101,8 +102,8 @@ void glycoproteinBuilder::updateSidechainRotation(const MolecularMetadata::Sidec
 {
     setSidechainRotation(mutableData.atomBounds, data.residues.sidechainDihedrals[residue],
                          sidechains.rotations[rotation]);
-    mutableData.residueBounds[residue] =
-        cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graph, residue)));
+    updateResidueBounds(graph, mutableData, residue);
+    updateResidueMoleculeBounds(graph, mutableData, residue);
 }
 
 bool glycoproteinBuilder::sidechainInitialStateHasOverlap(const assembly::Graph& graph, const AssemblyData& data,
