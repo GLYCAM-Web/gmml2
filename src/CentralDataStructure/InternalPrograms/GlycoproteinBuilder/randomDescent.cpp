@@ -249,7 +249,6 @@ namespace glycoproteinBuilder
                 }
                 wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
                              overlapWeight, preferences);
-                updateGlycanBounds(graph, data, mutableData, glycanId);
                 cds::Overlap newOverlap =
                     localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
                 cds::Overlap diff = newOverlap + (previousOverlap * -1);
