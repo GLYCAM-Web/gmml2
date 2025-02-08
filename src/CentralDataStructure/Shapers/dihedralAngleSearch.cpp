@@ -199,7 +199,7 @@ namespace
             }
             cds::Overlap overlaps =
                 cds::CountOverlappingAtoms(atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
-                                           input.atomIgnored, input.bonds, fixedResidueIndices, movingResidueIndices);
+                                           input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices);
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -259,7 +259,7 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<Res
     std::vector<cds::Atom*> atoms       = atomVecs.first;
     std::vector<size_t> atomResidues    = atomVecs.second;
     std::vector<bool> atomMoving        = toAtomMoving(atoms, dihedral.movingAtoms);
-    std::vector<bool> atomIgnored(atoms.size(), false);
+    std::vector<bool> atomIncluded(atoms.size(), true);
     std::vector<bool> residueMoving(residues.size(), false);
     for (size_t n = 0; n < atomResidues.size(); n++)
     {
@@ -286,7 +286,7 @@ cds::dihedralRotationInputData(RotatableDihedral& dihedral, const std::array<Res
     };
     return {
         atomMoving,
-        atomIgnored,
+        atomIncluded,
         atomBounds,
         residueBounds,
         residueWeights,
@@ -333,7 +333,7 @@ void cds::simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<Rot
         DihedralRotationDataContainer input = dihedralRotationInputData(dihedral, residues);
         DihedralRotationData inputPointers {
             input.atomMoving,
-            input.atomIgnored,
+            input.atomIncluded,
             input.atomBounds,
             input.residueBounds,
             input.residueWeights,

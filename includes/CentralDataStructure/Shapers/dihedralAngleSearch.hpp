@@ -27,7 +27,7 @@ namespace cds
     struct DihedralRotationDataContainer
     {
         std::vector<bool> atomMoving;
-        std::vector<bool> atomIgnored;
+        std::vector<bool> atomIncluded;
         std::vector<Sphere> atomBounds;
         std::vector<Sphere> residueBounds;
         std::vector<double> residueWeights;
@@ -39,7 +39,7 @@ namespace cds
     struct DihedralRotationData
     {
         const std::vector<bool>& atomMoving;
-        const std::vector<bool>& atomIgnored;
+        const std::vector<bool>& atomIncluded;
         const std::vector<Sphere>& atomBounds;
         const std::vector<Sphere>& residueBounds;
         const std::vector<double>& residueWeights;

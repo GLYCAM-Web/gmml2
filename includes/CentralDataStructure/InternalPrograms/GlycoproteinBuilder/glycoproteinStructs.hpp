@@ -35,8 +35,9 @@ namespace glycoproteinBuilder
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
         std::vector<double> charges;
-        std::vector<bool> none;
         std::vector<bool> partOfMovableSidechain;
+        std::vector<bool> all;
+        std::vector<bool> alwaysIncluded;
     };
 
     struct SidechainDihedral
@@ -125,7 +126,6 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> residueBounds;
         std::vector<cds::Sphere> moleculeBounds;
         std::vector<cds::AngleWithMetadata> currentDihedralShape;
-        std::vector<bool> atomIgnored;
         std::vector<bool> glycanIncluded;
     };
 

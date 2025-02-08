@@ -183,8 +183,9 @@ namespace glycoproteinBuilder
                            cds::atomAtomicNumbers(atoms),
                            cds::atomElements(atoms),
                            cds::atomCharges(atoms),
-                           std::vector<bool>(atoms.size(), false),
-                           partOfMovableSidechain};
+                           partOfMovableSidechain,
+                           std::vector<bool>(atoms.size(), true),
+                           std::vector<bool>(atoms.size(), true)};
 
         std::vector<std::string> residueNames      = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
@@ -288,8 +289,8 @@ namespace glycoproteinBuilder
         AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
 
         std::vector<bool> glycanIncluded(glycosites.size(), true);
-        MutableData mutableData {atomBoundingSpheres,           residueBoundingSpheres, moleculeBounds,
-                                 rotatableDihedralCurrentShape, atomData.none,          glycanIncluded};
+        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds,
+                                 rotatableDihedralCurrentShape, glycanIncluded};
 
         return GlycoproteinAssembly {graph, data, mutableData};
     }
