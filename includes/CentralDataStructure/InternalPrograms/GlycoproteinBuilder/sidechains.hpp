@@ -11,7 +11,8 @@
 namespace glycoproteinBuilder
 {
     bool sidechainHasGlycanOverlap(const assembly::Graph& graph, const AssemblyData& data,
-                                   const MutableData& mutableData, size_t sidechainResidue);
+                                   const MutableData& mutableData, const std::vector<size_t>& glycans,
+                                   size_t sidechainResidue);
     void updateSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                  const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                                  size_t sidechainResidue, size_t rotation);

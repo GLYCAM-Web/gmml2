@@ -120,7 +120,8 @@ namespace glycoproteinBuilder
         SidechainAdjustment adjustSidechains =
             [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                 const std::vector<cds::Coordinate>& initialCoordinates,
-                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences)
+                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
+                const std::vector<size_t>& glycans)
         {
             std::vector<size_t> sidechainResiduesWithGlycanOverlap;
             sidechainResiduesWithGlycanOverlap.reserve(graph.residueCount);
@@ -129,7 +130,7 @@ namespace glycoproteinBuilder
             {
                 if (data.residues.types[residue] == cds::ResidueType::Protein &&
                     data.residues.sidechainDihedrals[residue].size() > 0 &&
-                    sidechainHasGlycanOverlap(graph, data, mutableData, residue))
+                    sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residue))
                 {
                     sidechainResiduesWithGlycanOverlap.push_back(residue);
                 }
@@ -143,7 +144,7 @@ namespace glycoproteinBuilder
                                                                      residue, potentialOverlaps);
                 updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue, bestRotation);
             }
-            for (size_t glycanId : codeUtils::shuffleVector(rng, codeUtils::indexVector(data.indices.glycans)))
+            for (size_t glycanId : codeUtils::shuffleVector(rng, glycans))
             {
                 wiggleGlycan(graph, data, mutableData, data.atoms.all, glycanId, searchSettings, overlapWeight,
                              glycositePreferences[glycanId]);
@@ -162,7 +163,7 @@ namespace glycoproteinBuilder
 
         SidechainAdjustment noSidechainAdjustment =
             [&](pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&, const std::vector<cds::Coordinate>&,
-                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&)
+                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&, const std::vector<size_t>&)
         {
             return;
         };
@@ -189,7 +190,8 @@ namespace glycoproteinBuilder
                 wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
                              overlapWeight, glycositePreferences[glycanId]);
             }
-            adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences);
+            adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences,
+                             codeUtils::indexVector(data.indices.glycans));
             GlycoproteinState currentState;
             std::vector<size_t> overlapSites = determineSitesWithOverlap(codeUtils::indexVector(data.indices.glycans),
                                                                          graph, data, mutableData, data.atoms.all);

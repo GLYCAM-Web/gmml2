@@ -61,11 +61,12 @@ namespace
 } // namespace
 
 bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph, const AssemblyData& data,
-                                                    const MutableData& mutableData, size_t sidechainResidue)
+                                                    const MutableData& mutableData, const std::vector<size_t>& glycans,
+                                                    size_t sidechainResidue)
 {
     const std::vector<size_t>& sidechainAtoms = data.residues.sidechainDihedrals[sidechainResidue][0].movingAtoms;
     cds::Sphere bounds = cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, sidechainAtoms));
-    for (size_t glycanId = 0; glycanId < data.indices.glycans.size(); glycanId++)
+    for (size_t glycanId : glycans)
     {
         size_t glycanMolecule = data.indices.glycans[glycanId].glycanMolecule;
         if (mutableData.glycanIncluded[glycanId] &&

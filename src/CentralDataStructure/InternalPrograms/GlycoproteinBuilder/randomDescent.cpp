@@ -249,6 +249,7 @@ namespace glycoproteinBuilder
                 }
                 wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
                              overlapWeight, preferences);
+                adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences, {glycanId});
                 cds::Overlap newOverlap =
                     localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
                 cds::Overlap diff = newOverlap + (previousOverlap * -1);
@@ -265,8 +266,6 @@ namespace glycoproteinBuilder
                               "RandomDescent accepted a change of " + std::to_string(diff.count));
                 }
             }
-
-            adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences);
 
             if (cds::compareOverlaps(globalOverlap, newGlobalOverlap) > 0)
             {
