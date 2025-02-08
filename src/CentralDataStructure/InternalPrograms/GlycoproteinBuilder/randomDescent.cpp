@@ -241,8 +241,8 @@ namespace glycoproteinBuilder
                 const std::vector<size_t>& linkageIds = data.indices.glycans[glycanId].linkages;
                 cds::Overlap previousOverlap =
                     localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
-                auto preferences                              = randomizeShape(rng, data, mutableData, glycanId);
-                std::vector<cds::AngleWithMetadata> lastShape = mutableData.currentDihedralShape;
+                auto preferences      = randomizeShape(rng, data, mutableData, glycanId);
+                MutableData lastShape = mutableData;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], preferences[n]);
@@ -255,8 +255,7 @@ namespace glycoproteinBuilder
                 bool isWorse      = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
                 if (isWorse)
                 {
-                    setLinkageShape(graph, data, mutableData, glycanId, lastShape);
-                    updateGlycanBounds(graph, data, mutableData, glycanId);
+                    mutableData = lastShape;
                 }
                 else
                 {

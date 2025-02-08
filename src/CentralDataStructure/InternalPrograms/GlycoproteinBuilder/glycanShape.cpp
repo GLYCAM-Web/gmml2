@@ -93,8 +93,6 @@ namespace glycoproteinBuilder
             mutableData.residueBounds[n] =
                 cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graph, n)));
         }
-
-        mutableData.currentDihedralShape[dihedralId] = target;
     }
 
     void setLinkageShape(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,

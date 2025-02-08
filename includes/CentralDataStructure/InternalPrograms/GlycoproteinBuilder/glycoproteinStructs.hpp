@@ -70,6 +70,7 @@ namespace glycoproteinBuilder
     struct RotatableDihedralData
     {
         std::vector<GlycamMetadata::DihedralAngleDataVector> metadata;
+        std::vector<cds::AngleWithMetadata> initialShape;
     };
 
     struct ResidueLinkageData
@@ -125,7 +126,6 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> atomBounds;
         std::vector<cds::Sphere> residueBounds;
         std::vector<cds::Sphere> moleculeBounds;
-        std::vector<cds::AngleWithMetadata> currentDihedralShape;
         std::vector<bool> glycanIncluded;
     };
 

@@ -57,7 +57,7 @@ namespace glycoproteinBuilder
                         if (isChiAngle(dihedralMetadata[dihedralId][0].dihedral_angle_name_))
                         {
                             pref.isFrozen[n] = true;
-                            size_t metadata  = mutableData.currentDihedralShape[dihedralId].metadataIndex;
+                            size_t metadata  = data.rotatableDihedralData.initialShape[dihedralId].metadataIndex;
                             pref.angles[n][metadata] =
                                 constants::toDegrees(cds::angle(dihedralCoordinates(data, mutableData, dihedralId)));
                             pref.metadataOrder = {metadata};

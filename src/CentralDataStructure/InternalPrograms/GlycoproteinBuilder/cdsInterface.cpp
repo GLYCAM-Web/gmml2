@@ -88,7 +88,7 @@ namespace glycoproteinBuilder
         }
 
         std::vector<MoleculeType> moleculeTypes(graphIndices.molecules.size(), MoleculeType::protein);
-        std::vector<cds::AngleWithMetadata> rotatableDihedralCurrentShape;
+        std::vector<cds::AngleWithMetadata> rotatableDihedralShape;
         std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
         std::vector<ResidueLinkageIndices> residueLinkages;
         std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
@@ -111,8 +111,9 @@ namespace glycoproteinBuilder
                 const std::vector<cds::RotatableDihedral>& linkageDihedrals = linkage.rotatableDihedrals;
                 std::vector<size_t> dihedralIndices =
                     codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
-                codeUtils::insertInto(rotatableDihedralCurrentShape,
+                codeUtils::insertInto(rotatableDihedralShape,
                                       cds::currentShape(linkage.rotatableDihedrals, linkage.dihedralMetadata));
+                codeUtils::insertInto(dihedralMetadata, linkage.dihedralMetadata);
                 for (size_t q = 0; q < linkageDihedrals.size(); q++)
                 {
                     const cds::RotatableDihedral& dihedral = linkageDihedrals[q];
@@ -122,7 +123,6 @@ namespace glycoproteinBuilder
                         dihedralAtoms[i] = codeUtils::indexOf(atoms, dihedral.atoms[i]);
                     }
                     rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
-                    dihedralMetadata.push_back(linkage.dihedralMetadata[q]);
                 }
                 auto onlyThisMolecule = [&](const std::vector<size_t>& indices)
                 {
@@ -271,7 +271,7 @@ namespace glycoproteinBuilder
             boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.elements);
 
         MoleculeData moleculeData {moleculeTypes};
-        RotatableDihedralData rotatableDihedralData {dihedralMetadata};
+        RotatableDihedralData rotatableDihedralData {dihedralMetadata, rotatableDihedralShape};
         ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageOverlapBonds, linkageBranching,
                                                isGlycositeLinkage};
 
@@ -289,8 +289,7 @@ namespace glycoproteinBuilder
         AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
 
         std::vector<bool> glycanIncluded(glycosites.size(), true);
-        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds,
-                                 rotatableDihedralCurrentShape, glycanIncluded};
+        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds, glycanIncluded};
 
         return GlycoproteinAssembly {graph, data, mutableData};
     }
