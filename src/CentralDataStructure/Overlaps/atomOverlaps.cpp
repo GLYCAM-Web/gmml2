@@ -43,47 +43,6 @@ namespace
         }
     }
 
-    cds::ResidueAtomOverlapInput toOverlapInput(const cds::ResiduesWithOverlapWeight& input,
-                                                const std::vector<bool>& firstResidueBondedAtoms)
-    {
-        auto& residues   = input.residues;
-        size_t atomCount = 0;
-        for (auto res : residues)
-        {
-            atomCount += res->atomCount();
-        }
-        std::vector<cds::Sphere> coordinates;
-        coordinates.reserve(atomCount);
-        std::vector<std::vector<size_t>> residueAtoms;
-        residueAtoms.reserve(residues.size());
-        size_t currentAtom = 0;
-        for (auto& res : residues)
-        {
-            auto& atomsRef = res->getAtomsReference();
-            residueAtoms.push_back(codeUtils::indexVectorWithOffset(currentAtom, atomsRef));
-            for (const auto& atomPtr : atomsRef)
-            {
-                coordinates.push_back(cds::coordinateWithRadius(atomPtr.get()));
-            }
-            currentAtom += atomsRef.size();
-        }
-        std::vector<cds::Sphere> boundingSpheres;
-        boundingSpheres.reserve(residues.size());
-        std::vector<cds::Sphere> residuePoints;
-        for (size_t n = 0; n < residueAtoms.size(); n++)
-        {
-            std::vector<size_t> indices = residueAtoms[n];
-            residuePoints.clear();
-            for (size_t index : indices)
-            {
-                residuePoints.push_back(coordinates[index]);
-            }
-            boundingSpheres.push_back(cds::boundingSphere(residuePoints));
-        }
-        return {coordinates,  boundingSpheres, codeUtils::indexVector(residueAtoms),
-                residueAtoms, input.weights,   firstResidueBondedAtoms};
-    }
-
     size_t findBondIndex(const std::vector<cds::BondedResidueOverlapInput>& bonds, size_t a, size_t b)
     {
         for (size_t n = 0; n < bonds.size(); n++)
@@ -172,52 +131,6 @@ cds::Overlap cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, c
         }
     }
     return overlap;
-}
-
-cds::Overlap cds::CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
-                                        const ResiduesWithOverlapWeight& residuesB,
-                                        const std::vector<bool>& ignoredAtoms)
-{
-    if (residuesA.residues.empty() || residuesB.residues.empty())
-    {
-        return Overlap {0.0, 0.0};
-    }
-    else
-    {
-        auto bondedAtoms = [](Atom* origin, std::vector<Atom*>& atoms)
-        {
-            // residues aren't bonded in certain cases, use a default if so
-            return (origin == nullptr) ? std::vector<bool>(atoms.size(), false) : atomsBondedTo(origin, atoms);
-        };
-        std::vector<Atom*> atomsA       = residuesA.residues[0]->getAtoms();
-        std::vector<Atom*> atomsB       = residuesB.residues[0]->getAtoms();
-        std::array<Atom*, 2> bondedPair = bondedAtomPair(atomsA, atomsB);
-        ResidueAtomOverlapInput inputA  = toOverlapInput(residuesA, bondedAtoms(bondedPair[0], atomsA));
-        ResidueAtomOverlapInput inputB  = toOverlapInput(residuesB, bondedAtoms(bondedPair[1], atomsB));
-
-        size_t atomOffset                              = inputA.atomCoordinates.size();
-        size_t residueOffset                           = inputA.boundingSpheres.size();
-        std::vector<std::vector<size_t>> residueAtomsB = inputB.residueAtoms;
-        for (size_t n = 0; n < residueAtomsB.size(); n++)
-        {
-            residueAtomsB[n] = codeUtils::offsetIndices(atomOffset, residueAtomsB[n]);
-        }
-        std::vector<size_t> residueIndicesB = codeUtils::indexVectorWithOffset(residueOffset, inputB.residueIndices);
-        std::vector<Sphere> atomBounds      = codeUtils::vectorAppend(inputA.atomCoordinates, inputB.atomCoordinates);
-        std::vector<Sphere> residueBounds   = codeUtils::vectorAppend(inputA.boundingSpheres, inputB.boundingSpheres);
-        std::vector<double> residueWeights  = codeUtils::vectorAppend(inputA.residueWeights, inputB.residueWeights);
-        std::vector<std::vector<size_t>> residueAtoms = codeUtils::vectorAppend(inputA.residueAtoms, residueAtomsB);
-        std::vector<BondedResidueOverlapInput> bonds;
-        if (bondedPair[0] != nullptr)
-        {
-            bonds.push_back({
-                {      inputA.residueIndices[0],             residueIndicesB[0]},
-                {inputA.firstResidueBondedAtoms, inputB.firstResidueBondedAtoms}
-            });
-        }
-        return CountOverlappingAtoms(atomBounds, residueBounds, residueAtoms, residueWeights, ignoredAtoms, bonds,
-                                     inputA.residueIndices, residueIndicesB);
-    }
 }
 
 cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)

@@ -17,16 +17,6 @@ namespace cds
         std::vector<double> weights;
     };
 
-    struct ResidueAtomOverlapInput
-    {
-        std::vector<Sphere> atomCoordinates;
-        std::vector<Sphere> boundingSpheres;
-        const std::vector<size_t> residueIndices;
-        const std::vector<std::vector<size_t>> residueAtoms;
-        const std::vector<double> residueWeights;
-        const std::vector<bool> firstResidueBondedAtoms;
-    };
-
     struct BondedResidueOverlapInput
     {
         std::array<size_t, 2> residueIndices;
@@ -43,7 +33,5 @@ namespace cds
                                   const std::vector<double>& residueWeights, const std::vector<bool>& ignoredAtoms,
                                   const std::vector<BondedResidueOverlapInput>& bonds,
                                   const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
-    Overlap CountOverlappingAtoms(const ResiduesWithOverlapWeight& residuesA,
-                                  const ResiduesWithOverlapWeight& residuesB, const std::vector<bool>& ignoredAtoms);
 } // namespace cds
 #endif
