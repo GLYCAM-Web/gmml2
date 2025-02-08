@@ -1,16 +1,12 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/writerInterface.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/shapeRandomization.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/randomDescent.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
@@ -19,9 +15,6 @@
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
@@ -49,129 +42,11 @@
 
 namespace glycoproteinBuilder
 {
-    namespace
+    void resolveOverlaps(const MolecularMetadata::SidechainRotamerData& sidechainRotamers,
+                         const OverlapWeight& overlapWeight, const GlycoproteinAssembly& assembly,
+                         const GlycoproteinBuilderInputs& settings, const std::string& outputDir,
+                         const std::vector<std::string>& headerLines, int numThreads)
     {
-        Residue* selectResidueFromInput(cds::Assembly* glycoprotein, const std::string userSelection)
-        { // Chain_residueNumber_insertionCode* *optional.
-            std::vector<std::string> splitUserSelection = codeUtils::split(userSelection, '_');
-            if (splitUserSelection.size() < 2)
-            {
-                throw std::runtime_error(
-                    "userSelection (" + userSelection +
-                    ") for residue to glycosylate is incorrect format.\nMust be "
-                    "chain_residueNumber_insertionCode.\nInsertionCode is optional. Chain can be ? if no "
-                    "chain numbers are in input.\nExamples: ?_24_? or ?_24 will use the first residue it "
-                    "encounters numbered 24. A_24_B is A chain, residue 24, insertion code B");
-            }
-            std::string userSelectedChain = "";
-            if (splitUserSelection.at(0) != "?")
-            {
-                userSelectedChain = splitUserSelection.at(0);
-            }
-            std::string userSelectedResidue = splitUserSelection.at(1);
-            if (splitUserSelection.size() == 3)
-            {
-                userSelectedResidue += splitUserSelection.at(2); // So will be 24A or just 24.
-            }
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "We working with " + userSelectedChain + "_" + userSelectedResidue);
-            for (auto& residue : glycoprotein->getResidues())
-            {
-                if (residue->GetType() != cds::ResidueType::Protein)
-                {
-                    gmml::log(__LINE__, __FILE__, gmml::INF,
-                              "Glycosite selector skipping non-protein residue: " + residue->getStringId());
-                    continue;
-                }
-                pdb::PdbResidue* pdbResidue = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
-                //            std::cout << pdbResidue->getChainId() << "_";
-                //            std::cout << pdbResidue->getNumberAndInsertionCode() << "\n";
-                if ((pdbResidue->getChainId() == userSelectedChain) &&
-                    (pdbResidue->getNumberAndInsertionCode() == userSelectedResidue))
-                {
-                    gmml::log(__LINE__, __FILE__, gmml::INF, "Id of selected glycosite: " + pdbResidue->printId());
-                    return residue;
-                }
-            }
-            return nullptr;
-        }
-
-        std::vector<GlycosylationSite>
-        createGlycosites(cds::Assembly* glycoprotein,
-                         std::vector<glycoproteinBuilder::GlycositeInput> glycositesInputVector)
-        {
-            std::vector<GlycosylationSite> glycosites;
-            for (auto& glycositeInput : glycositesInputVector)
-            {
-                gmml::log(__LINE__, __FILE__, gmml::INF,
-                          "Creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
-                              glycositeInput.glycanInput);
-                Residue* glycositeResidue = selectResidueFromInput(glycoprotein, glycositeInput.proteinResidueId);
-                if (glycositeResidue == nullptr)
-                {
-                    throw std::runtime_error("Error: Did not find a residue with id matching " +
-                                             glycositeInput.proteinResidueId + "\n");
-                }
-                Carbohydrate* carb = codeUtils::erratic_cast<Carbohydrate*>(
-                    glycoprotein->addMolecule(std::make_unique<Carbohydrate>(glycositeInput.glycanInput)));
-                gmml::log(__LINE__, __FILE__, gmml::INF,
-                          "About to emplace_back to glycosites with: " + glycositeInput.proteinResidueId +
-                              " and glycan " + glycositeInput.glycanInput);
-                unsigned int highestResidueNumber =
-                    cdsSelections::findHighestResidueNumber(glycoprotein->getResidues());
-                glycosites.emplace_back(glycositeResidue, carb, glycositeInput, highestResidueNumber);
-                for (auto& linkage : carb->GetGlycosidicLinkages())
-                {
-                    cds::determineResiduesForOverlapCheck(linkage); // Now that the protein residue is attached.
-                }
-                //	    std::cout << "Done with glycan" << std::endl;
-                gmml::log(__LINE__, __FILE__, gmml::INF,
-                          "Completed creating glycosite on residue " + glycositeInput.proteinResidueId +
-                              " with glycan " + glycositeInput.glycanInput);
-            }
-            return glycosites;
-        }
-    } // namespace
-
-    GlycoproteinBuilder::GlycoproteinBuilder(glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct,
-                                             pdb::PreprocessorOptions preprocessingOptions)
-        : settings(inputStruct)
-    {
-        try
-        {
-            pdbFile = pdb::PdbFile(inputStruct.substrateFileName);
-            if (!inputStruct.skipMDPrep)
-            {
-                gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
-                pdbFile.PreProcess(preprocessingOptions);
-            }
-            glycoprotein_                                = &pdbFile.mutableAssemblies().front();
-            std::vector<cds::Residue*> gpInitialResidues = glycoprotein_->getResidues();
-            cds::setIntraConnectivity(gpInitialResidues);
-            gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
-            proteinResidues_ = glycoprotein_->getResidues();
-            glycosites_      = createGlycosites(glycoprotein_, inputStruct.glycositesInputVector);
-            cds::setInterConnectivity(gpInitialResidues); // do the inter here, so that the whole protein isn't included
-                                                          // as overlap residues in the glycan linkages.
-        }
-        catch (const std::string& errorMessage)
-        {
-            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
-            throw std::runtime_error(errorMessage);
-        }
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
-        return;
-    }
-
-    void GlycoproteinBuilder::ResolveOverlaps(const MolecularMetadata::SidechainRotamerData& sidechainRotamers,
-                                              const std::string& outputDir, const std::vector<std::string>& headerLines,
-                                              int numThreads)
-    {
-        double selfWeight           = 1000000.0;
-        double proteinWeight        = 1000.0;
-        double glycanWeight         = 1.0;
-        OverlapWeight overlapWeight = {proteinWeight, glycanWeight, selfWeight};
-
         uint64_t seed = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
         pcg32 seedingRng(seed);
 
@@ -416,13 +291,6 @@ namespace glycoproteinBuilder
             }
         };
 
-        std::vector<cds::Molecule*> molecules = getGlycoprotein()->getMolecules();
-
-        const GlycoproteinAssembly initialAssembly =
-            toGlycoproteinAssemblyStructs(molecules, glycosites_, overlapWeight);
-        const GlycoproteinAssembly assembly                      = settings.allowSidechainAdjustment
-                                                                       ? addSidechainRotamers(sidechainRotamers, initialAssembly)
-                                                                       : initialAssembly;
         const assembly::Graph& graph                             = assembly.graph;
         const std::vector<std::vector<size_t>>& moleculeResidues = graph.molecules.nodes.elements;
         const AssemblyData& data                                 = assembly.data;

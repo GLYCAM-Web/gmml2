@@ -8,6 +8,11 @@
 #include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 
 #include <string>
@@ -139,11 +144,41 @@ int main(int argc, char* argv[])
             sidechainRotamers       = MolecularMetadata::readSidechainRotamerData(dunbrackLib);
         }
         std::cout << "Input file is " << inputFile << "\n";
-        glycoproteinBuilder::GlycoproteinBuilderInputs inputStruct = glycoproteinBuilder::readGPInputFile(inputFile);
+        glycoproteinBuilder::GlycoproteinBuilderInputs settings = glycoproteinBuilder::readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
-        glycoproteinBuilder::GlycoproteinBuilder glycoproteinBuilder(inputStruct);
+
+        pdb::PdbFile pdbFile(settings.substrateFileName);
+        if (!settings.skipMDPrep)
+        {
+            gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
+            pdbFile.PreProcess(pdb::PreprocessorOptions());
+        }
+
+        cds::Assembly* glycoprotein                  = &pdbFile.mutableAssemblies().front();
+        std::vector<cds::Residue*> gpInitialResidues = glycoprotein->getResidues();
+        cds::setIntraConnectivity(gpInitialResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
+        std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
+            glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
+        cds::setInterConnectivity(gpInitialResidues);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
+
+        double selfWeight                                = 1000000.0;
+        double proteinWeight                             = 1000.0;
+        double glycanWeight                              = 1.0;
+        glycoproteinBuilder::OverlapWeight overlapWeight = {proteinWeight, glycanWeight, selfWeight};
+
+        std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
+        const glycoproteinBuilder::GlycoproteinAssembly initialAssembly =
+            glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapWeight);
+
+        const glycoproteinBuilder::GlycoproteinAssembly assembly =
+            settings.allowSidechainAdjustment ? addSidechainRotamers(sidechainRotamers, initialAssembly)
+                                              : initialAssembly;
+
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder.ResolveOverlaps(sidechainRotamers, outputDir, headerLines, numThreads);
+        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, overlapWeight, assembly, settings, outputDir,
+                                             headerLines, numThreads);
     }
     catch (const std::runtime_error& error)
     {
