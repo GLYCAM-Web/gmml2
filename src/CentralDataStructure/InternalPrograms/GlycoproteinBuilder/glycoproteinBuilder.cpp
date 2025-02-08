@@ -295,7 +295,8 @@ namespace glycoproteinBuilder
         };
 
         auto resolveOverlapsWithWiggler =
-            [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
+            [&](pcg32& rng, SidechainAdjustment adjustSidechains, const assembly::Graph& graph,
+                const AssemblyData& data, MutableData& mutableData,
                 const std::vector<cds::Coordinate>& initialCoordinates, bool deleteSitesUntilResolved)
         {
             std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
@@ -427,6 +428,8 @@ namespace glycoproteinBuilder
         const AssemblyData& data                                 = assembly.data;
         const MutableData& initialState                          = assembly.mutableData;
         std::vector<cds::Coordinate> initialCoordinates          = atomCoordinates(initialState);
+        SidechainAdjustment sidechainAdjustment =
+            settings.allowSidechainAdjustment ? adjustSidechains : noSidechainAdjustment;
 
         auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
         {
@@ -469,9 +472,9 @@ namespace glycoproteinBuilder
 
         auto runInitial = [&](pcg32 rng)
         {
-            MutableData mutableData = initialState;
-            std::vector<cds::Coordinate> resolvedCoords =
-                resolveOverlapsWithWiggler(rng, graph, data, mutableData, initialCoordinates, false);
+            MutableData mutableData                     = initialState;
+            std::vector<cds::Coordinate> resolvedCoords = resolveOverlapsWithWiggler(
+                rng, sidechainAdjustment, graph, data, mutableData, initialCoordinates, false);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                          allResidueTER, noConnections, "glycoprotein");
@@ -483,9 +486,10 @@ namespace glycoproteinBuilder
 
         auto runIteration = [&](pcg32 rng, size_t count)
         {
-            MutableData mutableData                  = initialState;
-            std::vector<cds::Coordinate> coordinates = resolveOverlapsWithWiggler(
-                rng, graph, data, mutableData, initialCoordinates, settings.deleteSitesUntilResolved);
+            MutableData mutableData = initialState;
+            std::vector<cds::Coordinate> coordinates =
+                resolveOverlapsWithWiggler(rng, sidechainAdjustment, graph, data, mutableData, initialCoordinates,
+                                           settings.deleteSitesUntilResolved);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
