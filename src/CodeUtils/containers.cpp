@@ -17,6 +17,16 @@ std::vector<bool> codeUtils::vectorAnd(const std::vector<bool>& vecA, const std:
     return result;
 }
 
+std::vector<bool> codeUtils::vectorNot(const std::vector<bool>& vec)
+{
+    std::vector<bool> result(vec.size(), false);
+    for (size_t n = 0; n < vec.size(); n++)
+    {
+        result[n] = !vec[n];
+    }
+    return result;
+}
+
 std::vector<size_t> codeUtils::offsetIndices(size_t offset, std::vector<size_t> indices)
 {
     for (auto& index : indices)
