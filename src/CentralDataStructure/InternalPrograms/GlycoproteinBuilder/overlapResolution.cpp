@@ -140,22 +140,48 @@ namespace glycoproteinBuilder
             {
                 std::vector<size_t> potentialOverlaps =
                     atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
-                size_t bestRotation = lowestOverlapSidechainRotation(sidechainRotamers, graph, data, mutableData,
-                                                                     residue, potentialOverlaps);
-                updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue, bestRotation);
+                cds::Overlap initialOverlap =
+                    sidechainOverlap(graph, mutableData.atomBounds, data.residues.overlapWeights,
+                                     data.residues.sidechainDihedrals[residue][0].movingAtoms, potentialOverlaps);
+                IndexedOverlap bestRotation = lowestOverlapSidechainRotation(sidechainRotamers, graph, data,
+                                                                             mutableData, residue, potentialOverlaps);
+                if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
+                {
+                    updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue, bestRotation.index);
+                    mutableData.residueSidechainMoved[residue] = true;
+                }
             }
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycans))
             {
                 wiggleGlycan(graph, data, mutableData, data.atoms.all, glycanId, searchSettings, overlapWeight,
                              glycositePreferences[glycanId]);
             }
-            for (size_t residue : codeUtils::reverse(sidechainsToAdjust))
+            for (size_t residue : sidechainsToAdjust)
             {
-                if (!sidechainInitialStateHasOverlap(graph, data, initialCoordinates, mutableData, residue))
+                for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
                 {
-                    for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
+                    mutableData.atomBounds[atom].center = initialCoordinates[atom];
+                    updateResidueBounds(graph, mutableData, residue);
+                    updateResidueMoleculeBounds(graph, mutableData, residue);
+                    mutableData.residueSidechainMoved[residue] = false;
+                }
+            }
+            for (size_t residue : sidechainsToAdjust)
+            {
+                if (sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residue))
+                {
+                    std::vector<size_t> potentialOverlaps =
+                        atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
+                    cds::Overlap initialOverlap =
+                        sidechainOverlap(graph, mutableData.atomBounds, data.residues.overlapWeights,
+                                         data.residues.sidechainDihedrals[residue][0].movingAtoms, potentialOverlaps);
+                    IndexedOverlap bestRotation = lowestOverlapSidechainRotation(
+                        sidechainRotamers, graph, data, mutableData, residue, potentialOverlaps);
+                    if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
                     {
-                        mutableData.atomBounds[atom].center = initialCoordinates[atom];
+                        updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue,
+                                                bestRotation.index);
+                        mutableData.residueSidechainMoved[residue] = true;
                     }
                 }
             }
@@ -369,6 +395,14 @@ namespace glycoproteinBuilder
             writePdbFile(graph, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          currentMoleculeResidues, residueTER(currentMoleculeResidues),
                          atomPairsConnectingNonProteinResidues, prefix.str());
+            size_t moved = 0;
+            for (size_t n : graph.residues.nodes.indices)
+            {
+                if (mutableData.residueSidechainMoved[n])
+                {
+                    moved++;
+                }
+            }
         };
 
         writePdbFile(graph, data, initialCoordinates, data.atoms.numbers, data.residues.numbers, moleculeResidues,

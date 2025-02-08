@@ -127,6 +127,7 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> residueBounds;
         std::vector<cds::Sphere> moleculeBounds;
         std::vector<bool> glycanIncluded;
+        std::vector<bool> residueSidechainMoved;
     };
 
     struct GlycoproteinAssembly
