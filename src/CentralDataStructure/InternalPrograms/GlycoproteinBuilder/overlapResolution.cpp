@@ -158,13 +158,7 @@ namespace glycoproteinBuilder
             }
             for (size_t residue : sidechainsToAdjust)
             {
-                for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
-                {
-                    mutableData.atomBounds[atom].center = initialCoordinates[atom];
-                    updateResidueBounds(graph, mutableData, residue);
-                    updateResidueMoleculeBounds(graph, mutableData, residue);
-                    mutableData.residueSidechainMoved[residue] = false;
-                }
+                restoreSidechainRotation(graph, data, mutableData, initialCoordinates, residue);
             }
             for (size_t residue : sidechainsToAdjust)
             {

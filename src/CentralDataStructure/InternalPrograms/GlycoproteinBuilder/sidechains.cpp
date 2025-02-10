@@ -107,6 +107,20 @@ void glycoproteinBuilder::updateSidechainRotation(const MolecularMetadata::Sidec
     updateResidueMoleculeBounds(graph, mutableData, residue);
 }
 
+void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph, const AssemblyData& data,
+                                                   MutableData& mutableData,
+                                                   const std::vector<cds::Coordinate>& initialCoordinates,
+                                                   size_t residue)
+{
+    for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
+    {
+        mutableData.atomBounds[atom].center = initialCoordinates[atom];
+    }
+    mutableData.residueSidechainMoved[residue] = false;
+    updateResidueBounds(graph, mutableData, residue);
+    updateResidueMoleculeBounds(graph, mutableData, residue);
+}
+
 cds::Overlap glycoproteinBuilder::sidechainOverlap(const assembly::Graph& graph, const std::vector<cds::Sphere>& bounds,
                                                    const std::vector<double>& residueOverlapWeight,
                                                    const std::vector<size_t>& atomsA, const std::vector<size_t>& atomsB)
