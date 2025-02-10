@@ -219,7 +219,6 @@ namespace glycoproteinBuilder
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,
-                                    const std::vector<cds::Coordinate>& initialCoordinates,
                                     const GlycoproteinState& initialState)
     {
         std::stringstream logss;
@@ -249,7 +248,7 @@ namespace glycoproteinBuilder
                 }
                 wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
                              overlapWeight, preferences);
-                adjustSidechains(rng, graph, data, mutableData, initialCoordinates, glycositePreferences, {glycanId});
+                adjustSidechains(rng, graph, data, mutableData, glycositePreferences, {glycanId});
                 cds::Overlap newOverlap =
                     localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
                 cds::Overlap diff = newOverlap + (previousOverlap * -1);

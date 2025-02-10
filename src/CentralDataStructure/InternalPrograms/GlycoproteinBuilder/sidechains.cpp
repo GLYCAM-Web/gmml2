@@ -108,13 +108,11 @@ void glycoproteinBuilder::updateSidechainRotation(const MolecularMetadata::Sidec
 }
 
 void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph, const AssemblyData& data,
-                                                   MutableData& mutableData,
-                                                   const std::vector<cds::Coordinate>& initialCoordinates,
-                                                   size_t residue)
+                                                   MutableData& mutableData, size_t residue)
 {
     for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
     {
-        mutableData.atomBounds[atom].center = initialCoordinates[atom];
+        mutableData.atomBounds[atom] = data.atoms.initialState[atom];
     }
     mutableData.residueSidechainMoved[residue] = false;
     updateResidueBounds(graph, mutableData, residue);

@@ -39,7 +39,6 @@ namespace glycoproteinBuilder
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
                                     const OverlapWeight& overlapWeight, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,
-                                    const std::vector<cds::Coordinate>& initialCoordinates,
                                     const GlycoproteinState& initialState);
 } // namespace glycoproteinBuilder
 #endif

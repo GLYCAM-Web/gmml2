@@ -35,6 +35,7 @@ namespace glycoproteinBuilder
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
         std::vector<double> charges;
+        std::vector<cds::Sphere> initialState;
         std::vector<bool> partOfMovableSidechain;
         std::vector<bool> all;
         std::vector<bool> alwaysIncluded;
@@ -137,9 +138,9 @@ namespace glycoproteinBuilder
         MutableData mutableData;
     };
 
-    typedef std::function<void(
-        pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&, const std::vector<cds::Coordinate>&,
-        const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&, const std::vector<size_t>&)>
+    typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
+                               const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&,
+                               const std::vector<size_t>&)>
         SidechainAdjustment;
 
 } // namespace glycoproteinBuilder

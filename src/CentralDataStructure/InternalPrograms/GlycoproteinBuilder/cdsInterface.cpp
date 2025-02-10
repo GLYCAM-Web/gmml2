@@ -183,6 +183,7 @@ namespace glycoproteinBuilder
                            cds::atomAtomicNumbers(atoms),
                            cds::atomElements(atoms),
                            cds::atomCharges(atoms),
+                           atomBoundingSpheres,
                            partOfMovableSidechain,
                            std::vector<bool>(atoms.size(), true),
                            std::vector<bool>(atoms.size(), true)};
