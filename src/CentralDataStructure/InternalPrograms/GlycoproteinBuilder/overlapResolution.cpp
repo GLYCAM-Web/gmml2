@@ -249,7 +249,6 @@ namespace glycoproteinBuilder
             restoreSidechains(rng, graph, data, mutableData, glycositePreferences,
                               codeUtils::indexVector(data.indices.glycans));
             gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
-            return getCoordinates(mutableData.atomBounds);
         };
 
         auto writeOffFile = [&outputDir](const assembly::Graph& graph, const AssemblyData& data,
@@ -370,9 +369,9 @@ namespace glycoproteinBuilder
 
         auto runInitial = [&](pcg32 rng)
         {
-            MutableData mutableData                     = initialState;
-            std::vector<cds::Coordinate> resolvedCoords = resolveOverlapsWithWiggler(
-                rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData, false);
+            MutableData mutableData = initialState;
+            resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData, false);
+            std::vector<cds::Coordinate> resolvedCoords = getCoordinates(mutableData.atomBounds);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers, moleculeResidues,
                          allResidueTER, noConnections, "glycoprotein");
@@ -385,9 +384,9 @@ namespace glycoproteinBuilder
         auto runIteration = [&](pcg32 rng, size_t count)
         {
             MutableData mutableData = initialState;
-            std::vector<cds::Coordinate> coordinates =
-                resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
-                                           settings.deleteSitesUntilResolved);
+            resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
+                                       settings.deleteSitesUntilResolved);
+            std::vector<cds::Coordinate> coordinates = getCoordinates(mutableData.atomBounds);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
