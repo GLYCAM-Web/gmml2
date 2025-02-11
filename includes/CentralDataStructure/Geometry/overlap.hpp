@@ -13,8 +13,8 @@ namespace cds
 
     struct Overlap
     {
-        double count;
-        double weight;
+        double count  = 0.0;
+        double weight = 0.0;
 
         inline Overlap operator+(const Overlap& a) const
         {
