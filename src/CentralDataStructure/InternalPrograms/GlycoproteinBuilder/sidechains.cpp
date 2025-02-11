@@ -259,13 +259,9 @@ std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(con
     {
         insertOverlappingAtomsOfMolecule(molecule);
     }
-    for (size_t n = 0; n < data.indices.glycans.size(); n++)
+    for (size_t glycan : codeUtils::boolsToIndices(mutableData.glycanIncluded))
     {
-        const GlycanIndices& glycan = data.indices.glycans[n];
-        if (mutableData.glycanIncluded[n])
-        {
-            insertOverlappingAtomsOfMolecule(glycan.glycanMolecule);
-        }
+        insertOverlappingAtomsOfMolecule(data.indices.glycans[glycan].glycanMolecule);
     }
     return result;
 }
