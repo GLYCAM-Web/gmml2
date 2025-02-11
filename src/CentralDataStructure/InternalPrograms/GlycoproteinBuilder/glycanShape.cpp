@@ -43,11 +43,10 @@ namespace glycoproteinBuilder
     void updateGlycanBounds(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                             size_t glycanId)
     {
-        const GlycanIndices& glycan = data.indices.glycans[glycanId];
-        size_t siteResidue          = glycan.attachmentResidue;
+        size_t siteResidue = data.glycans.attachmentResidue[glycanId];
         updateResidueBounds(graph, mutableData, siteResidue);
         updateResidueMoleculeBounds(graph, mutableData, siteResidue);
-        size_t moleculeId = glycan.glycanMolecule;
+        size_t moleculeId = data.glycans.moleculeId[glycanId];
         for (size_t residue : moleculeResidues(graph, moleculeId))
         {
             updateResidueBounds(graph, mutableData, residue);
@@ -98,7 +97,7 @@ namespace glycoproteinBuilder
     void setLinkageShape(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                          size_t glycanId, const std::vector<cds::AngleWithMetadata>& recordedShape)
     {
-        const std::vector<size_t>& linkages = data.indices.glycans[glycanId].linkages;
+        const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
         for (size_t n = 0; n < linkages.size(); n++)
         {
             size_t linkageId                     = linkages[n];

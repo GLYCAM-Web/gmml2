@@ -96,7 +96,9 @@ namespace glycoproteinBuilder
         std::vector<std::vector<cds::BondedResidueOverlapInput>> linkageOverlapBonds;
         std::vector<bool> linkageBranching;
         std::vector<bool> isGlycositeLinkage;
-        std::vector<GlycanIndices> glycositeIndices;
+        std::vector<size_t> glycanAttachmentResidue;
+        std::vector<size_t> glycanMoleculeId;
+        std::vector<std::vector<size_t>> glycanLinkages;
         for (size_t n = 0; n < glycosites.size(); n++)
         {
             size_t site = codeUtils::indexOf(residues, glycosites[n].GetResidue());
@@ -163,7 +165,9 @@ namespace glycoproteinBuilder
                 linkageBranching.push_back(linkage.rotatableDihedrals[0].isBranchingLinkage);
             }
             moleculeTypes[moleculeIndex] = MoleculeType::glycan;
-            glycositeIndices.push_back({site, moleculeIndex, linkageIds});
+            glycanAttachmentResidue.push_back(site);
+            glycanMoleculeId.push_back(moleculeIndex);
+            glycanLinkages.push_back(linkageIds);
         }
         std::vector<double> residueOverlapWeight;
         residueOverlapWeight.reserve(residues.size());
@@ -272,6 +276,7 @@ namespace glycoproteinBuilder
             boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.elements);
 
         MoleculeData moleculeData {moleculeTypes};
+        GlycanData GlycanData {glycanAttachmentResidue, glycanMoleculeId, glycanLinkages};
         RotatableDihedralData rotatableDihedralData {dihedralMetadata, rotatableDihedralShape};
         ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageOverlapBonds, linkageBranching,
                                                isGlycositeLinkage};
@@ -285,9 +290,10 @@ namespace glycoproteinBuilder
             }
         }
 
-        AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages, glycositeIndices};
+        AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages};
 
-        AssemblyData data {atomData, residueData, moleculeData, rotatableDihedralData, residueLinkageData, indices};
+        AssemblyData data {atomData,           residueData, moleculeData, GlycanData, rotatableDihedralData,
+                           residueLinkageData, indices};
 
         std::vector<bool> glycanIncluded(glycosites.size(), true);
         MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds, glycanIncluded,

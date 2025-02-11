@@ -199,11 +199,11 @@ namespace glycoproteinBuilder
                                               bool deleteSitesUntilResolved)
         {
             std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
-            const std::vector<size_t> glycanIndices = codeUtils::indexVector(data.indices.glycans);
+            const std::vector<size_t> glycanIndices = codeUtils::indexVector(data.glycans.moleculeId);
             for (size_t glycanId : glycanIndices)
             {
                 auto preference                       = randomizeShape(rng, data, mutableData, glycanId);
-                const std::vector<size_t>& linkageIds = data.indices.glycans[glycanId].linkages;
+                const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                 for (size_t k = 0; k < linkageIds.size(); k++)
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[k], preference[k]);
@@ -234,7 +234,7 @@ namespace glycoproteinBuilder
                     size_t indexToRemove = codeUtils::randomIndex(rng, overlapSites);
                     size_t glycan        = overlapSites[indexToRemove];
                     deleteGlycan(mutableData, glycan);
-                    size_t proteinResidue = data.indices.glycans[glycan].attachmentResidue;
+                    size_t proteinResidue = data.glycans.attachmentResidue[glycan];
                     // restore atoms to initial shape
                     for (size_t n : residueAtoms(graph, proteinResidue))
                     {
@@ -282,14 +282,13 @@ namespace glycoproteinBuilder
         auto printDihedralAnglesAndOverlapOfGlycosites =
             [](const assembly::Graph& graph, const AssemblyData& data, const MutableData& mutableData)
         {
-            const std::vector<GlycanIndices>& glycans = data.indices.glycans;
-            const std::vector<bool>& included         = mutableData.glycanIncluded;
-            const std::vector<bool>& includedAtoms    = data.atoms.all;
-            for (size_t n = 0; n < glycans.size(); n++)
+            const std::vector<bool>& included      = mutableData.glycanIncluded;
+            const std::vector<bool>& includedAtoms = data.atoms.all;
+            size_t glycanCount                     = data.glycans.moleculeId.size();
+            for (size_t n = 0; n < glycanCount; n++)
             {
                 std::stringstream logss;
-                const GlycanIndices& glycan = data.indices.glycans[n];
-                std::string residueID       = data.residues.ids[glycan.attachmentResidue];
+                std::string residueID = data.residues.ids[data.glycans.attachmentResidue[n]];
                 if (included[n])
                 {
                     cds::Overlap selfOverlap = intraGlycanOverlaps(graph, data, mutableData, includedAtoms, n);
@@ -297,15 +296,15 @@ namespace glycoproteinBuilder
                     for (size_t k : data.indices.proteinMolecules)
                     {
                         proteinOverlap +=
-                            moleculeOverlaps(graph, data, mutableData, includedAtoms, k, glycan.glycanMolecule);
+                            moleculeOverlaps(graph, data, mutableData, includedAtoms, k, data.glycans.moleculeId[n]);
                     }
                     cds::Overlap glycanOverlap {0.0, 0.0};
-                    for (size_t k = 0; k < data.indices.glycans.size(); k++)
+                    for (size_t k = 0; k < data.glycans.moleculeId.size(); k++)
                     {
                         if (included[k] && k != n)
                         {
                             glycanOverlap += moleculeOverlaps(graph, data, mutableData, includedAtoms,
-                                                              glycan.glycanMolecule, glycans[k].glycanMolecule);
+                                                              data.glycans.moleculeId[n], data.glycans.moleculeId[k]);
                         }
                     }
                     logss << "Residue ID: " << residueID << ", protein overlap: " << proteinOverlap.count

@@ -53,7 +53,7 @@ namespace glycoproteinBuilder
             std::vector<size_t> intersectingResidues;
             intersectingResidues.reserve(graph.residueCount);
             codeUtils::insertInto(intersectingResidues, linkage.nonReducingResidues);
-            size_t glycanMolecule = data.indices.glycans[glycanId].glycanMolecule;
+            size_t glycanMolecule = data.glycans.moleculeId[glycanId];
             for (size_t n : data.indices.proteinMolecules)
             {
                 if (cds::spheresOverlap(constants::overlapTolerance, movementBounds, moleculeBounds[n]))
@@ -62,9 +62,9 @@ namespace glycoproteinBuilder
                                                      moleculeResidues(graph, n));
                 }
             }
-            for (size_t n = 0; n < data.indices.glycans.size(); n++)
+            for (size_t n = 0; n < data.glycans.moleculeId.size(); n++)
             {
-                size_t otherMolecule = data.indices.glycans[n].glycanMolecule;
+                size_t otherMolecule = data.glycans.moleculeId[n];
                 if (mutableData.glycanIncluded[n] && (otherMolecule != glycanMolecule) &&
                     cds::spheresOverlap(constants::overlapTolerance, movementBounds, moleculeBounds[otherMolecule]))
                 {
@@ -200,13 +200,13 @@ namespace glycoproteinBuilder
                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences)
     {
-        const std::vector<size_t>& linkages = data.indices.glycans[glycanId].linkages;
+        const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
         // wiggling twice gives the first linkages a second chance to resolve in a better structure
         for (size_t k = 0; k < 2; k++)
         {
             for (size_t n = 0; n < linkages.size(); n++)
             {
-                size_t linkageId = data.indices.glycans[glycanId].linkages[n];
+                size_t linkageId = data.glycans.linkages[glycanId][n];
                 wiggleLinkage(graph, data, mutableData, includedAtoms, glycanId, linkageId, searchSettings, weight,
                               preferences[n]);
             }
@@ -237,7 +237,7 @@ namespace glycoproteinBuilder
             cds::Overlap newGlobalOverlap = globalOverlap;
             for (auto& glycanId : codeUtils::shuffleVector(rng, overlapSites))
             {
-                const std::vector<size_t>& linkageIds = data.indices.glycans[glycanId].linkages;
+                const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                 cds::Overlap previousOverlap =
                     localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
                 auto preferences      = randomizeShape(rng, data, mutableData, glycanId);

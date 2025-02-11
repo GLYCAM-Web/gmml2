@@ -68,6 +68,13 @@ namespace glycoproteinBuilder
         std::vector<MoleculeType> types;
     };
 
+    struct GlycanData
+    {
+        std::vector<size_t> attachmentResidue;
+        std::vector<size_t> moleculeId;
+        std::vector<std::vector<size_t>> linkages;
+    };
+
     struct RotatableDihedralData
     {
         std::vector<GlycamMetadata::DihedralAngleDataVector> metadata;
@@ -97,19 +104,11 @@ namespace glycoproteinBuilder
         std::vector<size_t> reducingResidues;
     };
 
-    struct GlycanIndices
-    {
-        size_t attachmentResidue;
-        size_t glycanMolecule;
-        std::vector<size_t> linkages;
-    };
-
     struct AssemblyIndices
     {
         std::vector<size_t> proteinMolecules;
         std::vector<RotatableDihedralIndices> rotatableDihedrals;
         std::vector<ResidueLinkageIndices> residueLinkages;
-        std::vector<GlycanIndices> glycans;
     };
 
     struct AssemblyData
@@ -117,6 +116,7 @@ namespace glycoproteinBuilder
         AtomData atoms;
         ResidueData residues;
         MoleculeData molecules;
+        GlycanData glycans;
         RotatableDihedralData rotatableDihedralData;
         ResidueLinkageData residueLinkageData;
         AssemblyIndices indices;
