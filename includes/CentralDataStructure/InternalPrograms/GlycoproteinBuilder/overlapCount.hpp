@@ -9,17 +9,19 @@
 
 namespace glycoproteinBuilder
 {
-    cds::Overlap intraGlycanOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                     const MutableData& mutableData, const std::vector<bool>& includedAtoms,
-                                     size_t glycanId);
-    cds::Overlap moleculeOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                  const MutableData& mutableData, const std::vector<bool>& includedAtoms,
-                                  size_t moleculeA, size_t moleculeB);
-    cds::Overlap moleculeResidueOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                         const MutableData& mutableData, const std::vector<bool>& includedAtoms,
-                                         size_t molecule, size_t residue);
-    cds::Overlap totalOverlaps(const assembly::Graph& graph, const AssemblyData& data, const MutableData& mutableData,
-                               const std::vector<bool>& includedAtoms, OverlapWeight weight);
+    std::vector<cds::Overlap> intraGlycanOverlaps(const assembly::Graph& graph, const AssemblyData& data,
+                                                  const MutableData& mutableData,
+                                                  const std::vector<bool>& includedAtoms, size_t glycanId);
+    std::vector<cds::Overlap> moleculeOverlaps(const assembly::Graph& graph, const AssemblyData& data,
+                                               const MutableData& mutableData, const std::vector<bool>& includedAtoms,
+                                               size_t moleculeA, size_t moleculeB);
+    std::vector<cds::Overlap> moleculeResidueOverlaps(const assembly::Graph& graph, const AssemblyData& data,
+                                                      const MutableData& mutableData,
+                                                      const std::vector<bool>& includedAtoms, size_t molecule,
+                                                      size_t residue);
+    std::vector<cds::Overlap> totalOverlaps(const assembly::Graph& graph, const AssemblyData& data,
+                                            const MutableData& mutableData, const std::vector<bool>& includedAtoms,
+                                            OverlapWeight weight);
     cds::Overlap localOverlap(const assembly::Graph& graph, const AssemblyData& data, const MutableData& mutableData,
                               const std::vector<bool>& includedAtoms, size_t glycanId, double selfWeight);
     std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites, const assembly::Graph& graph,

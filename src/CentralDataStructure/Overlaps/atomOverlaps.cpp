@@ -81,20 +81,20 @@ std::vector<size_t> cds::intersectingIndices(const cds::Sphere& sphere, const st
     return result;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
-                                        const std::vector<std::vector<size_t>>& residueAtoms,
-                                        const std::vector<double>& residueWeights,
-                                        const std::vector<bool>& includedAtoms,
-                                        const std::vector<BondedResidueOverlapInput>& bonds,
-                                        const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
+std::vector<cds::Overlap>
+cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
+                           const std::vector<std::vector<size_t>>& residueAtoms,
+                           const std::vector<double>& residueWeights, const std::vector<bool>& includedAtoms,
+                           const std::vector<BondedResidueOverlapInput>& bonds, const std::vector<size_t>& residuesA,
+                           const std::vector<size_t>& residuesB)
 {
+    std::vector<cds::Overlap> result(residueBounds.size(), {0.0, 0.0});
     std::vector<size_t> indicesA;
     indicesA.reserve(64);
     std::vector<size_t> indicesB;
     indicesB.reserve(64);
     double tolerance = constants::overlapTolerance;
     OverlapProperties properties {constants::clashWeightBase, tolerance};
-    Overlap overlap {0.0, 0.0};
     for (size_t n = 0; n < residuesA.size(); n++)
     {
         size_t aIndex                = residuesA[n];
@@ -125,12 +125,14 @@ cds::Overlap cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, c
             {
                 for (size_t k : indicesB)
                 {
-                    overlap += (overlapAmount(properties, atomBounds[n], atomBounds[k]) * weight);
+                    Overlap overlap = overlapAmount(properties, atomBounds[n], atomBounds[k]) * weight;
+                    result[aIndex]  += overlap;
+                    result[bIndex]  += overlap;
                 }
             }
         }
     }
-    return overlap;
+    return result;
 }
 
 cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)

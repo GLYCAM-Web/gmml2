@@ -197,9 +197,9 @@ namespace
                 residueBounds[movingResidueIndices[n]].center =
                     matrix * input.residueBounds[movingResidueIndices[n]].center;
             }
-            cds::Overlap overlaps =
+            cds::Overlap overlaps = cds::overlapVectorSum(
                 cds::CountOverlappingAtoms(atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
-                                           input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices);
+                                           input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices));
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}

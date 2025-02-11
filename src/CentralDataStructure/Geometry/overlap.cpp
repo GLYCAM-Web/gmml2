@@ -31,3 +31,32 @@ cds::Overlap cds::overlapAmount(const OverlapProperties properties, const Sphere
         return Overlap {0.0, 0.0};
     }
 }
+
+cds::Overlap cds::overlapVectorSum(const std::vector<Overlap>& vec)
+{
+    Overlap result {0.0, 0.0};
+    for (auto& a : vec)
+    {
+        result += a;
+    }
+    return result * 0.5;
+}
+
+std::vector<cds::Overlap> cds::scaledOverlaps(double scale, const std::vector<Overlap>& vec)
+{
+    std::vector<cds::Overlap> result;
+    result.reserve(vec.size());
+    for (size_t n = 0; n < vec.size(); n++)
+    {
+        result[n] = vec[n] * scale;
+    }
+    return result;
+}
+
+void cds::addOverlapsTo(std::vector<Overlap>& vec, const std::vector<Overlap>& added)
+{
+    for (size_t n = 0; n < vec.size(); n++)
+    {
+        vec[n] += added[n];
+    }
+}
