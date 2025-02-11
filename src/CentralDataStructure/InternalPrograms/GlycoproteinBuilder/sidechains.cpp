@@ -119,6 +119,23 @@ void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph,
     updateResidueMoleculeBounds(graph, mutableData, residue);
 }
 
+void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetadata::SidechainRotamerData& sidechains,
+                                                           const assembly::Graph& graph, const AssemblyData& data,
+                                                           MutableData& mutableData, size_t residue)
+{
+    std::vector<size_t> potentialOverlaps = atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
+    cds::Overlap initialOverlap =
+        sidechainOverlap(graph, mutableData.atomBounds, data.residues.overlapWeights,
+                         data.residues.sidechainDihedrals[residue][0].movingAtoms, potentialOverlaps);
+    IndexedOverlap bestRotation =
+        lowestOverlapSidechainRotation(sidechains, graph, data, mutableData, residue, potentialOverlaps);
+    if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
+    {
+        updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
+        mutableData.residueSidechainMoved[residue] = true;
+    }
+}
+
 cds::Overlap glycoproteinBuilder::sidechainOverlap(const assembly::Graph& graph, const std::vector<cds::Sphere>& bounds,
                                                    const std::vector<double>& residueOverlapWeight,
                                                    const std::vector<size_t>& atomsA, const std::vector<size_t>& atomsB)

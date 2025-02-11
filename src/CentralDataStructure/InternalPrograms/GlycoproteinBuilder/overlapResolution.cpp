@@ -162,19 +162,7 @@ namespace glycoproteinBuilder
             {
                 if (sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residue))
                 {
-                    std::vector<size_t> potentialOverlaps =
-                        atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
-                    cds::Overlap initialOverlap =
-                        sidechainOverlap(graph, mutableData.atomBounds, data.residues.overlapWeights,
-                                         data.residues.sidechainDihedrals[residue][0].movingAtoms, potentialOverlaps);
-                    IndexedOverlap bestRotation = lowestOverlapSidechainRotation(
-                        sidechainRotamers, graph, data, mutableData, residue, potentialOverlaps);
-                    if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
-                    {
-                        updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue,
-                                                bestRotation.index);
-                        mutableData.residueSidechainMoved[residue] = true;
-                    }
+                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, residue);
                 }
             }
         };
@@ -193,19 +181,7 @@ namespace glycoproteinBuilder
             {
                 if (sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residue))
                 {
-                    std::vector<size_t> potentialOverlaps =
-                        atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
-                    cds::Overlap initialOverlap =
-                        sidechainOverlap(graph, mutableData.atomBounds, data.residues.overlapWeights,
-                                         data.residues.sidechainDihedrals[residue][0].movingAtoms, potentialOverlaps);
-                    IndexedOverlap bestRotation = lowestOverlapSidechainRotation(
-                        sidechainRotamers, graph, data, mutableData, residue, potentialOverlaps);
-                    if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
-                    {
-                        updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue,
-                                                bestRotation.index);
-                        mutableData.residueSidechainMoved[residue] = true;
-                    }
+                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, residue);
                 }
             }
         };
