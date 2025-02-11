@@ -62,10 +62,9 @@ namespace glycoproteinBuilder
                                                      moleculeResidues(graph, n));
                 }
             }
-            for (size_t n = 0; n < data.glycans.moleculeId.size(); n++)
+            for (size_t otherMolecule : includedGlycanMoleculeIds(data, mutableData))
             {
-                size_t otherMolecule = data.glycans.moleculeId[n];
-                if (mutableData.glycanIncluded[n] && (otherMolecule != glycanMolecule) &&
+                if ((otherMolecule != glycanMolecule) &&
                     cds::spheresOverlap(constants::overlapTolerance, movementBounds, moleculeBounds[otherMolecule]))
                 {
                     cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,

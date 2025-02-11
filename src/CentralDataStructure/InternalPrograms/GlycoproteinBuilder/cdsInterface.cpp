@@ -295,8 +295,8 @@ namespace glycoproteinBuilder
         AssemblyData data {atomData,           residueData, moleculeData, GlycanData, rotatableDihedralData,
                            residueLinkageData, indices};
 
-        std::vector<bool> glycanIncluded(glycosites.size(), true);
-        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds, glycanIncluded,
+        std::vector<bool> moleculeIncluded(graph.moleculeCount, true);
+        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds, moleculeIncluded,
                                  std::vector<bool>(residues.size(), false)};
 
         return GlycoproteinAssembly {graph, data, mutableData};

@@ -5,6 +5,7 @@
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
@@ -127,7 +128,7 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> atomBounds;
         std::vector<cds::Sphere> residueBounds;
         std::vector<cds::Sphere> moleculeBounds;
-        std::vector<bool> glycanIncluded;
+        std::vector<bool> moleculeIncluded;
         std::vector<bool> residueSidechainMoved;
     };
 
@@ -137,6 +138,22 @@ namespace glycoproteinBuilder
         AssemblyData data;
         MutableData mutableData;
     };
+
+    inline std::vector<bool> glycanIncluded(const AssemblyData& data, const MutableData& mutableData)
+    {
+        return codeUtils::indicesToValues(mutableData.moleculeIncluded, data.glycans.moleculeId);
+    }
+
+    inline std::vector<size_t> includedGlycanMoleculeIds(const AssemblyData& data, const MutableData& mutableData)
+    {
+        return codeUtils::indicesToValues(data.glycans.moleculeId,
+                                          codeUtils::boolsToIndices(glycanIncluded(data, mutableData)));
+    }
+
+    inline std::vector<size_t> includedGlycanIndices(const AssemblyData& data, const MutableData& mutableData)
+    {
+        return codeUtils::boolsToIndices(glycanIncluded(data, mutableData));
+    }
 
     typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
                                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&,

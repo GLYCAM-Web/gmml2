@@ -69,8 +69,7 @@ bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph
     for (size_t glycanId : glycans)
     {
         size_t glycanMolecule = data.glycans.moleculeId[glycanId];
-        if (mutableData.glycanIncluded[glycanId] &&
-            cds::spheresOverlap(constants::overlapTolerance, bounds, mutableData.moleculeBounds[glycanMolecule]))
+        if (cds::spheresOverlap(constants::overlapTolerance, bounds, mutableData.moleculeBounds[glycanMolecule]))
         {
             for (size_t residue : moleculeResidues(graph, glycanMolecule))
             {
@@ -255,13 +254,12 @@ std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(con
             }
         }
     };
-    for (size_t molecule : data.indices.proteinMolecules)
+    for (size_t molecule = 0; molecule < graph.moleculeCount; molecule++)
     {
-        insertOverlappingAtomsOfMolecule(molecule);
-    }
-    for (size_t glycan : codeUtils::boolsToIndices(mutableData.glycanIncluded))
-    {
-        insertOverlappingAtomsOfMolecule(data.glycans.moleculeId[glycan]);
+        if (mutableData.moleculeIncluded[molecule])
+        {
+            insertOverlappingAtomsOfMolecule(molecule);
+        }
     }
     return result;
 }

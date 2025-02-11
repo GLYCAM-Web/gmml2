@@ -111,9 +111,9 @@ namespace glycoproteinBuilder
             return result;
         };
 
-        auto deleteGlycan = [](MutableData& mutableData, size_t glycanId)
+        auto deleteMolecule = [](MutableData& mutableData, size_t moleculeId)
         {
-            mutableData.glycanIncluded[glycanId] = false;
+            mutableData.moleculeIncluded[moleculeId] = false;
         };
 
         SidechainAdjustment adjustSidechains =
@@ -233,7 +233,7 @@ namespace glycoproteinBuilder
                 {
                     size_t indexToRemove = codeUtils::randomIndex(rng, overlapSites);
                     size_t glycan        = overlapSites[indexToRemove];
-                    deleteGlycan(mutableData, glycan);
+                    deleteMolecule(mutableData, data.glycans.moleculeId[glycan]);
                     size_t proteinResidue = data.glycans.attachmentResidue[glycan];
                     // restore atoms to initial shape
                     for (size_t n : residueAtoms(graph, proteinResidue))
@@ -242,12 +242,12 @@ namespace glycoproteinBuilder
                     }
                     updateResidueBounds(graph, mutableData, proteinResidue);
                     updateResidueMoleculeBounds(graph, mutableData, proteinResidue);
-                    overlapSites = determineSitesWithOverlap(codeUtils::boolsToIndices(mutableData.glycanIncluded),
-                                                             graph, data, mutableData, data.atoms.all);
+                    overlapSites = determineSitesWithOverlap(includedGlycanIndices(data, mutableData), graph, data,
+                                                             mutableData, data.atoms.all);
                 }
             }
             restoreSidechains(rng, graph, data, mutableData, glycositePreferences,
-                              codeUtils::boolsToIndices(mutableData.glycanIncluded));
+                              includedGlycanIndices(data, mutableData));
             gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
         };
 
@@ -282,7 +282,7 @@ namespace glycoproteinBuilder
         auto printDihedralAnglesAndOverlapOfGlycosites =
             [](const assembly::Graph& graph, const AssemblyData& data, const MutableData& mutableData)
         {
-            const std::vector<bool>& included      = mutableData.glycanIncluded;
+            const std::vector<bool>& included      = glycanIncluded(data, mutableData);
             const std::vector<bool>& includedAtoms = data.atoms.all;
             size_t glycanCount                     = data.glycans.moleculeId.size();
             for (size_t n = 0; n < glycanCount; n++)
@@ -326,12 +326,6 @@ namespace glycoproteinBuilder
             settings.allowSidechainAdjustment ? adjustSidechains : noSidechainAdjustment;
         SidechainAdjustment sidechainRestoration =
             settings.allowSidechainAdjustment ? restoreSidechains : noSidechainAdjustment;
-
-        auto includedMolecules = [&](const std::vector<bool>& includedGlycans)
-        {
-            std::vector<bool> proteinIncluded(data.indices.proteinMolecules.size(), true);
-            return codeUtils::vectorAppend(proteinIncluded, includedGlycans);
-        };
 
         auto residueTER = [&](const std::vector<std::vector<size_t>>& moleculeResidues)
         {
@@ -389,9 +383,8 @@ namespace glycoproteinBuilder
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
-            std::vector<bool> currentMolecules = includedMolecules(mutableData.glycanIncluded);
             std::vector<std::vector<size_t>> currentMoleculeResidues =
-                codeUtils::boolsToValues(graph.molecules.nodes.elements, currentMolecules);
+                codeUtils::boolsToValues(graph.molecules.nodes.elements, mutableData.moleculeIncluded);
             writePdbFile(graph, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          currentMoleculeResidues, residueTER(currentMoleculeResidues),
                          atomPairsConnectingNonProteinResidues, prefix.str());
