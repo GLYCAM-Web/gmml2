@@ -1,9 +1,10 @@
-#include "includes/CodeUtils/strings.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "includes/CodeUtils/directories.hpp"
+#include "includes/CodeUtils/strings.hpp"
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <sys/stat.h> // stat
 
 int main(int argc, char** argv)
 {
@@ -19,12 +20,7 @@ int main(int argc, char** argv)
     std::ifstream infile(argv[1]);
     char delimiter = argv[2][0]; // The second [0] gets me the first element of the argv which is type char**
     std::string outputFolderName = argv[3];
-    struct stat info;
-    if (stat(argv[3], &info) != 0)
-    {
-        std::cerr << "Folder " << outputFolderName << "/ does not exist and it isn't my job to make it.\n";
-        std::exit(EXIT_FAILURE);
-    }
+    codeUtils::createDirectories(outputFolderName);
     std::string line;
     while (std::getline(infile, line))
     {

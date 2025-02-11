@@ -4,6 +4,7 @@
 #include "includes/CodeUtils/strings.hpp"
 
 #include <sys/param.h> // for MIN function
+#include <sys/stat.h>  // stat
 #include <cstring>     // strlen
 #include <string>
 #include <vector>
@@ -65,6 +66,16 @@ void codeUtils::ensureDirectoryExists(const std::string& pathName)
     {
         gmml::log(__LINE__, __FILE__, gmml::ERR, "Directory " + pathName + " does not exist");
         throw "Directory " + pathName + " does not exist";
+    }
+}
+
+void codeUtils::createDirectories(const std::string& pathName)
+{
+    std::filesystem::create_directories(pathName);
+    struct stat info;
+    if (stat(pathName.c_str(), &info) != 0)
+    {
+        throw std::runtime_error("failed to create directory: " + pathName);
     }
 }
 

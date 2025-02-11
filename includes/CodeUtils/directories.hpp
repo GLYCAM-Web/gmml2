@@ -30,6 +30,7 @@ namespace codeUtils
     Path toPath(const std::string& str);
     bool doesDirectoryExist(const std::string& pathName);
     void ensureDirectoryExists(const std::string& pathName);
+    void createDirectories(const std::string& pathName);
     std::string getEnvVar(const std::string& key);
     std::string getGmmlHomeDir();
     std::string getSNFGSymbolsDir();

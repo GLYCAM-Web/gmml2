@@ -99,12 +99,7 @@ int main(int argc, char* argv[])
                 case ARGUMENTS::OUTPUT_DIR:
                     {
                         outputDir = arg.value;
-                        struct stat info;
-                        if (stat(outputDir.c_str(), &info) != 0)
-                        {
-                            std::cerr << "Folder " << outputDir << "/ does not exist and it isn't my job to make it.\n";
-                            std::exit(EXIT_FAILURE);
-                        }
+                        codeUtils::createDirectories(outputDir);
                         break;
                     }
                 case ARGUMENTS::TEST_MODE:
