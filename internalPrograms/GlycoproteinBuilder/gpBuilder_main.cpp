@@ -164,12 +164,14 @@ int main(int argc, char* argv[])
         glycoproteinBuilder::OverlapWeight overlapWeight = {proteinWeight, glycanWeight, selfWeight};
 
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
-        const glycoproteinBuilder::GlycoproteinAssembly initialAssembly =
-            glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapWeight);
 
-        const glycoproteinBuilder::GlycoproteinAssembly assembly =
-            settings.allowSidechainAdjustment ? addSidechainRotamers(sidechainRotamers, initialAssembly)
-                                              : initialAssembly;
+        glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
+            sidechainRotamers,
+            glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapWeight));
+        if (settings.allowSidechainAdjustment)
+        {
+            assembly.data.atoms.alwaysIncluded = codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain);
+        }
 
         std::cout << "Resolving overlaps" << std::endl;
         glycoproteinBuilder::resolveOverlaps(sidechainRotamers, overlapWeight, assembly, settings, outputDir,

@@ -352,6 +352,5 @@ glycoproteinBuilder::addSidechainRotamers(const MolecularMetadata::SidechainRota
     assembly.data.residues.sidechainPotentialBounds =
         sidechainPotentialBounds(assembly.graph, assembly.data, assembly.mutableData, sidechains);
     assembly.data.atoms.partOfMovableSidechain = partOfMovableSidechain(assembly.graph, assembly.data);
-    assembly.data.atoms.alwaysIncluded         = codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain);
     return assembly;
 }
