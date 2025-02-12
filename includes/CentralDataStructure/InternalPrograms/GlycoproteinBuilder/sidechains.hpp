@@ -28,15 +28,17 @@ namespace glycoproteinBuilder
     void setSidechainToLowestOverlapState(const MolecularMetadata::SidechainRotamerData& sidechains,
                                           const assembly::Graph& graph, const AssemblyData& data,
                                           MutableData& mutableData, size_t residue);
-    cds::Overlap sidechainOverlap(const assembly::Graph& graph, const std::vector<cds::Sphere>& bounds,
-                                  const std::vector<double>& residueOverlapWeight, const std::vector<size_t>& atomsA,
-                                  const std::vector<size_t>& atomsB);
+    std::vector<cds::Overlap> sidechainOverlap(const assembly::Graph& graph, const std::vector<cds::Sphere>& bounds,
+                                               const std::vector<double>& residueOverlapWeight,
+                                               const std::vector<size_t>& atomsA, const std::vector<size_t>& atomsB);
     IndexedOverlap lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                                   const assembly::Graph& graph, const AssemblyData& data,
                                                   MutableData& mutableData, size_t sidechainResidue,
                                                   const std::vector<size_t>& otherAtoms);
     std::vector<size_t> atomsWithinSidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
-                                                            const MutableData& mutableData, size_t sidechainResidue);
+                                                            const MutableData& mutableData,
+                                                            const std::vector<bool>& includedAtoms,
+                                                            size_t sidechainResidue);
     std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(const assembly::Graph& graph,
                                                                    const AssemblyData& data);
     std::vector<std::vector<size_t>> sidechainRotations(const assembly::Graph& graph, const AssemblyData& data,
