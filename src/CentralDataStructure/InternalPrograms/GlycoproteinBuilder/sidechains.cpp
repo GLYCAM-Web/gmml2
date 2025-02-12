@@ -340,27 +340,20 @@ glycoproteinBuilder::sidechainPotentialBounds(const assembly::Graph& graph, cons
     });
     for (size_t n = 0; n < graph.residueCount; n++)
     {
-        const std::vector<size_t>& rotations = data.residues.sidechainRotations[n];
-        if (!rotations.empty())
+        const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[n];
+        const std::vector<size_t>& rotations            = data.residues.sidechainRotations[n];
+        if (!(dihedrals.empty() || rotations.empty()))
         {
-            const std::vector<cds::Sphere> initialCoords    = mutableData.atomBounds;
-            const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[n];
-            std::vector<double> initialAngles;
-            initialAngles.reserve(dihedrals.size());
-            for (auto& dihedral : dihedrals)
-            {
-                initialAngles.push_back(cds::angle(sidechainDihedralCoordinates(initialCoords, dihedral.atoms)));
-            }
             const std::vector<size_t>& firstDihedralMovingAtoms = dihedrals[0].movingAtoms;
             cds::Sphere bounds =
-                cds::boundingSphere(codeUtils::indicesToValues(initialCoords, firstDihedralMovingAtoms));
+                cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, firstDihedralMovingAtoms));
             for (size_t rotationId : rotations)
             {
                 std::vector<cds::Sphere> coords = mutableData.atomBounds;
                 setSidechainRotation(coords, dihedrals, sidechains.rotations[rotationId]);
-                for (size_t at : firstDihedralMovingAtoms)
+                for (size_t atom : firstDihedralMovingAtoms)
                 {
-                    bounds = cds::boundingSphereIncluding(bounds, coords[at]);
+                    bounds = cds::boundingSphereIncluding(bounds, coords[atom]);
                 }
             }
             result[n] = bounds;
