@@ -136,18 +136,7 @@ namespace glycoproteinBuilder
             std::vector<size_t> sidechainsToAdjust = codeUtils::shuffleVector(rng, sidechainResiduesWithGlycanOverlap);
             for (size_t residue : sidechainsToAdjust)
             {
-                std::vector<size_t> potentialOverlaps =
-                    atomsWithinSidechainPotentialBounds(graph, data, mutableData, residue);
-                cds::Overlap initialOverlap =
-                    sidechainOverlap(graph, mutableData.atomBounds, data.residues.overlapWeights,
-                                     data.residues.sidechainDihedrals[residue][0].movingAtoms, potentialOverlaps);
-                IndexedOverlap bestRotation = lowestOverlapSidechainRotation(sidechainRotamers, graph, data,
-                                                                             mutableData, residue, potentialOverlaps);
-                if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
-                {
-                    updateSidechainRotation(sidechainRotamers, graph, data, mutableData, residue, bestRotation.index);
-                    mutableData.residueSidechainMoved[residue] = true;
-                }
+                setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, residue);
             }
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycans))
             {
