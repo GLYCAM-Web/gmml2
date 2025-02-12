@@ -36,11 +36,7 @@ namespace glycoproteinBuilder
             const ResidueLinkageIndices& linkage     = data.indices.residueLinkages[linkageId];
             const RotatableDihedralIndices& dihedral = data.indices.rotatableDihedrals[dihedralId];
             const std::vector<size_t>& movingAtoms   = dihedral.movingAtoms;
-            std::vector<bool> atomMoving(graph.atomCount, false);
-            for (size_t atom : movingAtoms)
-            {
-                atomMoving[atom] = true;
-            }
+            std::vector<bool> atomMoving             = codeUtils::indicesToBools(graph.atomCount, dihedral.movingAtoms);
             const std::vector<cds::Sphere>& atomBounds     = mutableData.atomBounds;
             const std::vector<cds::Sphere>& residueBounds  = mutableData.residueBounds;
             const std::vector<cds::Sphere>& moleculeBounds = mutableData.moleculeBounds;
@@ -205,7 +201,7 @@ namespace glycoproteinBuilder
         {
             for (size_t n = 0; n < linkages.size(); n++)
             {
-                size_t linkageId = data.glycans.linkages[glycanId][n];
+                size_t linkageId = linkages[n];
                 wiggleLinkage(graph, data, mutableData, includedAtoms, glycanId, linkageId, searchSettings, weight,
                               preferences[n]);
             }
