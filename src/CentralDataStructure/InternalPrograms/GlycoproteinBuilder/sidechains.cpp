@@ -38,6 +38,12 @@ namespace
         return {coord(indices[0]), coord(indices[1]), coord(indices[2]), coord(indices[3])};
     }
 
+    std::vector<size_t> sidechainMovingAtoms(const glycoproteinBuilder::AssemblyData& data, size_t residue)
+    {
+        // perhaps this should be its own variable rather than 0-th element lookup
+        return data.residues.sidechainDihedrals[residue][0].movingAtoms;
+    }
+
     void moveSphereCenters(std::vector<cds::Sphere>& coords, const cds::RotationMatrix& matrix,
                            const std::vector<size_t>& toMove)
     {
@@ -65,7 +71,7 @@ bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph
                                                     size_t sidechainResidue)
 {
     double overlapTolerance                   = data.overlapProperties.tolerance;
-    const std::vector<size_t>& sidechainAtoms = data.residues.sidechainDihedrals[sidechainResidue][0].movingAtoms;
+    const std::vector<size_t>& sidechainAtoms = sidechainMovingAtoms(data, sidechainResidue);
     cds::Sphere bounds = cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, sidechainAtoms));
     for (size_t glycanId : glycans)
     {
@@ -111,7 +117,7 @@ void glycoproteinBuilder::updateSidechainRotation(const MolecularMetadata::Sidec
 void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph, const AssemblyData& data,
                                                    MutableData& mutableData, size_t residue)
 {
-    for (size_t atom : data.residues.sidechainDihedrals[residue][0].movingAtoms)
+    for (size_t atom : sidechainMovingAtoms(data, residue))
     {
         mutableData.atomBounds[atom] = data.atoms.initialState[atom];
     }
@@ -127,8 +133,7 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
     std::vector<size_t> potentialOverlaps =
         atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.all, residue);
     cds::Overlap initialOverlap = cds::overlapVectorSum(
-        sidechainOverlap(graph, data, mutableData.atomBounds, data.residues.sidechainDihedrals[residue][0].movingAtoms,
-                         potentialOverlaps));
+        sidechainOverlap(graph, data, mutableData.atomBounds, sidechainMovingAtoms(data, residue), potentialOverlaps));
     IndexedOverlap bestRotation =
         lowestOverlapSidechainRotation(sidechains, graph, data, mutableData, residue, potentialOverlaps);
     if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
@@ -163,7 +168,7 @@ glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainR
 {
     const std::vector<size_t>& rotations            = data.residues.sidechainRotations[sidechainResidue];
     const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[sidechainResidue];
-    const std::vector<size_t>& movingAtoms          = dihedrals[0].movingAtoms;
+    const std::vector<size_t>& movingAtoms          = sidechainMovingAtoms(data, sidechainResidue);
     std::vector<cds::Sphere> coords                 = mutableData.atomBounds;
     std::vector<cds::Overlap> overlaps;
     overlaps.reserve(rotations.size());
@@ -307,7 +312,7 @@ glycoproteinBuilder::sidechainPotentialBounds(const assembly::Graph& graph, cons
         const std::vector<size_t>& rotations            = data.residues.sidechainRotations[n];
         if (!(dihedrals.empty() || rotations.empty()))
         {
-            const std::vector<size_t>& firstDihedralMovingAtoms = dihedrals[0].movingAtoms;
+            const std::vector<size_t>& firstDihedralMovingAtoms = sidechainMovingAtoms(data, n);
             cds::Sphere bounds =
                 cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, firstDihedralMovingAtoms));
             for (size_t rotationId : rotations)
@@ -330,10 +335,9 @@ std::vector<bool> glycoproteinBuilder::partOfMovableSidechain(const assembly::Gr
     std::vector<bool> result(graph.atomCount, false);
     for (size_t n = 0; n < graph.residueCount; n++)
     {
-        const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[n];
-        if (dihedrals.size() > 0)
+        if (data.residues.sidechainDihedrals[n].size() > 0)
         {
-            for (size_t k : dihedrals[0].movingAtoms)
+            for (size_t k : sidechainMovingAtoms(data, n))
             {
                 result[k] = true;
             }
