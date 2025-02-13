@@ -158,23 +158,24 @@ int main(int argc, char* argv[])
         cds::setInterConnectivity(gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
-        double selfWeight                                = 1000000.0;
-        double proteinWeight                             = 1000.0;
-        double glycanWeight                              = 1.0;
-        glycoproteinBuilder::OverlapWeight overlapWeight = {proteinWeight, glycanWeight, selfWeight};
+        double selfWeight    = 1000000.0;
+        double proteinWeight = 1000.0;
+        double glycanWeight  = 1.0;
+        glycoproteinBuilder::OverlapMultiplier overlapMultiplier {proteinWeight, glycanWeight, selfWeight};
+        cds::OverlapProperties overlapProperties {constants::clashWeightBase, settings.overlapTolerance};
 
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
-        glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
-            sidechainRotamers,
-            glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapWeight));
+        glycoproteinBuilder::GlycoproteinAssembly assembly =
+            addSidechainRotamers(sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
+                                                        molecules, glycosites, overlapProperties, overlapMultiplier));
         if (settings.allowSidechainAdjustment)
         {
             assembly.data.atoms.alwaysIncluded = codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain);
         }
 
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, overlapWeight, assembly, settings, outputDir,
+        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, overlapMultiplier, assembly, settings, outputDir,
                                              headerLines, numThreads);
     }
     catch (const std::runtime_error& error)

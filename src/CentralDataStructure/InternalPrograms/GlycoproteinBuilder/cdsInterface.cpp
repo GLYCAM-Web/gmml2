@@ -20,7 +20,8 @@ namespace glycoproteinBuilder
 {
     GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
                                                        std::vector<GlycosylationSite>& glycosites,
-                                                       const OverlapWeight overlapWeight)
+                                                       const cds::OverlapProperties overlapProperties,
+                                                       const OverlapMultiplier overlapWeight)
     {
         using MolecularMetadata::Element;
 
@@ -169,12 +170,12 @@ namespace glycoproteinBuilder
             glycanMoleculeId.push_back(moleculeIndex);
             glycanLinkages.push_back(linkageIds);
         }
-        std::vector<double> residueOverlapWeight;
-        residueOverlapWeight.reserve(residues.size());
+        std::vector<double> defaultResidueOverlapWeight;
+        defaultResidueOverlapWeight.reserve(residues.size());
         for (size_t molecule : graphIndices.residueMolecule)
         {
-            residueOverlapWeight.push_back(moleculeTypes[molecule] == MoleculeType::protein ? overlapWeight.protein
-                                                                                            : overlapWeight.glycan);
+            defaultResidueOverlapWeight.push_back(
+                moleculeTypes[molecule] == MoleculeType::protein ? overlapWeight.protein : overlapWeight.glycan);
         }
 
         std::vector<std::string> atomNames           = cds::atomNames(atoms);
@@ -268,7 +269,6 @@ namespace glycoproteinBuilder
                                  cds::residueStringIds(residues),
                                  cds::residueNumbers(residues),
                                  cds::serializedNumberVector(residues.size()),
-                                 residueOverlapWeight,
                                  sidechainDihedrals,
                                  sidechainRotations,
                                  sidechainPotentialBounds};
@@ -292,8 +292,12 @@ namespace glycoproteinBuilder
 
         AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages};
 
-        AssemblyData data {atomData,           residueData, moleculeData, GlycanData, rotatableDihedralData,
-                           residueLinkageData, indices};
+        std::vector<double> equalResidueWeight(residues.size(), 1.0);
+
+        AssemblyData data {atomData,          residueData,           moleculeData,
+                           GlycanData,        rotatableDihedralData, residueLinkageData,
+                           indices,           overlapProperties,     defaultResidueOverlapWeight,
+                           equalResidueWeight};
 
         std::vector<bool> moleculeIncluded(graph.moleculeCount, true);
         MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds, moleculeIncluded,

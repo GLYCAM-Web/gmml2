@@ -1,5 +1,4 @@
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
-#include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
@@ -29,14 +28,14 @@ namespace
         }
     }
 
-    void insertIntersection(std::vector<size_t>& result, const cds::Sphere& sphere,
+    void insertIntersection(std::vector<size_t>& result, double overlapTolerance, const cds::Sphere& sphere,
                             const std::vector<cds::Sphere>& bounds, const std::vector<bool>& includeAtom,
                             const std::vector<size_t>& indices)
     {
         result.reserve(indices.size());
         for (size_t index : indices)
         {
-            if (includeAtom[index] && cds::spheresOverlap(constants::overlapTolerance, sphere, bounds[index]))
+            if (includeAtom[index] && cds::spheresOverlap(overlapTolerance, sphere, bounds[index]))
             {
                 result.push_back(index);
             }
@@ -59,42 +58,39 @@ namespace
     }
 } // namespace
 
-void cds::insertIndicesOfIntersection(std::vector<size_t>& result, const Sphere& sphere,
+void cds::insertIndicesOfIntersection(std::vector<size_t>& result, double overlapTolerance, const Sphere& sphere,
                                       const std::vector<Sphere>& coords, const std::vector<size_t>& indices)
 {
     result.reserve(indices.size());
     for (size_t index : indices)
     {
         auto& a = coords[index];
-        if (cds::spheresOverlap(constants::overlapTolerance, sphere, a))
+        if (cds::spheresOverlap(overlapTolerance, sphere, a))
         {
             result.push_back(index);
         }
     }
 }
 
-std::vector<size_t> cds::intersectingIndices(const cds::Sphere& sphere, const std::vector<cds::Sphere>& coords,
-                                             const std::vector<size_t>& indices)
+std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds::Sphere& sphere,
+                                             const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices)
 {
     std::vector<size_t> result;
-    insertIndicesOfIntersection(result, sphere, coords, indices);
+    insertIndicesOfIntersection(result, overlapTolerance, sphere, coords, indices);
     return result;
 }
 
-std::vector<cds::Overlap>
-cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
-                           const std::vector<std::vector<size_t>>& residueAtoms,
-                           const std::vector<double>& residueWeights, const std::vector<bool>& includedAtoms,
-                           const std::vector<BondedResidueOverlapInput>& bonds, const std::vector<size_t>& residuesA,
-                           const std::vector<size_t>& residuesB)
+std::vector<cds::Overlap> cds::CountOverlappingAtoms(
+    OverlapProperties properties, const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
+    const std::vector<std::vector<size_t>>& residueAtoms, const std::vector<double>& residueWeights,
+    const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
+    const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
 {
     std::vector<cds::Overlap> result(residueBounds.size(), {0.0, 0.0});
     std::vector<size_t> indicesA;
     indicesA.reserve(64);
     std::vector<size_t> indicesB;
     indicesB.reserve(64);
-    double tolerance = constants::overlapTolerance;
-    OverlapProperties properties {constants::clashWeightBase, tolerance};
     for (size_t n = 0; n < residuesA.size(); n++)
     {
         size_t aIndex                = residuesA[n];
@@ -116,10 +112,10 @@ cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vec
                 insertNonIgnored(indicesA, atomsA, includedAtoms, bond.ignoredAtoms[order]);
                 insertNonIgnored(indicesB, atomsB, includedAtoms, bond.ignoredAtoms[!order]);
             }
-            else if (cds::spheresOverlap(tolerance, residueBoundsA, residueBoundsB))
+            else if (cds::spheresOverlap(properties.tolerance, residueBoundsA, residueBoundsB))
             {
-                insertIntersection(indicesA, residueBoundsB, atomBounds, includedAtoms, atomsA);
-                insertIntersection(indicesB, residueBoundsA, atomBounds, includedAtoms, atomsB);
+                insertIntersection(indicesA, properties.tolerance, residueBoundsB, atomBounds, includedAtoms, atomsA);
+                insertIntersection(indicesB, properties.tolerance, residueBoundsA, atomBounds, includedAtoms, atomsB);
             }
             for (size_t n : indicesA)
             {
@@ -135,12 +131,12 @@ cds::CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vec
     return result;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
+cds::Overlap cds::CountOverlappingAtoms(OverlapProperties properties, const std::vector<cds::Atom*>& atomsA,
+                                        const std::vector<cds::Atom*>& atomsB)
 {
     std::vector<Sphere> coordsA = atomCoordinatesWithRadii(atomsA);
     std::vector<Sphere> coordsB = atomCoordinatesWithRadii(atomsB);
 
-    OverlapProperties properties {constants::clashWeightBase, constants::overlapTolerance};
     Overlap overlap {0, 0.0};
     for (auto& coordA : coordsA)
     {

@@ -18,7 +18,7 @@ namespace glycoproteinBuilder
         std::vector<std::vector<cds::ResidueLinkageShapePreference>> preferences;
     };
 
-    typedef std::function<void(const assembly::Graph&, const AssemblyData&, size_t glycanId, const OverlapWeight&,
+    typedef std::function<void(const assembly::Graph&, const AssemblyData&, size_t glycanId, const OverlapMultiplier&,
                                std::vector<cds::ResidueLinkageShapePreference>&)>
         WiggleGlycan;
 
@@ -28,16 +28,16 @@ namespace glycoproteinBuilder
 
     void wiggleLinkage(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                        const std::vector<bool>& includedAtoms, size_t glycanId, size_t linkageId,
-                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
+                       const cds::AngleSearchSettings& searchSettings, const OverlapMultiplier& overlapMultiplier,
                        const cds::ResidueLinkageShapePreference& shapePreference);
     void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                       const std::vector<bool>& includedAtoms, size_t glycanId,
-                      const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
+                      const cds::AngleSearchSettings& searchSettings, const OverlapMultiplier& overlapMultiplier,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences);
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
                                     SidechainAdjustment adjustSidechains,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
-                                    const OverlapWeight& overlapWeight, const assembly::Graph& graph,
+                                    const OverlapMultiplier& overlapMultiplier, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,
                                     const GlycoproteinState& initialState);
 } // namespace glycoproteinBuilder

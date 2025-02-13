@@ -1,6 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GPINPUTSTRUCTS_HPP
 
+#include "includes/CodeUtils/constants.hpp"
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -19,6 +21,7 @@ namespace glycoproteinBuilder
         std::string substrateFileName           = "Undefined"; // Program should throw if left as "Undefined".
         ulong number3DStructures                = 1;
         ulong persistCycles                     = 5;
+        double overlapTolerance                 = constants::overlapTolerance;
         bool freezeGlycositeResidueConformation = false;
         bool allowSidechainAdjustment           = false;
         bool deleteSitesUntilResolved           = false;

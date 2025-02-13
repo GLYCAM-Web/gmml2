@@ -23,16 +23,16 @@ namespace cds
         std::array<std::vector<bool>, 2> ignoredAtoms;
     };
 
-    void insertIndicesOfIntersection(std::vector<size_t>& result, const cds::Sphere& sphere,
+    void insertIndicesOfIntersection(std::vector<size_t>& result, double overlapTolerance, const cds::Sphere& sphere,
                                      const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
-    std::vector<size_t> intersectingIndices(const cds::Sphere& sphere, const std::vector<cds::Sphere>& coords,
-                                            const std::vector<size_t>& indices);
-    Overlap CountOverlappingAtoms(const std::vector<Atom*>& atomsA, const std::vector<Atom*>& atomsB);
-    std::vector<Overlap>
-    CountOverlappingAtoms(const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
-                          const std::vector<std::vector<size_t>>& residueAtoms,
-                          const std::vector<double>& residueWeights, const std::vector<bool>& includedAtoms,
-                          const std::vector<BondedResidueOverlapInput>& bonds, const std::vector<size_t>& residuesA,
-                          const std::vector<size_t>& residuesB);
+    std::vector<size_t> intersectingIndices(double overlapTolerance, const cds::Sphere& sphere,
+                                            const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
+    Overlap CountOverlappingAtoms(OverlapProperties properties, const std::vector<Atom*>& atomsA,
+                                  const std::vector<Atom*>& atomsB);
+    std::vector<Overlap> CountOverlappingAtoms(
+        OverlapProperties properties, const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
+        const std::vector<std::vector<size_t>>& residueAtoms, const std::vector<double>& residueWeights,
+        const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
+        const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
 } // namespace cds
 #endif

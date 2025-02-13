@@ -253,7 +253,8 @@ namespace
             auto weights  = std::vector<double> {1.0};
             return cds::ResiduesWithOverlapWeight {residues, weights};
         };
-        cds::simpleWiggleCurrentRotamers(searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
+        cds::simpleWiggleCurrentRotamers({constants::clashWeightBase, constants::overlapTolerance},
+                                         searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
                                          searchPreference,
                                          {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     }
@@ -515,7 +516,8 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
         auto preference = cds::angleSearchPreference(
             searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
         cds::simpleWiggleCurrentRotamers(
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+            {constants::clashWeightBase, constants::overlapTolerance}, searchSettings.angles,
+            linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
             {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;

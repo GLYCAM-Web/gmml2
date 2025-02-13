@@ -65,12 +65,14 @@ namespace cds
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
-    DihedralRotationDataContainer dihedralRotationInputData(RotatableDihedral& dihedral,
+    DihedralRotationDataContainer dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
                                                             const std::array<ResiduesWithOverlapWeight, 2>& residues);
-    AngleOverlap wiggleUsingRotamers(SearchAngles searchAngles, const DihedralCoordinates coordinates,
-                                     const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
-                                     const AngleSearchPreference& preference, const DihedralRotationData& input);
-    void simpleWiggleCurrentRotamers(SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
+    AngleOverlap wiggleUsingRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
+                                     const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
+                                     const DihedralAngleDataVector& rotamers, const AngleSearchPreference& preference,
+                                     const DihedralRotationData& input);
+    void simpleWiggleCurrentRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
+                                     std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
                                      const std::array<ResiduesWithOverlapWeight, 2>& residues);

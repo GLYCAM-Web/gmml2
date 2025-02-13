@@ -4,6 +4,7 @@
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
@@ -20,7 +21,7 @@ namespace glycoproteinBuilder
         glycan
     };
 
-    struct OverlapWeight
+    struct OverlapMultiplier
     {
         double protein;
         double glycan;
@@ -58,7 +59,6 @@ namespace glycoproteinBuilder
         std::vector<std::string> ids;
         std::vector<int> numbers;
         std::vector<int> serializedNumbers;
-        std::vector<double> overlapWeights;
         std::vector<std::vector<SidechainDihedral>> sidechainDihedrals;
         std::vector<std::vector<size_t>> sidechainRotations;
         std::vector<cds::Sphere> sidechainPotentialBounds;
@@ -121,6 +121,9 @@ namespace glycoproteinBuilder
         RotatableDihedralData rotatableDihedralData;
         ResidueLinkageData residueLinkageData;
         AssemblyIndices indices;
+        cds::OverlapProperties overlapProperties;
+        std::vector<double> defaultResidueWeight;
+        std::vector<double> equalResidueWeight;
     };
 
     struct MutableData

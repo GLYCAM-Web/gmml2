@@ -30,17 +30,19 @@ namespace glycoproteinBuilder
         };
 
         PartialDihedralRotationData toRotationInputData(const assembly::Graph& graph, const AssemblyData& data,
-                                                        const MutableData& mutableData, const OverlapWeight& weight,
-                                                        size_t glycanId, size_t linkageId, size_t dihedralId)
+                                                        const MutableData& mutableData,
+                                                        const OverlapMultiplier& overlapMultiplier, size_t glycanId,
+                                                        size_t linkageId, size_t dihedralId)
         {
             const ResidueLinkageIndices& linkage     = data.indices.residueLinkages[linkageId];
             const RotatableDihedralIndices& dihedral = data.indices.rotatableDihedrals[dihedralId];
             const std::vector<size_t>& movingAtoms   = dihedral.movingAtoms;
+            std::vector<double> residueWeights       = data.defaultResidueWeight;
             std::vector<bool> atomMoving             = codeUtils::indicesToBools(graph.atomCount, dihedral.movingAtoms);
             const std::vector<cds::Sphere>& atomBounds     = mutableData.atomBounds;
             const std::vector<cds::Sphere>& residueBounds  = mutableData.residueBounds;
             const std::vector<cds::Sphere>& moleculeBounds = mutableData.moleculeBounds;
-            std::vector<double> residueWeights             = data.residues.overlapWeights;
+            double overlapTolerance                        = data.overlapProperties.tolerance;
             cds::Sphere movingAtomBounds = cds::boundingSphere(codeUtils::indicesToValues(atomBounds, movingAtoms));
             Coordinate pointA            = atomBounds[dihedral.atoms[1]].center;
             Coordinate pointB            = atomBounds[dihedral.atoms[2]].center;
@@ -52,19 +54,19 @@ namespace glycoproteinBuilder
             size_t glycanMolecule = data.glycans.moleculeId[glycanId];
             for (size_t n : data.indices.proteinMolecules)
             {
-                if (cds::spheresOverlap(constants::overlapTolerance, movementBounds, moleculeBounds[n]))
+                if (cds::spheresOverlap(overlapTolerance, movementBounds, moleculeBounds[n]))
                 {
-                    cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,
-                                                     moleculeResidues(graph, n));
+                    cds::insertIndicesOfIntersection(intersectingResidues, overlapTolerance, movementBounds,
+                                                     residueBounds, moleculeResidues(graph, n));
                 }
             }
             for (size_t otherMolecule : includedGlycanMoleculeIds(data, mutableData))
             {
                 if ((otherMolecule != glycanMolecule) &&
-                    cds::spheresOverlap(constants::overlapTolerance, movementBounds, moleculeBounds[otherMolecule]))
+                    cds::spheresOverlap(overlapTolerance, movementBounds, moleculeBounds[otherMolecule]))
                 {
-                    cds::insertIndicesOfIntersection(intersectingResidues, movementBounds, residueBounds,
-                                                     moleculeResidues(graph, otherMolecule));
+                    cds::insertIndicesOfIntersection(intersectingResidues, overlapTolerance, movementBounds,
+                                                     residueBounds, moleculeResidues(graph, otherMolecule));
                 }
             }
 
@@ -74,7 +76,7 @@ namespace glycoproteinBuilder
             }
             for (size_t n : linkage.nonReducingResidues)
             {
-                residueWeights[n] = weight.self;
+                residueWeights[n] = overlapMultiplier.self;
             }
             return {
                 atomMoving, residueWeights, {intersectingResidues, linkage.reducingResidues}
@@ -83,7 +85,8 @@ namespace glycoproteinBuilder
 
         void wigglePermutationLinkage(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                                       const std::vector<bool>& includedAtoms, size_t glycanId, size_t linkageId,
-                                      const cds::AngleSearchSettings& settings, const OverlapWeight& weight,
+                                      const cds::AngleSearchSettings& settings,
+                                      const OverlapMultiplier& overlapMultiplier,
                                       const cds::PermutationShapePreference& shapePreference)
         {
             const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
@@ -98,22 +101,24 @@ namespace glycoproteinBuilder
                                                                     shapePreference.metadataOrder[n]};
                 const std::array<cds::Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData, dihedralId);
                 PartialDihedralRotationData partial =
-                    toRotationInputData(graph, data, mutableData, weight, glycanId, linkageId, dihedralId);
+                    toRotationInputData(graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
                 cds::DihedralRotationData input {
                     partial.atomMoving,     includedAtoms,
                     mutableData.atomBounds, mutableData.residueBounds,
                     partial.residueWeights, graph.residues.nodes.elements,
                     partial.residueIndices, data.residueLinkageData.overlapBonds[linkageId]};
                 const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
-                cds::AngleOverlap best                                  = cds::wiggleUsingRotamers(
-                    settings.angles, coordinates, codeUtils::indexVector(metadata), metadata, preference, input);
+                cds::AngleOverlap best =
+                    cds::wiggleUsingRotamers(data.overlapProperties, settings.angles, coordinates,
+                                             codeUtils::indexVector(metadata), metadata, preference, input);
                 setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, best.angle);
             }
         }
 
         void wiggleConformerLinkage(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                                     const std::vector<bool>& includedAtoms, size_t glycanId, size_t linkageId,
-                                    const cds::AngleSearchSettings& settings, const OverlapWeight& weight,
+                                    const cds::AngleSearchSettings& settings,
+                                    const OverlapMultiplier& overlapMultiplier,
                                     const cds::ConformerShapePreference& shapePreference)
         {
             const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
@@ -142,17 +147,18 @@ namespace glycoproteinBuilder
                                                              preferenceAngles[n], order};
                     cds::DihedralCoordinates coordinates = dihedralCoordinates(data, mutableData, dihedralId);
 
-                    PartialDihedralRotationData partial =
-                        toRotationInputData(graph, data, mutableData, weight, glycanId, linkageId, dihedralId);
+                    PartialDihedralRotationData partial = toRotationInputData(
+                        graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
                     cds::DihedralRotationData input {
                         partial.atomMoving,     includedAtoms,
                         mutableData.atomBounds, mutableData.residueBounds,
                         partial.residueWeights, graph.residues.nodes.elements,
                         partial.residueIndices, data.residueLinkageData.overlapBonds[linkageId]};
-                    cds::AngleOverlap best = cds::wiggleUsingRotamers(settings.angles, coordinates, index,
-                                                                      dihedralMetadata[dihedralId], preference, input);
-                    results[k][n]          = best.angle;
-                    bestOverlaps[k]        = best;
+                    cds::AngleOverlap best =
+                        cds::wiggleUsingRotamers(data.overlapProperties, settings.angles, coordinates, index,
+                                                 dihedralMetadata[dihedralId], preference, input);
+                    results[k][n]   = best.angle;
+                    bestOverlaps[k] = best;
                     setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, best.angle);
                 }
             }
@@ -168,7 +174,7 @@ namespace glycoproteinBuilder
 
     void wiggleLinkage(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                        const std::vector<bool>& includedAtoms, size_t glycanId, size_t linkageId,
-                       const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
+                       const cds::AngleSearchSettings& searchSettings, const OverlapMultiplier& overlapMultiplier,
                        const cds::ResidueLinkageShapePreference& shapePreference)
     {
         switch (data.residueLinkageData.rotamerTypes[linkageId])
@@ -178,13 +184,13 @@ namespace glycoproteinBuilder
                     cds::PermutationShapePreference preference =
                         std::get<cds::PermutationShapePreference>(shapePreference);
                     return wigglePermutationLinkage(graph, data, mutableData, includedAtoms, glycanId, linkageId,
-                                                    searchSettings, weight, preference);
+                                                    searchSettings, overlapMultiplier, preference);
                 }
             case RotamerType::conformer:
                 {
                     cds::ConformerShapePreference preference = std::get<cds::ConformerShapePreference>(shapePreference);
                     return wiggleConformerLinkage(graph, data, mutableData, includedAtoms, glycanId, linkageId,
-                                                  searchSettings, weight, preference);
+                                                  searchSettings, overlapMultiplier, preference);
                 }
         }
         throw std::runtime_error("unhandled linkage shape preference in glycoproteinOverlapResolution wiggleLinkage");
@@ -192,7 +198,7 @@ namespace glycoproteinBuilder
 
     void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                       const std::vector<bool>& includedAtoms, size_t glycanId,
-                      const cds::AngleSearchSettings& searchSettings, const OverlapWeight& weight,
+                      const cds::AngleSearchSettings& searchSettings, const OverlapMultiplier& overlapMultiplier,
                       const std::vector<cds::ResidueLinkageShapePreference>& preferences)
     {
         const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
@@ -202,8 +208,8 @@ namespace glycoproteinBuilder
             for (size_t n = 0; n < linkages.size(); n++)
             {
                 size_t linkageId = linkages[n];
-                wiggleLinkage(graph, data, mutableData, includedAtoms, glycanId, linkageId, searchSettings, weight,
-                              preferences[n]);
+                wiggleLinkage(graph, data, mutableData, includedAtoms, glycanId, linkageId, searchSettings,
+                              overlapMultiplier, preferences[n]);
             }
         }
         updateGlycanBounds(graph, data, mutableData, glycanId);
@@ -212,7 +218,7 @@ namespace glycoproteinBuilder
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
                                     SidechainAdjustment adjustSidechains,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
-                                    const OverlapWeight& overlapWeight, const assembly::Graph& graph,
+                                    const OverlapMultiplier& overlapMultiplier, const assembly::Graph& graph,
                                     const AssemblyData& data, MutableData& mutableData,
                                     const GlycoproteinState& initialState)
     {
@@ -233,21 +239,21 @@ namespace glycoproteinBuilder
             for (auto& glycanId : codeUtils::shuffleVector(rng, overlapSites))
             {
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
-                cds::Overlap previousOverlap =
-                    localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
-                auto preferences      = randomizeShape(rng, data, mutableData, glycanId);
-                MutableData lastShape = mutableData;
+                cds::Overlap previousOverlap = localOverlap(graph, data, mutableData, data.defaultResidueWeight,
+                                                            data.atoms.all, glycanId, overlapMultiplier.self);
+                auto preferences             = randomizeShape(rng, data, mutableData, glycanId);
+                MutableData lastShape        = mutableData;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], preferences[n]);
                 }
                 wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
-                             overlapWeight, preferences);
+                             overlapMultiplier, preferences);
                 adjustSidechains(rng, graph, data, mutableData, glycositePreferences, {glycanId});
-                cds::Overlap newOverlap =
-                    localOverlap(graph, data, mutableData, data.atoms.all, glycanId, overlapWeight.self);
-                cds::Overlap diff = newOverlap + (previousOverlap * -1);
-                bool isWorse      = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+                cds::Overlap newOverlap = localOverlap(graph, data, mutableData, data.defaultResidueWeight,
+                                                       data.atoms.all, glycanId, overlapMultiplier.self);
+                cds::Overlap diff       = newOverlap + (previousOverlap * -1);
+                bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
                 if (isWorse)
                 {
                     mutableData = lastShape;
