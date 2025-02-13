@@ -17,6 +17,7 @@ namespace glycoproteinBuilder
         static const std::string proteinParameter                            = "Protein";
         static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
         static const std::string persistCyclesParameter                      = "persistCycles";
+        static const std::string overlapToleranceParameter                   = "atomOverlapTolerance";
         static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
         static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
         static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
@@ -43,6 +44,15 @@ namespace glycoproteinBuilder
                 if (!opt.has_value())
                 {
                     throwError("'" + str + "' is not a valid non-negative integer");
+                }
+                return opt.value();
+            };
+            auto parseDouble = [&](const std::string& str)
+            {
+                std::optional<double> opt = codeUtils::parseDouble(str);
+                if (!opt.has_value())
+                {
+                    throwError("'" + str + "' is not a valid floating point number");
                 }
                 return opt.value();
             };
@@ -111,6 +121,10 @@ namespace glycoproteinBuilder
                     else if (parameter == persistCyclesParameter)
                     {
                         gpInputs.persistCycles = parseUlong(value);
+                    }
+                    else if (parameter == overlapToleranceParameter)
+                    {
+                        gpInputs.overlapTolerance = parseDouble(value);
                     }
                     else if (parameter == freezeGlycositeResidueConformationParameter)
                     {
