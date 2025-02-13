@@ -118,6 +118,18 @@ namespace glycoproteinBuilder
             mutableData.moleculeIncluded[moleculeId] = false;
         };
 
+        auto sidechainRotationPreferences =
+            [](pcg32& rng, const AssemblyData& data, const std::vector<size_t>& residues)
+        {
+            std::vector<std::vector<size_t>> result;
+            result.reserve(residues.size());
+            for (size_t residue : residues)
+            {
+                result.push_back(codeUtils::weightedRandomOrder(rng, data.residues.sidechainRotationWeights[residue]));
+            }
+            return result;
+        };
+
         SidechainAdjustment adjustSidechains =
             [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                 const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
@@ -135,32 +147,35 @@ namespace glycoproteinBuilder
                     sidechainResiduesWithGlycanOverlap.push_back(residue);
                 }
             }
-            std::vector<size_t> sidechainsToAdjust = codeUtils::shuffleVector(rng, sidechainResiduesWithGlycanOverlap);
-            for (size_t residue : sidechainsToAdjust)
+            std::vector<size_t> residues = codeUtils::shuffleVector(rng, sidechainResiduesWithGlycanOverlap);
+            std::vector<std::vector<size_t>> preferences = sidechainRotationPreferences(rng, data, residues);
+            for (size_t n = 0; n < residues.size(); n++)
             {
-                setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, residue);
+                setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, preferences[n],
+                                                 residues[n]);
             }
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycans))
             {
                 wiggleGlycan(graph, data, mutableData, data.atoms.all, glycanId, searchSettings, overlapMultiplier,
                              glycositePreferences[glycanId]);
             }
-            for (size_t residue : sidechainsToAdjust)
+            for (size_t residue : residues)
             {
                 restoreSidechainRotation(graph, data, mutableData, residue);
             }
             std::vector<size_t> allGlycans = includedGlycanIndices(data, mutableData);
-            for (size_t residue : sidechainsToAdjust)
+            for (size_t n = 0; n < residues.size(); n++)
             {
-                if (sidechainHasGlycanOverlap(graph, data, mutableData, allGlycans, residue))
+                if (sidechainHasGlycanOverlap(graph, data, mutableData, allGlycans, residues[n]))
                 {
-                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, residue);
+                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, preferences[n],
+                                                     residues[n]);
                 }
             }
         };
 
         SidechainAdjustment restoreSidechains =
-            [&](pcg32&, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
+            [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                 const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&, const std::vector<size_t>& glycans)
         {
             std::vector<size_t> residues = codeUtils::boolsToIndices(mutableData.residueSidechainMoved);
@@ -168,11 +183,13 @@ namespace glycoproteinBuilder
             {
                 restoreSidechainRotation(graph, data, mutableData, residue);
             }
-            for (size_t residue : residues)
+            std::vector<std::vector<size_t>> preferences = sidechainRotationPreferences(rng, data, residues);
+            for (size_t n = 0; n < residues.size(); n++)
             {
-                if (sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residue))
+                if (sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residues[n]))
                 {
-                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, residue);
+                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, preferences[n],
+                                                     residues[n]);
                 }
             }
         };

@@ -128,14 +128,15 @@ void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph,
 
 void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetadata::SidechainRotamerData& sidechains,
                                                            const assembly::Graph& graph, const AssemblyData& data,
-                                                           MutableData& mutableData, size_t residue)
+                                                           MutableData& mutableData,
+                                                           const std::vector<size_t>& preference, size_t residue)
 {
     std::vector<size_t> potentialOverlaps =
         atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.all, residue);
     cds::Overlap initialOverlap = cds::overlapVectorSum(
         sidechainOverlap(graph, data, mutableData.atomBounds, sidechainMovingAtoms(data, residue), potentialOverlaps));
     IndexedOverlap bestRotation =
-        lowestOverlapSidechainRotation(sidechains, graph, data, mutableData, residue, potentialOverlaps);
+        lowestOverlapSidechainRotation(sidechains, graph, data, mutableData, preference, residue, potentialOverlaps);
     if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
     {
         updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
@@ -162,29 +163,32 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
     return result;
 }
 
-glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainRotation(
-    const MolecularMetadata::SidechainRotamerData& sidechains, const assembly::Graph& graph, const AssemblyData& data,
-    MutableData& mutableData, size_t sidechainResidue, const std::vector<size_t>& otherAtoms)
+glycoproteinBuilder::IndexedOverlap
+glycoproteinBuilder::lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
+                                                    const assembly::Graph& graph, const AssemblyData& data,
+                                                    MutableData& mutableData, const std::vector<size_t>& preference,
+                                                    size_t sidechainResidue, const std::vector<size_t>& otherAtoms)
 {
-    const std::vector<size_t>& rotations            = data.residues.sidechainRotations[sidechainResidue];
+    const std::vector<size_t> rotations             = data.residues.sidechainRotations[sidechainResidue];
     const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[sidechainResidue];
     const std::vector<size_t>& movingAtoms          = sidechainMovingAtoms(data, sidechainResidue);
     std::vector<cds::Sphere> coords                 = mutableData.atomBounds;
     std::vector<cds::Overlap> overlaps;
     overlaps.reserve(rotations.size());
-    for (size_t rotation : rotations)
+    for (size_t n : preference)
     {
         coords = mutableData.atomBounds;
-        setSidechainRotation(coords, dihedrals, sidechains.rotations[rotation]);
+        setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
         cds::Overlap overlap = cds::overlapVectorSum(sidechainOverlap(graph, data, coords, movingAtoms, otherAtoms));
         overlaps.push_back(overlap);
     }
-    size_t lowestIndex = 0;
-    for (size_t n = 1; n < rotations.size(); n++)
+    size_t lowestIndex = preference[0];
+    for (size_t n = 1; n < preference.size(); n++)
     {
-        if (cds::compareOverlaps(overlaps[lowestIndex], overlaps[n]) > 0)
+        size_t current = preference[n];
+        if (cds::compareOverlaps(overlaps[lowestIndex], overlaps[current]) > 0)
         {
-            lowestIndex = n;
+            lowestIndex = current;
         }
     }
     return IndexedOverlap {rotations[lowestIndex], overlaps[lowestIndex]};

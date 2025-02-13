@@ -33,14 +33,15 @@ namespace glycoproteinBuilder
                                   size_t residue);
     void setSidechainToLowestOverlapState(const MolecularMetadata::SidechainRotamerData& sidechains,
                                           const assembly::Graph& graph, const AssemblyData& data,
-                                          MutableData& mutableData, size_t residue);
+                                          MutableData& mutableData, const std::vector<size_t>& preference,
+                                          size_t residue);
     std::vector<cds::Overlap> sidechainOverlap(const assembly::Graph& graph, const AssemblyData& data,
                                                const std::vector<cds::Sphere>& bounds,
                                                const std::vector<size_t>& atomsA, const std::vector<size_t>& atomsB);
     IndexedOverlap lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                                   const assembly::Graph& graph, const AssemblyData& data,
-                                                  MutableData& mutableData, size_t sidechainResidue,
-                                                  const std::vector<size_t>& otherAtoms);
+                                                  MutableData& mutableData, const std::vector<size_t>& preference,
+                                                  size_t sidechainResidue, const std::vector<size_t>& otherAtoms);
     std::vector<size_t> atomsWithinSidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
                                                             const MutableData& mutableData,
                                                             const std::vector<bool>& includedAtoms,
