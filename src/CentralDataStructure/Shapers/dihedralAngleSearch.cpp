@@ -305,23 +305,37 @@ cds::AngleOverlap cds::wiggleUsingRotamers(cds::OverlapProperties overlapPropert
                                            const AngleSearchPreference& preference,
                                            const cds::DihedralRotationData& input)
 {
-    std::vector<AngleOverlap> results;
-    for (size_t n : preference.metadataOrder)
+    // residue sets can be empty if overlap tolerance is high
+    // no overlaps are possible in this case, so we can
+    // return preferred angle immediately to avoid segfault later
+    if (input.residueIndices[0].empty() || input.residueIndices[1].empty())
     {
-        double angle      = preference.angles[n];
-        double deviation  = preference.deviation;
-        AngleOverlap best = WiggleAnglesOverlaps(overlapProperties, coordinates, indices[n], preference.angles[n],
-                                                 searchAngles(rotamers[n], angle, deviation), input);
-        // found something with no overlaps
-        // if metadata and angles are sorted in order of preference, we can quit here
-        if (best.overlaps.count <= 0.0)
-        {
-            return best;
-        }
-        results.push_back(best);
+        size_t index = preference.metadataOrder[0];
+        double angle = preference.angles[index];
+        return {
+            cds::Overlap {0.0, 0.0},
+             {angle, angle, index}
+        };
     }
-
-    return bestOverlapResult(results);
+    else
+    {
+        std::vector<AngleOverlap> results;
+        for (size_t n : preference.metadataOrder)
+        {
+            double angle      = preference.angles[n];
+            double deviation  = preference.deviation;
+            AngleOverlap best = WiggleAnglesOverlaps(overlapProperties, coordinates, indices[n], preference.angles[n],
+                                                     searchAngles(rotamers[n], angle, deviation), input);
+            // found something with no overlaps
+            // if metadata and angles are sorted in order of preference, we can quit here
+            if (best.overlaps.count <= 0.0)
+            {
+                return best;
+            }
+            results.push_back(best);
+        }
+        return bestOverlapResult(results);
+    }
 }
 
 void cds::simpleWiggleCurrentRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
