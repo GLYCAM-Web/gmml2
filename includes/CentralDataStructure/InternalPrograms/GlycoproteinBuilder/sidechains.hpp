@@ -17,6 +17,12 @@ namespace glycoproteinBuilder
         cds::Overlap overlap;
     };
 
+    struct SidechainRotationsAndWeights
+    {
+        std::vector<std::vector<size_t>> rotations;
+        std::vector<std::vector<double>> weights;
+    };
+
     bool sidechainHasGlycanOverlap(const assembly::Graph& graph, const AssemblyData& data,
                                    const MutableData& mutableData, const std::vector<size_t>& glycans,
                                    size_t sidechainResidue);
@@ -41,8 +47,9 @@ namespace glycoproteinBuilder
                                                             size_t sidechainResidue);
     std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(const assembly::Graph& graph,
                                                                    const AssemblyData& data);
-    std::vector<std::vector<size_t>> sidechainRotations(const assembly::Graph& graph, const AssemblyData& data,
-                                                        const MolecularMetadata::SidechainRotamerData& sidechains);
+    SidechainRotationsAndWeights
+    sidechainRotationsAndWeights(const assembly::Graph& graph, const AssemblyData& data,
+                                 const MolecularMetadata::SidechainRotamerData& sidechains);
     std::vector<cds::Sphere> sidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
                                                       const MutableData& mutableData,
                                                       const MolecularMetadata::SidechainRotamerData& sidechains);

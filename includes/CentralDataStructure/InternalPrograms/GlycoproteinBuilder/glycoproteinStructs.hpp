@@ -61,6 +61,7 @@ namespace glycoproteinBuilder
         std::vector<int> serializedNumbers;
         std::vector<std::vector<SidechainDihedral>> sidechainDihedrals;
         std::vector<std::vector<size_t>> sidechainRotations;
+        std::vector<std::vector<double>> sidechainRotationWeights;
         std::vector<cds::Sphere> sidechainPotentialBounds;
     };
 

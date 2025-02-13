@@ -257,6 +257,7 @@ namespace glycoproteinBuilder
 
         std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(residues.size());
         std::vector<std::vector<size_t>> sidechainRotations(residues.size());
+        std::vector<std::vector<double>> sidechainWeights(residues.size());
         std::vector<cds::Sphere> sidechainPotentialBounds(residues.size(), cds::Sphere {
                                                                                0.0, cds::Coordinate {0.0, 0.0, 0.0}
         });
@@ -271,6 +272,7 @@ namespace glycoproteinBuilder
                                  cds::serializedNumberVector(residues.size()),
                                  sidechainDihedrals,
                                  sidechainRotations,
+                                 sidechainWeights,
                                  sidechainPotentialBounds};
         std::vector<cds::Sphere> moleculeBounds =
             boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.elements);

@@ -277,11 +277,16 @@ glycoproteinBuilder::sidechainDihedrals(const assembly::Graph& graph, const Asse
     return result;
 }
 
-std::vector<std::vector<size_t>>
-glycoproteinBuilder::sidechainRotations(const assembly::Graph& graph, const AssemblyData& data,
-                                        const MolecularMetadata::SidechainRotamerData& sidechains)
+glycoproteinBuilder::SidechainRotationsAndWeights
+glycoproteinBuilder::sidechainRotationsAndWeights(const assembly::Graph& graph, const AssemblyData& data,
+                                                  const MolecularMetadata::SidechainRotamerData& sidechains)
 {
-    std::vector<std::vector<size_t>> result(graph.residueCount, std::vector<size_t> {});
+    std::vector<std::vector<size_t>> rotations(graph.residueCount, std::vector<size_t> {});
+    std::vector<std::vector<double>> weights(graph.residueCount, std::vector<double> {});
+    std::function<double(const size_t&)> weight = [&](const size_t& n)
+    {
+        return sidechains.rotations[n].probability;
+    };
     for (size_t n = 0; n < graph.residueCount; n++)
     {
         if (!data.residues.sidechainDihedrals[n].empty())
@@ -292,10 +297,11 @@ glycoproteinBuilder::sidechainRotations(const assembly::Graph& graph, const Asse
             double psi                        = constants::toDegrees(data.residues.psiAngles[n]);
             std::vector<size_t> rotationIds =
                 MolecularMetadata::sidechainRotationIndices(sidechains, originalResidue, phi, psi);
-            result[n] = rotationIds;
+            rotations[n] = rotationIds;
+            weights[n]   = codeUtils::vectorMap(weight, rotationIds);
         }
     }
-    return result;
+    return {rotations, weights};
 }
 
 std::vector<cds::Sphere>
@@ -351,7 +357,10 @@ glycoproteinBuilder::addSidechainRotamers(const MolecularMetadata::SidechainRota
                                           GlycoproteinAssembly assembly)
 {
     assembly.data.residues.sidechainDihedrals = sidechainDihedrals(assembly.graph, assembly.data);
-    assembly.data.residues.sidechainRotations = sidechainRotations(assembly.graph, assembly.data, sidechains);
+    SidechainRotationsAndWeights rotationsAndWeights =
+        sidechainRotationsAndWeights(assembly.graph, assembly.data, sidechains);
+    assembly.data.residues.sidechainRotations       = rotationsAndWeights.rotations;
+    assembly.data.residues.sidechainRotationWeights = rotationsAndWeights.weights;
     assembly.data.residues.sidechainPotentialBounds =
         sidechainPotentialBounds(assembly.graph, assembly.data, assembly.mutableData, sidechains);
     assembly.data.atoms.partOfMovableSidechain = partOfMovableSidechain(assembly.graph, assembly.data);
