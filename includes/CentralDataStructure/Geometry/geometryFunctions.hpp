@@ -34,7 +34,8 @@ namespace cds
 
     inline bool withinDistance(double distance, const Coordinate& a, const Coordinate& b)
     {
-        return squaredDistance(a, b) < distance * distance;
+        double d = std::max(0.0, distance);
+        return squaredDistance(a, b) < d * d;
     }
 
     inline bool spheresOverlap(double tolerance, const Sphere& a, const Sphere& b)

@@ -19,7 +19,7 @@ int cds::compareOverlaps(const Overlap& a, const Overlap& b)
 
 cds::Overlap cds::overlapAmount(const OverlapProperties properties, const Sphere& a, const Sphere& b)
 {
-    double cutoff     = a.radius + b.radius - properties.tolerance;
+    double cutoff     = std::max(0.0, a.radius + b.radius - properties.tolerance);
     double sqDist     = squaredDistance(a.center, b.center);
     double weightBase = properties.weightBase;
     if (sqDist < cutoff * cutoff)
