@@ -160,9 +160,8 @@ namespace glycoproteinBuilder
         };
 
         SidechainAdjustment restoreSidechains =
-            [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
-                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                const std::vector<size_t>& glycans)
+            [&](pcg32&, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
+                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&, const std::vector<size_t>& glycans)
         {
             std::vector<size_t> residues = codeUtils::boolsToIndices(mutableData.residueSidechainMoved);
             for (size_t residue : residues)
