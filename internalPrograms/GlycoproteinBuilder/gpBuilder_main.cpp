@@ -90,6 +90,7 @@ int main(int argc, char* argv[])
         std::string headerBaseString = "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
         int numThreads = 1;
+        bool testMode  = false;
         bool overwrite = false;
         for (const auto& arg : arguments.args)
         {
@@ -108,6 +109,7 @@ int main(int argc, char* argv[])
                     }
                 case ARGUMENTS::TEST_MODE:
                     {
+                        testMode    = true;
                         headerLines = {headerBaseString + " in test mode"};
                         std::cout << "Running in test mode\n";
                         break;
@@ -139,7 +141,7 @@ int main(int argc, char* argv[])
                     break;
             }
         }
-        if (!(overwrite || outputDir == "."))
+        if (!(testMode || overwrite || outputDir == "."))
         {
             if (!codeUtils::directoryIsEmptyOrNonexistent(outputDir))
             {
