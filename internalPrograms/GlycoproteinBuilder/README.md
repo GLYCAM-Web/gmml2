@@ -32,10 +32,10 @@ You can run `./bin/gpBuilder --help` for a list of options
 ```
 usage: ./bin/gpBuilder [-h | --help]
                        [-v | --version]
-                       [-p <value> | --num-threads <value>] 
-                       [--overwrite-existing-files] 
+                       [-t <value> | --num-threads <value>]
+                       [--overwrite-existing-files]
                        input-file
-                       [output-directory] 
+                       [output-directory]
 ```
 
 ### Setup

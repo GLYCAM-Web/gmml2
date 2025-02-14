@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
         {ArgReq::optional,    ArgType::flag,               HELP,        "help", 'h',                 ""},
         {ArgReq::optional,    ArgType::flag,            VERSION,     "version", 'v',                 ""},
         {  ArgReq::hidden,    ArgType::flag,          TEST_MODE,   "test-mode", ' ',                 ""},
-        {ArgReq::optional,  ArgType::option,        NUM_THREADS, "num-threads", 'p',            "value"},
+        {ArgReq::optional,  ArgType::option,        NUM_THREADS, "num-threads", 't',            "value"},
         {ArgReq::optional,    ArgType::flag, OVERWRITE_EXISTING, overwriteFlag, ' ',                 ""}
     };
     std::string programName = codeUtils::programName(argv);
