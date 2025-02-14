@@ -60,6 +60,11 @@ bool codeUtils::doesDirectoryExist(const std::string& pathName)
     }
 }
 
+bool codeUtils::directoryIsEmptyOrNonexistent(const std::string& pathName)
+{
+    return !doesDirectoryExist(pathName) || std::filesystem::is_empty(pathName);
+}
+
 void codeUtils::ensureDirectoryExists(const std::string& pathName)
 {
     if (!codeUtils::doesDirectoryExist(pathName))
