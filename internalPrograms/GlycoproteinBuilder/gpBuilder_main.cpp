@@ -31,18 +31,21 @@ int main(int argc, char* argv[])
         HELP,
         VERSION,
         TEST_MODE,
-        NUM_THREADS
+        NUM_THREADS,
+        OVERWRITE_EXISTING
     };
 
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
+    const std::string overwriteFlag                    = "overwrite-existing-files";
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
-        {ArgReq::required, ArgType::unnamed,  INPUT_FILE,            "", ' ',       "input-file"},
-        {ArgReq::optional, ArgType::unnamed,  OUTPUT_DIR,            "", ' ', "output-directory"},
-        {ArgReq::optional,    ArgType::flag,        HELP,        "help", 'h',                 ""},
-        {ArgReq::optional,    ArgType::flag,     VERSION,     "version", 'v',                 ""},
-        {  ArgReq::hidden,    ArgType::flag,   TEST_MODE,   "test-mode", ' ',                 ""},
-        {ArgReq::optional,  ArgType::option, NUM_THREADS, "num-threads", 'p',            "value"}
+        {ArgReq::required, ArgType::unnamed,         INPUT_FILE,            "", ' ',       "input-file"},
+        {ArgReq::optional, ArgType::unnamed,         OUTPUT_DIR,            "", ' ', "output-directory"},
+        {ArgReq::optional,    ArgType::flag,               HELP,        "help", 'h',                 ""},
+        {ArgReq::optional,    ArgType::flag,            VERSION,     "version", 'v',                 ""},
+        {  ArgReq::hidden,    ArgType::flag,          TEST_MODE,   "test-mode", ' ',                 ""},
+        {ArgReq::optional,  ArgType::option,        NUM_THREADS, "num-threads", 'p',            "value"},
+        {ArgReq::optional,    ArgType::flag, OVERWRITE_EXISTING, overwriteFlag, ' ',                 ""}
     };
     std::string programName = codeUtils::programName(argv);
     codeUtils::Path path    = codeUtils::toPath(argv[0]);
@@ -87,6 +90,7 @@ int main(int argc, char* argv[])
         std::string headerBaseString = "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
         int numThreads = 1;
+        bool overwrite = false;
         for (const auto& arg : arguments.args)
         {
             switch (arg.id)
@@ -127,10 +131,24 @@ int main(int argc, char* argv[])
                         }
                         break;
                     }
+                case ARGUMENTS::OVERWRITE_EXISTING:
+                    {
+                        overwrite = true;
+                    }
                 default:
                     break;
             }
         }
+        if (!(overwrite || outputDir == "."))
+        {
+            if (!codeUtils::directoryIsEmptyOrNonexistent(outputDir))
+            {
+                throw std::runtime_error("Output directory '" + outputDir +
+                                         "' not empty. Please empty/remove it or run the program with the flag --" +
+                                         overwriteFlag);
+            }
+        }
+
         MolecularMetadata::SidechainRotamerData sidechainRotamers;
         {
             std::string basePath = (path.absolute ? "/" : "") +
