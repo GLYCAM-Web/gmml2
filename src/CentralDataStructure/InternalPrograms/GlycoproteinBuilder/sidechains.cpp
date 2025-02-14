@@ -149,7 +149,7 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
                                                                 const std::vector<size_t>& atomsB)
 {
     const std::vector<double>& residueWeight = data.defaultResidueWeight;
-    std::vector<cds::Overlap> result(graph.residueCount, {0.0, 0.0});
+    std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
     for (size_t n : atomsA)
     {
         for (size_t k : atomsB)

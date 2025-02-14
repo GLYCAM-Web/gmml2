@@ -79,7 +79,7 @@ namespace glycoproteinBuilder
                                                   const std::vector<bool>& includedAtoms, size_t glycanId)
     {
         const std::vector<size_t>& glycanLinkages = data.glycans.linkages[glycanId];
-        std::vector<cds::Overlap> result(graph.residueCount, {0.0, 0.0});
+        std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
         // skip first linkage as it connects to protein. We're only counting glycan atoms here
         for (size_t n = 1; n < glycanLinkages.size(); n++)
         {
@@ -108,7 +108,7 @@ namespace glycoproteinBuilder
         const cds::Sphere& boundsB = mutableData.moleculeBounds[moleculeB];
         if (!cds::spheresOverlap(overlapTolerance, boundsA, boundsB))
         {
-            return std::vector<cds::Overlap>(graph.residueCount, {0.0, 0.0});
+            return std::vector<cds::Overlap>(graph.atomCount, {0.0, 0.0});
         }
         else
         {
@@ -133,7 +133,7 @@ namespace glycoproteinBuilder
         const cds::Sphere& residueBounds  = mutableData.residueBounds[residue];
         if (!cds::spheresOverlap(data.overlapProperties.tolerance, moleculeBounds, residueBounds))
         {
-            return std::vector<cds::Overlap>(graph.residueCount, {0.0, 0.0});
+            return std::vector<cds::Overlap>(graph.atomCount, {0.0, 0.0});
         }
         else
         {
@@ -149,7 +149,7 @@ namespace glycoproteinBuilder
                                             const MutableData& mutableData, const std::vector<double>& residueWeights,
                                             const std::vector<bool>& includedAtoms, OverlapMultiplier overlapMultiplier)
     {
-        std::vector<cds::Overlap> result(graph.residueCount, {0.0, 0.0});
+        std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
         const std::vector<size_t> glycans = includedGlycanIndices(data, mutableData);
 
         for (size_t n : glycans)

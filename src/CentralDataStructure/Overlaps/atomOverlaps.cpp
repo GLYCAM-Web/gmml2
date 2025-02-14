@@ -86,7 +86,7 @@ std::vector<cds::Overlap> cds::CountOverlappingAtoms(
     const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
     const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
 {
-    std::vector<cds::Overlap> result(residueBounds.size(), {0.0, 0.0});
+    std::vector<cds::Overlap> result(atomBounds.size(), {0.0, 0.0});
     std::vector<size_t> indicesA;
     indicesA.reserve(64);
     std::vector<size_t> indicesB;
@@ -122,8 +122,8 @@ std::vector<cds::Overlap> cds::CountOverlappingAtoms(
                 for (size_t k : indicesB)
                 {
                     Overlap overlap = overlapAmount(properties, atomBounds[n], atomBounds[k]) * weight;
-                    result[aIndex]  += overlap;
-                    result[bIndex]  += overlap;
+                    result[n]       += overlap;
+                    result[k]       += overlap;
                 }
             }
         }

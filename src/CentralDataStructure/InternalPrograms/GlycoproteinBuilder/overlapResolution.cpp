@@ -395,13 +395,16 @@ namespace glycoproteinBuilder
             bool reject                              = false;
             if (settings.rejectExcessiveGlycanOverlaps)
             {
-                std::vector<cds::Overlap> overlaps = totalOverlaps(graph, data, mutableData, data.equalResidueWeight,
-                                                                   data.atoms.all, OverlapMultiplier {1.0, 1.0, 1.0});
+                std::vector<cds::Overlap> atomOverlaps =
+                    totalOverlaps(graph, data, mutableData, data.equalResidueWeight, data.atoms.all,
+                                  OverlapMultiplier {1.0, 1.0, 1.0});
                 for (size_t molecule : includedGlycanMoleculeIds(data, mutableData))
                 {
                     for (size_t residue : moleculeResidues(graph, molecule))
                     {
-                        reject = reject || (overlaps[residue].count >= settings.glycanOverlapRejectionThreshold);
+                        cds::Overlap overlaps = cds::overlapVectorSum(
+                            codeUtils::indicesToValues(atomOverlaps, residueAtoms(graph, residue)));
+                        reject = reject || ((overlaps.count * 2.0) >= settings.glycanOverlapRejectionThreshold);
                     }
                 }
             }
