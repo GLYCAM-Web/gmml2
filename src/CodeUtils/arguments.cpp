@@ -218,35 +218,29 @@ namespace codeUtils
         {
             return (req == ArgReq::optional) ? brackets : emptyBrace;
         };
-        std::string initial = "usage: " + programName + " ";
-        std::string indent(initial.size(), ' ');
-        size_t widthLimit = 60;
+        std::string initial     = "usage: " + programName + " ";
+        std::string indentBreak = "\n" + std::string(initial.size(), ' ');
         std::ostringstream ss;
+        bool firstLine = true;
         ss << initial;
-        size_t accum = 0;
         for (auto& def : defs)
         {
             if (def.type != ArgType::unnamed && def.requirement != ArgReq::hidden)
             {
-                if (accum >= widthLimit)
-                {
-                    ss << "\n" << indent;
-                    accum = 0;
-                }
+                ss << (firstLine ? "" : indentBreak);
+                firstLine                                 = false;
                 std::pair<std::string, std::string> brace = braceType(ArgReq::optional);
-                std::string str                           = brace.first + argHelpString(def) + brace.second;
-                ss << str << " ";
-                accum += str.size() + 1;
+                ss << brace.first + argHelpString(def) + brace.second;
             }
         }
-        ss << "\n" << indent;
         for (auto& def : defs)
         {
             if (def.type == ArgType::unnamed && def.requirement != ArgReq::hidden)
             {
+                ss << (firstLine ? "" : indentBreak);
+                firstLine                                 = false;
                 std::pair<std::string, std::string> brace = braceType(def.requirement);
-                std::string str                           = brace.first + def.nameOfValue + brace.second;
-                ss << str << " ";
+                ss << brace.first + def.nameOfValue + brace.second;
             }
         }
         ss << "\n";
