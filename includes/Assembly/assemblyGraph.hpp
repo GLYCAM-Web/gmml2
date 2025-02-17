@@ -2,6 +2,7 @@
 #define INCLUDES_ASSEMBLY_ASSEMBLYGRAPH_HPP
 
 #include "includes/Graph/graphTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 
@@ -31,6 +32,16 @@ namespace assembly
     {
         return graph.molecules.nodes.elements[moleculeId];
     };
+
+    inline std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
+    {
+        std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
+        {
+            return graph.residueMolecule[graph.atomResidue[n]] == moleculeId;
+        };
+        std::vector<bool> selected = codeUtils::vectorMap(inMolecule, graph.atoms.nodes.indices);
+        return codeUtils::boolsToIndices(selected);
+    }
 
     inline const std::vector<size_t>& assemblyMolecules(const Graph& graph, size_t assemblyId)
     {
