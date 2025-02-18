@@ -47,3 +47,4 @@ ATOM     45 H2O  0GA     2       6.739  16.385 -16.414  1.00  0.00           H
 TER
 CONECT   24    1
 CONECT    1   24
+END
