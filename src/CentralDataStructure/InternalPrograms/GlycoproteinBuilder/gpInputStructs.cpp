@@ -150,7 +150,9 @@ namespace glycoproteinBuilder
                     }
                     else if (parameter == prepareForMDParameter)
                     {
-                        gpInputs.MDprep = parseBool(value);
+                        bool b                = parseBool(value);
+                        gpInputs.MDprep       = b;
+                        gpInputs.writeOffFile = b;
                     }
                     else
                     {

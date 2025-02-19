@@ -380,7 +380,10 @@ namespace glycoproteinBuilder
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers,
                          mutableData.moleculeIncluded, noConnections, outputDir, "glycoprotein");
-            writeOffFile(graph, data, resolvedCoords, "glycoprotein");
+            if (settings.writeOffFile)
+            {
+                writeOffFile(graph, data, resolvedCoords, "glycoprotein");
+            }
             writePdbFile(graph, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir,
                          "glycoprotein_serialized");

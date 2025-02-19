@@ -30,6 +30,7 @@ namespace glycoproteinBuilder
         bool isDeterministic                    = false;
         uint64_t seed                           = 0;
         bool MDprep                             = true;
+        bool writeOffFile                       = true;
         std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
     };
 
