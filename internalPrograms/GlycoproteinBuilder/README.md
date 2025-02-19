@@ -39,7 +39,7 @@ usage: ./bin/gpBuilder [-h | --help]
 ```
 
 ### Setup
-Edit or create an input.txt file. See [gmml2/tests/tests/inputs/017.GlycoproteinBuilderInput.txt](../../tests/tests/inputs/017.GlycoproteinBuilderInput.txt) for an example.
+Edit or create an input.txt file. See [ExampleGlycoproteinBuilderInput.txt](../../tests/tests/inputs/ExampleGlycoproteinBuilderInput.txt) for an example.
 
 Required input:
 ```

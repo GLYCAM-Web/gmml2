@@ -1,3 +1,4 @@
+./017.test.GlycoproteinBuilder.sh Example tests/inputs/ExampleGlycoproteinBuilderInput.txt 017/example
 ./017.test.GlycoproteinBuilder.sh Standard tests/inputs/017.GlycoproteinBuilderInput.txt 017/standard
 ./017.test.GlycoproteinBuilder.sh Skip_MD_prep tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt 017/skipMdPrep
 ./017.test.GlycoproteinBuilder.sh Single_glycan tests/inputs/017.GlycoproteinBuilderInputSingleGlycan.txt 017/singleGlycan

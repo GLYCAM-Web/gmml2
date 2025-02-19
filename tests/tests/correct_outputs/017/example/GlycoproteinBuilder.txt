@@ -1,0 +1,5 @@
+Running in test mode
+Input file is tests/inputs/ExampleGlycoproteinBuilderInput.txt
+Reading input file complete, on to construction
+Resolving overlaps
+Program got to end ok
