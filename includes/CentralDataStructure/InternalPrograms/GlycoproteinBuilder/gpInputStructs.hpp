@@ -29,7 +29,7 @@ namespace glycoproteinBuilder
         ulong glycanOverlapRejectionThreshold   = 0;
         bool isDeterministic                    = false;
         uint64_t seed                           = 0;
-        bool skipMDPrep                         = false;
+        bool MDprep                             = true;
         std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
     };
 

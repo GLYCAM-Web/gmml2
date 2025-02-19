@@ -163,7 +163,7 @@ int main(int argc, char* argv[])
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
         pdb::PdbFile pdbFile(settings.substrateFileName);
-        if (!settings.skipMDPrep)
+        if (settings.MDprep)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
             pdbFile.PreProcess(pdb::PreprocessorOptions());

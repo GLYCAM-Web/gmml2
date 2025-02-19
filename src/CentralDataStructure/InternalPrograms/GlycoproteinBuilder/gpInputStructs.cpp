@@ -23,7 +23,7 @@ namespace glycoproteinBuilder
         static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
         static const std::string glycanOverlapRejectionThreshold             = "residueOverlapRejectionThreshold";
         static const std::string seedParameter                               = "seed";
-        static const std::string skipMDPrepParameter                         = "skipMDPrep";
+        static const std::string prepareForMDParameter                       = "prepareForMD";
         static const std::string glycanSectionParameter                      = "ProteinResidue, GlycanName";
         static const std::vector<std::string> requiredParameters             = {proteinParameter};
         std::vector<std::string> foundParameters                             = {};
@@ -148,9 +148,9 @@ namespace glycoproteinBuilder
                         gpInputs.isDeterministic = true;
                         gpInputs.seed            = parseUlong(value);
                     }
-                    else if (parameter == skipMDPrepParameter)
+                    else if (parameter == prepareForMDParameter)
                     {
-                        gpInputs.skipMDPrep = parseBool(value);
+                        gpInputs.MDprep = parseBool(value);
                     }
                     else
                     {
