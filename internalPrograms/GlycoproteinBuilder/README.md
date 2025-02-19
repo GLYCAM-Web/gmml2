@@ -39,7 +39,7 @@ usage: ./bin/gpBuilder [-h | --help]
 ```
 
 ### Setup
-Edit or create an input.txt file. See gmml2/tests/tests/inputs/017.GlycoproteinBuilderInput.txt for an example.
+Edit or create an input.txt file. See [gmml2/tests/tests/inputs/017.GlycoproteinBuilderInput.txt](../../tests/tests/inputs/017.GlycoproteinBuilderInput.txt) for an example.
 
 Required input:
 ```
@@ -64,6 +64,7 @@ Additional settings:
 | NumberOfOutputStructures | 1 | Each output structure is an independent sample of possible glycan shapes. Rotamers are randomized according to their statistical likelihood |
 | persistCycles | 5 | How long the algorithm persists in looking for a solution with a lower number of overlaps. Higher values take more time, but may yield better results |
 | seed | none | Using a specific seed will provide reproducible output across different computers and different runs. Delete this line for a random seed to be used |
+| prepareForMD | true | Recommended and likely necessary if you wish to run an energy minimization or MD simulation. An OFF file will be produced if this is turned on and successfully completes |
 | residueOverlapRejectionThreshold | none | Structures with one or more glycan residues having overlaps with this many atoms in other residues will be placed in a /rejected directory. Delete this line to not reject any structures |
 | atomOverlapTolerance | 0.6 | How much any pair of atoms are allowed to overlap into their vdW radii before the algorithm tries to separate them. Higher values are more permissive |
 | freezeGlycositeResidueConformation | false | Enable to preserve chi1 and chi2 angles of protein-glycan linkages according to their initial shape |
