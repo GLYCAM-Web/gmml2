@@ -133,6 +133,7 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
 {
     std::vector<size_t> potentialOverlaps =
         atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.all, residue);
+    restoreSidechainRotation(graph, data, mutableData, residue);
     cds::Overlap initialOverlap = cds::overlapVectorSum(
         sidechainOverlap(graph, data, mutableData.atomBounds, sidechainMovingAtoms(data, residue), potentialOverlaps));
     IndexedOverlap bestRotation =
@@ -140,6 +141,10 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
     if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
     {
         updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
+    }
+    else
+    {
+        restoreSidechainRotation(graph, data, mutableData, residue);
     }
 }
 
@@ -179,7 +184,7 @@ glycoproteinBuilder::lowestOverlapSidechainRotation(const MolecularMetadata::Sid
     std::vector<cds::Sphere> coords                 = mutableData.atomBounds;
     std::vector<cds::Overlap> overlaps;
     overlaps.reserve(rotations.size());
-    for (size_t n : preference)
+    for (size_t n = 0; n < rotations.size(); n++)
     {
         coords = mutableData.atomBounds;
         setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
