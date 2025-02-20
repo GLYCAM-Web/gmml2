@@ -65,6 +65,16 @@ std::vector<size_t> codeUtils::boolsToIndices(const std::vector<bool>& mask)
     return result;
 }
 
+std::vector<bool> codeUtils::groupContains(const std::vector<size_t>& group, const std::vector<size_t>& indices)
+{
+    std::vector<bool> result(group.size(), false);
+    for (size_t n : indices)
+    {
+        result[group[n]] = true;
+    }
+    return result;
+}
+
 std::vector<size_t> codeUtils::indexVectorWithOffset(size_t offset, size_t count)
 {
     std::vector<size_t> result;
