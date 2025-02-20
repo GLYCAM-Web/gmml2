@@ -115,7 +115,7 @@ namespace glycoproteinBuilder
                 cds::AngleOverlap best =
                     cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles, coordinates,
                                              codeUtils::indexVector(metadata), metadata, preference, input);
-                setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, best.angle);
+                setDihedralAngle(graph, data, mutableData, dihedralId, best.angle);
             }
         }
 
@@ -177,7 +177,7 @@ namespace glycoproteinBuilder
                                                  coordinates, index, dihedralMetadata[dihedralId], preference, input);
                     results[k][n]   = best.angle;
                     bestOverlaps[k] = best;
-                    setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, best.angle);
+                    setDihedralAngle(graph, data, mutableData, dihedralId, best.angle);
                 }
             }
             size_t bestIndex = cds::bestOverlapResultIndex(bestOverlaps);
@@ -185,7 +185,7 @@ namespace glycoproteinBuilder
             {
                 size_t dihedralId                 = dihedrals[n];
                 cds::AngleWithMetadata& bestShape = results[bestIndex][n];
-                setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, bestShape);
+                setDihedralAngle(graph, data, mutableData, dihedralId, bestShape);
             }
             cds::Overlap postOverlap = localOverlap(graph, data, mutableData, data.defaultResidueWeight, includedAtoms,
                                                     glycanId, overlapMultiplier.self);
@@ -194,7 +194,7 @@ namespace glycoproteinBuilder
                 for (size_t n = 0; n < dihedrals.size(); n++)
                 {
                     size_t dihedralId = dihedrals[n];
-                    setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, initialShape[n]);
+                    setDihedralAngle(graph, data, mutableData, dihedralId, initialShape[n]);
                 }
             }
         }
