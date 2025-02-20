@@ -68,8 +68,9 @@ namespace glycoproteinBuilder
     void setDihedralAngle(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                           size_t linkageId, size_t dihedralId, const cds::AngleWithMetadata& target)
     {
-        const RotatableDihedralIndices& dihedral      = data.indices.rotatableDihedrals[dihedralId];
-        std::array<cds::Coordinate, 4> dihedralCoords = dihedralCoordinates(data, mutableData, dihedralId);
+        mutableData.dihedralCurrentMetadata[dihedralId] = target.metadataIndex;
+        const RotatableDihedralIndices& dihedral        = data.indices.rotatableDihedrals[dihedralId];
+        std::array<cds::Coordinate, 4> dihedralCoords   = dihedralCoordinates(data, mutableData, dihedralId);
         auto matrix = cds::rotationTo(dihedralCoords, constants::toRadians(target.value));
         for (size_t atom : dihedral.movingAtoms)
         {

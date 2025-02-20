@@ -95,6 +95,7 @@ namespace glycoproteinBuilder
         std::vector<ResidueLinkageIndices> residueLinkages;
         std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
         std::vector<GlycamMetadata::DihedralAngleDataVector> dihedralMetadata;
+        std::vector<size_t> dihedralCurrentMetadata;
         std::vector<std::vector<cds::BondedResidueOverlapInput>> linkageOverlapBonds;
         std::vector<bool> linkageBranching;
         std::vector<bool> isGlycositeLinkage;
@@ -127,6 +128,7 @@ namespace glycoproteinBuilder
                         dihedralAtoms[i] = codeUtils::indexOf(atoms, dihedral.atoms[i]);
                     }
                     rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
+                    dihedralCurrentMetadata.push_back(dihedral.currentMetadataIndex);
                 }
                 auto onlyThisMolecule = [&](const std::vector<size_t>& indices)
                 {
@@ -312,8 +314,9 @@ namespace glycoproteinBuilder
                            equalResidueWeight};
 
         std::vector<bool> moleculeIncluded(graph.moleculeCount, true);
-        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds, moleculeIncluded,
-                                 std::vector<bool>(residues.size(), false)};
+        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres,
+                                 moleculeBounds,      dihedralCurrentMetadata,
+                                 moleculeIncluded,    std::vector<bool>(residues.size(), false)};
 
         return GlycoproteinAssembly {graph, data, mutableData};
     }
