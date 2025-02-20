@@ -89,10 +89,10 @@ namespace glycoproteinBuilder
             const std::vector<size_t>& residuesB = linkage.reducingResidues;
 
             std::vector<cds::BondedResidueOverlapInput> bonds = residueBonds(graph, residueA, residuesB[0]);
-            cds::addOverlapsTo(result,
-                               cds::CountOverlappingAtoms(data.overlapProperties, mutableData.atomBounds,
-                                                          mutableData.residueBounds, graph.residues.nodes.elements,
-                                                          residueWeights, includedAtoms, bonds, {residueA}, residuesB));
+            cds::addOverlapsTo(result, cds::CountOverlappingAtoms(
+                                           data.potentialTable, data.overlapProperties, mutableData.atomBounds,
+                                           mutableData.residueBounds, graph.residues.nodes.elements, residueWeights,
+                                           data.atoms.elementEnums, includedAtoms, bonds, {residueA}, residuesB));
         }
         return result;
     }
@@ -117,9 +117,9 @@ namespace glycoproteinBuilder
                 overlapTolerance, boundsB, mutableData.residueBounds, moleculeResidues(graph, moleculeA));
             std::vector<size_t> residuesB = cds::intersectingIndices(
                 overlapTolerance, boundsA, mutableData.residueBounds, moleculeResidues(graph, moleculeB));
-            return cds::CountOverlappingAtoms(data.overlapProperties, mutableData.atomBounds, mutableData.residueBounds,
-                                              graph.residues.nodes.elements, residueWeights, includedAtoms, bonds,
-                                              residuesA, residuesB);
+            return cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, mutableData.atomBounds,
+                                              mutableData.residueBounds, graph.residues.nodes.elements, residueWeights,
+                                              data.atoms.elementEnums, includedAtoms, bonds, residuesA, residuesB);
         }
     }
 
@@ -139,9 +139,10 @@ namespace glycoproteinBuilder
         {
             size_t residueMolecule                            = graph.residueMolecule[residue];
             std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graph, molecule, residueMolecule);
-            return cds::CountOverlappingAtoms(data.overlapProperties, mutableData.atomBounds, mutableData.residueBounds,
-                                              graph.residues.nodes.elements, residueWeights, includedAtoms, bonds,
-                                              {residue}, moleculeResidues(graph, molecule));
+            return cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, mutableData.atomBounds,
+                                              mutableData.residueBounds, graph.residues.nodes.elements, residueWeights,
+                                              data.atoms.elementEnums, includedAtoms, bonds, {residue},
+                                              moleculeResidues(graph, molecule));
         }
     }
 

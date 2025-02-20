@@ -29,10 +29,13 @@ namespace cds
                                             const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     Overlap CountOverlappingAtoms(OverlapProperties properties, const std::vector<Atom*>& atomsA,
                                   const std::vector<Atom*>& atomsB);
-    std::vector<Overlap> CountOverlappingAtoms(
-        OverlapProperties properties, const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
-        const std::vector<std::vector<size_t>>& residueAtoms, const std::vector<double>& residueWeights,
-        const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
-        const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
+    std::vector<Overlap>
+    CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
+                          const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
+                          const std::vector<std::vector<size_t>>& residueAtoms,
+                          const std::vector<double>& residueWeights,
+                          const std::vector<MolecularMetadata::Element>& atomElements,
+                          const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
+                          const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
 } // namespace cds
 #endif

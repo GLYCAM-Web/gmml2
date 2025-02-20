@@ -167,7 +167,8 @@ namespace
         residueBounds[residue] = cds::boundingSphere(firstCoords);
     }
 
-    cds::AngleOverlap WiggleAnglesOverlaps(cds::OverlapProperties overlapProperties,
+    cds::AngleOverlap WiggleAnglesOverlaps(const MolecularMetadata::PotentialTable& potential,
+                                           cds::OverlapProperties overlapProperties,
                                            const cds::DihedralCoordinates dihedral, size_t metadataIndex,
                                            double anglePreference, std::vector<double> angles,
                                            const cds::DihedralRotationData& input)
@@ -199,8 +200,8 @@ namespace
                     matrix * input.residueBounds[movingResidueIndices[n]].center;
             }
             cds::Overlap overlaps = cds::overlapVectorSum(cds::CountOverlappingAtoms(
-                overlapProperties, atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
-                input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices));
+                potential, overlapProperties, atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
+                input.atomElements, input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices));
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -290,6 +291,7 @@ cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihed
         atomMoving,
         atomIncluded,
         atomBounds,
+        cds::atomElementEnums(atoms),
         residueBounds,
         residueWeights,
         residueAtoms,
@@ -299,7 +301,8 @@ cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihed
     };
 }
 
-cds::AngleOverlap cds::wiggleUsingRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
+cds::AngleOverlap cds::wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
+                                           cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                            const cds::DihedralCoordinates coordinates,
                                            const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
                                            const AngleSearchPreference& preference,
@@ -322,10 +325,11 @@ cds::AngleOverlap cds::wiggleUsingRotamers(cds::OverlapProperties overlapPropert
         std::vector<AngleOverlap> results;
         for (size_t n : preference.metadataOrder)
         {
-            double angle      = preference.angles[n];
-            double deviation  = preference.deviation;
-            AngleOverlap best = WiggleAnglesOverlaps(overlapProperties, coordinates, indices[n], preference.angles[n],
-                                                     searchAngles(rotamers[n], angle, deviation), input);
+            double angle     = preference.angles[n];
+            double deviation = preference.deviation;
+            AngleOverlap best =
+                WiggleAnglesOverlaps(potential, overlapProperties, coordinates, indices[n], preference.angles[n],
+                                     searchAngles(rotamers[n], angle, deviation), input);
             // found something with no overlaps
             // if metadata and angles are sorted in order of preference, we can quit here
             if (best.overlaps.count <= 0.0)
@@ -338,7 +342,8 @@ cds::AngleOverlap cds::wiggleUsingRotamers(cds::OverlapProperties overlapPropert
     }
 }
 
-void cds::simpleWiggleCurrentRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
+void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential,
+                                      cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                       std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
                                       const std::vector<AngleSearchPreference>& preference,
@@ -352,17 +357,14 @@ void cds::simpleWiggleCurrentRotamers(cds::OverlapProperties overlapProperties, 
         DihedralRotationDataContainer input =
             dihedralRotationInputData(overlapProperties.tolerance, dihedral, residues);
         DihedralRotationData inputPointers {
-            input.atomMoving,
-            input.atomIncluded,
-            input.atomBounds,
-            input.residueBounds,
-            input.residueWeights,
-            input.residueAtoms,
-            {input.residueIndices[0], input.residueIndices[1]},
+            input.atomMoving,    input.atomIncluded,
+            input.atomBounds,    input.atomElements,
+            input.residueBounds, input.residueWeights,
+            input.residueAtoms,  {input.residueIndices[0], input.residueIndices[1]},
             input.bonds
         };
-        auto best = wiggleUsingRotamers(overlapProperties, searchAngles, coordinates, index, metadata[n], preference[n],
-                                        inputPointers);
+        auto best = wiggleUsingRotamers(potential, overlapProperties, searchAngles, coordinates, index, metadata[n],
+                                        preference[n], inputPointers);
         setDihedralAngle(dihedral, best.angle);
     }
 }

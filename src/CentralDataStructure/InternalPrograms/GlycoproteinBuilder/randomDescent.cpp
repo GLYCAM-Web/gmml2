@@ -102,14 +102,18 @@ namespace glycoproteinBuilder
                 const std::array<cds::Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData, dihedralId);
                 PartialDihedralRotationData partial =
                     toRotationInputData(graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
-                cds::DihedralRotationData input {
-                    partial.atomMoving,     includedAtoms,
-                    mutableData.atomBounds, mutableData.residueBounds,
-                    partial.residueWeights, graph.residues.nodes.elements,
-                    partial.residueIndices, data.residueLinkageData.overlapBonds[linkageId]};
+                cds::DihedralRotationData input {partial.atomMoving,
+                                                 includedAtoms,
+                                                 mutableData.atomBounds,
+                                                 data.atoms.elementEnums,
+                                                 mutableData.residueBounds,
+                                                 partial.residueWeights,
+                                                 graph.residues.nodes.elements,
+                                                 partial.residueIndices,
+                                                 data.residueLinkageData.overlapBonds[linkageId]};
                 const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
                 cds::AngleOverlap best =
-                    cds::wiggleUsingRotamers(data.overlapProperties, settings.angles, coordinates,
+                    cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles, coordinates,
                                              codeUtils::indexVector(metadata), metadata, preference, input);
                 setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, best.angle);
             }
@@ -149,14 +153,18 @@ namespace glycoproteinBuilder
 
                     PartialDihedralRotationData partial = toRotationInputData(
                         graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
-                    cds::DihedralRotationData input {
-                        partial.atomMoving,     includedAtoms,
-                        mutableData.atomBounds, mutableData.residueBounds,
-                        partial.residueWeights, graph.residues.nodes.elements,
-                        partial.residueIndices, data.residueLinkageData.overlapBonds[linkageId]};
+                    cds::DihedralRotationData input {partial.atomMoving,
+                                                     includedAtoms,
+                                                     mutableData.atomBounds,
+                                                     data.atoms.elementEnums,
+                                                     mutableData.residueBounds,
+                                                     partial.residueWeights,
+                                                     graph.residues.nodes.elements,
+                                                     partial.residueIndices,
+                                                     data.residueLinkageData.overlapBonds[linkageId]};
                     cds::AngleOverlap best =
-                        cds::wiggleUsingRotamers(data.overlapProperties, settings.angles, coordinates, index,
-                                                 dihedralMetadata[dihedralId], preference, input);
+                        cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles,
+                                                 coordinates, index, dihedralMetadata[dihedralId], preference, input);
                     results[k][n]   = best.angle;
                     bestOverlaps[k] = best;
                     setDihedralAngle(graph, data, mutableData, linkageId, dihedralId, best.angle);

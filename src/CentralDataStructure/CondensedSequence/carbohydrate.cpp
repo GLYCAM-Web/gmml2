@@ -253,10 +253,10 @@ namespace
             auto weights  = std::vector<double> {1.0};
             return cds::ResiduesWithOverlapWeight {residues, weights};
         };
-        cds::simpleWiggleCurrentRotamers({constants::clashWeightBase, constants::overlapTolerance},
-                                         searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
-                                         searchPreference,
-                                         {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
+        cds::simpleWiggleCurrentRotamers(
+            MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference,
+            {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
@@ -516,8 +516,8 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
         auto preference = cds::angleSearchPreference(
             searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
         cds::simpleWiggleCurrentRotamers(
-            {constants::clashWeightBase, constants::overlapTolerance}, searchSettings.angles,
-            linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+            MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
             {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;

@@ -36,6 +36,7 @@ namespace glycoproteinBuilder
         std::vector<int> serializedNumbers;
         std::vector<int> atomicNumbers;
         std::vector<std::string> elements;
+        std::vector<MolecularMetadata::Element> elementEnums;
         std::vector<double> charges;
         std::vector<cds::Sphere> initialState;
         std::vector<bool> partOfMovableSidechain;
@@ -122,6 +123,7 @@ namespace glycoproteinBuilder
         RotatableDihedralData rotatableDihedralData;
         ResidueLinkageData residueLinkageData;
         AssemblyIndices indices;
+        MolecularMetadata::PotentialTable potentialTable;
         cds::OverlapProperties overlapProperties;
         std::vector<double> defaultResidueWeight;
         std::vector<double> equalResidueWeight;

@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <array>
@@ -29,6 +30,7 @@ namespace cds
         std::vector<bool> atomMoving;
         std::vector<bool> atomIncluded;
         std::vector<Sphere> atomBounds;
+        std::vector<MolecularMetadata::Element> atomElements;
         std::vector<Sphere> residueBounds;
         std::vector<double> residueWeights;
         std::vector<std::vector<size_t>> residueAtoms;
@@ -41,6 +43,7 @@ namespace cds
         const std::vector<bool>& atomMoving;
         const std::vector<bool>& atomIncluded;
         const std::vector<Sphere>& atomBounds;
+        const std::vector<MolecularMetadata::Element>& atomElements;
         const std::vector<Sphere>& residueBounds;
         const std::vector<double>& residueWeights;
         const std::vector<std::vector<size_t>>& residueAtoms;
@@ -67,11 +70,13 @@ namespace cds
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
     DihedralRotationDataContainer dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
                                                             const std::array<ResiduesWithOverlapWeight, 2>& residues);
-    AngleOverlap wiggleUsingRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
+    AngleOverlap wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
+                                     cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                      const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
                                      const DihedralAngleDataVector& rotamers, const AngleSearchPreference& preference,
                                      const DihedralRotationData& input);
-    void simpleWiggleCurrentRotamers(cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
+    void simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential,
+                                     cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                      std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,

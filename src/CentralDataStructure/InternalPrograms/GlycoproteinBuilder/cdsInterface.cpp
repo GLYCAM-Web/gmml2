@@ -12,6 +12,7 @@
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <array>
 #include <vector>
@@ -181,12 +182,15 @@ namespace glycoproteinBuilder
         std::vector<std::string> atomNames           = cds::atomNames(atoms);
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
         std::vector<bool> partOfMovableSidechain(atoms.size(), false);
+        std::vector<Element> atomElementEnums = cds::atomElementEnums(atoms);
+        MolecularMetadata::validateElementsInPotentialTable(MolecularMetadata::potentialTable(), atomElementEnums);
         AtomData atomData {atomNames,
                            cds::atomTypes(atoms),
                            cds::atomNumbers(atoms),
                            cds::serializedNumberVector(atoms.size()),
                            cds::atomAtomicNumbers(atoms),
                            cds::atomElements(atoms),
+                           atomElementEnums,
                            cds::atomCharges(atoms),
                            atomBoundingSpheres,
                            partOfMovableSidechain,
@@ -200,7 +204,6 @@ namespace glycoproteinBuilder
         std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
         std::vector<double> phiAngles(residues.size(), 0.0);
         std::vector<double> psiAngles(residues.size(), 0.0);
-        std::vector<Element> atomElementEnums          = cds::atomElementEnums(atoms);
         std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
         {
             return atomElementEnums[n] != Element::H;
@@ -296,9 +299,16 @@ namespace glycoproteinBuilder
 
         std::vector<double> equalResidueWeight(residues.size(), 1.0);
 
-        AssemblyData data {atomData,          residueData,           moleculeData,
-                           GlycanData,        rotatableDihedralData, residueLinkageData,
-                           indices,           overlapProperties,     defaultResidueOverlapWeight,
+        AssemblyData data {atomData,
+                           residueData,
+                           moleculeData,
+                           GlycanData,
+                           rotatableDihedralData,
+                           residueLinkageData,
+                           indices,
+                           MolecularMetadata::potentialTable(),
+                           overlapProperties,
+                           defaultResidueOverlapWeight,
                            equalResidueWeight};
 
         std::vector<bool> moleculeIncluded(graph.moleculeCount, true);

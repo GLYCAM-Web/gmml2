@@ -10,14 +10,15 @@ int cds::compareOverlaps(const Overlap& a, const Overlap& b)
     return (std::fabs(a.weight - b.weight) <= 1e-10) ? 0 : ((a.weight > b.weight) ? 1 : -1);
 }
 
-cds::Overlap cds::overlapAmount(const OverlapProperties properties, const Sphere& a, const Sphere& b)
+cds::Overlap cds::overlapAmount(double tolerance, double scale, const Sphere& a, const Sphere& b)
 {
-    double cutoff     = std::max(0.0, a.radius + b.radius - properties.tolerance);
-    double sqDist     = squaredDistance(a.center, b.center);
-    double weightBase = properties.weightBase;
+    double cutoff = std::max(0.0, a.radius + b.radius - tolerance);
+    double sqDist = squaredDistance(a.center, b.center);
     if (sqDist < cutoff * cutoff)
     {
-        return Overlap {1.0, weightBase / (weightBase + sqDist)};
+        double pow4  = sqDist * sqDist;
+        double pow12 = pow4 * pow4 * pow4;
+        return Overlap {1.0, scale / (std::numeric_limits<double>::epsilon() + pow12)};
     }
     else
     {
