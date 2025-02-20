@@ -4,8 +4,6 @@ NumberOfOutputStructures:2
 
 persistCycles:5
 
-prepareForMD:false
-
 seed:0
 
 ProteinResidue, GlycanName:

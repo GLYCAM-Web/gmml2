@@ -1,5 +1,7 @@
 Protein:tests/inputs/017c.JRFL.B99990001.pdb
 
+prepareForMD:true
+
 NumberOfOutputStructures:1
 
 persistCycles:5

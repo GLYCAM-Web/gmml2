@@ -1,5 +1,7 @@
 Protein:tests/inputs/017.1eer_eop_Asn.pdb
 
+prepareForMD:true
+
 NumberOfOutputStructures:2
 
 persistCycles:5

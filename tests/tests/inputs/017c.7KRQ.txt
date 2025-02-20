@@ -1,5 +1,7 @@
 Protein:tests/inputs/7KRQ.pdb
 
+prepareForMD:true
+
 NumberOfOutputStructures:0
 
 persistCycles:5
