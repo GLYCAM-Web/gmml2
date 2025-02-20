@@ -88,10 +88,16 @@ namespace glycoproteinBuilder
                 coord                  = matrix * coord;
             }
         }
-        for (size_t n : residueIds)
+        std::vector<bool> updateResidue = residueMoving;
+        std::vector<bool> updateMolecule(graph.moleculeCount, false);
+        for (size_t n : codeUtils::boolsToIndices(updateResidue))
         {
-            mutableData.residueBounds[n] =
-                cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graph, n)));
+            updateMolecule[graph.residueMolecule[n]] = true;
+            updateResidueBounds(graph, mutableData, n);
+        }
+        for (size_t n : codeUtils::boolsToIndices(updateMolecule))
+        {
+            updateMoleculeBounds(graph, mutableData, n);
         }
     }
 
