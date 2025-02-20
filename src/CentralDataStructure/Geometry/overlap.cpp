@@ -7,14 +7,7 @@
 
 int cds::compareOverlaps(const Overlap& a, const Overlap& b)
 {
-    if (std::round(a.count) == std::round(b.count))
-    {
-        return (std::fabs(a.weight - b.weight) <= 1e-10) ? 0 : ((a.weight > b.weight) ? 1 : -1);
-    }
-    else
-    {
-        return a.count - b.count;
-    }
+    return (std::fabs(a.weight - b.weight) <= 1e-10) ? 0 : ((a.weight > b.weight) ? 1 : -1);
 }
 
 cds::Overlap cds::overlapAmount(const OverlapProperties properties, const Sphere& a, const Sphere& b)
