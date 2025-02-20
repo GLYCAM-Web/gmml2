@@ -1,6 +1,4 @@
 #!/bin/bash
-printf "Testing 023.carbohydrateBuilder... "
-
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
 BIN_PATH=${GMML_ROOT_DIR}/bin/carbohydrateBuilder
 
@@ -9,51 +7,34 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-rm -r 023.outputs/ >/dev/null 2>&1
-mkdir 023.outputs/
-eval "${BIN_PATH} tests/inputs/023.smallLibrary.txt _ 023.outputs >023.output_carbohydrateBuilder.txt 2>&1"
+input=$1
+directory=$2
+output="output/${directory}"
 
-for i in $(cut -d _ -f1 tests/inputs/023.smallLibrary.txt); do
-    if [ -f 023.outputs/"${i}".pdb ]; then
-        echo "${i}.pdb succesfully created." >>023.output_carbohydrateBuilder.txt
-        if ! cmp 023.outputs/"${i}".pdb tests/correct_outputs/023.outputs/"${i}".pdb >/dev/null 2>&1; then
-            echo "Test FAILED! Created pdb file 023.outputs/${i}.pdb is different from tests/correct_outputs/023.outputs/${i}.pdb"
-            echo "Exit Code: 1"
-            return 1
-        fi
-    else
-        echo "${i}.pdb not created." >>023.output_carbohydrateBuilder.txt
-        if [ -f tests/correct_outputs/023.outputs/"${i}".pdb ]; then
-            echo "Test FAILED! Did not create ${i}.pdb, yet it exists in tests/correct_outputs/023.outputs/${i}.pdb"
-            echo "Exit Code: 1"
-            return 1
-        fi
-    fi
-done
-for i in $(cut -d _ -f1 tests/inputs/023.smallLibrary.txt); do
-    if [ -f 023.outputs/"${i}".off ]; then
-        echo "${i}.off succesfully created." >>023.output_carbohydrateBuilder.txt
-        if ! cmp 023.outputs/"${i}".off tests/correct_outputs/023.outputs/"${i}".off >/dev/null 2>&1; then
-            echo "Test FAILED! Created off file 023.outputs/${i}.off is different from tests/correct_outputs/023.outputs/${i}.off"
-            echo "Exit Code: 1"
-            return 1
-        fi
-    else
-        echo "${i}.off not created." >>023.output_carbohydrateBuilder.txt
-        if [ -f tests/correct_outputs/023.outputs/"${i}".off ]; then
-            echo "Test FAILED! Did not create ${i}.off, yet it exists in tests/correct_outputs/023.outputs/${i}.off"
-            echo "Exit Code: 1"
-            return 1
-        fi
-    fi
-done
-if ! cmp 023.output_carbohydrateBuilder.txt tests/correct_outputs/023.output_carbohydrateBuilder.txt >/dev/null 2>&1; then
-    printf "Test FAILED! Output file %s different from %s \n" 023.output_carbohydrateBuilder.txt tests/correct_outputs/023.output_carbohydrateBuilder.txt
+echo -n "Testing 023 carbohydrateBuilder..."
+rm -r "${output}" >/dev/null 2>&1
+mkdir -p ${output}
+"${BIN_PATH}" "${input}" "_" "${output}" "--test-mode" > "${output}"/carbohydrateBuilder.txt 2>&1
+
+expected="tests/correct_outputs/${directory}"
+
+if [ ! -d "${expected}" ]; then
+    echo "Test FAILED"
+    echo "directory ${expected} does not exist"
     echo "Exit Code: 1"
     return 1
-else
-    printf "Test passed.\n"
-    rm -r 023.outputs/ 023.output_carbohydrateBuilder.txt
-    echo "Exit Code: 0"
-    return 0
 fi
+# note: if diff starts being slow, consider comparing checksums of directory contents instead
+DIFF=$(diff -qr "${output}" "${expected}")
+if [ "$DIFF" ]
+then
+    echo "Test FAILED"
+    echo "${DIFF}"
+    echo "Exit Code: 1"
+    return 1
+fi
+
+rm -r "${output}" >/dev/null 2>&1
+printf "Test passed.\n"
+echo "Exit Code: 0"
+return 0

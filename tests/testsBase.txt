@@ -2,11 +2,11 @@
 ./019.test.newPDBClass.sh
 ./020.test.parameterFiles.sh
 ./022.test.libraryFileReader.sh
-./023.test.carbohydrateBuilder.sh
+./023.test.carbohydrateBuilder.sh tests/inputs/023.smallLibrary.txt 023
 ./024.test.wiggleToSite.sh
 ./026.test.editPdbFile.sh
 ./027.test.glycamResidueCombinator.sh
-./028.test.cdsCarbBuilderAll.sh
+./028.test.cdsCarbBuilderAll.sh tests/inputs/023.smallLibrary.txt 028
 ./030.test.gmPreProcessor.sh
 ./031.test.iupac.sh
 ./016.test.DrawGlycan.sh 01.dot DTalp[2S,3Me]a1-6DManpa1-6[DAllpb1-3][DNeup5Aca2-6DGalpb1-4DGlcp[3S]b1-2DAltpa1-4]DManpb1-4DGulp[6Me]b1-4DGlcpNAcb1-OH
