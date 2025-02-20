@@ -28,7 +28,7 @@ using gmmlPrograms::WiggleToSite;
 WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     : substrate_(inputStruct.substrateFile_), carbohydrate_(inputStruct.carbohydrateSequence_)
 {
-    this->getCarbohydrate().Generate3DStructureFiles("./", "initial");
+    this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
     const Residue* superimpositionTarget = pdb::residueSelector(
         this->getSubstrate(), inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
     const Residue* wigglingTarget = pdb::residueSelector(this->getSubstrate(), inputStruct.wigglingTargetResidue_,
@@ -47,7 +47,7 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     Residue* wiggleMe      = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
                                                               inputStruct.carbohydrateWigglingResidue_);
     this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
-    this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed");
+    this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed", {});
     this->determineWiggleLinkages(superimposeMe, wiggleMe);
     std::vector<cds::Atom*> substrateWithoutSuperimpositionAtoms = codeUtils::findElementsNotInVector(
         pdb::getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
@@ -69,7 +69,7 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     this->setCurrentDistance(this->calculateDistance());
     int structureCount = this->minimizeDistance(inputStruct.persistCycles_, !inputStruct.isDeterministic_);
     this->minimizeDistance(inputStruct.persistCycles_, false, structureCount);
-    this->getCarbohydrate().Generate3DStructureFiles("./", "finished");
+    this->getCarbohydrate().Generate3DStructureFiles("./", "finished", {});
 }
 
 int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int structureCount)

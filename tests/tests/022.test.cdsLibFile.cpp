@@ -32,7 +32,7 @@ int main()
     {
         outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices = cds::toIndexData({&libFile});
-        cds::WritePdb(outFileStream, indices);
+        cds::WritePdb(outFileStream, indices, {});
         outFileStream.close();
     }
     catch (...)

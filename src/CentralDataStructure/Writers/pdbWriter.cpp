@@ -89,7 +89,7 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
     }
 }
 
-void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
+void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices, const std::vector<std::string>& headerLines)
 {
     std::vector<bool> includedAtoms       = cds::atomVisibility(indices.atoms);
     assembly::Graph graph                 = createAssemblyGraph(indices, includedAtoms);
@@ -97,6 +97,10 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices)
     std::vector<ResidueType> types        = residueTypes(residues);
     std::vector<bool> ter                 = residueTER(types);
     PdbFileData data                      = toPdbFileData(indices);
+    for (auto& line : headerLines)
+    {
+        stream << "HEADER    " << line << "\n";
+    }
     cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, data);
     std::vector<bool> selectedResidueTypes(ResidueTypeCount, false);
     for (auto type : {Sugar, Derivative, Aglycone, Undefined})

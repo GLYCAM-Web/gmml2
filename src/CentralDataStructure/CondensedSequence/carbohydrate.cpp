@@ -386,7 +386,8 @@ void Carbohydrate::replaceAglycone(cds::Residue* newAglycone)
 //////////////////////////////////////////////////////////
 // std::string fileOutputDirectory = "unspecified", std::string fileType = "PDB", std::string outputFileNaming =
 // "structure"
-void Carbohydrate::Generate3DStructureFiles(std::string fileOutputDirectory, std::string outputFileNaming)
+void Carbohydrate::Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming,
+                                            const std::vector<std::string>& headerLines)
 { // ToDo exception handling in centralized function for writing pdb/off
     // Build the filename and path, add appropriate suffix later
     try
@@ -405,7 +406,7 @@ void Carbohydrate::Generate3DStructureFiles(std::string fileOutputDirectory, std
         std::ofstream outFileStream;
         outFileStream.open(completeFileName.c_str());
         cds::GraphIndexData indices = cds::toIndexData({this});
-        WritePdb(outFileStream, indices);
+        WritePdb(outFileStream, indices, headerLines);
         outFileStream.close();
         // Off file
         completeFileName = PathAndFileName + ".off";

@@ -6,6 +6,7 @@
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/version.h"
 
 #include <vector>
 #include <string>
@@ -48,8 +49,15 @@ catch (...)
 void carbohydrateBuilder::GenerateSingle3DStructureDefaultFiles(std::string fileOutputDirectory,
                                                                 std::string outputFileNaming)
 {
-    this->carbohydrate_.Generate3DStructureFiles(fileOutputDirectory, outputFileNaming);
-    return;
+    this->Generate3DStructureFiles(fileOutputDirectory, outputFileNaming);
+}
+
+void carbohydrateBuilder::Generate3DStructureFiles(const std::string& fileOutputDirectory,
+                                                   const std::string& outputFileNaming)
+{
+    std::vector<std::string> headerLines {"Produced by GMML (https://github.com/GLYCAM-Web/gmml2)  version " +
+                                          std::string(GMML_VERSION)};
+    this->carbohydrate_.Generate3DStructureFiles(fileOutputDirectory, outputFileNaming, headerLines);
 }
 
 void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::SingleRotamerInfoVector conformerInfo,
@@ -79,7 +87,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
     }
     std::string fileName = "structure";
     this->carbohydrate_.ResolveOverlaps(cdsCondensedSequence::defaultSearchSettings);
-    this->carbohydrate_.Generate3DStructureFiles(fileOutputDirectory, fileName);
+    this->Generate3DStructureFiles(fileOutputDirectory, fileName);
     return;
 }
 
@@ -173,7 +181,7 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
             // Check for issues? Resolve
             // Figure out name of file:
             // http://128.192.9.183/eln/gwscratch/2020/01/10/succinct-rotamer-set-labeling-for-sequences/ Write PDB file
-            this->carbohydrate_.Generate3DStructureFiles(".", std::to_string(rotamerCount));
+            this->Generate3DStructureFiles(".", std::to_string(rotamerCount));
             // }
         }
     }

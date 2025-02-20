@@ -65,8 +65,8 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        void Generate3DStructureFiles(std::string fileOutputDirectory = "unspecified",
-                                      std::string outputFileNaming    = "structure");
+        void Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming,
+                                      const std::vector<std::string>& headerLines);
         void ResolveOverlaps(const cds::AngleSearchSettings& searchSettings);
         unsigned long int CountShapes(bool likelyShapesOnly = false) const;
         std::string GetNumberOfShapes(

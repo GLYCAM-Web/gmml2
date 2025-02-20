@@ -74,7 +74,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
-        const cdsCondensedSequence::Carbohydrate& GetCarbohydrate() const
+        cdsCondensedSequence::Carbohydrate& GetCarbohydrate()
         {
             return carbohydrate_;
         }
@@ -88,6 +88,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void GenerateSingle3DStructureDefaultFiles(std::string fileOutputDirectory = "unspecified",
                                                    std::string outputFileNaming    = "structure");
+        void Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming);
         LinkageOptionsVector GenerateUserOptionsDataStruct();
         void GenerateSpecific3DStructure(SingleRotamerInfoVector conformerInfo,
                                          std::string fileOutputDirectory = "unspecified");

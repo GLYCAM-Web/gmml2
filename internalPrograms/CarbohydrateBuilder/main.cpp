@@ -147,7 +147,7 @@ int main(int argc, char** argv)
                 std::cout << "\n*********************\nBuilding " << inputSequence << "\n*********************\n";
                 cdsCondensedSequence::carbohydrateBuilder carbBuilder(inputSequence);
                 std::string inputGlycanID = splitLine.at(0);
-                carbBuilder.GenerateSingle3DStructureDefaultFiles(outputDir, inputGlycanID);
+                carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputDir, inputGlycanID, headerLines);
             }
             catch (const std::runtime_error& error)
             {

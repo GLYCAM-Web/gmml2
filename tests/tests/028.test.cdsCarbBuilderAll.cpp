@@ -84,7 +84,8 @@ int main(int argc, char** argv)
                     std::cout << "\n";
                 }
             }
-            carbBuilder.GenerateSingle3DStructureDefaultFiles(outputFolderName, inputGlycanID);
+            std::vector<std::string> headerLines {"Produced by GMML carb builder all test"};
+            carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputFolderName, inputGlycanID, headerLines);
         }
         catch (const std::runtime_error& error)
         {
