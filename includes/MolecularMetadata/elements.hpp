@@ -2,6 +2,7 @@
 #define INCLUDES_MOLECULARMETADATA_ELEMENTS_HPP
 
 #include <string>
+#include <vector>
 
 namespace MolecularMetadata
 {
@@ -129,9 +130,20 @@ namespace MolecularMetadata
         ElementCount = 119
     };
 
+    struct PotentialTable
+    {
+        std::vector<double> epsilon;
+        std::vector<bool> hasEpsilon;
+        std::vector<double> sigma;
+        std::vector<bool> hasSigma;
+    };
+
     Element toElement(const std::string& str);
     const std::string& elementName(Element element);
     double vanDerWaalsRadius(Element element);
+    const PotentialTable& potentialTable();
+    void validateElementsInPotentialTable(const PotentialTable& potential, const std::vector<Element>& vec);
+    double potentialWeight(const PotentialTable& table, Element a, Element b);
     Element findElementAtomicNumber(const std::string& queryElement);
 } // namespace MolecularMetadata
 #endif
