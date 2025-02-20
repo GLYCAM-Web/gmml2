@@ -159,19 +159,6 @@ namespace glycoproteinBuilder
                 wiggleGlycan(graph, data, mutableData, data.atoms.all, glycanId, searchSettings, overlapMultiplier,
                              glycositePreferences[glycanId]);
             }
-            for (size_t residue : residues)
-            {
-                restoreSidechainRotation(graph, data, mutableData, residue);
-            }
-            std::vector<size_t> allGlycans = includedGlycanIndices(data, mutableData);
-            for (size_t n = 0; n < residues.size(); n++)
-            {
-                if (sidechainHasGlycanOverlap(graph, data, mutableData, allGlycans, residues[n]))
-                {
-                    setSidechainToLowestOverlapState(sidechainRotamers, graph, data, mutableData, preferences[n],
-                                                     residues[n]);
-                }
-            }
         };
 
         SidechainAdjustment restoreSidechains =
