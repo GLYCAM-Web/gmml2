@@ -6,7 +6,6 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
@@ -297,7 +296,13 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
         };
         OverlapState best = wiggleUsingRotamers(potential, overlapProperties, searchAngles, coordinates, index,
                                                 metadata[n], preference[n], inputPointers);
-        setDihedralAngle(dihedral, best.angle);
+        for (size_t n = 0; n < input.graph.atomCount; n++)
+        {
+            if (input.atomMoving[n])
+            {
+                indices.atoms[n]->setCoordinate(best.bounds.atoms[n].center);
+            }
+        }
     }
 }
 

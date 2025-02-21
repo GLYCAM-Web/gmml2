@@ -135,16 +135,9 @@ namespace glycoproteinBuilder
             const std::vector<bool>& isFrozen                                 = shapePreference.isFrozen;
             std::vector<cds::OverlapState> bestResults;
             bestResults.resize(numberOfMetadata);
-            std::vector<size_t> index = codeUtils::indexVector(dihedralMetadata[dihedrals[0]]);
-            size_t initialMetadata    = mutableData.dihedralCurrentMetadata[dihedrals[0]];
-            std::vector<cds::AngleWithMetadata> initialShape(dihedrals.size(), {0.0, 0.0, 0});
-            for (size_t n = 0; n < dihedrals.size(); n++)
-            {
-                std::array<cds::Coordinate, 4> dihedralCoords =
-                    dihedralCoordinates(data, mutableData.bounds, dihedrals[n]);
-                double angle    = constants::toDegrees(cds::angle(dihedralCoords));
-                initialShape[n] = {angle, angle, initialMetadata};
-            }
+            std::vector<size_t> index      = codeUtils::indexVector(dihedralMetadata[dihedrals[0]]);
+            size_t initialMetadata         = mutableData.dihedralCurrentMetadata[dihedrals[0]];
+            assembly::Bounds initialBounds = mutableData.bounds;
             for (size_t k = 0; k < numberOfMetadata; k++)
             {
                 std::vector<size_t> order = {shapePreference.metadataOrder[k]};
@@ -173,24 +166,24 @@ namespace glycoproteinBuilder
                     cds::OverlapState best =
                         cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles,
                                                  coordinates, index, dihedralMetadata[dihedralId], preference, input);
-                    bestResults[k] = best;
-                    setDihedralAngle(graph, data, mutableData, dihedralId, best.angle);
+                    bestResults[k]     = best;
+                    mutableData.bounds = best.bounds;
                 }
             }
             size_t bestIndex   = cds::bestOverlapResultIndex(bestResults);
             mutableData.bounds = bestResults[bestIndex].bounds;
             for (size_t n = 0; n < dihedrals.size(); n++)
             {
-                mutableData.dihedralCurrentMetadata[n] = bestResults[bestIndex].angle.metadataIndex;
+                mutableData.dihedralCurrentMetadata[dihedrals[n]] = bestResults[bestIndex].angle.metadataIndex;
             }
             cds::Overlap postOverlap = localOverlap(graph, data, mutableData, data.defaultResidueWeight, includedAtoms,
                                                     glycanId, overlapMultiplier.self);
             if (cds::compareOverlaps(postOverlap, initialOverlap) > 0)
             {
+                mutableData.bounds = initialBounds;
                 for (size_t n = 0; n < dihedrals.size(); n++)
                 {
-                    size_t dihedralId = dihedrals[n];
-                    setDihedralAngle(graph, data, mutableData, dihedralId, initialShape[n]);
+                    mutableData.dihedralCurrentMetadata[dihedrals[n]] = initialMetadata;
                 }
             }
         }
