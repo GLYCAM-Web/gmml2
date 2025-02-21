@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 
 #include <vector>
 #include <utility>
@@ -31,8 +33,7 @@ namespace cds
                                   const std::vector<Atom*>& atomsB);
     std::vector<Overlap>
     CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
-                          const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
-                          const std::vector<std::vector<size_t>>& residueAtoms,
+                          const assembly::Graph& graph, const assembly::Bounds& bounds,
                           const std::vector<double>& residueWeights,
                           const std::vector<MolecularMetadata::Element>& atomElements,
                           const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,

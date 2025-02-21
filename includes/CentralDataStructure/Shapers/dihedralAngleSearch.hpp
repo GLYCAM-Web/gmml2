@@ -28,6 +28,13 @@ namespace cds
         AngleWithMetadata angle;
     };
 
+    struct OverlapState
+    {
+        Overlap overlap;
+        AngleWithMetadata angle;
+        assembly::Bounds bounds;
+    };
+
     struct DihedralRotationDataContainer
     {
         assembly::Graph graph;
@@ -67,12 +74,11 @@ namespace cds
         SearchAngles angles;
     };
 
-    size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
-    AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
+    size_t bestOverlapResultIndex(const std::vector<OverlapState>& results);
     DihedralRotationDataContainer dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
                                                             const GraphIndexData& indices,
                                                             const std::array<ResiduesWithOverlapWeight, 2>& residues);
-    AngleOverlap wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
+    OverlapState wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
                                      cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                      const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
                                      const DihedralAngleDataVector& rotamers, const AngleSearchPreference& preference,

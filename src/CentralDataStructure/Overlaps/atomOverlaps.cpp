@@ -82,14 +82,13 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
 
 std::vector<cds::Overlap>
 cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
-                           const std::vector<Sphere>& atomBounds, const std::vector<Sphere>& residueBounds,
-                           const std::vector<std::vector<size_t>>& residueAtoms,
+                           const assembly::Graph& graph, const assembly::Bounds& bounds,
                            const std::vector<double>& residueWeights,
                            const std::vector<MolecularMetadata::Element>& atomElements,
                            const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
                            const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
 {
-    std::vector<cds::Overlap> result(atomBounds.size(), {0.0, 0.0});
+    std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
     std::vector<size_t> indicesA;
     indicesA.reserve(64);
     std::vector<size_t> indicesB;
@@ -97,13 +96,13 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
     for (size_t n = 0; n < residuesA.size(); n++)
     {
         size_t aIndex                = residuesA[n];
-        const Sphere& residueBoundsA = residueBounds[aIndex];
+        const Sphere& residueBoundsA = bounds.residues[aIndex];
         for (size_t k = 0; k < residuesB.size(); k++)
         {
             size_t bIndex                     = residuesB[k];
-            const Sphere& residueBoundsB      = residueBounds[bIndex];
-            const std::vector<size_t>& atomsA = residueAtoms[aIndex];
-            const std::vector<size_t>& atomsB = residueAtoms[bIndex];
+            const Sphere& residueBoundsB      = bounds.residues[bIndex];
+            const std::vector<size_t>& atomsA = residueAtoms(graph, aIndex);
+            const std::vector<size_t>& atomsB = residueAtoms(graph, bIndex);
             double weight                     = residueWeights[aIndex] * residueWeights[bIndex];
             indicesA.clear();
             indicesB.clear();
@@ -117,8 +116,8 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
             }
             else if (cds::spheresOverlap(properties.tolerance, residueBoundsA, residueBoundsB))
             {
-                insertIntersection(indicesA, properties.tolerance, residueBoundsB, atomBounds, includedAtoms, atomsA);
-                insertIntersection(indicesB, properties.tolerance, residueBoundsA, atomBounds, includedAtoms, atomsB);
+                insertIntersection(indicesA, properties.tolerance, residueBoundsB, bounds.atoms, includedAtoms, atomsA);
+                insertIntersection(indicesB, properties.tolerance, residueBoundsA, bounds.atoms, includedAtoms, atomsB);
             }
             for (size_t n : indicesA)
             {
@@ -126,10 +125,11 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
                 for (size_t k : indicesB)
                 {
                     MolecularMetadata::Element elementB = atomElements[k];
-                    double scale    = MolecularMetadata::potentialWeight(potential, elementA, elementB);
-                    Overlap overlap = overlapAmount(properties.tolerance, scale, atomBounds[n], atomBounds[k]) * weight;
-                    result[n]       += overlap;
-                    result[k]       += overlap;
+                    double scale = MolecularMetadata::potentialWeight(potential, elementA, elementB);
+                    Overlap overlap =
+                        overlapAmount(properties.tolerance, scale, bounds.atoms[n], bounds.atoms[k]) * weight;
+                    result[n] += overlap;
+                    result[k] += overlap;
                 }
             }
         }
