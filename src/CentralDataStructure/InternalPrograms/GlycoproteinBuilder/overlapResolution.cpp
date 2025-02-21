@@ -248,9 +248,9 @@ namespace glycoproteinBuilder
             gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
         };
 
-        auto writeOffFile = [&outputDir](const assembly::Graph& graph, const AssemblyData& data,
-                                         const std::vector<cds::Coordinate>& coordinates,
-                                         const std::vector<bool>& includedMolecules, const std::string& prefix)
+        auto writeOffFile =
+            [](const assembly::Graph& graph, const AssemblyData& data, const std::vector<cds::Coordinate>& coordinates,
+               const std::vector<bool>& includedMolecules, const std::string& outputDir, const std::string& prefix)
         {
             std::vector<bool> residueIncluded(graph.residueCount, false);
             for (size_t n = 0; n < graph.residueCount; n++)
@@ -378,7 +378,7 @@ namespace glycoproteinBuilder
                          mutableData.moleculeIncluded, noConnections, outputDir, "glycoprotein");
             if (settings.writeOffFile)
             {
-                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, "glycoprotein");
+                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "glycoprotein");
             }
             writePdbFile(graph, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir,
@@ -413,8 +413,13 @@ namespace glycoproteinBuilder
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
+            std::string prefixStr = prefix.str();
             writePdbFile(graph, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
-                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, directory, prefix.str());
+                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, directory, prefixStr);
+            if (settings.writeOffFile)
+            {
+                writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefixStr);
+            }
             size_t moved = 0;
             for (size_t n : graph.residues.nodes.indices)
             {
