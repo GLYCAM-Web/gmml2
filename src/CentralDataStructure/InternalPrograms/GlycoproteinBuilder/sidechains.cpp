@@ -72,24 +72,24 @@ bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph
 {
     double overlapTolerance                   = data.overlapProperties.tolerance;
     const std::vector<size_t>& sidechainAtoms = sidechainMovingAtoms(data, sidechainResidue);
-    cds::Sphere bounds = cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, sidechainAtoms));
+    cds::Sphere bounds = cds::boundingSphere(codeUtils::indicesToValues(mutableData.bounds.atoms, sidechainAtoms));
     for (size_t glycanId : glycans)
     {
         size_t glycanMolecule = data.glycans.moleculeId[glycanId];
-        if (cds::spheresOverlap(overlapTolerance, bounds, mutableData.moleculeBounds[glycanMolecule]))
+        if (cds::spheresOverlap(overlapTolerance, bounds, mutableData.bounds.molecules[glycanMolecule]))
         {
             for (size_t residue : moleculeResidues(graph, glycanMolecule))
             {
-                if (cds::spheresOverlap(overlapTolerance, bounds, mutableData.residueBounds[residue]))
+                if (cds::spheresOverlap(overlapTolerance, bounds, mutableData.bounds.residues[residue]))
                 {
                     for (size_t atom : residueAtoms(graph, residue))
                     {
-                        if (cds::spheresOverlap(overlapTolerance, bounds, mutableData.atomBounds[atom]))
+                        if (cds::spheresOverlap(overlapTolerance, bounds, mutableData.bounds.atoms[atom]))
                         {
                             for (size_t otherAtom : sidechainAtoms)
                             {
-                                if (cds::spheresOverlap(overlapTolerance, mutableData.atomBounds[atom],
-                                                        mutableData.atomBounds[otherAtom]))
+                                if (cds::spheresOverlap(overlapTolerance, mutableData.bounds.atoms[atom],
+                                                        mutableData.bounds.atoms[otherAtom]))
                                 {
                                     return true;
                                 }
@@ -107,11 +107,11 @@ void glycoproteinBuilder::updateSidechainRotation(const MolecularMetadata::Sidec
                                                   const assembly::Graph& graph, const AssemblyData& data,
                                                   MutableData& mutableData, size_t residue, size_t rotation)
 {
-    setSidechainRotation(mutableData.atomBounds, data.residues.sidechainDihedrals[residue],
+    setSidechainRotation(mutableData.bounds.atoms, data.residues.sidechainDihedrals[residue],
                          sidechains.rotations[rotation]);
     mutableData.residueSidechainMoved[residue] = true;
-    updateResidueBounds(graph, mutableData, residue);
-    updateResidueMoleculeBounds(graph, mutableData, residue);
+    updateResidueBounds(graph, mutableData.bounds, residue);
+    updateResidueMoleculeBounds(graph, mutableData.bounds, residue);
 }
 
 void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph, const AssemblyData& data,
@@ -119,11 +119,11 @@ void glycoproteinBuilder::restoreSidechainRotation(const assembly::Graph& graph,
 {
     for (size_t atom : sidechainMovingAtoms(data, residue))
     {
-        mutableData.atomBounds[atom] = data.atoms.initialState[atom];
+        mutableData.bounds.atoms[atom] = data.atoms.initialState[atom];
     }
     mutableData.residueSidechainMoved[residue] = false;
-    updateResidueBounds(graph, mutableData, residue);
-    updateResidueMoleculeBounds(graph, mutableData, residue);
+    updateResidueBounds(graph, mutableData.bounds, residue);
+    updateResidueMoleculeBounds(graph, mutableData.bounds, residue);
 }
 
 void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetadata::SidechainRotamerData& sidechains,
@@ -134,8 +134,8 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
     std::vector<size_t> potentialOverlaps =
         atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.all, residue);
     restoreSidechainRotation(graph, data, mutableData, residue);
-    cds::Overlap initialOverlap = cds::overlapVectorSum(
-        sidechainOverlap(graph, data, mutableData.atomBounds, sidechainMovingAtoms(data, residue), potentialOverlaps));
+    cds::Overlap initialOverlap = cds::overlapVectorSum(sidechainOverlap(
+        graph, data, mutableData.bounds.atoms, sidechainMovingAtoms(data, residue), potentialOverlaps));
     IndexedOverlap bestRotation =
         lowestOverlapSidechainRotation(sidechains, graph, data, mutableData, preference, residue, potentialOverlaps);
     if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
@@ -181,12 +181,12 @@ glycoproteinBuilder::lowestOverlapSidechainRotation(const MolecularMetadata::Sid
     const std::vector<size_t> rotations             = data.residues.sidechainRotations[sidechainResidue];
     const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[sidechainResidue];
     const std::vector<size_t>& movingAtoms          = sidechainMovingAtoms(data, sidechainResidue);
-    std::vector<cds::Sphere> coords                 = mutableData.atomBounds;
+    std::vector<cds::Sphere> coords                 = mutableData.bounds.atoms;
     std::vector<cds::Overlap> overlaps;
     overlaps.reserve(rotations.size());
     for (size_t n = 0; n < rotations.size(); n++)
     {
-        coords = mutableData.atomBounds;
+        coords = mutableData.bounds.atoms;
         setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
         cds::Overlap overlap = cds::overlapVectorSum(sidechainOverlap(graph, data, coords, movingAtoms, otherAtoms));
         overlaps.push_back(overlap);
@@ -218,15 +218,15 @@ std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(con
     };
     auto insertOverlappingAtomsOfMolecule = [&](size_t molecule)
     {
-        if (overlapsWithSidechainBounds(mutableData.moleculeBounds[molecule]))
+        if (overlapsWithSidechainBounds(mutableData.bounds.molecules[molecule]))
         {
             for (size_t residue : moleculeResidues(graph, molecule))
             {
-                if ((residue != sidechainResidue) && overlapsWithSidechainBounds(mutableData.residueBounds[residue]))
+                if ((residue != sidechainResidue) && overlapsWithSidechainBounds(mutableData.bounds.residues[residue]))
                 {
                     for (size_t atom : residueAtoms(graph, residue))
                     {
-                        if (includedAtoms[atom] && overlapsWithSidechainBounds(mutableData.atomBounds[atom]))
+                        if (includedAtoms[atom] && overlapsWithSidechainBounds(mutableData.bounds.atoms[atom]))
                         {
                             result.push_back(atom);
                         }
@@ -333,10 +333,10 @@ glycoproteinBuilder::sidechainPotentialBounds(const assembly::Graph& graph, cons
         {
             const std::vector<size_t>& firstDihedralMovingAtoms = sidechainMovingAtoms(data, n);
             cds::Sphere bounds =
-                cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, firstDihedralMovingAtoms));
+                cds::boundingSphere(codeUtils::indicesToValues(mutableData.bounds.atoms, firstDihedralMovingAtoms));
             for (size_t rotationId : rotations)
             {
-                std::vector<cds::Sphere> coords = mutableData.atomBounds;
+                std::vector<cds::Sphere> coords = mutableData.bounds.atoms;
                 setSidechainRotation(coords, dihedrals, sidechains.rotations[rotationId]);
                 for (size_t atom : firstDihedralMovingAtoms)
                 {

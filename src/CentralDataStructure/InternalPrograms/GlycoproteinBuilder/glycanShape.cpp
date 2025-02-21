@@ -2,72 +2,34 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <functional>
 
 namespace glycoproteinBuilder
 {
-    void updateResidueBounds(const assembly::Graph& graph, MutableData& mutableData, size_t index)
-    {
-        mutableData.residueBounds[index] =
-            cds::boundingSphere(codeUtils::indicesToValues(mutableData.atomBounds, residueAtoms(graph, index)));
-    }
-
-    void updateResidueMoleculeBounds(const assembly::Graph& graph, MutableData& mutableData, size_t index)
-    {
-        size_t moleculeIndex = graph.residueMolecule[index];
-        mutableData.moleculeBounds[moleculeIndex] =
-            cds::boundingSphereIncluding(mutableData.moleculeBounds[moleculeIndex], mutableData.residueBounds[index]);
-    }
-
-    void updateMoleculeBounds(const assembly::Graph& graph, MutableData& mutableData, size_t index)
-    {
-        mutableData.moleculeBounds[index] =
-            cds::boundingSphere(codeUtils::indicesToValues(mutableData.residueBounds, moleculeResidues(graph, index)));
-    }
-
-    void updateGlycanBounds(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
+    void updateGlycanBounds(const assembly::Graph& graph, const AssemblyData& data, assembly::Bounds& bounds,
                             size_t glycanId)
     {
         size_t siteResidue = data.glycans.attachmentResidue[glycanId];
-        updateResidueBounds(graph, mutableData, siteResidue);
-        updateResidueMoleculeBounds(graph, mutableData, siteResidue);
+        updateResidueBounds(graph, bounds, siteResidue);
+        updateResidueMoleculeBounds(graph, bounds, siteResidue);
         size_t moleculeId = data.glycans.moleculeId[glycanId];
         for (size_t residue : moleculeResidues(graph, moleculeId))
         {
-            updateResidueBounds(graph, mutableData, residue);
+            updateResidueBounds(graph, bounds, residue);
         }
-        updateMoleculeBounds(graph, mutableData, moleculeId);
+        updateMoleculeBounds(graph, bounds, moleculeId);
     }
 
-    void updateBoundsContainingAtoms(const assembly::Graph& graph, MutableData& mutableData,
-                                     const std::vector<size_t>& atoms)
-    {
-        std::vector<bool> updateResidue(graph.residueCount, false);
-        std::vector<bool> updateMolecule(graph.moleculeCount, false);
-        for (size_t atom : atoms)
-        {
-            updateResidue[graph.atomResidue[atom]] = true;
-        }
-        for (size_t n : codeUtils::boolsToIndices(updateResidue))
-        {
-            updateMolecule[graph.residueMolecule[n]] = true;
-            updateResidueBounds(graph, mutableData, n);
-        }
-        for (size_t n : codeUtils::boolsToIndices(updateMolecule))
-        {
-            updateMoleculeBounds(graph, mutableData, n);
-        }
-    }
-
-    std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const MutableData& mutableData,
+    std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const assembly::Bounds& bounds,
                                                        size_t dihedralId)
     {
         const std::array<size_t, 4>& atoms = data.indices.rotatableDihedrals[dihedralId].atoms;
         auto coord                         = [&](size_t n)
         {
-            return mutableData.atomBounds[atoms[n]].center;
+            return bounds.atoms[atoms[n]].center;
         };
         return {coord(3), coord(2), coord(1), coord(0)};
     }
@@ -77,14 +39,14 @@ namespace glycoproteinBuilder
     {
         mutableData.dihedralCurrentMetadata[dihedralId] = target.metadataIndex;
         const RotatableDihedralIndices& dihedral        = data.indices.rotatableDihedrals[dihedralId];
-        std::array<cds::Coordinate, 4> dihedralCoords   = dihedralCoordinates(data, mutableData, dihedralId);
+        std::array<cds::Coordinate, 4> dihedralCoords   = dihedralCoordinates(data, mutableData.bounds, dihedralId);
         auto matrix = cds::rotationTo(dihedralCoords, constants::toRadians(target.value));
         for (size_t atom : dihedral.movingAtoms)
         {
-            cds::Coordinate& coord = mutableData.atomBounds[atom].center;
+            cds::Coordinate& coord = mutableData.bounds.atoms[atom].center;
             coord                  = matrix * coord;
         }
-        updateBoundsContainingAtoms(graph, mutableData, dihedral.movingAtoms);
+        updateBoundsContainingAtoms(graph, mutableData.bounds, dihedral.movingAtoms);
     }
 
     void setLinkageShape(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,

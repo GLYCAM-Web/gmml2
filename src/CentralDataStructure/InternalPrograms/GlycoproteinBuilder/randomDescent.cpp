@@ -39,9 +39,9 @@ namespace glycoproteinBuilder
             const std::vector<size_t>& movingAtoms   = dihedral.movingAtoms;
             std::vector<double> residueWeights       = data.defaultResidueWeight;
             std::vector<bool> atomMoving             = codeUtils::indicesToBools(graph.atomCount, dihedral.movingAtoms);
-            const std::vector<cds::Sphere>& atomBounds     = mutableData.atomBounds;
-            const std::vector<cds::Sphere>& residueBounds  = mutableData.residueBounds;
-            const std::vector<cds::Sphere>& moleculeBounds = mutableData.moleculeBounds;
+            const std::vector<cds::Sphere>& atomBounds     = mutableData.bounds.atoms;
+            const std::vector<cds::Sphere>& residueBounds  = mutableData.bounds.residues;
+            const std::vector<cds::Sphere>& moleculeBounds = mutableData.bounds.molecules;
             double overlapTolerance                        = data.overlapProperties.tolerance;
             cds::Sphere movingAtomBounds = cds::boundingSphere(codeUtils::indicesToValues(atomBounds, movingAtoms));
             Coordinate pointA            = atomBounds[dihedral.atoms[1]].center;
@@ -95,18 +95,19 @@ namespace glycoproteinBuilder
             //  rotatable bond in Asn outwards
             for (size_t rn = 0; rn < dihedrals.size(); rn++)
             {
-                size_t n                                         = dihedrals.size() - 1 - rn;
-                size_t dihedralId                                = dihedrals[n];
-                cds::AngleSearchPreference preference            = {settings.deviation, shapePreference.angles[n],
-                                                                    shapePreference.metadataOrder[n]};
-                const std::array<cds::Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData, dihedralId);
+                size_t n                              = dihedrals.size() - 1 - rn;
+                size_t dihedralId                     = dihedrals[n];
+                cds::AngleSearchPreference preference = {settings.deviation, shapePreference.angles[n],
+                                                         shapePreference.metadataOrder[n]};
+                const std::array<cds::Coordinate, 4> coordinates =
+                    dihedralCoordinates(data, mutableData.bounds, dihedralId);
                 PartialDihedralRotationData partial =
                     toRotationInputData(graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
                 cds::DihedralRotationData input {partial.atomMoving,
                                                  includedAtoms,
-                                                 mutableData.atomBounds,
+                                                 mutableData.bounds.atoms,
                                                  data.atoms.elementEnums,
-                                                 mutableData.residueBounds,
+                                                 mutableData.bounds.residues,
                                                  partial.residueWeights,
                                                  graph.residues.nodes.elements,
                                                  partial.residueIndices,
@@ -141,9 +142,10 @@ namespace glycoproteinBuilder
             std::vector<cds::AngleWithMetadata> initialShape(dihedrals.size(), {0.0, 0.0, 0});
             for (size_t n = 0; n < dihedrals.size(); n++)
             {
-                std::array<cds::Coordinate, 4> dihedralCoords = dihedralCoordinates(data, mutableData, dihedrals[n]);
-                double angle                                  = constants::toDegrees(cds::angle(dihedralCoords));
-                initialShape[n]                               = {angle, angle, initialMetadata};
+                std::array<cds::Coordinate, 4> dihedralCoords =
+                    dihedralCoordinates(data, mutableData.bounds, dihedrals[n]);
+                double angle    = constants::toDegrees(cds::angle(dihedralCoords));
+                initialShape[n] = {angle, angle, initialMetadata};
             }
             for (size_t k = 0; k < numberOfMetadata; k++)
             {
@@ -159,15 +161,15 @@ namespace glycoproteinBuilder
                     size_t dihedralId                     = dihedrals[n];
                     cds::AngleSearchPreference preference = {isFrozen[n] ? 0.0 : settings.deviation,
                                                              preferenceAngles[n], order};
-                    cds::DihedralCoordinates coordinates = dihedralCoordinates(data, mutableData, dihedralId);
+                    cds::DihedralCoordinates coordinates = dihedralCoordinates(data, mutableData.bounds, dihedralId);
 
                     PartialDihedralRotationData partial = toRotationInputData(
                         graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
                     cds::DihedralRotationData input {partial.atomMoving,
                                                      includedAtoms,
-                                                     mutableData.atomBounds,
+                                                     mutableData.bounds.atoms,
                                                      data.atoms.elementEnums,
-                                                     mutableData.residueBounds,
+                                                     mutableData.bounds.residues,
                                                      partial.residueWeights,
                                                      graph.residues.nodes.elements,
                                                      partial.residueIndices,
@@ -240,7 +242,7 @@ namespace glycoproteinBuilder
                               overlapMultiplier, preferences[n]);
             }
         }
-        updateGlycanBounds(graph, data, mutableData, glycanId);
+        updateGlycanBounds(graph, data, mutableData.bounds, glycanId);
     }
 
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,

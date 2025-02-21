@@ -11,6 +11,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 
@@ -314,9 +315,9 @@ namespace glycoproteinBuilder
                            equalResidueWeight};
 
         std::vector<bool> moleculeIncluded(graph.moleculeCount, true);
-        MutableData mutableData {atomBoundingSpheres, residueBoundingSpheres,
-                                 moleculeBounds,      dihedralCurrentMetadata,
-                                 moleculeIncluded,    std::vector<bool>(residues.size(), false)};
+        assembly::Bounds bounds {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds};
+        MutableData mutableData {bounds, dihedralCurrentMetadata, moleculeIncluded,
+                                 std::vector<bool>(residues.size(), false)};
 
         return GlycoproteinAssembly {graph, data, mutableData};
     }

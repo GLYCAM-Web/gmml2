@@ -3,6 +3,7 @@
 
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
@@ -131,9 +132,7 @@ namespace glycoproteinBuilder
 
     struct MutableData
     {
-        std::vector<cds::Sphere> atomBounds;
-        std::vector<cds::Sphere> residueBounds;
-        std::vector<cds::Sphere> moleculeBounds;
+        assembly::Bounds bounds;
         std::vector<size_t> dihedralCurrentMetadata;
         std::vector<bool> moleculeIncluded;
         std::vector<bool> residueSidechainMoved;

@@ -11,7 +11,7 @@
 namespace glycoproteinBuilder
 {
     std::vector<cds::ResidueLinkageShapePreference> randomLinkageShapePreference(
-        pcg32& rng, const AssemblyData& data, const MutableData& mutableData, size_t glycanId,
+        pcg32& rng, const AssemblyData& data, const assembly::Bounds& bounds, size_t glycanId,
         std::function<std::vector<size_t>(pcg32&, GlycamMetadata::DihedralAngleDataVector metadataVector)>
             randomMetadata,
         std::function<double(pcg32&, GlycamMetadata::DihedralAngleData metadata)> randomAngle,
