@@ -48,8 +48,9 @@ namespace glycoproteinBuilder
                          const GlycoproteinBuilderInputs& settings, const std::string& outputDir,
                          const std::vector<std::string>& headerLines, int numThreads)
     {
-        const std::string rejectDir = outputDir + "/rejected";
-        uint64_t seed               = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
+        const std::string rejectDir   = outputDir + "/rejected";
+        const std::string deletionDir = outputDir + "/deletions";
+        uint64_t seed                 = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
         pcg32 seedingRng(seed);
 
         auto randomMetadata = [](pcg32& rng, GlycamMetadata::DihedralAngleDataVector metadataVector)
@@ -383,7 +384,9 @@ namespace glycoproteinBuilder
             resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
                                        settings.deleteSitesUntilResolved);
             std::vector<cds::Coordinate> coordinates = getCoordinates(mutableData.bounds.atoms);
+            bool hasDeleted                          = codeUtils::contains(mutableData.moleculeIncluded, false);
             bool reject                              = false;
+            std::string directory                    = outputDir;
             if (settings.rejectExcessiveGlycanOverlaps)
             {
                 std::vector<cds::Overlap> atomOverlaps =
@@ -399,7 +402,7 @@ namespace glycoproteinBuilder
                     }
                 }
             }
-            const std::string& directory = reject ? rejectDir : outputDir;
+            directory = hasDeleted ? deletionDir : (reject ? rejectDir : outputDir);
             printDihedralAnglesAndOverlapOfGlycosites(graph, data, mutableData);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
