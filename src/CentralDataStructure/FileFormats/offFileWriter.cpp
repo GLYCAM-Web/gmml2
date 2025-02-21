@@ -229,12 +229,11 @@ void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const assembl
 }
 
 void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data,
-                                         const std::string& unitName)
+                                         const std::vector<size_t>& residueIndices, const std::string& unitName)
 { // For writing residues together as a molecule
     stream << "!!index array str"
            << "\n";
     stream << " \"" << unitName << "\""
            << "\n";
-    cds::WriteOffFileUnit(stream, data.format, graph, data.residues, data.atoms,
-                          codeUtils::indexVector(data.residues.names), unitName);
+    cds::WriteOffFileUnit(stream, data.format, graph, data.residues, data.atoms, residueIndices, unitName);
 }

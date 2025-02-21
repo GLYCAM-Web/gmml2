@@ -61,5 +61,5 @@ void cds::WriteOff(std::ostream& stream, const std::string& name, const GraphInd
     cds::OffFileData data           = cds::toOffFileData(indices.residues);
     data.atoms.numbers              = serializedNumberVector(includedAtoms);
     data.residues.numbers           = serializedNumberVector(indices.residues.size());
-    cds::WriteResiduesTogetherToOffFile(stream, graph, data, name);
+    cds::WriteResiduesTogetherToOffFile(stream, graph, data, codeUtils::indexVector(indices.residues), name);
 }

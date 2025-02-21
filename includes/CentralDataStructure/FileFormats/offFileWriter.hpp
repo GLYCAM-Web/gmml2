@@ -16,6 +16,6 @@ namespace cds
     void WriteResiduesIndividuallyToOffFile(std::ostream& stream, const assembly::Graph& graph,
                                             const OffFileData& data);
     void WriteResiduesTogetherToOffFile(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data,
-                                        const std::string& unitName);
+                                        const std::vector<size_t>& residueIndices, const std::string& unitName);
 } // namespace cds
 #endif

@@ -249,13 +249,20 @@ namespace glycoproteinBuilder
         };
 
         auto writeOffFile = [&outputDir](const assembly::Graph& graph, const AssemblyData& data,
-                                         const std::vector<cds::Coordinate>& coordinates, const std::string& prefix)
+                                         const std::vector<cds::Coordinate>& coordinates,
+                                         const std::vector<bool>& includedMolecules, const std::string& prefix)
         {
+            std::vector<bool> residueIncluded(graph.residueCount, false);
+            for (size_t n = 0; n < graph.residueCount; n++)
+            {
+                residueIncluded[n] = includedMolecules[graph.residueMolecule[n]];
+            }
             cds::OffFileData offData = toOffFileData(graph, data, coordinates);
             std::string fileName     = outputDir + "/" + prefix + ".off";
             std::ofstream outFileStream;
             outFileStream.open(fileName.c_str());
-            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, offData, "GLYCOPROTEINBUILDER");
+            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, offData,
+                                                codeUtils::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
             outFileStream.close();
         };
 
@@ -371,7 +378,7 @@ namespace glycoproteinBuilder
                          mutableData.moleculeIncluded, noConnections, outputDir, "glycoprotein");
             if (settings.writeOffFile)
             {
-                writeOffFile(graph, data, resolvedCoords, "glycoprotein");
+                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, "glycoprotein");
             }
             writePdbFile(graph, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir,

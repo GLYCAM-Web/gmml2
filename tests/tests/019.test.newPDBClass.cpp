@@ -39,7 +39,8 @@ int main(int argc, char* argv[])
             cds::OffFileData data           = cds::toOffFileData(indices.residues);
             cds::serializeNumbers(indices.atoms);
             cds::serializeNumbers(indices.residues);
-            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, data, outFileName.c_str());
+            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, data, codeUtils::indexVector(indices.residues),
+                                                outFileName.c_str());
             outFileStream.close();
         }
         catch (std::runtime_error& error)
