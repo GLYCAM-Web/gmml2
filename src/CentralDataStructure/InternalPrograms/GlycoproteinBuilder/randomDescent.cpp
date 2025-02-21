@@ -133,8 +133,10 @@ namespace glycoproteinBuilder
             size_t numberOfMetadata                                           = shapePreference.metadataOrder.size();
             const std::vector<std::vector<double>>& preferenceAngles          = shapePreference.angles;
             const std::vector<bool>& isFrozen                                 = shapePreference.isFrozen;
-            std::vector<cds::OverlapState> bestResults;
+            std::vector<cds::AngleOverlap> bestResults;
             bestResults.resize(numberOfMetadata);
+            std::vector<assembly::Bounds> states;
+            states.resize(numberOfMetadata);
             std::vector<size_t> index      = codeUtils::indexVector(dihedralMetadata[dihedrals[0]]);
             size_t initialMetadata         = mutableData.dihedralCurrentMetadata[dihedrals[0]];
             assembly::Bounds initialBounds = mutableData.bounds;
@@ -166,12 +168,13 @@ namespace glycoproteinBuilder
                     cds::OverlapState best =
                         cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles,
                                                  coordinates, index, dihedralMetadata[dihedralId], preference, input);
-                    bestResults[k]     = best;
+                    bestResults[k]     = {best.overlap, best.angle};
                     mutableData.bounds = best.bounds;
+                    states[k]          = best.bounds;
                 }
             }
             size_t bestIndex   = cds::bestOverlapResultIndex(bestResults);
-            mutableData.bounds = bestResults[bestIndex].bounds;
+            mutableData.bounds = states[bestIndex];
             for (size_t n = 0; n < dihedrals.size(); n++)
             {
                 mutableData.dihedralCurrentMetadata[dihedrals[n]] = bestResults[bestIndex].angle.metadataIndex;

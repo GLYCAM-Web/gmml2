@@ -74,7 +74,7 @@ namespace cds
         SearchAngles angles;
     };
 
-    size_t bestOverlapResultIndex(const std::vector<OverlapState>& results);
+    size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     DihedralRotationDataContainer dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
                                                             const GraphIndexData& indices,
                                                             const std::array<ResiduesWithOverlapWeight, 2>& residues);

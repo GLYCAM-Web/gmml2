@@ -34,14 +34,20 @@ namespace assembly
         {
             updateResidue[graph.atomResidue[atom]] = true;
         }
-        for (size_t n : codeUtils::boolsToIndices(updateResidue))
+        for (size_t n = 0; n < graph.residueCount; n++)
         {
-            updateMolecule[graph.residueMolecule[n]] = true;
-            updateResidueBounds(graph, bounds, n);
+            if (updateResidue[n])
+            {
+                updateMolecule[graph.residueMolecule[n]] = true;
+                updateResidueBounds(graph, bounds, n);
+            }
         }
-        for (size_t n : codeUtils::boolsToIndices(updateMolecule))
+        for (size_t n = 0; n < graph.moleculeCount; n++)
         {
-            updateMoleculeBounds(graph, bounds, n);
+            if (updateMolecule[n])
+            {
+                updateMoleculeBounds(graph, bounds, n);
+            }
         }
     }
 } // namespace assembly
