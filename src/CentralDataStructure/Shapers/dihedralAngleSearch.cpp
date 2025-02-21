@@ -10,6 +10,8 @@
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/constants.hpp"
@@ -79,53 +81,6 @@ namespace
         return {newSetA, newSetB};
     }
 
-    std::pair<std::vector<cds::Atom*>, std::vector<size_t>> toAtoms(const std::vector<cds::Residue*>& residues)
-    {
-        size_t atomCount = 0;
-        for (auto res : residues)
-        {
-            atomCount += res->atomCount();
-        }
-        std::vector<cds::Atom*> atoms;
-        atoms.reserve(atomCount);
-        std::vector<size_t> atomResidues;
-        atomResidues.reserve(atomCount);
-        for (size_t n = 0; n < residues.size(); n++)
-        {
-            for (auto& atomPtr : residues[n]->getAtomsReference())
-            {
-                atoms.push_back(atomPtr.get());
-                atomResidues.push_back(n);
-            }
-        }
-        return {atoms, atomResidues};
-    }
-
-    std::vector<std::vector<size_t>> toResidueAtoms(const std::vector<size_t>& atomResidues)
-    {
-        size_t maxId = 0;
-        for (size_t res : atomResidues)
-        {
-            maxId = std::max(maxId, res);
-        }
-        std::vector<size_t> count(maxId + 1, 0);
-        for (size_t res : atomResidues)
-        {
-            count[res]++;
-        }
-        std::vector<std::vector<size_t>> result(count.size());
-        for (size_t n = 0; n < count.size(); n++)
-        {
-            result[n].reserve(count[n]);
-        }
-        for (size_t n = 0; n < atomResidues.size(); n++)
-        {
-            size_t residue = atomResidues[n];
-            result[residue].push_back(n);
-        }
-        return result;
-    }
-
     std::vector<bool> toAtomMoving(const std::vector<cds::Atom*>& atoms, const std::vector<cds::Atom*>& movingAtoms)
     {
         std::vector<bool> atomMoving;
@@ -137,30 +92,17 @@ namespace
         return atomMoving;
     }
 
-    std::vector<cds::Sphere> toResidueBounds(const std::vector<cds::Sphere>& atomBounds,
-                                             const std::vector<std::vector<size_t>>& residueAtoms)
-    {
-
-        std::vector<cds::Sphere> result;
-        result.reserve(residueAtoms.size());
-        for (size_t n = 0; n < residueAtoms.size(); n++)
-        {
-            result.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms[n])));
-        }
-        return result;
-    }
-
     void moveFirstResidueCoords(size_t side, const cds::RotationMatrix& matrix, const cds::DihedralRotationData& input,
                                 std::vector<cds::Sphere>& atomBounds, std::vector<cds::Sphere>& residueBounds)
     {
         size_t residue = input.residueIndices[side][0];
         std::vector<cds::Sphere> firstCoords;
-        const std::vector<size_t>& indices = input.residueAtoms[residue];
+        const std::vector<size_t>& indices = residueAtoms(input.graph, residue);
         firstCoords.reserve(indices.size());
         for (size_t n = 0; n < indices.size(); n++)
         {
             size_t index             = indices[n];
-            const Coordinate& center = input.atomBounds[index].center;
+            const Coordinate& center = input.bounds.atoms[index].center;
             atomBounds[index].center = input.atomMoving[index] ? matrix * center : center;
             firstCoords.push_back(atomBounds[index]);
         }
@@ -174,8 +116,8 @@ namespace
                                            const cds::DihedralRotationData& input)
     {
         // copies of input vectors used for updates during looping
-        std::vector<cds::Sphere> atomBounds             = input.atomBounds;
-        std::vector<cds::Sphere> residueBounds          = input.residueBounds;
+        std::vector<cds::Sphere> atomBounds             = input.bounds.atoms;
+        std::vector<cds::Sphere> residueBounds          = input.bounds.residues;
         const std::vector<size_t>& fixedResidueIndices  = input.residueIndices[0];
         const std::vector<size_t>& movingResidueIndices = input.residueIndices[1];
         std::vector<cds::AngleOverlap> results;
@@ -189,19 +131,20 @@ namespace
             for (size_t n = 1; n < movingResidueIndices.size(); n++)
             {
                 size_t residue = movingResidueIndices[n];
-                for (size_t index : input.residueAtoms[residue])
+                for (size_t index : residueAtoms(input.graph, residue))
                 {
-                    atomBounds[index].center = matrix * input.atomBounds[index].center;
+                    atomBounds[index].center = matrix * input.bounds.atoms[index].center;
                 }
             }
             for (size_t n = 1; n < movingResidueIndices.size(); n++)
             {
                 residueBounds[movingResidueIndices[n]].center =
-                    matrix * input.residueBounds[movingResidueIndices[n]].center;
+                    matrix * input.bounds.residues[movingResidueIndices[n]].center;
             }
             cds::Overlap overlaps = cds::overlapVectorSum(cds::CountOverlappingAtoms(
-                potential, overlapProperties, atomBounds, residueBounds, input.residueAtoms, input.residueWeights,
-                input.atomElements, input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices));
+                potential, overlapProperties, atomBounds, residueBounds, input.graph.residues.nodes.elements,
+                input.residueWeights, input.atomElements, input.atomIncluded, input.bonds, fixedResidueIndices,
+                movingResidueIndices));
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -247,54 +190,70 @@ cds::AngleOverlap cds::bestOverlapResult(const std::vector<AngleOverlap>& result
 }
 
 cds::DihedralRotationDataContainer
-cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
+cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral, const GraphIndexData& indices,
                                const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
 {
+    assembly::Graph graph  = createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
     auto movingAtomSpheres = atomCoordinatesWithRadii(dihedral.movingAtoms);
     auto movingAtomBounds  = boundingSphere(movingAtomSpheres);
     Coordinate pointA      = dihedral.atoms[1]->coordinate();
     Coordinate pointB      = dihedral.atoms[2]->coordinate();
     auto movementBounds    = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
 
-    std::vector<cds::Residue*> residues = codeUtils::vectorAppend(residueSets[0].residues, residueSets[1].residues);
-    std::vector<double> residueWeights  = codeUtils::vectorAppend(residueSets[0].weights, residueSets[1].weights);
-    auto atomVecs                       = toAtoms(residues);
-    std::vector<cds::Atom*> atoms       = atomVecs.first;
-    std::vector<size_t> atomResidues    = atomVecs.second;
-    std::vector<bool> atomMoving        = toAtomMoving(atoms, dihedral.movingAtoms);
-    std::vector<bool> atomIncluded(atoms.size(), true);
-    std::vector<bool> residueMoving(residues.size(), false);
-    for (size_t n = 0; n < atomResidues.size(); n++)
+    const std::vector<cds::Residue*>& residues = indices.residues;
+    std::vector<bool> atomMoving               = toAtomMoving(indices.atoms, dihedral.movingAtoms);
+    std::vector<bool> atomIncluded(graph.atomCount, true);
+    std::vector<bool> residueMoving(graph.residueCount, false);
+    for (size_t n = 0; n < graph.atomResidue.size(); n++)
     {
         if (atomMoving[n])
         {
-            residueMoving[atomResidues[n]] = true;
+            residueMoving[graph.atomResidue[n]] = true;
         }
     }
     std::vector<size_t> residueSetA = toResidueIndices(residues, residueSets[0].residues);
     std::vector<size_t> residueSetB = toResidueIndices(residues, residueSets[1].residues);
+    std::vector<double> residueWeights(graph.residueCount, 0.0);
+    for (size_t n = 0; n < residueSetA.size(); n++)
+    {
+        residueWeights[residueSetA[n]] = residueSets[0].weights[n];
+    }
+    for (size_t n = 0; n < residueSetB.size(); n++)
+    {
+        residueWeights[residueSetB[n]] = residueSets[1].weights[n];
+    }
     std::array<std::vector<size_t>, 2> residueIndices =
         dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
                                     : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
-    std::vector<std::vector<size_t>> residueAtoms = toResidueAtoms(atomResidues);
-    std::vector<Sphere> atomBounds                = atomCoordinatesWithRadii(atoms);
-    std::vector<Sphere> residueBounds             = toResidueBounds(atomBounds, residueAtoms);
 
-    auto atomsA      = codeUtils::indicesToValues(atoms, residueAtoms[residueIndices[0][0]]);
-    auto atomsB      = codeUtils::indicesToValues(atoms, residueAtoms[residueIndices[1][0]]);
-    auto residueBond = bondedAtomPair(atomsA, atomsB);
-    auto bonds       = std::vector<cds::BondedResidueOverlapInput> {
+    std::vector<Atom*> atomsA = codeUtils::indicesToValues(indices.atoms, residueAtoms(graph, residueIndices[0][0]));
+    std::vector<Atom*> atomsB = codeUtils::indicesToValues(indices.atoms, residueAtoms(graph, residueIndices[1][0]));
+    auto residueBond          = bondedAtomPair(atomsA, atomsB);
+    auto bonds                = std::vector<cds::BondedResidueOverlapInput> {
         {{residueIndices[0][0], residueIndices[1][0]},
          {atomsBondedTo(residueBond[0], atomsA), atomsBondedTo(residueBond[1], atomsB)}}
     };
+    std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(indices.atoms);
+    std::vector<Sphere> residueBounds;
+    residueBounds.reserve(graph.residueCount);
+    for (size_t n = 0; n < graph.residueCount; n++)
+    {
+        residueBounds.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms(graph, n))));
+    }
+    std::vector<Sphere> moleculeBounds;
+    moleculeBounds.reserve(graph.moleculeCount);
+    for (size_t n = 0; n < graph.moleculeCount; n++)
+    {
+        moleculeBounds.push_back(boundingSphere(codeUtils::indicesToValues(residueBounds, moleculeResidues(graph, n))));
+    }
+    assembly::Bounds bounds {atomBounds, residueBounds, moleculeBounds};
     return {
+        graph,
+        bounds,
         atomMoving,
         atomIncluded,
-        atomBounds,
-        cds::atomElementEnums(atoms),
-        residueBounds,
+        cds::atomElementEnums(indices.atoms),
         residueWeights,
-        residueAtoms,
         {residueIndices[0],
           cds::intersectingIndices(overlapTolerance, movementBounds, residueBounds, residueIndices[1])},
         bonds
@@ -347,6 +306,7 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
                                       std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
                                       const std::vector<AngleSearchPreference>& preference,
+                                      const GraphIndexData& indices,
                                       const std::array<ResiduesWithOverlapWeight, 2>& residues)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
@@ -355,12 +315,15 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
         std::vector<size_t> index {dihedral.currentMetadataIndex};
         auto coordinates = dihedralCoordinates(dihedral);
         DihedralRotationDataContainer input =
-            dihedralRotationInputData(overlapProperties.tolerance, dihedral, residues);
+            dihedralRotationInputData(overlapProperties.tolerance, dihedral, indices, residues);
         DihedralRotationData inputPointers {
-            input.atomMoving,    input.atomIncluded,
-            input.atomBounds,    input.atomElements,
-            input.residueBounds, input.residueWeights,
-            input.residueAtoms,  {input.residueIndices[0], input.residueIndices[1]},
+            input.graph,
+            input.bounds,
+            input.atomMoving,
+            input.atomIncluded,
+            input.atomElements,
+            input.residueWeights,
+            {input.residueIndices[0], input.residueIndices[1]},
             input.bonds
         };
         auto best = wiggleUsingRotamers(potential, overlapProperties, searchAngles, coordinates, index, metadata[n],

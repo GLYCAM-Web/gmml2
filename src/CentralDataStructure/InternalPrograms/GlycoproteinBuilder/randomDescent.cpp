@@ -103,13 +103,12 @@ namespace glycoproteinBuilder
                     dihedralCoordinates(data, mutableData.bounds, dihedralId);
                 PartialDihedralRotationData partial =
                     toRotationInputData(graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
-                cds::DihedralRotationData input {partial.atomMoving,
+                cds::DihedralRotationData input {graph,
+                                                 mutableData.bounds,
+                                                 partial.atomMoving,
                                                  includedAtoms,
-                                                 mutableData.bounds.atoms,
                                                  data.atoms.elementEnums,
-                                                 mutableData.bounds.residues,
                                                  partial.residueWeights,
-                                                 graph.residues.nodes.elements,
                                                  partial.residueIndices,
                                                  data.residueLinkageData.overlapBonds[linkageId]};
                 const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
@@ -165,13 +164,12 @@ namespace glycoproteinBuilder
 
                     PartialDihedralRotationData partial = toRotationInputData(
                         graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
-                    cds::DihedralRotationData input {partial.atomMoving,
+                    cds::DihedralRotationData input {graph,
+                                                     mutableData.bounds,
+                                                     partial.atomMoving,
                                                      includedAtoms,
-                                                     mutableData.bounds.atoms,
                                                      data.atoms.elementEnums,
-                                                     mutableData.bounds.residues,
                                                      partial.residueWeights,
-                                                     graph.residues.nodes.elements,
                                                      partial.residueIndices,
                                                      data.residueLinkageData.overlapBonds[linkageId]};
                     cds::AngleOverlap best =

@@ -7,8 +7,11 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 
 #include <array>
 #include <vector>
@@ -27,26 +30,24 @@ namespace cds
 
     struct DihedralRotationDataContainer
     {
+        assembly::Graph graph;
+        assembly::Bounds bounds;
         std::vector<bool> atomMoving;
         std::vector<bool> atomIncluded;
-        std::vector<Sphere> atomBounds;
         std::vector<MolecularMetadata::Element> atomElements;
-        std::vector<Sphere> residueBounds;
         std::vector<double> residueWeights;
-        std::vector<std::vector<size_t>> residueAtoms;
         std::array<std::vector<size_t>, 2> residueIndices;
         std::vector<cds::BondedResidueOverlapInput> bonds;
     };
 
     struct DihedralRotationData
     {
+        const assembly::Graph& graph;
+        const assembly::Bounds& bounds;
         const std::vector<bool>& atomMoving;
         const std::vector<bool>& atomIncluded;
-        const std::vector<Sphere>& atomBounds;
         const std::vector<MolecularMetadata::Element>& atomElements;
-        const std::vector<Sphere>& residueBounds;
         const std::vector<double>& residueWeights;
-        const std::vector<std::vector<size_t>>& residueAtoms;
         const std::array<std::vector<size_t>, 2>& residueIndices;
         const std::vector<cds::BondedResidueOverlapInput>& bonds;
     };
@@ -69,6 +70,7 @@ namespace cds
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     AngleOverlap bestOverlapResult(const std::vector<AngleOverlap>& results);
     DihedralRotationDataContainer dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
+                                                            const GraphIndexData& indices,
                                                             const std::array<ResiduesWithOverlapWeight, 2>& residues);
     AngleOverlap wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
                                      cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
@@ -80,6 +82,7 @@ namespace cds
                                      std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference,
+                                     const GraphIndexData& indices,
                                      const std::array<ResiduesWithOverlapWeight, 2>& residues);
     std::vector<double> evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
                                            double increment);

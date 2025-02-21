@@ -11,6 +11,7 @@
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
@@ -239,8 +240,9 @@ namespace
         }
     }
 
-    void initialWiggleLinkage(cds::ResidueLinkage& linkage, const cds::AngleSearchSettings& searchSettings,
-                              cds::Residue* parentResidue, cds::Residue* childResidue)
+    void initialWiggleLinkage(cds::Molecule* molecule, cds::ResidueLinkage& linkage,
+                              const cds::AngleSearchSettings& searchSettings, cds::Residue* parentResidue,
+                              cds::Residue* childResidue)
     {
         // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after
         // more residues are added.
@@ -256,11 +258,12 @@ namespace
         cds::simpleWiggleCurrentRotamers(
             MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
             searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference,
-            {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
+            cds::toIndexData({molecule}), {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
-    void depthFirstSetConnectivityAndGeometry(std::vector<cds::ResidueLinkage>& glycosidicLinkages,
+    void depthFirstSetConnectivityAndGeometry(cds::Molecule* molecule,
+                                              std::vector<cds::ResidueLinkage>& glycosidicLinkages,
                                               const cds::AngleSearchSettings& searchSettings,
                                               cds::Residue* currentParent)
     {
@@ -286,8 +289,8 @@ namespace
             connectAndSetGeometry(currentParent, child);
             cds::ResidueLink link        = cds::findResidueLink({child, currentParent});
             cds::ResidueLinkage& linkage = glycosidicLinkages.emplace_back(cds::createResidueLinkage(link));
-            initialWiggleLinkage(linkage, searchSettings, currentParent, child);
-            depthFirstSetConnectivityAndGeometry(glycosidicLinkages, searchSettings, child);
+            initialWiggleLinkage(molecule, linkage, searchSettings, currentParent, child);
+            depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, child);
         }
     }
 } // namespace
@@ -334,7 +337,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     cds::serializeNumbers(this->getAtoms());
     auto searchSettings = defaultSearchSettings;
     // Set 3D structure
-    depthFirstSetConnectivityAndGeometry(glycosidicLinkages_, searchSettings,
+    depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings,
                                          getResidues().front()); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
@@ -519,6 +522,7 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
         cds::simpleWiggleCurrentRotamers(
             MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
             searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+            cds::toIndexData({this}),
             {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;
