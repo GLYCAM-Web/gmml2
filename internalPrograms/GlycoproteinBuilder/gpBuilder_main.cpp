@@ -186,12 +186,15 @@ int main(int argc, char* argv[])
 
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
-        glycoproteinBuilder::GlycoproteinAssembly assembly =
-            addSidechainRotamers(sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                                                        molecules, glycosites, overlapProperties, overlapMultiplier));
+        bool excludeHydrogen                               = false;
+        glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
+            sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
+                                   molecules, glycosites, overlapProperties, overlapMultiplier, excludeHydrogen));
         if (settings.allowSidechainAdjustment)
         {
-            assembly.data.atoms.alwaysIncluded = codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain);
+            assembly.data.atoms.includeInEachOverlapCheck =
+                codeUtils::vectorAnd(assembly.data.atoms.includeInEachOverlapCheck,
+                                     codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain));
         }
 
         std::cout << "Resolving overlaps" << std::endl;

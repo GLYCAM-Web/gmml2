@@ -132,7 +132,7 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
                                                            const std::vector<size_t>& preference, size_t residue)
 {
     std::vector<size_t> potentialOverlaps =
-        atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.all, residue);
+        atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.includeInEachOverlapCheck, residue);
     restoreSidechainRotation(graph, data, mutableData, residue);
     cds::Overlap initialOverlap = cds::overlapVectorSum(sidechainOverlap(
         graph, data, mutableData.bounds.atoms, sidechainMovingAtoms(data, residue), potentialOverlaps));

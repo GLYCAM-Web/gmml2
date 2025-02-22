@@ -40,9 +40,10 @@ namespace glycoproteinBuilder
         std::vector<MolecularMetadata::Element> elementEnums;
         std::vector<double> charges;
         std::vector<cds::Sphere> initialState;
-        std::vector<bool> partOfMovableSidechain;
         std::vector<bool> all;
-        std::vector<bool> alwaysIncluded;
+        std::vector<bool> includeInEachOverlapCheck;
+        std::vector<bool> includeInMainOverlapCheck;
+        std::vector<bool> partOfMovableSidechain;
     };
 
     struct SidechainDihedral

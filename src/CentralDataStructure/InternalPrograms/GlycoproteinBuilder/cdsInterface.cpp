@@ -23,7 +23,7 @@ namespace glycoproteinBuilder
     GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
                                                        std::vector<GlycosylationSite>& glycosites,
                                                        const cds::OverlapProperties overlapProperties,
-                                                       const OverlapMultiplier overlapWeight)
+                                                       const OverlapMultiplier overlapWeight, bool excludeHydrogen)
     {
         using MolecularMetadata::Element;
 
@@ -187,6 +187,14 @@ namespace glycoproteinBuilder
         std::vector<bool> partOfMovableSidechain(atoms.size(), false);
         std::vector<Element> atomElementEnums = cds::atomElementEnums(atoms);
         MolecularMetadata::validateElementsInPotentialTable(MolecularMetadata::potentialTable(), atomElementEnums);
+        std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
+        {
+            return atomElementEnums[n] != Element::H;
+        };
+        std::vector<bool> allAtoms(atoms.size(), true);
+        std::vector<bool> nonHydrogenAtoms =
+            codeUtils::vectorMap(nonHydrogen, codeUtils::indexVector(atomElementEnums));
+        std::vector<bool> includeInOverlapCheck = excludeHydrogen ? nonHydrogenAtoms : allAtoms;
         AtomData atomData {atomNames,
                            cds::atomTypes(atoms),
                            cds::atomNumbers(atoms),
@@ -196,9 +204,10 @@ namespace glycoproteinBuilder
                            atomElementEnums,
                            cds::atomCharges(atoms),
                            atomBoundingSpheres,
-                           partOfMovableSidechain,
-                           std::vector<bool>(atoms.size(), true),
-                           std::vector<bool>(atoms.size(), true)};
+                           allAtoms,
+                           includeInOverlapCheck,
+                           includeInOverlapCheck,
+                           partOfMovableSidechain};
 
         std::vector<std::string> residueNames      = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
@@ -207,10 +216,6 @@ namespace glycoproteinBuilder
         std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
         std::vector<double> phiAngles(residues.size(), 0.0);
         std::vector<double> psiAngles(residues.size(), 0.0);
-        std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
-        {
-            return atomElementEnums[n] != Element::H;
-        };
 
         auto dihedralCoordinates = [&](const std::array<size_t, 4>& arr)
         {

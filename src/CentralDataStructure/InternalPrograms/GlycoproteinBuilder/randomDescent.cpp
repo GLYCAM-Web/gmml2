@@ -259,21 +259,23 @@ namespace glycoproteinBuilder
             for (auto& glycanId : codeUtils::shuffleVector(rng, overlapSites))
             {
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
-                cds::Overlap previousOverlap = localOverlap(graph, data, mutableData, data.defaultResidueWeight,
-                                                            data.atoms.all, glycanId, overlapMultiplier.self);
-                auto preferences             = randomizeShape(rng, data, mutableData, glycanId);
-                MutableData lastShape        = mutableData;
+                cds::Overlap previousOverlap =
+                    localOverlap(graph, data, mutableData, data.defaultResidueWeight,
+                                 data.atoms.includeInEachOverlapCheck, glycanId, overlapMultiplier.self);
+                auto preferences      = randomizeShape(rng, data, mutableData, glycanId);
+                MutableData lastShape = mutableData;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], preferences[n]);
                 }
-                wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
+                wiggleGlycan(graph, data, mutableData, data.atoms.includeInMainOverlapCheck, glycanId, searchSettings,
                              overlapMultiplier, preferences);
                 adjustSidechains(rng, graph, data, mutableData, glycositePreferences, {glycanId});
-                cds::Overlap newOverlap = localOverlap(graph, data, mutableData, data.defaultResidueWeight,
-                                                       data.atoms.all, glycanId, overlapMultiplier.self);
-                cds::Overlap diff       = newOverlap + (previousOverlap * -1);
-                bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+                cds::Overlap newOverlap =
+                    localOverlap(graph, data, mutableData, data.defaultResidueWeight,
+                                 data.atoms.includeInEachOverlapCheck, glycanId, overlapMultiplier.self);
+                cds::Overlap diff = newOverlap + (previousOverlap * -1);
+                bool isWorse      = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
                 if (isWorse)
                 {
                     mutableData = lastShape;
@@ -292,7 +294,8 @@ namespace glycoproteinBuilder
                 cycle = 0;
             }
             globalOverlap = newGlobalOverlap;
-            overlapSites  = determineSitesWithOverlap(overlapSites, graph, data, mutableData, data.atoms.all);
+            overlapSites =
+                determineSitesWithOverlap(overlapSites, graph, data, mutableData, data.atoms.includeInEachOverlapCheck);
         }
         return {globalOverlap, overlapSites, glycositePreferences};
     }

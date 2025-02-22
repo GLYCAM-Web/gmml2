@@ -157,8 +157,8 @@ namespace glycoproteinBuilder
             }
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycans))
             {
-                wiggleGlycan(graph, data, mutableData, data.atoms.all, glycanId, searchSettings, overlapMultiplier,
-                             glycositePreferences[glycanId]);
+                wiggleGlycan(graph, data, mutableData, data.atoms.includeInEachOverlapCheck, glycanId, searchSettings,
+                             overlapMultiplier, glycositePreferences[glycanId]);
             }
         };
 
@@ -209,17 +209,18 @@ namespace glycoproteinBuilder
             }
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycanIndices))
             {
-                wiggleGlycan(graph, data, mutableData, data.atoms.alwaysIncluded, glycanId, searchSettings,
+                wiggleGlycan(graph, data, mutableData, data.atoms.includeInMainOverlapCheck, glycanId, searchSettings,
                              overlapMultiplier, glycositePreferences[glycanId]);
             }
             adjustSidechains(rng, graph, data, mutableData, glycositePreferences, glycanIndices);
             GlycoproteinState currentState;
-            std::vector<size_t> overlapSites =
-                determineSitesWithOverlap(glycanIndices, graph, data, mutableData, data.atoms.all);
+            std::vector<size_t> overlapSites = determineSitesWithOverlap(glycanIndices, graph, data, mutableData,
+                                                                         data.atoms.includeInEachOverlapCheck);
             for (bool done = false; !done; done = overlapSites.empty() || !deleteSitesUntilResolved)
             {
-                cds::Overlap initialOverlap = cds::overlapVectorSum(totalOverlaps(
-                    graph, data, mutableData, data.defaultResidueWeight, data.atoms.all, overlapMultiplier));
+                cds::Overlap initialOverlap =
+                    cds::overlapVectorSum(totalOverlaps(graph, data, mutableData, data.defaultResidueWeight,
+                                                        data.atoms.includeInEachOverlapCheck, overlapMultiplier));
 
                 GlycoproteinState initialState = {initialOverlap, overlapSites, glycositePreferences};
                 currentState =
@@ -240,7 +241,7 @@ namespace glycoproteinBuilder
                     updateResidueBounds(graph, mutableData.bounds, proteinResidue);
                     updateResidueMoleculeBounds(graph, mutableData.bounds, proteinResidue);
                     overlapSites = determineSitesWithOverlap(includedGlycanIndices(data, mutableData), graph, data,
-                                                             mutableData, data.atoms.all);
+                                                             mutableData, data.atoms.includeInEachOverlapCheck);
                 }
             }
             restoreSidechains(rng, graph, data, mutableData, glycositePreferences,
@@ -301,7 +302,7 @@ namespace glycoproteinBuilder
         {
             const std::vector<bool>& included         = glycanIncluded(data, mutableData);
             const std::vector<double>& residueWeights = data.equalResidueWeight;
-            const std::vector<bool>& includedAtoms    = data.atoms.all;
+            const std::vector<bool>& includedAtoms    = data.atoms.includeInEachOverlapCheck;
             size_t glycanCount                        = data.glycans.moleculeId.size();
             for (size_t n = 0; n < glycanCount; n++)
             {
@@ -397,8 +398,8 @@ namespace glycoproteinBuilder
             if (settings.rejectExcessiveGlycanOverlaps)
             {
                 std::vector<cds::Overlap> atomOverlaps =
-                    totalOverlaps(graph, data, mutableData, data.equalResidueWeight, data.atoms.all,
-                                  OverlapMultiplier {1.0, 1.0, 1.0});
+                    totalOverlaps(graph, data, mutableData, data.equalResidueWeight,
+                                  data.atoms.includeInEachOverlapCheck, OverlapMultiplier {1.0, 1.0, 1.0});
                 for (size_t molecule : includedGlycanMoleculeIds(data, mutableData))
                 {
                     for (size_t residue : moleculeResidues(graph, molecule))
