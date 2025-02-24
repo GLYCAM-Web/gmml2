@@ -212,7 +212,7 @@ namespace glycoproteinBuilder
         std::vector<std::string> residueNames      = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
         std::vector<cds::Sphere> residueBoundingSpheres =
-            boundingSpheresOf(atomBoundingSpheres, graph.residues.nodes.elements);
+            boundingSpheresOf(atomBoundingSpheres, graph.residues.nodes.constituents);
         std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
         std::vector<double> phiAngles(residues.size(), 0.0);
         std::vector<double> psiAngles(residues.size(), 0.0);
@@ -286,7 +286,7 @@ namespace glycoproteinBuilder
                                  sidechainWeights,
                                  sidechainPotentialBounds};
         std::vector<cds::Sphere> moleculeBounds =
-            boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.elements);
+            boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.constituents);
 
         MoleculeData moleculeData {moleculeTypes};
         GlycanData GlycanData {glycanAttachmentResidue, glycanMoleculeId, glycanLinkages};

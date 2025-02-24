@@ -21,7 +21,7 @@ namespace graph
         std::vector<size_t> indices;
         std::vector<std::vector<size_t>> nodeAdjacencies;
         std::vector<std::vector<size_t>> edgeAdjacencies;
-        std::vector<std::vector<size_t>> elements;
+        std::vector<std::vector<size_t>> constituents;
     };
 
     struct GraphEdges

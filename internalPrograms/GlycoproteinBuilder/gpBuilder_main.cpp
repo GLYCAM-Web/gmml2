@@ -49,10 +49,10 @@ int main(int argc, char* argv[])
     };
     std::string programName = codeUtils::programName(argv);
     codeUtils::Path path    = codeUtils::toPath(argv[0]);
-    size_t pathSize         = path.elements.size();
-    if (pathSize < 3 || path.elements[pathSize - 2] != std::string("bin"))
+    size_t pathSize         = path.constituents.size();
+    if (pathSize < 3 || path.constituents[pathSize - 2] != std::string("bin"))
     {
-        throw std::runtime_error("expected application to be located in bin/" + path.elements[pathSize - 1] +
+        throw std::runtime_error("expected application to be located in bin/" + path.constituents[pathSize - 1] +
                                  ", actually located in " + programName);
     }
 
@@ -153,8 +153,9 @@ int main(int argc, char* argv[])
 
         MolecularMetadata::SidechainRotamerData sidechainRotamers;
         {
-            std::string basePath = (path.absolute ? "/" : "") +
-                                   codeUtils::join("/", codeUtils::take(path.elements.size() - 2, path.elements));
+            std::string basePath =
+                (path.absolute ? "/" : "") +
+                codeUtils::join("/", codeUtils::take(path.constituents.size() - 2, path.constituents));
             std::string dunbrackLib = basePath + "/dat/dunbrack/sidechainRotamers.txt";
             sidechainRotamers       = MolecularMetadata::readSidechainRotamerData(dunbrackLib);
         }

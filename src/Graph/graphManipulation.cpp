@@ -128,12 +128,12 @@ graph::Graph graph::selectedQuotientAliveOrNot(const Database& graph, const std:
     auto nodeData                  = createNodes(nodeGroup, includeNode);
     std::vector<size_t> nodes      = nodeData.first;
     std::vector<size_t> groupIndex = nodeData.second;
-    std::vector<std::vector<size_t>> elements(nodes.size(), std::vector<size_t> {});
+    std::vector<std::vector<size_t>> constituents(nodes.size(), std::vector<size_t> {});
     for (size_t n = 0; n < graph.nodes.size(); n++)
     {
         if (includeNode[n])
         {
-            elements[groupIndex[nodeGroup[n]]].push_back(graph.nodes[n]);
+            constituents[groupIndex[nodeGroup[n]]].push_back(graph.nodes[n]);
         }
     }
     std::vector<size_t> edges;
@@ -155,7 +155,7 @@ graph::Graph graph::selectedQuotientAliveOrNot(const Database& graph, const std:
     std::vector<std::vector<size_t>> nodeNodes = adjacencies.first;
     std::vector<std::vector<size_t>> nodeEdges = adjacencies.second;
     return {
-        {nodes, nodeNodes, nodeEdges, elements},
+        {nodes, nodeNodes, nodeEdges, constituents},
         {edges, edgeNodes},
         graph
     };

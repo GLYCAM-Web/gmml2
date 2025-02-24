@@ -25,12 +25,12 @@ namespace assembly
 
     inline const std::vector<size_t>& residueAtoms(const Graph& graph, size_t residueId)
     {
-        return graph.residues.nodes.elements[residueId];
+        return graph.residues.nodes.constituents[residueId];
     };
 
     inline const std::vector<size_t>& moleculeResidues(const Graph& graph, size_t moleculeId)
     {
-        return graph.molecules.nodes.elements[moleculeId];
+        return graph.molecules.nodes.constituents[moleculeId];
     };
 
     inline std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
@@ -45,7 +45,7 @@ namespace assembly
 
     inline const std::vector<size_t>& assemblyMolecules(const Graph& graph, size_t assemblyId)
     {
-        return graph.assemblies.nodes.elements[assemblyId];
+        return graph.assemblies.nodes.constituents[assemblyId];
     };
 
     inline size_t residueEdgeToAtomEdgeIndex(const Graph& graph, size_t edgeId)

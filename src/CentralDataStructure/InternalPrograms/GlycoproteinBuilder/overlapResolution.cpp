@@ -287,7 +287,7 @@ namespace glycoproteinBuilder
             cds::PdbFileData pdbData =
                 toPdbFileData(graph, data, coordinates, atomNumbers, residueNumbers, headerLines);
             std::vector<std::vector<size_t>> residueIndices =
-                codeUtils::boolsToValues(graph.molecules.nodes.elements, includedMolecules);
+                codeUtils::boolsToValues(graph.molecules.nodes.constituents, includedMolecules);
             std::vector<std::vector<bool>> TER = residueTER(data, residueIndices);
             codeUtils::createDirectories(outputDir);
             std::string fileName = outputDir + "/" + prefix + ".pdb";

@@ -34,7 +34,7 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const assembly::Graph& graph,
     for (size_t n = 0; n < residueIndices.size(); n++)
     {
         size_t residueIndex = residueIndices[n];
-        for (size_t residueAtom : graph.residues.nodes.elements[residueIndex])
+        for (size_t residueAtom : residueAtoms(graph, residueIndex))
         {
             size_t atomIndex = graph.residues.source.nodes[residueAtom];
             cds::writeAtomToPdb(stream, data.format, residues, residueIndex, atoms, atomIndex);

@@ -22,7 +22,7 @@ namespace codeUtils
     struct Path
     {
         bool absolute;
-        std::vector<std::string> elements;
+        std::vector<std::string> constituents;
     };
 
     std::string Find_Program_Installation_Directory();
