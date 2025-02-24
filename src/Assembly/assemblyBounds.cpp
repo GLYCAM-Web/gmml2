@@ -26,11 +26,11 @@ namespace assembly
             cds::boundingSphere(codeUtils::indicesToValues(bounds.residues, moleculeResidues(graph, index)));
     }
 
-    void updateBoundsContainingAtoms(const Graph& graph, Bounds& bounds, const std::vector<size_t>& atoms)
+    void updateBoundsContainingAtoms(const Graph& graph, Bounds& bounds, const std::vector<size_t>& selectedAtoms)
     {
         std::vector<bool> updateResidue(graph.residueCount, false);
         std::vector<bool> updateMolecule(graph.moleculeCount, false);
-        for (size_t atom : atoms)
+        for (size_t atom : selectedAtoms)
         {
             updateResidue[graph.atomResidue[atom]] = true;
         }

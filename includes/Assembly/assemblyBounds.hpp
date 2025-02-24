@@ -18,7 +18,7 @@ namespace assembly
     void updateResidueBounds(const Graph& graph, Bounds& bounds, size_t index);
     void updateResidueMoleculeBounds(const Graph& graph, Bounds& bounds, size_t index);
     void updateMoleculeBounds(const Graph& graph, Bounds& bounds, size_t index);
-    void updateBoundsContainingAtoms(const Graph& graph, Bounds& bounds, const std::vector<size_t>& atoms);
+    void updateBoundsContainingAtoms(const Graph& graph, Bounds& bounds, const std::vector<size_t>& selectedAtoms);
 } // namespace assembly
 
 #endif
