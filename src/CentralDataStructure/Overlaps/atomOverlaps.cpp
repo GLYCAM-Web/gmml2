@@ -56,6 +56,33 @@ namespace
         }
         return bonds.size();
     }
+
+    std::array<std::vector<size_t>, 2> atomsToCheck(const assembly::Graph& graph, const cds::AtomOverlapData& atomData,
+                                                    const cds::ResidueOverlapData& residueData,
+                                                    const std::vector<cds::BondedResidueOverlapInput>& bonds,
+                                                    double overlapTolerance, size_t residueA, size_t residueB)
+    {
+        const cds::Sphere& residueBoundsA = residueData.bounds[residueA];
+        const cds::Sphere& residueBoundsB = residueData.bounds[residueB];
+        const std::vector<size_t>& atomsA = residueAtoms(graph, residueA);
+        const std::vector<size_t>& atomsB = residueAtoms(graph, residueB);
+        std::vector<size_t> indicesA;
+        std::vector<size_t> indicesB;
+        size_t bondIndex = findBondIndex(bonds, residueA, residueB);
+        if (bondIndex < bonds.size())
+        {
+            const cds::BondedResidueOverlapInput& bond = bonds[bondIndex];
+            bool order                                 = !(bond.residueIndices[0] == residueA);
+            insertNonIgnored(indicesA, atomsA, atomData.included, bond.ignoredAtoms[order]);
+            insertNonIgnored(indicesB, atomsB, atomData.included, bond.ignoredAtoms[!order]);
+        }
+        else if (cds::spheresOverlap(overlapTolerance, residueBoundsA, residueBoundsB))
+        {
+            insertIntersection(indicesA, overlapTolerance, residueBoundsB, atomData.bounds, atomData.included, atomsA);
+            insertIntersection(indicesB, overlapTolerance, residueBoundsA, atomData.bounds, atomData.included, atomsB);
+        }
+        return {indicesA, indicesB};
+    }
 } // namespace
 
 void cds::insertIndicesOfIntersection(std::vector<size_t>& result, double overlapTolerance, const Sphere& sphere,
@@ -82,52 +109,27 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
 
 std::vector<cds::Overlap>
 cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
-                           const assembly::Graph& graph, const assembly::Bounds& bounds,
-                           const std::vector<double>& residueWeights,
-                           const std::vector<MolecularMetadata::Element>& atomElements,
-                           const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
+                           const assembly::Graph& graph, const AtomOverlapData& atomData,
+                           const ResidueOverlapData& residueData, const std::vector<BondedResidueOverlapInput>& bonds,
                            const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
 {
     std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
-    std::vector<size_t> indicesA;
-    indicesA.reserve(64);
-    std::vector<size_t> indicesB;
-    indicesB.reserve(64);
-    for (size_t n = 0; n < residuesA.size(); n++)
+    for (size_t residueA : residuesA)
     {
-        size_t aIndex                = residuesA[n];
-        const Sphere& residueBoundsA = bounds.residues[aIndex];
-        for (size_t k = 0; k < residuesB.size(); k++)
+        for (size_t residueB : residuesB)
         {
-            size_t bIndex                     = residuesB[k];
-            const Sphere& residueBoundsB      = bounds.residues[bIndex];
-            const std::vector<size_t>& atomsA = residueAtoms(graph, aIndex);
-            const std::vector<size_t>& atomsB = residueAtoms(graph, bIndex);
-            double weight                     = residueWeights[aIndex] * residueWeights[bIndex];
-            indicesA.clear();
-            indicesB.clear();
-            size_t bondIndex = findBondIndex(bonds, aIndex, bIndex);
-            if (bondIndex < bonds.size())
+            double weight = residueData.weights[residueA] * residueData.weights[residueB];
+            std::array<std::vector<size_t>, 2> toCheck =
+                atomsToCheck(graph, atomData, residueData, bonds, properties.tolerance, residueA, residueB);
+            for (size_t n : toCheck[0])
             {
-                const BondedResidueOverlapInput& bond = bonds[bondIndex];
-                bool order                            = !(bond.residueIndices[0] == aIndex);
-                insertNonIgnored(indicesA, atomsA, includedAtoms, bond.ignoredAtoms[order]);
-                insertNonIgnored(indicesB, atomsB, includedAtoms, bond.ignoredAtoms[!order]);
-            }
-            else if (cds::spheresOverlap(properties.tolerance, residueBoundsA, residueBoundsB))
-            {
-                insertIntersection(indicesA, properties.tolerance, residueBoundsB, bounds.atoms, includedAtoms, atomsA);
-                insertIntersection(indicesB, properties.tolerance, residueBoundsA, bounds.atoms, includedAtoms, atomsB);
-            }
-            for (size_t n : indicesA)
-            {
-                MolecularMetadata::Element elementA = atomElements[n];
-                for (size_t k : indicesB)
+                MolecularMetadata::Element elementA = atomData.elements[n];
+                for (size_t k : toCheck[1])
                 {
-                    MolecularMetadata::Element elementB = atomElements[k];
+                    MolecularMetadata::Element elementB = atomData.elements[k];
                     double scale = MolecularMetadata::potentialWeight(potential, elementA, elementB);
                     Overlap overlap =
-                        overlapAmount(properties.tolerance, scale, bounds.atoms[n], bounds.atoms[k]) * weight;
+                        overlapAmount(properties.tolerance, scale, atomData.bounds[n], atomData.bounds[k]) * weight;
                     result[n] += overlap;
                     result[k] += overlap;
                 }

@@ -13,6 +13,19 @@
 
 namespace cds
 {
+    struct AtomOverlapData
+    {
+        const std::vector<Sphere>& bounds;
+        const std::vector<MolecularMetadata::Element>& elements;
+        const std::vector<bool>& included;
+    };
+
+    struct ResidueOverlapData
+    {
+        const std::vector<Sphere>& bounds;
+        const std::vector<double>& weights;
+    };
+
     struct ResiduesWithOverlapWeight
     {
         std::vector<Residue*> residues;
@@ -31,12 +44,11 @@ namespace cds
                                             const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     Overlap CountOverlappingAtoms(OverlapProperties properties, const std::vector<Atom*>& atomsA,
                                   const std::vector<Atom*>& atomsB);
-    std::vector<Overlap>
-    CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
-                          const assembly::Graph& graph, const assembly::Bounds& bounds,
-                          const std::vector<double>& residueWeights,
-                          const std::vector<MolecularMetadata::Element>& atomElements,
-                          const std::vector<bool>& includedAtoms, const std::vector<BondedResidueOverlapInput>& bonds,
-                          const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
+    std::vector<Overlap> CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential,
+                                               OverlapProperties properties, const assembly::Graph& graph,
+                                               const AtomOverlapData& atomData, const ResidueOverlapData& residueData,
+                                               const std::vector<BondedResidueOverlapInput>& bonds,
+                                               const std::vector<size_t>& residuesA,
+                                               const std::vector<size_t>& residuesB);
 } // namespace cds
 #endif

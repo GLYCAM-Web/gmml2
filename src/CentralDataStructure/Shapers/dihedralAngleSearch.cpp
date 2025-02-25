@@ -118,8 +118,8 @@ namespace
             cds::RotationMatrix matrix = rotationTo(dihedral, constants::toRadians(angle));
             applyMatrix(input.graph, input.bounds, movingAtoms, matrix, bounds);
             cds::Overlap overlaps = cds::overlapVectorSum(cds::CountOverlappingAtoms(
-                potential, overlapProperties, input.graph, bounds, input.residueWeights, input.atomElements,
-                input.atomIncluded, input.bonds, fixedResidueIndices, movingResidueIndices));
+                potential, overlapProperties, input.graph, {bounds.atoms, input.atomElements, input.atomIncluded},
+                {bounds.residues, input.residueWeights}, input.bonds, fixedResidueIndices, movingResidueIndices));
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
