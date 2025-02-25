@@ -36,8 +36,8 @@ namespace glycoproteinBuilder
         std::vector<int> numbers;
         std::vector<int> serializedNumbers;
         std::vector<int> atomicNumbers;
-        std::vector<std::string> elements;
-        std::vector<MolecularMetadata::Element> elementEnums;
+        std::vector<std::string> elementStrings;
+        std::vector<MolecularMetadata::Element> elements;
         std::vector<double> charges;
         std::vector<cds::Sphere> initialState;
         std::vector<bool> all;

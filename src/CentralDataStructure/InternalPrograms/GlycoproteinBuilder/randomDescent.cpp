@@ -107,7 +107,7 @@ namespace glycoproteinBuilder
                                                  mutableData.bounds,
                                                  partial.atomMoving,
                                                  includedAtoms,
-                                                 data.atoms.elementEnums,
+                                                 data.atoms.elements,
                                                  partial.residueWeights,
                                                  partial.residueIndices,
                                                  data.residueLinkageData.overlapBonds[linkageId]};
@@ -161,7 +161,7 @@ namespace glycoproteinBuilder
                                                      mutableData.bounds,
                                                      partial.atomMoving,
                                                      includedAtoms,
-                                                     data.atoms.elementEnums,
+                                                     data.atoms.elements,
                                                      partial.residueWeights,
                                                      partial.residueIndices,
                                                      data.residueLinkageData.overlapBonds[linkageId]};

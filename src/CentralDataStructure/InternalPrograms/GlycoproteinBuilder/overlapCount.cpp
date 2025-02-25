@@ -90,10 +90,10 @@ namespace glycoproteinBuilder
             const std::vector<size_t>& residuesB = linkage.reducingResidues;
 
             std::vector<cds::BondedResidueOverlapInput> bonds = residueBonds(graph, residueA, residuesB[0]);
-            cds::addOverlapsTo(
-                result, cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, graph,
-                                                   {bounds.atoms, data.atoms.elementEnums, includedAtoms},
-                                                   {bounds.residues, residueWeights}, bonds, {residueA}, residuesB));
+            cds::addOverlapsTo(result, cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, graph,
+                                                                  {bounds.atoms, data.atoms.elements, includedAtoms},
+                                                                  {bounds.residues, residueWeights}, bonds, {residueA},
+                                                                  residuesB));
         }
         return result;
     }
@@ -119,7 +119,7 @@ namespace glycoproteinBuilder
             std::vector<size_t> residuesB = cds::intersectingIndices(overlapTolerance, boundsA, bounds.residues,
                                                                      moleculeResidues(graph, moleculeB));
             return cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, graph,
-                                              {bounds.atoms, data.atoms.elementEnums, includedAtoms},
+                                              {bounds.atoms, data.atoms.elements, includedAtoms},
                                               {bounds.residues, residueWeights}, bonds, residuesA, residuesB);
         }
     }
@@ -140,10 +140,9 @@ namespace glycoproteinBuilder
         {
             size_t residueMolecule                            = graph.residueMolecule[residue];
             std::vector<cds::BondedResidueOverlapInput> bonds = moleculeBonds(graph, molecule, residueMolecule);
-            return cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, graph,
-                                              {bounds.atoms, data.atoms.elementEnums, includedAtoms},
-                                              {bounds.residues, residueWeights}, bonds, {residue},
-                                              moleculeResidues(graph, molecule));
+            return cds::CountOverlappingAtoms(
+                data.potentialTable, data.overlapProperties, graph, {bounds.atoms, data.atoms.elements, includedAtoms},
+                {bounds.residues, residueWeights}, bonds, {residue}, moleculeResidues(graph, molecule));
         }
     }
 

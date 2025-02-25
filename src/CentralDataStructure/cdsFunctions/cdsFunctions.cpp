@@ -67,7 +67,7 @@ std::vector<std::string> cds::atomNames(const std::vector<Atom*>& atoms)
     return result;
 }
 
-std::vector<std::string> cds::atomElements(const std::vector<Atom*>& atoms)
+std::vector<std::string> cds::atomElementStrings(const std::vector<Atom*>& atoms)
 {
     std::vector<std::string> result;
     result.reserve(atoms.size());
@@ -78,7 +78,7 @@ std::vector<std::string> cds::atomElements(const std::vector<Atom*>& atoms)
     return result;
 }
 
-std::vector<MolecularMetadata::Element> cds::atomElementEnums(const std::vector<Atom*>& atoms)
+std::vector<MolecularMetadata::Element> cds::atomElements(const std::vector<Atom*>& atoms)
 {
     std::vector<MolecularMetadata::Element> result;
     result.reserve(atoms.size());

@@ -36,7 +36,8 @@ std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
 cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
                                             std::vector<double> occupancies, std::vector<double> temperatureFactors)
 {
-    return {atomCoordinates(atoms), atomNumbers(atoms), atomNames(atoms), atomElements(atoms), recordNames, occupancies,
+    return {atomCoordinates(atoms),    atomNumbers(atoms), atomNames(atoms),
+            atomElementStrings(atoms), recordNames,        occupancies,
             temperatureFactors};
 }
 
@@ -45,7 +46,7 @@ cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms
     return {atomCoordinates(atoms),
             atomNumbers(atoms),
             atomNames(atoms),
-            atomElements(atoms),
+            atomElementStrings(atoms),
             recordNames,
             std::vector<double>(atoms.size(), 1.0),
             std::vector<double>(atoms.size(), 0.0)};

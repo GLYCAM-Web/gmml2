@@ -223,7 +223,7 @@ cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihed
         bounds,
         atomMoving,
         atomIncluded,
-        cds::atomElementEnums(indices.atoms),
+        cds::atomElements(indices.atoms),
         residueWeights,
         {residueIndices[0],
           cds::intersectingIndices(overlapTolerance, movementBounds, residueBounds, residueIndices[1])},

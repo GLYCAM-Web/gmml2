@@ -57,7 +57,7 @@ namespace glycoproteinBuilder
         cds::PdbFileAtomData atomPdbData {atomCoordinates,
                                           atomNumbers,
                                           data.atoms.names,
-                                          data.atoms.elements,
+                                          data.atoms.elementStrings,
                                           recordNames,
                                           std::vector<double>(atomCount, 1.0),
                                           std::vector<double>(atomCount, 0.0)};

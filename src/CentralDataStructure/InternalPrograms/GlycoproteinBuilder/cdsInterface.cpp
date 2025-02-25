@@ -185,23 +185,22 @@ namespace glycoproteinBuilder
         std::vector<std::string> atomNames           = cds::atomNames(atoms);
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
         std::vector<bool> partOfMovableSidechain(atoms.size(), false);
-        std::vector<Element> atomElementEnums = cds::atomElementEnums(atoms);
-        MolecularMetadata::validateElementsInPotentialTable(MolecularMetadata::potentialTable(), atomElementEnums);
+        std::vector<Element> atomElements = cds::atomElements(atoms);
+        MolecularMetadata::validateElementsInPotentialTable(MolecularMetadata::potentialTable(), atomElements);
         std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
         {
-            return atomElementEnums[n] != Element::H;
+            return atomElements[n] != Element::H;
         };
         std::vector<bool> allAtoms(atoms.size(), true);
-        std::vector<bool> nonHydrogenAtoms =
-            codeUtils::vectorMap(nonHydrogen, codeUtils::indexVector(atomElementEnums));
+        std::vector<bool> nonHydrogenAtoms = codeUtils::vectorMap(nonHydrogen, codeUtils::indexVector(atomElements));
         std::vector<bool> includeInOverlapCheck = excludeHydrogen ? nonHydrogenAtoms : allAtoms;
         AtomData atomData {atomNames,
                            cds::atomTypes(atoms),
                            cds::atomNumbers(atoms),
                            cds::serializedNumberVector(atoms.size()),
                            cds::atomAtomicNumbers(atoms),
-                           cds::atomElements(atoms),
-                           atomElementEnums,
+                           cds::atomElementStrings(atoms),
+                           atomElements,
                            cds::atomCharges(atoms),
                            atomBoundingSpheres,
                            allAtoms,

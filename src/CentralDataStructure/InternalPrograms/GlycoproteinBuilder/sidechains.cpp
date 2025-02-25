@@ -158,11 +158,11 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
     const cds::OverlapProperties& properties = data.overlapProperties;
     for (size_t n : atomsA)
     {
-        MolecularMetadata::Element elementA = data.atoms.elementEnums[n];
+        MolecularMetadata::Element elementA = data.atoms.elements[n];
         for (size_t k : atomsB)
         {
             double weight = residueWeight[graph.atomResidue[n]] * residueWeight[graph.atomResidue[k]];
-            MolecularMetadata::Element elementB = data.atoms.elementEnums[k];
+            MolecularMetadata::Element elementB = data.atoms.elements[k];
             double scale         = MolecularMetadata::potentialWeight(data.potentialTable, elementA, elementB);
             cds::Overlap overlap = cds::overlapAmount(properties.tolerance, scale, bounds[n], bounds[k]) * weight;
             result[graph.atomResidue[n]] += overlap;

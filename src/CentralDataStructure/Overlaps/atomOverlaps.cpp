@@ -144,8 +144,8 @@ cds::Overlap cds::CountOverlappingAtoms(OverlapProperties properties, const std:
 {
     std::vector<Sphere> coordsA                       = atomCoordinatesWithRadii(atomsA);
     std::vector<Sphere> coordsB                       = atomCoordinatesWithRadii(atomsB);
-    std::vector<MolecularMetadata::Element> elementsA = cds::atomElementEnums(atomsA);
-    std::vector<MolecularMetadata::Element> elementsB = cds::atomElementEnums(atomsB);
+    std::vector<MolecularMetadata::Element> elementsA = cds::atomElements(atomsA);
+    std::vector<MolecularMetadata::Element> elementsB = cds::atomElements(atomsB);
 
     Overlap overlap {0, 0.0};
     for (size_t n = 0; n < atomsA.size(); n++)
