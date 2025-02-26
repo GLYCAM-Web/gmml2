@@ -197,13 +197,17 @@ cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihed
         dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
                                     : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
 
-    std::vector<Atom*> atomsA = codeUtils::indicesToValues(indices.atoms, residueAtoms(graph, residueIndices[0][0]));
-    std::vector<Atom*> atomsB = codeUtils::indicesToValues(indices.atoms, residueAtoms(graph, residueIndices[1][0]));
-    auto residueBond          = bondedAtomPair(atomsA, atomsB);
-    auto bonds                = std::vector<cds::BondedResidueOverlapInput> {
-        {{residueIndices[0][0], residueIndices[1][0]},
-         {atomsBondedTo(residueBond[0], atomsA), atomsBondedTo(residueBond[1], atomsB)}}
-    };
+    size_t residueA                  = residueIndices[0][0];
+    size_t residueB                  = residueIndices[1][0];
+    size_t adjacency                 = codeUtils::indexOf(graph.residues.nodes.nodeAdjacencies[residueA], residueB);
+    const std::vector<size_t>& edges = graph.residues.nodes.edgeAdjacencies[residueA];
+    std::vector<cds::BondedResidueOverlapInput> bonds;
+    if (adjacency < edges.size())
+    {
+        size_t edgeIndex = edges[adjacency];
+        bonds.push_back(
+            {graph.residues.edges.nodeAdjacencies[edgeIndex], residueAtomsCloseToEdge(graph, edges[adjacency])});
+    }
     std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(indices.atoms);
     std::vector<Sphere> residueBounds;
     residueBounds.reserve(graph.residueCount);

@@ -12,37 +12,6 @@ namespace glycoproteinBuilder
 {
     namespace
     {
-        std::vector<bool> ignoredAtomsOf(const assembly::Graph& graph, size_t residueIndex, size_t atomIndex)
-        {
-            const std::vector<size_t>& atomAdj     = graph.atoms.nodes.nodeAdjacencies[atomIndex];
-            const std::vector<size_t>& atomIndices = residueAtoms(graph, residueIndex);
-            std::vector<bool> ignored(atomIndices.size(), false);
-            ignored[codeUtils::indexOf(atomIndices, atomIndex)] = true;
-            for (size_t adj : atomAdj)
-            {
-                if (graph.atomResidue[adj] == residueIndex)
-                {
-                    ignored[codeUtils::indexOf(atomIndices, adj)] = true;
-                }
-            }
-            return ignored;
-        };
-
-        cds::BondedResidueOverlapInput bondedResidueOverlapInput(const assembly::Graph& graph, size_t bondIndex)
-        {
-            auto& atomBond             = graph.atoms.edges.nodeAdjacencies[bondIndex];
-            size_t atomA               = atomBond[0];
-            size_t atomB               = atomBond[1];
-            size_t residueA            = graph.atomResidue[atomA];
-            size_t residueB            = graph.atomResidue[atomB];
-            std::vector<bool> ignoredA = ignoredAtomsOf(graph, residueA, atomA);
-            std::vector<bool> ignoredB = ignoredAtomsOf(graph, residueB, atomB);
-            return {
-                {residueA, residueB},
-                {ignoredA, ignoredB}
-            };
-        }
-
         std::vector<cds::BondedResidueOverlapInput> residueBonds(const assembly::Graph& graph, size_t residueA,
                                                                  size_t residueB)
         {
@@ -51,9 +20,9 @@ namespace glycoproteinBuilder
             size_t adjacencyIndex = codeUtils::indexOf(adjacencies, residueB);
             if (adjacencyIndex < adjacencies.size())
             {
-                size_t edgeIndex = graph.residues.nodes.edgeAdjacencies[residueA][adjacencyIndex];
-                size_t bondIndex = residueEdgeToAtomEdgeIndex(graph, edgeIndex);
-                bonds.push_back(bondedResidueOverlapInput(graph, bondIndex));
+                size_t edgeIndex                      = graph.residues.nodes.edgeAdjacencies[residueA][adjacencyIndex];
+                const std::array<size_t, 2>& residues = graph.residues.edges.nodeAdjacencies[edgeIndex];
+                bonds.push_back({residues, residueAtomsCloseToEdge(graph, edgeIndex)});
             }
             return bonds;
         }
@@ -66,9 +35,10 @@ namespace glycoproteinBuilder
             size_t adjacencyIndex = codeUtils::indexOf(adjacencies, moleculeB);
             if (adjacencyIndex < adjacencies.size())
             {
-                size_t edgeIndex     = graph.molecules.nodes.edgeAdjacencies[moleculeA][adjacencyIndex];
-                size_t atomBondIndex = moleculeEdgeToAtomEdgeIndex(graph, edgeIndex);
-                bonds.push_back(bondedResidueOverlapInput(graph, atomBondIndex));
+                size_t edgeIndex        = graph.molecules.nodes.edgeAdjacencies[moleculeA][adjacencyIndex];
+                size_t residueEdgeIndex = moleculeEdgeToResidueEdgeIndex(graph, edgeIndex);
+                const std::array<size_t, 2>& residues = graph.residues.edges.nodeAdjacencies[residueEdgeIndex];
+                bonds.push_back({residues, residueAtomsCloseToEdge(graph, residueEdgeIndex)});
             }
             return bonds;
         }

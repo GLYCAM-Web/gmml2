@@ -4,6 +4,7 @@
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
+#include <array>
 #include <vector>
 
 namespace assembly
@@ -22,6 +23,8 @@ namespace assembly
         graph::Graph molecules;
         graph::Graph assemblies;
     };
+
+    std::array<std::vector<bool>, 2> residueAtomsCloseToEdge(const assembly::Graph& graph, size_t residueEdgeIndex);
 
     inline const std::vector<size_t>& residueAtoms(const Graph& graph, size_t residueId)
     {
@@ -53,9 +56,14 @@ namespace assembly
         return graph.residues.edges.indices[edgeId];
     }
 
+    inline size_t moleculeEdgeToResidueEdgeIndex(const Graph& graph, size_t edgeId)
+    {
+        return graph.molecules.edges.indices[edgeId];
+    }
+
     inline size_t moleculeEdgeToAtomEdgeIndex(const Graph& graph, size_t edgeId)
     {
-        return residueEdgeToAtomEdgeIndex(graph, graph.molecules.edges.indices[edgeId]);
+        return residueEdgeToAtomEdgeIndex(graph, moleculeEdgeToResidueEdgeIndex(graph, edgeId));
     }
 } // namespace assembly
 

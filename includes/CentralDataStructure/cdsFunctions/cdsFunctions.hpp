@@ -42,7 +42,5 @@ namespace cds
     std::string truncatedResidueName(const Residue* residue);
     std::vector<std::string> truncatedResidueNames(const std::vector<Residue*>& residues);
     std::vector<ResidueType> residueTypes(const std::vector<Residue*>& residues);
-    std::array<Atom*, 2> bondedAtomPair(std::vector<Atom*>& atomsA, std::vector<Atom*>& atomsB);
-    std::vector<bool> atomsBondedTo(Atom* origin, std::vector<Atom*>& atoms);
 } // namespace cds
 #endif
