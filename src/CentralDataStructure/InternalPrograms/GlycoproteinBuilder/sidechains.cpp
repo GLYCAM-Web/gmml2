@@ -142,10 +142,6 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
     {
         updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
     }
-    else
-    {
-        restoreSidechainRotation(graph, data, mutableData, residue);
-    }
 }
 
 std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::Graph& graph, const AssemblyData& data,
