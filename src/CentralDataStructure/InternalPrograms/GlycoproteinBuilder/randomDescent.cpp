@@ -262,15 +262,17 @@ namespace glycoproteinBuilder
                 cds::Overlap previousOverlap =
                     localOverlap(graph, data, mutableData, data.defaultResidueWeight,
                                  data.atoms.includeInEachOverlapCheck, glycanId, overlapMultiplier.self);
-                cds::GlycanShapePreference preferences = randomizeShape(rng, data, mutableData, glycanId);
-                MutableData lastShape                  = mutableData;
+                std::vector<cds::GlycanShapePreference> currentPreferences = glycositePreferences;
+                currentPreferences[glycanId]                  = randomizeShape(rng, data, mutableData, glycanId);
+                cds::GlycanShapePreference& glycanPreferences = currentPreferences[glycanId];
+                MutableData lastShape                         = mutableData;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {
-                    setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], preferences[n]);
+                    setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], glycanPreferences[n]);
                 }
                 wiggleGlycan(graph, data, mutableData, data.atoms.includeInMainOverlapCheck, glycanId, searchSettings,
-                             overlapMultiplier, preferences);
-                adjustSidechains(rng, graph, data, mutableData, glycositePreferences, {glycanId});
+                             overlapMultiplier, glycanPreferences);
+                adjustSidechains(rng, graph, data, mutableData, currentPreferences, {glycanId});
                 cds::Overlap newOverlap =
                     localOverlap(graph, data, mutableData, data.defaultResidueWeight,
                                  data.atoms.includeInEachOverlapCheck, glycanId, overlapMultiplier.self);
@@ -282,8 +284,8 @@ namespace glycoproteinBuilder
                 }
                 else
                 {
-                    newGlobalOverlap               += diff;
-                    glycositePreferences[glycanId] = preferences;
+                    newGlobalOverlap     += diff;
+                    glycositePreferences = currentPreferences;
                     gmml::log(__LINE__, __FILE__, gmml::INF,
                               "RandomDescent accepted a change of " + std::to_string(diff.count));
                 }
