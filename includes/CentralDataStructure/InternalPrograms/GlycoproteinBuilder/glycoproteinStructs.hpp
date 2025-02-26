@@ -68,6 +68,11 @@ namespace glycoproteinBuilder
         std::vector<cds::Sphere> sidechainPotentialBounds;
     };
 
+    struct ResidueEdgeData
+    {
+        std::vector<std::array<std::vector<bool>, 2>> atomsCloseToEdge;
+    };
+
     struct MoleculeData
     {
         std::vector<MoleculeType> types;
@@ -89,7 +94,6 @@ namespace glycoproteinBuilder
     struct ResidueLinkageData
     {
         std::vector<GlycamMetadata::RotamerType> rotamerTypes;
-        std::vector<std::vector<cds::BondedResidueOverlapInput>> overlapBonds;
         std::vector<bool> branching;
         std::vector<bool> isGlycositeLinkage;
     };
@@ -104,7 +108,6 @@ namespace glycoproteinBuilder
     {
         size_t residueEdge;
         std::vector<size_t> rotatableDihedrals;
-        std::array<std::vector<bool>, 2> closelyBondedAtoms;
         std::vector<size_t> nonReducingResidues;
         std::vector<size_t> reducingResidues;
     };
@@ -121,6 +124,7 @@ namespace glycoproteinBuilder
         AtomData atoms;
         ResidueData residues;
         MoleculeData molecules;
+        ResidueEdgeData residueEdges;
         GlycanData glycans;
         RotatableDihedralData rotatableDihedralData;
         ResidueLinkageData residueLinkageData;

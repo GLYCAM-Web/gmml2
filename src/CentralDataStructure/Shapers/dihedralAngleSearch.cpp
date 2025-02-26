@@ -119,7 +119,8 @@ namespace
             applyMatrix(input.graph, input.bounds, movingAtoms, matrix, bounds);
             cds::Overlap overlaps = cds::overlapVectorSum(cds::CountOverlappingAtoms(
                 potential, overlapProperties, input.graph, {bounds.atoms, input.atomElements, input.atomIncluded},
-                {bounds.residues, input.residueWeights}, input.bonds, fixedResidueIndices, movingResidueIndices));
+                {bounds.residues, input.residueWeights}, input.residueAtomsCloseToEdge, fixedResidueIndices,
+                movingResidueIndices));
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -197,17 +198,6 @@ cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihed
         dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
                                     : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
 
-    size_t residueA                  = residueIndices[0][0];
-    size_t residueB                  = residueIndices[1][0];
-    size_t adjacency                 = codeUtils::indexOf(graph.residues.nodes.nodeAdjacencies[residueA], residueB);
-    const std::vector<size_t>& edges = graph.residues.nodes.edgeAdjacencies[residueA];
-    std::vector<cds::BondedResidueOverlapInput> bonds;
-    if (adjacency < edges.size())
-    {
-        size_t edgeIndex = edges[adjacency];
-        bonds.push_back(
-            {graph.residues.edges.nodeAdjacencies[edgeIndex], residueAtomsCloseToEdge(graph, edges[adjacency])});
-    }
     std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(indices.atoms);
     std::vector<Sphere> residueBounds;
     residueBounds.reserve(graph.residueCount);
@@ -231,7 +221,7 @@ cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihed
         residueWeights,
         {residueIndices[0],
           cds::intersectingIndices(overlapTolerance, movementBounds, residueBounds, residueIndices[1])},
-        bonds
+        assembly::atomsCloseToResidueEdges(graph)
     };
 }
 
@@ -308,7 +298,7 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
             input.atomElements,
             input.residueWeights,
             {input.residueIndices[0], input.residueIndices[1]},
-            input.bonds
+            input.residueAtomsCloseToEdge
         };
         OverlapState best = wiggleUsingRotamers(potential, overlapProperties, searchAngles, coordinates, index,
                                                 metadata[n], preference[n], inputPointers);

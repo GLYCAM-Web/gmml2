@@ -44,7 +44,7 @@ namespace cds
         std::vector<MolecularMetadata::Element> atomElements;
         std::vector<double> residueWeights;
         std::array<std::vector<size_t>, 2> residueIndices;
-        std::vector<cds::BondedResidueOverlapInput> bonds;
+        const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge;
     };
 
     struct DihedralRotationData
@@ -56,7 +56,7 @@ namespace cds
         const std::vector<MolecularMetadata::Element>& atomElements;
         const std::vector<double>& residueWeights;
         const std::array<std::vector<size_t>, 2>& residueIndices;
-        const std::vector<cds::BondedResidueOverlapInput>& bonds;
+        const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge;
     };
 
     struct AngleSearchPreference

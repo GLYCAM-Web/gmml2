@@ -25,6 +25,7 @@ namespace assembly
     };
 
     std::array<std::vector<bool>, 2> residueAtomsCloseToEdge(const assembly::Graph& graph, size_t residueEdgeIndex);
+    std::vector<std::array<std::vector<bool>, 2>> atomsCloseToResidueEdges(const assembly::Graph& graph);
 
     inline const std::vector<size_t>& residueAtoms(const Graph& graph, size_t residueId)
     {

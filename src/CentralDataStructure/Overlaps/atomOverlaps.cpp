@@ -42,25 +42,11 @@ namespace
         }
     }
 
-    size_t findBondIndex(const std::vector<cds::BondedResidueOverlapInput>& bonds, size_t a, size_t b)
-    {
-        for (size_t n = 0; n < bonds.size(); n++)
-        {
-            const cds::BondedResidueOverlapInput& bond = bonds[n];
-            size_t ax                                  = bond.residueIndices[0];
-            size_t bx                                  = bond.residueIndices[1];
-            if ((ax == a && bx == b) || (ax == b && bx == a))
-            {
-                return n;
-            }
-        }
-        return bonds.size();
-    }
-
-    std::array<std::vector<size_t>, 2> atomsToCheck(const assembly::Graph& graph, const cds::AtomOverlapData& atomData,
-                                                    const cds::ResidueOverlapData& residueData,
-                                                    const std::vector<cds::BondedResidueOverlapInput>& bonds,
-                                                    double overlapTolerance, size_t residueA, size_t residueB)
+    std::array<std::vector<size_t>, 2>
+    atomsToCheck(const assembly::Graph& graph, const cds::AtomOverlapData& atomData,
+                 const cds::ResidueOverlapData& residueData,
+                 const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge, double overlapTolerance,
+                 size_t residueA, size_t residueB)
     {
         const cds::Sphere& residueBoundsA = residueData.bounds[residueA];
         const cds::Sphere& residueBoundsB = residueData.bounds[residueB];
@@ -68,13 +54,15 @@ namespace
         const std::vector<size_t>& atomsB = residueAtoms(graph, residueB);
         std::vector<size_t> indicesA;
         std::vector<size_t> indicesB;
-        size_t bondIndex = findBondIndex(bonds, residueA, residueB);
-        if (bondIndex < bonds.size())
+        size_t adjacency                 = codeUtils::indexOf(graph.residues.nodes.nodeAdjacencies[residueA], residueB);
+        const std::vector<size_t>& edges = graph.residues.nodes.edgeAdjacencies[residueA];
+        if (adjacency < edges.size())
         {
-            const cds::BondedResidueOverlapInput& bond = bonds[bondIndex];
-            bool order                                 = !(bond.residueIndices[0] == residueA);
-            insertNonIgnored(indicesA, atomsA, atomData.included, bond.ignoredAtoms[order]);
-            insertNonIgnored(indicesB, atomsB, atomData.included, bond.ignoredAtoms[!order]);
+            size_t edgeIndex                                     = edges[adjacency];
+            const std::array<std::vector<bool>, 2>& ignoredAtoms = residueAtomsCloseToEdge[edgeIndex];
+            bool order = !(graph.residues.edges.nodeAdjacencies[edgeIndex][0] == residueA);
+            insertNonIgnored(indicesA, atomsA, atomData.included, ignoredAtoms[order]);
+            insertNonIgnored(indicesB, atomsB, atomData.included, ignoredAtoms[!order]);
         }
         else if (cds::spheresOverlap(overlapTolerance, residueBoundsA, residueBoundsB))
         {
@@ -110,7 +98,8 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
 std::vector<cds::Overlap>
 cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
                            const assembly::Graph& graph, const AtomOverlapData& atomData,
-                           const ResidueOverlapData& residueData, const std::vector<BondedResidueOverlapInput>& bonds,
+                           const ResidueOverlapData& residueData,
+                           const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge,
                            const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB)
 {
     std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
@@ -118,9 +107,9 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
     {
         for (size_t residueB : residuesB)
         {
-            double weight = residueData.weights[residueA] * residueData.weights[residueB];
-            std::array<std::vector<size_t>, 2> toCheck =
-                atomsToCheck(graph, atomData, residueData, bonds, properties.tolerance, residueA, residueB);
+            double weight                              = residueData.weights[residueA] * residueData.weights[residueB];
+            std::array<std::vector<size_t>, 2> toCheck = atomsToCheck(
+                graph, atomData, residueData, residueAtomsCloseToEdge, properties.tolerance, residueA, residueB);
             for (size_t n : toCheck[0])
             {
                 MolecularMetadata::Element elementA = atomData.elements[n];

@@ -67,23 +67,6 @@ namespace glycoproteinBuilder
             return result;
         };
 
-        auto closelyBondedAtoms = [&](size_t residueId, size_t atomId)
-        {
-            if (graphIndices.atomResidue[atomId] != residueId)
-            {
-                throw std::runtime_error("bork");
-            }
-            const std::vector<size_t>& elements = residueAtoms(graph, residueId);
-            std::vector<bool> result(elements.size(), false);
-            for (size_t n = 0; n < elements.size(); n++)
-            {
-                const std::vector<size_t>& adjacencies = graph.atoms.nodes.nodeAdjacencies[atomId];
-                size_t id                              = elements[n];
-                result[n]                              = (id == atomId) || codeUtils::contains(adjacencies, id);
-            }
-            return result;
-        };
-
         std::vector<std::vector<cds::ResidueLinkage>> glycosidicLinkages;
         for (auto& a : glycosites)
         {
@@ -97,7 +80,6 @@ namespace glycoproteinBuilder
         std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
         std::vector<GlycamMetadata::DihedralAngleDataVector> dihedralMetadata;
         std::vector<size_t> dihedralCurrentMetadata;
-        std::vector<std::vector<cds::BondedResidueOverlapInput>> linkageOverlapBonds;
         std::vector<bool> linkageBranching;
         std::vector<bool> isGlycositeLinkage;
         std::vector<size_t> glycanAttachmentResidue;
@@ -154,19 +136,9 @@ namespace glycoproteinBuilder
                 {
                     throw std::runtime_error("no residue adjacency");
                 }
-                size_t edgeId                    = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
-                std::array<size_t, 2> residueIds = graph.residues.edges.nodeAdjacencies[edgeId];
-                std::array<size_t, 2> atomIds =
-                    graph.atoms.edges.nodeAdjacencies[residueEdgeToAtomEdgeIndex(graph, edgeId)];
-                bool direction                               = graphIndices.atomResidue[atomIds[0]] == residueIds[1];
-                std::array<std::vector<bool>, 2> bondedAtoms = {closelyBondedAtoms(residueIds[0], atomIds[direction]),
-                                                                closelyBondedAtoms(residueIds[1], atomIds[!direction])};
-
-                residueLinkages.push_back({edgeId, dihedralIndices, bondedAtoms, nonReducing, reducing});
+                size_t edgeId = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
+                residueLinkages.push_back({edgeId, dihedralIndices, nonReducing, reducing});
                 linkageRotamerTypes.push_back(linkage.rotamerType);
-                linkageOverlapBonds.push_back({
-                    {residueIds, bondedAtoms}
-                });
                 linkageBranching.push_back(linkage.rotatableDihedrals[0].isBranchingLinkage);
             }
             moleculeTypes[moleculeIndex] = MoleculeType::glycan;
@@ -290,8 +262,7 @@ namespace glycoproteinBuilder
         MoleculeData moleculeData {moleculeTypes};
         GlycanData GlycanData {glycanAttachmentResidue, glycanMoleculeId, glycanLinkages};
         RotatableDihedralData rotatableDihedralData {dihedralMetadata, rotatableDihedralShape};
-        ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageOverlapBonds, linkageBranching,
-                                               isGlycositeLinkage};
+        ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageBranching, isGlycositeLinkage};
 
         std::vector<size_t> proteinMolecules;
         for (size_t n = 0; n < moleculeTypes.size(); n++)
@@ -309,6 +280,7 @@ namespace glycoproteinBuilder
         AssemblyData data {atomData,
                            residueData,
                            moleculeData,
+                           ResidueEdgeData {assembly::atomsCloseToResidueEdges(graph)},
                            GlycanData,
                            rotatableDihedralData,
                            residueLinkageData,

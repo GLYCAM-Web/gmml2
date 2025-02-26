@@ -110,7 +110,7 @@ namespace glycoproteinBuilder
                                                  data.atoms.elements,
                                                  partial.residueWeights,
                                                  partial.residueIndices,
-                                                 data.residueLinkageData.overlapBonds[linkageId]};
+                                                 data.residueEdges.atomsCloseToEdge};
                 const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
                 cds::OverlapState best =
                     cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles, coordinates,
@@ -164,7 +164,7 @@ namespace glycoproteinBuilder
                                                      data.atoms.elements,
                                                      partial.residueWeights,
                                                      partial.residueIndices,
-                                                     data.residueLinkageData.overlapBonds[linkageId]};
+                                                     data.residueEdges.atomsCloseToEdge};
                     cds::OverlapState best =
                         cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles,
                                                  coordinates, index, dihedralMetadata[dihedralId], preference, input);
