@@ -172,11 +172,10 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
     return result;
 }
 
-glycoproteinBuilder::IndexedOverlap
-glycoproteinBuilder::lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
-                                                    const assembly::Graph& graph, const AssemblyData& data,
-                                                    MutableData& mutableData, const std::vector<size_t>& preference,
-                                                    size_t sidechainResidue, const std::vector<size_t>& otherAtoms)
+glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainRotation(
+    const MolecularMetadata::SidechainRotamerData& sidechains, const assembly::Graph& graph, const AssemblyData& data,
+    const MutableData& mutableData, const std::vector<size_t>& preference, size_t sidechainResidue,
+    const std::vector<size_t>& otherAtoms)
 {
     const std::vector<size_t> rotations             = data.residues.sidechainRotations[sidechainResidue];
     const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[sidechainResidue];
