@@ -23,6 +23,17 @@ namespace codeUtils
         return std::find(vector.begin(), vector.end(), element) - vector.begin();
     }
 
+    template<class T> std::vector<size_t> indicesOf(const std::vector<T>& vector, const std::vector<T>& elements)
+    {
+        std::vector<size_t> result;
+        result.reserve(elements.size());
+        for (auto& a : elements)
+        {
+            result.push_back(indexOf(vector, a));
+        }
+        return result;
+    }
+
     template<class T> bool contains(const std::vector<T>& vector, const T element)
     {
         return indexOf(vector, element) < vector.size();
