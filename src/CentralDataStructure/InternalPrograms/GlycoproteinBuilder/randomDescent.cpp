@@ -219,7 +219,7 @@ namespace glycoproteinBuilder
     void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                       const std::vector<bool>& includedAtoms, size_t glycanId,
                       const cds::AngleSearchSettings& searchSettings, const OverlapMultiplier& overlapMultiplier,
-                      const std::vector<cds::ResidueLinkageShapePreference>& preferences)
+                      const cds::GlycanShapePreference& preferences)
     {
         const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
         // wiggling twice gives the first linkages a second chance to resolve in a better structure
@@ -246,10 +246,10 @@ namespace glycoproteinBuilder
         logss << "Random Decent, persisting for " << persistCycles << " cycles.\n";
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 
-        cds::Overlap globalOverlap       = initialState.overlap;
-        std::vector<size_t> overlapSites = initialState.overlapSites;
-        auto glycositePreferences        = initialState.preferences;
-        uint cycle                       = 0;
+        cds::Overlap globalOverlap                                   = initialState.overlap;
+        std::vector<size_t> overlapSites                             = initialState.overlapSites;
+        std::vector<cds::GlycanShapePreference> glycositePreferences = initialState.preferences;
+        uint cycle                                                   = 0;
         while ((!overlapSites.empty()) && (cycle < persistCycles))
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
@@ -262,8 +262,8 @@ namespace glycoproteinBuilder
                 cds::Overlap previousOverlap =
                     localOverlap(graph, data, mutableData, data.defaultResidueWeight,
                                  data.atoms.includeInEachOverlapCheck, glycanId, overlapMultiplier.self);
-                auto preferences      = randomizeShape(rng, data, mutableData, glycanId);
-                MutableData lastShape = mutableData;
+                cds::GlycanShapePreference preferences = randomizeShape(rng, data, mutableData, glycanId);
+                MutableData lastShape                  = mutableData;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], preferences[n]);

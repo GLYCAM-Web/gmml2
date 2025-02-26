@@ -133,8 +133,7 @@ namespace glycoproteinBuilder
 
         SidechainAdjustment adjustSidechains =
             [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
-                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>& glycositePreferences,
-                const std::vector<size_t>& glycans)
+                const std::vector<cds::GlycanShapePreference>& glycositePreferences, const std::vector<size_t>& glycans)
         {
             std::vector<size_t> sidechainResiduesWithGlycanOverlap;
             sidechainResiduesWithGlycanOverlap.reserve(graph.residueCount);
@@ -164,7 +163,7 @@ namespace glycoproteinBuilder
 
         SidechainAdjustment restoreSidechains =
             [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
-                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&, const std::vector<size_t>& glycans)
+                const std::vector<cds::GlycanShapePreference>&, const std::vector<size_t>& glycans)
         {
             std::vector<size_t> residues = codeUtils::boolsToIndices(mutableData.residueSidechainMoved);
             for (size_t residue : residues)
@@ -182,9 +181,9 @@ namespace glycoproteinBuilder
             }
         };
 
-        SidechainAdjustment noSidechainAdjustment =
-            [&](pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
-                const std::vector<std::vector<cds::ResidueLinkageShapePreference>>&, const std::vector<size_t>&)
+        SidechainAdjustment noSidechainAdjustment = [&](pcg32&, const assembly::Graph&, const AssemblyData&,
+                                                        MutableData&, const std::vector<cds::GlycanShapePreference>&,
+                                                        const std::vector<size_t>&)
         {
             return;
         };
@@ -194,7 +193,7 @@ namespace glycoproteinBuilder
                                               const AssemblyData& data, MutableData& mutableData,
                                               bool deleteSitesUntilResolved)
         {
-            std::vector<std::vector<cds::ResidueLinkageShapePreference>> glycositePreferences;
+            std::vector<cds::GlycanShapePreference> glycositePreferences;
             const std::vector<size_t> glycanIndices = codeUtils::indexVector(data.glycans.moleculeId);
             for (size_t glycanId : glycanIndices)
             {

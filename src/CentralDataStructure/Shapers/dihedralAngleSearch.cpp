@@ -362,7 +362,7 @@ std::vector<cds::AngleSearchPreference> cds::angleSearchPreference(double deviat
 }
 
 std::vector<std::vector<cds::AngleSearchPreference>>
-cds::angleSearchPreference(double deviation, const std::vector<ResidueLinkageShapePreference>& preferences)
+cds::angleSearchPreference(double deviation, const GlycanShapePreference& preferences)
 {
     std::vector<std::vector<AngleSearchPreference>> result;
     result.reserve(preferences.size());

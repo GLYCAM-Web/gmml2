@@ -132,8 +132,7 @@ void cds::setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShap
     return onResidueLinkageShapePreference(onConformer, onPermutation, preference);
 }
 
-void cds::setShapeToPreference(std::vector<ResidueLinkage>& linkages,
-                               const std::vector<ResidueLinkageShapePreference>& preferences)
+void cds::setShapeToPreference(std::vector<ResidueLinkage>& linkages, const GlycanShapePreference& preferences)
 {
     for (size_t n = 0; n < linkages.size(); n++)
     {
@@ -231,11 +230,11 @@ cds::ResidueLinkageShapePreference cds::currentRotamerOnly(const ResidueLinkage&
     return selectedRotamersOnly(current, linkage, preference);
 }
 
-std::vector<cds::ResidueLinkageShapePreference> cds::linkageShapePreference(MetadataDistribution metadataDistribution,
-                                                                            AngleDistribution angleDistribution,
-                                                                            const std::vector<ResidueLinkage>& linkages)
+cds::GlycanShapePreference cds::linkageShapePreference(MetadataDistribution metadataDistribution,
+                                                       AngleDistribution angleDistribution,
+                                                       const std::vector<ResidueLinkage>& linkages)
 {
-    std::vector<ResidueLinkageShapePreference> result;
+    GlycanShapePreference result;
     result.reserve(linkages.size());
     for (auto& linkage : linkages)
     {
@@ -244,9 +243,9 @@ std::vector<cds::ResidueLinkageShapePreference> cds::linkageShapePreference(Meta
     return result;
 }
 
-std::vector<cds::ResidueLinkageShapePreference> cds::defaultShapePreference(const std::vector<ResidueLinkage>& linkages)
+cds::GlycanShapePreference cds::defaultShapePreference(const std::vector<ResidueLinkage>& linkages)
 {
-    std::vector<ResidueLinkageShapePreference> result;
+    GlycanShapePreference result;
     result.reserve(linkages.size());
     for (auto& linkage : linkages)
     {
@@ -255,11 +254,10 @@ std::vector<cds::ResidueLinkageShapePreference> cds::defaultShapePreference(cons
     return result;
 }
 
-std::vector<cds::ResidueLinkageShapePreference>
-cds::firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
-                      const std::vector<ResidueLinkageShapePreference>& preferences)
+cds::GlycanShapePreference cds::firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
+                                                 const GlycanShapePreference& preferences)
 {
-    std::vector<ResidueLinkageShapePreference> result;
+    GlycanShapePreference result;
     result.reserve(preferences.size());
     for (size_t n = 0; n < preferences.size(); n++)
     {
@@ -268,11 +266,10 @@ cds::firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
     return result;
 }
 
-std::vector<cds::ResidueLinkageShapePreference>
-cds::currentRotamerOnly(const std::vector<ResidueLinkage>& linkages,
-                        const std::vector<ResidueLinkageShapePreference>& preferences)
+cds::GlycanShapePreference cds::currentRotamerOnly(const std::vector<ResidueLinkage>& linkages,
+                                                   const GlycanShapePreference& preferences)
 {
-    std::vector<ResidueLinkageShapePreference> result;
+    GlycanShapePreference result;
     result.reserve(preferences.size());
     for (size_t n = 0; n < preferences.size(); n++)
     {

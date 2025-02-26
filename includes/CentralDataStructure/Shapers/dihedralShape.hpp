@@ -51,6 +51,8 @@ namespace cds
 
     typedef std::variant<ConformerShapePreference, PermutationShapePreference> ResidueLinkageShapePreference;
 
+    typedef std::vector<cds::ResidueLinkageShapePreference> GlycanShapePreference;
+
     template<typename T>
     T onResidueLinkageShapePreference(std::function<T(const ConformerShapePreference&)>& onConformer,
                                       std::function<T(const PermutationShapePreference&)>& onPermutation,
@@ -82,8 +84,7 @@ namespace cds
     void setShape(std::vector<ResidueLinkage>& linkages, const std::vector<std::vector<AngleWithMetadata>>& angles);
     void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles);
     void setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference);
-    void setShapeToPreference(std::vector<ResidueLinkage>& linkages,
-                              const std::vector<ResidueLinkageShapePreference>& preferences);
+    void setShapeToPreference(std::vector<ResidueLinkage>& linkages, const GlycanShapePreference& preferences);
     ResidueLinkageShapePreference linkageShapePreference(MetadataDistribution metadataDistribution,
                                                          AngleDistribution angleDistribution,
                                                          const ResidueLinkage& linkage);
@@ -95,16 +96,14 @@ namespace cds
                                                    const ResidueLinkageShapePreference& preference);
     ResidueLinkageShapePreference currentRotamerOnly(const ResidueLinkage& linkage,
                                                      const ResidueLinkageShapePreference& preference);
-    std::vector<ResidueLinkageShapePreference> linkageShapePreference(MetadataDistribution metadataDistribution,
-                                                                      AngleDistribution angleDistribution,
-                                                                      const std::vector<ResidueLinkage>& linkages);
-    std::vector<ResidueLinkageShapePreference> defaultShapePreference(const std::vector<ResidueLinkage>& linkages);
-    std::vector<ResidueLinkageShapePreference>
-    firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
-                     const std::vector<ResidueLinkageShapePreference>& preferences);
-    std::vector<ResidueLinkageShapePreference>
-    currentRotamerOnly(const std::vector<ResidueLinkage>& linkages,
-                       const std::vector<ResidueLinkageShapePreference>& preferences);
+    GlycanShapePreference linkageShapePreference(MetadataDistribution metadataDistribution,
+                                                 AngleDistribution angleDistribution,
+                                                 const std::vector<ResidueLinkage>& linkages);
+    GlycanShapePreference defaultShapePreference(const std::vector<ResidueLinkage>& linkages);
+    GlycanShapePreference firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
+                                           const GlycanShapePreference& preferences);
+    GlycanShapePreference currentRotamerOnly(const std::vector<ResidueLinkage>& linkages,
+                                             const GlycanShapePreference& preferences);
 
 } // namespace cds
 #endif

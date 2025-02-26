@@ -94,7 +94,7 @@ namespace cds
                                            double increment);
     std::vector<AngleSearchPreference> angleSearchPreference(double deviation,
                                                              const ResidueLinkageShapePreference& preference);
-    std::vector<std::vector<AngleSearchPreference>>
-    angleSearchPreference(double deviation, const std::vector<ResidueLinkageShapePreference>& preferences);
+    std::vector<std::vector<AngleSearchPreference>> angleSearchPreference(double deviation,
+                                                                          const GlycanShapePreference& preferences);
 } // namespace cds
 #endif

@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
@@ -15,15 +16,15 @@ namespace glycoproteinBuilder
     {
         cds::Overlap overlap;
         std::vector<size_t> overlapSites;
-        std::vector<std::vector<cds::ResidueLinkageShapePreference>> preferences;
+        std::vector<cds::GlycanShapePreference> preferences;
     };
 
     typedef std::function<void(const assembly::Graph&, const AssemblyData&, size_t glycanId, const OverlapMultiplier&,
-                               std::vector<cds::ResidueLinkageShapePreference>&)>
+                               cds::GlycanShapePreference&)>
         WiggleGlycan;
 
-    typedef std::function<std::vector<cds::ResidueLinkageShapePreference>(pcg32& rng, const AssemblyData&,
-                                                                          const MutableData&, size_t glycanId)>
+    typedef std::function<cds::GlycanShapePreference(pcg32& rng, const AssemblyData&, const MutableData&,
+                                                     size_t glycanId)>
         GlycanShapeRandomizer;
 
     void wiggleLinkage(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
@@ -33,7 +34,7 @@ namespace glycoproteinBuilder
     void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                       const std::vector<bool>& includedAtoms, size_t glycanId,
                       const cds::AngleSearchSettings& searchSettings, const OverlapMultiplier& overlapMultiplier,
-                      const std::vector<cds::ResidueLinkageShapePreference>& preferences);
+                      const cds::GlycanShapePreference& preferences);
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
                                     SidechainAdjustment adjustSidechains,
                                     const cds::AngleSearchSettings& searchSettings, uint persistCycles,
