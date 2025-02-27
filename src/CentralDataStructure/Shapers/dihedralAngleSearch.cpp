@@ -150,56 +150,6 @@ size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
     return bestIndex;
 }
 
-cds::DihedralRotationDataContainer
-cds::dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral, const GraphIndexData& indices,
-                               const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
-{
-    assembly::Graph graph   = createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
-    assembly::Bounds bounds = toAssemblyBounds(indices, graph);
-
-    const std::vector<cds::Residue*>& residues = indices.residues;
-    std::vector<size_t> movingAtomIndices      = codeUtils::indicesOf(indices.atoms, dihedral.movingAtoms);
-    std::vector<bool> atomMoving               = codeUtils::indicesToBools(indices.atoms.size(), movingAtomIndices);
-    std::vector<Sphere> movingAtomSpheres      = codeUtils::indicesToValues(bounds.atoms, movingAtomIndices);
-    Sphere movingAtomBounds                    = boundingSphere(movingAtomSpheres);
-    Coordinate pointA                          = dihedral.atoms[1]->coordinate();
-    Coordinate pointB                          = dihedral.atoms[2]->coordinate();
-    Sphere movementBounds                      = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
-
-    std::vector<bool> atomIncluded(graph.atomCount, true);
-    std::vector<bool> residueMoving(graph.residueCount, false);
-    for (size_t n : movingAtomIndices)
-    {
-        residueMoving[graph.atomResidue[n]] = true;
-    }
-    std::vector<size_t> residueSetA = toResidueIndices(residues, residueSets[0].residues);
-    std::vector<size_t> residueSetB = toResidueIndices(residues, residueSets[1].residues);
-    std::vector<double> residueWeights(graph.residueCount, 0.0);
-    for (size_t n = 0; n < residueSetA.size(); n++)
-    {
-        residueWeights[residueSetA[n]] = residueSets[0].weights[n];
-    }
-    for (size_t n = 0; n < residueSetB.size(); n++)
-    {
-        residueWeights[residueSetB[n]] = residueSets[1].weights[n];
-    }
-    std::array<std::vector<size_t>, 2> residueIndices =
-        dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
-                                    : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
-
-    return {
-        graph,
-        bounds,
-        atomMoving,
-        atomIncluded,
-        cds::atomElements(indices.atoms),
-        residueWeights,
-        {residueIndices[0],
-          cds::intersectingIndices(overlapTolerance, movementBounds, bounds.residues, residueIndices[1])},
-        assembly::atomsCloseToResidueEdges(graph)
-    };
-}
-
 cds::OverlapState cds::wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
                                            cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                            const cds::DihedralCoordinates coordinates,
@@ -254,36 +204,75 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
                                       cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                       std::vector<RotatableDihedral>& dihedrals,
                                       const std::vector<DihedralAngleDataVector>& metadata,
-                                      const std::vector<AngleSearchPreference>& preference,
+                                      const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
                                       const GraphIndexData& indices,
-                                      const std::array<ResiduesWithOverlapWeight, 2>& residues)
+                                      const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge,
+                                      const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
 {
+    assembly::Bounds bounds = toAssemblyBounds(indices, graph);
+    std::vector<bool> atomIncluded(graph.atomCount, true);
+    std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(indices.atoms);
+    const std::vector<cds::Residue*>& residues           = indices.residues;
+    std::vector<size_t> residueSetA                      = toResidueIndices(residues, residueSets[0].residues);
+    std::vector<size_t> residueSetB                      = toResidueIndices(residues, residueSets[1].residues);
+    std::vector<double> residueWeights(graph.residueCount, 0.0);
+    for (size_t n = 0; n < residueSetA.size(); n++)
+    {
+        residueWeights[residueSetA[n]] = residueSets[0].weights[n];
+    }
+    for (size_t n = 0; n < residueSetB.size(); n++)
+    {
+        residueWeights[residueSetB[n]] = residueSets[1].weights[n];
+    }
+    auto dihedralCoords = [&](const cds::RotatableDihedral& dihedral)
+    {
+        auto coord = [&](size_t n)
+        {
+            return bounds.atoms[codeUtils::indexOf(indices.atoms, dihedral.atoms[n])].center;
+        };
+        return std::array<Coordinate, 4> {coord(3), coord(2), coord(1), coord(0)};
+    };
+
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
-        cds::RotatableDihedral& dihedral = dihedrals[n];
+        cds::RotatableDihedral& dihedral      = dihedrals[n];
+        std::vector<size_t> movingAtomIndices = codeUtils::indicesOf(indices.atoms, dihedral.movingAtoms);
+        std::vector<bool> atomMoving          = codeUtils::indicesToBools(indices.atoms.size(), movingAtomIndices);
+        std::vector<Sphere> movingAtomSpheres = codeUtils::indicesToValues(bounds.atoms, movingAtomIndices);
+        Sphere movingAtomBounds               = boundingSphere(movingAtomSpheres);
+        std::array<Coordinate, 4> coordinates = dihedralCoords(dihedral);
+        Coordinate pointA                     = coordinates[2];
+        Coordinate pointB                     = coordinates[1];
+        Sphere movementBounds                 = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
+
+        std::vector<bool> residueMoving(graph.residueCount, false);
+        for (size_t n : movingAtomIndices)
+        {
+            residueMoving[graph.atomResidue[n]] = true;
+        }
+        std::array<std::vector<size_t>, 2> residueIndices =
+            dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
+                                        : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
+
         std::vector<size_t> index {dihedral.currentMetadataIndex};
-        std::array<Coordinate, 4> coordinates = dihedralCoordinates(dihedral);
-        DihedralRotationDataContainer input =
-            dihedralRotationInputData(overlapProperties.tolerance, dihedral, indices, residues);
-        DihedralRotationData inputPointers {
-            input.graph,
-            input.bounds,
-            input.atomMoving,
-            input.atomIncluded,
-            input.atomElements,
-            input.residueWeights,
-            {input.residueIndices[0], input.residueIndices[1]},
-            input.residueAtomsCloseToEdge
+        DihedralRotationData input {
+            graph,
+            bounds,
+            atomMoving,
+            atomIncluded,
+            atomElements,
+            residueWeights,
+            {residueIndices[0],
+              cds::intersectingIndices(overlapProperties.tolerance, movementBounds, bounds.residues, residueIndices[1])},
+            residueAtomsCloseToEdge
         };
         OverlapState best = wiggleUsingRotamers(potential, overlapProperties, searchAngles, coordinates, index,
-                                                metadata[n], preference[n], inputPointers);
-        for (size_t n = 0; n < input.graph.atomCount; n++)
-        {
-            if (input.atomMoving[n])
-            {
-                indices.atoms[n]->setCoordinate(best.bounds.atoms[n].center);
-            }
-        }
+                                                metadata[n], preference[n], input);
+        bounds            = best.bounds;
+    }
+    for (size_t n = 0; n < graph.atomCount; n++)
+    {
+        indices.atoms[n]->setCoordinate(bounds.atoms[n].center);
     }
 }
 

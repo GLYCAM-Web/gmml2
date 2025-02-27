@@ -35,18 +35,6 @@ namespace cds
         assembly::Bounds bounds;
     };
 
-    struct DihedralRotationDataContainer
-    {
-        assembly::Graph graph;
-        assembly::Bounds bounds;
-        std::vector<bool> atomMoving;
-        std::vector<bool> atomIncluded;
-        std::vector<MolecularMetadata::Element> atomElements;
-        std::vector<double> residueWeights;
-        std::array<std::vector<size_t>, 2> residueIndices;
-        const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge;
-    };
-
     struct DihedralRotationData
     {
         const assembly::Graph& graph;
@@ -75,9 +63,6 @@ namespace cds
     };
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
-    DihedralRotationDataContainer dihedralRotationInputData(double overlapTolerance, RotatableDihedral& dihedral,
-                                                            const GraphIndexData& indices,
-                                                            const std::array<ResiduesWithOverlapWeight, 2>& residues);
     OverlapState wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
                                      cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                      const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
@@ -87,9 +72,10 @@ namespace cds
                                      cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
                                      std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
-                                     const std::vector<AngleSearchPreference>& preference,
+                                     const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
                                      const GraphIndexData& indices,
-                                     const std::array<ResiduesWithOverlapWeight, 2>& residues);
+                                     const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge,
+                                     const std::array<ResiduesWithOverlapWeight, 2>& residueSets);
     std::vector<double> evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
                                            double increment);
     std::vector<AngleSearchPreference> angleSearchPreference(double deviation,

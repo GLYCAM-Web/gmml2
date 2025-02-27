@@ -255,10 +255,14 @@ namespace
             auto weights  = std::vector<double> {1.0};
             return cds::ResiduesWithOverlapWeight {residues, weights};
         };
+        cds::GraphIndexData indices = cds::toIndexData({molecule});
+        assembly::Graph graph       = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+        std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
+            assembly::atomsCloseToResidueEdges(graph);
         cds::simpleWiggleCurrentRotamers(
             MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference,
-            cds::toIndexData({molecule}), {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, graph,
+            indices, residueAtomsCloseToEdge, {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
@@ -510,6 +514,9 @@ cds::Atom* Carbohydrate::GetAnomericAtom()
 
 void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
 {
+    cds::GraphIndexData indices = cds::toIndexData({this});
+    assembly::Graph graph       = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+    std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     for (auto& linkage : glycosidicLinkages_)
     {
         auto withWeight = [](const std::vector<Residue*> residues)
@@ -521,8 +528,8 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
             searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
         cds::simpleWiggleCurrentRotamers(
             MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
-            cds::toIndexData({this}),
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference, graph, indices,
+            residueAtomsCloseToEdge,
             {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;
