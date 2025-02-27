@@ -24,7 +24,7 @@ namespace glycoproteinBuilder
 
         struct PartialDihedralRotationData
         {
-            std::vector<bool> atomMoving;
+            std::vector<size_t> movingAtoms;
             std::vector<double> residueWeights;
             std::array<std::vector<size_t>, 2> residueIndices;
         };
@@ -34,11 +34,10 @@ namespace glycoproteinBuilder
                                                         const OverlapMultiplier& overlapMultiplier, size_t glycanId,
                                                         size_t linkageId, size_t dihedralId)
         {
-            const ResidueLinkageIndices& linkage     = data.indices.residueLinkages[linkageId];
-            const RotatableDihedralIndices& dihedral = data.indices.rotatableDihedrals[dihedralId];
-            const std::vector<size_t>& movingAtoms   = dihedral.movingAtoms;
-            std::vector<double> residueWeights       = data.defaultResidueWeight;
-            std::vector<bool> atomMoving             = codeUtils::indicesToBools(graph.atomCount, dihedral.movingAtoms);
+            const ResidueLinkageIndices& linkage           = data.indices.residueLinkages[linkageId];
+            const RotatableDihedralIndices& dihedral       = data.indices.rotatableDihedrals[dihedralId];
+            const std::vector<size_t>& movingAtoms         = dihedral.movingAtoms;
+            std::vector<double> residueWeights             = data.defaultResidueWeight;
             const std::vector<cds::Sphere>& atomBounds     = mutableData.bounds.atoms;
             const std::vector<cds::Sphere>& residueBounds  = mutableData.bounds.residues;
             const std::vector<cds::Sphere>& moleculeBounds = mutableData.bounds.molecules;
@@ -79,7 +78,7 @@ namespace glycoproteinBuilder
                 residueWeights[n] = overlapMultiplier.self;
             }
             return {
-                atomMoving, residueWeights, {intersectingResidues, linkage.reducingResidues}
+                dihedral.movingAtoms, residueWeights, {intersectingResidues, linkage.reducingResidues}
             };
         }
 
@@ -103,18 +102,17 @@ namespace glycoproteinBuilder
                     dihedralCoordinates(data, mutableData.bounds, dihedralId);
                 PartialDihedralRotationData partial =
                     toRotationInputData(graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
-                cds::DihedralRotationData input {graph,
-                                                 mutableData.bounds,
-                                                 partial.atomMoving,
-                                                 includedAtoms,
-                                                 data.atoms.elements,
-                                                 partial.residueWeights,
-                                                 partial.residueIndices,
-                                                 data.residueEdges.atomsCloseToEdge};
                 const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
-                cds::OverlapState best =
-                    cds::wiggleUsingRotamers(data.potentialTable, data.overlapTolerance, settings.angles, coordinates,
-                                             codeUtils::indexVector(metadata), metadata, preference, input);
+                auto searchOverlap                                      = [&](const assembly::Bounds& bounds)
+                {
+                    return cds::overlapVectorSum(cds::CountOverlappingAtoms(
+                        data.potentialTable, data.overlapTolerance, graph,
+                        {bounds.atoms, data.atoms.elements, includedAtoms}, {bounds.residues, partial.residueWeights},
+                        data.residueEdges.atomsCloseToEdge, partial.residueIndices[0], partial.residueIndices[1]));
+                };
+                cds::OverlapState best = cds::wiggleUsingRotamers(
+                    searchOverlap, settings.angles, graph, mutableData.bounds, partial.movingAtoms, coordinates,
+                    codeUtils::indexVector(metadata), metadata, preference);
                 mutableData.bounds                              = best.bounds;
                 mutableData.dihedralCurrentMetadata[dihedralId] = best.angle.metadataIndex;
             }
@@ -157,17 +155,17 @@ namespace glycoproteinBuilder
 
                     PartialDihedralRotationData partial = toRotationInputData(
                         graph, data, mutableData, overlapMultiplier, glycanId, linkageId, dihedralId);
-                    cds::DihedralRotationData input {graph,
-                                                     mutableData.bounds,
-                                                     partial.atomMoving,
-                                                     includedAtoms,
-                                                     data.atoms.elements,
-                                                     partial.residueWeights,
-                                                     partial.residueIndices,
-                                                     data.residueEdges.atomsCloseToEdge};
-                    cds::OverlapState best =
-                        cds::wiggleUsingRotamers(data.potentialTable, data.overlapTolerance, settings.angles,
-                                                 coordinates, index, dihedralMetadata[dihedralId], preference, input);
+                    auto searchOverlap = [&](const assembly::Bounds& bounds)
+                    {
+                        return cds::overlapVectorSum(cds::CountOverlappingAtoms(
+                            data.potentialTable, data.overlapTolerance, graph,
+                            {bounds.atoms, data.atoms.elements, includedAtoms},
+                            {bounds.residues, partial.residueWeights}, data.residueEdges.atomsCloseToEdge,
+                            partial.residueIndices[0], partial.residueIndices[1]));
+                    };
+                    cds::OverlapState best = cds::wiggleUsingRotamers(
+                        searchOverlap, settings.angles, graph, mutableData.bounds, partial.movingAtoms, coordinates,
+                        index, dihedralMetadata[dihedralId], preference);
                     bestResults[k]     = {best.overlap, best.angle};
                     mutableData.bounds = best.bounds;
                     states[k]          = best.bounds;

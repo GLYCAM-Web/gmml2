@@ -91,24 +91,19 @@ namespace
         assembly::updateBoundsContainingAtoms(graph, bounds, movingAtoms);
     };
 
-    cds::AngleOverlap WiggleAnglesOverlaps(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
+    cds::AngleOverlap WiggleAnglesOverlaps(cds::SearchOverlap searchOverlap, const assembly::Graph& graph,
+                                           const assembly::Bounds& initialBounds,
+                                           const std::vector<size_t>& movingAtoms,
                                            const cds::DihedralCoordinates dihedral, size_t metadataIndex,
-                                           double anglePreference, std::vector<double> angles,
-                                           const cds::DihedralRotationData& input)
+                                           double anglePreference, std::vector<double> angles)
     {
-        const std::vector<size_t>& fixedResidueIndices  = input.residueIndices[0];
-        const std::vector<size_t>& movingResidueIndices = input.residueIndices[1];
-        std::vector<size_t> movingAtoms                 = codeUtils::boolsToIndices(input.atomMoving);
-        assembly::Bounds bounds                         = input.bounds;
+        assembly::Bounds bounds = initialBounds;
         std::vector<cds::AngleOverlap> results;
         for (double angle : angles)
         {
             cds::RotationMatrix matrix = rotationTo(dihedral, constants::toRadians(angle));
-            applyMatrix(input.graph, input.bounds, movingAtoms, matrix, bounds);
-            cds::Overlap overlaps = cds::overlapVectorSum(cds::CountOverlappingAtoms(
-                potential, overlapTolerance, input.graph, {bounds.atoms, input.atomElements, input.atomIncluded},
-                {bounds.residues, input.residueWeights}, input.residueAtomsCloseToEdge, fixedResidueIndices,
-                movingResidueIndices));
+            applyMatrix(graph, initialBounds, movingAtoms, matrix, bounds);
+            cds::Overlap overlaps = searchOverlap(bounds);
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
@@ -149,53 +144,38 @@ size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
     return bestIndex;
 }
 
-cds::OverlapState cds::wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
-                                           SearchAngles searchAngles, const cds::DihedralCoordinates coordinates,
+cds::OverlapState cds::wiggleUsingRotamers(cds::SearchOverlap searchOverlap, SearchAngles searchAngles,
+                                           const assembly::Graph& graph, const assembly::Bounds& initialBounds,
+                                           const std::vector<size_t>& movingAtoms,
+                                           const cds::DihedralCoordinates coordinates,
                                            const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
-                                           const AngleSearchPreference& preference,
-                                           const cds::DihedralRotationData& input)
+                                           const AngleSearchPreference& preference)
 {
-    // residue sets can be empty if overlap tolerance is high
-    // no overlaps are possible in this case, so we can
-    // return preferred angle immediately to avoid segfault later
-    if (input.residueIndices[0].empty() || input.residueIndices[1].empty())
+    auto resultState = [&](const AngleOverlap best)
     {
-        size_t index = preference.metadataOrder[0];
-        double angle = preference.angles[index];
-        return {
-            cds::Overlap {0.0, 0.0},
-             {angle, angle, index},
-             input.bounds
-        };
-    }
-    else
+        assembly::Bounds bounds    = initialBounds;
+        cds::RotationMatrix matrix = rotationTo(coordinates, constants::toRadians(best.angle.value));
+        applyMatrix(graph, initialBounds, movingAtoms, matrix, bounds);
+        return OverlapState {best.overlaps, best.angle, bounds};
+    };
+    std::vector<AngleOverlap> results;
+    for (size_t n : preference.metadataOrder)
     {
-        auto resultState = [&](const AngleOverlap best)
+        double angle     = preference.angles[n];
+        double deviation = preference.deviation;
+        AngleOverlap best =
+            WiggleAnglesOverlaps(searchOverlap, graph, initialBounds, movingAtoms, coordinates, indices[n],
+                                 preference.angles[n], searchAngles(rotamers[n], angle, deviation));
+        // found something with no overlaps
+        // if metadata and angles are sorted in order of preference, we can quit here
+        if (best.overlaps.count <= 0.0)
         {
-            assembly::Bounds bounds    = input.bounds;
-            cds::RotationMatrix matrix = rotationTo(coordinates, constants::toRadians(best.angle.value));
-            applyMatrix(input.graph, input.bounds, codeUtils::boolsToIndices(input.atomMoving), matrix, bounds);
-            return OverlapState {best.overlaps, best.angle, bounds};
-        };
-        std::vector<AngleOverlap> results;
-        for (size_t n : preference.metadataOrder)
-        {
-            double angle     = preference.angles[n];
-            double deviation = preference.deviation;
-            AngleOverlap best =
-                WiggleAnglesOverlaps(potential, overlapTolerance, coordinates, indices[n], preference.angles[n],
-                                     searchAngles(rotamers[n], angle, deviation), input);
-            // found something with no overlaps
-            // if metadata and angles are sorted in order of preference, we can quit here
-            if (best.overlaps.count <= 0.0)
-            {
-                return resultState(best);
-            }
-            results.push_back(best);
+            return resultState(best);
         }
-        size_t index = bestOverlapResultIndex(results);
-        return resultState(results[index]);
+        results.push_back(best);
     }
+    size_t index = bestOverlapResultIndex(results);
+    return resultState(results[index]);
 }
 
 void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
@@ -233,9 +213,8 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
         cds::RotatableDihedral& dihedral      = dihedrals[n];
-        std::vector<size_t> movingAtomIndices = codeUtils::indicesOf(indices.atoms, dihedral.movingAtoms);
-        std::vector<bool> atomMoving          = codeUtils::indicesToBools(indices.atoms.size(), movingAtomIndices);
-        std::vector<Sphere> movingAtomSpheres = codeUtils::indicesToValues(bounds.atoms, movingAtomIndices);
+        std::vector<size_t> movingAtoms       = codeUtils::indicesOf(indices.atoms, dihedral.movingAtoms);
+        std::vector<Sphere> movingAtomSpheres = codeUtils::indicesToValues(bounds.atoms, movingAtoms);
         Sphere movingAtomBounds               = boundingSphere(movingAtomSpheres);
         std::array<Coordinate, 4> coordinates = dihedralCoords(dihedral);
         Coordinate pointA                     = coordinates[2];
@@ -243,28 +222,27 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
         Sphere movementBounds                 = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
 
         std::vector<bool> residueMoving(graph.residueCount, false);
-        for (size_t n : movingAtomIndices)
+        for (size_t n : movingAtoms)
         {
             residueMoving[graph.atomResidue[n]] = true;
         }
         std::array<std::vector<size_t>, 2> residueIndices =
             dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
                                         : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
+        std::array<std::vector<size_t>, 2> residuesWithinBounds = {
+            residueIndices[0],
+            cds::intersectingIndices(overlapTolerance, movementBounds, bounds.residues, residueIndices[1])};
 
         std::vector<size_t> index {dihedral.currentMetadataIndex};
-        DihedralRotationData input {
-            graph,
-            bounds,
-            atomMoving,
-            atomIncluded,
-            atomElements,
-            residueWeights,
-            {residueIndices[0],
-              cds::intersectingIndices(overlapTolerance, movementBounds, bounds.residues, residueIndices[1])},
-            residueAtomsCloseToEdge
+        auto searchOverlap = [&](const assembly::Bounds& bounds)
+        {
+            return cds::overlapVectorSum(cds::CountOverlappingAtoms(
+                potential, overlapTolerance, graph, {bounds.atoms, atomElements, atomIncluded},
+                {bounds.residues, residueWeights}, residueAtomsCloseToEdge, residuesWithinBounds[0],
+                residuesWithinBounds[1]));
         };
-        OverlapState best = wiggleUsingRotamers(potential, overlapTolerance, searchAngles, coordinates, index,
-                                                metadata[n], preference[n], input);
+        OverlapState best = wiggleUsingRotamers(searchOverlap, searchAngles, graph, bounds, movingAtoms, coordinates,
+                                                index, metadata[n], preference[n]);
         bounds            = best.bounds;
     }
     for (size_t n = 0; n < graph.atomCount; n++)

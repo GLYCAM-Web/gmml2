@@ -35,18 +35,6 @@ namespace cds
         assembly::Bounds bounds;
     };
 
-    struct DihedralRotationData
-    {
-        const assembly::Graph& graph;
-        const assembly::Bounds& bounds;
-        const std::vector<bool>& atomMoving;
-        const std::vector<bool>& atomIncluded;
-        const std::vector<MolecularMetadata::Element>& atomElements;
-        const std::vector<double>& residueWeights;
-        const std::array<std::vector<size_t>, 2>& residueIndices;
-        const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge;
-    };
-
     struct AngleSearchPreference
     {
         double deviation;
@@ -55,6 +43,7 @@ namespace cds
     };
 
     typedef std::function<std::vector<double>(const DihedralAngleData&, double, double)> SearchAngles;
+    typedef std::function<cds::Overlap(const assembly::Bounds&)> SearchOverlap;
 
     struct AngleSearchSettings
     {
@@ -63,10 +52,11 @@ namespace cds
     };
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
-    OverlapState wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
-                                     SearchAngles searchAngles, const DihedralCoordinates coordinates,
+    OverlapState wiggleUsingRotamers(cds::SearchOverlap searchOverlap, SearchAngles searchAngles,
+                                     const assembly::Graph& graph, const assembly::Bounds& bounds,
+                                     const std::vector<size_t>& movingAtoms, const DihedralCoordinates coordinates,
                                      const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
-                                     const AngleSearchPreference& preference, const DihedralRotationData& input);
+                                     const AngleSearchPreference& preference);
     void simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
                                      SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
