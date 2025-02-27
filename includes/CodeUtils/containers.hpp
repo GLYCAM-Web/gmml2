@@ -17,6 +17,8 @@ namespace codeUtils
     std::vector<bool> indicesToBools(size_t size, const std::vector<size_t>& indices);
     std::vector<size_t> boolsToIndices(const std::vector<bool>& mask);
     std::vector<bool> groupContains(size_t count, const std::vector<size_t>& group, const std::vector<size_t>& indices);
+    std::vector<bool> groupContainsSelected(size_t count, const std::vector<size_t>& group,
+                                            const std::vector<bool>& selection);
 
     template<class T> size_t indexOf(const std::vector<T>& vector, const T element)
     {

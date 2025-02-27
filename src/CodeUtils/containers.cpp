@@ -76,6 +76,18 @@ std::vector<bool> codeUtils::groupContains(size_t count, const std::vector<size_
     return result;
 }
 
+std::vector<bool> codeUtils::groupContainsSelected(size_t count, const std::vector<size_t>& group,
+                                                   const std::vector<bool>& selection)
+{
+    std::vector<bool> result(count, false);
+    for (size_t n = 0; n < selection.size(); n++)
+    {
+        size_t index  = group[n];
+        result[index] = result[index] || selection[n];
+    }
+    return result;
+}
+
 std::vector<size_t> codeUtils::indexVectorWithOffset(size_t offset, size_t count)
 {
     std::vector<size_t> result;
