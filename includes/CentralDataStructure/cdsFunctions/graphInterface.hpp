@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
 #include <vector>
@@ -28,6 +29,7 @@ namespace cds
     GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
     graph::Database createGraphData(const GraphIndexData& indices);
     assembly::Graph createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms);
+    assembly::Bounds toAssemblyBounds(const GraphIndexData& indices, const assembly::Graph& graph);
 } // namespace cds
 
 #endif

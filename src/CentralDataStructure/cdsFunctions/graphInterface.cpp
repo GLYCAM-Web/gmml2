@@ -1,9 +1,12 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -167,4 +170,24 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices, const st
                             residueGraph,
                             moleculeGraph,
                             assemblyGraph};
+}
+
+assembly::Bounds cds::toAssemblyBounds(const GraphIndexData& indices, const assembly::Graph& graph)
+{
+    std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(indices.atoms);
+    size_t residueCount            = indices.residues.size();
+    std::vector<Sphere> residueBounds;
+    residueBounds.reserve(residueCount);
+    for (size_t n = 0; n < residueCount; n++)
+    {
+        residueBounds.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms(graph, n))));
+    }
+    size_t moleculeCount = indices.molecules.size();
+    std::vector<Sphere> moleculeBounds;
+    moleculeBounds.reserve(moleculeCount);
+    for (size_t n = 0; n < moleculeCount; n++)
+    {
+        moleculeBounds.push_back(boundingSphere(codeUtils::indicesToValues(residueBounds, moleculeResidues(graph, n))));
+    }
+    return {atomBounds, residueBounds, moleculeBounds};
 }
