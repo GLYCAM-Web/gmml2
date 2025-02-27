@@ -16,7 +16,7 @@ namespace codeUtils
     std::vector<size_t> offsetIndices(size_t offset, std::vector<size_t> indices);
     std::vector<bool> indicesToBools(size_t size, const std::vector<size_t>& indices);
     std::vector<size_t> boolsToIndices(const std::vector<bool>& mask);
-    std::vector<bool> groupContains(const std::vector<size_t>& group, const std::vector<size_t>& indices);
+    std::vector<bool> groupContains(size_t count, const std::vector<size_t>& group, const std::vector<size_t>& indices);
 
     template<class T> size_t indexOf(const std::vector<T>& vector, const T element)
     {

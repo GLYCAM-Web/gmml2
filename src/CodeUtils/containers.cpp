@@ -65,9 +65,10 @@ std::vector<size_t> codeUtils::boolsToIndices(const std::vector<bool>& mask)
     return result;
 }
 
-std::vector<bool> codeUtils::groupContains(const std::vector<size_t>& group, const std::vector<size_t>& indices)
+std::vector<bool> codeUtils::groupContains(size_t count, const std::vector<size_t>& group,
+                                           const std::vector<size_t>& indices)
 {
-    std::vector<bool> result(group.size(), false);
+    std::vector<bool> result(count, false);
     for (size_t n : indices)
     {
         result[group[n]] = true;
