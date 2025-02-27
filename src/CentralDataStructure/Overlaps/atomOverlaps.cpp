@@ -96,7 +96,7 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
 }
 
 std::vector<cds::Overlap>
-cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
+cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
                            const assembly::Graph& graph, const AtomOverlapData& atomData,
                            const ResidueOverlapData& residueData,
                            const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge,
@@ -109,7 +109,7 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
         {
             double weight                              = residueData.weights[residueA] * residueData.weights[residueB];
             std::array<std::vector<size_t>, 2> toCheck = atomsToCheck(
-                graph, atomData, residueData, residueAtomsCloseToEdge, properties.tolerance, residueA, residueB);
+                graph, atomData, residueData, residueAtomsCloseToEdge, overlapTolerance, residueA, residueB);
             for (size_t n : toCheck[0])
             {
                 MolecularMetadata::Element elementA = atomData.elements[n];
@@ -118,7 +118,7 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
                     MolecularMetadata::Element elementB = atomData.elements[k];
                     double scale = MolecularMetadata::potentialWeight(potential, elementA, elementB);
                     Overlap overlap =
-                        overlapAmount(properties.tolerance, scale, atomData.bounds[n], atomData.bounds[k]) * weight;
+                        overlapAmount(overlapTolerance, scale, atomData.bounds[n], atomData.bounds[k]) * weight;
                     result[n] += overlap;
                     result[k] += overlap;
                 }
@@ -128,7 +128,7 @@ cds::CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, O
     return result;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(OverlapProperties properties, const std::vector<cds::Atom*>& atomsA,
+cds::Overlap cds::CountOverlappingAtoms(double overlapTolerance, const std::vector<cds::Atom*>& atomsA,
                                         const std::vector<cds::Atom*>& atomsB)
 {
     std::vector<Sphere> coordsA                       = atomCoordinatesWithRadii(atomsA);
@@ -143,7 +143,7 @@ cds::Overlap cds::CountOverlappingAtoms(OverlapProperties properties, const std:
         {
             double scale =
                 MolecularMetadata::potentialWeight(MolecularMetadata::potentialTable(), elementsA[n], elementsB[k]);
-            overlap += overlapAmount(properties.tolerance, scale, coordsA[n], coordsB[k]);
+            overlap += overlapAmount(overlapTolerance, scale, coordsA[n], coordsB[k]);
         }
     }
     return overlap;

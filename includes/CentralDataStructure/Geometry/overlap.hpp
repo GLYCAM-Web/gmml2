@@ -5,12 +5,6 @@
 
 namespace cds
 {
-    struct OverlapProperties
-    {
-        double weightBase;
-        double tolerance;
-    };
-
     struct Overlap
     {
         double count  = 0.0;

@@ -25,7 +25,7 @@ namespace glycoproteinBuilder
             size_t residueA                      = linkage.nonReducingResidues[0];
             const std::vector<size_t>& residuesB = linkage.reducingResidues;
             cds::addOverlapsTo(result,
-                               cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, graph,
+                               cds::CountOverlappingAtoms(data.potentialTable, data.overlapTolerance, graph,
                                                           {bounds.atoms, data.atoms.elements, includedAtoms},
                                                           {bounds.residues, residueWeights},
                                                           data.residueEdges.atomsCloseToEdge, {residueA}, residuesB));
@@ -39,7 +39,7 @@ namespace glycoproteinBuilder
                                                const std::vector<bool>& includedAtoms, size_t moleculeA,
                                                size_t moleculeB)
     {
-        double overlapTolerance    = data.overlapProperties.tolerance;
+        double overlapTolerance    = data.overlapTolerance;
         const cds::Sphere& boundsA = bounds.molecules[moleculeA];
         const cds::Sphere& boundsB = bounds.molecules[moleculeB];
         if (!cds::spheresOverlap(overlapTolerance, boundsA, boundsB))
@@ -53,7 +53,7 @@ namespace glycoproteinBuilder
             std::vector<size_t> residuesB = cds::intersectingIndices(overlapTolerance, boundsA, bounds.residues,
                                                                      moleculeResidues(graph, moleculeB));
             return cds::CountOverlappingAtoms(
-                data.potentialTable, data.overlapProperties, graph, {bounds.atoms, data.atoms.elements, includedAtoms},
+                data.potentialTable, data.overlapTolerance, graph, {bounds.atoms, data.atoms.elements, includedAtoms},
                 {bounds.residues, residueWeights}, data.residueEdges.atomsCloseToEdge, residuesA, residuesB);
         }
     }
@@ -66,13 +66,13 @@ namespace glycoproteinBuilder
     {
         const cds::Sphere& moleculeBounds = bounds.molecules[molecule];
         const cds::Sphere& residueBounds  = bounds.residues[residue];
-        if (!cds::spheresOverlap(data.overlapProperties.tolerance, moleculeBounds, residueBounds))
+        if (!cds::spheresOverlap(data.overlapTolerance, moleculeBounds, residueBounds))
         {
             return std::vector<cds::Overlap>(graph.atomCount, {0.0, 0.0});
         }
         else
         {
-            return cds::CountOverlappingAtoms(data.potentialTable, data.overlapProperties, graph,
+            return cds::CountOverlappingAtoms(data.potentialTable, data.overlapTolerance, graph,
                                               {bounds.atoms, data.atoms.elements, includedAtoms},
                                               {bounds.residues, residueWeights}, data.residueEdges.atomsCloseToEdge,
                                               {residue}, moleculeResidues(graph, molecule));

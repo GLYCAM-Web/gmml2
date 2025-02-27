@@ -259,10 +259,10 @@ namespace
         assembly::Graph graph       = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
-        cds::simpleWiggleCurrentRotamers(
-            MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, graph,
-            indices, residueAtomsCloseToEdge, {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
+        cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
+                                         searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
+                                         searchPreference, graph, indices, residueAtomsCloseToEdge,
+                                         {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
@@ -527,9 +527,8 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
         auto preference = cds::angleSearchPreference(
             searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
         cds::simpleWiggleCurrentRotamers(
-            MolecularMetadata::potentialTable(), {constants::clashWeightBase, constants::overlapTolerance},
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, preference, graph, indices,
-            residueAtomsCloseToEdge,
+            MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
+            linkage.rotatableDihedrals, linkage.dihedralMetadata, preference, graph, indices, residueAtomsCloseToEdge,
             {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
     }
     return;

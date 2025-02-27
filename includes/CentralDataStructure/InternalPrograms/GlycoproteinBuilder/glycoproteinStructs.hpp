@@ -130,9 +130,9 @@ namespace glycoproteinBuilder
         ResidueLinkageData residueLinkageData;
         AssemblyIndices indices;
         MolecularMetadata::PotentialTable potentialTable;
-        cds::OverlapProperties overlapProperties;
         std::vector<double> defaultResidueWeight;
         std::vector<double> equalResidueWeight;
+        double overlapTolerance;
     };
 
     struct MutableData

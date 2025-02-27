@@ -63,14 +63,12 @@ namespace cds
     };
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
-    OverlapState wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential,
-                                     cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
-                                     const DihedralCoordinates coordinates, const std::vector<size_t>& indices,
-                                     const DihedralAngleDataVector& rotamers, const AngleSearchPreference& preference,
-                                     const DihedralRotationData& input);
-    void simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential,
-                                     cds::OverlapProperties overlapProperties, SearchAngles searchAngles,
-                                     std::vector<RotatableDihedral>& dihedrals,
+    OverlapState wiggleUsingRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
+                                     SearchAngles searchAngles, const DihedralCoordinates coordinates,
+                                     const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
+                                     const AngleSearchPreference& preference, const DihedralRotationData& input);
+    void simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
+                                     SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
                                      const std::vector<DihedralAngleDataVector>& metadata,
                                      const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
                                      const GraphIndexData& indices,

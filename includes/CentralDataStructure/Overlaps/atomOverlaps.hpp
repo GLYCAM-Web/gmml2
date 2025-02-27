@@ -36,10 +36,10 @@ namespace cds
                                      const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     std::vector<size_t> intersectingIndices(double overlapTolerance, const cds::Sphere& sphere,
                                             const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
-    Overlap CountOverlappingAtoms(OverlapProperties properties, const std::vector<Atom*>& atomsA,
+    Overlap CountOverlappingAtoms(double overlapTolerance, const std::vector<Atom*>& atomsA,
                                   const std::vector<Atom*>& atomsB);
     std::vector<Overlap>
-    CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, OverlapProperties properties,
+    CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
                           const assembly::Graph& graph, const AtomOverlapData& atomData,
                           const ResidueOverlapData& residueData,
                           const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge,

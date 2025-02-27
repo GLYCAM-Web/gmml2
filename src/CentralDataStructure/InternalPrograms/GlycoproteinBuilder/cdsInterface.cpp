@@ -22,8 +22,8 @@ namespace glycoproteinBuilder
 {
     GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
                                                        std::vector<GlycosylationSite>& glycosites,
-                                                       const cds::OverlapProperties overlapProperties,
-                                                       const OverlapMultiplier overlapWeight, bool excludeHydrogen)
+                                                       const OverlapMultiplier overlapWeight, double overlapTolerance,
+                                                       bool excludeHydrogen)
     {
         using MolecularMetadata::Element;
 
@@ -286,9 +286,9 @@ namespace glycoproteinBuilder
                            residueLinkageData,
                            indices,
                            MolecularMetadata::potentialTable(),
-                           overlapProperties,
                            defaultResidueOverlapWeight,
-                           equalResidueWeight};
+                           equalResidueWeight,
+                           overlapTolerance};
 
         std::vector<bool> moleculeIncluded(graph.moleculeCount, true);
         assembly::Bounds bounds {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds};

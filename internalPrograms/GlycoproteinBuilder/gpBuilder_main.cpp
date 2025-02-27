@@ -183,14 +183,14 @@ int main(int argc, char* argv[])
         double proteinWeight = 1000.0;
         double glycanWeight  = 1.0;
         glycoproteinBuilder::OverlapMultiplier overlapMultiplier {proteinWeight, glycanWeight, selfWeight};
-        cds::OverlapProperties overlapProperties {constants::clashWeightBase, settings.overlapTolerance};
 
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
         bool excludeHydrogen                               = false;
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
-            sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                                   molecules, glycosites, overlapProperties, overlapMultiplier, excludeHydrogen));
+            sidechainRotamers,
+            glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapMultiplier,
+                                                               settings.overlapTolerance, excludeHydrogen));
         if (settings.allowSidechainAdjustment)
         {
             assembly.data.atoms.includeInEachOverlapCheck =

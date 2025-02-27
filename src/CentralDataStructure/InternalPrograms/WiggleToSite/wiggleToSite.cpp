@@ -54,8 +54,8 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
     std::vector<cds::Atom*> substrateAtomsToAvoidOverlappingWith =
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
     this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
-    this->setCurrentOverlapCount(cds::CountOverlappingAtoms({constants::clashWeightBase, constants::overlapTolerance},
-                                                            atomsToAvoid_, this->getCarbohydrate().getAtoms()));
+    this->setCurrentOverlapCount(
+        cds::CountOverlappingAtoms(constants::overlapTolerance, atomsToAvoid_, this->getCarbohydrate().getAtoms()));
     this->wiggleMeCoordinates_     = {wiggleMe->FindAtom("C1")->coordinateReference(),
                                       wiggleMe->FindAtom("C3")->coordinateReference(),
                                       wiggleMe->FindAtom("C5")->coordinateReference()};
@@ -178,8 +178,8 @@ double WiggleToSite::calculateDistance()
 
 bool WiggleToSite::acceptOverlaps()
 {
-    cds::Overlap overlapCount = cds::CountOverlappingAtoms({constants::clashWeightBase, constants::overlapTolerance},
-                                                           atomsToAvoid_, getCarbohydrate().getAtoms());
+    cds::Overlap overlapCount =
+        cds::CountOverlappingAtoms(constants::overlapTolerance, atomsToAvoid_, getCarbohydrate().getAtoms());
     if (cds::compareOverlaps(overlapCount, this->getCurrentOverlapCount()) > 0)
     {
         return false;

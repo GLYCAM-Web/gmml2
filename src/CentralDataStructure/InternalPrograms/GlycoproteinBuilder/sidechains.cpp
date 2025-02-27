@@ -70,7 +70,7 @@ bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph
                                                     const MutableData& mutableData, const std::vector<size_t>& glycans,
                                                     size_t sidechainResidue)
 {
-    double overlapTolerance                   = data.overlapProperties.tolerance;
+    double overlapTolerance                   = data.overlapTolerance;
     const std::vector<size_t>& sidechainAtoms = sidechainMovingAtoms(data, sidechainResidue);
     cds::Sphere bounds = cds::boundingSphere(codeUtils::indicesToValues(mutableData.bounds.atoms, sidechainAtoms));
     for (size_t glycanId : glycans)
@@ -151,7 +151,6 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
 {
     const std::vector<double>& residueWeight = data.defaultResidueWeight;
     std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
-    const cds::OverlapProperties& properties = data.overlapProperties;
     for (size_t n : atomsA)
     {
         MolecularMetadata::Element elementA = data.atoms.elements[n];
@@ -160,7 +159,7 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
             double weight = residueWeight[graph.atomResidue[n]] * residueWeight[graph.atomResidue[k]];
             MolecularMetadata::Element elementB = data.atoms.elements[k];
             double scale         = MolecularMetadata::potentialWeight(data.potentialTable, elementA, elementB);
-            cds::Overlap overlap = cds::overlapAmount(properties.tolerance, scale, bounds[n], bounds[k]) * weight;
+            cds::Overlap overlap = cds::overlapAmount(data.overlapTolerance, scale, bounds[n], bounds[k]) * weight;
             result[graph.atomResidue[n]] += overlap;
             result[graph.atomResidue[k]] += overlap;
         }
@@ -209,7 +208,7 @@ std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(con
     result.reserve(256); // some extra, don't need to be precise
     auto overlapsWithSidechainBounds = [&](const cds::Sphere& sphere)
     {
-        return cds::spheresOverlap(data.overlapProperties.tolerance, sidechainBounds, sphere);
+        return cds::spheresOverlap(data.overlapTolerance, sidechainBounds, sphere);
     };
     auto insertOverlappingAtomsOfMolecule = [&](size_t molecule)
     {

@@ -42,7 +42,7 @@ namespace glycoproteinBuilder
             const std::vector<cds::Sphere>& atomBounds     = mutableData.bounds.atoms;
             const std::vector<cds::Sphere>& residueBounds  = mutableData.bounds.residues;
             const std::vector<cds::Sphere>& moleculeBounds = mutableData.bounds.molecules;
-            double overlapTolerance                        = data.overlapProperties.tolerance;
+            double overlapTolerance                        = data.overlapTolerance;
             cds::Sphere movingAtomBounds = cds::boundingSphere(codeUtils::indicesToValues(atomBounds, movingAtoms));
             Coordinate pointA            = atomBounds[dihedral.atoms[1]].center;
             Coordinate pointB            = atomBounds[dihedral.atoms[2]].center;
@@ -113,7 +113,7 @@ namespace glycoproteinBuilder
                                                  data.residueEdges.atomsCloseToEdge};
                 const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
                 cds::OverlapState best =
-                    cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles, coordinates,
+                    cds::wiggleUsingRotamers(data.potentialTable, data.overlapTolerance, settings.angles, coordinates,
                                              codeUtils::indexVector(metadata), metadata, preference, input);
                 mutableData.bounds                              = best.bounds;
                 mutableData.dihedralCurrentMetadata[dihedralId] = best.angle.metadataIndex;
@@ -166,7 +166,7 @@ namespace glycoproteinBuilder
                                                      partial.residueIndices,
                                                      data.residueEdges.atomsCloseToEdge};
                     cds::OverlapState best =
-                        cds::wiggleUsingRotamers(data.potentialTable, data.overlapProperties, settings.angles,
+                        cds::wiggleUsingRotamers(data.potentialTable, data.overlapTolerance, settings.angles,
                                                  coordinates, index, dihedralMetadata[dihedralId], preference, input);
                     bestResults[k]     = {best.overlap, best.angle};
                     mutableData.bounds = best.bounds;
