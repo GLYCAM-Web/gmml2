@@ -63,7 +63,7 @@ namespace cds
                                      const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
                                      const GraphIndexData& indices,
                                      const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge,
-                                     const std::array<ResiduesWithOverlapWeight, 2>& residueSets);
+                                     const std::array<std::vector<Residue*>, 2>& residueSets);
     std::vector<double> evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
                                            double increment);
     std::vector<AngleSearchPreference> angleSearchPreference(double deviation,

@@ -26,12 +26,6 @@ namespace cds
         const std::vector<double>& weights;
     };
 
-    struct ResiduesWithOverlapWeight
-    {
-        std::vector<Residue*> residues;
-        std::vector<double> weights;
-    };
-
     void insertIndicesOfIntersection(std::vector<size_t>& result, double overlapTolerance, const cds::Sphere& sphere,
                                      const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     std::vector<size_t> intersectingIndices(double overlapTolerance, const cds::Sphere& sphere,

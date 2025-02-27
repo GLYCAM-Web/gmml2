@@ -248,21 +248,16 @@ namespace
         // more residues are added.
         auto shapePreference = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
         cds::setShapeToPreference(linkage, shapePreference);
-        auto searchPreference  = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
-        auto residueWithWeight = [](cds::Residue* residue)
-        {
-            auto residues = std::vector<cds::Residue*> {residue};
-            auto weights  = std::vector<double> {1.0};
-            return cds::ResiduesWithOverlapWeight {residues, weights};
-        };
+        auto searchPreference       = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
         cds::GraphIndexData indices = cds::toIndexData({molecule});
         assembly::Graph graph       = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
-        cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
-                                         searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
-                                         searchPreference, graph, indices, residueAtomsCloseToEdge,
-                                         {residueWithWeight(childResidue), residueWithWeight(parentResidue)});
+        cds::simpleWiggleCurrentRotamers(
+            MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
+            linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, graph, indices,
+            residueAtomsCloseToEdge,
+            {std::vector<cds::Residue*> {childResidue}, std::vector<cds::Residue*> {parentResidue}});
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
@@ -519,17 +514,12 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     for (auto& linkage : glycosidicLinkages_)
     {
-        auto withWeight = [](const std::vector<Residue*> residues)
-        {
-            return cds::ResiduesWithOverlapWeight {residues, std::vector<double>(residues.size(), 1.0)};
-        };
-
         auto preference = cds::angleSearchPreference(
             searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
-        cds::simpleWiggleCurrentRotamers(
-            MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
-            linkage.rotatableDihedrals, linkage.dihedralMetadata, preference, graph, indices, residueAtomsCloseToEdge,
-            {withWeight(linkage.nonReducingOverlapResidues), withWeight(linkage.reducingOverlapResidues)});
+        cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
+                                         searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
+                                         preference, graph, indices, residueAtomsCloseToEdge,
+                                         {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues});
     }
     return;
 }

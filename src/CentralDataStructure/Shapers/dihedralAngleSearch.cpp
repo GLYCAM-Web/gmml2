@@ -47,18 +47,6 @@ namespace
         }
     }
 
-    std::vector<size_t> toResidueIndices(const std::vector<cds::Residue*>& residues,
-                                         const std::vector<cds::Residue*>& reindex)
-    {
-        std::vector<size_t> result;
-        result.reserve(reindex.size());
-        for (auto res : reindex)
-        {
-            result.push_back(codeUtils::indexOf(residues, res));
-        }
-        return result;
-    }
-
     std::array<std::vector<size_t>, 2> branchedResidueSets(const std::vector<bool>& residueMoving,
                                                            const std::vector<size_t>& setA,
                                                            const std::vector<size_t>& setB)
@@ -184,23 +172,15 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
                                       const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
                                       const GraphIndexData& indices,
                                       const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge,
-                                      const std::array<ResiduesWithOverlapWeight, 2>& residueSets)
+                                      const std::array<std::vector<Residue*>, 2>& residueSets)
 {
     assembly::Bounds bounds = toAssemblyBounds(indices, graph);
     std::vector<bool> atomIncluded(graph.atomCount, true);
     std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(indices.atoms);
     const std::vector<cds::Residue*>& residues           = indices.residues;
-    std::vector<size_t> residueSetA                      = toResidueIndices(residues, residueSets[0].residues);
-    std::vector<size_t> residueSetB                      = toResidueIndices(residues, residueSets[1].residues);
-    std::vector<double> residueWeights(graph.residueCount, 0.0);
-    for (size_t n = 0; n < residueSetA.size(); n++)
-    {
-        residueWeights[residueSetA[n]] = residueSets[0].weights[n];
-    }
-    for (size_t n = 0; n < residueSetB.size(); n++)
-    {
-        residueWeights[residueSetB[n]] = residueSets[1].weights[n];
-    }
+    std::vector<size_t> residueSetA                      = codeUtils::indicesOf(residues, residueSets[0]);
+    std::vector<size_t> residueSetB                      = codeUtils::indicesOf(residues, residueSets[1]);
+    std::vector<double> residueWeights(graph.residueCount, 1.0);
     auto dihedralCoords = [&](const cds::RotatableDihedral& dihedral)
     {
         auto coord = [&](size_t n)
