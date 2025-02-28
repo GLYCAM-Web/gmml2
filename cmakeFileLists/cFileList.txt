@@ -1,5 +1,6 @@
 ./src/Assembly/assemblyBounds.cpp
 ./src/Assembly/assemblyGraph.cpp
+./src/Assembly/assemblySelection.cpp
 ./src/CentralDataStructure/CondensedSequence/carbohydrate.cpp
 ./src/CentralDataStructure/CondensedSequence/graphViz.cpp
 ./src/CentralDataStructure/CondensedSequence/parsedResidue.cpp
