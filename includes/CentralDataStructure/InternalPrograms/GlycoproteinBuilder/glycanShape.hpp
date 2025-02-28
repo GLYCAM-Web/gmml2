@@ -12,8 +12,6 @@
 
 namespace glycoproteinBuilder
 {
-    void updateGlycanBounds(const assembly::Graph& graph, const AssemblyData& data, assembly::Bounds& bounds,
-                            size_t glycanId);
     std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const assembly::Bounds& bounds,
                                                        size_t dihedralId);
     void setDihedralAngle(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,

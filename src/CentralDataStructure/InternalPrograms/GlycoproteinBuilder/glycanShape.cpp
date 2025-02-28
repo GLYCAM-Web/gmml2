@@ -9,20 +9,6 @@
 
 namespace glycoproteinBuilder
 {
-    void updateGlycanBounds(const assembly::Graph& graph, const AssemblyData& data, assembly::Bounds& bounds,
-                            size_t glycanId)
-    {
-        size_t siteResidue = data.glycans.attachmentResidue[glycanId];
-        updateResidueBounds(graph, bounds, siteResidue);
-        updateResidueMoleculeBounds(graph, bounds, siteResidue);
-        size_t moleculeId = data.glycans.moleculeId[glycanId];
-        for (size_t residue : moleculeResidues(graph, moleculeId))
-        {
-            updateResidueBounds(graph, bounds, residue);
-        }
-        updateMoleculeBounds(graph, bounds, moleculeId);
-    }
-
     std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const assembly::Bounds& bounds,
                                                        size_t dihedralId)
     {

@@ -232,7 +232,6 @@ namespace glycoproteinBuilder
                               overlapMultiplier, preferences[n]);
             }
         }
-        updateGlycanBounds(graph, data, mutableData.bounds, glycanId);
     }
 
     GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,

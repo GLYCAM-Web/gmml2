@@ -207,7 +207,6 @@ namespace glycoproteinBuilder
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[k], preference[k]);
                 }
-                updateGlycanBounds(graph, data, mutableData.bounds, glycanId);
                 glycositePreferences.push_back(preference);
             }
             const assembly::Selection mainSelection =
