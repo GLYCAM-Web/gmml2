@@ -87,3 +87,8 @@ void cds::writeConectCards(std::ostream& stream, const std::vector<int>& atomNum
         writeLine(second, first);
     }
 }
+
+void cds::theEnd(std::ostream& stream)
+{
+    stream << "END\n";
+}

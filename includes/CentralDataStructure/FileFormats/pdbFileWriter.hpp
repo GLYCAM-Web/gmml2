@@ -22,6 +22,7 @@ namespace cds
                         size_t residueIndex, const PdbFileAtomData& atoms, size_t atomIndex);
     void writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
                           const std::vector<std::array<size_t, 2>>& connectionIndices);
+    void theEnd(std::ostream& stream);
 
 } // namespace cds
 #endif

@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -246,5 +247,5 @@ void PdbFile::Write(std::ostream& out) const
             out << "ENDMDL\n";
         }
     }
-    return;
+    cds::theEnd(out);
 }

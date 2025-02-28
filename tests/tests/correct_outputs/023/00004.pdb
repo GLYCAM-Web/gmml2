@@ -48,3 +48,4 @@ ATOM     45 H1O  0CU     2       1.382  17.488 -12.879  1.00  0.00           H
 TER
 CONECT   24    1
 CONECT    1   24
+END

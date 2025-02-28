@@ -88,6 +88,7 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
         }
         stream << "ENDMDL\n";
     }
+    theEnd(stream);
 }
 
 void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices, const std::vector<std::string>& headerLines)
@@ -114,4 +115,5 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices, const st
     std::vector<std::array<size_t, 2>> connectionIndices =
         codeUtils::indicesToValues(subgraph.residues.source.edgeNodes, subgraph.residues.edges.indices);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
+    cds::theEnd(stream);
 }
