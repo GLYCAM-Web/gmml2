@@ -193,8 +193,8 @@ int main(int argc, char* argv[])
                                                                settings.overlapTolerance, excludeHydrogen));
         if (settings.allowSidechainAdjustment)
         {
-            assembly.data.atoms.includeInEachOverlapCheck =
-                codeUtils::vectorAnd(assembly.data.atoms.includeInEachOverlapCheck,
+            assembly.data.atoms.includeInMainOverlapCheck =
+                codeUtils::vectorAnd(assembly.data.atoms.includeInMainOverlapCheck,
                                      codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain));
         }
 
