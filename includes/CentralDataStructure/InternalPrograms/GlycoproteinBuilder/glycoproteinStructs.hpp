@@ -150,20 +150,22 @@ namespace glycoproteinBuilder
         MutableData mutableData;
     };
 
-    inline std::vector<bool> glycanIncluded(const AssemblyData& data, const MutableData& mutableData)
+    inline std::vector<bool> glycanIncluded(const AssemblyData& data, const std::vector<bool>& includedMolecules)
     {
-        return codeUtils::indicesToValues(mutableData.moleculeIncluded, data.glycans.moleculeId);
+        return codeUtils::indicesToValues(includedMolecules, data.glycans.moleculeId);
     }
 
-    inline std::vector<size_t> includedGlycanMoleculeIds(const AssemblyData& data, const MutableData& mutableData)
+    inline std::vector<size_t> includedGlycanMoleculeIds(const AssemblyData& data,
+                                                         const std::vector<bool>& includedMolecules)
     {
         return codeUtils::indicesToValues(data.glycans.moleculeId,
-                                          codeUtils::boolsToIndices(glycanIncluded(data, mutableData)));
+                                          codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules)));
     }
 
-    inline std::vector<size_t> includedGlycanIndices(const AssemblyData& data, const MutableData& mutableData)
+    inline std::vector<size_t> includedGlycanIndices(const AssemblyData& data,
+                                                     const std::vector<bool>& includedMolecules)
     {
-        return codeUtils::boolsToIndices(glycanIncluded(data, mutableData));
+        return codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules));
     }
 
     typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,

@@ -84,7 +84,7 @@ namespace glycoproteinBuilder
                                             const std::vector<bool>& includedAtoms, OverlapMultiplier overlapMultiplier)
     {
         std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
-        const std::vector<size_t> glycans = includedGlycanIndices(data, mutableData);
+        const std::vector<size_t> glycans = includedGlycanIndices(data, mutableData.moleculeIncluded);
 
         for (size_t n : glycans)
         {
@@ -115,7 +115,7 @@ namespace glycoproteinBuilder
                               const std::vector<double>& residueWeights, const std::vector<bool>& includedAtoms,
                               size_t glycanId, double selfWeight)
     {
-        const std::vector<size_t> glycans = includedGlycanIndices(data, mutableData);
+        const std::vector<size_t> glycans = includedGlycanIndices(data, mutableData.moleculeIncluded);
         cds::Overlap overlap              = cds::overlapVectorSum(intraGlycanOverlaps(graph, data, mutableData.bounds,
                                                                                       residueWeights, includedAtoms, glycanId)) *
                                selfWeight;
@@ -146,7 +146,7 @@ namespace glycoproteinBuilder
                                                   const std::vector<bool>& includedAtoms)
     {
         const std::vector<double>& residueWeights = data.equalResidueWeight;
-        const std::vector<bool>& included         = glycanIncluded(data, mutableData);
+        const std::vector<bool>& included         = glycanIncluded(data, mutableData.moleculeIncluded);
         auto hasProteinOverlap                    = [&](size_t n)
         {
             cds::Overlap overlap {0.0, 0.0};
