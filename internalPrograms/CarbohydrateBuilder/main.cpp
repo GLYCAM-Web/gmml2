@@ -145,10 +145,11 @@ int main(int argc, char** argv)
                               << argv[2] << "<<<\n";
                     std::exit(EXIT_FAILURE);
                 }
-                std::string inputSequence = splitLine.at(1);
-                std::cout << "\n*********************\nBuilding " << inputSequence << "\n*********************\n";
-                cdsCondensedSequence::carbohydrateBuilder carbBuilder(inputSequence);
                 std::string inputGlycanID = splitLine.at(0);
+                std::string inputSequence = splitLine.at(1);
+                std::cout << "\n*********************\nBuilding " << inputGlycanID << ": " << inputSequence
+                          << "\n*********************\n";
+                cdsCondensedSequence::carbohydrateBuilder carbBuilder(inputSequence);
                 carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputDir, inputGlycanID, headerLines);
             }
             catch (const std::runtime_error& error)
