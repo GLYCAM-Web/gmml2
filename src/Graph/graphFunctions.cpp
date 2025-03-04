@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <vector>
 
-std::vector<size_t> graph::reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting)
+std::vector<bool> graph::reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting)
 {
     std::vector<bool> reachable(nodeCount(graph), false);
     std::vector<size_t> toVisit;
@@ -25,5 +25,5 @@ std::vector<size_t> graph::reachableNodes(const Graph& graph, const std::vector<
             }
         }
     }
-    return codeUtils::boolsToIndices(reachable);
+    return reachable;
 }

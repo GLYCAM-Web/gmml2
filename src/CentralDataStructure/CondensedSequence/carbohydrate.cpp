@@ -255,11 +255,10 @@ namespace
         const cds::GraphIndexData indices = cds::toIndexData({molecule});
         const assembly::Graph graph = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
         size_t residueIndex         = codeUtils::indexOf(indices.residues, residue);
-        std::vector<size_t> reachable =
+        std::vector<bool> reachable =
             graph::reachableNodes(graph.residues, std::vector<bool>(graph.residueCount, false), residueIndex);
-        const assembly::Selection selection =
-            assembly::selectByResidues(graph, codeUtils::indicesToBools(graph.residueCount, reachable));
-        const assembly::Bounds bounds = toAssemblyBounds(indices, graph);
+        const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
+        const assembly::Bounds bounds       = toAssemblyBounds(indices, graph);
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(

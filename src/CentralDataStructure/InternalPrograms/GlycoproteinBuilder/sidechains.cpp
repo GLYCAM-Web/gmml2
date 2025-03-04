@@ -271,11 +271,12 @@ glycoproteinBuilder::sidechainDihedrals(const assembly::Graph& graph, const Asse
                     {
                         return atom(dihedral[k]);
                     };
-                    std::array<size_t, 4> indices   = dihedralIndices(index);
-                    std::vector<size_t> movingAtoms = graph::reachableNodes(
+                    std::array<size_t, 4> indices = dihedralIndices(index);
+                    std::vector<bool> reachable   = graph::reachableNodes(
                         graph.atoms,
                         codeUtils::indicesToBools(graph.atomCount, std::vector<size_t> {indices[1], indices[2]}),
                         indices[2]);
+                    std::vector<size_t> movingAtoms = codeUtils::boolsToIndices(reachable);
                     sidechainDihedrals.push_back({indices, movingAtoms});
                 }
                 result[n] = sidechainDihedrals;

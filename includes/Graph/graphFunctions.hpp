@@ -8,7 +8,7 @@
 
 namespace graph
 {
-    std::vector<size_t> reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting);
+    std::vector<bool> reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting);
 } // namespace graph
 
 #endif
