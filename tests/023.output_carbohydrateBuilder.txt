@@ -303,9 +303,8 @@ Building DAbepb1-OH
 *********************
 
 *********************
-Building Arap4Na1-OH
+Building LArap4Na1-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for Arap4Na1- with this glycam residue code: 0AN
 
 *********************
 Building GlcpNAc3NAcAa1-OH
@@ -384,7 +383,7 @@ Building DAATpb1-OH
 00070.pdb not created.
 00071.pdb succesfully created.
 00072.pdb succesfully created.
-00073.pdb not created.
+00073.pdb succesfully created.
 00074.pdb succesfully created.
 00075.pdb succesfully created.
 00076.pdb succesfully created.
@@ -454,7 +453,7 @@ Building DAATpb1-OH
 00070.off not created.
 00071.off succesfully created.
 00072.off succesfully created.
-00073.off not created.
+00073.off succesfully created.
 00074.off succesfully created.
 00075.off succesfully created.
 00076.off succesfully created.
