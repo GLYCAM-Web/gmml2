@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
@@ -130,8 +131,8 @@ namespace glycoproteinBuilder
         ResidueLinkageData residueLinkageData;
         AssemblyIndices indices;
         MolecularMetadata::PotentialTable potentialTable;
-        std::vector<double> defaultResidueWeight;
-        std::vector<double> equalResidueWeight;
+        cds::MoleculeOverlapWeight defaultWeight;
+        cds::MoleculeOverlapWeight equalWeight;
         double overlapTolerance;
     };
 

@@ -36,14 +36,30 @@ cds::Overlap cds::overlapVectorSum(const std::vector<Overlap>& vec)
     return result * 0.5;
 }
 
-std::vector<cds::Overlap> cds::scaledOverlaps(double scale, const std::vector<Overlap>& vec)
+bool cds::containsOverlap(const std::vector<cds::Overlap>& vec)
 {
-    std::vector<cds::Overlap> result;
-    result.reserve(vec.size());
+    for (auto& a : vec)
+    {
+        if (a.count > 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+void cds::scaleOverlaps(double scale, std::vector<Overlap>& vec)
+{
     for (size_t n = 0; n < vec.size(); n++)
     {
-        result[n] = vec[n] * scale;
+        vec[n] = vec[n] * scale;
     }
+}
+
+std::vector<cds::Overlap> cds::scaledOverlaps(double scale, const std::vector<Overlap>& vec)
+{
+    std::vector<cds::Overlap> result = vec;
+    scaleOverlaps(scale, result);
     return result;
 }
 

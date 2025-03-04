@@ -30,6 +30,8 @@ namespace cds
     int compareOverlaps(const Overlap& a, const Overlap& b);
     Overlap overlapAmount(double tolerance, double scale, const Sphere& a, const Sphere& b);
     Overlap overlapVectorSum(const std::vector<Overlap>& vec);
+    bool containsOverlap(const std::vector<cds::Overlap>& vec);
+    void scaleOverlaps(double scale, std::vector<Overlap>& vec);
     std::vector<Overlap> scaledOverlaps(double scale, const std::vector<Overlap>& vec);
     void addOverlapsTo(std::vector<Overlap>& vec, const std::vector<Overlap>& added);
 } // namespace cds

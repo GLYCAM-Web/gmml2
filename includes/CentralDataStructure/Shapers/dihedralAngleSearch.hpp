@@ -57,13 +57,12 @@ namespace cds
                                      const std::vector<size_t>& movingAtoms, const DihedralCoordinates coordinates,
                                      const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
                                      const AngleSearchPreference& preference);
-    void simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
-                                     SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
-                                     const std::vector<DihedralAngleDataVector>& metadata,
-                                     const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
-                                     const GraphIndexData& indices,
-                                     const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge,
-                                     const std::array<std::vector<Residue*>, 2>& residueSets);
+    assembly::Bounds simpleWiggleCurrentRotamers(
+        const MolecularMetadata::PotentialTable& potential, double overlapTolerance, SearchAngles searchAngles,
+        std::vector<RotatableDihedral>& dihedrals, const std::vector<DihedralAngleDataVector>& metadata,
+        const std::vector<AngleSearchPreference>& preference, const GraphIndexData& indices,
+        const assembly::Graph& graph, const assembly::Selection& selection, const assembly::Bounds& bounds,
+        const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge);
     std::vector<double> evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
                                            double increment);
     std::vector<AngleSearchPreference> angleSearchPreference(double deviation,

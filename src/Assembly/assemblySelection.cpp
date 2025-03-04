@@ -6,29 +6,86 @@
 
 namespace assembly
 {
+    Selection selectAll(const Graph& graph)
+    {
+        std::vector<bool> atoms(graph.atomCount, true);
+        std::vector<bool> residues(graph.residueCount, true);
+        std::vector<bool> molecules(graph.moleculeCount, true);
+        return {atoms, residues, molecules};
+    }
+
     Selection selectByAtoms(const Graph& graph, const std::vector<bool>& atoms)
     {
-        std::vector<bool> residues = codeUtils::groupContainsSelected(graph.residueCount, graph.atomResidue, atoms);
-        std::vector<bool> molecules =
-            codeUtils::groupContainsSelected(graph.moleculeCount, graph.residueMolecule, residues);
-        return {atoms, residues, molecules};
+        Selection all  = selectAll(graph);
+        Selection some = all;
+        some.atoms     = atoms;
+        return intersection(graph, some, all);
+    }
+
+    Selection selectByResidues(const Graph& graph, const std::vector<bool>& residues)
+    {
+        Selection all  = selectAll(graph);
+        Selection some = all;
+        some.residues  = residues;
+        return intersection(graph, some, all);
     }
 
     Selection selectByMolecules(const Graph& graph, const std::vector<bool>& molecules)
     {
-        std::vector<bool> residues = codeUtils::indicesToValues(molecules, graph.residueMolecule);
-        std::vector<bool> atoms    = codeUtils::indicesToValues(residues, graph.atomResidue);
-        return {atoms, residues, molecules};
+        Selection all  = selectAll(graph);
+        Selection some = all;
+        some.molecules = molecules;
+        return intersection(graph, some, all);
     }
 
     Selection selectByAtomsAndMolecules(const Graph& graph, const std::vector<bool>& atoms,
                                         const std::vector<bool>& molecules)
     {
-        Selection byMolecules = selectByMolecules(graph, molecules);
-        return selectByAtoms(graph, codeUtils::vectorAnd(atoms, byMolecules.atoms));
+        Selection all  = selectAll(graph);
+        Selection some = all;
+        some.atoms     = atoms;
+        some.molecules = molecules;
+        return intersection(graph, some, all);
     }
 
-    std::vector<size_t> selectedMoleculeResidues(const Graph& graph, const Selection& selection, size_t molecule)
+    Selection intersection(const Graph& graph, const Selection& first, const Selection& second)
+    {
+        auto setValues = [](std::vector<bool>& result, const std::vector<size_t>& group, const std::vector<bool>& value)
+        {
+            std::fill(result.begin(), result.end(), false);
+            for (size_t n = 0; n < value.size(); n++)
+            {
+                size_t index  = group[n];
+                result[index] = result[index] || value[n];
+            }
+        };
+        std::vector<bool> atoms(graph.atomCount, false);
+        std::vector<bool> residues(graph.residueCount, false);
+        std::vector<bool> molecules(graph.moleculeCount, false);
+
+        for (size_t n = 0; n < graph.moleculeCount; n++)
+        {
+            molecules[n] = first.molecules[n] && second.molecules[n];
+        }
+        for (size_t n = 0; n < graph.residueCount; n++)
+        {
+            residues[n] = molecules[graph.residueMolecule[n]] && first.residues[n] && second.residues[n];
+        }
+        for (size_t n = 0; n < graph.atomCount; n++)
+        {
+            atoms[n] = residues[graph.atomResidue[n]] && first.atoms[n] && second.atoms[n];
+        }
+        setValues(residues, graph.atomResidue, atoms);
+        setValues(molecules, graph.residueMolecule, residues);
+        return {atoms, residues, molecules};
+    }
+
+    std::vector<size_t> selectedMolecules(const Selection& selection)
+    {
+        return codeUtils::boolsToIndices(selection.molecules);
+    }
+
+    std::vector<size_t> moleculeSelectedResidues(const Graph& graph, const Selection& selection, size_t molecule)
     {
         const std::vector<size_t>& residues = moleculeResidues(graph, molecule);
         std::vector<size_t> selectedResidues;
@@ -42,4 +99,17 @@ namespace assembly
         }
         return selectedResidues;
     }
+
+    std::vector<std::vector<size_t>> moleculeSelectedResidues(const Graph& graph, const Selection& selection,
+                                                              const std::vector<size_t>& molecules)
+    {
+        std::vector<std::vector<size_t>> result;
+        result.reserve(molecules.size());
+        for (size_t molecule : molecules)
+        {
+            result.push_back(moleculeSelectedResidues(graph, selection, molecule));
+        }
+        return result;
+    }
+
 } // namespace assembly

@@ -25,6 +25,10 @@
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblySelection.hpp"
+#include "includes/Graph/graphFunctions.hpp"
 #include <sstream>
 #include <fstream>
 #include <cctype>    // isDigit
@@ -240,24 +244,32 @@ namespace
         }
     }
 
-    void initialWiggleLinkage(cds::Molecule* molecule, cds::ResidueLinkage& linkage,
-                              const cds::AngleSearchSettings& searchSettings, cds::Residue* parentResidue,
-                              cds::Residue* childResidue)
+    void initialWiggleLinkage(cds::Molecule* molecule, cds::Residue* residue, cds::ResidueLinkage& linkage,
+                              const cds::AngleSearchSettings& searchSettings)
     {
         // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after
         // more residues are added.
         auto shapePreference = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
         cds::setShapeToPreference(linkage, shapePreference);
-        auto searchPreference       = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
-        cds::GraphIndexData indices = cds::toIndexData({molecule});
-        assembly::Graph graph       = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+        auto searchPreference             = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
+        const cds::GraphIndexData indices = cds::toIndexData({molecule});
+        const assembly::Graph graph = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+        size_t residueIndex         = codeUtils::indexOf(indices.residues, residue);
+        std::vector<size_t> reachable =
+            graph::reachableNodes(graph.residues, std::vector<bool>(graph.residueCount, false), residueIndex);
+        const assembly::Selection selection =
+            assembly::selectByResidues(graph, codeUtils::indicesToBools(graph.residueCount, reachable));
+        const assembly::Bounds bounds = toAssemblyBounds(indices, graph);
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
-        cds::simpleWiggleCurrentRotamers(
+        assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
             MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
-            linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, graph, indices,
-            residueAtomsCloseToEdge,
-            {std::vector<cds::Residue*> {childResidue}, std::vector<cds::Residue*> {parentResidue}});
+            linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, indices, graph, selection, bounds,
+            residueAtomsCloseToEdge);
+        for (size_t n = 0; n < graph.atomCount; n++)
+        {
+            indices.atoms[n]->setCoordinate(newBounds.atoms[n].center);
+        }
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
@@ -288,7 +300,7 @@ namespace
             connectAndSetGeometry(currentParent, child);
             cds::ResidueLink link        = cds::findResidueLink({child, currentParent});
             cds::ResidueLinkage& linkage = glycosidicLinkages.emplace_back(cds::createResidueLinkage(link));
-            initialWiggleLinkage(molecule, linkage, searchSettings, currentParent, child);
+            initialWiggleLinkage(molecule, child, linkage, searchSettings);
             depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, child);
         }
     }
@@ -509,17 +521,27 @@ cds::Atom* Carbohydrate::GetAnomericAtom()
 
 void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
 {
-    cds::GraphIndexData indices = cds::toIndexData({this});
-    assembly::Graph graph       = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+    const cds::GraphIndexData indices = cds::toIndexData({this});
+    const assembly::Graph graph = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+    const assembly::Selection selection                                   = assembly::selectAll(graph);
+    assembly::Bounds bounds                                               = cds::toAssemblyBounds(indices, graph);
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
-    for (auto& linkage : glycosidicLinkages_)
+    // wiggle twice for nicer structures
+    for (size_t n = 0; n < 2; n++)
     {
-        auto preference = cds::angleSearchPreference(
-            searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
-        cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
-                                         searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata,
-                                         preference, graph, indices, residueAtomsCloseToEdge,
-                                         {linkage.nonReducingOverlapResidues, linkage.reducingOverlapResidues});
+        for (auto& linkage : glycosidicLinkages_)
+        {
+            auto preference = cds::angleSearchPreference(
+                searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
+            bounds = cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
+                                                      searchSettings.angles, linkage.rotatableDihedrals,
+                                                      linkage.dihedralMetadata, preference, indices, graph, selection,
+                                                      bounds, residueAtomsCloseToEdge);
+        }
+    }
+    for (size_t n = 0; n < graph.atomCount; n++)
+    {
+        indices.atoms[n]->setCoordinate(bounds.atoms[n].center);
     }
     return;
 }

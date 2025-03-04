@@ -7,23 +7,17 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblySelection.hpp"
 
 #include <vector>
 #include <utility>
 
 namespace cds
 {
-    struct AtomOverlapData
+    struct MoleculeOverlapWeight
     {
-        const std::vector<Sphere>& bounds;
-        const std::vector<MolecularMetadata::Element>& elements;
-        const std::vector<bool>& included;
-    };
-
-    struct ResidueOverlapData
-    {
-        const std::vector<Sphere>& bounds;
-        const std::vector<double>& weights;
+        std::vector<double> between;
+        std::vector<double> within;
     };
 
     void insertIndicesOfIntersection(std::vector<size_t>& result, double overlapTolerance, const cds::Sphere& sphere,
@@ -32,11 +26,21 @@ namespace cds
                                             const std::vector<cds::Sphere>& coords, const std::vector<size_t>& indices);
     Overlap CountOverlappingAtoms(double overlapTolerance, const std::vector<Atom*>& atomsA,
                                   const std::vector<Atom*>& atomsB);
-    std::vector<Overlap>
-    CountOverlappingAtoms(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
-                          const assembly::Graph& graph, const AtomOverlapData& atomData,
-                          const ResidueOverlapData& residueData,
-                          const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge,
-                          const std::vector<size_t>& residuesA, const std::vector<size_t>& residuesB);
+    void addResidueOverlaps(std::vector<Overlap>& result, const MolecularMetadata::PotentialTable& potential,
+                            double overlapTolerance, const assembly::Graph& graph, const assembly::Bounds& bounds,
+                            const assembly::Selection& selectionA, const assembly::Selection& selectionB,
+                            const std::vector<MolecularMetadata::Element>& atomElements,
+                            const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge, double weight,
+                            size_t residueA, size_t residueB);
+    std::vector<Overlap> overlapsBetweenSelections(
+        const MolecularMetadata::PotentialTable& potential, double overlapTolerance, const assembly::Graph& graph,
+        const assembly::Bounds& bounds, const assembly::Selection& selectionA, const assembly::Selection& selectionB,
+        const std::vector<MolecularMetadata::Element>& atomElements, const MoleculeOverlapWeight& weight,
+        const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge);
+    std::vector<Overlap> overlapsWithinSelection(
+        const MolecularMetadata::PotentialTable& potential, double overlapTolerance, const assembly::Graph& graph,
+        const assembly::Bounds& bounds, const assembly::Selection& selection,
+        const std::vector<MolecularMetadata::Element>& atomElements, const MoleculeOverlapWeight& weight,
+        const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge);
 } // namespace cds
 #endif

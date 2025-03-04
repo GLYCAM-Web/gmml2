@@ -199,8 +199,7 @@ int main(int argc, char* argv[])
         }
 
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, overlapMultiplier, assembly, settings, outputDir,
-                                             headerLines, numThreads);
+        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, assembly, settings, outputDir, headerLines, numThreads);
     }
     catch (const std::runtime_error& error)
     {

@@ -15,6 +15,7 @@
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 
+#include <cmath>
 #include <array>
 #include <vector>
 
@@ -146,13 +147,6 @@ namespace glycoproteinBuilder
             glycanMoleculeId.push_back(moleculeIndex);
             glycanLinkages.push_back(linkageIds);
         }
-        std::vector<double> defaultResidueOverlapWeight;
-        defaultResidueOverlapWeight.reserve(residues.size());
-        for (size_t molecule : graphIndices.residueMolecule)
-        {
-            defaultResidueOverlapWeight.push_back(
-                moleculeTypes[molecule] == MoleculeType::protein ? overlapWeight.protein : overlapWeight.glycan);
-        }
 
         std::vector<std::string> atomNames           = cds::atomNames(atoms);
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
@@ -275,7 +269,18 @@ namespace glycoproteinBuilder
 
         AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages};
 
-        std::vector<double> equalResidueWeight(residues.size(), 1.0);
+        cds::MoleculeOverlapWeight equalOverlapWeight {std::vector<double>(molecules.size(), 1.0),
+                                                       std::vector<double>(molecules.size(), 1.0)};
+        cds::MoleculeOverlapWeight defaultOverlapWeight;
+        defaultOverlapWeight.within.reserve(molecules.size());
+        defaultOverlapWeight.between.reserve(molecules.size());
+        for (size_t molecule : graphIndices.residueMolecule)
+        {
+            bool isProtein = moleculeTypes[molecule] == MoleculeType::protein;
+            defaultOverlapWeight.within.push_back(isProtein ? std::pow(overlapWeight.protein, 2.0)
+                                                            : overlapWeight.self);
+            defaultOverlapWeight.between.push_back(isProtein ? overlapWeight.protein : overlapWeight.glycan);
+        }
 
         AssemblyData data {atomData,
                            residueData,
@@ -286,8 +291,8 @@ namespace glycoproteinBuilder
                            residueLinkageData,
                            indices,
                            MolecularMetadata::potentialTable(),
-                           defaultResidueOverlapWeight,
-                           equalResidueWeight,
+                           defaultOverlapWeight,
+                           equalOverlapWeight,
                            overlapTolerance};
 
         std::vector<bool> moleculeIncluded(graph.moleculeCount, true);

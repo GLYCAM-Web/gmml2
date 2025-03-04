@@ -47,27 +47,6 @@ namespace
         }
     }
 
-    std::array<std::vector<size_t>, 2> branchedResidueSets(const std::vector<bool>& residueMoving,
-                                                           const std::vector<size_t>& setA,
-                                                           const std::vector<size_t>& setB)
-    {
-        std::vector<size_t> newSetA = setB;
-        std::vector<size_t> newSetB = {setA[0]};
-        for (size_t n = 1; n < setA.size(); n++)
-        {
-            size_t index = setA[n];
-            if (residueMoving[index])
-            {
-                newSetB.push_back(index);
-            }
-            else
-            {
-                newSetA.push_back(index);
-            }
-        }
-        return {newSetA, newSetB};
-    }
-
     void applyMatrix(const assembly::Graph& graph, const assembly::Bounds& initial,
                      const std::vector<size_t>& movingAtoms, const cds::RotationMatrix& matrix,
                      assembly::Bounds& bounds)
@@ -166,22 +145,19 @@ cds::OverlapState cds::wiggleUsingRotamers(cds::SearchOverlap searchOverlap, Sea
     return resultState(results[index]);
 }
 
-void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
-                                      SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
-                                      const std::vector<DihedralAngleDataVector>& metadata,
-                                      const std::vector<AngleSearchPreference>& preference, const assembly::Graph graph,
-                                      const GraphIndexData& indices,
-                                      const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge,
-                                      const std::array<std::vector<Residue*>, 2>& residueSets)
+assembly::Bounds cds::simpleWiggleCurrentRotamers(
+    const MolecularMetadata::PotentialTable& potential, double overlapTolerance, SearchAngles searchAngles,
+    std::vector<RotatableDihedral>& dihedrals, const std::vector<DihedralAngleDataVector>& metadata,
+    const std::vector<AngleSearchPreference>& preference, const GraphIndexData& indices, const assembly::Graph& graph,
+    const assembly::Selection& selection, const assembly::Bounds& initialBounds,
+    const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge)
 {
-    assembly::Bounds bounds = toAssemblyBounds(indices, graph);
-    std::vector<bool> atomIncluded(graph.atomCount, true);
+    assembly::Bounds bounds = initialBounds;
+    std::vector<bool> moleculeSelected(graph.moleculeCount, true);
     std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(indices.atoms);
-    const std::vector<cds::Residue*>& residues           = indices.residues;
-    std::vector<size_t> residueSetA                      = codeUtils::indicesOf(residues, residueSets[0]);
-    std::vector<size_t> residueSetB                      = codeUtils::indicesOf(residues, residueSets[1]);
-    std::vector<double> residueWeights(graph.residueCount, 1.0);
-    auto dihedralCoords = [&](const cds::RotatableDihedral& dihedral)
+    MoleculeOverlapWeight overlapWeight {std::vector<double>(graph.moleculeCount, 1.0),
+                                         std::vector<double>(graph.moleculeCount, 1.0)};
+    auto dihedralCoords = [&](const RotatableDihedral& dihedral)
     {
         auto coord = [&](size_t n)
         {
@@ -192,43 +168,28 @@ void cds::simpleWiggleCurrentRotamers(const MolecularMetadata::PotentialTable& p
 
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
-        cds::RotatableDihedral& dihedral      = dihedrals[n];
+        RotatableDihedral& dihedral           = dihedrals[n];
         std::vector<size_t> movingAtoms       = codeUtils::indicesOf(indices.atoms, dihedral.movingAtoms);
-        std::vector<Sphere> movingAtomSpheres = codeUtils::indicesToValues(bounds.atoms, movingAtoms);
-        Sphere movingAtomBounds               = boundingSphere(movingAtomSpheres);
+        std::vector<bool> atomMoving          = codeUtils::indicesToBools(graph.atomCount, movingAtoms);
         std::array<Coordinate, 4> coordinates = dihedralCoords(dihedral);
-        Coordinate pointA                     = coordinates[2];
-        Coordinate pointB                     = coordinates[1];
-        Sphere movementBounds                 = boundingSphereCenteredOnLine(movingAtomBounds, pointA, pointB);
-
-        std::vector<bool> residueMoving(graph.residueCount, false);
-        for (size_t n : movingAtoms)
-        {
-            residueMoving[graph.atomResidue[n]] = true;
-        }
-        std::array<std::vector<size_t>, 2> residueIndices =
-            dihedral.isBranchingLinkage ? branchedResidueSets(residueMoving, residueSetA, residueSetB)
-                                        : std::array<std::vector<size_t>, 2> {residueSetA, residueSetB};
-        std::array<std::vector<size_t>, 2> residuesWithinBounds = {
-            residueIndices[0],
-            cds::intersectingIndices(overlapTolerance, movementBounds, bounds.residues, residueIndices[1])};
+        assembly::Selection selectionA =
+            assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
+        assembly::Selection selectionB =
+            assembly::intersection(graph, selection, assembly::selectByAtoms(graph, codeUtils::vectorNot(atomMoving)));
 
         std::vector<size_t> index {dihedral.currentMetadataIndex};
+
         auto searchOverlap = [&](const assembly::Bounds& bounds)
         {
-            return cds::overlapVectorSum(cds::CountOverlappingAtoms(
-                potential, overlapTolerance, graph, {bounds.atoms, atomElements, atomIncluded},
-                {bounds.residues, residueWeights}, residueAtomsCloseToEdge, residuesWithinBounds[0],
-                residuesWithinBounds[1]));
+            return overlapVectorSum(overlapsBetweenSelections(potential, overlapTolerance, graph, bounds, selectionA,
+                                                              selectionB, atomElements, overlapWeight,
+                                                              residueAtomsCloseToEdge));
         };
         OverlapState best = wiggleUsingRotamers(searchOverlap, searchAngles, graph, bounds, movingAtoms, coordinates,
                                                 index, metadata[n], preference[n]);
         bounds            = best.bounds;
     }
-    for (size_t n = 0; n < graph.atomCount; n++)
-    {
-        indices.atoms[n]->setCoordinate(bounds.atoms[n].center);
-    }
+    return bounds;
 }
 
 std::vector<double> cds::evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,

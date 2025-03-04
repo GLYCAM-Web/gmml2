@@ -14,12 +14,19 @@ namespace assembly
         std::vector<bool> molecules;
     };
 
+    Selection selectAll(const Graph& graph);
     Selection selectByAtoms(const Graph& graph, const std::vector<bool>& atoms);
+    Selection selectByResidues(const Graph& graph, const std::vector<bool>& residues);
     Selection selectByMolecules(const Graph& graph, const std::vector<bool>& molecules);
     Selection selectByAtomsAndMolecules(const Graph& graph, const std::vector<bool>& atoms,
                                         const std::vector<bool>& molecules);
 
-    std::vector<size_t> selectedMoleculeResidues(const Graph& graph, const Selection& selection, size_t molecule);
+    Selection intersection(const Graph& graph, const Selection& first, const Selection& second);
+
+    std::vector<size_t> selectedMolecules(const Selection& selection);
+    std::vector<size_t> moleculeSelectedResidues(const Graph& graph, const Selection& selection, size_t molecule);
+    std::vector<std::vector<size_t>> moleculeSelectedResidues(const Graph& graph, const Selection& selection,
+                                                              const std::vector<size_t>& molecules);
 } // namespace assembly
 
 #endif

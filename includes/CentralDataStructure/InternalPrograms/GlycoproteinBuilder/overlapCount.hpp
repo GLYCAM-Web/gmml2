@@ -11,24 +11,12 @@
 
 namespace glycoproteinBuilder
 {
-    std::vector<cds::Overlap> intraGlycanOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                                  const assembly::Selection& selection, const assembly::Bounds& bounds,
-                                                  const std::vector<double>& residueWeights, size_t glycanId);
-    std::vector<cds::Overlap> moleculeOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                               const assembly::Selection& selection, const assembly::Bounds& bounds,
-                                               const std::vector<double>& residueWeights, size_t moleculeA,
-                                               size_t moleculeB);
-    std::vector<cds::Overlap> moleculeResidueOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                                      const assembly::Selection& selection,
-                                                      const assembly::Bounds& bounds,
-                                                      const std::vector<double>& residueWeights, size_t molecule,
-                                                      size_t residue);
     std::vector<cds::Overlap> totalOverlaps(const assembly::Graph& graph, const AssemblyData& data,
                                             const assembly::Selection& selection, const assembly::Bounds& bounds,
-                                            const std::vector<double>& residueWeights, OverlapMultiplier weight);
+                                            const cds::MoleculeOverlapWeight& weight);
     cds::Overlap localOverlap(const assembly::Graph& graph, const AssemblyData& data,
                               const assembly::Selection& selection, const assembly::Bounds& bounds,
-                              const std::vector<double>& residueWeights, size_t glycanId, double selfWeight);
+                              const cds::MoleculeOverlapWeight& weight, size_t glycanId);
     std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites, const assembly::Graph& graph,
                                                   const AssemblyData& data, const assembly::Selection& selection,
                                                   const assembly::Bounds& bounds);
