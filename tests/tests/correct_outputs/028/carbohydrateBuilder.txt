@@ -1653,7 +1653,7 @@ ROH_1_?_?
 0Fc_2_?_?
 
 *********************
-Building id 00064:DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
+Building id 00077:DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 *********************
 Input:
 DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
@@ -1663,7 +1663,7 @@ IndexOrdered:
 DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 IndexOrderedLabeled:
 DXylp&Label=residue-4;[4&Label=link-3;S&Label=residue-5;]a1-6&Label=link-2;DManpNAc&Label=residue-3;b1-4&Label=link-1;DManpNAc&Label=residue-2;a1-2&Label=link-0;DFrup&Label=residue-1;
-Parsed and labelled 00064 with no exceptions thrown.
+Parsed and labelled 00077 with no exceptions thrown.
 
 Number of residues for this sequence is 5
 Number of likely shapes is 2
@@ -1677,7 +1677,7 @@ Name: DXylpa1-6DManNAcpb, LinkageIndex: 2, Res1: 4, Res2: 3
     LikelyRotamers: Omg, gg, gt
 
 *********************
-Building id 00065:DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
+Building id 00078:DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
 *********************
 Input:
 DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
@@ -1687,7 +1687,7 @@ IndexOrdered:
 DManp[6S]a1-6DManpa1-4[DManp[2A]a1-6DManpa1-6]DGlcpa1-4DManpa1-2DManpa1-2DManpa1-2DManpa1-2LFucpa1-4LFucpa1-2LFrupa
 IndexOrderedLabeled:
 DManp&Label=residue-13;[6&Label=link-12;S&Label=residue-14;]a1-6&Label=link-11;DManp&Label=residue-12;a1-4&Label=link-10;[DManp&Label=residue-10;[2&Label=link-9;A&Label=residue-11;]a1-6&Label=link-8;DManp&Label=residue-9;a1-6&Label=link-7;]DGlcp&Label=residue-8;a1-4&Label=link-6;DManp&Label=residue-7;a1-2&Label=link-5;DManp&Label=residue-6;a1-2&Label=link-4;DManp&Label=residue-5;a1-2&Label=link-3;DManp&Label=residue-4;a1-2&Label=link-2;LFucp&Label=residue-3;a1-4&Label=link-1;LFucp&Label=residue-2;a1-2&Label=link-0;LFrup&Label=residue-1;
-Parsed and labelled 00065 with no exceptions thrown.
+Parsed and labelled 00078 with no exceptions thrown.
 
 Number of residues for this sequence is 14
 Number of likely shapes is 8
@@ -1712,3 +1712,18 @@ Name: DManpa1-6DManpa, LinkageIndex: 8, Res1: 10, Res2: 9
     LikelyRotamers: Omg, gg, gt
 Name: DManpa1-6DManpa, LinkageIndex: 11, Res1: 13, Res2: 12
     LikelyRotamers: Omg, gg, gt
+
+*********************
+Building id 00079:DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+*********************
+Input:
+DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+Interpreted:
+DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+IndexOrdered:
+DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+IndexOrderedLabeled:
+DAraf&Label=residue-15;a1-5&Label=link-13;[DAraf&Label=residue-14;a1-5&Label=link-12;[DGalf&Label=residue-13;a1-5&Label=link-11;DGalf&Label=residue-12;a1-6&Label=link-10;]DGalf&Label=residue-11;a1-5&Label=link-9;DGalf&Label=residue-10;a1-6&Label=link-8;]DGalf&Label=residue-9;a1-5&Label=link-7;DGalf&Label=residue-8;a1-6&Label=link-6;DGalf&Label=residue-7;a1-5&Label=link-5;DGalf&Label=residue-6;a1-6&Label=link-4;DGalf&Label=residue-5;a1-5&Label=link-3;DGalf&Label=residue-4;a1-6&Label=link-2;DGalf&Label=residue-3;a1-5&Label=link-1;DGalf&Label=residue-2;a1-&Label=link-0;OME&Label=residue-1;
+Parsed and labelled 00079 with no exceptions thrown.
+
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 6LD and 5LD. Missing metadata for dihedral 4: [O6, C6, C5, O5]
