@@ -1397,16 +1397,16 @@ Name: LLyxfb1-6LTagfb, LinkageIndex: 5, Res1: 7, Res2: 6
     LikelyRotamers: Omg, gg, gt
 
 *********************
-Building id 00063:DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+Building id 00063:DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DK3Opa2-OH
 *********************
 Input:
-DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DK3Opa2-OH
 Interpreted:
-DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DK3Opa2-OH
 IndexOrdered:
-DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DKo1pa2-OH
+DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DK3Opa2-OH
 IndexOrderedLabeled:
-DLegp&Label=residue-8;b2-4&Label=link-6;LPsep&Label=residue-7;b2-4&Label=link-5;LAcip&Label=residue-6;b2-4&Label=link-4;LFusp&Label=residue-5;b2-3&Label=link-3;DGalf&Label=residue-4;a1-4&Label=link-2;DMurpNAc&Label=residue-3;b1-4&Label=link-1;DKo1p&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
+DLegp&Label=residue-8;b2-4&Label=link-6;LPsep&Label=residue-7;b2-4&Label=link-5;LAcip&Label=residue-6;b2-4&Label=link-4;LFusp&Label=residue-5;b2-3&Label=link-3;DGalf&Label=residue-4;a1-4&Label=link-2;DMurpNAc&Label=residue-3;b1-4&Label=link-1;DK3Op&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00063 with no exceptions thrown.
 
 Number of residues for this sequence is 8
@@ -1422,6 +1422,235 @@ ROH_1_?_?
 0Lg_8_?_?
 Name: DLegpb2-4LPsepb, LinkageIndex: 6, Res1: 8, Res2: 7
     LikelyRotamers: Phi, t, -g
+
+*********************
+Building id 00064:DLegpa2-4LPsepa2-4LAcipa2-4LFuspa2-3DGalfb1-4DMurpNAca1-4DK3Opb2-OH
+*********************
+Input:
+DLegpa2-4LPsepa2-4LAcipa2-4LFuspa2-3DGalfb1-4DMurpNAca1-4DK3Opb2-OH
+Interpreted:
+DLegpa2-4LPsepa2-4LAcipa2-4LFuspa2-3DGalfb1-4DMurpNAca1-4DK3Opb2-OH
+IndexOrdered:
+DLegpa2-4LPsepa2-4LAcipa2-4LFuspa2-3DGalfb1-4DMurpNAca1-4DK3Opb2-OH
+IndexOrderedLabeled:
+DLegp&Label=residue-8;a2-4&Label=link-6;LPsep&Label=residue-7;a2-4&Label=link-5;LAcip&Label=residue-6;a2-4&Label=link-4;LFusp&Label=residue-5;a2-3&Label=link-3;DGalf&Label=residue-4;b1-4&Label=link-2;DMurpNAc&Label=residue-3;a1-4&Label=link-1;DK3Op&Label=residue-2;b2-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00064 with no exceptions thrown.
+
+Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 4MR@C1 and 4Kx@O4
+Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
+
+
+*********************
+Building id 00065:DOlipa1-OH
+*********************
+Input:
+DOlipa1-OH
+Interpreted:
+DOlipa1-OH
+IndexOrdered:
+DOlipa1-OH
+IndexOrderedLabeled:
+DOlip&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00065 with no exceptions thrown.
+
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DOlipa1- with this glycam residue code: 0DR
+
+*********************
+Building id 00066:DOlipb1-OH
+*********************
+Input:
+DOlipb1-OH
+Interpreted:
+DOlipb1-OH
+IndexOrdered:
+DOlipb1-OH
+IndexOrderedLabeled:
+DOlip&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00066 with no exceptions thrown.
+
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DOlipb1- with this glycam residue code: 0Dr
+
+*********************
+Building id 00067:DBacpa1-OH
+*********************
+Input:
+DBacpa1-OH
+Interpreted:
+DBacpa1-OH
+IndexOrdered:
+DBacpa1-OH
+IndexOrderedLabeled:
+DBacp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00067 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0BC_2_?_?
+
+*********************
+Building id 00068:DBacpb1-OH
+*********************
+Input:
+DBacpb1-OH
+Interpreted:
+DBacpb1-OH
+IndexOrdered:
+DBacpb1-OH
+IndexOrderedLabeled:
+DBacp&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00068 with no exceptions thrown.
+
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1- with this glycam residue code: 0Bc
+
+*********************
+Building id 00069:DDmanpHepa1-OH
+*********************
+Input:
+DDmanpHepa1-OH
+Interpreted:
+DDmanpHepa1-OH
+IndexOrdered:
+DDmanpHepa1-OH
+IndexOrderedLabeled:
+DDmanpHep&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00069 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0DH_2_?_?
+
+*********************
+Building id 00070:LDmanpHepa1-OH
+*********************
+Input:
+LDmanpHepa1-OH
+Interpreted:
+LDmanpHepa1-OH
+IndexOrdered:
+LDmanpHepa1-OH
+IndexOrderedLabeled:
+LDmanpHep&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00070 with no exceptions thrown.
+
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for LDmanpHepa1- with this glycam residue code: 0lH
+
+*********************
+Building id 00071:DAbepa1-OH
+*********************
+Input:
+DAbepa1-OH
+Interpreted:
+DAbepa1-OH
+IndexOrdered:
+DAbepa1-OH
+IndexOrderedLabeled:
+DAbep&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00071 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0AE_2_?_?
+
+*********************
+Building id 00072:DAbepb1-OH
+*********************
+Input:
+DAbepb1-OH
+Interpreted:
+DAbepb1-OH
+IndexOrdered:
+DAbepb1-OH
+IndexOrderedLabeled:
+DAbep&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00072 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0Ae_2_?_?
+
+*********************
+Building id 00073:LArap4Na1-OH
+*********************
+Input:
+LArap4Na1-OH
+Interpreted:
+LArap4Na1-OH
+IndexOrdered:
+LArap4Na1-OH
+IndexOrderedLabeled:
+LArap4N&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00073 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0aN_2_?_?
+
+*********************
+Building id 00074:GlcpNAc3NAcAa1-OH
+*********************
+Input:
+GlcpNAc3NAcAa1-OH
+Interpreted:
+GlcpNAc3NAcAa1-OH
+IndexOrdered:
+GlcpNAc3NAcAa1-OH
+IndexOrderedLabeled:
+GlcpNAc3NAcA&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00074 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0ZF_2_?_?
+
+*********************
+Building id 00075:QuipNAc4NAcb1-OH
+*********************
+Input:
+QuipNAc4NAcb1-OH
+Interpreted:
+QuipNAc4NAcb1-OH
+IndexOrdered:
+QuipNAc4NAcb1-OH
+IndexOrderedLabeled:
+QuipNAc4NAc&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00075 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0Qf_2_?_?
+
+*********************
+Building id 00076:DAATpb1-OH
+*********************
+Input:
+DAATpb1-OH
+Interpreted:
+DAATpb1-OH
+IndexOrdered:
+DAATpb1-OH
+IndexOrderedLabeled:
+DAATp&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00076 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0Fc_2_?_?
 
 *********************
 Building id 00064:DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
