@@ -27,6 +27,7 @@ namespace assembly
     std::vector<size_t> moleculeSelectedResidues(const Graph& graph, const Selection& selection, size_t molecule);
     std::vector<std::vector<size_t>> moleculeSelectedResidues(const Graph& graph, const Selection& selection,
                                                               const std::vector<size_t>& molecules);
+    std::vector<size_t> moleculeSelectedAtoms(const Graph& graph, const Selection& selection, size_t molecule);
 } // namespace assembly
 
 #endif

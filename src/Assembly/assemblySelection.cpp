@@ -112,4 +112,19 @@ namespace assembly
         return result;
     }
 
+    std::vector<size_t> moleculeSelectedAtoms(const Graph& graph, const Selection& selection, size_t molecule)
+    {
+        const std::vector<size_t>& atoms = moleculeAtoms(graph, molecule);
+        std::vector<size_t> selectedAtoms;
+        selectedAtoms.reserve(atoms.size());
+        for (size_t n : atoms)
+        {
+            if (selection.atoms[n])
+            {
+                selectedAtoms.push_back(n);
+            }
+        }
+        return selectedAtoms;
+    }
+
 } // namespace assembly
