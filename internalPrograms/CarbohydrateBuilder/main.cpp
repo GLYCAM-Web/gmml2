@@ -93,6 +93,7 @@ int main(int argc, char** argv)
                             std::exit(1);
                         }
                         delimiter = arg.value[0];
+                        break;
                     }
                 case ARGUMENTS::OUTPUT_DIR:
                     {
@@ -110,6 +111,7 @@ int main(int argc, char** argv)
                 case ARGUMENTS::OVERWRITE_EXISTING:
                     {
                         overwrite = true;
+                        break;
                     }
                 default:
                     break;
