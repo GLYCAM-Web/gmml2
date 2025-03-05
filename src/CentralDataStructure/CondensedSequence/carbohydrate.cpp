@@ -459,12 +459,12 @@ std::string Carbohydrate::GetNumberOfShapes(bool likelyShapesOnly) const
 unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 {
     unsigned long long int numberOfShapes = 1;
-    for (auto& linkage : glycosidicLinkages_)
+    for (auto& linkage : cds::nonDerivativeResidueLinkages(glycosidicLinkages_))
     {
         auto rotamerType = linkage.rotamerType;
         auto& metadata   = linkage.dihedralMetadata;
-        numberOfShapes   *= (likelyShapesOnly ? cds::numberOfLikelyShapes(rotamerType, metadata)
-                                              : cds::numberOfShapes(rotamerType, metadata));
+        numberOfShapes   *= likelyShapesOnly ? cds::numberOfLikelyShapes(rotamerType, metadata)
+                                             : cds::numberOfShapes(rotamerType, metadata);
     }
     return numberOfShapes;
 }
