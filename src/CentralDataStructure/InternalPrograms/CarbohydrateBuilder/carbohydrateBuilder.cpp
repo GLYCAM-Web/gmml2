@@ -102,7 +102,7 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
 {
     cdsCondensedSequence::LinkageOptionsVector userOptionsForSequence;
     // carbohydrate_.SetIndexByConnectivity();
-    for (auto& linkage : this->carbohydrate_.GetGlycosidicLinkages())
+    for (auto& linkage : cds::nonDerivativeResidueLinkages(this->carbohydrate_.GetGlycosidicLinkages()))
     {
         // std::cout << "linko nameo: " << linkage.GetName() << std::endl;
         cdsCondensedSequence::DihedralOptionsVector possibleRotamers, likelyRotamers;

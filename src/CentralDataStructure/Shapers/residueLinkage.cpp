@@ -56,6 +56,18 @@ std::vector<size_t> cds::rotatableDihedralsWithMultipleRotamers(const std::vecto
     return indices;
 }
 
+std::vector<cds::ResidueLinkage> cds::nonDerivativeResidueLinkages(const std::vector<cds::ResidueLinkage>& linkages)
+{
+    auto nonDerivative = [](const cds::ResidueLinkage& linkage)
+    {
+        return !linkage.isDerivative;
+    };
+    std::vector<cds::ResidueLinkage> result;
+    result.reserve(linkages.size());
+    std::copy_if(linkages.begin(), linkages.end(), std::back_inserter(result), nonDerivative);
+    return result;
+}
+
 size_t cds::numberOfShapes(GlycamMetadata::RotamerType rotamerType,
                            const std::vector<DihedralAngleDataVector>& metadata)
 {

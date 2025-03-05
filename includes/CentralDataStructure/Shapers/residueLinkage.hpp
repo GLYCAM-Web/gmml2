@@ -58,6 +58,7 @@ namespace cds
         std::vector<RotatableDihedral> rotatableDihedrals;
         std::vector<DihedralAngleDataVector> dihedralMetadata;
         GlycamMetadata::RotamerType rotamerType;
+        bool isDerivative;
         unsigned long long index = 0;
         std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
         std::vector<cds::Residue*> reducingOverlapResidues;
@@ -65,6 +66,7 @@ namespace cds
     };
 
     std::vector<size_t> rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata);
+    std::vector<ResidueLinkage> nonDerivativeResidueLinkages(const std::vector<cds::ResidueLinkage>& linkages);
     size_t numberOfShapes(GlycamMetadata::RotamerType rotamerType,
                           const std::vector<DihedralAngleDataVector>& metadata);
     size_t numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,

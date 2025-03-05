@@ -285,9 +285,19 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
         throw std::runtime_error("missing dihedrals or metadata in residue linkage: " + print(link));
     }
 
-    auto rotamerType = metadata[0][0].rotamer_type_;
-    ResidueLinkage linkage {
-        link, dihedrals, metadata, rotamerType, index, name, reducingOverlapResidues, nonReducingOverlapResidues};
+    const GlycamMetadata::DihedralAngleData& firstMetadata = metadata[0][0];
+    GlycamMetadata::RotamerType rotamerType                = firstMetadata.rotamer_type_;
+    const std::vector<std::string>& cond1                  = firstMetadata.residue1_conditions_;
+    bool isDerivative                                      = cond1.size() > 0 && cond1[0] == "derivative";
+    ResidueLinkage linkage {link,
+                            dihedrals,
+                            metadata,
+                            rotamerType,
+                            isDerivative,
+                            index,
+                            name,
+                            reducingOverlapResidues,
+                            nonReducingOverlapResidues};
 
     validateRotamerTypes(linkage);
     if (rotamerType == GlycamMetadata::RotamerType::conformer)
