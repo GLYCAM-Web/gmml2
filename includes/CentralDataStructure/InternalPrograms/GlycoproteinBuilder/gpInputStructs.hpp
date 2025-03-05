@@ -26,7 +26,7 @@ namespace glycoproteinBuilder
         bool allowSidechainAdjustment           = false;
         bool deleteSitesUntilResolved           = false;
         bool rejectExcessiveGlycanOverlaps      = false;
-        ulong glycanOverlapRejectionThreshold   = 0;
+        double atomPotentialRejectionThreshold  = 0.0;
         bool isDeterministic                    = false;
         uint64_t seed                           = 0;
         bool MDprep                             = false;

@@ -21,7 +21,7 @@ namespace glycoproteinBuilder
         static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
         static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
         static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
-        static const std::string glycanOverlapRejectionThreshold             = "residueOverlapRejectionThreshold";
+        static const std::string atomPotentialRejectionThresholdParameter    = "atomPotentialForceRejectionThreshold";
         static const std::string seedParameter                               = "seed";
         static const std::string prepareForMDParameter                       = "prepareForMD";
         static const std::string glycanSectionParameter                      = "ProteinResidue, GlycanName";
@@ -138,10 +138,10 @@ namespace glycoproteinBuilder
                     {
                         gpInputs.deleteSitesUntilResolved = parseBool(value);
                     }
-                    else if (parameter == glycanOverlapRejectionThreshold)
+                    else if (parameter == atomPotentialRejectionThresholdParameter)
                     {
                         gpInputs.rejectExcessiveGlycanOverlaps   = true;
-                        gpInputs.glycanOverlapRejectionThreshold = parseUlong(value);
+                        gpInputs.atomPotentialRejectionThreshold = parseDouble(value);
                     }
                     else if (parameter == seedParameter)
                     {

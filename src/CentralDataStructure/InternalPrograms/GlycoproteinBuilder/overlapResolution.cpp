@@ -351,9 +351,12 @@ namespace glycoproteinBuilder
             resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
                                        settings.deleteSitesUntilResolved);
             std::vector<cds::Coordinate> coordinates = getCoordinates(mutableData.bounds.atoms);
-            bool hasDeleted                          = codeUtils::contains(mutableData.moleculeIncluded, false);
-            bool reject                              = false;
-            std::string directory                    = outputDir;
+            const assembly::Selection fullSelection =
+                assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
+
+            bool hasDeleted       = codeUtils::contains(mutableData.moleculeIncluded, false);
+            bool reject           = false;
+            std::string directory = outputDir;
             if (settings.rejectExcessiveGlycanOverlaps)
             {
                 assembly::Selection selection = assembly::selectByAtomsAndMolecules(
@@ -362,11 +365,23 @@ namespace glycoproteinBuilder
                     totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
                 for (size_t molecule : includedGlycanMoleculeIds(data, mutableData.moleculeIncluded))
                 {
-                    for (size_t residue : moleculeResidues(graph, molecule))
+                    std::vector<bool> otherMolecules = mutableData.moleculeIncluded;
+                    otherMolecules[molecule]         = false;
+                    std::vector<bool> glycanMolecule(graph.moleculeCount, false);
+                    glycanMolecule[molecule]           = true;
+                    assembly::Selection otherSelection = assembly::intersection(
+                        graph, fullSelection, assembly::selectByMolecules(graph, otherMolecules));
+                    assembly::Selection glycanSelection = assembly::intersection(
+                        graph, fullSelection, assembly::selectByMolecules(graph, glycanMolecule));
+                    std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(
+                        data.potentialTable, data.overlapTolerance, graph, mutableData.bounds, glycanSelection,
+                        otherSelection, data.atoms.elements, data.equalWeight, data.residueEdges.atomsCloseToEdge);
+                    for (size_t n : assembly::moleculeSelectedAtoms(graph, glycanSelection, molecule))
                     {
-                        cds::Overlap overlaps = cds::overlapVectorSum(
-                            codeUtils::indicesToValues(atomOverlaps, residueAtoms(graph, residue)));
-                        reject = reject || ((overlaps.count * 2.0) >= settings.glycanOverlapRejectionThreshold);
+                        if (overlap[n].weight > settings.atomPotentialRejectionThreshold)
+                        {
+                            reject = true;
+                        }
                     }
                 }
             }
