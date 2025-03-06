@@ -83,8 +83,7 @@ namespace
             auto& currentMetadata = metadata[n];
             if (!currentMetadata.empty())
             {
-                rotatableDihedrals.emplace_back(
-                    cds::RotatableDihedral {dihedralAtoms[n].isBranching, dihedralAtoms[n].atoms, {}, 0});
+                rotatableDihedrals.emplace_back(cds::RotatableDihedral {dihedralAtoms[n], {}, 0});
             }
             else
             {
@@ -162,7 +161,7 @@ namespace
         for (size_t n = metadata.size(); n < dihedralAtoms.size(); n++)
         {
             std::vector<std::string> atomNames;
-            for (auto& atom : dihedralAtoms[n].atoms)
+            for (auto& atom : dihedralAtoms[n])
             {
                 atomNames.push_back(atom->getName());
             }

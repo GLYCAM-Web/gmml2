@@ -33,15 +33,10 @@ namespace cds
         std::pair<std::string, std::string> atoms;
     };
 
-    struct DihedralAtoms
-    {
-        bool isBranching;
-        std::array<cds::Atom*, 4> atoms;
-    };
+    typedef std::array<cds::Atom*, 4> DihedralAtoms;
 
     struct RotatableDihedral
     {
-        bool isBranchingLinkage;
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
         std::array<Atom*, 4> atoms;
         // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond

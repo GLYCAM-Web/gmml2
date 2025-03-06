@@ -113,8 +113,7 @@ cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::Res
                                 cds::Atom* neighbor = cdsSelections::FindCyclePointNeighbor(foundPath, branch.GetRoot(),
                                                                                             link.residues.second);
                                 foundPath.push_back(neighbor);
-                                std::vector<cds::DihedralAtoms> temp =
-                                    splitAtomVectorIntoRotatableDihedrals(true, foundPath);
+                                std::vector<cds::DihedralAtoms> temp = splitAtomVectorIntoRotatableDihedrals(foundPath);
                                 codeUtils::insertInto(rotatableDihedralsInBranches, temp);
                             }
                         }

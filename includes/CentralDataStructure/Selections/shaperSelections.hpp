@@ -21,8 +21,7 @@ namespace cdsSelections
     cds::ResidueLinkage* selectLinkageWithIndex(std::vector<cds::ResidueLinkage>& inputLinkages,
                                                 const long long unsigned int indexQuery);
     std::vector<cds::ResidueLinkage> SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inputLinkages);
-    std::vector<cds::DihedralAtoms> splitAtomVectorIntoRotatableDihedrals(bool isBranching,
-                                                                          const std::vector<cds::Atom*>& atoms);
+    std::vector<cds::DihedralAtoms> splitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms);
     std::vector<cds::DihedralAtoms> findRotatableDihedralsConnectingResidues(const cds::ResidueLink& link);
 } // namespace cdsSelections
 #endif

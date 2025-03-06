@@ -33,11 +33,11 @@ void cds::createHydrogenForPsiAngles(Residue* residue, std::vector<DihedralAtoms
         {
             if (entry.dihedral_angle_name_ == "Psi" && entry.atom4_.at(0) == 'H')
             { // If it's a psi angle and is supposed to be defined by a H...
-                Atom* atom     = dihedralAtoms[n].atoms[2];
+                Atom* atom     = dihedralAtoms[n][2];
                 Atom* hydrogen = findHydrogenForPsiAngle(atom);
                 if (hydrogen != nullptr)
                 {
-                    dihedralAtoms[n].atoms[3] = hydrogen;
+                    dihedralAtoms[n][3] = hydrogen;
                 }
                 else
                 {

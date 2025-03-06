@@ -95,7 +95,6 @@ namespace glycoproteinBuilder
     struct ResidueLinkageData
     {
         std::vector<GlycamMetadata::RotamerType> rotamerTypes;
-        std::vector<bool> branching;
         std::vector<bool> isGlycositeLinkage;
     };
 

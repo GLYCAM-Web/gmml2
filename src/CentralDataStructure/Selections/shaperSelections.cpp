@@ -124,7 +124,7 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
 
 //  This function splits that list into groups of 4 and creates RotatableDihedral object
 std::vector<cds::DihedralAtoms>
-cdsSelections::splitAtomVectorIntoRotatableDihedrals(bool isBranching, const std::vector<cds::Atom*>& atoms)
+cdsSelections::splitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms)
 {
     // Ok looking for sets of four atoms, but shifting along vector by one atom for each dihedral.
     //  So four atoms will make one rotatable bond, five will make two bonds, six will make three etc.
@@ -147,9 +147,7 @@ cdsSelections::splitAtomVectorIntoRotatableDihedrals(bool isBranching, const std
         std::vector<cds::DihedralAtoms> dihedrals;
         for (size_t n = 0; n < atoms.size() - 3; n++)
         {
-            dihedrals.emplace_back(cds::DihedralAtoms {
-                isBranching, {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]}
-            });
+            dihedrals.emplace_back(cds::DihedralAtoms {atoms[n], atoms[n + 1], atoms[n + 2], atoms[n + 3]});
         }
         return dihedrals;
     }
@@ -178,7 +176,7 @@ std::vector<cds::DihedralAtoms> cdsSelections::findRotatableDihedralsConnectingR
     auto branchResult = findRotatableDihedralsinBranchesConnectingResidues(link, firstResidueCyclePoints);
     std::vector<cds::DihedralAtoms>& rotatableDihedralsInBranches = std::get<0>(branchResult);
     std::vector<cds::Atom*>& connectingAtoms                      = std::get<1>(branchResult);
-    std::vector<cds::DihedralAtoms> RotatableDihedrals = splitAtomVectorIntoRotatableDihedrals(false, connectingAtoms);
+    std::vector<cds::DihedralAtoms> RotatableDihedrals = splitAtomVectorIntoRotatableDihedrals(connectingAtoms);
     // Add any linkage branches (in 2-7 and 2-8) to the rest.
     RotatableDihedrals.insert(RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(),
                               rotatableDihedralsInBranches.end());

@@ -81,7 +81,6 @@ namespace glycoproteinBuilder
         std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
         std::vector<GlycamMetadata::DihedralAngleDataVector> dihedralMetadata;
         std::vector<size_t> dihedralCurrentMetadata;
-        std::vector<bool> linkageBranching;
         std::vector<bool> isGlycositeLinkage;
         std::vector<size_t> glycanAttachmentResidue;
         std::vector<size_t> glycanMoleculeId;
@@ -140,7 +139,6 @@ namespace glycoproteinBuilder
                 size_t edgeId = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
                 residueLinkages.push_back({edgeId, dihedralIndices, nonReducing, reducing});
                 linkageRotamerTypes.push_back(linkage.rotamerType);
-                linkageBranching.push_back(linkage.rotatableDihedrals[0].isBranchingLinkage);
             }
             moleculeTypes[moleculeIndex] = MoleculeType::glycan;
             glycanAttachmentResidue.push_back(site);
@@ -256,7 +254,7 @@ namespace glycoproteinBuilder
         MoleculeData moleculeData {moleculeTypes};
         GlycanData GlycanData {glycanAttachmentResidue, glycanMoleculeId, glycanLinkages};
         RotatableDihedralData rotatableDihedralData {dihedralMetadata, rotatableDihedralShape};
-        ResidueLinkageData residueLinkageData {linkageRotamerTypes, linkageBranching, isGlycositeLinkage};
+        ResidueLinkageData residueLinkageData {linkageRotamerTypes, isGlycositeLinkage};
 
         std::vector<size_t> proteinMolecules;
         for (size_t n = 0; n < moleculeTypes.size(); n++)
