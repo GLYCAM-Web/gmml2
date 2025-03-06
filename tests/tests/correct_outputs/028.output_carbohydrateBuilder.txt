@@ -325,8 +325,8 @@ DManp&Label=residue-13;b1-2&Label=link-11;DManp&Label=residue-11;[6&Label=link-1
 Parsed and labelled 00019 with no exceptions thrown.
 
 Number of residues for this sequence is 13
-Number of likely shapes is 48
-Number of possible shapes is 243
+Number of likely shapes is 4
+Number of possible shapes is 9
 OME_1_?_?
 YLA_2_?_?
 XMA_3_?_?
@@ -342,13 +342,7 @@ ACX_12_?_?
 0MB_13_?_?
 Name: DGlcpb1-6DManpa, LinkageIndex: 2, Res1: 4, Res2: 3
     LikelyRotamers: Omg, gg, gt
-Name: Methyl3-6DManpb, LinkageIndex: 5, Res1: 7, Res2: 6
-    LikelyRotamers: Omg, gg, gt
 Name: DGalpb1-6DManpb, LinkageIndex: 7, Res1: 9, Res2: 8
-    LikelyRotamers: Omg, gg, gt
-Name: AcetylA-6DGalpb, LinkageIndex: 8, Res1: 10, Res2: 9
-    LikelyRotamers: Omg, gg, gt, tg
-Name: AcetylA-6DManpb, LinkageIndex: 10, Res1: 12, Res2: 11
     LikelyRotamers: Omg, gg, gt
 
 *********************
@@ -365,8 +359,8 @@ DManp&Label=residue-12;b1-2&Label=link-10;DManp&Label=residue-10;[6&Label=link-9
 Parsed and labelled 00020 with no exceptions thrown.
 
 Number of residues for this sequence is 12
-Number of likely shapes is 16
-Number of possible shapes is 81
+Number of likely shapes is 4
+Number of possible shapes is 9
 OME_1_?_?
 YLA_2_?_?
 XMA_3_?_?
@@ -381,11 +375,7 @@ ACX_11_?_?
 0MB_12_?_?
 Name: DGlcpb1-6DManpa, LinkageIndex: 2, Res1: 4, Res2: 3
     LikelyRotamers: Omg, gg, gt
-Name: Methyl3-6DManpb, LinkageIndex: 5, Res1: 7, Res2: 6
-    LikelyRotamers: Omg, gg, gt
 Name: DGalpb1-6DManpb, LinkageIndex: 7, Res1: 9, Res2: 8
-    LikelyRotamers: Omg, gg, gt
-Name: AcetylA-6DManpb, LinkageIndex: 9, Res1: 11, Res2: 10
     LikelyRotamers: Omg, gg, gt
 
 *********************
