@@ -200,10 +200,7 @@ CMAKE_BUILD_TYPE_FLAG="-DCMAKE_BUILD_TYPE=Release"
 #target gmml_wrapped = swig wrapped gmml
 #target gmml = just gmml with no wrap
 MAKE_TARGET="gmml2"
-#this is just to hold if we want to create a makefile that doesnt have
-#the ability to swig wrap. This is good for debugging purposes and
-#making linter checks much much faster
-CMAKE_NOWRAP_FLAG=""
+SWIG_WRAP_FLAG=""
 #set our base number procs to 4
 NMP=4
 
@@ -283,9 +280,7 @@ while getopts "j:o:cwhd:" option; do
             CLEAN=1
             ;;
         d)
-            if [ "${OPTARG}" == "no_wrap" ]; then
-                CMAKE_NOWRAP_FLAG="-DDEBUG_NO_WRAP=True"
-            elif [ "${OPTARG}" == "inc_tests" ]; then
+            if [ "${OPTARG}" == "inc_tests" ]; then
                 AUTO_TESTIN_TIME=1
             else
                 optionsBorked "${option}" "badArg"
@@ -298,6 +293,7 @@ while getopts "j:o:cwhd:" option; do
                 optionsBorked "${option}" "notArg"
             }
             MAKE_TARGET="gmml2_wrapped"
+            SWIG_WRAP_FLAG="-DSWIG_WRAP=True"
             ;;
         h)
             printHelp
@@ -356,7 +352,7 @@ echo -e "\n${INFO_STYLE}###### Generating GMML makefile using cmake ######${RESE
 #make life easier. Also this command ends up generating the Makefile into the cmakeBuild
 #directory which is normal behavior for cmake. Also all our libraries etc. will be thrown
 #in that directory.
-cmake "${CMAKE_BUILD_TYPE_FLAG}" -S . -B ./cmakeBuild -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ "${CMAKE_NOWRAP_FLAG}" ||
+cmake "${CMAKE_BUILD_TYPE_FLAG}" -S . -B ./cmakeBuild -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ "${SWIG_WRAP_FLAG}" ||
     {
         echo -e "${ERROR_STYLE}ERROR RUNNING CMAKE ON GMML: $0 FAILED, EXITING${RESET_STYLE}"
         exit 1

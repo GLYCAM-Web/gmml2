@@ -26,14 +26,12 @@ endif()
 #treat the variable as a string. Idk man this is dumb, but keep in mind we are
 #checking if the variable is defined, not the contents hence the lack of
 #dollar sign and curly braces
-if (NOT DEFINED DEBUG_NO_WRAP)
-        set(DEBUG_NO_WRAP false)
+if (NOT DEFINED SWIG_WRAP)
+        set(SWIG_WRAP false)
 endif()
 
-#Basically we always hit here UNLESS we pass the DEBUG_NO_WRAP=True. This allows us to produce
-#a makefile and other assoicaited files that have zero reference to swig, this helps for
-#debugging purposes
-if (NOT ${DEBUG_NO_WRAP})
+#We only hit here we pass the SWIG_WRAP=True.
+if (${SWIG_WRAP})
     #Get swig package
     find_package(SWIG 4.0 COMPONENTS python REQUIRED)
     #Get python lib package
@@ -60,10 +58,8 @@ message(STATUS "C Compiler Used:\t${CMAKE_C_COMPILER_ID}")
 message(STATUS "C Compiler Version:\t${CMAKE_C_COMPILER_VERSION}")
 message(STATUS "C Compiler Path:\t${CMAKE_C_COMPILER}")
 message("")
-#Since we dont check for these packages if are are doing the total
-#wrap skip thing, we also want to skip over places that try to reference
-#packages we are not sure we have
-if (NOT ${DEBUG_NO_WRAP})
+#Check packages required for wrap
+if (${SWIG_WRAP})
     message(STATUS "Swig Executable:\t${SWIG_EXECUTABLE}")
     message(STATUS "Swig Version:\t${SWIG_VERSION}")
     message(STATUS "Swig Library Dir:\t${SWIG_DIR}")
@@ -190,13 +186,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC -Wall -W)
 target_link_libraries(${PROJECT_NAME} PUBLIC stdc++fs)
 ################## END SETTING UP GMML TARGET ###################
 
-
-#we only skip here if we are trying to gen a makefile that has 0 wrap
-#acapabilities. This is needed to help linting, etc. run because we dont generate
-#a compile commands that includes the wrapping commands. Also if we dont even
-#have the swig stuff included in our cmake list file none of these commands
-#will work.
-if (NOT ${DEBUG_NO_WRAP})
+if (${SWIG_WRAP})
     ################## BEGIN SETTING UP GMML_WRAPPED TARGET ###################
     #have cpp property set on for file gmml.i
     #This property is associated with the gmml.i file itself
@@ -240,7 +230,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 ################## BEGIN ALL BUILT FILES INCLUDED IN `make clean` ###################
 #to properly remove swig data
-if (NOT ${DEBUG_NO_WRAP})
+if (${SWIG_WRAP})
     set_property(TARGET ${PROJECT_NAME}_wrapped PROPERTY 
         ADDITIONAL_MAKE_CLEAN_FILES)
 endif()
