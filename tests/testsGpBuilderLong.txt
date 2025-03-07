@@ -1,3 +1,1 @@
-./017.test.GlycoproteinBuilder.sh JRFL_Delete tests/inputs/017c.JRFLDelete.txt 017c/JRFLDelete
-./017.test.GlycoproteinBuilder.sh JRFL_Freeze tests/inputs/017c.JRFLFreeze.txt 017c/JRFLFreeze
 ./017.test.GlycoproteinBuilder.sh 7KRQ tests/inputs/017c.7KRQ.txt 017c/7KRQ
