@@ -9,7 +9,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/031.test.iupac.cpp -lgmml2 -pthread -o iupac
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/lib/ -Wl,-rpath,"${GMML_ROOT_DIR}"/lib/ tests/031.test.iupac.cpp -lgmml2 -pthread -o iupac
 ./iupac > 031.output.txt
 
 if ! cmp -s 031.output.txt tests/correct_outputs/031.output.txt; then

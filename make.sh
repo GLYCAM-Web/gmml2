@@ -340,6 +340,9 @@ if [ "${CLEAN}" == "1" ]; then
     if [ -d "./lib" ]; then
         rm -rf ./lib
     fi
+    if [ -d "./bin" ]; then
+        rm -rf ./bin
+    fi
     echo -e "${PASSED_STYLE}###### All compiled/wrapped GMML has been completely removed ######${RESET_STYLE}"
 fi
 

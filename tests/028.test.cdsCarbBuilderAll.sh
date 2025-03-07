@@ -12,7 +12,7 @@ input=$1
 directory=$2
 output="output/${directory}"
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/028.test.cdsCarbBuilderAll.cpp -lgmml2 -pthread -o 028.carbBuilder.exe
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/lib/ -Wl,-rpath,"${GMML_ROOT_DIR}"/lib/ tests/028.test.cdsCarbBuilderAll.cpp -lgmml2 -pthread -o 028.carbBuilder.exe
 rm -r "${output}" >/dev/null 2>&1
 mkdir -p ${output}
 ./028.carbBuilder.exe "${input}" "_" "${output}" > "${output}"/carbohydrateBuilder.txt 2>&1

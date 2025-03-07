@@ -9,7 +9,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     exit 1
 fi
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/bin/ -Wl,-rpath,"${GMML_ROOT_DIR}"/bin/ tests/020.test.parameterFiles.cpp -lgmml2 -pthread -o loadParameters
+g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/lib/ -Wl,-rpath,"${GMML_ROOT_DIR}"/lib/ tests/020.test.parameterFiles.cpp -lgmml2 -pthread -o loadParameters
 ./loadParameters
 
 fileList=("prepAsPrepFile.prep" "prepAsPdbFile.pdb" "prepAsOffFile.off" "prepAsLibFile.lib")
