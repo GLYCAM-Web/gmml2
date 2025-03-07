@@ -1,4 +1,4 @@
-Protein:tests/inputs/017c.JRFL.B99990001.pdb
+Protein:tests/inputs/017.GlycoproteinBuilder/JRFL.B99990001.pdb
 
 prepareForMD:true
 

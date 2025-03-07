@@ -1,0 +1,19 @@
+Protein:tests/inputs/7AKK.pdb
+
+prepareForMD:true
+
+NumberOfOutputStructures:2
+
+allowSidechainAdjustment:true
+
+persistCycles:2
+
+atomPotentialForceRejectionThreshold:0.5
+
+seed:0
+
+ProteinResidue, GlycanName:
+B_63|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
+E_836|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
+H_224|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
+END

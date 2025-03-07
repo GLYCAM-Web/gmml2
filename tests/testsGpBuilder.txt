@@ -1,7 +1,7 @@
-./017.test.GlycoproteinBuilder.sh Example tests/inputs/ExampleGlycoproteinBuilderInput.txt 017/example
-./017.test.GlycoproteinBuilder.sh Standard tests/inputs/017.GlycoproteinBuilderInput.txt 017/standard
-./017.test.GlycoproteinBuilder.sh Skip_MD_prep tests/inputs/017.GlycoproteinBuilderInputNoMDPrep.txt 017/skipMdPrep
-./017.test.GlycoproteinBuilder.sh Single_glycan tests/inputs/017.GlycoproteinBuilderInputSingleGlycan.txt 017/singleGlycan
-./017.test.GlycoproteinBuilder.sh Freeze_glycosite_conformation tests/inputs/017.GlycoproteinBuilderInputFreezeGSConformation.txt 017/freezeGSConformation
-./017.test.GlycoproteinBuilder.sh Delete_incompatible_sites tests/inputs/017.GlycoproteinBuilderInputDeleteSites.txt 017/deleteSites
-./017b.test.GlycoproteinBuilderFailure.sh
+./017.test.GlycoproteinBuilder.sh Example tests/inputs/017.GlycoproteinBuilder/example.txt 017/example
+./017.test.GlycoproteinBuilder.sh Standard tests/inputs/017.GlycoproteinBuilder/standard.txt 017/standard
+./017.test.GlycoproteinBuilder.sh Skip_MD_prep tests/inputs/017.GlycoproteinBuilder/skipMDPrep.txt 017/skipMdPrep
+./017.test.GlycoproteinBuilder.sh Single_glycan tests/inputs/017.GlycoproteinBuilder/singleGlycan.txt 017/singleGlycan
+./017.test.GlycoproteinBuilder.sh Freeze_glycosite_conformation tests/inputs/017.GlycoproteinBuilder/freezeGSConformation.txt 017/freezeGSConformation
+./017.test.GlycoproteinBuilder.sh Delete_incompatible_sites tests/inputs/017.GlycoproteinBuilder/deleteSites.txt 017/deleteSites
+./017.test.GlycoproteinBuilder.sh Failure tests/inputs/017.GlycoproteinBuilder/createError.txt 017/failure

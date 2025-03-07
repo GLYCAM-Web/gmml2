@@ -1,4 +1,4 @@
-Protein:tests/inputs/7KRQ.pdb
+Protein:tests/inputs/017.GlycoproteinBuilder/7KRQ.pdb
 
 prepareForMD:true
 

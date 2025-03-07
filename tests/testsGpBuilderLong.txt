@@ -1,1 +1,1 @@
-./017.test.GlycoproteinBuilder.sh 7KRQ tests/inputs/017c.7KRQ.txt 017c/7KRQ
+./017.test.GlycoproteinBuilder.sh 7KRQ tests/inputs/017.GlycoproteinBuilder/7KRQ.txt 017c/7KRQ
