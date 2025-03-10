@@ -31,3 +31,4 @@ ATOM     28 H4O  0DH     2       0.392  11.617  -2.129  1.00  0.00           H
 TER
 CONECT   15    2
 CONECT    2   15
+END

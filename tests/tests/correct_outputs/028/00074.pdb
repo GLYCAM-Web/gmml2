@@ -37,3 +37,4 @@ ATOM     34 O2N  0ZF     2      -2.979  12.039  -5.387  1.00  0.00           O
 TER
 CONECT   23    2
 CONECT    2   23
+END

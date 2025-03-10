@@ -24,3 +24,4 @@ ATOM     21 H2O  0aN     2      -5.840   6.270  -2.522  1.00  0.00           H
 TER
 CONECT    3    2
 CONECT    2    3
+END

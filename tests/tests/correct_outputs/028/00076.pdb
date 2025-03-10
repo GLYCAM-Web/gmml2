@@ -34,3 +34,4 @@ ATOM     31 O2N  0Fc     2      -4.215  10.309  -7.081  1.00  0.00           O
 TER
 CONECT    3    2
 CONECT    2    3
+END
