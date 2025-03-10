@@ -72,4 +72,4 @@
 00076_DAATpb1-OH
 00077_DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 00078_DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
-00079_DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+00079_DArafa1-6DGalfa1-6DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME

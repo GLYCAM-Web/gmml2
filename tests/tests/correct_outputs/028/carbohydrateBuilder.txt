@@ -865,7 +865,7 @@ OME_1_?_?
 2AD_4_?_?
 0AU_5_?_?
 Name: DArafa1-5DArafa, LinkageIndex: 1, Res1: 3, Res2: 2
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gt, tg
 
 *********************
 Building id 00044:DKDNpa2-8DKDOpa2-9DKDNpb2-7DKDOpb2-OME
@@ -1714,16 +1714,44 @@ Name: DManpa1-6DManpa, LinkageIndex: 11, Res1: 13, Res2: 12
     LikelyRotamers: Omg, gg, gt
 
 *********************
-Building id 00079:DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+Building id 00079:DArafa1-6DGalfa1-6DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
 *********************
 Input:
-DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+DArafa1-6DGalfa1-6DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
 Interpreted:
-DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+DArafa1-6DGalfa1-6DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
 IndexOrdered:
-DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+DArafa1-6DGalfa1-6DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
 IndexOrderedLabeled:
-DAraf&Label=residue-15;a1-5&Label=link-13;[DAraf&Label=residue-14;a1-5&Label=link-12;[DGalf&Label=residue-13;a1-5&Label=link-11;DGalf&Label=residue-12;a1-6&Label=link-10;]DGalf&Label=residue-11;a1-5&Label=link-9;DGalf&Label=residue-10;a1-6&Label=link-8;]DGalf&Label=residue-9;a1-5&Label=link-7;DGalf&Label=residue-8;a1-6&Label=link-6;DGalf&Label=residue-7;a1-5&Label=link-5;DGalf&Label=residue-6;a1-6&Label=link-4;DGalf&Label=residue-5;a1-5&Label=link-3;DGalf&Label=residue-4;a1-6&Label=link-2;DGalf&Label=residue-3;a1-5&Label=link-1;DGalf&Label=residue-2;a1-&Label=link-0;OME&Label=residue-1;
+DAraf&Label=residue-10;a1-6&Label=link-8;DGalf&Label=residue-9;a1-6&Label=link-7;DGalf&Label=residue-8;a1-6&Label=link-6;DGalf&Label=residue-7;a1-5&Label=link-5;DGalf&Label=residue-6;a1-6&Label=link-4;DGalf&Label=residue-5;a1-5&Label=link-3;DGalf&Label=residue-4;a1-6&Label=link-2;DGalf&Label=residue-3;a1-5&Label=link-1;DGalf&Label=residue-2;a1-&Label=link-0;OME&Label=residue-1;
 Parsed and labelled 00079 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 6LD and 5LD. Missing metadata for dihedral 4: [O6, C6, C5, O5]
+Number of residues for this sequence is 10
+Number of likely shapes is 256
+Number of possible shapes is 256
+OME_1_?_?
+5LD_2_?_?
+6LD_3_?_?
+5LD_4_?_?
+6LD_5_?_?
+5LD_6_?_?
+6LD_7_?_?
+6LD_8_?_?
+6LD_9_?_?
+0AD_10_?_?
+Name: DGalfa1-5DGalfa, LinkageIndex: 1, Res1: 3, Res2: 2
+    LikelyRotamers: Omg, gt, tg
+Name: DGalfa1-6DGalfa, LinkageIndex: 2, Res1: 4, Res2: 3
+    LikelyRotamers: Omg, gt, tg
+Name: DGalfa1-5DGalfa, LinkageIndex: 3, Res1: 5, Res2: 4
+    LikelyRotamers: Omg, gt, tg
+Name: DGalfa1-6DGalfa, LinkageIndex: 4, Res1: 6, Res2: 5
+    LikelyRotamers: Omg, gt, tg
+Name: DGalfa1-5DGalfa, LinkageIndex: 5, Res1: 7, Res2: 6
+    LikelyRotamers: Omg, gt, tg
+Name: DGalfa1-6DGalfa, LinkageIndex: 6, Res1: 8, Res2: 7
+    LikelyRotamers: Omg, gt, tg
+Name: DGalfa1-6DGalfa, LinkageIndex: 7, Res1: 9, Res2: 8
+    LikelyRotamers: Omg, gt, tg
+Name: DArafa1-6DGalfa, LinkageIndex: 8, Res1: 10, Res2: 9
+    LikelyRotamers: Omg, gt, tg

@@ -328,6 +328,5 @@ Building 00078: DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1
 *********************
 
 *********************
-Building 00079: DArafa1-5[DArafa1-5[DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6]DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
+Building 00079: DArafa1-6DGalfa1-6DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-6DGalfa1-5DGalfa1-OME
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 6LD and 5LD. Missing metadata for dihedral 4: [O6, C6, C5, O5]
