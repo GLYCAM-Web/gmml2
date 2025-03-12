@@ -7,7 +7,8 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
-#include <fstream> // std::ifstream
+#include <fstream>
+#include <ostream>
 #include <iomanip> // setprecision setw
 
 using pdb::PdbFile;
@@ -208,12 +209,13 @@ pdb::PreprocessorInformation PdbFile::PreProcess(PreprocessorOptions inputOption
 
 void PdbFile::Write(const std::string outName) const
 {
-    std::ofstream outFileStream;
     try
     {
-        outFileStream.open(outName.c_str());
-        this->Write(outFileStream);
-        outFileStream.close();
+        codeUtils::writeToFile(outName,
+                               [&](std::ostream& stream)
+                               {
+                                   this->Write(stream);
+                               });
     }
     catch (...)
     {

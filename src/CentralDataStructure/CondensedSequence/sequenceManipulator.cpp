@@ -5,10 +5,11 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <sstream>
-#include <fstream> // writing outputDotFile
+#include <ostream>
 
 using cdsCondensedSequence::ParsedResidue;
 
@@ -181,11 +182,14 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, std:
         ss << graphVizLinkageLine(nodes, linkage);
     }
     ss << "}\n";
+    std::string str = ss.str();
     // Open and overwrite.
-    std::ofstream outputDotFile(configs.file_name_, std::ios::trunc);
-    outputDotFile << ss.str();
-    outputDotFile.close();
-    return ss.str();
+    codeUtils::writeToFile(configs.file_name_,
+                           [&str](std::ostream& stream)
+                           {
+                               stream << str;
+                           });
+    return str;
 }
 
 std::vector<ParsedResidue*>

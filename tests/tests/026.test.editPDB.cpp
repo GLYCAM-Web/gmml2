@@ -5,11 +5,12 @@
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/files.hpp"
 
 #include <vector>
 #include <string>
 #include <iostream>
-#include <fstream>
+#include <ostream>
 
 int main(int argc, char* argv[])
 {
@@ -56,9 +57,10 @@ int main(int argc, char* argv[])
     std::cout << "Found " << selectedResidues.size() << " residues\n";
     cds::Assembly newAssembly(selectedResidues);
     const std::string outName = "026.outputSelection.pdb";
-    std::ofstream outFileStream;
-    outFileStream.open(outName.c_str());
-    cds::writeTrajectoryToPdb(outFileStream, newAssembly.getMolecules());
-    outFileStream.close();
+    codeUtils::writeToFile(outName,
+                           [&](std::ostream& stream)
+                           {
+                               cds::writeTrajectoryToPdb(stream, newAssembly.getMolecules());
+                           });
     return 0;
 }

@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
@@ -8,7 +9,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 
-#include <fstream>
+#include <ostream>
 #include <stdexcept>
 
 int main()
@@ -21,13 +22,14 @@ int main()
     glycamPrepFileSelect.Write("./prepAsPrepFile.prep");
     // PDB
     std::string fileName = "./prepAsPdbFile.pdb";
-    std::ofstream outFileStream;
     try
     {
-        outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices = cds::toIndexData({&glycamPrepFileSelect});
-        cds::WritePdb(outFileStream, indices, {});
-        outFileStream.close();
+        codeUtils::writeToFile(fileName,
+                               [&](std::ostream& stream)
+                               {
+                                   cds::WritePdb(stream, indices, {});
+                               });
     }
     catch (...)
     {
@@ -38,14 +40,16 @@ int main()
     fileName = "./prepAsOffFile.off";
     try
     {
-        std::ofstream outFileStream;
-        outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices     = cds::toIndexData(glycamPrepFileSelect.getResidues());
         std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
         assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
         cds::serializeResiduesIndividually(indices.residues);
-        cds::WriteResiduesIndividuallyToOffFile(outFileStream, graph, cds::toOffFileData(indices.residues));
-        outFileStream.close();
+        codeUtils::writeToFile(fileName,
+                               [&](std::ostream& stream)
+                               {
+                                   cds::WriteResiduesIndividuallyToOffFile(stream, graph,
+                                                                           cds::toOffFileData(indices.residues));
+                               });
     }
     catch (...)
     {
@@ -57,14 +61,16 @@ int main()
     fileName = "./prepAsLibFile.lib";
     try
     {
-        std::ofstream outFileStream;
-        outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices     = cds::toIndexData(glycamPrepFileSelect.getResidues());
         std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
         assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
         cds::serializeResiduesIndividually(indices.residues);
-        cds::WriteResiduesIndividuallyToOffFile(outFileStream, graph, cds::toOffFileData(indices.residues));
-        outFileStream.close();
+        codeUtils::writeToFile(fileName,
+                               [&](std::ostream& stream)
+                               {
+                                   cds::WriteResiduesIndividuallyToOffFile(stream, graph,
+                                                                           cds::toOffFileData(indices.residues));
+                               });
     }
     catch (...)
     {

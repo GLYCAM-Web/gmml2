@@ -1,3 +1,4 @@
+#include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
@@ -8,7 +9,7 @@
 #include "includes/Assembly/assemblyGraph.hpp"
 
 #include <iostream>
-#include <fstream>
+#include <ostream>
 #include <stdexcept>
 
 int main()
@@ -27,13 +28,14 @@ int main()
     std::cout << "Finished loading libfile" << std::endl;
     // Need a central place for this:
     std::string fileName = "./libAsPdbFile.pdb";
-    std::ofstream outFileStream;
     try
     {
-        outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices = cds::toIndexData({&libFile});
-        cds::WritePdb(outFileStream, indices, {});
-        outFileStream.close();
+        codeUtils::writeToFile(fileName,
+                               [&](std::ostream& stream)
+                               {
+                                   cds::WritePdb(stream, indices, {});
+                               });
     }
     catch (...)
     {
@@ -45,11 +47,12 @@ int main()
     fileName = "./libAsOffFile.off";
     try
     {
-        std::ofstream outFileStream;
-        outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices = cds::toIndexData({&libFile});
-        cds::WriteOff(outFileStream, libFile.getName(), indices);
-        outFileStream.close();
+        codeUtils::writeToFile(fileName,
+                               [&](std::ostream& stream)
+                               {
+                                   cds::WriteOff(stream, libFile.getName(), indices);
+                               });
     }
     catch (...)
     {
@@ -61,14 +64,16 @@ int main()
     fileName = "./libAsLibFile.lib";
     try
     {
-        std::ofstream outFileStream;
-        outFileStream.open(fileName.c_str());
         cds::GraphIndexData indices     = cds::toIndexData(libFile.getResidues());
         std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
         assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
         cds::serializeResiduesIndividually(indices.residues);
-        cds::WriteResiduesIndividuallyToOffFile(outFileStream, graph, cds::toOffFileData(indices.residues));
-        outFileStream.close();
+        codeUtils::writeToFile(fileName,
+                               [&](std::ostream& stream)
+                               {
+                                   cds::WriteResiduesIndividuallyToOffFile(stream, graph,
+                                                                           cds::toOffFileData(indices.residues));
+                               });
     }
     catch (...)
     {

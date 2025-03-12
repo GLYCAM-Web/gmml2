@@ -30,7 +30,7 @@
 #include "includes/Assembly/assemblySelection.hpp"
 #include "includes/Graph/graphFunctions.hpp"
 #include <sstream>
-#include <fstream>
+#include <ostream>
 #include <cctype>    // isDigit
 #include <algorithm> //  std::erase, std::remove
 
@@ -414,18 +414,17 @@ void Carbohydrate::Generate3DStructureFiles(const std::string& fileOutputDirecto
         {
             PathAndFileName += fileOutputDirectory + "/" + outputFileNaming;
         }
-        // Pdb file
-        std::string completeFileName = PathAndFileName + ".pdb";
-        std::ofstream outFileStream;
-        outFileStream.open(completeFileName.c_str());
         cds::GraphIndexData indices = cds::toIndexData({this});
-        WritePdb(outFileStream, indices, headerLines);
-        outFileStream.close();
-        // Off file
-        completeFileName = PathAndFileName + ".off";
-        outFileStream.open(completeFileName.c_str());
-        WriteOff(outFileStream, getName(), indices);
-        outFileStream.close();
+        codeUtils::writeToFile(PathAndFileName + ".pdb",
+                               [&](std::ostream& stream)
+                               {
+                                   WritePdb(stream, indices, headerLines);
+                               });
+        codeUtils::writeToFile(PathAndFileName + ".off",
+                               [&](std::ostream& stream)
+                               {
+                                   WriteOff(stream, getName(), indices);
+                               });
     }
     catch (const std::string& exceptionMessage)
     {

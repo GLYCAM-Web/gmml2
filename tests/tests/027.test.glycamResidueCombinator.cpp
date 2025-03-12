@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
@@ -10,7 +11,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <fstream>
+#include <ostream>
 
 // For loading select residues from glycam06.prep files
 int main(int argc, char* argv[])
@@ -101,13 +102,14 @@ int main(int argc, char* argv[])
         allGeneratedResidues.push_back(specialResidue);
     }
 
-    std::ofstream outFileStream;
-    std::string fileName = "GLYCAM_06k.lib";
-    outFileStream.open(fileName.c_str());
     cds::serializeResiduesIndividually(allGeneratedResidues);
     cds::GraphIndexData indices     = cds::toIndexData(allGeneratedResidues);
     std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
     assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
-    cds::WriteResiduesIndividuallyToOffFile(outFileStream, graph, cds::toOffFileData(allGeneratedResidues));
-    outFileStream.close();
+    codeUtils::writeToFile("GLYCAM_06k.lib",
+                           [&](std::ostream& stream)
+                           {
+                               cds::WriteResiduesIndividuallyToOffFile(stream, graph,
+                                                                       cds::toOffFileData(allGeneratedResidues));
+                           });
 }

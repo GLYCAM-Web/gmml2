@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -30,18 +31,18 @@ int main(int argc, char* argv[])
         // OFF molecule
         try
         {
-            std::ofstream outFileStream;
-            outFileStream.open("outputOffFile.off");
-            std::string outFileName         = "Assembly";
             cds::GraphIndexData indices     = cds::toIndexData(assembly.getMolecules());
             std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
             assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
             cds::OffFileData data           = cds::toOffFileData(indices.residues);
             cds::serializeNumbers(indices.atoms);
             cds::serializeNumbers(indices.residues);
-            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, data, codeUtils::indexVector(indices.residues),
-                                                outFileName.c_str());
-            outFileStream.close();
+            codeUtils::writeToFile("outputOffFile.off",
+                                   [&](std::ostream& stream)
+                                   {
+                                       cds::WriteResiduesTogetherToOffFile(
+                                           stream, graph, data, codeUtils::indexVector(indices.residues), "Assembly");
+                                   });
         }
         catch (std::runtime_error& error)
         {

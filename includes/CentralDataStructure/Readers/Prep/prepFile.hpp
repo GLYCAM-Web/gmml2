@@ -6,7 +6,8 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include <map>
 #include <string>
-#include <iostream>
+#include <fstream>
+#include <ostream>
 #include <vector>
 
 namespace prep
@@ -34,7 +35,7 @@ namespace prep
         //                         FUNCTIONS                    //
         //////////////////////////////////////////////////////////
         void Write(const std::string& prep_file);
-        void Write(std::ofstream& out_stream);
+        void Write(std::ostream& out_stream);
         //////////////////////////////////////////////////////////
         //                     DISPLAY FUNCTIONS                //
         //////////////////////////////////////////////////////////

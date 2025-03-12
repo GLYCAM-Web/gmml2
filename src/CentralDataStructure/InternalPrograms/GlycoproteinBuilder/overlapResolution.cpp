@@ -40,7 +40,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-#include <fstream>
+#include <ostream>
 #include <stdexcept>
 
 namespace glycoproteinBuilder
@@ -263,11 +263,13 @@ namespace glycoproteinBuilder
             }
             cds::OffFileData offData = toOffFileData(graph, data, coordinates);
             std::string fileName     = outputDir + "/" + prefix + ".off";
-            std::ofstream outFileStream;
-            outFileStream.open(fileName.c_str());
-            cds::WriteResiduesTogetherToOffFile(outFileStream, graph, offData,
-                                                codeUtils::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
-            outFileStream.close();
+            codeUtils::writeToFile(fileName,
+                                   [&](std::ostream& stream)
+                                   {
+                                       cds::WriteResiduesTogetherToOffFile(stream, graph, offData,
+                                                                           codeUtils::boolsToIndices(residueIncluded),
+                                                                           "GLYCOPROTEINBUILDER");
+                                   });
         };
 
         auto residueTER = [](const AssemblyData& data, const std::vector<std::vector<size_t>>& residueIndices)
@@ -293,11 +295,13 @@ namespace glycoproteinBuilder
                 codeUtils::boolsToValues(graph.molecules.nodes.constituents, includedMolecules);
             std::vector<std::vector<bool>> TER = residueTER(data, residueIndices);
             codeUtils::createDirectories(outputDir);
-            std::string fileName = outputDir + "/" + prefix + ".pdb";
-            std::ofstream outFileStream;
-            outFileStream.open(fileName.c_str());
-            cds::writeAssemblyToPdb(outFileStream, graph, residueIndices, TER, connectionIndices, pdbData);
-            outFileStream.close();
+            std::string filename = outputDir + "/" + prefix + ".pdb";
+            codeUtils::writeToFile(filename,
+                                   [&](std::ostream& stream)
+                                   {
+                                       cds::writeAssemblyToPdb(stream, graph, residueIndices, TER, connectionIndices,
+                                                               pdbData);
+                                   });
         };
 
         const assembly::Graph& graph    = assembly.graph;

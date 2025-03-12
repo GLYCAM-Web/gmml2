@@ -176,27 +176,21 @@ void PrepFile::ReadQueryResidues(std::ifstream& in_file, const std::vector<std::
 
 void PrepFile::Write(const std::string& prep_file)
 {
-    std::ofstream out_file;
     try
     {
-        out_file.open(prep_file.c_str());
+        codeUtils::writeToFile(prep_file,
+                               [&](std::ostream& stream)
+                               {
+                                   this->Write(stream);
+                               });
     }
     catch (...)
     {
         throw std::runtime_error("PrepFile could not be created for writing");
     }
-    try
-    {
-        this->Write(out_file);
-        out_file.close();
-    }
-    catch (...)
-    {
-        out_file.close();
-    }
 }
 
-void PrepFile::Write(std::ofstream& stream)
+void PrepFile::Write(std::ostream& stream)
 {
     stream << "\n"
            << "\n";
