@@ -16,7 +16,7 @@ using prep::PrepResidue;
 //////////////////////////////////////////////////////////
 //                       Constructor                    //
 //////////////////////////////////////////////////////////
-PrepResidue::PrepResidue(std::ifstream& in_file, std::string& line)
+PrepResidue::PrepResidue(std::istream& in_file, std::string& line)
 {
     std::string name, dummy_atom_type;
     std::istringstream ss;
@@ -596,7 +596,7 @@ prep::SectionType PrepResidue::ExtractSectionType(std::string& line)
 }
 
 /// Parse the loop section of each residue section and return a loop map
-void PrepResidue::ExtractLoops(std::ifstream& in_file)
+void PrepResidue::ExtractLoops(std::istream& in_file)
 {
     std::string line;
     std::stringstream ss;
@@ -620,7 +620,7 @@ void PrepResidue::ExtractLoops(std::ifstream& in_file)
 }
 
 /// Parse the improper dihedral section of each residue section and return a std::vector of improper dihedrals
-void PrepResidue::ExtractImproperDihedral(std::ifstream& in_file)
+void PrepResidue::ExtractImproperDihedral(std::istream& in_file)
 {
     std::string line;
     std::stringstream ss;

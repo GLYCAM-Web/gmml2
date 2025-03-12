@@ -2,9 +2,10 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
-#include <iostream>
+
 #include <string>
 #include <vector>
+#include <iostream>
 
 int main(int argc, char* argv[])
 {

@@ -3,7 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include <string>
-#include <iostream>
+#include <sstream>
 
 // #include <functional>
 namespace pdb

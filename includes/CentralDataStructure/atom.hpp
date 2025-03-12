@@ -8,7 +8,6 @@
 #include "includes/CodeUtils/references.hpp"
 
 #include <string>
-#include <iostream>
 #include <vector>
 #include <memory> // unique_ptr
 
@@ -34,8 +33,6 @@ namespace cds
             swap(lhs.charge_, rhs.charge_);
             swap(lhs.atomType_, rhs.atomType_);
             swap(lhs.number_, rhs.number_);
-            std::cout << "Swap triggered for Atom, everything in " << rhs.getName() << " swapped with " << lhs.getName()
-                      << std::endl;
         }
 
         //////////////////////////////////////////////////////////

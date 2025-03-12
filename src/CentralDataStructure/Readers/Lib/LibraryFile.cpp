@@ -36,7 +36,7 @@ namespace lib
     }
 
     // Private
-    void LibraryFile::ParseInFileStream(std::ifstream& inputFileStream)
+    void LibraryFile::ParseInFileStream(std::istream& inputFileStream)
     {
         std::string line;
         // Skip any blank lines at the beginning of the file
@@ -76,7 +76,7 @@ namespace lib
         }
     }
 
-    void LibraryFile::ParseQueryResidues(std::ifstream& inputFileStream, const std::vector<std::string>& queryNames)
+    void LibraryFile::ParseQueryResidues(std::istream& inputFileStream, const std::vector<std::string>& queryNames)
     {
         std::string line;
         // Skip any blank lines at the beginning of the file
@@ -119,7 +119,7 @@ namespace lib
         }
     }
 
-    std::stringstream LibraryFile::ExtractUnitSection(std::ifstream& inputFileStream, const std::string unitName)
+    std::stringstream LibraryFile::ExtractUnitSection(std::istream& inputFileStream, const std::string unitName)
     {
         std::stringstream extractedSection;
         std::string entryLineStart = "!entry." + unitName + ".unit";

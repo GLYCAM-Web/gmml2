@@ -6,7 +6,8 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <iostream>
+#include <istream>
+#include <ostream>
 
 namespace prep
 {
@@ -60,7 +61,7 @@ namespace prep
         //////////////////////////////////////////////////////////
         //                       Constructor                    //
         //////////////////////////////////////////////////////////
-        PrepResidue(std::ifstream& in_file, std::string& line);
+        PrepResidue(std::istream& in_file, std::string& line);
         PrepResidue()  = default;
         ~PrepResidue() = default;
         PrepResidue(PrepResidue&& other) noexcept; // Move Ctor
@@ -126,8 +127,8 @@ namespace prep
         void ExtractResidueDummyAtomOmission(std::istream& ss);
         void ExtractResidueDummyAtomPosition(std::istream& ss);
         prep::SectionType ExtractSectionType(std::string& line);
-        void ExtractLoops(std::ifstream& in_file);
-        void ExtractImproperDihedral(std::ifstream& in_file);
+        void ExtractLoops(std::istream& in_file);
+        void ExtractImproperDihedral(std::istream& in_file);
         //////////////////////////////////////////////////////////
         //                         ACCESSOR                     //
         //////////////////////////////////////////////////////////

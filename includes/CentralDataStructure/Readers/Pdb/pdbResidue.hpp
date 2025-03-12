@@ -6,7 +6,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 
 #include <string>
-#include <iostream>
+#include <sstream>
+#include <ostream>
 
 namespace pdb
 {
@@ -77,7 +78,7 @@ namespace pdb
             return this->getId().print();
         }
 
-        void Print(std::ostream& out = std::cerr) const;
+        void Print(std::ostream& out) const;
 
       private:
         //////////////////////////////////////////////////////////

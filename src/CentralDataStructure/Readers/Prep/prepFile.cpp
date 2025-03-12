@@ -119,7 +119,7 @@ void PrepFile::Generate3dStructures()
 //////////////////////////////////////////////////////////
 //                         FUNCTIONS                    //
 //////////////////////////////////////////////////////////
-void PrepFile::ReadAllResidues(std::ifstream& in_file)
+void PrepFile::ReadAllResidues(std::istream& in_file)
 {
     std::string line = "";
     getline(in_file, line);
@@ -133,7 +133,7 @@ void PrepFile::ReadAllResidues(std::ifstream& in_file)
 }
 
 // Reads each line of the file. If it finds one of the query residues it reads it in. Won't read in query repeats twice.
-void PrepFile::ReadQueryResidues(std::ifstream& in_file, const std::vector<std::string>& queryNames)
+void PrepFile::ReadQueryResidues(std::istream& in_file, const std::vector<std::string>& queryNames)
 {
     std::string line = "";
     getline(in_file, line);

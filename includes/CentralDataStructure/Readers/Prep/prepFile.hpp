@@ -6,7 +6,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include <map>
 #include <string>
-#include <fstream>
+#include <istream>
 #include <ostream>
 #include <vector>
 
@@ -48,9 +48,9 @@ namespace prep
         //////////////////////////////////////////////////////////
         //                           MUTATOR                    //
         //////////////////////////////////////////////////////////
-        void ReadAllResidues(std::ifstream& in_file);
-        void ReadQueryResidues(std::ifstream& in_file, const std::vector<std::string>& queryNames);
-        // void ReadOnlyQueryResidues(std::ifstream &in_file, std::vector<std::string>& query_residue_names);
+        void ReadAllResidues(std::istream& in_file);
+        void ReadQueryResidues(std::istream& in_file, const std::vector<std::string>& queryNames);
+        // void ReadOnlyQueryResidues(std::istream &in_file, std::vector<std::string>& query_residue_names);
         //////////////////////////////////////////////////////////
         //                         ATTRIBUTES                   //
         //////////////////////////////////////////////////////////

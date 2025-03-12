@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_DATABASEREFERENCERECORD_HPP
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 namespace pdb
 {
@@ -17,7 +17,7 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
-        void Print(std::ostream& out = std::cerr) const;
+        void Print(std::ostream& out) const;
         void Write(std::ostream& stream) const;
 
       private:

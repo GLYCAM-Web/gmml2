@@ -5,7 +5,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include <vector>
-#include <iostream>
+#include <sstream>
+#include <ostream>
 
 namespace pdb
 {
@@ -39,7 +40,7 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
-        void Print(std::ostream& out = std::cerr) const;
+        void Print(std::ostream& out) const;
         void Write(std::ostream& stream) const;
 
       private:

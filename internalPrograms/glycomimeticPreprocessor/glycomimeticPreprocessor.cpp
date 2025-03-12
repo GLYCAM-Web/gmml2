@@ -5,6 +5,7 @@
 #include "includes/CodeUtils/casting.hpp"
 #include <string>
 #include <fstream>
+#include <iostream>
 
 // Adapted the preprocessor to prepare files for Yao's glycomimetic program.
 // In addition to regular preprocessing it:

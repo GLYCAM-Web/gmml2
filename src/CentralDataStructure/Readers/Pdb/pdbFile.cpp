@@ -35,7 +35,7 @@ PdbFile::PdbFile(const std::string& pdbFilePath, const InputType pdbFileType) : 
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished parsing " + pdbFilePath);
 }
 
-void PdbFile::ParseInFileStream(std::ifstream& pdbFileStream, const InputType pdbFileType)
+void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdbFileType)
 {
     //    std::cout << "Parsing inputfile\n";
     for (std::string line; std::getline(pdbFileStream, line);)
@@ -103,7 +103,7 @@ void PdbFile::ParseInFileStream(std::ifstream& pdbFileStream, const InputType pd
 // Initializers used by constructors
 // Should extract all lines that start with the strings in recordNames.
 // Returns when it hits a line that does not start with one of those records.
-std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::ifstream& pdbFileStream, std::string& line,
+std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::istream& pdbFileStream, std::string& line,
                                                             const std::vector<std::string> recordNames)
 {
     std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
@@ -134,7 +134,7 @@ std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::ifstream& pdbFi
 // Goes through a section of the PDB file that contains the same header section. E.g. HEADER.
 // If the header changes, it goes back to the previous line. I wanted the out while loop to trigger the new line. This
 // means I don't have to check recordName between if statement and can have else if.
-std::stringstream PdbFile::ExtractHomogenousRecordSection(std::ifstream& pdbFileStream, std::string& line,
+std::stringstream PdbFile::ExtractHomogenousRecordSection(std::istream& pdbFileStream, std::string& line,
                                                           std::string recordName)
 {
     std::stringstream recordSection;

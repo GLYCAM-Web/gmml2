@@ -6,7 +6,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CodeUtils/constants.hpp" // codeUtils::iNotSet
 #include <string>
-#include <iostream>
+#include <ostream>
 
 namespace pdb
 {
@@ -64,7 +64,7 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
         //////////////////////////////////////////////////////////
-        void Print(std::ostream& out = std::cerr) const;
+        void Print(std::ostream& out) const;
 
       private:
         //////////////////////////////////////////////////////////

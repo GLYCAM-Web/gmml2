@@ -1,7 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 
-#include <iostream>
 #include <string>
 #include <vector>
 #include "includes/CentralDataStructure/residue.hpp"

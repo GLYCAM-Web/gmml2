@@ -13,6 +13,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include <string>
+#include <istream>
+#include <ostream>
 #include <vector>
 
 namespace pdb
@@ -103,10 +105,10 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        void ParseInFileStream(std::ifstream& pdbFileStream, const InputType pdbFileType = modelsAsMolecules);
-        std::stringstream ExtractHeterogenousRecordSection(std::ifstream& pdbFileStream, std::string& line,
+        void ParseInFileStream(std::istream& pdbFileStream, const InputType pdbFileType = modelsAsMolecules);
+        std::stringstream ExtractHeterogenousRecordSection(std::istream& pdbFileStream, std::string& line,
                                                            const std::vector<std::string> recordNames);
-        std::stringstream ExtractHomogenousRecordSection(std::ifstream& pdbFileStream, std::string& line,
+        std::stringstream ExtractHomogenousRecordSection(std::istream& pdbFileStream, std::string& line,
                                                          std::string previousName);
         //////////////////////////////////////////////////////////
         //                        ATTRIBUTES                    //

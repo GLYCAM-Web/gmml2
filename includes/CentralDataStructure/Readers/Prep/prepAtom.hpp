@@ -4,7 +4,8 @@
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include <string>
-#include <iostream>
+#include <istream>
+#include <ostream>
 
 namespace prep
 { // repeated from common or utils as they should be here, not in gmml scope. Left over there as the old class needs
@@ -35,7 +36,6 @@ namespace prep
 
         friend void swap(PrepAtom& lhs, PrepAtom& rhs) noexcept
         {
-            std::cout << "PrepAtom swap triggered" << std::endl;
             using std::swap;
             swap(static_cast<cds::Atom&>(lhs), static_cast<cds::Atom&>(rhs));
             swap(lhs.type_, rhs.type_);
@@ -63,7 +63,7 @@ namespace prep
         //////////////////////////////////////////////////////////
         //                     DISPLAY FUNCTIONS                //
         //////////////////////////////////////////////////////////
-        void Print(std::ostream& out = std::cerr) const;
+        void Print(std::ostream& out) const;
         void Write(std::ostream& stream) const;
 
         //////////////////////////////////////////////////////////
