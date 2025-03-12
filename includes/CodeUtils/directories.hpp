@@ -25,14 +25,10 @@ namespace codeUtils
         std::vector<std::string> constituents;
     };
 
-    std::string Find_Program_Installation_Directory();
-    std::string Find_Program_workingDirectory();
     Path toPath(const std::string& str);
     bool doesDirectoryExist(const std::string& pathName);
     bool directoryIsEmptyOrNonexistent(const std::string& pathName);
-    void ensureDirectoryExists(const std::string& pathName);
     void createDirectories(const std::string& pathName);
-    std::string getEnvVar(const std::string& key);
     std::string getGmmlHomeDir();
     std::string getSNFGSymbolsDir();
 

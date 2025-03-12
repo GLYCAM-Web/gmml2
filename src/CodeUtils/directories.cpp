@@ -3,39 +3,9 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
-#include <sys/param.h> // for MIN function
-#include <sys/stat.h>  // stat
-#include <cstring>     // strlen
+#include <sys/stat.h>
 #include <string>
 #include <vector>
-
-std::string codeUtils::Find_Program_Installation_Directory()
-{ // A way to get the program name plus working directory
-    char processID[32];
-    char pBuffer[256];
-    ssize_t len = sizeof(pBuffer);
-    sprintf(processID, "/proc/%d/exe", getpid());
-    int bytes = MIN(readlink(processID, pBuffer, len), len - 1);
-    if (bytes >= 0)
-    {
-        pBuffer[bytes] = '\0';
-        // std::cout << "processID:" << processID << " pBuffer:" << pBuffer << " bytes:" << bytes << std::endl;
-        return codeUtils::SplitFilename(pBuffer);
-    }
-    return "Error";
-}
-
-std::string codeUtils::Find_Program_workingDirectory()
-{
-    char cCurrentPath[FILENAME_MAX];
-    if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
-    {
-        return "Error reading working directory";
-    }
-    cCurrentPath[strlen(cCurrentPath)] = '/';  // Add a / at the end.
-    cCurrentPath[strlen(cCurrentPath)] = '\0'; // Above overwrites the null, the null is important. Respect the nu
-    return cCurrentPath;
-}
 
 codeUtils::Path codeUtils::toPath(const std::string& str)
 {
@@ -65,15 +35,6 @@ bool codeUtils::directoryIsEmptyOrNonexistent(const std::string& pathName)
     return !doesDirectoryExist(pathName) || std::filesystem::is_empty(pathName);
 }
 
-void codeUtils::ensureDirectoryExists(const std::string& pathName)
-{
-    if (!codeUtils::doesDirectoryExist(pathName))
-    {
-        gmml::log(__LINE__, __FILE__, gmml::ERR, "Directory " + pathName + " does not exist");
-        throw "Directory " + pathName + " does not exist";
-    }
-}
-
 void codeUtils::createDirectories(const std::string& pathName)
 {
     std::filesystem::create_directories(pathName);
@@ -82,12 +43,6 @@ void codeUtils::createDirectories(const std::string& pathName)
     {
         throw std::runtime_error("failed to create directory: " + pathName);
     }
-}
-
-std::string codeUtils::getEnvVar(const std::string& key)
-{
-    char* val = std::getenv(key.c_str());
-    return val == NULL ? std::string("") : std::string(val);
 }
 
 std::string codeUtils::getSNFGSymbolsDir()
