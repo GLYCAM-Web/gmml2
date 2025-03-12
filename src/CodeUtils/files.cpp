@@ -98,3 +98,10 @@ std::vector<char> codeUtils::readEntireFile(const std::string& filename)
     }
     return buffer;
 }
+
+void codeUtils::writeToFile(const std::string& filename, std::function<void(std::ostream&)> write)
+{
+    std::ofstream file(filename);
+    write(file);
+    file.close();
+}
