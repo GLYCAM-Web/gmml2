@@ -321,11 +321,9 @@ namespace glycoproteinBuilder
         SidechainAdjustment sidechainRestoration =
             settings.moveOverlappingSidechains ? restoreSidechains : noSidechainAdjustment;
 
-        std::vector<cds::ResidueType> nonProteinTypes {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
-                                                       cds::ResidueType::Aglycone, cds::ResidueType::Undefined};
-        auto isNonProteinResidue = [&data, &nonProteinTypes](size_t n)
+        auto isNonProteinResidue = [&graph, &data](size_t n)
         {
-            return codeUtils::contains(nonProteinTypes, data.residues.types[n]);
+            return data.molecules.types[graph.residueMolecule[n]] != MoleculeType::protein;
         };
 
         std::vector<std::array<size_t, 2>> noConnections = {};
