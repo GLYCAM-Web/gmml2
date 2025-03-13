@@ -28,8 +28,8 @@ DNeup5Ac&Label=residue-7;a2-9&Label=link-5;DNeup5Ac&Label=residue-6;a2-8&Label=l
 Parsed and labelled 00002 with no exceptions thrown.
 
 Number of residues for this sequence is 7
-Number of likely shapes is 80
-Number of possible shapes is 120
+Number of likely shapes is 16
+Number of possible shapes is 24
 OME_1_?_?
 6MB_2_?_?
 3GB_3_?_?
@@ -43,12 +43,6 @@ Name: DNeu5Acpa2-3DGlcpb, LinkageIndex: 2, Res1: 4, Res2: 3
     LikelyRotamers: Phi, t, -g
 Name: DNeu5Acpa2-7DNeu5Acpa, LinkageIndex: 3, Res1: 5, Res2: 4
     LikelyRotamers: Phi, t, -g
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 4, Res1: 6, Res2: 5
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
 Name: DNeu5Acpa2-9DNeu5Acpa, LinkageIndex: 5, Res1: 7, Res2: 6
     LikelyRotamers: Phi, t, -g
 
@@ -178,31 +172,13 @@ DNeupNAc&Label=residue-5;a2-8&Label=link-3;DNeupNAc&Label=residue-4;a2-8&Label=l
 Parsed and labelled 00012 with no exceptions thrown.
 
 Number of residues for this sequence is 5
-Number of likely shapes is 125
-Number of possible shapes is 125
+Number of likely shapes is 1
+Number of possible shapes is 1
 ROH_1_?_?
 8SA_2_?_?
 8SA_3_?_?
 8SA_4_?_?
 0SA_5_?_?
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 1, Res1: 3, Res2: 2
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 2, Res1: 4, Res2: 3
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 3, Res1: 5, Res2: 4
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
 
 *********************
 Building id 00013:DGlcpA1-OH
@@ -256,8 +232,8 @@ DNeupNAc&Label=residue-7;a2-8&Label=link-5;DNeupNAc&Label=residue-6;a2-8&Label=l
 Parsed and labelled 00015 with no exceptions thrown.
 
 Number of residues for this sequence is 7
-Number of likely shapes is 1500
-Number of possible shapes is 2250
+Number of likely shapes is 12
+Number of possible shapes is 18
 ROH_1_?_?
 6LB_2_?_?
 6GB_3_?_?
@@ -270,24 +246,6 @@ Name: DGlcpb1-6DGalpb, LinkageIndex: 1, Res1: 3, Res2: 2
 Name: DNeu5Acpa2-6DGlcpb, LinkageIndex: 2, Res1: 4, Res2: 3
     LikelyRotamers: Phi, t, -g
     LikelyRotamers: Omg, gg, gt
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 3, Res1: 5, Res2: 4
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 4, Res1: 6, Res2: 5
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 5, Res1: 7, Res2: 6
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
 
 *********************
 Building id 00016:LFucpa1-1DFrufb2-OME
@@ -392,8 +350,8 @@ LIdopA&Label=residue-11;a1-4&Label=link-9;[DNeupNAc&Label=residue-10;a2-8&Label=
 Parsed and labelled 00021 with no exceptions thrown.
 
 Number of residues for this sequence is 12
-Number of likely shapes is 600
-Number of possible shapes is 900
+Number of likely shapes is 24
+Number of possible shapes is 36
 OME_1_?_?
 WZA_2_?_?
 XGB_3_?_?
@@ -413,18 +371,6 @@ Name: LFrupa2-6DGalpb, LinkageIndex: 5, Res1: 7, Res2: 6
     LikelyRotamers: Omg, gg, gt, tg
 Name: DNeu5Acpa2-5LFrupa, LinkageIndex: 6, Res1: 8, Res2: 7
     LikelyRotamers: Phi, t, -g
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 7, Res1: 9, Res2: 8
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 8, Res1: 10, Res2: 9
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
 
 *********************
 Building id 00023:DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
@@ -684,8 +630,8 @@ DNeup5Ac&Label=residue-14;a2-7&Label=link-12;[DNeup5Ac&Label=residue-12;a2-8&Lab
 Parsed and labelled 00035 with no exceptions thrown.
 
 Number of residues for this sequence is 15
-Number of likely shapes is 2500
-Number of possible shapes is 2500
+Number of likely shapes is 4
+Number of possible shapes is 4
 ROH_1_?_?
 BSA_2_?_?
 FSA_3_?_?
@@ -703,27 +649,6 @@ ACX_13_?_?
 ACX_15_?_?
 Name: DNeu5Acpa2-9DNeu5Acpa, LinkageIndex: 1, Res1: 3, Res2: 2
     LikelyRotamers: Phi, t, -g
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 3, Res1: 5, Res2: 3
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 7, Res1: 9, Res2: 2
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 8, Res1: 10, Res2: 9
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
-    LikelyRotamers: Omg9, A, B, C, D, E
-Name: DNeu5Acpa2-8DNeu5Acpa, LinkageIndex: 10, Res1: 12, Res2: 10
-    LikelyRotamers: Phi, A, B, C, D, E
-    LikelyRotamers: Psi, A, B, C, D, E
-    LikelyRotamers: Omg8, A, B, C, D, E
-    LikelyRotamers: Omg7, A, B, C, D, E
 Name: DNeu5Acpa2-7DNeu5Acpa, LinkageIndex: 12, Res1: 14, Res2: 9
     LikelyRotamers: Phi, t, -g
 
