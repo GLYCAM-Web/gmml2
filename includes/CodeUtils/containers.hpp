@@ -99,6 +99,16 @@ namespace codeUtils
         return result;
     }
 
+    template<class T> T vectorMax(const T& initial, const std::vector<T>& vec)
+    {
+        T result = initial;
+        for (size_t n = 0; n < vec.size(); n++)
+        {
+            result = std::max(result, vec[n]);
+        }
+        return result;
+    }
+
     template<class T> void insertInto(std::vector<T>& into, const std::vector<T>& other)
     {
         into.insert(into.end(), other.begin(), other.end());
