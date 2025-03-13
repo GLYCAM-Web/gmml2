@@ -326,7 +326,6 @@ namespace glycoproteinBuilder
             return data.molecules.types[graph.residueMolecule[n]] != MoleculeType::protein;
         };
 
-        std::vector<std::array<size_t, 2>> noConnections = {};
         std::vector<std::array<size_t, 2>> atomPairsConnectingNonProteinResidues;
         const graph::GraphEdges& residueEdges = graph.residues.edges;
         for (size_t n = 0; n < edgeCount(graph.residues); n++)
@@ -340,9 +339,6 @@ namespace glycoproteinBuilder
             }
         }
 
-        std::vector<std::array<size_t, 2>>& writtenConnections =
-            settings.MDprep ? atomPairsConnectingNonProteinResidues : noConnections;
-
         auto runInitial = [&](pcg32 rng, StructureStats& stats)
         {
             MutableData mutableData = initialState;
@@ -353,7 +349,7 @@ namespace glycoproteinBuilder
                 totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
             bool serialized = settings.MDprep;
             writePdbFile(graph, data, resolvedCoords, atomNumbers(serialized, data), residueNumbers(serialized, data),
-                         mutableData.moleculeIncluded, writtenConnections, outputDir, "reference");
+                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, "reference");
             if (settings.writeOffFile)
             {
                 writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "reference");
@@ -401,7 +397,7 @@ namespace glycoproteinBuilder
             directory       = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
             bool serialized = settings.MDprep;
             writePdbFile(graph, data, coordinates, atomNumbers(serialized, data), residueNumbers(serialized, data),
-                         mutableData.moleculeIncluded, writtenConnections, directory, prefix);
+                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, directory, prefix);
             if (settings.writeOffFile)
             {
                 writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefix);
@@ -410,7 +406,7 @@ namespace glycoproteinBuilder
         };
 
         writePdbFile(graph, data, getCoordinates(data.atoms.initialState), data.atoms.numbers, data.residues.numbers,
-                     initialState.moleculeIncluded, noConnections, outputDir, "unresolved");
+                     initialState.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, "unresolved");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
         size_t extraStructures = settings.number3DStructures;
