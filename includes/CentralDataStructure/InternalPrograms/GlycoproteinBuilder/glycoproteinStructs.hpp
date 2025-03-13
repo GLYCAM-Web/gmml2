@@ -168,6 +168,16 @@ namespace glycoproteinBuilder
         return codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules));
     }
 
+    inline const std::vector<int>& atomNumbers(bool serialized, const AssemblyData& data)
+    {
+        return serialized ? data.atoms.serializedNumbers : data.atoms.numbers;
+    }
+
+    inline const std::vector<int>& residueNumbers(bool serialized, const AssemblyData& data)
+    {
+        return serialized ? data.residues.serializedNumbers : data.residues.numbers;
+    }
+
     typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
                                const std::vector<cds::GlycanShapePreference>&, const std::vector<size_t>&)>
         SidechainAdjustment;

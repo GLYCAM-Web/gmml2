@@ -334,6 +334,9 @@ namespace glycoproteinBuilder
             }
         }
 
+        std::vector<std::array<size_t, 2>>& writtenConnections =
+            settings.MDprep ? atomPairsConnectingNonProteinResidues : noConnections;
+
         auto runInitial = [&](pcg32 rng, StructureStats& stats)
         {
             MutableData mutableData = initialState;
@@ -342,15 +345,13 @@ namespace glycoproteinBuilder
             assembly::Selection selection               = assembly::selectAll(graph);
             std::vector<cds::Overlap> atomOverlaps =
                 totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
-            writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers,
-                         mutableData.moleculeIncluded, noConnections, outputDir, "reference");
+            bool serialized = settings.MDprep;
+            writePdbFile(graph, data, resolvedCoords, atomNumbers(serialized, data), residueNumbers(serialized, data),
+                         mutableData.moleculeIncluded, writtenConnections, outputDir, "reference");
             if (settings.writeOffFile)
             {
                 writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "reference");
             }
-            writePdbFile(graph, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
-                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir,
-                         "reference_serialized");
             stats = StructureStats {"reference", false, false, mutableData.bounds, selection, atomOverlaps};
         };
 
@@ -398,8 +399,9 @@ namespace glycoproteinBuilder
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
             std::string prefixStr = prefix.str();
-            writePdbFile(graph, data, coordinates, data.atoms.serializedNumbers, data.residues.serializedNumbers,
-                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, directory, prefixStr);
+            bool serialized       = settings.MDprep;
+            writePdbFile(graph, data, coordinates, atomNumbers(serialized, data), residueNumbers(serialized, data),
+                         mutableData.moleculeIncluded, writtenConnections, directory, prefixStr);
             if (settings.writeOffFile)
             {
                 writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefixStr);
