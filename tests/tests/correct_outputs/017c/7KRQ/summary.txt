@@ -1,0 +1,21 @@
+### Glycoprotein Builder ###
+Produced by GMML (https://github.com/GLYCAM-Web/gmml2) in test mode
+
+## Input ##
+Filename: tests/inputs/017.GlycoproteinBuilder/7KRQ.txt
+Protein: tests/inputs/017.GlycoproteinBuilder/7KRQ.pdb
+
+Parameter                              | Value   
+numberOfOutputStructures                 0       
+rngSeed                                  0       
+prepareForMD                             true    
+persistCycles                            5       
+overlapRejectionThreshold                0.500000
+useInitialGlycositeResidueConformation   false   
+moveOverlappingSidechains                false   
+deleteNonviableGlycosites                false   
+
+## Structures ##
+
+Filename  | Status | Highest atom potential | Deleted sites
+reference            0.457291                              

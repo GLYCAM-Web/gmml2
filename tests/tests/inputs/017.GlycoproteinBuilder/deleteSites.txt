@@ -2,13 +2,13 @@ Protein:tests/inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 prepareForMD:true
 
-NumberOfOutputStructures:2
+numberOfOutputStructures:2
 
 persistCycles:5
 
-deleteIncompatibleSites:true
+deleteNonviableGlycosites:true
 
-seed:0
+rngSeed:0
 
 ProteinResidue, GlycanName:
 A_24|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH

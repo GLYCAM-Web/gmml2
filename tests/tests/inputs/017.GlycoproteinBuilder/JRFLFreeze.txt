@@ -2,13 +2,13 @@ Protein:tests/inputs/017.GlycoproteinBuilder/JRFL.B99990001.pdb
 
 prepareForMD:true
 
-NumberOfOutputStructures:1
+numberOfOutputStructures:1
 
 persistCycles:5
 
-freezeGlycositeResidueConformation:true
+useInitialGlycositeResidueConformation:true
 
-seed:0
+rngSeed:0
 
 ProteinResidue, GlycanName:
 A_58|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH

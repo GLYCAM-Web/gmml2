@@ -1,0 +1,23 @@
+### Glycoprotein Builder ###
+Produced by GMML (https://github.com/GLYCAM-Web/gmml2) in test mode
+
+## Input ##
+Filename: tests/inputs/017.GlycoproteinBuilder/standard.txt
+Protein: tests/inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
+
+Parameter                              | Value   
+numberOfOutputStructures                 2       
+rngSeed                                  0       
+prepareForMD                             true    
+persistCycles                            5       
+overlapRejectionThreshold                0.500000
+useInitialGlycositeResidueConformation   false   
+moveOverlappingSidechains                false   
+deleteNonviableGlycosites                false   
+
+## Structures ##
+
+Filename       | Status | Highest atom potential | Deleted sites
+reference                 0.144396                              
+0_glycoprotein            0.042803                              
+1_glycoprotein            0.035589                              

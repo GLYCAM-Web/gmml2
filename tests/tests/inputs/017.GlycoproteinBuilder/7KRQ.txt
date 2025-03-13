@@ -2,11 +2,11 @@ Protein:tests/inputs/017.GlycoproteinBuilder/7KRQ.pdb
 
 prepareForMD:true
 
-NumberOfOutputStructures:0
+numberOfOutputStructures:0
 
 persistCycles:5
 
-seed:0
+rngSeed:0
 
 ProteinResidue, GlycanName:
 A_17|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
