@@ -343,15 +343,15 @@ namespace glycoproteinBuilder
             std::vector<cds::Overlap> atomOverlaps =
                 totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
             writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers,
-                         mutableData.moleculeIncluded, noConnections, outputDir, "glycoprotein");
+                         mutableData.moleculeIncluded, noConnections, outputDir, "reference");
             if (settings.writeOffFile)
             {
-                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "glycoprotein");
+                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "reference");
             }
             writePdbFile(graph, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir,
-                         "glycoprotein_serialized");
-            stats = StructureStats {"glycoprotein", false, false, mutableData.bounds, selection, atomOverlaps};
+                         "reference_serialized");
+            stats = StructureStats {"reference", false, false, mutableData.bounds, selection, atomOverlaps};
         };
 
         auto runIteration = [&](pcg32 rng, StructureStats& stats, size_t count)
@@ -408,7 +408,7 @@ namespace glycoproteinBuilder
         };
 
         writePdbFile(graph, data, getCoordinates(data.atoms.initialState), data.atoms.numbers, data.residues.numbers,
-                     initialState.moleculeIncluded, noConnections, outputDir, "glycoprotein_initial");
+                     initialState.moleculeIncluded, noConnections, outputDir, "unresolved");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
         size_t totalStructures = settings.number3DStructures + 1;
