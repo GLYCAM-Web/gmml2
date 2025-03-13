@@ -20,6 +20,8 @@ namespace glycoproteinBuilder
         {
             std::ostringstream status;
             std::ostringstream deletions;
+            std::ostringstream movedSidechainResidues;
+            std::vector<size_t> movedSidechains = codeUtils::boolsToIndices(stat.residueSidechainMoved);
             if (stat.rejected)
             {
                 status << "rejected";
@@ -43,7 +45,14 @@ namespace glycoproteinBuilder
                     highest = std::max(highest, stat.overlap[n].weight);
                 }
             }
-            return std::vector<std::string> {stat.filename, status.str(), std::to_string(highest), deletions.str()};
+            for (size_t n = 0; n < movedSidechains.size(); n++)
+            {
+                size_t residue = movedSidechains[n];
+                movedSidechainResidues << data.residues.names[residue] << data.residues.numbers[residue]
+                                       << (n == movedSidechains.size() - 1 ? "" : " ");
+            }
+            return std::vector<std::string> {stat.filename, status.str(), std::to_string(highest), deletions.str(),
+                                             movedSidechainResidues.str()};
         };
 
         std::function<std::string(bool)> boolStr = [](bool b)
@@ -64,7 +73,7 @@ namespace glycoproteinBuilder
         };
 
         Table structureTable {
-            {"Filename", "Status", "Highest atom potential", "Deleted sites"},
+            {"Filename", "Status", "Highest atom potential", "Deleted sites", "Moved sidechains"},
             codeUtils::vectorMap(toRow, stats)
         };
 

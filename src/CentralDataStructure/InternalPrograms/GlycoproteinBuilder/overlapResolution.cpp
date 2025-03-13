@@ -354,7 +354,9 @@ namespace glycoproteinBuilder
             {
                 writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "reference");
             }
-            stats = StructureStats {"reference", false, false, mutableData.bounds, selection, atomOverlaps};
+            stats = StructureStats {"reference",        false,     false,
+                                    mutableData.bounds, selection, mutableData.residueSidechainMoved,
+                                    atomOverlaps};
         };
 
         auto runIteration = [&](pcg32 rng, StructureStats& stats, const std::string& prefix)
@@ -402,7 +404,9 @@ namespace glycoproteinBuilder
             {
                 writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefix);
             }
-            stats = StructureStats {prefix, reject, hasDeleted, mutableData.bounds, selection, atomOverlaps};
+            stats = StructureStats {
+                prefix,      reject, hasDeleted, mutableData.bounds, selection, mutableData.residueSidechainMoved,
+                atomOverlaps};
         };
 
         writePdbFile(graph, data, getCoordinates(data.atoms.initialState), data.atoms.numbers, data.residues.numbers,
