@@ -158,19 +158,6 @@ namespace glycoproteinBuilder
         std::vector<bool> allAtoms(atoms.size(), true);
         std::vector<bool> nonHydrogenAtoms = codeUtils::vectorMap(nonHydrogen, codeUtils::indexVector(atomElements));
         std::vector<bool> includeInOverlapCheck = excludeHydrogen ? nonHydrogenAtoms : allAtoms;
-        AtomData atomData {atomNames,
-                           cds::atomTypes(atoms),
-                           cds::atomNumbers(atoms),
-                           cds::serializedNumberVector(atoms.size()),
-                           cds::atomAtomicNumbers(atoms),
-                           cds::atomElementStrings(atoms),
-                           atomElements,
-                           cds::atomCharges(atoms),
-                           atomBoundingSpheres,
-                           allAtoms,
-                           includeInOverlapCheck,
-                           includeInOverlapCheck,
-                           partOfMovableSidechain};
 
         std::vector<std::string> residueNames      = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
@@ -236,13 +223,52 @@ namespace glycoproteinBuilder
                                                                                0.0, cds::Coordinate {0.0, 0.0, 0.0}
         });
 
+        auto serializeNonProtein = [](const std::vector<int>& numbers, const std::vector<bool>& isProtein)
+        {
+            std::vector<int> result = numbers;
+            int maxNumber           = codeUtils::vectorMax(0, codeUtils::boolsToValues(numbers, isProtein));
+            for (size_t n : codeUtils::boolsToIndices(codeUtils::vectorNot(isProtein)))
+            {
+                maxNumber++;
+                result[n] = maxNumber;
+            }
+            return result;
+        };
+
+        std::function<bool(const MoleculeType&)> isProtein = [](const MoleculeType& type)
+        {
+            return type == MoleculeType::protein;
+        };
+        std::vector<MoleculeType> residueMoleculeTypes =
+            codeUtils::indicesToValues(moleculeTypes, graph.residueMolecule);
+        std::vector<MoleculeType> atomMoleculeTypes =
+            codeUtils::indicesToValues(residueMoleculeTypes, graph.atomResidue);
+        std::vector<bool> proteinResidue = codeUtils::vectorMap(isProtein, residueMoleculeTypes);
+        std::vector<bool> proteinAtom    = codeUtils::vectorMap(isProtein, atomMoleculeTypes);
+        std::vector<int> residueNumbers  = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
+        std::vector<int> atomNumbers     = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
+
+        AtomData atomData {atomNames,
+                           cds::atomTypes(atoms),
+                           atomNumbers,
+                           cds::serializedNumberVector(atoms.size()),
+                           cds::atomAtomicNumbers(atoms),
+                           cds::atomElementStrings(atoms),
+                           atomElements,
+                           cds::atomCharges(atoms),
+                           atomBoundingSpheres,
+                           allAtoms,
+                           includeInOverlapCheck,
+                           includeInOverlapCheck,
+                           partOfMovableSidechain};
+
         ResidueData residueData {residueNames,
                                  residueTypes,
                                  residuesHaveAllExpectedAtoms,
                                  phiAngles,
                                  psiAngles,
                                  cds::residueStringIds(residues),
-                                 cds::residueNumbers(residues),
+                                 residueNumbers,
                                  cds::serializedNumberVector(residues.size()),
                                  sidechainDihedrals,
                                  sidechainRotations,
