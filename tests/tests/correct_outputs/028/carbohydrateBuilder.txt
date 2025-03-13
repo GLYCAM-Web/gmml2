@@ -857,15 +857,15 @@ DAraf&Label=residue-5;b1-2&Label=link-3;DAraf&Label=residue-4;a1-3&Label=link-2;
 Parsed and labelled 00043 with no exceptions thrown.
 
 Number of residues for this sequence is 5
-Number of likely shapes is 2
-Number of possible shapes is 2
+Number of likely shapes is 3
+Number of possible shapes is 3
 OME_1_?_?
 5AD_2_?_?
 3AD_3_?_?
 2AD_4_?_?
 0AU_5_?_?
 Name: DArafa1-5DArafa, LinkageIndex: 1, Res1: 3, Res2: 2
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 
 *********************
 Building id 00044:DKDNpa2-8DKDOpa2-9DKDNpb2-7DKDOpb2-OME
@@ -1483,3 +1483,54 @@ Name: DManpa1-6DManpa, LinkageIndex: 8, Res1: 10, Res2: 9
     LikelyRotamers: Omg, gg, gt
 Name: DManpa1-6DManpa, LinkageIndex: 11, Res1: 13, Res2: 12
     LikelyRotamers: Omg, gg, gt
+
+*********************
+Building id 00100:DRibfa1-5DArafa1-5DXylfa1-5DLyxfa1-5DRibfa1-2DRibfa1-OH
+*********************
+Input:
+DRibfa1-5DArafa1-5DXylfa1-5DLyxfa1-5DRibfa1-2DRibfa1-OH
+Interpreted:
+DRibfa1-5DArafa1-5DXylfa1-5DLyxfa1-5DRibfa1-2DRibfa1-OH
+IndexOrdered:
+DRibfa1-5DArafa1-5DXylfa1-5DLyxfa1-5DRibfa1-2DRibfa1-OH
+IndexOrderedLabeled:
+DRibf&Label=residue-7;a1-5&Label=link-5;DAraf&Label=residue-6;a1-5&Label=link-4;DXylf&Label=residue-5;a1-5&Label=link-3;DLyxf&Label=residue-4;a1-5&Label=link-2;DRibf&Label=residue-3;a1-2&Label=link-1;DRibf&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00100 with no exceptions thrown.
+
+Number of residues for this sequence is 7
+Number of likely shapes is 81
+Number of possible shapes is 81
+ROH_1_?_?
+2RD_2_?_?
+5RD_3_?_?
+5DD_4_?_?
+5XD_5_?_?
+5AD_6_?_?
+0RD_7_?_?
+Name: DLyxfa1-5DRibfa, LinkageIndex: 2, Res1: 4, Res2: 3
+    LikelyRotamers: Omg, gg, gt, tg
+Name: DXylfa1-5DLyxfa, LinkageIndex: 3, Res1: 5, Res2: 4
+    LikelyRotamers: Omg, gg, gt, tg
+Name: DArafa1-5DXylfa, LinkageIndex: 4, Res1: 6, Res2: 5
+    LikelyRotamers: Omg, gg, gt, tg
+Name: DRibfa1-5DArafa, LinkageIndex: 5, Res1: 7, Res2: 6
+    LikelyRotamers: Omg, gg, gt, tg
+
+*********************
+Building id 00101:DRibpa1-OH
+*********************
+Input:
+DRibpa1-OH
+Interpreted:
+DRibpa1-OH
+IndexOrdered:
+DRibpa1-OH
+IndexOrderedLabeled:
+DRibp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00101 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0RA_2_?_?

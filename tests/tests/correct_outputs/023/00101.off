@@ -1,0 +1,155 @@
+!!index array str
+ "CONDENSEDSEQUENCE"
+!entry.CONDENSEDSEQUENCE.unit.atoms table  str name  str type  int typex  int resx  int flags  int seq  int elmnt  dbl chg
+ "HO1" "Ho" 0 1 131072 1 1 0.445000
+ "O1" "Oh" 0 1 131072 2 8 -0.639000
+ "C1" "Cg" 0 2 131072 1 6 0.488000
+ "H1" "H2" 0 2 131072 2 1 0.000000
+ "C2" "Cg" 0 2 131072 3 6 0.253000
+ "H2" "H1" 0 2 131072 4 1 0.000000
+ "C3" "Cg" 0 2 131072 5 6 0.345000
+ "H3" "H1" 0 2 131072 6 1 0.000000
+ "C4" "Cg" 0 2 131072 7 6 0.122000
+ "H4" "H1" 0 2 131072 8 1 0.000000
+ "C5" "Cg" 0 2 131072 9 6 0.377000
+ "H5E" "H1" 0 2 131072 10 1 0.000000
+ "H5A" "H1" 0 2 131072 11 1 0.000000
+ "O5" "Os" 0 2 131072 12 8 -0.561000
+ "O4" "Oh" 0 2 131072 13 8 -0.663000
+ "H4O" "Ho" 0 2 131072 14 1 0.419000
+ "O3" "Oh" 0 2 131072 15 8 -0.737000
+ "H3O" "Ho" 0 2 131072 16 1 0.443000
+ "O2" "Oh" 0 2 131072 17 8 -0.711000
+ "H2O" "Ho" 0 2 131072 18 1 0.419000
+!entry.CONDENSEDSEQUENCE.unit.atomspertinfo table  str pname  str ptype  int ptypex  int pelmnt  dbl pchg
+ "HO1" "Ho" 0 -1 0.0
+ "O1" "Oh" 0 -1 0.0
+ "C1" "Cg" 0 -1 0.0
+ "H1" "H2" 0 -1 0.0
+ "C2" "Cg" 0 -1 0.0
+ "H2" "H1" 0 -1 0.0
+ "C3" "Cg" 0 -1 0.0
+ "H3" "H1" 0 -1 0.0
+ "C4" "Cg" 0 -1 0.0
+ "H4" "H1" 0 -1 0.0
+ "C5" "Cg" 0 -1 0.0
+ "H5E" "H1" 0 -1 0.0
+ "H5A" "H1" 0 -1 0.0
+ "O5" "Os" 0 -1 0.0
+ "O4" "Oh" 0 -1 0.0
+ "H4O" "Ho" 0 -1 0.0
+ "O3" "Oh" 0 -1 0.0
+ "H3O" "Ho" 0 -1 0.0
+ "O2" "Oh" 0 -1 0.0
+ "H2O" "Ho" 0 -1 0.0
+!entry.CONDENSEDSEQUENCE.unit.boundbox array dbl
+ -1.000000
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+!entry.CONDENSEDSEQUENCE.unit.childsequence single int
+ 3
+!entry.CONDENSEDSEQUENCE.unit.connect array int
+ 1
+ 20
+!entry.CONDENSEDSEQUENCE.unit.connectivity table  int atom1x  int atom2x  int flags
+ 1 2 1
+ 3 14 1
+ 3 4 1
+ 3 5 1
+ 2 3 1
+ 5 6 1
+ 5 7 1
+ 5 19 1
+ 7 8 1
+ 7 9 1
+ 7 17 1
+ 9 10 1
+ 9 11 1
+ 9 15 1
+ 11 12 1
+ 11 13 1
+ 11 14 1
+ 15 16 1
+ 17 18 1
+ 19 20 1
+!entry.CONDENSEDSEQUENCE.unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx
+ "U" 0 "R" 1
+ "R" 1 "A" 1
+ "R" 1 "A" 2
+ "U" 0 "R" 2
+ "R" 2 "A" 3
+ "R" 2 "A" 4
+ "R" 2 "A" 5
+ "R" 2 "A" 6
+ "R" 2 "A" 7
+ "R" 2 "A" 8
+ "R" 2 "A" 9
+ "R" 2 "A" 10
+ "R" 2 "A" 11
+ "R" 2 "A" 12
+ "R" 2 "A" 13
+ "R" 2 "A" 14
+ "R" 2 "A" 15
+ "R" 2 "A" 16
+ "R" 2 "A" 17
+ "R" 2 "A" 18
+ "R" 2 "A" 19
+ "R" 2 "A" 20
+!entry.CONDENSEDSEQUENCE.unit.name single str
+ "CONDENSEDSEQUENCE"
+!entry.CONDENSEDSEQUENCE.unit.positions table  dbl x  dbl y  dbl z
+ -3.766903 9.089939 -1.562014
+ -4.172209 9.583274 -2.278916
+ -3.474295 8.429161 -2.754141
+ -2.419893 8.486930 -2.483957
+ -3.592653 8.336203 -4.293803
+ -2.918385 7.538662 -4.609353
+ -4.994147 7.970126 -4.822543
+ -4.956652 7.803562 -5.900102
+ -5.464263 6.689228 -4.104173
+ -4.818999 5.865348 -4.412614
+ -5.410243 6.795730 -2.571819
+ -5.653813 5.836021 -2.116043
+ -6.126026 7.535927 -2.211203
+ -4.043791 7.196289 -2.157515
+ -6.807410 6.366037 -4.499739
+ -7.399973 7.068323 -4.221771
+ -5.914337 9.049859 -4.547852
+ -6.778160 8.832343 -4.905756
+ -3.115136 9.543739 -4.913926
+ -3.684054 10.275874 -4.665103
+!entry.CONDENSEDSEQUENCE.unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x
+ 2 2 0 0 0 0
+ 3 3 0 0 0 0
+!entry.CONDENSEDSEQUENCE.unit.residues table  str name  int seq  int childseq  int startatomx  str restype  int imagingx
+ "ROH" 1 3 1 "?" 0
+ "0RA" 2 19 3 "?" 0
+!entry.CONDENSEDSEQUENCE.unit.solventcap array dbl
+ -1.000000
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+!entry.CONDENSEDSEQUENCE.unit.velocities table  dbl x  dbl y  dbl z
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0

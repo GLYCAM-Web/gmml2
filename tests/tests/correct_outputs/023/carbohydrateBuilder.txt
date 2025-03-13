@@ -267,3 +267,11 @@ Building DXylp[4S]a1-6DManpNAcb1-4DManpNAca1-2DFrupa
 *********************
 Building DManp[2A]a1-6DManpa1-6[DManp[6S]a1-6DManpa1-4]DGlcpa1-4[2DManpa1-2DManpa1-]<2>2LFucpa1-4LFucpa1-2LFrupa
 *********************
+
+*********************
+Building DRibfa1-5DArafa1-5DXylfa1-5DLyxfa1-5DRibfa1-2DRibfa1-OH
+*********************
+
+*********************
+Building DRibpa1-OH
+*********************

@@ -63,7 +63,7 @@ namespace
           // Omega angle in x-5 furanose linkages.
           { "C.*"  , "O5"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
           { "C.*"  , "O5"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
- //         { "C.*"  , "O5"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
+          { "C.*"  , "O5"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
           // Omega angle in x-6 furanose linkages.
           { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
           { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "O5"  },
