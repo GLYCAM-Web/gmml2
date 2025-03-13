@@ -61,7 +61,7 @@ namespace glycoproteinBuilder
             auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
             return codeUtils::weightedRandomOrder(rng, weights);
         };
-        bool freezeGlycositeResidueConformation = settings.freezeGlycositeResidueConformation;
+        bool freezeGlycositeResidueConformation = settings.useInitialGlycositeResidueConformation;
         double preferenceDeviation              = 2.0;
         double searchDeviation                  = 0.5;
         double searchIncrement                  = 1.0;
@@ -310,9 +310,9 @@ namespace glycoproteinBuilder
         const AssemblyData& data        = assembly.data;
         const MutableData& initialState = assembly.mutableData;
         SidechainAdjustment sidechainAdjustment =
-            settings.allowSidechainAdjustment ? adjustSidechains : noSidechainAdjustment;
+            settings.moveOverlappingSidechains ? adjustSidechains : noSidechainAdjustment;
         SidechainAdjustment sidechainRestoration =
-            settings.allowSidechainAdjustment ? restoreSidechains : noSidechainAdjustment;
+            settings.moveOverlappingSidechains ? restoreSidechains : noSidechainAdjustment;
 
         std::vector<cds::ResidueType> nonProteinTypes {cds::ResidueType::Sugar, cds::ResidueType::Derivative,
                                                        cds::ResidueType::Aglycone, cds::ResidueType::Undefined};
@@ -389,7 +389,7 @@ namespace glycoproteinBuilder
                         otherSelection, data.atoms.elements, data.equalWeight, data.residueEdges.atomsCloseToEdge);
                     for (size_t n : assembly::moleculeSelectedAtoms(graph, glycanSelection, molecule))
                     {
-                        if (overlap[n].weight > settings.atomPotentialRejectionThreshold)
+                        if (overlap[n].weight > settings.overlapRejectionThreshold)
                         {
                             reject = true;
                         }

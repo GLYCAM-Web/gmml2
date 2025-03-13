@@ -113,22 +113,22 @@ namespace glycoproteinBuilder
                     {
                         gpInputs.persistCycles = parseUlong(value);
                     }
-                    else if (parameter == freezeGlycositeResidueConformationParameter)
+                    else if (parameter == useInitialGlycositeResidueConformationParameter)
                     {
-                        gpInputs.freezeGlycositeResidueConformation = parseBool(value);
+                        gpInputs.useInitialGlycositeResidueConformation = parseBool(value);
                     }
-                    else if (parameter == allowSidechainAdjustmentParameter)
+                    else if (parameter == moveOverlappingSidechainsParameter)
                     {
-                        gpInputs.allowSidechainAdjustment = parseBool(value);
+                        gpInputs.moveOverlappingSidechains = parseBool(value);
                     }
                     else if (parameter == deleteIncompatibleSitesParameter)
                     {
                         gpInputs.deleteSitesUntilResolved = parseBool(value);
                     }
-                    else if (parameter == atomPotentialRejectionThresholdParameter)
+                    else if (parameter == overlapRejectionThresholdParameter)
                     {
-                        gpInputs.rejectExcessiveGlycanOverlaps   = true;
-                        gpInputs.atomPotentialRejectionThreshold = parseDouble(value);
+                        gpInputs.rejectExcessiveGlycanOverlaps = true;
+                        gpInputs.overlapRejectionThreshold     = parseDouble(value);
                     }
                     else if (parameter == seedParameter)
                     {

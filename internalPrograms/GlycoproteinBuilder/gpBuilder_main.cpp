@@ -191,7 +191,7 @@ int main(int argc, char* argv[])
             sidechainRotamers,
             glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapMultiplier,
                                                                settings.overlapTolerance, excludeHydrogen));
-        if (settings.allowSidechainAdjustment)
+        if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck =
                 codeUtils::vectorAnd(assembly.data.atoms.includeInMainOverlapCheck,

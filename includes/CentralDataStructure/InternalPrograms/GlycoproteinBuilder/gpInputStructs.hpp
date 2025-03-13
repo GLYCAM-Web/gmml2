@@ -8,15 +8,15 @@
 
 namespace glycoproteinBuilder
 {
-    static const std::string proteinParameter                            = "Protein";
-    static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
-    static const std::string persistCyclesParameter                      = "persistCycles";
-    static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
-    static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
-    static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
-    static const std::string atomPotentialRejectionThresholdParameter    = "atomPotentialForceRejectionThreshold";
-    static const std::string seedParameter                               = "seed";
-    static const std::string prepareForMDParameter                       = "prepareForMD";
+    static const std::string proteinParameter                                = "Protein";
+    static const std::string numberOfStructuresParameter                     = "numberOfOutputStructures";
+    static const std::string persistCyclesParameter                          = "persistCycles";
+    static const std::string useInitialGlycositeResidueConformationParameter = "useInitialGlycositeResidueConformation";
+    static const std::string moveOverlappingSidechainsParameter              = "moveOverlappingSidechains";
+    static const std::string deleteIncompatibleSitesParameter                = "deleteNonviableGlycosites";
+    static const std::string overlapRejectionThresholdParameter              = "overlapRejectionThreshold";
+    static const std::string seedParameter                                   = "rngSeed";
+    static const std::string prepareForMDParameter                           = "prepareForMD";
 
     struct GlycositeInput
     {
@@ -28,19 +28,19 @@ namespace glycoproteinBuilder
     struct GlycoproteinBuilderInputs
     {
         std::string inputFileName;
-        std::string substrateFileName           = "Undefined"; // Program should throw if left as "Undefined".
-        ulong number3DStructures                = 1;
-        ulong persistCycles                     = 5;
-        double overlapTolerance                 = constants::overlapTolerance;
-        bool freezeGlycositeResidueConformation = false;
-        bool allowSidechainAdjustment           = false;
-        bool deleteSitesUntilResolved           = false;
-        bool rejectExcessiveGlycanOverlaps      = false;
-        double atomPotentialRejectionThreshold  = 0.0;
-        bool isDeterministic                    = false;
-        uint64_t seed                           = 0;
-        bool MDprep                             = false;
-        bool writeOffFile                       = false;
+        std::string substrateFileName               = "Undefined"; // Program should throw if left as "Undefined".
+        ulong number3DStructures                    = 1;
+        ulong persistCycles                         = 5;
+        double overlapTolerance                     = constants::overlapTolerance;
+        bool useInitialGlycositeResidueConformation = false;
+        bool moveOverlappingSidechains              = false;
+        bool deleteSitesUntilResolved               = false;
+        bool rejectExcessiveGlycanOverlaps          = false;
+        double overlapRejectionThreshold            = 0.0;
+        bool isDeterministic                        = false;
+        uint64_t seed                               = 0;
+        bool MDprep                                 = false;
+        bool writeOffFile                           = false;
         std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
     };
 
