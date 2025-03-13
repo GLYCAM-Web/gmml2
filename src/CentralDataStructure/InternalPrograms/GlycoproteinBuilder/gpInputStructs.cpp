@@ -113,10 +113,6 @@ namespace glycoproteinBuilder
                     {
                         gpInputs.persistCycles = parseUlong(value);
                     }
-                    else if (parameter == overlapToleranceParameter)
-                    {
-                        gpInputs.overlapTolerance = parseDouble(value);
-                    }
                     else if (parameter == freezeGlycositeResidueConformationParameter)
                     {
                         gpInputs.freezeGlycositeResidueConformation = parseBool(value);

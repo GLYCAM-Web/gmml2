@@ -11,7 +11,6 @@ namespace glycoproteinBuilder
     static const std::string proteinParameter                            = "Protein";
     static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
     static const std::string persistCyclesParameter                      = "persistCycles";
-    static const std::string overlapToleranceParameter                   = "atomOverlapTolerance";
     static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
     static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
     static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
