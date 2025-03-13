@@ -50,9 +50,10 @@ namespace glycoproteinBuilder
                          const GlycoproteinAssembly& assembly, const GlycoproteinBuilderInputs& settings,
                          const std::string& outputDir, const std::vector<std::string>& headerLines, int numThreads)
     {
-        const std::string rejectDir   = outputDir + "/rejected";
-        const std::string deletionDir = outputDir + "/deletions";
-        uint64_t seed                 = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
+        const std::string structureDir = outputDir + "/structures";
+        const std::string rejectDir    = structureDir + "/rejected";
+        const std::string deletionDir  = structureDir + "/deletions";
+        uint64_t seed                  = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
         pcg32 seedingRng(seed);
 
         auto randomMetadata = [](pcg32& rng, GlycamMetadata::DihedralAngleDataVector metadataVector)
@@ -395,7 +396,7 @@ namespace glycoproteinBuilder
                     }
                 }
             }
-            directory = hasDeleted ? deletionDir : (reject ? rejectDir : outputDir);
+            directory = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
             std::stringstream prefix;
             prefix << count << "_glycoprotein";
             std::string prefixStr = prefix.str();
