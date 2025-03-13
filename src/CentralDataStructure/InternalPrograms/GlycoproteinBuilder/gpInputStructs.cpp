@@ -127,8 +127,7 @@ namespace glycoproteinBuilder
                     }
                     else if (parameter == overlapRejectionThresholdParameter)
                     {
-                        gpInputs.rejectExcessiveGlycanOverlaps = true;
-                        gpInputs.overlapRejectionThreshold     = parseDouble(value);
+                        gpInputs.overlapRejectionThreshold = parseDouble(value);
                     }
                     else if (parameter == seedParameter)
                     {

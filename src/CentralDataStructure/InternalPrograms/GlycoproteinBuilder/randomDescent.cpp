@@ -204,20 +204,21 @@ namespace glycoproteinBuilder
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 
         cds::Overlap globalOverlap                                   = initialState.overlap;
-        std::vector<size_t> overlapSites                             = initialState.overlapSites;
+        std::vector<size_t> sitesWithOverlap                         = initialState.sitesWithOverlap;
+        std::vector<size_t> sitesAboveOverlapThreshold               = initialState.sitesAboveOverlapThreshold;
         std::vector<cds::GlycanShapePreference> glycositePreferences = initialState.preferences;
         const assembly::Selection eachSelection                      = assembly::selectByAtomsAndMolecules(
             graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
         const assembly::Selection mainSelection = assembly::selectByAtomsAndMolecules(
             graph, data.atoms.includeInMainOverlapCheck, mutableData.moleculeIncluded);
         uint cycle = 0;
-        while ((!overlapSites.empty()) && (cycle < persistCycles))
+        while ((!sitesAboveOverlapThreshold.empty()) && (cycle < persistCycles))
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles));
             cycle++;
             cds::Overlap newGlobalOverlap = globalOverlap;
-            for (auto& glycanId : codeUtils::shuffleVector(rng, overlapSites))
+            for (auto& glycanId : codeUtils::shuffleVector(rng, sitesWithOverlap))
             {
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                 cds::Overlap previousOverlap =
@@ -254,9 +255,12 @@ namespace glycoproteinBuilder
                 cycle = 0;
             }
             globalOverlap = newGlobalOverlap;
-            overlapSites  = determineSitesWithOverlap(overlapSites, graph, data, eachSelection, mutableData.bounds);
+            sitesWithOverlap =
+                determineSitesWithOverlap(0.0, sitesWithOverlap, graph, data, eachSelection, mutableData.bounds);
+            sitesAboveOverlapThreshold = determineSitesWithOverlap(data.overlapRejectionThreshold, sitesWithOverlap,
+                                                                   graph, data, eachSelection, mutableData.bounds);
         }
-        return {globalOverlap, overlapSites, glycositePreferences};
+        return {globalOverlap, sitesWithOverlap, sitesAboveOverlapThreshold, glycositePreferences};
     }
 
 } // namespace glycoproteinBuilder

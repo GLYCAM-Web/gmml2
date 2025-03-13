@@ -179,8 +179,8 @@ int main(int argc, char* argv[])
         cds::setInterConnectivity(gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
-        double selfWeight    = 1000000.0;
-        double proteinWeight = 1000.0;
+        double selfWeight    = 1.0;
+        double proteinWeight = 1.0;
         double glycanWeight  = 1.0;
         glycoproteinBuilder::OverlapMultiplier overlapMultiplier {proteinWeight, glycanWeight, selfWeight};
 
@@ -188,9 +188,9 @@ int main(int argc, char* argv[])
 
         bool excludeHydrogen                               = false;
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
-            sidechainRotamers,
-            glycoproteinBuilder::toGlycoproteinAssemblyStructs(molecules, glycosites, overlapMultiplier,
-                                                               settings.overlapTolerance, excludeHydrogen));
+            sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
+                                   molecules, glycosites, overlapMultiplier, settings.overlapTolerance,
+                                   settings.overlapRejectionThreshold, excludeHydrogen));
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck =

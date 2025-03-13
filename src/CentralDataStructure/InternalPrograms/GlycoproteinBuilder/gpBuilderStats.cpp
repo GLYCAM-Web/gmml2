@@ -57,8 +57,7 @@ namespace glycoproteinBuilder
              {seedParameter, std::to_string(seed)},
              {prepareForMDParameter, boolStr(input.MDprep)},
              {persistCyclesParameter, std::to_string(input.persistCycles)},
-             {overlapRejectionThresholdParameter,
-              (input.rejectExcessiveGlycanOverlaps ? std::to_string(input.overlapRejectionThreshold) : "none")},
+             {overlapRejectionThresholdParameter, std::to_string(input.overlapRejectionThreshold)},
              {useInitialGlycositeResidueConformationParameter, boolStr(input.useInitialGlycositeResidueConformation)},
              {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
              {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)}}

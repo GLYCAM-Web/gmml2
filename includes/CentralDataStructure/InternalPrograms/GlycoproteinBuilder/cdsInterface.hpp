@@ -12,6 +12,6 @@ namespace glycoproteinBuilder
     GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
                                                        std::vector<GlycosylationSite>& glycosites,
                                                        const OverlapMultiplier overlapWeight, double overlapTolerance,
-                                                       bool excludeHydrogen);
+                                                       double overlapRejectionThreshold, bool excludeHydrogen);
 } // namespace glycoproteinBuilder
 #endif

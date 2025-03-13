@@ -61,9 +61,9 @@ namespace glycoproteinBuilder
         return cds::overlapVectorSum(overlapWithin) + cds::overlapVectorSum(overlapBetween);
     };
 
-    std::vector<size_t> determineSitesWithOverlap(const std::vector<size_t>& movedSites, const assembly::Graph& graph,
-                                                  const AssemblyData& data, const assembly::Selection& selection,
-                                                  const assembly::Bounds& bounds)
+    std::vector<size_t> determineSitesWithOverlap(double threshold, const std::vector<size_t>& movedSites,
+                                                  const assembly::Graph& graph, const AssemblyData& data,
+                                                  const assembly::Selection& selection, const assembly::Bounds& bounds)
 
     {
         const cds::MoleculeOverlapWeight& weight = data.equalWeight;
@@ -75,9 +75,10 @@ namespace glycoproteinBuilder
             assembly::Selection proteinSelection = assembly::selectByAtomsAndMolecules(
                 graph, selection.atoms, codeUtils::indicesToBools(graph.moleculeCount, data.indices.proteinMolecules));
 
-            return containsOverlap(cds::overlapsBetweenSelections(
-                data.potentialTable, data.overlapTolerance, graph, bounds, glycanSelection, proteinSelection,
-                data.atoms.elements, weight, data.residueEdges.atomsCloseToEdge));
+            return containsOverlapExceedingThreshold(
+                threshold, cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds,
+                                                          glycanSelection, proteinSelection, data.atoms.elements,
+                                                          weight, data.residueEdges.atomsCloseToEdge));
         };
         auto hasSelfOverlap = [&](size_t n)
         {
@@ -86,9 +87,10 @@ namespace glycoproteinBuilder
             assembly::Selection glycanSelection =
                 assembly::selectByAtomsAndMolecules(graph, selection.atoms, glycanMolecule);
 
-            return containsOverlap(cds::overlapsWithinSelection(data.potentialTable, data.overlapTolerance, graph,
-                                                                bounds, glycanSelection, data.atoms.elements, weight,
-                                                                data.residueEdges.atomsCloseToEdge));
+            return containsOverlapExceedingThreshold(
+                threshold,
+                cds::overlapsWithinSelection(data.potentialTable, data.overlapTolerance, graph, bounds, glycanSelection,
+                                             data.atoms.elements, weight, data.residueEdges.atomsCloseToEdge));
         };
         size_t glycanCount = data.glycans.moleculeId.size();
         std::vector<size_t> sitesToCheck;
@@ -118,7 +120,7 @@ namespace glycoproteinBuilder
                     std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(
                         data.potentialTable, data.overlapTolerance, graph, bounds, selectionN, selectionK,
                         data.atoms.elements, weight, data.residueEdges.atomsCloseToEdge);
-                    if (cds::containsOverlap(overlap))
+                    if (cds::containsOverlapExceedingThreshold(threshold, overlap))
                     {
                         glycanOverlap[n] = true;
                         glycanOverlap[k] = true;

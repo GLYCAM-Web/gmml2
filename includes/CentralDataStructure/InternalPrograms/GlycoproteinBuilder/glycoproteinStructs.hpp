@@ -133,6 +133,7 @@ namespace glycoproteinBuilder
         cds::MoleculeOverlapWeight defaultWeight;
         cds::MoleculeOverlapWeight equalWeight;
         double overlapTolerance;
+        double overlapRejectionThreshold;
     };
 
     struct MutableData
