@@ -356,7 +356,7 @@ namespace glycoproteinBuilder
             stats = StructureStats {"reference", false, false, mutableData.bounds, selection, atomOverlaps};
         };
 
-        auto runIteration = [&](pcg32 rng, StructureStats& stats, size_t count)
+        auto runIteration = [&](pcg32 rng, StructureStats& stats, const std::string& prefix)
         {
             MutableData mutableData = initialState;
             resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
@@ -396,30 +396,44 @@ namespace glycoproteinBuilder
                     }
                 }
             }
-            directory = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
-            std::stringstream prefix;
-            prefix << count << "_glycoprotein";
-            std::string prefixStr = prefix.str();
-            bool serialized       = settings.MDprep;
+            directory       = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
+            bool serialized = settings.MDprep;
             writePdbFile(graph, data, coordinates, atomNumbers(serialized, data), residueNumbers(serialized, data),
-                         mutableData.moleculeIncluded, writtenConnections, directory, prefixStr);
+                         mutableData.moleculeIncluded, writtenConnections, directory, prefix);
             if (settings.writeOffFile)
             {
-                writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefixStr);
+                writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefix);
             }
-            stats = StructureStats {prefixStr, reject, hasDeleted, mutableData.bounds, selection, atomOverlaps};
+            stats = StructureStats {prefix, reject, hasDeleted, mutableData.bounds, selection, atomOverlaps};
         };
 
         writePdbFile(graph, data, getCoordinates(data.atoms.initialState), data.atoms.numbers, data.residues.numbers,
                      initialState.moleculeIncluded, noConnections, outputDir, "unresolved");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
-        size_t totalStructures = settings.number3DStructures + 1;
+        size_t extraStructures = settings.number3DStructures;
+        size_t totalStructures = extraStructures + 1;
         std::vector<uint64_t> rngSeeds;
         rngSeeds.reserve(totalStructures);
         for (size_t n = 0; n < totalStructures; n++)
         {
             rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
+        }
+        std::vector<std::string> prefixes;
+        prefixes.reserve(extraStructures);
+        if (extraStructures == 1)
+        {
+            prefixes.push_back("glycoprotein");
+        }
+        else if (extraStructures > 1)
+        {
+            size_t digitCount = std::to_string(extraStructures - 1).size();
+            for (size_t n = 0; n < extraStructures; n++)
+            {
+                std::string digits      = std::to_string(n);
+                std::string extraZeroes = std::string(digitCount - digits.size(), '0');
+                prefixes.push_back(extraZeroes + digits + "_glycoprotein");
+            }
         }
         // will be initialized in loop
         std::vector<StructureStats> stats(totalStructures);
@@ -436,7 +450,7 @@ namespace glycoproteinBuilder
             }
             else
             {
-                runIteration(rng, stats[count], count - 1);
+                runIteration(rng, stats[count], prefixes[count - 1]);
             }
         }
 
