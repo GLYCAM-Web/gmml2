@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/shapeRandomization.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/randomDescent.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpBuilderStats.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
@@ -333,11 +334,14 @@ namespace glycoproteinBuilder
             }
         }
 
-        auto runInitial = [&](pcg32 rng)
+        auto runInitial = [&](pcg32 rng, StructureStats& stats)
         {
             MutableData mutableData = initialState;
             resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData, false);
             std::vector<cds::Coordinate> resolvedCoords = getCoordinates(mutableData.bounds.atoms);
+            assembly::Selection selection               = assembly::selectAll(graph);
+            std::vector<cds::Overlap> atomOverlaps =
+                totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
             writePdbFile(graph, data, resolvedCoords, data.atoms.numbers, data.residues.numbers,
                          mutableData.moleculeIncluded, noConnections, outputDir, "glycoprotein");
             if (settings.writeOffFile)
@@ -347,9 +351,10 @@ namespace glycoproteinBuilder
             writePdbFile(graph, data, resolvedCoords, data.atoms.serializedNumbers, data.residues.serializedNumbers,
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir,
                          "glycoprotein_serialized");
+            stats = StructureStats {"glycoprotein", false, false, mutableData.bounds, selection, atomOverlaps};
         };
 
-        auto runIteration = [&](pcg32 rng, size_t count)
+        auto runIteration = [&](pcg32 rng, StructureStats& stats, size_t count)
         {
             MutableData mutableData = initialState;
             resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
@@ -358,15 +363,15 @@ namespace glycoproteinBuilder
             const assembly::Selection fullSelection =
                 assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
 
-            bool hasDeleted       = codeUtils::contains(mutableData.moleculeIncluded, false);
-            bool reject           = false;
-            std::string directory = outputDir;
+            bool hasDeleted               = codeUtils::contains(mutableData.moleculeIncluded, false);
+            bool reject                   = false;
+            std::string directory         = outputDir;
+            assembly::Selection selection = assembly::selectByAtomsAndMolecules(
+                graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
+            std::vector<cds::Overlap> atomOverlaps =
+                totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
             if (settings.rejectExcessiveGlycanOverlaps)
             {
-                assembly::Selection selection = assembly::selectByAtomsAndMolecules(
-                    graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
-                std::vector<cds::Overlap> atomOverlaps =
-                    totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
                 for (size_t molecule : includedGlycanMoleculeIds(data, mutableData.moleculeIncluded))
                 {
                     std::vector<bool> otherMolecules = mutableData.moleculeIncluded;
@@ -399,14 +404,7 @@ namespace glycoproteinBuilder
             {
                 writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefixStr);
             }
-            size_t moved = 0;
-            for (size_t n : graph.residues.nodes.indices)
-            {
-                if (mutableData.residueSidechainMoved[n])
-                {
-                    moved++;
-                }
-            }
+            stats = StructureStats {prefixStr, reject, hasDeleted, mutableData.bounds, selection, atomOverlaps};
         };
 
         writePdbFile(graph, data, getCoordinates(data.atoms.initialState), data.atoms.numbers, data.residues.numbers,
@@ -420,6 +418,8 @@ namespace glycoproteinBuilder
         {
             rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
         }
+        // will be initialized in loop
+        std::vector<StructureStats> stats(totalStructures);
 
         codeUtils::setOpenMpNumberOfThreads(numThreads);
 // clang format doesn't align pragmas
@@ -429,12 +429,29 @@ namespace glycoproteinBuilder
             pcg32 rng(rngSeeds[count]);
             if (count == 0)
             {
-                runInitial(rng);
+                runInitial(rng, stats[0]);
             }
             else
             {
-                runIteration(rng, count - 1);
+                runIteration(rng, stats[count], count - 1);
             }
         }
+
+        Summary summary = summarizeStats(graph, data, settings, seed, stats);
+        codeUtils::writeToFile(outputDir + "/summary.txt",
+                               [&](std::ostream& stream)
+                               {
+                                   stream << plaintextSummary(summary, headerLines);
+                               });
+        codeUtils::writeToFile(outputDir + "/summary.html",
+                               [&](std::ostream& stream)
+                               {
+                                   stream << htmlSummary(summary, headerLines);
+                               });
+        codeUtils::writeToFile(outputDir + "/structures.csv",
+                               [&](std::ostream& stream)
+                               {
+                                   stream << csvTable(summary.structuretable);
+                               });
     }
 } // namespace glycoproteinBuilder

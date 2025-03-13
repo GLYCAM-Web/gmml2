@@ -8,6 +8,17 @@
 
 namespace glycoproteinBuilder
 {
+    static const std::string proteinParameter                            = "Protein";
+    static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
+    static const std::string persistCyclesParameter                      = "persistCycles";
+    static const std::string overlapToleranceParameter                   = "atomOverlapTolerance";
+    static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
+    static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
+    static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
+    static const std::string atomPotentialRejectionThresholdParameter    = "atomPotentialForceRejectionThreshold";
+    static const std::string seedParameter                               = "seed";
+    static const std::string prepareForMDParameter                       = "prepareForMD";
+
     struct GlycositeInput
     {
         std::string proteinResidueId = ""; // E.g. ?_20_A if no chain ID and residue number is 20 and insertion code is
@@ -17,6 +28,7 @@ namespace glycoproteinBuilder
 
     struct GlycoproteinBuilderInputs
     {
+        std::string inputFileName;
         std::string substrateFileName           = "Undefined"; // Program should throw if left as "Undefined".
         ulong number3DStructures                = 1;
         ulong persistCycles                     = 5;

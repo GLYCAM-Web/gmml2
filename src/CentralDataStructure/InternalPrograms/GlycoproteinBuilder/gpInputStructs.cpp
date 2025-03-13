@@ -14,24 +14,15 @@ namespace glycoproteinBuilder
 {
     GlycoproteinBuilderInputs readGPInputFile(std::string inputFileName)
     {
-        static const std::string proteinParameter                            = "Protein";
-        static const std::string numberOfStructuresParameter                 = "NumberOfOutputStructures";
-        static const std::string persistCyclesParameter                      = "persistCycles";
-        static const std::string overlapToleranceParameter                   = "atomOverlapTolerance";
-        static const std::string freezeGlycositeResidueConformationParameter = "freezeGlycositeResidueConformation";
-        static const std::string allowSidechainAdjustmentParameter           = "allowSidechainAdjustment";
-        static const std::string deleteIncompatibleSitesParameter            = "deleteIncompatibleSites";
-        static const std::string atomPotentialRejectionThresholdParameter    = "atomPotentialForceRejectionThreshold";
-        static const std::string seedParameter                               = "seed";
-        static const std::string prepareForMDParameter                       = "prepareForMD";
-        static const std::string glycanSectionParameter                      = "ProteinResidue, GlycanName";
-        static const std::vector<std::string> requiredParameters             = {proteinParameter};
-        std::vector<std::string> foundParameters                             = {};
+        const std::string glycanSectionParameter          = "ProteinResidue, GlycanName";
+        const std::vector<std::string> requiredParameters = {proteinParameter};
+        std::vector<std::string> foundParameters          = {};
 
         bool foundGlycanSection   = false;
         bool readingGlycanSection = false;
         GlycoproteinBuilderInputs gpInputs;
-        auto processLine = [&](const std::string& original, size_t lineNumber)
+        gpInputs.inputFileName = inputFileName;
+        auto processLine       = [&](const std::string& original, size_t lineNumber)
         {
             auto throwError = [&](const std::string& str)
             {
