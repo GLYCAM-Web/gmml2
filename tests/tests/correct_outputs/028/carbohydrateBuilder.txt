@@ -1534,3 +1534,43 @@ Number of likely shapes is 1
 Number of possible shapes is 1
 ROH_1_?_?
 0RA_2_?_?
+
+*********************
+Building id 00102:DFrufb2-4DFrufa2-4DFrufa2-OME
+*********************
+Input:
+DFrufb2-4DFrufa2-4DFrufa2-OME
+Interpreted:
+DFrufb2-4DFrufa2-4DFrufa2-OME
+IndexOrdered:
+DFrufb2-4DFrufa2-4DFrufa2-OME
+IndexOrderedLabeled:
+DFruf&Label=residue-4;b2-4&Label=link-2;DFruf&Label=residue-3;a2-4&Label=link-1;DFruf&Label=residue-2;a2-&Label=link-0;OME&Label=residue-1;
+Parsed and labelled 00102 with no exceptions thrown.
+
+Number of residues for this sequence is 4
+Number of likely shapes is 1
+Number of possible shapes is 1
+OME_1_?_?
+4CD_2_?_?
+4CD_3_?_?
+0CU_4_?_?
+
+*********************
+Building id 00103:DFrufb2-2DFrufa
+*********************
+Input:
+DFrufb2-2DFrufa
+Interpreted:
+DFrufb2-2DFrufa
+IndexOrdered:
+DFrufb2-2DFrufa
+IndexOrderedLabeled:
+DFruf&Label=residue-2;b2-2&Label=link-0;DFruf&Label=residue-1;
+Parsed and labelled 00103 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+2CD_1_?_?
+0CU_2_?_?

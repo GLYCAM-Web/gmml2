@@ -72,7 +72,10 @@ namespace
  		  { "C1"   , "O1"     , "Phi"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {}             , {"ketose"}                , "C2" , "C1" , "O1" , "C1" },
   		  { "C1"   , "O1"     , "Psi"  ,-150.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {}             , {"ketose"}                , "C1" , "O1" , "C1" , "C2" },
   		  { "C1"   , "O1"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 1 , {}             , {"ketose"}                , "O1" , "C1" , "C2" , "O5" },
-		  // Omega angle in x-1 linkages in ketose, furanoses
+		  // Ketose 2-2 linkages to other ketoses
+		  { "C2"   , "O2"     , "Phi"  ,    0.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {"ketose"}  , {"ketose"}                , "C1" , "C2" , "O2" , "C2" },
+		  { "C2"   , "O2"     , "Psi"  ,   90.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {"ketose"}  , {"ketose"}                , "C2" , "O2" , "C2" , "C1" },
+		  // Omega angle in x-1 linkages to ketofuranoses
           { "C.*"  , "O1"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose", "ketose"}        , "O1" , "C1" , "C2" , "O6"  },
           { "C.*"  , "O1"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose", "ketose"}        , "O1" , "C1" , "C2" , "O6"  },
 		  // Sucrose from: Bock K, Lemieux RU. Carbohydrate Research, 100 (1982) 63-74. Now allowing ordering of sequence either way, thus four entries instead of two.
