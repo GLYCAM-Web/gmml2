@@ -90,6 +90,7 @@
 ./src/CodeUtils/parsing.cpp
 ./src/CodeUtils/random.cpp
 ./src/CodeUtils/strings.cpp
+./src/CodeUtils/structuredFiles.cpp
 ./src/CodeUtils/threads.cpp
 ./src/Graph/graphFunctions.cpp
 ./src/Graph/graphManipulation.cpp
