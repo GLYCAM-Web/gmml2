@@ -1,7 +1,9 @@
-### Glycoprotein Builder ###
+##### Glycoprotein Builder #####
+
 Produced by GMML (https://github.com/GLYCAM-Web/gmml2) in test mode
 
-## Input ##
+#### Input ####
+
 Filename: tests/inputs/017.GlycoproteinBuilder/deleteSites.txt
 Protein: tests/inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
@@ -15,9 +17,10 @@ useInitialGlycositeResidueConformation   false
 moveOverlappingSidechains                false   
 deleteNonviableGlycosites                true    
 
-## Structures ##
+#### Structures ####
 
-Filename       | Status | Highest atom potential | Deleted sites
-reference                 0.144396                              
-0_glycoprotein            0.042803                              
-1_glycoprotein            0.035589                              
+Filename       | Status | Highest atom potential | Deleted sites | Moved sidechains
+reference                 0.144396                                                 
+0_glycoprotein            0.042803                                                 
+1_glycoprotein            0.035589                                                 
+

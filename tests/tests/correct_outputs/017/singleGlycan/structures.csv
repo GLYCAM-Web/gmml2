@@ -1,4 +1,4 @@
-Filename,Status,Highest atom potential,Deleted sites
-reference,,0.000000,
-0_glycoprotein,,0.000000,
-1_glycoprotein,,0.000000,
+Filename,Status,Highest atom potential,Deleted sites,Moved sidechains
+reference,,0.000000,,
+0_glycoprotein,,0.000000,,
+1_glycoprotein,,0.000000,,
