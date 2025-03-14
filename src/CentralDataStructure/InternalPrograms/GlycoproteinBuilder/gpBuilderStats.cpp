@@ -74,7 +74,7 @@ namespace glycoproteinBuilder
         };
 
         codeUtils::TextTable structureTable {
-            {"Filename", "Status", "Highest atom potential", "Deleted sites", "Moved sidechains"},
+            {"Filename", "Status", "Highest atom overlap", "Deleted glycosites", "Moved sidechains"},
             codeUtils::vectorMap(toRow, stats)
         };
 

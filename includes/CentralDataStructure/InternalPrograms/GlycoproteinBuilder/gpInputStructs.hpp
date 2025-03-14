@@ -13,7 +13,7 @@ namespace glycoproteinBuilder
     static const std::string persistCyclesParameter                          = "persistCycles";
     static const std::string useInitialGlycositeResidueConformationParameter = "useInitialGlycositeResidueConformation";
     static const std::string moveOverlappingSidechainsParameter              = "moveOverlappingSidechains";
-    static const std::string deleteIncompatibleSitesParameter                = "deleteNonviableGlycosites";
+    static const std::string deleteIncompatibleSitesParameter                = "deleteUnresolvableGlycosites";
     static const std::string overlapRejectionThresholdParameter              = "overlapRejectionThreshold";
     static const std::string seedParameter                                   = "rngSeed";
     static const std::string prepareForMDParameter                           = "prepareForMD";
