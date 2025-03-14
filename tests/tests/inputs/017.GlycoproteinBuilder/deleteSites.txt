@@ -6,7 +6,9 @@ numberOfOutputStructures:2
 
 persistCycles:5
 
-deleteNonviableGlycosites:true
+overlapRejectionThreshold:0.0
+
+deleteUnresolvableGlycosites:true
 
 rngSeed:0
 

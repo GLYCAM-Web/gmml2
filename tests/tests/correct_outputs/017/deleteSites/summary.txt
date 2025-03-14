@@ -12,15 +12,15 @@ numberOfOutputStructures                 2
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
-overlapRejectionThreshold                0.500000
+overlapRejectionThreshold                0.000000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                false   
-deleteNonviableGlycosites                true    
+deleteUnresolvableGlycosites             true    
 
 #### Structures ####
 
-Filename       | Status | Highest atom potential | Deleted sites | Moved sidechains
-reference                 0.144396                                                 
-0_glycoprotein            0.042803                                                 
-1_glycoprotein            0.035589                                                 
+Filename       | Status    | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
+reference                    0.100888               A_24                                                     
+0_glycoprotein   deletions   0.000000                                   A_24                                 
+1_glycoprotein   deletions   0.000000                                   A_24                                 
 

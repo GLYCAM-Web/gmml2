@@ -15,12 +15,12 @@ persistCycles                            5
 overlapRejectionThreshold                0.500000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                false   
-deleteNonviableGlycosites                false   
+deleteUnresolvableGlycosites             false   
 
 #### Structures ####
 
-Filename       | Status | Highest atom potential | Deleted sites | Moved sidechains
-reference                 0.000000                                                 
-0_glycoprotein            0.000000                                                 
-1_glycoprotein            0.000000                                                 
+Filename       | Status | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
+reference                 0.000000                                                                        
+0_glycoprotein            0.000000                                                                        
+1_glycoprotein            0.000000                                                                        
 
