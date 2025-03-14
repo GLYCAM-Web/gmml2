@@ -21,6 +21,7 @@ namespace glycoproteinBuilder
         bool deletions;
         assembly::Bounds bounds;
         assembly::Selection selection;
+        std::vector<bool> nonViableMolecule;
         std::vector<bool> residueSidechainMoved;
         std::vector<cds::Overlap> overlap;
     };

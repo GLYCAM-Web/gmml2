@@ -340,6 +340,23 @@ namespace glycoproteinBuilder
             }
         }
 
+        auto nonViableSites = [&settings](const assembly::Graph& graph, const assembly::Selection& selection,
+                                          const AssemblyData& data, const std::vector<cds::Overlap>& overlaps)
+        {
+            std::vector<bool> result(graph.moleculeCount, false);
+            for (size_t molecule : includedGlycanMoleculeIds(data, selection.molecules))
+            {
+                for (size_t n : assembly::moleculeSelectedAtoms(graph, selection, molecule))
+                {
+                    if (overlaps[n].weight > settings.overlapRejectionThreshold)
+                    {
+                        result[molecule] = true;
+                    }
+                }
+            }
+            return result;
+        };
+
         auto runInitial = [&](pcg32 rng, StructureStats& stats)
         {
             MutableData mutableData = initialState;
@@ -355,9 +372,10 @@ namespace glycoproteinBuilder
             {
                 writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "reference");
             }
-            stats = StructureStats {"reference",        false,     false,
-                                    mutableData.bounds, selection, mutableData.residueSidechainMoved,
-                                    atomOverlaps};
+            std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
+            stats                       = StructureStats {
+                "reference", false, false, mutableData.bounds, selection, nonViable, mutableData.residueSidechainMoved,
+                atomOverlaps};
         };
 
         auto runIteration = [&](pcg32 rng, StructureStats& stats, const std::string& prefix)
@@ -370,44 +388,29 @@ namespace glycoproteinBuilder
                 assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
 
             bool hasDeleted               = codeUtils::contains(mutableData.moleculeIncluded, false);
-            bool reject                   = false;
             std::string directory         = outputDir;
             assembly::Selection selection = assembly::selectByAtomsAndMolecules(
                 graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
             std::vector<cds::Overlap> atomOverlaps =
                 totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
-            for (size_t molecule : includedGlycanMoleculeIds(data, mutableData.moleculeIncluded))
-            {
-                std::vector<bool> otherMolecules = mutableData.moleculeIncluded;
-                otherMolecules[molecule]         = false;
-                std::vector<bool> glycanMolecule(graph.moleculeCount, false);
-                glycanMolecule[molecule] = true;
-                assembly::Selection otherSelection =
-                    assembly::intersection(graph, fullSelection, assembly::selectByMolecules(graph, otherMolecules));
-                assembly::Selection glycanSelection =
-                    assembly::intersection(graph, fullSelection, assembly::selectByMolecules(graph, glycanMolecule));
-                std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(
-                    data.potentialTable, data.overlapTolerance, graph, mutableData.bounds, glycanSelection,
-                    otherSelection, data.atoms.elements, data.equalWeight, data.residueEdges.atomsCloseToEdge);
-                for (size_t n : assembly::moleculeSelectedAtoms(graph, glycanSelection, molecule))
-                {
-                    if (overlap[n].weight > settings.overlapRejectionThreshold)
-                    {
-                        reject = true;
-                    }
-                }
-            }
-            directory       = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
-            bool serialized = settings.MDprep;
+            std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
+            bool reject                 = codeUtils::contains(nonViable, true);
+            directory                   = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
+            bool serialized             = settings.MDprep;
             writePdbFile(graph, data, coordinates, atomNumbers(serialized, data), residueNumbers(serialized, data),
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, directory, prefix);
             if (settings.writeOffFile)
             {
                 writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefix);
             }
-            stats = StructureStats {
-                prefix,      reject, hasDeleted, mutableData.bounds, selection, mutableData.residueSidechainMoved,
-                atomOverlaps};
+            stats = StructureStats {prefix,
+                                    reject,
+                                    hasDeleted,
+                                    mutableData.bounds,
+                                    selection,
+                                    nonViable,
+                                    mutableData.residueSidechainMoved,
+                                    atomOverlaps};
         };
 
         writePdbFile(graph, data, getCoordinates(data.atoms.initialState), data.atoms.numbers, data.residues.numbers,

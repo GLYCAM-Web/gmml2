@@ -19,7 +19,15 @@ namespace glycoproteinBuilder
     {
         std::function<std::vector<std::string>(const StructureStats&)> toRow = [&](const StructureStats& stat)
         {
+            auto glycanSitesToStream = [&input](std::ostream& stream, const std::vector<size_t>& glycans)
+            {
+                for (size_t n = 0; n < glycans.size(); n++)
+                {
+                    stream << input.glycositesInputVector[n].proteinResidueId << (n == glycans.size() - 1 ? "" : " ");
+                }
+            };
             std::ostringstream status;
+            std::ostringstream nonviable;
             std::ostringstream deletions;
             std::ostringstream movedSidechainResidues;
             std::vector<size_t> movedSidechains = codeUtils::boolsToIndices(stat.residueSidechainMoved);
@@ -32,12 +40,11 @@ namespace glycoproteinBuilder
                 std::vector<size_t> deletedGlycans = codeUtils::boolsToIndices(codeUtils::indicesToValues(
                     codeUtils::vectorNot(stat.selection.molecules), data.glycans.moleculeId));
                 status << "deletions";
-                for (size_t n = 0; n < deletedGlycans.size(); n++)
-                {
-                    deletions << input.glycositesInputVector[n].proteinResidueId
-                              << (n == deletedGlycans.size() - 1 ? "" : " ");
-                }
+                glycanSitesToStream(deletions, deletedGlycans);
             }
+            std::vector<size_t> nonViableGlycans =
+                codeUtils::boolsToIndices(codeUtils::indicesToValues(stat.nonViableMolecule, data.glycans.moleculeId));
+            glycanSitesToStream(nonviable, nonViableGlycans);
             double highest = 0.0;
             for (size_t molecule : includedGlycanMoleculeIds(data, stat.selection.molecules))
             {
@@ -52,8 +59,8 @@ namespace glycoproteinBuilder
                 movedSidechainResidues << data.residues.names[residue] << data.residues.numbers[residue]
                                        << (n == movedSidechains.size() - 1 ? "" : " ");
             }
-            return std::vector<std::string> {stat.filename, status.str(), std::to_string(highest), deletions.str(),
-                                             movedSidechainResidues.str()};
+            return std::vector<std::string> {stat.filename,   status.str(),    std::to_string(highest),
+                                             nonviable.str(), deletions.str(), movedSidechainResidues.str()};
         };
 
         std::function<std::string(bool)> boolStr = [](bool b)
@@ -74,7 +81,8 @@ namespace glycoproteinBuilder
         };
 
         codeUtils::TextTable structureTable {
-            {"Filename", "Status", "Highest atom overlap", "Deleted glycosites", "Moved sidechains"},
+            {"Filename", "Status", "Highest atom overlap", "Failed glycosites", "Deleted glycosites",
+             "Moved sidechains"},
             codeUtils::vectorMap(toRow, stats)
         };
 
