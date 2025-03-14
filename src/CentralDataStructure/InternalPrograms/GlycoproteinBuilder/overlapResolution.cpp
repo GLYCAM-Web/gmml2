@@ -28,6 +28,7 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/directories.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/structuredFiles.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/random.hpp"
 #include "includes/CodeUtils/strings.hpp"
@@ -456,21 +457,37 @@ namespace glycoproteinBuilder
             }
         }
 
-        Summary summary = summarizeStats(graph, data, settings, seed, stats);
+        Summary summary                                   = summarizeStats(graph, data, settings, seed, stats);
+        std::vector<codeUtils::TextVariant> textStructure = {
+            codeUtils::TextVariant(codeUtils::TextHeader {2, "Glycoprotein Builder"}
+             ),
+            codeUtils::TextVariant(codeUtils::TextParagraph {headerLines}
+             ),
+            codeUtils::TextVariant(codeUtils::TextHeader {3, "Input"}
+             ),
+            codeUtils::TextVariant(
+                codeUtils::TextParagraph {{"Filename: " + summary.filename, "Protein: " + summary.proteinFilename}}
+             ),
+            codeUtils::TextVariant(summary.parameterTable),
+            codeUtils::TextVariant(codeUtils::TextHeader {3, "Structures"}
+             ),
+            codeUtils::TextVariant(summary.structuretable),
+        };
+
         codeUtils::writeToFile(outputDir + "/summary.txt",
                                [&](std::ostream& stream)
                                {
-                                   stream << plaintextSummary(summary, headerLines);
+                                   codeUtils::toTxt(stream, textStructure);
                                });
         codeUtils::writeToFile(outputDir + "/summary.html",
                                [&](std::ostream& stream)
                                {
-                                   stream << htmlSummary(summary, headerLines);
+                                   codeUtils::toHtml(stream, textStructure);
                                });
         codeUtils::writeToFile(outputDir + "/structures.csv",
                                [&](std::ostream& stream)
                                {
-                                   stream << csvTable(summary.structuretable);
+                                   codeUtils::toCsv(stream, ",", summary.structuretable);
                                });
     }
 } // namespace glycoproteinBuilder

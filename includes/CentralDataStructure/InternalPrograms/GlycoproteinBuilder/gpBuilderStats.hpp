@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblySelection.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/CodeUtils/structuredFiles.hpp"
 
 #include <vector>
 #include <string>
@@ -24,25 +25,16 @@ namespace glycoproteinBuilder
         std::vector<cds::Overlap> overlap;
     };
 
-    struct Table
-    {
-        std::vector<std::string> header;
-        std::vector<std::vector<std::string>> rows;
-    };
-
     struct Summary
     {
         std::string filename;
         std::string proteinFilename;
-        Table parameterTable;
-        Table structuretable;
+        codeUtils::TextTable parameterTable;
+        codeUtils::TextTable structuretable;
     };
 
     Summary summarizeStats(const assembly::Graph& graph, const AssemblyData& data,
                            const GlycoproteinBuilderInputs& input, uint64_t seed,
                            const std::vector<StructureStats>& stats);
-    std::string htmlSummary(const Summary& summary, const std::vector<std::string>& headerLines);
-    std::string plaintextSummary(const Summary& summary, const std::vector<std::string>& headerLines);
-    std::string csvTable(const Table& table);
 } // namespace glycoproteinBuilder
 #endif
