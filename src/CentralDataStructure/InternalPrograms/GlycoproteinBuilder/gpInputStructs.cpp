@@ -131,8 +131,19 @@ namespace glycoproteinBuilder
                     }
                     else if (parameter == seedParameter)
                     {
-                        gpInputs.isDeterministic = true;
-                        gpInputs.seed            = parseUlong(value);
+                        if (value != "random")
+                        {
+                            try
+                            {
+                                gpInputs.isDeterministic = true;
+                                gpInputs.seed            = parseUlong(value);
+                            }
+                            catch (...)
+                            {
+                                throwError("expected '" + seedParameter + ":random' or '" + seedParameter +
+                                           ":<integer>'");
+                            }
+                        }
                     }
                     else if (parameter == prepareForMDParameter)
                     {
