@@ -20,7 +20,7 @@ deleteUnresolvableGlycosites             false
 #### Structures ####
 
 Filename       | Status   | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
-reference                   70.829878              A_24                                                     
+default                     15.569909              A_24                                                     
 0_glycoprotein   rejected   67.644327              A_24                                                     
 1_glycoprotein   rejected   70.122646              A_24                                                     
 

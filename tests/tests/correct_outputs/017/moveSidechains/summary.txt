@@ -20,7 +20,7 @@ deleteUnresolvableGlycosites             false
 #### Structures ####
 
 Filename       | Status | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains          
-reference                 0.003698                                                        ILE39 THR132 THR134       
+default                   0.000000                                                        ILE39 THR132              
 0_glycoprotein            0.007445                                                        THR132 THR134             
 1_glycoprotein            0.001049                                                        THR132 THR134             
 2_glycoprotein            0.004045                                                        ARG76 THR132 THR134 ASP136

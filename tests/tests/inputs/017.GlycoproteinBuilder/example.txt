@@ -12,7 +12,7 @@ useInitialGlycositeResidueConformation:false
 
 moveOverlappingSidechains:false
 
-deleteNonviableGlycosites:false
+deleteUnresolvableGlycosites:false
 
 ProteinResidue, GlycanName:
 A_24|DManpa1-2DManpa1-6[DManpa1-2DManpa1-3]DManpa1-6[DManpa1-2DManpa1-2DManpa1-3]DManpb1-4DGlcpNAcb1-4DGlcpNAcb1-OH

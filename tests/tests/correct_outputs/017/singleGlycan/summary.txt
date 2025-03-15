@@ -20,7 +20,7 @@ deleteUnresolvableGlycosites             false
 #### Structures ####
 
 Filename       | Status | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
-reference                 0.000000                                                                        
+default                   0.000000                                                                        
 0_glycoprotein            0.000000                                                                        
 1_glycoprotein            0.000000                                                                        
 
