@@ -178,8 +178,8 @@ namespace glycoproteinBuilder
     }
 
     void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, const assembly::Selection& selection,
-                      MutableData& mutableData, size_t glycanId, const cds::AngleSearchSettings& searchSettings,
-                      const cds::GlycanShapePreference& preferences)
+                      const cds::AngleSearchSettings& searchSettings, const cds::GlycanShapePreference& preferences,
+                      MutableData& mutableData, size_t glycanId)
     {
         const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
         // wiggling twice gives the first linkages a second chance to resolve in a better structure
@@ -193,11 +193,10 @@ namespace glycoproteinBuilder
         }
     }
 
-    GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
-                                    SidechainAdjustment adjustSidechains,
-                                    const cds::AngleSearchSettings& searchSettings, uint persistCycles,
-                                    const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
-                                    const GlycoproteinState& initialState)
+    GlycoproteinState randomDescent(pcg32& rng, const AngleSettings& settings, WiggleGlycan wiggleGlycan,
+                                    GlycanShapeRandomizer randomizeShape, SidechainAdjustment adjustSidechains,
+                                    uint persistCycles, const assembly::Graph& graph, const AssemblyData& data,
+                                    MutableData& mutableData, const GlycoproteinState& initialState)
     {
         std::stringstream logss;
         logss << "Random Decent, persisting for " << persistCycles << " cycles.\n";
@@ -224,15 +223,15 @@ namespace glycoproteinBuilder
                 cds::Overlap previousOverlap =
                     localOverlap(graph, data, eachSelection, mutableData.bounds, data.defaultWeight, glycanId);
                 std::vector<cds::GlycanShapePreference> currentPreferences = glycositePreferences;
-                currentPreferences[glycanId]                  = randomizeShape(rng, data, mutableData, glycanId);
+                currentPreferences[glycanId] = randomizeShape(rng, settings, data, mutableData, glycanId);
                 cds::GlycanShapePreference& glycanPreferences = currentPreferences[glycanId];
                 MutableData lastShape                         = mutableData;
                 for (size_t n = 0; n < linkageIds.size(); n++)
                 {
                     setLinkageShapeToPreference(graph, data, mutableData, linkageIds[n], glycanPreferences[n]);
                 }
-                wiggleGlycan(graph, data, mainSelection, mutableData, glycanId, searchSettings, glycanPreferences);
-                adjustSidechains(rng, graph, data, mutableData, currentPreferences, {glycanId});
+                wiggleGlycan(graph, data, mainSelection, settings, glycanPreferences, mutableData, glycanId);
+                adjustSidechains(rng, settings, wiggleGlycan, graph, data, mutableData, currentPreferences, {glycanId});
                 cds::Overlap newOverlap =
                     localOverlap(graph, data, eachSelection, mutableData.bounds, data.defaultWeight, glycanId);
                 cds::Overlap diff = newOverlap + (previousOverlap * -1);

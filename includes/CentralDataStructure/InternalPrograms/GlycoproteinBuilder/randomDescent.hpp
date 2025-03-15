@@ -20,24 +20,19 @@ namespace glycoproteinBuilder
         std::vector<cds::GlycanShapePreference> preferences;
     };
 
-    typedef std::function<void(const assembly::Graph&, const AssemblyData&, size_t glycanId, const OverlapMultiplier&,
-                               cds::GlycanShapePreference&)>
-        WiggleGlycan;
-
-    typedef std::function<cds::GlycanShapePreference(pcg32& rng, const AssemblyData&, const MutableData&,
-                                                     size_t glycanId)>
+    typedef std::function<cds::GlycanShapePreference(pcg32& rng, const AngleSettings&, const AssemblyData&,
+                                                     const MutableData&, size_t glycanId)>
         GlycanShapeRandomizer;
 
     void wiggleLinkage(const assembly::Graph& graph, const AssemblyData& data, const assembly::Selection& selection,
                        MutableData& mutableData, size_t linkageId, const cds::AngleSearchSettings& searchSettings,
                        const cds::ResidueLinkageShapePreference& shapePreference);
     void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, const assembly::Selection& selection,
-                      MutableData& mutableData, size_t glycanId, const cds::AngleSearchSettings& searchSettings,
-                      const cds::GlycanShapePreference& preferences);
-    GlycoproteinState randomDescent(pcg32& rng, GlycanShapeRandomizer randomizeShape,
-                                    SidechainAdjustment adjustSidechains,
-                                    const cds::AngleSearchSettings& searchSettings, uint persistCycles,
-                                    const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
-                                    const GlycoproteinState& initialState);
+                      const cds::AngleSearchSettings& searchSettings, const cds::GlycanShapePreference& preferences,
+                      MutableData& mutableData, size_t glycanId);
+    GlycoproteinState randomDescent(pcg32& rng, const AngleSettings& settings, WiggleGlycan wiggleGlycan,
+                                    GlycanShapeRandomizer randomizeShape, SidechainAdjustment adjustSidechains,
+                                    uint persistCycles, const assembly::Graph& graph, const AssemblyData& data,
+                                    MutableData& mutableData, const GlycoproteinState& initialState);
 } // namespace glycoproteinBuilder
 #endif

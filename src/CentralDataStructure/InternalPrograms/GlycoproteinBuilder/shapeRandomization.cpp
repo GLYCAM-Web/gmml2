@@ -19,10 +19,10 @@ namespace
 namespace glycoproteinBuilder
 {
     cds::GlycanShapePreference randomLinkageShapePreference(
-        pcg32& rng, const AssemblyData& data, const assembly::Bounds& bounds, size_t glycanId,
-        std::function<std::vector<size_t>(pcg32&, GlycamMetadata::DihedralAngleDataVector metadataVector)>
-            randomMetadata,
-        std::function<double(pcg32&, GlycamMetadata::DihedralAngleData metadata)> randomAngle,
+        pcg32& rng, const AngleSettings& settings, const AssemblyData& data, const assembly::Bounds& bounds,
+        size_t glycanId,
+        std::function<double(pcg32&, const AngleSettings&, const GlycamMetadata::DihedralAngleData& metadata)>
+            randomAngle,
         bool freezeGlycositeResidueConformation)
     {
         const std::vector<size_t>& linkages                               = data.glycans.linkages[glycanId];
@@ -40,13 +40,13 @@ namespace glycoproteinBuilder
                 size_t dihedralId = rotatableDihedrals[k];
                 for (auto& metadata : dihedralMetadata[dihedralId])
                 {
-                    angles[k].push_back(randomAngle(rng, metadata));
+                    angles[k].push_back(randomAngle(rng, settings, metadata));
                 }
             }
             if (data.residueLinkageData.rotamerTypes[linkageId] == GlycamMetadata::RotamerType::conformer)
             {
                 size_t firstDihedralId    = rotatableDihedrals[0];
-                std::vector<size_t> order = randomMetadata(rng, dihedralMetadata[firstDihedralId]);
+                std::vector<size_t> order = settings.randomMetadata(rng, dihedralMetadata[firstDihedralId]);
                 std::vector<bool> isFrozen(rotatableDihedrals.size(), false);
                 cds::ConformerShapePreference pref {isFrozen, angles, order};
                 if (isGlycositeLinkage && freezeGlycositeResidueConformation)
@@ -72,7 +72,7 @@ namespace glycoproteinBuilder
                 order.reserve(rotatableDihedrals.size());
                 for (size_t dihedralId : rotatableDihedrals)
                 {
-                    order.push_back(randomMetadata(rng, dihedralMetadata[dihedralId]));
+                    order.push_back(settings.randomMetadata(rng, dihedralMetadata[dihedralId]));
                 }
                 result.push_back(cds::PermutationShapePreference {angles, order});
             }

@@ -179,8 +179,25 @@ namespace glycoproteinBuilder
         return serialized ? data.residues.serializedNumbers : data.residues.numbers;
     }
 
-    typedef std::function<void(pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&,
-                               const std::vector<cds::GlycanShapePreference>&, const std::vector<size_t>&)>
+    typedef std::function<std::vector<size_t>(pcg32& rng,
+                                              const GlycamMetadata::DihedralAngleDataVector& metadataVector)>
+        MetadataOrder;
+
+    struct AngleSettings
+    {
+        double preferenceDeviation;
+        double searchDeviation;
+        double searchIncrement;
+        MetadataOrder randomMetadata;
+    };
+
+    typedef std::function<void(const assembly::Graph&, const AssemblyData&, const assembly::Selection&,
+                               const AngleSettings&, const cds::GlycanShapePreference&, MutableData&, size_t)>
+        WiggleGlycan;
+
+    typedef std::function<void(pcg32&, const AngleSettings& settings, WiggleGlycan, const assembly::Graph&,
+                               const AssemblyData&, MutableData&, const std::vector<cds::GlycanShapePreference>&,
+                               const std::vector<size_t>&)>
         SidechainAdjustment;
 
 } // namespace glycoproteinBuilder

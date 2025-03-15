@@ -57,22 +57,23 @@ namespace glycoproteinBuilder
         uint64_t seed                  = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
         pcg32 seedingRng(seed);
 
-        auto randomMetadata = [](pcg32& rng, GlycamMetadata::DihedralAngleDataVector metadataVector)
+        MetadataOrder initialMetadataOrder = [](pcg32&, const GlycamMetadata::DihedralAngleDataVector& metadataVector)
+        {
+            return codeUtils::indexVector(metadataVector);
+        };
+        MetadataOrder randomMetadataOrder =
+            [](pcg32& rng, const GlycamMetadata::DihedralAngleDataVector& metadataVector)
         {
             auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
             return codeUtils::weightedRandomOrder(rng, weights);
         };
         bool freezeGlycositeResidueConformation = settings.useInitialGlycositeResidueConformation;
-        double preferenceDeviation              = 2.0;
-        double searchDeviation                  = 0.5;
-        double searchIncrement                  = 1.0;
-        auto standardDeviation =
-            [&preferenceDeviation, &searchDeviation](const GlycamMetadata::DihedralAngleData& metadata)
+        auto standardDeviation = [](const AngleSettings& settings, const GlycamMetadata::DihedralAngleData& metadata)
         {
             std::function<std::pair<double, double>(const GlycamMetadata::AngleLimit&)> onLimit =
                 [&](const GlycamMetadata::AngleLimit& dev)
             {
-                double max_std   = preferenceDeviation + searchDeviation;
+                double max_std   = settings.preferenceDeviation + settings.searchDeviation;
                 double lower_std = dev.lowerDeviationLimit / max_std;
                 double upper_std = dev.upperDeviationLimit / max_std;
                 return std::pair<double, double> {lower_std, upper_std};
@@ -84,26 +85,19 @@ namespace glycoproteinBuilder
             };
             return GlycamMetadata::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
         };
-        auto searchAngles = [&standardDeviation, &searchIncrement](const GlycamMetadata::DihedralAngleData& metadata,
-                                                                   double preference, double deviation)
+        auto randomAngle = [&standardDeviation](pcg32& rng, const AngleSettings& settings,
+                                                const GlycamMetadata::DihedralAngleData& metadata)
         {
-            auto std = standardDeviation(metadata);
-            return cds::evenlySpacedAngles(preference, deviation * std.first, deviation * std.second, searchIncrement);
-        };
-        cds::AngleSearchSettings searchSettings = cds::AngleSearchSettings {searchDeviation, searchAngles};
-        auto randomAngle =
-            [&standardDeviation, &preferenceDeviation](pcg32& rng, GlycamMetadata::DihedralAngleData metadata)
-        {
-            double stdCutoff = preferenceDeviation;
+            double stdCutoff = settings.preferenceDeviation;
             double num       = codeUtils::normalDistributionRandomDoubleWithCutoff(rng, -stdCutoff, stdCutoff);
-            auto std         = standardDeviation(metadata);
+            auto std         = standardDeviation(settings, metadata);
             return metadata.default_angle + num * (num < 0 ? std.first : std.second);
         };
-        auto randomizeShape = [&randomMetadata, &randomAngle,
-                               &freezeGlycositeResidueConformation](pcg32& rng, const AssemblyData& data,
-                                                                    const MutableData& mutableData, size_t linkageId)
+        GlycanShapeRandomizer randomizeShape = [&randomAngle, &freezeGlycositeResidueConformation](
+                                                   pcg32& rng, const AngleSettings& settings, const AssemblyData& data,
+                                                   const MutableData& mutableData, size_t linkageId)
         {
-            return randomLinkageShapePreference(rng, data, mutableData.bounds, linkageId, randomMetadata, randomAngle,
+            return randomLinkageShapePreference(rng, settings, data, mutableData.bounds, linkageId, randomAngle,
                                                 freezeGlycositeResidueConformation);
         };
 
@@ -136,7 +130,8 @@ namespace glycoproteinBuilder
         };
 
         SidechainAdjustment adjustSidechains =
-            [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
+            [&](pcg32& rng, const AngleSettings& settings, WiggleGlycan wiggleGlycan, const assembly::Graph& graph,
+                const AssemblyData& data, MutableData& mutableData,
                 const std::vector<cds::GlycanShapePreference>& glycositePreferences, const std::vector<size_t>& glycans)
         {
             std::vector<size_t> sidechainResiduesWithGlycanOverlap;
@@ -162,14 +157,14 @@ namespace glycoproteinBuilder
                 graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycans))
             {
-                wiggleGlycan(graph, data, selection, mutableData, glycanId, searchSettings,
-                             glycositePreferences[glycanId]);
+                wiggleGlycan(graph, data, selection, settings, glycositePreferences[glycanId], mutableData, glycanId);
             }
         };
 
         SidechainAdjustment restoreSidechains =
-            [&](pcg32& rng, const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
-                const std::vector<cds::GlycanShapePreference>&, const std::vector<size_t>& glycans)
+            [&](pcg32& rng, const AngleSettings&, WiggleGlycan, const assembly::Graph& graph, const AssemblyData& data,
+                MutableData& mutableData, const std::vector<cds::GlycanShapePreference>&,
+                const std::vector<size_t>& glycans)
         {
             std::vector<size_t> residues = codeUtils::boolsToIndices(mutableData.residueSidechainMoved);
             for (size_t residue : residues)
@@ -187,23 +182,40 @@ namespace glycoproteinBuilder
             }
         };
 
-        SidechainAdjustment noSidechainAdjustment = [&](pcg32&, const assembly::Graph&, const AssemblyData&,
-                                                        MutableData&, const std::vector<cds::GlycanShapePreference>&,
-                                                        const std::vector<size_t>&)
+        SidechainAdjustment noSidechainAdjustment =
+            [&](pcg32&, const AngleSettings&, WiggleGlycan, const assembly::Graph&, const AssemblyData&, MutableData&,
+                const std::vector<cds::GlycanShapePreference>&, const std::vector<size_t>&)
         {
             return;
         };
 
-        auto resolveOverlapsWithWiggler = [&](pcg32& rng, SidechainAdjustment adjustSidechains,
-                                              SidechainAdjustment restoreSidechains, const assembly::Graph& graph,
-                                              const AssemblyData& data, MutableData& mutableData,
-                                              bool deleteSitesUntilResolved)
+        WiggleGlycan wiggle = [&standardDeviation](const assembly::Graph& graph, const AssemblyData& data,
+                                                   const assembly::Selection& selection, const AngleSettings& settings,
+                                                   const cds::GlycanShapePreference& preference,
+                                                   MutableData& mutableData, size_t glycanId)
+        {
+            auto searchAngles = [&standardDeviation, &settings](const GlycamMetadata::DihedralAngleData& metadata,
+                                                                double preference, double deviation)
+            {
+                auto std = standardDeviation(settings, metadata);
+                return cds::evenlySpacedAngles(preference, deviation * std.first, deviation * std.second,
+                                               settings.searchIncrement);
+            };
+            return wiggleGlycan(graph, data, selection, {settings.searchDeviation, searchAngles}, preference,
+                                mutableData, glycanId);
+        };
+
+        auto resolveOverlapsWithWiggler =
+            [&](pcg32& rng, const AngleSettings& initialAngleSettings, const AngleSettings& mainAngleSettings,
+                SidechainAdjustment adjustSidechains, SidechainAdjustment restoreSidechains,
+                GlycanShapeRandomizer& randomizeShape, const assembly::Graph& graph, const AssemblyData& data,
+                MutableData& mutableData, bool deleteSitesUntilResolved)
         {
             std::vector<cds::GlycanShapePreference> glycositePreferences;
             const std::vector<size_t> glycanIndices = codeUtils::indexVector(data.glycans.moleculeId);
             for (size_t glycanId : glycanIndices)
             {
-                auto preference                       = randomizeShape(rng, data, mutableData, glycanId);
+                auto preference = randomizeShape(rng, initialAngleSettings, data, mutableData, glycanId);
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                 for (size_t k = 0; k < linkageIds.size(); k++)
                 {
@@ -214,10 +226,11 @@ namespace glycoproteinBuilder
             assembly::Selection glycanSelection = assembly::selectByAtoms(graph, data.atoms.includeInMainOverlapCheck);
             for (size_t glycanId : codeUtils::shuffleVector(rng, glycanIndices))
             {
-                wiggleGlycan(graph, data, glycanSelection, mutableData, glycanId, searchSettings,
-                             glycositePreferences[glycanId]);
+                wiggle(graph, data, glycanSelection, initialAngleSettings, glycositePreferences[glycanId], mutableData,
+                       glycanId);
             }
-            adjustSidechains(rng, graph, data, mutableData, glycositePreferences, glycanIndices);
+            adjustSidechains(rng, initialAngleSettings, wiggle, graph, data, mutableData, glycositePreferences,
+                             glycanIndices);
             assembly::Selection selection = assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
             GlycoproteinState currentState;
             std::vector<size_t> sitesWithOverlap =
@@ -231,10 +244,10 @@ namespace glycoproteinBuilder
 
                 GlycoproteinState initialState = {initialOverlap, sitesWithOverlap, sitesAboveOverlapThreshold,
                                                   glycositePreferences};
-                currentState                   = randomDescent(rng, randomizeShape, adjustSidechains, searchSettings,
-                                                               settings.persistCycles, graph, data, mutableData, initialState);
-                sitesWithOverlap               = currentState.sitesWithOverlap;
-                sitesAboveOverlapThreshold     = currentState.sitesAboveOverlapThreshold;
+                currentState     = randomDescent(rng, mainAngleSettings, wiggle, randomizeShape, adjustSidechains,
+                                                 settings.persistCycles, graph, data, mutableData, initialState);
+                sitesWithOverlap = currentState.sitesWithOverlap;
+                sitesAboveOverlapThreshold = currentState.sitesAboveOverlapThreshold;
                 if (deleteSitesUntilResolved && !sitesAboveOverlapThreshold.empty())
                 {
                     size_t indexToRemove = codeUtils::randomIndex(rng, sitesAboveOverlapThreshold);
@@ -257,7 +270,7 @@ namespace glycoproteinBuilder
                         data.overlapRejectionThreshold, sitesWithOverlap, graph, data, selection, mutableData.bounds);
                 }
             }
-            restoreSidechains(rng, graph, data, mutableData, glycositePreferences,
+            restoreSidechains(rng, mainAngleSettings, wiggle, graph, data, mutableData, glycositePreferences,
                               includedGlycanIndices(data, mutableData.moleculeIncluded));
             gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
         };
@@ -360,29 +373,34 @@ namespace glycoproteinBuilder
         auto runInitial = [&](pcg32 rng, StructureStats& stats)
         {
             MutableData mutableData = initialState;
-            resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData, false);
+            AngleSettings initialAngleSettings {0.0, 2.0, 1.0, initialMetadataOrder};
+            AngleSettings mainAngleSettings {0.5, 2.0, 1.0, initialMetadataOrder};
+            resolveOverlapsWithWiggler(rng, initialAngleSettings, mainAngleSettings, sidechainAdjustment,
+                                       sidechainRestoration, randomizeShape, graph, data, mutableData, false);
             std::vector<cds::Coordinate> resolvedCoords = getCoordinates(mutableData.bounds.atoms);
             assembly::Selection selection               = assembly::selectAll(graph);
             std::vector<cds::Overlap> atomOverlaps =
                 totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
-            bool serialized = settings.MDprep;
+            bool serialized    = settings.MDprep;
+            std::string prefix = "reference";
             writePdbFile(graph, data, resolvedCoords, atomNumbers(serialized, data), residueNumbers(serialized, data),
-                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, "reference");
+                         mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, prefix);
             if (settings.writeOffFile)
             {
-                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, "reference");
+                writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, prefix);
             }
             std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
             stats                       = StructureStats {
-                "reference", false, false, mutableData.bounds, selection, nonViable, mutableData.residueSidechainMoved,
+                prefix,      false, false, mutableData.bounds, selection, nonViable, mutableData.residueSidechainMoved,
                 atomOverlaps};
         };
 
         auto runIteration = [&](pcg32 rng, StructureStats& stats, const std::string& prefix)
         {
             MutableData mutableData = initialState;
-            resolveOverlapsWithWiggler(rng, sidechainAdjustment, sidechainRestoration, graph, data, mutableData,
-                                       settings.deleteSitesUntilResolved);
+            AngleSettings angleSettings {2.0, 0.5, 1.0, randomMetadataOrder};
+            resolveOverlapsWithWiggler(rng, angleSettings, angleSettings, sidechainAdjustment, sidechainRestoration,
+                                       randomizeShape, graph, data, mutableData, settings.deleteSitesUntilResolved);
             std::vector<cds::Coordinate> coordinates = getCoordinates(mutableData.bounds.atoms);
             const assembly::Selection fullSelection =
                 assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
