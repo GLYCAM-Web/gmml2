@@ -10,10 +10,26 @@
 
 namespace
 {
+    struct ResidueAndAtoms
+    {
+        cds::Residue* residue;
+        std::vector<cds::Atom*> atoms;
+    };
+
+    std::vector<ResidueAndAtoms> residueAndAtomVector(std::vector<cds::Residue*>& residues)
+    {
+        std::vector<ResidueAndAtoms> result;
+        result.reserve(residues.size());
+        for (auto& res : residues)
+        {
+            result.push_back({res, res->getAtoms()});
+        }
+        return result;
+    }
+
     bool bondAtomsIfClose(cds::Atom* atom1, cds::Atom* atom2)
     {
-        double maxLength = MolecularMetadata::maxBondLengthByAtomType(
-            MolecularMetadata::toElement(atom1->getElement()), MolecularMetadata::toElement(atom2->getElement()));
+        double maxLength = MolecularMetadata::maxBondLengthByAtomType(atom1->cachedElement(), atom2->cachedElement());
         if (withinDistance(maxLength, atom1->coordinate(), atom2->coordinate()))
         {
             addBond(atom1, atom2);
@@ -22,18 +38,38 @@ namespace
         return false;
     }
 
-    void bondResidueAtoms(std::vector<cds::Residue*>::iterator it1, std::vector<cds::Residue*>::iterator itEnd)
+    void bondAtomsAndResiduesByDistance(ResidueAndAtoms& a, ResidueAndAtoms& b)
     {
-        cds::Residue* res1                = *it1;
-        std::vector<cds::Atom*> res1Atoms = res1->getAtoms();
-        for (std::vector<cds::Residue*>::iterator it2 = std::next(it1); it2 != itEnd; ++it2)
+        cds::Residue* residueA    = a.residue;
+        cds::Residue* residueB    = b.residue;
+        bool residuesAreConnected = false;
+        for (auto& atomA : a.atoms)
         {
-            cds::Residue* res2                = *it2;
-            std::vector<cds::Atom*> res2Atoms = res2->getAtoms();
-            double residueDistance            = distance(res1Atoms.at(0)->coordinate(), res2Atoms.at(0)->coordinate());
-            if (residueDistance < constants::residueDistanceOverlapCutoff)
+            for (auto& atomB : b.atoms)
             {
-                cds::bondAtomsAndResiduesByDistance(res1, res2);
+                if (bondAtomsIfClose(atomA, atomB))
+                {
+                    residuesAreConnected = true; // only needs to be true once to connect residues.
+                }
+            }
+        }
+        if (residuesAreConnected)
+        {
+            std::string edgeName = residueA->getStringId() + "--" + residueB->getStringId();
+            residueA->addNeighbor(edgeName, residueB);
+        }
+    }
+
+    void bondResidueAtoms(std::vector<ResidueAndAtoms>& vec, size_t n)
+    {
+        std::vector<cds::Atom*> res1Atoms = vec[n].atoms;
+        for (size_t k = n + 1; k < vec.size(); k++)
+        {
+            std::vector<cds::Atom*> res2Atoms = vec[k].atoms;
+            if (cds::withinDistance(constants::residueDistanceOverlapCutoff, res1Atoms.at(0)->coordinate(),
+                                    res2Atoms.at(0)->coordinate()))
+            {
+                bondAtomsAndResiduesByDistance(vec[n], vec[k]);
             }
         }
     }
@@ -46,7 +82,7 @@ void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)
     std::vector<Coordinate> coordinates = atomCoordinates(atoms);
     for (auto& a : atoms)
     {
-        elements.push_back(MolecularMetadata::toElement(a->getElement()));
+        elements.push_back(a->cachedElement());
     }
     for (size_t n = 0; n < atoms.size(); n++)
     {
@@ -61,33 +97,14 @@ void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)
     }
 }
 
-void cds::bondAtomsAndResiduesByDistance(cds::Residue* residueA, cds::Residue* residueB)
-{
-    bool residuesAreConnected = false;
-    for (auto& atomA : residueA->getAtoms())
-    {
-        for (auto& atomB : residueB->getAtoms())
-        {
-            if (bondAtomsIfClose(atomA, atomB))
-            {
-                residuesAreConnected = true; // only needs to be true once to connect residues.
-            }
-        }
-    }
-    if (residuesAreConnected)
-    {
-        std::string edgeName = residueA->getStringId() + "--" + residueB->getStringId();
-        residueA->addNeighbor(edgeName, residueB);
-    }
-}
-
 void cds::bondAtomsAndResiduesByDistance(std::vector<cds::Residue*> residues)
 {
-    for (std::vector<cds::Residue*>::iterator it1 = residues.begin(); it1 != residues.end(); ++it1)
+    std::vector<ResidueAndAtoms> vec = residueAndAtomVector(residues);
+    for (size_t n = 0; n < residues.size(); n++)
     { // First bond by distance for atoms within each residue
-        cds::bondAtomsByDistance((*it1)->getAtoms());
+        cds::bondAtomsByDistance(vec[n].atoms);
         // Then for each residue, find other residues within reasonable residue distance.
-        bondResidueAtoms(it1, residues.end());
+        bondResidueAtoms(vec, n);
     }
 }
 
@@ -101,8 +118,9 @@ void cds::distanceBondIntra(std::vector<cds::Residue*> residues)
 
 void cds::distanceBondInter(std::vector<cds::Residue*> residues)
 {
-    for (std::vector<cds::Residue*>::iterator it1 = residues.begin(); it1 != residues.end(); ++it1)
+    std::vector<ResidueAndAtoms> vec = residueAndAtomVector(residues);
+    for (size_t n = 0; n < vec.size(); n++)
     {
-        bondResidueAtoms(it1, residues.end());
+        bondResidueAtoms(vec, n);
     }
 }
