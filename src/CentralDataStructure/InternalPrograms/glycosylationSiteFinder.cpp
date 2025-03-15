@@ -4,11 +4,8 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
-using glycoproteinBuilder::GlycosylationSiteFinder;
-
 namespace
 {
-
     std::vector<std::string> GetTagsForSequence(const std::string& firstRes, const std::string& midRes,
                                                 const std::string& lastRes)
     {
@@ -86,30 +83,23 @@ namespace
     }
 } // namespace
 
-GlycosylationSiteFinder::GlycosylationSiteFinder(std::vector<cds::Residue*> residues)
+namespace glycoproteinBuilder
 {
-    for (auto& residue : residues)
+    std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const std::vector<cds::Residue*>& residues)
     {
-        std::string linkType = glycoproteinMetadata::LookupLinkTypeForAminoAcidName(residue->getName());
-        if (!linkType.empty())
+        std::vector<GlycosylationSiteInfo> result;
+        for (auto& residue : residues)
         {
-            // std::cout << "Checking: " << residue->GetId() << "(" << residue->GetIndex() << ") with linkType: " <<
-            // linkType << std::endl;
-            std::vector<std::string> tags = {linkType};
-            std::string context           = GetSequenceContextAndDetermineTags(residue, tags);
-            pdb::ResidueId residueId      = residue->getId();
-            table_.emplace_back(residueId.getChainId(), residueId.getNumber(), residueId.getInsertionCode(), context,
-                                tags);
+            std::string linkType = glycoproteinMetadata::LookupLinkTypeForAminoAcidName(residue->getName());
+            if (!linkType.empty())
+            {
+                std::vector<std::string> tags = {linkType};
+                std::string context           = GetSequenceContextAndDetermineTags(residue, tags);
+                pdb::ResidueId residueId      = residue->getId();
+                result.push_back(GlycosylationSiteInfo {residueId.getChainId(), residueId.getNumber(),
+                                                        residueId.getInsertionCode(), context, tags});
+            }
         }
+        return result;
     }
-}
-
-std::string GlycosylationSiteFinder::PrintTable()
-{
-    std::string output = "";
-    for (auto& tableElement : table_)
-    {
-        output += tableElement.Print() + "\n";
-    }
-    return output;
-}
+} // namespace glycoproteinBuilder
