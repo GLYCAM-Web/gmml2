@@ -51,7 +51,7 @@ namespace glycoproteinBuilder
                          const GlycoproteinAssembly& assembly, const GlycoproteinBuilderInputs& settings,
                          const std::string& outputDir, const std::vector<std::string>& headerLines, int numThreads)
     {
-        const std::string structureDir = outputDir + "/structures";
+        const std::string structureDir = outputDir + "/samples";
         const std::string rejectDir    = structureDir + "/rejected";
         const std::string deletionDir  = structureDir + "/deletions";
         uint64_t seed                  = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
@@ -382,7 +382,7 @@ namespace glycoproteinBuilder
             std::vector<cds::Overlap> atomOverlaps =
                 totalOverlaps(graph, data, selection, mutableData.bounds, data.equalWeight);
             bool serialized    = settings.MDprep;
-            std::string prefix = "reference";
+            std::string prefix = "default";
             writePdbFile(graph, data, resolvedCoords, atomNumbers(serialized, data), residueNumbers(serialized, data),
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, prefix);
             if (settings.writeOffFile)
