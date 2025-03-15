@@ -1,0 +1,750 @@
+Chain,ResidueNumber,InsertionCode,SequenceContext,Tags
+A,25,,_S_HM,oLink oLinkLikely
+A,37,,VR_T_GP,oLink oLinkLikely
+A,43,,AI_T_QI,oLink oLinkLikely
+A,48,,EA_Y_LN,oLink oLinkTyr
+A,50,,YL_N_PR,nLink
+A,55,,MG_N_NI,nLink
+A,56,,GN_N_IP,nLink
+A,59,,IP_S_ED,oLink oLinkLikely
+A,63,,DL_Y_GY,oLink oLinkTyr
+A,65,,YG_Y_SN,oLink oLinkTyr
+A,66,,GY_S_NS,oLink oLinkLikely
+A,67,,YS_N_SI,nLink
+A,68,,SN_S_IN,oLink oLinkLikely
+A,70,,SI_N_TA,nLink
+A,71,,IN_T_AF,oLink oLinkLikely
+A,74,,AF_S_KA,oLink oLinkLikely
+A,77,,KA_S_DT,oLink oLinkLikely
+A,79,,SD_T_PN,oLink oLinkLikely
+A,81,,TP_N_KD,nLink
+A,84,,KD_T_LP,oLink oLinkLikely
+A,88,,PC_Y_SV,oLink oLinkTyr
+A,89,,CY_S_VA,oLink oLinkLikely
+A,99,,LL_N_ED,nLink
+A,103,,DM_T_CD,oLink oLinkLikely
+A,106,,CD_T_IL,oLink oLinkLikely
+A,110,,LM_W_EA,cLink
+A,114,,AV_S_VK,oLink oLinkLikely
+A,117,,VK_T_EV,oLink oLinkLikely
+A,123,,GI_S_SL,oLink oLinkLikely
+A,124,,IS_S_LV,oLink oLinkLikely
+A,127,,LV_N_LH,nLink
+A,134,,GK_Y_IY,oLink oLinkTyr
+A,136,,YI_Y_GS,oLink oLinkTyr
+A,138,,YG_S_SS,oLink oLinkLikely
+A,139,,GS_S_SG,oLink oLinkLikely
+A,140,,SS_S_GC,oLink oLinkLikely
+A,148,,QG_T_TY,oLink oLinkLikely
+A,149,,GT_T_YH,oLink oLinkLikely
+A,150,,TT_Y_HM,oLink oLinkTyr
+A,168,,VA_S_ST,oLink oLinkLikely
+A,169,,AS_S_TA,oLink oLinkLikely
+A,170,,SS_T_AT,oLink oLinkLikely
+A,172,,TA_T_YP,oLink oLinkLikely
+A,173,,AT_Y_PD,oLink oLinkTyr
+A,182,,IK_N_MK,nLink
+A,187,,PG_N_QG,nLink
+A,204,,GK_Y_PV,oLink oLinkTyr
+A,209,,EV_W_CP,cLink
+A,214,,DP_S_KN,oLink oLinkLikely
+A,216,,SK_N_EN,nLink
+A,218,,NE_N_TR,nLink
+A,219,,EN_T_RY,oLink oLinkLikely
+A,221,,TR_Y_YG,oLink oLinkTyr
+A,222,,RY_Y_GS,oLink oLinkTyr
+A,224,,YG_S_FT,oLink oLinkLikely
+A,226,,SF_T_GG,oLink oLinkLikely
+A,230,,GA_T_TP,oLink oLinkLikely
+A,231,,AT_T_PP,oLink oLinkLikely
+A,238,,QF_T_NS,oLink oLinkLikely
+A,239,,FT_N_SV,nLink
+A,240,,TN_S_VT,oLink oLinkLikely
+A,242,,SV_T_TV,oLink oLinkLikely
+A,243,,VT_T_VL,oLink oLinkLikely
+A,249,,DE_N_GV,nLink
+A,263,,FL_S_CA,oLink oLinkLikely
+A,272,,VH_T_NY,oLink oLinkLikely
+A,273,,HT_N_YS,nLink nLinkLikely
+A,274,,TN_Y_SE,oLink oLinkTyr
+A,275,,NY_S_ET,oLink oLinkLikely
+A,277,,SE_T_QV,oLink oLinkLikely
+A,280,,QV_W_RG,cLink
+A,286,,PR_Y_FN,oLink oLinkTyr
+A,288,,YF_N_VT,nLink nLinkLikely
+A,290,,NV_T_LR,oLink oLinkLikely
+A,298,,VK_N_PY,nLink
+A,300,,NP_Y_P,oLink oLinkTyr
+B,25,,_S_HM,oLink oLinkLikely
+B,43,,AI_T_QI,oLink oLinkLikely
+B,48,,EA_Y_LN,oLink oLinkTyr
+B,50,,YL_N_PR,nLink
+B,55,,MG_N_NI,nLink
+B,56,,GN_N_IP,nLink
+B,59,,IP_S_ED,oLink oLinkLikely
+B,63,,DL_Y_GY,oLink oLinkTyr
+B,65,,YG_Y_SN,oLink oLinkTyr
+B,66,,GY_S_NS,oLink oLinkLikely
+B,67,,YS_N_SI,nLink
+B,68,,SN_S_IN,oLink oLinkLikely
+B,70,,SI_N_TA,nLink
+B,71,,IN_T_AF,oLink oLinkLikely
+B,74,,AF_S_KA,oLink oLinkLikely
+B,77,,KA_S_DT,oLink oLinkLikely
+B,79,,SD_T_PN,oLink oLinkLikely
+B,81,,TP_N_KD,nLink
+B,84,,KD_T_LP,oLink oLinkLikely
+B,88,,PC_Y_SV,oLink oLinkTyr
+B,89,,CY_S_VA,oLink oLinkLikely
+B,99,,LL_N_ED,nLink
+B,103,,DM_T_CD,oLink oLinkLikely
+B,106,,CD_T_IL,oLink oLinkLikely
+B,110,,LM_W_EA,cLink
+B,114,,AV_S_VK,oLink oLinkLikely
+B,117,,VK_T_EV,oLink oLinkLikely
+B,123,,GI_S_SL,oLink oLinkLikely
+B,124,,IS_S_LV,oLink oLinkLikely
+B,127,,LV_N_LH,nLink
+B,134,,GK_Y_IY,oLink oLinkTyr
+B,136,,YI_Y_GS,oLink oLinkTyr
+B,138,,YG_S_SS,oLink oLinkLikely
+B,139,,GS_S_SG,oLink oLinkLikely
+B,140,,SS_S_GC,oLink oLinkLikely
+B,148,,QG_T_TY,oLink oLinkLikely
+B,149,,GT_T_YH,oLink oLinkLikely
+B,150,,TT_Y_HM,oLink oLinkTyr
+B,168,,VA_S_ST,oLink oLinkLikely
+B,169,,AS_S_TA,oLink oLinkLikely
+B,170,,SS_T_AT,oLink oLinkLikely
+B,172,,TA_T_YP,oLink oLinkLikely
+B,173,,AT_Y_PD,oLink oLinkTyr
+B,182,,IK_N_MK,nLink
+B,187,,PG_N_QG,nLink
+B,204,,GK_Y_PV,oLink oLinkTyr
+B,209,,EV_W_CP,cLink
+B,214,,DP_S_KN,oLink oLinkLikely
+B,216,,SK_N_EN,nLink
+B,218,,NE_N_TR,nLink
+B,219,,EN_T_RY,oLink oLinkLikely
+B,221,,TR_Y_YG,oLink oLinkTyr
+B,222,,RY_Y_GS,oLink oLinkTyr
+B,224,,YG_S_FT,oLink oLinkLikely
+B,226,,SF_T_GG,oLink oLinkLikely
+B,230,,GA_T_TP,oLink oLinkLikely
+B,231,,AT_T_PP,oLink oLinkLikely
+B,238,,QF_T_NS,oLink oLinkLikely
+B,239,,FT_N_SV,nLink
+B,240,,TN_S_VT,oLink oLinkLikely
+B,242,,SV_T_TV,oLink oLinkLikely
+B,243,,VT_T_VL,oLink oLinkLikely
+B,249,,DE_N_GV,nLink
+B,263,,FL_S_CA,oLink oLinkLikely
+B,272,,VH_T_NY,oLink oLinkLikely
+B,273,,HT_N_YS,nLink nLinkLikely
+B,274,,TN_Y_SE,oLink oLinkTyr
+B,275,,NY_S_ET,oLink oLinkLikely
+B,277,,SE_T_QV,oLink oLinkLikely
+B,280,,QV_W_RG,cLink
+B,286,,PR_Y_FN,oLink oLinkTyr
+B,288,,YF_N_VT,nLink nLinkLikely
+B,290,,NV_T_LR,oLink oLinkLikely
+B,298,,VK_N_P,nLink
+C,25,,_S_HM,oLink oLinkLikely
+C,37,,VR_T_GP,oLink oLinkLikely
+C,43,,AI_T_QI,oLink oLinkLikely
+C,48,,EA_Y_LN,oLink oLinkTyr
+C,50,,YL_N_PR,nLink
+C,55,,MG_N_NI,nLink
+C,56,,GN_N_IP,nLink
+C,59,,IP_S_ED,oLink oLinkLikely
+C,63,,DL_Y_GY,oLink oLinkTyr
+C,65,,YG_Y_SN,oLink oLinkTyr
+C,66,,GY_S_NS,oLink oLinkLikely
+C,67,,YS_N_SI,nLink
+C,68,,SN_S_IN,oLink oLinkLikely
+C,70,,SI_N_TA,nLink
+C,71,,IN_T_AF,oLink oLinkLikely
+C,74,,AF_S_KA,oLink oLinkLikely
+C,77,,KA_S_DT,oLink oLinkLikely
+C,79,,SD_T_PN,oLink oLinkLikely
+C,81,,TP_N_KD,nLink
+C,84,,KD_T_LP,oLink oLinkLikely
+C,88,,PC_Y_SV,oLink oLinkTyr
+C,89,,CY_S_VA,oLink oLinkLikely
+C,99,,LL_N_ED,nLink
+C,103,,DM_T_CD,oLink oLinkLikely
+C,106,,CD_T_IL,oLink oLinkLikely
+C,110,,LM_W_EA,cLink
+C,114,,AV_S_VK,oLink oLinkLikely
+C,117,,VK_T_EV,oLink oLinkLikely
+C,123,,GI_S_SL,oLink oLinkLikely
+C,124,,IS_S_LV,oLink oLinkLikely
+C,127,,LV_N_LH,nLink
+C,134,,GK_Y_IY,oLink oLinkTyr
+C,136,,YI_Y_GS,oLink oLinkTyr
+C,138,,YG_S_SS,oLink oLinkLikely
+C,139,,GS_S_SG,oLink oLinkLikely
+C,140,,SS_S_GC,oLink oLinkLikely
+C,148,,QG_T_TY,oLink oLinkLikely
+C,149,,GT_T_YH,oLink oLinkLikely
+C,150,,TT_Y_HM,oLink oLinkTyr
+C,168,,VA_S_ST,oLink oLinkLikely
+C,169,,AS_S_TA,oLink oLinkLikely
+C,170,,SS_T_AT,oLink oLinkLikely
+C,172,,TA_T_YP,oLink oLinkLikely
+C,173,,AT_Y_PD,oLink oLinkTyr
+C,182,,IK_N_MK,nLink
+C,187,,PG_N_QG,nLink
+C,204,,GK_Y_PV,oLink oLinkTyr
+C,209,,EV_W_CP,cLink
+C,214,,DP_S_KN,oLink oLinkLikely
+C,216,,SK_N_EN,nLink
+C,218,,NE_N_TR,nLink
+C,219,,EN_T_RY,oLink oLinkLikely
+C,221,,TR_Y_YG,oLink oLinkTyr
+C,222,,RY_Y_GS,oLink oLinkTyr
+C,224,,YG_S_FT,oLink oLinkLikely
+C,226,,SF_T_GG,oLink oLinkLikely
+C,230,,GA_T_TP,oLink oLinkLikely
+C,231,,AT_T_PP,oLink oLinkLikely
+C,238,,QF_T_NS,oLink oLinkLikely
+C,239,,FT_N_SV,nLink
+C,240,,TN_S_VT,oLink oLinkLikely
+C,242,,SV_T_TV,oLink oLinkLikely
+C,243,,VT_T_VL,oLink oLinkLikely
+C,249,,DE_N_GV,nLink
+C,263,,FL_S_CA,oLink oLinkLikely
+C,272,,VH_T_NY,oLink oLinkLikely
+C,273,,HT_N_YS,nLink nLinkLikely
+C,274,,TN_Y_SE,oLink oLinkTyr
+C,275,,NY_S_ET,oLink oLinkLikely
+C,277,,SE_T_QV,oLink oLinkLikely
+C,280,,QV_W_RG,cLink
+C,286,,PR_Y_FN,oLink oLinkTyr
+C,288,,YF_N_VT,nLink nLinkLikely
+C,290,,NV_T_LR,oLink oLinkLikely
+C,298,,VK_N_P,nLink
+D,37,,VR_T_GP,oLink oLinkLikely
+D,43,,AI_T_QI,oLink oLinkLikely
+D,48,,EA_Y_LN,oLink oLinkTyr
+D,50,,YL_N_PR,nLink
+D,55,,MG_N_NI,nLink
+D,56,,GN_N_IP,nLink
+D,59,,IP_S_ED,oLink oLinkLikely
+D,63,,DL_Y_GY,oLink oLinkTyr
+D,65,,YG_Y_SN,oLink oLinkTyr
+D,66,,GY_S_NS,oLink oLinkLikely
+D,67,,YS_N_SI,nLink
+D,68,,SN_S_IN,oLink oLinkLikely
+D,70,,SI_N_TA,nLink
+D,71,,IN_T_AF,oLink oLinkLikely
+D,74,,AF_S_KA,oLink oLinkLikely
+D,77,,KA_S_DT,oLink oLinkLikely
+D,79,,SD_T_PN,oLink oLinkLikely
+D,81,,TP_N_KD,nLink
+D,84,,KD_T_LP,oLink oLinkLikely
+D,88,,PC_Y_SV,oLink oLinkTyr
+D,89,,CY_S_VA,oLink oLinkLikely
+D,99,,LL_N_ED,nLink
+D,103,,DM_T_CD,oLink oLinkLikely
+D,106,,CD_T_IL,oLink oLinkLikely
+D,110,,LM_W_EA,cLink
+D,114,,AV_S_VK,oLink oLinkLikely
+D,117,,VK_T_EV,oLink oLinkLikely
+D,123,,GI_S_SL,oLink oLinkLikely
+D,124,,IS_S_LV,oLink oLinkLikely
+D,127,,LV_N_LH,nLink
+D,134,,GK_Y_IY,oLink oLinkTyr
+D,136,,YI_Y_GS,oLink oLinkTyr
+D,138,,YG_S_SS,oLink oLinkLikely
+D,139,,GS_S_SG,oLink oLinkLikely
+D,140,,SS_S_GC,oLink oLinkLikely
+D,148,,QG_T_TY,oLink oLinkLikely
+D,149,,GT_T_YH,oLink oLinkLikely
+D,150,,TT_Y_HM,oLink oLinkTyr
+D,168,,VA_S_ST,oLink oLinkLikely
+D,169,,AS_S_TA,oLink oLinkLikely
+D,170,,SS_T_AT,oLink oLinkLikely
+D,172,,TA_T_YP,oLink oLinkLikely
+D,173,,AT_Y_PD,oLink oLinkTyr
+D,182,,IK_N_MK,nLink
+D,187,,PG_N_QG,nLink
+D,204,,GK_Y_PV,oLink oLinkTyr
+D,209,,EV_W_CP,cLink
+D,214,,DP_S_KN,oLink oLinkLikely
+D,216,,SK_N_EN,nLink
+D,218,,NE_N_TR,nLink
+D,219,,EN_T_RY,oLink oLinkLikely
+D,221,,TR_Y_YG,oLink oLinkTyr
+D,222,,RY_Y_GS,oLink oLinkTyr
+D,224,,YG_S_FT,oLink oLinkLikely
+D,226,,SF_T_GG,oLink oLinkLikely
+D,230,,GA_T_TP,oLink oLinkLikely
+D,231,,AT_T_PP,oLink oLinkLikely
+D,238,,QF_T_NS,oLink oLinkLikely
+D,239,,FT_N_SV,nLink
+D,240,,TN_S_VT,oLink oLinkLikely
+D,242,,SV_T_TV,oLink oLinkLikely
+D,243,,VT_T_VL,oLink oLinkLikely
+D,249,,DE_N_GV,nLink
+D,263,,FL_S_CA,oLink oLinkLikely
+D,272,,VH_T_NY,oLink oLinkLikely
+D,273,,HT_N_YS,nLink nLinkLikely
+D,274,,TN_Y_SE,oLink oLinkTyr
+D,275,,NY_S_ET,oLink oLinkLikely
+D,277,,SE_T_QV,oLink oLinkLikely
+D,280,,QV_W_RG,cLink
+D,286,,PR_Y_FN,oLink oLinkTyr
+D,288,,YF_N_VT,nLink nLinkLikely
+D,290,,NV_T_LR,oLink oLinkLikely
+D,298,,VK_N_P,nLink
+E,25,,_S_HM,oLink oLinkLikely
+E,37,,VR_T_GP,oLink oLinkLikely
+E,43,,AI_T_QI,oLink oLinkLikely
+E,48,,EA_Y_LN,oLink oLinkTyr
+E,50,,YL_N_PR,nLink
+E,55,,MG_N_NI,nLink
+E,56,,GN_N_IP,nLink
+E,59,,IP_S_ED,oLink oLinkLikely
+E,63,,DL_Y_GY,oLink oLinkTyr
+E,65,,YG_Y_SN,oLink oLinkTyr
+E,66,,GY_S_NS,oLink oLinkLikely
+E,67,,YS_N_SI,nLink
+E,68,,SN_S_IN,oLink oLinkLikely
+E,70,,SI_N_TA,nLink
+E,71,,IN_T_AF,oLink oLinkLikely
+E,74,,AF_S_KA,oLink oLinkLikely
+E,77,,KA_S_DT,oLink oLinkLikely
+E,79,,SD_T_PN,oLink oLinkLikely
+E,81,,TP_N_KD,nLink
+E,84,,KD_T_LP,oLink oLinkLikely
+E,88,,PC_Y_SV,oLink oLinkTyr
+E,89,,CY_S_VA,oLink oLinkLikely
+E,99,,LL_N_ED,nLink
+E,103,,DM_T_CD,oLink oLinkLikely
+E,106,,CD_T_IL,oLink oLinkLikely
+E,110,,LM_W_EA,cLink
+E,114,,AV_S_VK,oLink oLinkLikely
+E,117,,VK_T_EV,oLink oLinkLikely
+E,123,,GI_S_SL,oLink oLinkLikely
+E,124,,IS_S_LV,oLink oLinkLikely
+E,127,,LV_N_LH,nLink
+E,134,,GK_Y_IY,oLink oLinkTyr
+E,136,,YI_Y_GS,oLink oLinkTyr
+E,138,,YG_S_SS,oLink oLinkLikely
+E,139,,GS_S_SG,oLink oLinkLikely
+E,140,,SS_S_GC,oLink oLinkLikely
+E,148,,QG_T_TY,oLink oLinkLikely
+E,149,,GT_T_YH,oLink oLinkLikely
+E,150,,TT_Y_HM,oLink oLinkTyr
+E,168,,VA_S_ST,oLink oLinkLikely
+E,169,,AS_S_TA,oLink oLinkLikely
+E,170,,SS_T_AT,oLink oLinkLikely
+E,172,,TA_T_YP,oLink oLinkLikely
+E,173,,AT_Y_PD,oLink oLinkTyr
+E,182,,IK_N_MK,nLink
+E,187,,PG_N_QG,nLink
+E,204,,GK_Y_PV,oLink oLinkTyr
+E,209,,EV_W_CP,cLink
+E,214,,DP_S_KN,oLink oLinkLikely
+E,216,,SK_N_EN,nLink
+E,218,,NE_N_TR,nLink
+E,219,,EN_T_RY,oLink oLinkLikely
+E,221,,TR_Y_YG,oLink oLinkTyr
+E,222,,RY_Y_GS,oLink oLinkTyr
+E,224,,YG_S_FT,oLink oLinkLikely
+E,226,,SF_T_GG,oLink oLinkLikely
+E,230,,GA_T_TP,oLink oLinkLikely
+E,231,,AT_T_PP,oLink oLinkLikely
+E,238,,QF_T_NS,oLink oLinkLikely
+E,239,,FT_N_SV,nLink
+E,240,,TN_S_VT,oLink oLinkLikely
+E,242,,SV_T_TV,oLink oLinkLikely
+E,243,,VT_T_VL,oLink oLinkLikely
+E,249,,DE_N_GV,nLink
+E,263,,FL_S_CA,oLink oLinkLikely
+E,272,,VH_T_NY,oLink oLinkLikely
+E,273,,HT_N_YS,nLink nLinkLikely
+E,274,,TN_Y_SE,oLink oLinkTyr
+E,275,,NY_S_ET,oLink oLinkLikely
+E,277,,SE_T_QV,oLink oLinkLikely
+E,280,,QV_W_RG,cLink
+E,286,,PR_Y_FN,oLink oLinkTyr
+E,288,,YF_N_VT,nLink nLinkLikely
+E,290,,NV_T_LR,oLink oLinkLikely
+E,298,,VK_N_PY,nLink
+E,300,,NP_Y_P,oLink oLinkTyr
+F,25,,_S_HM,oLink oLinkLikely
+F,37,,VR_T_GP,oLink oLinkLikely
+F,43,,AI_T_QI,oLink oLinkLikely
+F,48,,EA_Y_LN,oLink oLinkTyr
+F,50,,YL_N_PR,nLink
+F,55,,MG_N_NI,nLink
+F,56,,GN_N_IP,nLink
+F,59,,IP_S_ED,oLink oLinkLikely
+F,63,,DL_Y_GY,oLink oLinkTyr
+F,65,,YG_Y_SN,oLink oLinkTyr
+F,66,,GY_S_NS,oLink oLinkLikely
+F,67,,YS_N_SI,nLink
+F,68,,SN_S_IN,oLink oLinkLikely
+F,70,,SI_N_TA,nLink
+F,71,,IN_T_AF,oLink oLinkLikely
+F,74,,AF_S_KA,oLink oLinkLikely
+F,77,,KA_S_DT,oLink oLinkLikely
+F,79,,SD_T_PN,oLink oLinkLikely
+F,81,,TP_N_KD,nLink
+F,84,,KD_T_LP,oLink oLinkLikely
+F,88,,PC_Y_SV,oLink oLinkTyr
+F,89,,CY_S_VA,oLink oLinkLikely
+F,99,,LL_N_ED,nLink
+F,103,,DM_T_CD,oLink oLinkLikely
+F,106,,CD_T_IL,oLink oLinkLikely
+F,110,,LM_W_EA,cLink
+F,114,,AV_S_VK,oLink oLinkLikely
+F,117,,VK_T_EV,oLink oLinkLikely
+F,123,,GI_S_SL,oLink oLinkLikely
+F,124,,IS_S_LV,oLink oLinkLikely
+F,127,,LV_N_LH,nLink
+F,134,,GK_Y_IY,oLink oLinkTyr
+F,136,,YI_Y_GS,oLink oLinkTyr
+F,138,,YG_S_SS,oLink oLinkLikely
+F,139,,GS_S_SG,oLink oLinkLikely
+F,140,,SS_S_GC,oLink oLinkLikely
+F,148,,QG_T_TY,oLink oLinkLikely
+F,149,,GT_T_YH,oLink oLinkLikely
+F,150,,TT_Y_HM,oLink oLinkTyr
+F,168,,VA_S_ST,oLink oLinkLikely
+F,169,,AS_S_TA,oLink oLinkLikely
+F,170,,SS_T_AT,oLink oLinkLikely
+F,172,,TA_T_YP,oLink oLinkLikely
+F,173,,AT_Y_PD,oLink oLinkTyr
+F,182,,IK_N_MK,nLink
+F,187,,PG_N_QG,nLink
+F,204,,GK_Y_PV,oLink oLinkTyr
+F,209,,EV_W_CP,cLink
+F,214,,DP_S_KN,oLink oLinkLikely
+F,216,,SK_N_EN,nLink
+F,218,,NE_N_TR,nLink
+F,219,,EN_T_RY,oLink oLinkLikely
+F,221,,TR_Y_YG,oLink oLinkTyr
+F,222,,RY_Y_GS,oLink oLinkTyr
+F,224,,YG_S_FT,oLink oLinkLikely
+F,226,,SF_T_GG,oLink oLinkLikely
+F,230,,GA_T_TP,oLink oLinkLikely
+F,231,,AT_T_PP,oLink oLinkLikely
+F,238,,QF_T_NS,oLink oLinkLikely
+F,239,,FT_N_SV,nLink
+F,240,,TN_S_VT,oLink oLinkLikely
+F,242,,SV_T_TV,oLink oLinkLikely
+F,243,,VT_T_VL,oLink oLinkLikely
+F,249,,DE_N_GV,nLink
+F,263,,FL_S_CA,oLink oLinkLikely
+F,272,,VH_T_NY,oLink oLinkLikely
+F,273,,HT_N_YS,nLink nLinkLikely
+F,274,,TN_Y_SE,oLink oLinkTyr
+F,275,,NY_S_ET,oLink oLinkLikely
+F,277,,SE_T_QV,oLink oLinkLikely
+F,280,,QV_W_RG,cLink
+F,286,,PR_Y_FN,oLink oLinkTyr
+F,288,,YF_N_VT,nLink nLinkLikely
+F,290,,NV_T_LR,oLink oLinkLikely
+F,298,,VK_N_,nLink
+G,25,,_S_HM,oLink oLinkLikely
+G,37,,VR_T_GP,oLink oLinkLikely
+G,43,,AI_T_QI,oLink oLinkLikely
+G,48,,EA_Y_LN,oLink oLinkTyr
+G,50,,YL_N_PR,nLink
+G,55,,MG_N_NI,nLink
+G,56,,GN_N_IP,nLink
+G,59,,IP_S_ED,oLink oLinkLikely
+G,63,,DL_Y_GY,oLink oLinkTyr
+G,65,,YG_Y_SN,oLink oLinkTyr
+G,66,,GY_S_NS,oLink oLinkLikely
+G,67,,YS_N_SI,nLink
+G,68,,SN_S_IN,oLink oLinkLikely
+G,70,,SI_N_TA,nLink
+G,71,,IN_T_AF,oLink oLinkLikely
+G,74,,AF_S_KA,oLink oLinkLikely
+G,77,,KA_S_DT,oLink oLinkLikely
+G,79,,SD_T_PN,oLink oLinkLikely
+G,81,,TP_N_KD,nLink
+G,84,,KD_T_LP,oLink oLinkLikely
+G,88,,PC_Y_SV,oLink oLinkTyr
+G,89,,CY_S_VA,oLink oLinkLikely
+G,103,,DM_T_C,oLink oLinkLikely
+G,106,,_T_IL,oLink oLinkLikely
+G,110,,LM_W_EA,cLink
+G,114,,AV_S_VK,oLink oLinkLikely
+G,117,,VK_T_EV,oLink oLinkLikely
+G,123,,GI_S_SL,oLink oLinkLikely
+G,124,,IS_S_LV,oLink oLinkLikely
+G,127,,LV_N_LH,nLink
+G,134,,GK_Y_IY,oLink oLinkTyr
+G,136,,YI_Y_GS,oLink oLinkTyr
+G,138,,YG_S_SS,oLink oLinkLikely
+G,139,,GS_S_SG,oLink oLinkLikely
+G,140,,SS_S_GC,oLink oLinkLikely
+G,148,,QG_T_TY,oLink oLinkLikely
+G,149,,GT_T_YH,oLink oLinkLikely
+G,150,,TT_Y_HM,oLink oLinkTyr
+G,168,,VA_S_ST,oLink oLinkLikely
+G,169,,AS_S_TA,oLink oLinkLikely
+G,170,,SS_T_AT,oLink oLinkLikely
+G,172,,TA_T_YP,oLink oLinkLikely
+G,173,,AT_Y_PD,oLink oLinkTyr
+G,182,,IK_N_MK,nLink
+G,187,,PG_N_QG,nLink
+G,204,,GK_Y_PV,oLink oLinkTyr
+G,209,,EV_W_CP,cLink
+G,214,,DP_S_KN,oLink oLinkLikely
+G,216,,SK_N_EN,nLink
+G,218,,NE_N_TR,nLink
+G,219,,EN_T_RY,oLink oLinkLikely
+G,221,,TR_Y_YG,oLink oLinkTyr
+G,222,,RY_Y_GS,oLink oLinkTyr
+G,224,,YG_S_FT,oLink oLinkLikely
+G,226,,SF_T_GG,oLink oLinkLikely
+G,230,,GA_T_TP,oLink oLinkLikely
+G,231,,AT_T_PP,oLink oLinkLikely
+G,238,,QF_T_NS,oLink oLinkLikely
+G,239,,FT_N_SV,nLink
+G,240,,TN_S_VT,oLink oLinkLikely
+G,242,,SV_T_TV,oLink oLinkLikely
+G,243,,VT_T_VL,oLink oLinkLikely
+G,249,,DE_N_GV,nLink
+G,263,,FL_S_CA,oLink oLinkLikely
+G,272,,VH_T_NY,oLink oLinkLikely
+G,273,,HT_N_YS,nLink nLinkLikely
+G,274,,TN_Y_SE,oLink oLinkTyr
+G,275,,NY_S_ET,oLink oLinkLikely
+G,277,,SE_T_QV,oLink oLinkLikely
+G,280,,QV_W_RG,cLink
+G,286,,PR_Y_FN,oLink oLinkTyr
+G,288,,YF_N_VT,nLink nLinkLikely
+G,290,,NV_T_LR,oLink oLinkLikely
+G,298,,VK_N_,nLink
+H,25,,_S_HM,oLink oLinkLikely
+H,37,,VR_T_GP,oLink oLinkLikely
+H,43,,AI_T_QI,oLink oLinkLikely
+H,48,,EA_Y_LN,oLink oLinkTyr
+H,50,,YL_N_PR,nLink
+H,55,,MG_N_NI,nLink
+H,56,,GN_N_IP,nLink
+H,59,,IP_S_ED,oLink oLinkLikely
+H,63,,DL_Y_GY,oLink oLinkTyr
+H,65,,YG_Y_SN,oLink oLinkTyr
+H,66,,GY_S_NS,oLink oLinkLikely
+H,67,,YS_N_SI,nLink
+H,68,,SN_S_IN,oLink oLinkLikely
+H,70,,SI_N_TA,nLink
+H,71,,IN_T_AF,oLink oLinkLikely
+H,74,,AF_S_KA,oLink oLinkLikely
+H,77,,KA_S_DT,oLink oLinkLikely
+H,79,,SD_T_PN,oLink oLinkLikely
+H,81,,TP_N_KD,nLink
+H,84,,KD_T_LP,oLink oLinkLikely
+H,88,,PC_Y_SV,oLink oLinkTyr
+H,89,,CY_S_VA,oLink oLinkLikely
+H,99,,LL_N_ED,nLink
+H,103,,DM_T_C,oLink oLinkLikely
+H,106,,_T_IL,oLink oLinkLikely
+H,110,,LM_W_EA,cLink
+H,114,,AV_S_VK,oLink oLinkLikely
+H,117,,VK_T_EV,oLink oLinkLikely
+H,123,,GI_S_SL,oLink oLinkLikely
+H,124,,IS_S_LV,oLink oLinkLikely
+H,127,,LV_N_LH,nLink
+H,134,,GK_Y_IY,oLink oLinkTyr
+H,136,,YI_Y_GS,oLink oLinkTyr
+H,138,,YG_S_SS,oLink oLinkLikely
+H,139,,GS_S_SG,oLink oLinkLikely
+H,140,,SS_S_GC,oLink oLinkLikely
+H,148,,QG_T_TY,oLink oLinkLikely
+H,149,,GT_T_YH,oLink oLinkLikely
+H,150,,TT_Y_HM,oLink oLinkTyr
+H,168,,VA_S_ST,oLink oLinkLikely
+H,169,,AS_S_TA,oLink oLinkLikely
+H,170,,SS_T_AT,oLink oLinkLikely
+H,172,,TA_T_YP,oLink oLinkLikely
+H,173,,AT_Y_PD,oLink oLinkTyr
+H,182,,IK_N_MK,nLink
+H,187,,PG_N_QG,nLink
+H,204,,GK_Y_PV,oLink oLinkTyr
+H,209,,EV_W_CP,cLink
+H,214,,DP_S_KN,oLink oLinkLikely
+H,216,,SK_N_EN,nLink
+H,218,,NE_N_TR,nLink
+H,219,,EN_T_RY,oLink oLinkLikely
+H,221,,TR_Y_YG,oLink oLinkTyr
+H,222,,RY_Y_GS,oLink oLinkTyr
+H,224,,YG_S_FT,oLink oLinkLikely
+H,226,,SF_T_GG,oLink oLinkLikely
+H,230,,GA_T_TP,oLink oLinkLikely
+H,231,,AT_T_PP,oLink oLinkLikely
+H,238,,QF_T_NS,oLink oLinkLikely
+H,239,,FT_N_SV,nLink
+H,240,,TN_S_VT,oLink oLinkLikely
+H,242,,SV_T_TV,oLink oLinkLikely
+H,243,,VT_T_VL,oLink oLinkLikely
+H,249,,DE_N_GV,nLink
+H,263,,FL_S_CA,oLink oLinkLikely
+H,272,,VH_T_NY,oLink oLinkLikely
+H,273,,HT_N_YS,nLink nLinkLikely
+H,274,,TN_Y_SE,oLink oLinkTyr
+H,275,,NY_S_ET,oLink oLinkLikely
+H,277,,SE_T_QV,oLink oLinkLikely
+H,280,,QV_W_RG,cLink
+H,286,,PR_Y_FN,oLink oLinkTyr
+H,288,,YF_N_VT,nLink nLinkLikely
+H,290,,NV_T_LR,oLink oLinkLikely
+H,298,,VK_N_,nLink
+I,25,,_S_HM,oLink oLinkLikely
+I,37,,VR_T_GP,oLink oLinkLikely
+I,43,,AI_T_QI,oLink oLinkLikely
+I,48,,EA_Y_LN,oLink oLinkTyr
+I,50,,YL_N_PR,nLink
+I,55,,MG_N_NI,nLink
+I,56,,GN_N_IP,nLink
+I,59,,IP_S_ED,oLink oLinkLikely
+I,63,,DL_Y_GY,oLink oLinkTyr
+I,65,,YG_Y_SN,oLink oLinkTyr
+I,66,,GY_S_NS,oLink oLinkLikely
+I,67,,YS_N_SI,nLink
+I,68,,SN_S_IN,oLink oLinkLikely
+I,70,,SI_N_TA,nLink
+I,71,,IN_T_AF,oLink oLinkLikely
+I,74,,AF_S_KA,oLink oLinkLikely
+I,77,,KA_S_DT,oLink oLinkLikely
+I,79,,SD_T_PN,oLink oLinkLikely
+I,81,,TP_N_KD,nLink
+I,84,,KD_T_LP,oLink oLinkLikely
+I,88,,PC_Y_SV,oLink oLinkTyr
+I,89,,CY_S_VA,oLink oLinkLikely
+I,99,,LL_N_ED,nLink
+I,106,,CD_T_IL,oLink oLinkLikely
+I,110,,LM_W_EA,cLink
+I,114,,AV_S_VK,oLink oLinkLikely
+I,117,,VK_T_EV,oLink oLinkLikely
+I,123,,GI_S_SL,oLink oLinkLikely
+I,124,,IS_S_LV,oLink oLinkLikely
+I,127,,LV_N_LH,nLink
+I,134,,GK_Y_IY,oLink oLinkTyr
+I,136,,YI_Y_GS,oLink oLinkTyr
+I,138,,YG_S_SS,oLink oLinkLikely
+I,139,,GS_S_SG,oLink oLinkLikely
+I,140,,SS_S_GC,oLink oLinkLikely
+I,148,,QG_T_TY,oLink oLinkLikely
+I,149,,GT_T_YH,oLink oLinkLikely
+I,150,,TT_Y_HM,oLink oLinkTyr
+I,168,,VA_S_ST,oLink oLinkLikely
+I,169,,AS_S_TA,oLink oLinkLikely
+I,170,,SS_T_AT,oLink oLinkLikely
+I,172,,TA_T_YP,oLink oLinkLikely
+I,173,,AT_Y_PD,oLink oLinkTyr
+I,182,,IK_N_MK,nLink
+I,187,,PG_N_QG,nLink
+I,204,,GK_Y_PV,oLink oLinkTyr
+I,209,,EV_W_CP,cLink
+I,214,,DP_S_KN,oLink oLinkLikely
+I,216,,SK_N_EN,nLink
+I,218,,NE_N_TR,nLink
+I,219,,EN_T_RY,oLink oLinkLikely
+I,221,,TR_Y_YG,oLink oLinkTyr
+I,222,,RY_Y_GS,oLink oLinkTyr
+I,224,,YG_S_FT,oLink oLinkLikely
+I,226,,SF_T_GG,oLink oLinkLikely
+I,230,,GA_T_TP,oLink oLinkLikely
+I,231,,AT_T_PP,oLink oLinkLikely
+I,238,,QF_T_NS,oLink oLinkLikely
+I,239,,FT_N_SV,nLink
+I,240,,TN_S_VT,oLink oLinkLikely
+I,242,,SV_T_TV,oLink oLinkLikely
+I,243,,VT_T_VL,oLink oLinkLikely
+I,249,,DE_N_GV,nLink
+I,263,,FL_S_CA,oLink oLinkLikely
+I,272,,VH_T_NY,oLink oLinkLikely
+I,273,,HT_N_YS,nLink nLinkLikely
+I,274,,TN_Y_SE,oLink oLinkTyr
+I,275,,NY_S_ET,oLink oLinkLikely
+I,277,,SE_T_QV,oLink oLinkLikely
+I,280,,QV_W_RG,cLink
+I,286,,PR_Y_FN,oLink oLinkTyr
+I,288,,YF_N_VT,nLink nLinkLikely
+I,290,,NV_T_LR,oLink oLinkLikely
+I,298,,VK_N_P,nLink
+J,25,,G_S_HM,oLink oLinkLikely
+J,37,,VR_T_GP,oLink oLinkLikely
+J,43,,AI_T_QI,oLink oLinkLikely
+J,48,,EA_Y_LN,oLink oLinkTyr
+J,50,,YL_N_PR,nLink
+J,55,,MG_N_NI,nLink
+J,56,,GN_N_IP,nLink
+J,59,,IP_S_ED,oLink oLinkLikely
+J,63,,DL_Y_GY,oLink oLinkTyr
+J,65,,YG_Y_SN,oLink oLinkTyr
+J,66,,GY_S_NS,oLink oLinkLikely
+J,67,,YS_N_SI,nLink
+J,68,,SN_S_IN,oLink oLinkLikely
+J,70,,SI_N_TA,nLink
+J,71,,IN_T_AF,oLink oLinkLikely
+J,74,,AF_S_KA,oLink oLinkLikely
+J,77,,KA_S_DT,oLink oLinkLikely
+J,79,,SD_T_PN,oLink oLinkLikely
+J,81,,TP_N_KD,nLink
+J,84,,KD_T_LP,oLink oLinkLikely
+J,88,,PC_Y_SV,oLink oLinkTyr
+J,89,,CY_S_VA,oLink oLinkLikely
+J,99,,LL_N_ED,nLink
+J,103,,DM_T_CD,oLink oLinkLikely
+J,106,,CD_T_IL,oLink oLinkLikely
+J,110,,LM_W_EA,cLink
+J,114,,AV_S_VK,oLink oLinkLikely
+J,117,,VK_T_EV,oLink oLinkLikely
+J,123,,GI_S_SL,oLink oLinkLikely
+J,124,,IS_S_LV,oLink oLinkLikely
+J,127,,LV_N_LH,nLink
+J,134,,GK_Y_IY,oLink oLinkTyr
+J,136,,YI_Y_GS,oLink oLinkTyr
+J,138,,YG_S_SS,oLink oLinkLikely
+J,139,,GS_S_SG,oLink oLinkLikely
+J,140,,SS_S_GC,oLink oLinkLikely
+J,148,,QG_T_TY,oLink oLinkLikely
+J,149,,GT_T_YH,oLink oLinkLikely
+J,150,,TT_Y_HM,oLink oLinkTyr
+J,168,,VA_S_ST,oLink oLinkLikely
+J,169,,AS_S_TA,oLink oLinkLikely
+J,170,,SS_T_AT,oLink oLinkLikely
+J,172,,TA_T_YP,oLink oLinkLikely
+J,173,,AT_Y_PD,oLink oLinkTyr
+J,182,,IK_N_MK,nLink
+J,187,,PG_N_QG,nLink
+J,204,,GK_Y_PV,oLink oLinkTyr
+J,209,,EV_W_CP,cLink
+J,214,,DP_S_KN,oLink oLinkLikely
+J,216,,SK_N_EN,nLink
+J,218,,NE_N_TR,nLink
+J,219,,EN_T_RY,oLink oLinkLikely
+J,221,,TR_Y_YG,oLink oLinkTyr
+J,222,,RY_Y_GS,oLink oLinkTyr
+J,224,,YG_S_FT,oLink oLinkLikely
+J,226,,SF_T_GG,oLink oLinkLikely
+J,230,,GA_T_TP,oLink oLinkLikely
+J,231,,AT_T_PP,oLink oLinkLikely
+J,238,,QF_T_NS,oLink oLinkLikely
+J,239,,FT_N_SV,nLink
+J,240,,TN_S_VT,oLink oLinkLikely
+J,242,,SV_T_TV,oLink oLinkLikely
+J,243,,VT_T_VL,oLink oLinkLikely
+J,249,,DE_N_GV,nLink
+J,263,,FL_S_CA,oLink oLinkLikely
+J,272,,VH_T_NY,oLink oLinkLikely
+J,273,,HT_N_YS,nLink nLinkLikely
+J,274,,TN_Y_SE,oLink oLinkTyr
+J,275,,NY_S_ET,oLink oLinkLikely
+J,277,,SE_T_QV,oLink oLinkLikely
+J,280,,QV_W_RG,cLink
+J,286,,PR_Y_FN,oLink oLinkTyr
+J,288,,YF_N_VT,nLink nLinkLikely
+J,290,,NV_T_LR,oLink oLinkLikely
+J,298,,VK_N_PY,nLink
+J,300,,NP_Y_,oLink oLinkTyr

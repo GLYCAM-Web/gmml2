@@ -1,0 +1,5273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+table {
+font-family: arial, sans-serif;
+border-collapse: collapse;
+}
+td, th {
+border: 1px solid #dddddd;
+text-align: left;
+padding: 8px;
+}
+tr:nth-child(even) {
+background-color: #dddddd;
+}
+</style>
+</head>
+<body>
+<table>
+<tr>
+<th>Chain</th>
+<th>ResidueNumber</th>
+<th>InsertionCode</th>
+<th>SequenceContext</th>
+<th>Tags</th>
+</tr>
+<tr>
+<th>A</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>A</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>A</th>
+<th>298</th>
+<th></th>
+<th>VK_N_PY</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>A</th>
+<th>300</th>
+<th></th>
+<th>NP_Y_P</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>B</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>B</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>B</th>
+<th>298</th>
+<th></th>
+<th>VK_N_P</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>C</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>C</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>C</th>
+<th>298</th>
+<th></th>
+<th>VK_N_P</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>D</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>D</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>D</th>
+<th>298</th>
+<th></th>
+<th>VK_N_P</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>E</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>E</th>
+<th>298</th>
+<th></th>
+<th>VK_N_PY</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>E</th>
+<th>300</th>
+<th></th>
+<th>NP_Y_P</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>F</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>F</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>F</th>
+<th>298</th>
+<th></th>
+<th>VK_N_</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>103</th>
+<th></th>
+<th>DM_T_C</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>106</th>
+<th></th>
+<th>_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>G</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>G</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>G</th>
+<th>298</th>
+<th></th>
+<th>VK_N_</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>103</th>
+<th></th>
+<th>DM_T_C</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>106</th>
+<th></th>
+<th>_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>H</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>H</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>H</th>
+<th>298</th>
+<th></th>
+<th>VK_N_</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>25</th>
+<th></th>
+<th>_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>I</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>I</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>I</th>
+<th>298</th>
+<th></th>
+<th>VK_N_P</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>25</th>
+<th></th>
+<th>G_S_HM</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>37</th>
+<th></th>
+<th>VR_T_GP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>43</th>
+<th></th>
+<th>AI_T_QI</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>48</th>
+<th></th>
+<th>EA_Y_LN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>50</th>
+<th></th>
+<th>YL_N_PR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>55</th>
+<th></th>
+<th>MG_N_NI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>56</th>
+<th></th>
+<th>GN_N_IP</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>59</th>
+<th></th>
+<th>IP_S_ED</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>63</th>
+<th></th>
+<th>DL_Y_GY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>65</th>
+<th></th>
+<th>YG_Y_SN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>66</th>
+<th></th>
+<th>GY_S_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>67</th>
+<th></th>
+<th>YS_N_SI</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>68</th>
+<th></th>
+<th>SN_S_IN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>70</th>
+<th></th>
+<th>SI_N_TA</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>71</th>
+<th></th>
+<th>IN_T_AF</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>74</th>
+<th></th>
+<th>AF_S_KA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>77</th>
+<th></th>
+<th>KA_S_DT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>79</th>
+<th></th>
+<th>SD_T_PN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>81</th>
+<th></th>
+<th>TP_N_KD</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>84</th>
+<th></th>
+<th>KD_T_LP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>88</th>
+<th></th>
+<th>PC_Y_SV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>89</th>
+<th></th>
+<th>CY_S_VA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>99</th>
+<th></th>
+<th>LL_N_ED</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>103</th>
+<th></th>
+<th>DM_T_CD</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>106</th>
+<th></th>
+<th>CD_T_IL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>110</th>
+<th></th>
+<th>LM_W_EA</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>114</th>
+<th></th>
+<th>AV_S_VK</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>117</th>
+<th></th>
+<th>VK_T_EV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>123</th>
+<th></th>
+<th>GI_S_SL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>124</th>
+<th></th>
+<th>IS_S_LV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>127</th>
+<th></th>
+<th>LV_N_LH</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>134</th>
+<th></th>
+<th>GK_Y_IY</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>136</th>
+<th></th>
+<th>YI_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>138</th>
+<th></th>
+<th>YG_S_SS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>139</th>
+<th></th>
+<th>GS_S_SG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>140</th>
+<th></th>
+<th>SS_S_GC</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>148</th>
+<th></th>
+<th>QG_T_TY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>149</th>
+<th></th>
+<th>GT_T_YH</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>150</th>
+<th></th>
+<th>TT_Y_HM</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>168</th>
+<th></th>
+<th>VA_S_ST</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>169</th>
+<th></th>
+<th>AS_S_TA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>170</th>
+<th></th>
+<th>SS_T_AT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>172</th>
+<th></th>
+<th>TA_T_YP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>173</th>
+<th></th>
+<th>AT_Y_PD</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>182</th>
+<th></th>
+<th>IK_N_MK</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>187</th>
+<th></th>
+<th>PG_N_QG</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>204</th>
+<th></th>
+<th>GK_Y_PV</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>209</th>
+<th></th>
+<th>EV_W_CP</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>214</th>
+<th></th>
+<th>DP_S_KN</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>216</th>
+<th></th>
+<th>SK_N_EN</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>218</th>
+<th></th>
+<th>NE_N_TR</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>219</th>
+<th></th>
+<th>EN_T_RY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>221</th>
+<th></th>
+<th>TR_Y_YG</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>222</th>
+<th></th>
+<th>RY_Y_GS</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>224</th>
+<th></th>
+<th>YG_S_FT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>226</th>
+<th></th>
+<th>SF_T_GG</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>230</th>
+<th></th>
+<th>GA_T_TP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>231</th>
+<th></th>
+<th>AT_T_PP</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>238</th>
+<th></th>
+<th>QF_T_NS</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>239</th>
+<th></th>
+<th>FT_N_SV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>240</th>
+<th></th>
+<th>TN_S_VT</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>242</th>
+<th></th>
+<th>SV_T_TV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>243</th>
+<th></th>
+<th>VT_T_VL</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>249</th>
+<th></th>
+<th>DE_N_GV</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>263</th>
+<th></th>
+<th>FL_S_CA</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>272</th>
+<th></th>
+<th>VH_T_NY</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>273</th>
+<th></th>
+<th>HT_N_YS</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>274</th>
+<th></th>
+<th>TN_Y_SE</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>275</th>
+<th></th>
+<th>NY_S_ET</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>277</th>
+<th></th>
+<th>SE_T_QV</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>280</th>
+<th></th>
+<th>QV_W_RG</th>
+<th>cLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>286</th>
+<th></th>
+<th>PR_Y_FN</th>
+<th>oLink oLinkTyr</th>
+</tr>
+<tr>
+<th>J</th>
+<th>288</th>
+<th></th>
+<th>YF_N_VT</th>
+<th>nLink nLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>290</th>
+<th></th>
+<th>NV_T_LR</th>
+<th>oLink oLinkLikely</th>
+</tr>
+<tr>
+<th>J</th>
+<th>298</th>
+<th></th>
+<th>VK_N_PY</th>
+<th>nLink</th>
+</tr>
+<tr>
+<th>J</th>
+<th>300</th>
+<th></th>
+<th>NP_Y_</th>
+<th>oLink oLinkTyr</th>
+</tr>
+</table>
+</body>
+</html>
