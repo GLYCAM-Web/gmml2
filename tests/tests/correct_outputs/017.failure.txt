@@ -1,4 +1,0 @@
-Input file is tests/inputs/017.GlycoproteinBuilderInputDosAndError.txt
-Reading input file complete, on to construction
-glycoproteinBuilder: Error: Did not find a residue with id matching A_124
-
