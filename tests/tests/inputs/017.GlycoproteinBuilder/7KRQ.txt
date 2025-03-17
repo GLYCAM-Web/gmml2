@@ -2,7 +2,7 @@ Protein:tests/inputs/017.GlycoproteinBuilder/7KRQ.pdb
 
 prepareForMD:true
 
-numberOfOutputStructures:0
+numberOfSamples:0
 
 persistCycles:5
 

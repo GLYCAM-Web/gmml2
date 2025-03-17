@@ -2,7 +2,7 @@ Protein:tests/inputs/017.GlycoproteinBuilder/1rbj.pdb
 
 prepareForMD:true
 
-numberOfOutputStructures:2
+numberOfSamples:2
 
 persistCycles:5
 

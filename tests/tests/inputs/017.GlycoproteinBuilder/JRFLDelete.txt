@@ -2,7 +2,7 @@ Protein:tests/inputs/017.GlycoproteinBuilder/JRFL.B99990001.pdb
 
 prepareForMD:true
 
-numberOfOutputStructures:1
+numberOfSamples:1
 
 persistCycles:5
 

@@ -1,6 +1,6 @@
 Protein:tests/inputs/017.GlycoproteinBuilder/createError.pdb
 
-numberOfOutputStructures:2
+numberOfSamples:2
 
 persistCycles:5
 

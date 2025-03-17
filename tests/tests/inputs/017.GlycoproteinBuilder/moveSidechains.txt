@@ -2,7 +2,7 @@ Protein:tests/inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 prepareForMD:true
 
-numberOfOutputStructures:4
+numberOfSamples:4
 
 moveOverlappingSidechains:true
 

@@ -8,7 +8,7 @@ Filename: tests/inputs/017.GlycoproteinBuilder/moveSidechains.txt
 Protein: tests/inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 Parameter                              | Value   
-numberOfOutputStructures                 4       
+numberOfSamples                          4       
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       

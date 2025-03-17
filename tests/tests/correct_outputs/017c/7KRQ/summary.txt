@@ -8,7 +8,7 @@ Filename: tests/inputs/017.GlycoproteinBuilder/7KRQ.txt
 Protein: tests/inputs/017.GlycoproteinBuilder/7KRQ.pdb
 
 Parameter                              | Value   
-numberOfOutputStructures                 0       
+numberOfSamples                          0       
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       

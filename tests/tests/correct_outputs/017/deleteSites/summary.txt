@@ -8,7 +8,7 @@ Filename: tests/inputs/017.GlycoproteinBuilder/deleteSites.txt
 Protein: tests/inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 Parameter                              | Value   
-numberOfOutputStructures                 2       
+numberOfSamples                          2       
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
