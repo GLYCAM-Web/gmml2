@@ -38,6 +38,14 @@ usage: ./bin/gpBuilder [-h | --help]
                        [output-directory]
 ```
 
+### Output
+The output comes in 3 parts:
+* default: The complete glycoprotein structure with overlaps resolved. Glycans are kept as close to their default shape as possible.
+* unresolved: The complete glycoprotein with all glycans in their default shape, but without overlaps resolved.
+* samples: Zero or more structures in a wide variety of shapes with overlaps resolved. Sampled according to statistical likelihood.
+
+In addition to a summary detailing the settings used and output structures, as well as a structures.csv containing only structure data.
+
 ### Setup
 Edit or create an input.txt file. See [example.txt](../../tests/tests/inputs/017.GlycoproteinBuilder/example.txt) for an example.
 
@@ -61,12 +69,11 @@ Additional settings:
 
 | Setting  | Default | Explanation |
 | --- | --- | --- |
-| NumberOfOutputStructures | 1 | Each output structure is an independent sample of possible glycan shapes. Rotamers are randomized according to their statistical likelihood |
+| numberOfSamples | 1 | Number of structure samples to create in addition to the default structure |
 | persistCycles | 5 | How long the algorithm persists in looking for a solution with a lower number of overlaps. Higher values take more time, but may yield better results |
-| seed | none | Using a specific seed will provide reproducible output across different computers and different runs. Delete this line for a random seed to be used |
-| prepareForMD | true | Recommended and likely necessary if you wish to run an energy minimization or MD simulation. An OFF file will be produced if this is turned on and successfully completes |
-| atomPotentialForceRejectionThreshold | none | Structures with one or more glycan atoms having a combined Lennard-Jones repulsive potential this high to other atoms will be placed in a /rejected directory. Delete this line to not reject any structures |
-| atomOverlapTolerance | 0.6 | How much any pair of atoms are allowed to overlap into their vdW radii before the algorithm tries to separate them. Higher values are more permissive |
-| freezeGlycositeResidueConformation | false | Enable to preserve chi1 and chi2 angles of protein-glycan linkages according to their initial shape |
-| allowSidechainAdjustment | false | Enable to adjust protein sidechains from their initial shape if and only if it allows for a greater range of glycan sampling |
-| deleteIncompatibleSites | false | Enable to delete glycans where overlaps fail to resolve in order to produce a structure with no overlaps |
+| rngSeed | random | The random number generator used in the algorithm will pick a random starting point by default, the value of which will be written into the output summary. Alternatively, a specific integer such as rngSeed:42 can be provided in order to exactly reproduce the output of another run with the same seed and settings. Multithreading does not hinder reproducibility |
+| prepareForMD | false | Recommended and likely necessary if you wish to run an energy minimization or MD simulation. OFF files will be created for each output structure when this option is turned on |
+| overlapRejectionThreshold | 0.5 | The algorithm will attempt to keep the Lennard-Jones repulsive potential of all glycan atoms below this value. Samples where this failed will be placed in a /rejected directory |
+| useInitialGlycositeResidueConformation | false | Enable to preserve chi1 and chi2 angles of protein-glycan linkages according to their initial shape |
+| moveOverlappingSidechains | false | Enable to adjust protein sidechains from their initial shape if and only if it allows for reduced glycan overlap or a greater range of glycan shapes |
+| deleteUnresolvableGlycosites | false | Enable to delete glycans in samples where the overlap rejection threshold is exceeded in order to produce a structure with no overlaps. Structures with deleted sites will be placed in a /deletions directory. Glycans will not be deleted in the default structure |
