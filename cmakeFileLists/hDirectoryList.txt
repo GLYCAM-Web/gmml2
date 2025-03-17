@@ -36,4 +36,3 @@
 ./includes/MolecularModeling/TemplateGraph/GraphStructure
 ./includes/MolecularModeling/TemplateGraph/GraphStructure/include
 ./includes/MolecularModeling/TemplateGraph/LazyPrints
-./includes/Util
