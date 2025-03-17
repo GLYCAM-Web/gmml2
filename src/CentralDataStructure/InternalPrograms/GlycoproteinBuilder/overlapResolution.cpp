@@ -435,8 +435,8 @@ namespace glycoproteinBuilder
                      initialState.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, "unresolved");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
-        size_t extraStructures = settings.number3DStructures;
-        size_t totalStructures = extraStructures + 1;
+        size_t sampleCount     = settings.numberOfSamples;
+        size_t totalStructures = sampleCount + 1;
         std::vector<uint64_t> rngSeeds;
         rngSeeds.reserve(totalStructures);
         for (size_t n = 0; n < totalStructures; n++)
@@ -444,15 +444,15 @@ namespace glycoproteinBuilder
             rngSeeds.push_back(codeUtils::generateRandomSeed(seedingRng));
         }
         std::vector<std::string> prefixes;
-        prefixes.reserve(extraStructures);
-        if (extraStructures == 1)
+        prefixes.reserve(sampleCount);
+        if (sampleCount == 1)
         {
             prefixes.push_back("glycoprotein");
         }
-        else if (extraStructures > 1)
+        else if (sampleCount > 1)
         {
-            size_t digitCount = std::to_string(extraStructures - 1).size();
-            for (size_t n = 0; n < extraStructures; n++)
+            size_t digitCount = std::to_string(sampleCount - 1).size();
+            for (size_t n = 0; n < sampleCount; n++)
             {
                 std::string digits      = std::to_string(n);
                 std::string extraZeroes = std::string(digitCount - digits.size(), '0');

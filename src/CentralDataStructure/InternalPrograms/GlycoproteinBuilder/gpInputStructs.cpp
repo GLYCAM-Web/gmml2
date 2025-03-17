@@ -105,9 +105,9 @@ namespace glycoproteinBuilder
                     {
                         gpInputs.substrateFileName = value;
                     }
-                    else if (parameter == numberOfStructuresParameter)
+                    else if (parameter == numberOfSamplesParameter)
                     {
-                        gpInputs.number3DStructures = parseUlong(value);
+                        gpInputs.numberOfSamples = parseUlong(value);
                     }
                     else if (parameter == persistCyclesParameter)
                     {

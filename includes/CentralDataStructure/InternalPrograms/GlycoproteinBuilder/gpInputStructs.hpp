@@ -9,7 +9,7 @@
 namespace glycoproteinBuilder
 {
     static const std::string proteinParameter                                = "Protein";
-    static const std::string numberOfStructuresParameter                     = "numberOfOutputStructures";
+    static const std::string numberOfSamplesParameter                        = "numberOfSamples";
     static const std::string persistCyclesParameter                          = "persistCycles";
     static const std::string useInitialGlycositeResidueConformationParameter = "useInitialGlycositeResidueConformation";
     static const std::string moveOverlappingSidechainsParameter              = "moveOverlappingSidechains";
@@ -29,7 +29,7 @@ namespace glycoproteinBuilder
     {
         std::string inputFileName;
         std::string substrateFileName               = "Undefined"; // Program should throw if left as "Undefined".
-        ulong number3DStructures                    = 1;
+        ulong numberOfSamples                       = 1;
         ulong persistCycles                         = 5;
         double overlapTolerance                     = constants::overlapTolerance;
         bool useInitialGlycositeResidueConformation = false;

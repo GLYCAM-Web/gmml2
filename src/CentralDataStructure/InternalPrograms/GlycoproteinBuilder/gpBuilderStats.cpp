@@ -70,7 +70,7 @@ namespace glycoproteinBuilder
 
         codeUtils::TextTable parameterTable {
             {"Parameter", "Value"},
-            {{numberOfStructuresParameter, std::to_string(input.number3DStructures)},
+            {{numberOfSamplesParameter, std::to_string(input.numberOfSamples)},
              {seedParameter, std::to_string(seed)},
              {prepareForMDParameter, boolStr(input.MDprep)},
              {persistCyclesParameter, std::to_string(input.persistCycles)},
