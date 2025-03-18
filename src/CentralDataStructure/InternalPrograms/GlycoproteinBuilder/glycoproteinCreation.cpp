@@ -191,8 +191,6 @@ namespace
 
     void superimposeGlycanToGlycosite(Residue* glycosite, Carbohydrate* glycan)
     {
-        // Get the 3 target atoms from protein residue.
-        std::vector<cds::CoordinateReference> targetCoords;
         // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g. CG,
         // ND2, we will superimpose them onto the correspoinding "target" atoms in the protein residue
         // (glycosite_residue).
@@ -208,6 +206,8 @@ namespace
                                      "superimposition to " +
                                      residueId + ".\nCheck your input structure!\n");
         }
+        // Get the 3 target atoms from protein residue.
+        std::vector<cds::Coordinate> targetCoords;
         for (auto name : aglyconeAtomNames)
         {
             size_t index = codeUtils::indexOf(proteinAtomNames, name);
@@ -216,12 +216,23 @@ namespace
                 throw std::runtime_error("Error: atom '" + name + "' not found in residue " + residueId +
                                          " with atoms: " + codeUtils::join(", ", proteinAtomNames));
             }
-            targetCoords.push_back(proteinAtoms[index]->coordinateReference());
+            targetCoords.push_back(proteinAtoms[index]->coordinate());
         }
-        std::vector<cds::Atom*> glycanAtoms                  = glycan->mutableAtoms();
-        std::vector<cds::CoordinateReference> aglyconeCoords = cds::atomCoordinateReferences(aglyconeAtoms);
-        std::vector<cds::CoordinateReference> glycanCoords   = cds::atomCoordinateReferences(glycanAtoms);
-        cds::Superimpose(aglyconeCoords, targetCoords, glycanCoords);
+        std::vector<cds::Atom*> glycanAtoms          = glycan->mutableAtoms();
+        std::vector<cds::Coordinate> aglyconeCoords  = cds::atomCoordinates(aglyconeAtoms);
+        std::vector<cds::Coordinate> glycanCoords    = cds::atomCoordinates(glycanAtoms);
+        cds::AffineTransform transform               = cds::affineTransform(targetCoords, aglyconeCoords);
+        std::vector<cds::Coordinate> updatedAglycone = cds::matrixCoordinates(transform.affine * transform.moving);
+        std::vector<cds::Coordinate> updatedGlycan =
+            cds::matrixCoordinates(transform.affine * cds::generateMatrix(glycanCoords));
+        for (size_t n = 0; n < aglyconeAtoms.size(); n++)
+        {
+            aglyconeAtoms[n]->setCoordinate(updatedAglycone[n]);
+        }
+        for (size_t n = 0; n < glycanCoords.size(); n++)
+        {
+            glycanAtoms[n]->setCoordinate(updatedGlycan[n]);
+        }
     }
 
     std::vector<size_t> linkagesContainingResidue(const std::vector<cds::ResidueLinkage>& glycosidicLinkages,
