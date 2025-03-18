@@ -6,29 +6,12 @@
 
 namespace
 {
-    void GenerateMatrixFromCoordinates(const std::vector<cds::CoordinateReference>& coordinates,
-                                       Eigen::Matrix3Xd& matrix)
-    {
-        int col = 0; // Column index for matrix
-        for (auto& coordinate : coordinates)
-        {
-            auto coord = coordinate.get();
-            for (size_t n = 0; n < 3; n++)
-            {
-                matrix(n, col) = coord.nth(n);
-            }
-            ++col;
-        }
-    }
-
     void ReplaceCoordinatesFromMatrix(std::vector<cds::CoordinateReference>& coordinates,
                                       const Eigen::Matrix3Xd& matrix)
     {
-        int col = 0; // Column index for matrix
-        for (auto& coordinate : coordinates)
+        for (size_t k = 0; k < coordinates.size(); k++)
         {
-            coordinate.set({matrix(0, col), matrix(1, col), matrix(2, col)});
-            ++col;
+            coordinates[k].set({matrix(0, k), matrix(1, k), matrix(2, k)});
         }
     }
 
@@ -91,13 +74,59 @@ namespace
     }
 } // namespace
 
+Eigen::Matrix3Xd cds::generateMatrix(const std::vector<cds::Coordinate>& coordinates)
+{
+    Eigen::Matrix3Xd result(3, coordinates.size());
+    for (size_t k = 0; k < coordinates.size(); k++)
+    {
+        cds::Coordinate coord = coordinates[k];
+        for (size_t n = 0; n < 3; n++)
+        {
+            result(n, k) = coord.nth(n);
+        }
+    }
+    return result;
+}
+
+Eigen::Matrix3Xd cds::generateMatrix(const std::vector<cds::CoordinateReference>& coordinates)
+{
+    Eigen::Matrix3Xd result(3, coordinates.size());
+    for (size_t k = 0; k < coordinates.size(); k++)
+    {
+        cds::Coordinate coord = coordinates[k].get();
+        for (size_t n = 0; n < 3; n++)
+        {
+            result(n, k) = coord.nth(n);
+        }
+    }
+    return result;
+}
+
+std::vector<cds::Coordinate> cds::matrixCoordinates(const Eigen::Matrix3Xd& matrix)
+{
+    std::vector<cds::Coordinate> result;
+    Eigen::Index columns = matrix.cols();
+    result.reserve(columns);
+    for (Eigen::Index k = 0; k < columns; k++)
+    {
+        result.push_back({matrix(0, k), matrix(1, k), matrix(2, k)});
+    }
+    return result;
+}
+
+cds::AffineTransform cds::affineTransform(const std::vector<cds::Coordinate>& target,
+                                          const std::vector<cds::Coordinate>& moving)
+{
+    Eigen::Matrix3Xd targetMatrix = generateMatrix(target);
+    Eigen::Matrix3Xd movingMatrix = generateMatrix(moving);
+    Eigen::Affine3d transform     = Find3DAffineTransform(movingMatrix, targetMatrix);
+    return {movingMatrix, targetMatrix, transform};
+}
+
 void cds::Superimpose(std::vector<CoordinateReference>& moving, const std::vector<CoordinateReference>& target)
 {
-    Eigen::Matrix3Xd movingMatrix(3, moving.size()), targetMatrix(3, target.size());
-
-    // Create Matrices containing co-ordinates of moving and target
-    GenerateMatrixFromCoordinates(moving, movingMatrix);
-    GenerateMatrixFromCoordinates(target, targetMatrix);
+    Eigen::Matrix3Xd targetMatrix = generateMatrix(target);
+    Eigen::Matrix3Xd movingMatrix = generateMatrix(moving);
 
     // Figure out how to move assembly moving onto target
     Eigen::Affine3d Affine = Find3DAffineTransform(movingMatrix, targetMatrix);
@@ -112,13 +141,9 @@ void cds::Superimpose(std::vector<CoordinateReference>& moving, const std::vecto
 void cds::Superimpose(std::vector<CoordinateReference>& moving, const std::vector<CoordinateReference>& target,
                       std::vector<CoordinateReference>& alsoMoving)
 {
-    Eigen::Matrix3Xd movingMatrix(3, moving.size()), targetMatrix(3, target.size());
-    Eigen::Matrix3Xd alsoMovingMatrix(3, alsoMoving.size()); // separate from above line for clarity
-
-    // Create a matrices containing co-ordinates of assembly moving and target
-    GenerateMatrixFromCoordinates(moving, movingMatrix);
-    GenerateMatrixFromCoordinates(target, targetMatrix);
-    GenerateMatrixFromCoordinates(alsoMoving, alsoMovingMatrix);
+    Eigen::Matrix3Xd targetMatrix     = generateMatrix(target);
+    Eigen::Matrix3Xd movingMatrix     = generateMatrix(moving);
+    Eigen::Matrix3Xd alsoMovingMatrix = generateMatrix(alsoMoving);
 
     // Figure out how to move assembly moving onto target
     Eigen::Affine3d Affine = Find3DAffineTransform(movingMatrix, targetMatrix);
