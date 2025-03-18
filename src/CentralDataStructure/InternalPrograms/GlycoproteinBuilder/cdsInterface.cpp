@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
@@ -60,7 +60,7 @@ namespace glycoproteinBuilder
         std::vector<std::vector<cds::ResidueLinkage>> glycosidicLinkages;
         for (auto& a : glycosites)
         {
-            glycosidicLinkages.push_back(a.GetGlycan()->GetGlycosidicLinkages());
+            glycosidicLinkages.push_back(a.glycan->GetGlycosidicLinkages());
         }
 
         std::vector<MoleculeType> moleculeTypes(graphIndices.molecules.size(), MoleculeType::protein);
@@ -76,9 +76,9 @@ namespace glycoproteinBuilder
         std::vector<std::vector<size_t>> glycanLinkages;
         for (size_t n = 0; n < glycosites.size(); n++)
         {
-            size_t site = codeUtils::indexOf(residues, glycosites[n].GetResidue());
+            size_t site = codeUtils::indexOf(residues, glycosites[n].residue);
             size_t moleculeIndex =
-                codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycosites[n].GetGlycan()));
+                codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycosites[n].glycan));
             const std::vector<cds::ResidueLinkage>& linkages = glycosidicLinkages[n];
             std::vector<size_t> linkageIds = codeUtils::indexVectorWithOffset(residueLinkages.size(), linkages);
             for (size_t k = 0; k < linkages.size(); k++)

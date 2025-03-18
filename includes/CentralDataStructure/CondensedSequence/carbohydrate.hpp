@@ -61,7 +61,6 @@ namespace cdsCondensedSequence
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
         void deleteResidue(cds::Residue* byeBye);
-        void replaceAglycone(cds::Residue* newAglycone);
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////

@@ -376,24 +376,6 @@ void Carbohydrate::deleteResidue(cds::Residue* byeBye)
     cds::Molecule::deleteResidue(byeBye);
 }
 
-void Carbohydrate::replaceAglycone(cds::Residue* newAglycone)
-{
-    for (cds::ResidueLinkage& linkage : glycosidicLinkages_)
-    {
-        auto& linkageResidues = linkage.link.residues;
-        if (linkageResidues.first == this->GetAglycone() || linkageResidues.second == this->GetAglycone())
-        { // Old aglycone atoms are connected to reducing residue, are found during creation of rotatable dihedrals.
-            this->cds::Molecule::deleteResidue(this->GetAglycone());
-            newAglycone->addNeighbor(newAglycone->getName() + "-" + this->GetReducingResidue()->getName(),
-                                     this->GetReducingResidue());
-            cds::ResidueLink link = cds::findResidueLink({this->GetReducingResidue(), newAglycone});
-            linkage               = cds::createResidueLinkage(link);
-            cds::setShapeToPreference(linkage, cds::defaultShapePreference(linkage));
-            return;
-        }
-    }
-}
-
 //////////////////////////////////////////////////////////
 //                       FUNCTIONS                      //
 //////////////////////////////////////////////////////////

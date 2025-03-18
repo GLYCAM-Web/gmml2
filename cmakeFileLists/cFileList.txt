@@ -23,7 +23,6 @@
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.cpp
-./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpBuilderStats.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.cpp
 ./src/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.cpp

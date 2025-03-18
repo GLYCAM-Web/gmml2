@@ -8,7 +8,6 @@
 #include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycosylationSite.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapResolution.hpp"
@@ -173,10 +172,10 @@ int main(int argc, char* argv[])
         cds::Assembly* glycoprotein                  = &pdbFile.mutableAssemblies().front();
         std::vector<cds::Residue*> gpInitialResidues = glycoprotein->getResidues();
         cds::setIntraConnectivity(gpInitialResidues);
+        cds::setInterConnectivity(gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
-        cds::setInterConnectivity(gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
         double selfWeight    = 1.0;
