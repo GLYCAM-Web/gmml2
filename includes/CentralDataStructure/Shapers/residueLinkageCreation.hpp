@@ -12,7 +12,6 @@ namespace cds
     unsigned long long generateResidueLinkageIndex();
     ResidueLink findResidueLink(std::pair<cds::Residue*, cds::Residue*> residues);
     void determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals);
-    void determineResiduesForOverlapCheck(ResidueLinkage& linkage);
     ResidueLinkage createResidueLinkage(ResidueLink& link);
 } // namespace cds
 #endif

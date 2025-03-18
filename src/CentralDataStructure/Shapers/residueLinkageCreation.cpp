@@ -38,14 +38,6 @@ namespace
         return linkageName.str();
     }
 
-    std::vector<cds::Residue*> connectedResidues(cds::Residue* residue, cds::Residue* block)
-    {
-        std::vector<cds::Residue*> result = {block};
-        cdsSelections::FindConnectedResidues(result, residue);
-        result.erase(result.begin());
-        return result;
-    }
-
     cds::DihedralAngleMetadata findResidueLinkageMetadata(cds::ResidueLinkNames link)
     {
         std::string firstAtom     = link.atoms.first;
@@ -210,13 +202,6 @@ void cds::determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals)
     }
 }
 
-void cds::determineResiduesForOverlapCheck(ResidueLinkage& linkage)
-{
-    auto& residues                     = linkage.link.residues;
-    linkage.reducingOverlapResidues    = connectedResidues(residues.first, residues.second);
-    linkage.nonReducingOverlapResidues = connectedResidues(residues.second, residues.first);
-}
-
 cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
 {
     ResidueLinkNames names = toNames(link);
@@ -275,9 +260,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
     std::vector<RotatableDihedral> dihedrals = createRotatableDihedrals(name, dihedralAtoms, metadata);
     determineAtomsThatMove(dihedrals);
 
-    unsigned long long index        = generateResidueLinkageIndex();
-    auto reducingOverlapResidues    = connectedResidues(residues.first, residues.second);
-    auto nonReducingOverlapResidues = connectedResidues(residues.second, residues.first);
+    unsigned long long index = generateResidueLinkageIndex();
 
     if (dihedrals.empty() || metadata[0].empty())
     {
@@ -288,15 +271,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
     GlycamMetadata::RotamerType rotamerType                = firstMetadata.rotamer_type_;
     const std::vector<std::string>& cond1                  = firstMetadata.residue1_conditions_;
     bool isDerivative                                      = cond1.size() > 0 && cond1[0] == "derivative";
-    ResidueLinkage linkage {link,
-                            dihedrals,
-                            metadata,
-                            rotamerType,
-                            isDerivative,
-                            index,
-                            name,
-                            reducingOverlapResidues,
-                            nonReducingOverlapResidues};
+    ResidueLinkage linkage {link, dihedrals, metadata, rotamerType, isDerivative, index, name};
 
     validateRotamerTypes(linkage);
     if (rotamerType == GlycamMetadata::RotamerType::conformer)

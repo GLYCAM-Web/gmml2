@@ -56,8 +56,6 @@ namespace cds
         bool isDerivative;
         unsigned long long index = 0;
         std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
-        std::vector<cds::Residue*> reducingOverlapResidues;
-        std::vector<cds::Residue*> nonReducingOverlapResidues;
     };
 
     std::vector<size_t> rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata);

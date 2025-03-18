@@ -108,8 +108,6 @@ namespace glycoproteinBuilder
     {
         size_t residueEdge;
         std::vector<size_t> rotatableDihedrals;
-        std::vector<size_t> nonReducingResidues;
-        std::vector<size_t> reducingResidues;
     };
 
     struct AssemblyIndices

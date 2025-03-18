@@ -46,17 +46,6 @@ namespace glycoproteinBuilder
             return result;
         };
 
-        auto indexOfResidues = [&residues](const std::vector<cds::Residue*>& toFind)
-        {
-            std::vector<size_t> result;
-            result.reserve(toFind.size());
-            for (auto& res : toFind)
-            {
-                result.push_back(codeUtils::indexOf(residues, res));
-            }
-            return result;
-        };
-
         auto indexOfAtoms = [&atoms](const std::vector<cds::Atom*>& toFind)
         {
             std::vector<size_t> result;
@@ -113,23 +102,8 @@ namespace glycoproteinBuilder
                     rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
                     dihedralCurrentMetadata.push_back(dihedral.currentMetadataIndex);
                 }
-                auto onlyThisMolecule = [&](const std::vector<size_t>& indices)
-                {
-                    std::vector<size_t> result;
-                    result.reserve(indices.size());
-                    for (size_t index : indices)
-                    {
-                        if (graphIndices.residueMolecule[index] == moleculeIndex)
-                        {
-                            result.push_back(index);
-                        }
-                    }
-                    return result;
-                };
-                std::vector<size_t> nonReducing = onlyThisMolecule(indexOfResidues(linkage.nonReducingOverlapResidues));
-                std::vector<size_t> reducing    = onlyThisMolecule(indexOfResidues(linkage.reducingOverlapResidues));
-                size_t firstResidue             = codeUtils::indexOf(residues, linkage.link.residues.first);
-                size_t secondResidue            = codeUtils::indexOf(residues, linkage.link.residues.second);
+                size_t firstResidue                    = codeUtils::indexOf(residues, linkage.link.residues.first);
+                size_t secondResidue                   = codeUtils::indexOf(residues, linkage.link.residues.second);
                 const std::vector<size_t>& adjacencies = graph.residues.nodes.nodeAdjacencies[firstResidue];
                 size_t edgeN                           = codeUtils::indexOf(adjacencies, secondResidue);
                 if (edgeN >= adjacencies.size())
@@ -137,7 +111,7 @@ namespace glycoproteinBuilder
                     throw std::runtime_error("no residue adjacency");
                 }
                 size_t edgeId = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
-                residueLinkages.push_back({edgeId, dihedralIndices, nonReducing, reducing});
+                residueLinkages.push_back({edgeId, dihedralIndices});
                 linkageRotamerTypes.push_back(linkage.rotamerType);
             }
             moleculeTypes[moleculeIndex] = MoleculeType::glycan;
