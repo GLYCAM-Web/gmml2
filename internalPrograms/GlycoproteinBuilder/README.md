@@ -46,8 +46,18 @@ The output comes in 3 parts:
 
 In addition to a summary detailing the settings used and output structures, as well as a structures.csv containing only structure data.
 
-### Setup
-Edit or create an input.txt file. See [example.txt](../../tests/tests/inputs/017.GlycoproteinBuilder/example.txt) for an example.
+### Input
+
+First, you may want to get an overview of all potential glycosylation sites
+```
+./bin/gpBuilderTable protein.pdb --format txt
+```
+Or save it as a csv
+```
+./bin/gpBuilderTable protein.pdb --format csv > glycosites.csv
+```
+
+Then, edit or create an input.txt file. See [example.txt](../../tests/tests/inputs/017.GlycoproteinBuilder/example.txt) for an example.
 
 Required input:
 ```
