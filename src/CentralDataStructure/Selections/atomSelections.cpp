@@ -44,27 +44,6 @@ Atom* cdsSelections::getNeighborNamed(const Atom* queryAtom, const std::string& 
     return codeUtils::findElementWithName(queryAtom->getNeighbors(), neighborName);
 }
 
-// Step 1. If the C1 atom has a neighbor that isn't in the queryResidue, return C1.
-// Step 2. If the C2 atom has a neighbor that isn't in the queryResidue, return C2.
-// Step 3. Panic.
-Atom* cdsSelections::guessAnomericAtomByForeignNeighbor(const cds::Residue* queryResidue)
-{
-    std::vector<std::string> usualSuspects = {"C1", "C2"};
-    for (auto& suspectName : usualSuspects)
-    {
-        Atom* potentialAnomer = codeUtils::findElementWithName(queryResidue->getAtoms(), suspectName);
-        if (cdsSelections::selectNeighborNotInAtomVector(potentialAnomer, queryResidue->getAtoms()) != nullptr)
-        { // If atom has a foreign neighbor.
-            return potentialAnomer;
-        }
-    }
-    std::string message = "Did not find a C1 or C2 with a foreign neighbor in residue: " + queryResidue->getStringId() +
-                          ", thus no anomeric atom was found.";
-    gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-    throw std::runtime_error(message);
-    return nullptr;
-}
-
 std::vector<Atom*> cdsSelections::findCycleAtoms(cds::Atom* const starterAtom)
 {
     glygraph::Graph<cds::Atom> atomGraph(starterAtom);

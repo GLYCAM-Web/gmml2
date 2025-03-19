@@ -450,51 +450,6 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
     return numberOfShapes;
 }
 
-cds::Residue* Carbohydrate::GetReducingResidue()
-{ // Kindly dumb, but centralized stupidity. Tagging during construction would be better. Ano-ano linkages won't work,
-  // but this is used by gp builder so ok.
-    for (auto residue : this->getResidues())
-    { // Return the first sugar residue that isn't an Aglycone
-        if (residue->GetType() != ResidueType::Aglycone && residue->GetType() == ResidueType::Sugar)
-        {
-            return residue;
-        }
-    }
-    if (this->GetResidueCount() > 1)
-    {
-        return this->getResidues().at(1);
-    }
-    std::string message = "Reducing residue requested for Carbohydrate with name " + this->getName() +
-                          ", but it doesn't have more than 1 residue";
-    gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-    throw std::runtime_error(message);
-}
-
-cds::Residue* Carbohydrate::GetAglycone()
-{ // Kindly dumb, but centralized stupidity. Tagging during construction would be better. Ano-ano linkages won't work,
-  // but this is used by gp builder so ok.
-    for (auto residue : this->getResidues())
-    {
-        if (residue->GetType() == ResidueType::Aglycone)
-        {
-            return residue;
-        }
-    }
-    if (this->GetResidueCount() > 0)
-    {
-        return this->getResidues().front();
-    }
-    std::string message = "Aglycone residue requested for Carbohydrate with name " + this->getName() +
-                          ", but it doesn't have even 1 residue";
-    gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-    throw std::runtime_error(message);
-}
-
-cds::Atom* Carbohydrate::GetAnomericAtom()
-{
-    return cdsSelections::guessAnomericAtomByForeignNeighbor(this->GetReducingResidue());
-}
-
 //////////////////////////////////////////////////////////
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
