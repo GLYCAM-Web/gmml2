@@ -29,20 +29,6 @@ std::vector<Residue*> cdsSelections::selectResiduesByType(std::vector<Residue*> 
     return selectedResidues;
 }
 
-unsigned int cdsSelections::findHighestResidueNumber(std::vector<Residue*> residues)
-{
-    unsigned int highest = residues.back()->getNumber(); // Good start.
-    for (auto& residue : residues)
-    {
-        unsigned int resNumInt = residue->getNumber();
-        if (resNumInt > highest)
-        {
-            highest = resNumInt;
-        }
-    }
-    return highest;
-}
-
 // Not having Atom know which Residue it is in makes this funky. Make a decision about whether that happens or not.
 Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* queryResidue,
                                                                     const std::string& queryAtomName)

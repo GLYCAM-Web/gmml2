@@ -1,8 +1,6 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -36,12 +34,6 @@ void cdsSelections::FindConnectedAtoms(std::vector<Atom*>& visitedAtoms, Atom* c
         }
     }
     return;
-}
-
-// ToDo ensure all nodes have names, do this up there.
-Atom* cdsSelections::getNeighborNamed(const Atom* queryAtom, const std::string& neighborName)
-{
-    return codeUtils::findElementWithName(queryAtom->getNeighbors(), neighborName);
 }
 
 std::vector<Atom*> cdsSelections::findCycleAtoms(cds::Atom* const starterAtom)
@@ -107,20 +99,6 @@ Atom* cdsSelections::selectNeighborNotInAtomVector(const Atom* atomWithNeighbors
     return nullptr;
 }
 
-unsigned long int cdsSelections::CountInternalHeavyAtomBonds(std::vector<Atom*> queryAtoms)
-{
-    // This belong in a Molecule class. Algo:
-    // Get heavy atoms in molecule. Check number of neighbors. Check if there are more atoms within distance d than
-    // neighbors. Scream if so.
-    unsigned long int count       = 0;
-    std::vector<Atom*> heavyAtoms = cdsSelections::FindHeavyAtoms(queryAtoms);
-    for (auto& atom : heavyAtoms)
-    {
-        count += cdsSelections::CountAtomsWithinBondingDistance(atom, heavyAtoms);
-    }
-    return count;
-}
-
 std::vector<Atom*> cdsSelections::FindHeavyAtoms(std::vector<Atom*> queryAtoms)
 {
     std::vector<Atom*> foundAtoms;
@@ -136,17 +114,6 @@ std::vector<Atom*> cdsSelections::FindHeavyAtoms(std::vector<Atom*> queryAtoms)
     return foundAtoms;
 }
 
-std::vector<std::string> cdsSelections::FindNamesOfAtoms(std::vector<Atom*> queryAtoms)
-{
-    std::vector<std::string> foundNames;
-    foundNames.reserve(queryAtoms.size());
-    for (auto& atom : queryAtoms)
-    {
-        foundNames.push_back(atom->getName());
-    }
-    return foundNames;
-}
-
 unsigned long int cdsSelections::CountAtomsWithinBondingDistance(const Atom* queryAtom, std::vector<Atom*> otherAtoms)
 {
     unsigned long int count = 0;
@@ -158,18 +125,4 @@ unsigned long int cdsSelections::CountAtomsWithinBondingDistance(const Atom* que
         }
     }
     return count;
-}
-
-std::vector<Atom*> cdsSelections::FindAtomsWithinDistance(const Atom* queryAtom, std::vector<Atom*> otherAtoms,
-                                                          double distance)
-{
-    std::vector<Atom*> foundAtoms;
-    for (auto& otherAtom : otherAtoms)
-    {
-        if (withinDistance(distance, queryAtom->coordinate(), otherAtom->coordinate()))
-        {
-            foundAtoms.push_back(otherAtom);
-        }
-    }
-    return foundAtoms;
 }

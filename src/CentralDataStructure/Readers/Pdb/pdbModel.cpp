@@ -348,7 +348,7 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
         else // Recognized residue->
         {
             std::vector<std::string> parmHeavyAtomNames =
-                cdsSelections::FindNamesOfAtoms(cdsSelections::FindHeavyAtoms(parameterResidue->getAtoms()));
+                cds::atomNames(cdsSelections::FindHeavyAtoms(parameterResidue->getAtoms()));
             std::vector<std::string> parmAtomNames = parameterResidue->getAtomNames();
             std::vector<std::string> pdbAtomNames  = residue->getAtomNames();
             for (auto& parmHeavyAtomName : parmHeavyAtomNames) // What heavy atoms are missing from the pdb residue?
