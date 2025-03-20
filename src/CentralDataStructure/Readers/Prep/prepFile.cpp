@@ -3,7 +3,8 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/files.hpp"   // ensureFileExists
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/strings.hpp" // split
 #include "includes/CodeUtils/logging.hpp" // split
 #include <fstream>

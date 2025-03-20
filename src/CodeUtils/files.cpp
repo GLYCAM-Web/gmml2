@@ -1,4 +1,5 @@
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <cstdlib>
@@ -9,21 +10,6 @@
 #include <fstream>
 #include <functional>
 #include <stdexcept>
-
-bool codeUtils::doesFileExist(const std::string& fileName)
-{
-    struct stat buffer;
-    return (stat(fileName.c_str(), &buffer) == 0);
-}
-
-void codeUtils::ensureFileExists(const std::string& fileName)
-{
-    if (!codeUtils::doesFileExist(fileName))
-    {
-        gmml::log(__LINE__, __FILE__, gmml::ERR, "File " + fileName + " does not exist");
-        throw std::runtime_error("File " + fileName + " does not exist");
-    }
-}
 
 std::istream& codeUtils::safeGetline(std::istream& in, std::string& out)
 {

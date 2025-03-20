@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
-#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 
 #include <string>
 #include <array>

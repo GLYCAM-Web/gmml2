@@ -16,6 +16,8 @@ namespace codeUtils
     };
 
     Path toPath(const std::string& str);
+    bool doesFileExist(const std::string& fileName);
+    void ensureFileExists(const std::string& fileName);
     bool doesDirectoryExist(const std::string& pathName);
     bool directoryIsEmptyOrNonexistent(const std::string& pathName);
     void createDirectories(const std::string& pathName);
