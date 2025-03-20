@@ -3,8 +3,6 @@
 #include "includes/CodeUtils/logging.hpp"
 
 #include <cstdlib>
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <string>
 #include <istream>
 #include <fstream>
