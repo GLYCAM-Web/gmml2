@@ -152,8 +152,7 @@ assembly::Bounds cds::simpleWiggleCurrentRotamers(
     const assembly::Selection& selection, const assembly::Bounds& initialBounds,
     const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge)
 {
-    assembly::Bounds bounds = initialBounds;
-    std::vector<bool> moleculeSelected(graph.moleculeCount, true);
+    assembly::Bounds bounds                              = initialBounds;
     std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(indices.atoms);
     MoleculeOverlapWeight overlapWeight {std::vector<double>(graph.moleculeCount, 1.0),
                                          std::vector<double>(graph.moleculeCount, 1.0)};
