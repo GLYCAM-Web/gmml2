@@ -2,23 +2,13 @@
 #define INCLUDES_CODEUTILS_DIRECTORIES_HPP
 #include <sys/stat.h>  // To check if file exists using stat
 #include <sys/types.h> // The s_IFDIR
+#include <unistd.h>
 #include <string>
 #include <vector>
 #include <filesystem>
 
-// #include "includes/CodeUtils/logging.hpp"
-
 namespace codeUtils
 {
-
-#ifdef WINDOWS
-#include <direct.h>
-#define GetCurrentDir _getcwd
-#else
-#include <unistd.h>
-#define GetCurrentDir getcwd
-#endif
-
     struct Path
     {
         bool absolute;

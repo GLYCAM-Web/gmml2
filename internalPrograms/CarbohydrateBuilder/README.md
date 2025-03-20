@@ -4,7 +4,6 @@ Uses GMML to create 3D structures of carbohydrates based on the GLYCAM forcefiel
 ### Notes
 Project is under development, contact olivercgrant "at" gmail.com with queries. 
 The underlying code is used by the builder currently available on glycam.org/cb.
-Has been tested on linux, but should install on both Mac and Windows with appropriate C++ complilers.
 
 ### Prerequisites
 You'll need GMML. See here for installation instructions: http://glycam.org/docs/gems/download-and-install/.

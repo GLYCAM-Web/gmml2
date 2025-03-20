@@ -18,15 +18,15 @@ bool codeUtils::doesDirectoryExist(const std::string& pathName)
     struct stat info;
     if (stat(pathName.c_str(), &info) != 0)
     {
-        return false; // printf( "cannot access %s\n", pathname );
+        return false;
     }
     else if (info.st_mode & S_IFDIR)
-    {                // S_ISDIR() doesn't exist on my windows
-        return true; // printf( "%s is a directory\n", pathname );
+    {
+        return true;
     }
     else
     {
-        return false; // printf( "%s is no directory\n", pathname );
+        return false;
     }
 }
 
