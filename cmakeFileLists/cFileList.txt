@@ -83,8 +83,8 @@
 ./src/CentralDataStructure/residue.cpp
 ./src/CodeUtils/arguments.cpp
 ./src/CodeUtils/containers.cpp
-./src/CodeUtils/directories.cpp
 ./src/CodeUtils/files.cpp
+./src/CodeUtils/filesystem.cpp
 ./src/CodeUtils/logging.cpp
 ./src/CodeUtils/parsing.cpp
 ./src/CodeUtils/random.cpp
