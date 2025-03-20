@@ -16,9 +16,10 @@ namespace codeUtils
     };
 
     Path toPath(const std::string& str);
-    bool doesFileExist(const std::string& fileName);
+    bool pathExists(const std::string& path);
+    bool isDirectory(const std::string& path);
     void ensureFileExists(const std::string& fileName);
-    bool doesDirectoryExist(const std::string& pathName);
+    bool directoryExists(const std::string& path);
     bool directoryIsEmptyOrNonexistent(const std::string& pathName);
     void createDirectories(const std::string& pathName);
     std::string getGmmlHomeDir();

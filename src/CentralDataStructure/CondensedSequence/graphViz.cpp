@@ -10,7 +10,7 @@ cdsCondensedSequence::findImage(const cdsCondensedSequence::GraphVizDotConfig& c
                                 const std::string& label)
 {
     std::string imageFile = configs.svg_directory_path_ + name + ".svg";
-    if (codeUtils::doesFileExist((configs.base_path_ + imageFile).c_str()))
+    if (codeUtils::pathExists(configs.base_path_ + imageFile))
     {
         return GraphVizImage {true, imageFile, label};
     }

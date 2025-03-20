@@ -13,41 +13,35 @@ codeUtils::Path codeUtils::toPath(const std::string& str)
     return Path {absolute, split(str, '/')};
 }
 
-bool codeUtils::doesFileExist(const std::string& fileName)
+bool codeUtils::pathExists(const std::string& path)
 {
-    struct stat buffer;
-    return (stat(fileName.c_str(), &buffer) == 0);
+    return std::filesystem::exists(path);
+}
+
+bool codeUtils::isDirectory(const std::string& path)
+{
+    struct stat info;
+    stat(path.c_str(), &info);
+    return info.st_mode & S_IFDIR;
 }
 
 void codeUtils::ensureFileExists(const std::string& fileName)
 {
-    if (!codeUtils::doesFileExist(fileName))
+    if (!codeUtils::pathExists(fileName))
     {
         gmml::log(__LINE__, __FILE__, gmml::ERR, "File " + fileName + " does not exist");
         throw std::runtime_error("File " + fileName + " does not exist");
     }
 }
 
-bool codeUtils::doesDirectoryExist(const std::string& pathName)
+bool codeUtils::directoryExists(const std::string& path)
 {
-    struct stat info;
-    if (stat(pathName.c_str(), &info) != 0)
-    {
-        return false;
-    }
-    else if (info.st_mode & S_IFDIR)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return pathExists(path) && isDirectory(path);
 }
 
 bool codeUtils::directoryIsEmptyOrNonexistent(const std::string& pathName)
 {
-    return !doesDirectoryExist(pathName) || std::filesystem::is_empty(pathName);
+    return !directoryExists(pathName) || std::filesystem::is_empty(pathName);
 }
 
 void codeUtils::createDirectories(const std::string& pathName)
@@ -79,7 +73,7 @@ std::string codeUtils::getGmmlHomeDir()
             throw errorMessage;
         }
         gmmlHome = gemsHomeDirPath.string() + "/gmml/"; // guessing.
-        if (!codeUtils::doesDirectoryExist(gmmlHome))
+        if (!codeUtils::directoryExists(gmmlHome))
         {
             std::string errorMessage = "$GMMLHOME not set and directory $GEMSHOME/gmml/ doesn't exist.";
             gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
