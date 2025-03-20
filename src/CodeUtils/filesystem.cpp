@@ -54,6 +54,16 @@ void codeUtils::createDirectories(const std::string& pathName)
     }
 }
 
+std::string codeUtils::readSymlink(const std::string& filename)
+{
+    return pathExists(filename) && std::filesystem::is_symlink(filename) ? std::filesystem::read_symlink(filename) : "";
+}
+
+codeUtils::Path codeUtils::pathToCurrentExecutable()
+{
+    return toPath(readSymlink("/proc/self/exe"));
+}
+
 std::string codeUtils::getSNFGSymbolsDir()
 {
     return snfgSymbolsDirPath.string();

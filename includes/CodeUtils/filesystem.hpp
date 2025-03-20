@@ -22,6 +22,8 @@ namespace codeUtils
     bool directoryExists(const std::string& path);
     bool directoryIsEmptyOrNonexistent(const std::string& pathName);
     void createDirectories(const std::string& pathName);
+    std::string readSymlink(const std::string& filename);
+    Path pathToCurrentExecutable();
     std::string getGmmlHomeDir();
     std::string getSNFGSymbolsDir();
 
