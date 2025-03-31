@@ -61,7 +61,7 @@ std::string codeUtils::readSymlink(const std::string& filename)
 
 codeUtils::Path codeUtils::pathToCurrentExecutable()
 {
-    return toPath(readSymlink("/proc/self/exe"));
+    return toPath(readSymlink("/proc/%d/exe"));
 }
 
 std::string codeUtils::getSNFGSymbolsDir()
