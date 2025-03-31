@@ -35,7 +35,7 @@ namespace glycoproteinBuilder
         bool useInitialGlycositeResidueConformation = false;
         bool moveOverlappingSidechains              = false;
         bool deleteSitesUntilResolved               = false;
-        double overlapRejectionThreshold            = 0.5;
+        double overlapRejectionThreshold            = 0.0;
         bool isDeterministic                        = false;
         uint64_t seed                               = 0;
         bool MDprep                                 = false;
