@@ -29,13 +29,6 @@ using cdsCondensedSequence::Carbohydrate;
 
 namespace
 {
-    struct SuperimpositionValues
-    {
-        double angle;
-        double dihedral;
-        double distance;
-    };
-
     struct ChainAndResidue
     {
         std::string chain;
@@ -48,43 +41,6 @@ namespace
         Residue* aglycone;
         Residue* reducing;
     };
-
-    struct Glycosylation
-    {
-        std::string residue;
-        std::vector<std::string> atoms;
-        std::vector<SuperimpositionValues> values;
-    };
-
-    // Dear future self, the order that you add the atoms to the residue matters for superimposition
-    // ie N, CA, CB, not CB, CA, N.
-    const std::vector<Glycosylation> glycosylationTable {
-        {"ASN", {"ND2", "CG", "OD1"}, {{109.3, 180, 1.53}, {109.3, 261, 1.325}, {126, 0, 1.22}}},
-        {"THR",  {"OG1", "CB", "CA"},  {{112, 68, 1.46}, {109.3, 75, 1.53}, {109.3, 125, 1.53}}},
-        {"SER",   {"OG", "CB", "CA"},  {{112, 68, 1.46}, {109.3, 75, 1.53}, {109.3, 125, 1.53}}},
-        {"TYR",  {"OH", "CZ", "CE1"},      {{112, 68, 1.46}, {117, 60, 1.35}, {120, 180, 1.37}}}
-    };
-
-    std::function<std::string(const Glycosylation&)> getGlycosylationResidue = [](const Glycosylation& a)
-    {
-        return a.residue;
-    };
-    std::function<std::vector<std::string>(const Glycosylation&)> getGlycosylationAtoms = [](const Glycosylation& a)
-    {
-        return a.atoms;
-    };
-    std::function<std::vector<SuperimpositionValues>(const Glycosylation&)> getGlycosylationValues =
-        [](const Glycosylation& a)
-    {
-        return a.values;
-    };
-
-    const std::vector<std::string> glycosylationResidueNames =
-        codeUtils::vectorMap(getGlycosylationResidue, glycosylationTable);
-    const std::vector<std::vector<std::string>> glycosylationAtoms =
-        codeUtils::vectorMap(getGlycosylationAtoms, glycosylationTable);
-    const std::vector<std::vector<SuperimpositionValues>> glycosylationValues =
-        codeUtils::vectorMap(getGlycosylationValues, glycosylationTable);
 
     ChainAndResidue selectionChainAndResidue(const std::string userSelection)
     { // Chain_residueNumber_insertionCode* *optional.
@@ -193,8 +149,10 @@ namespace
     void prepareGlycansForSuperimpositionToParticularResidue(std::string aminoAcid, Attachment& attachment,
                                                              const glycoproteinBuilder::GlycositeInput& input)
     {
-        size_t index = codeUtils::indexOf(glycosylationResidueNames, aminoAcid);
-        if (index == glycosylationResidueNames.size())
+        const glycoproteinMetadata::GlycosylationTable glycosylationTable =
+            glycoproteinMetadata::defaultGlycosylationTable();
+        size_t index = codeUtils::indexOf(glycosylationTable.residueNames, aminoAcid);
+        if (index == glycosylationTable.residueNames.size())
         {
             std::string message =
                 "Problem creating glycosylation site. The amino acid requested: " + input.proteinResidueId +
@@ -221,13 +179,13 @@ namespace
         }
         aglycone->setName("SUP");
 
-        const std::vector<std::string>& names            = glycosylationAtoms[index];
-        const std::vector<SuperimpositionValues>& values = glycosylationValues[index];
-        Residue* reducing                                = attachment.reducing;
-        Atom* anomericAtom                               = reducing->FindAtom("C1");
-        Coordinate coordC5                               = reducing->FindAtom("C5")->coordinate();
-        Coordinate coordO5                               = reducing->FindAtom("O5")->coordinate();
-        Coordinate coordC1                               = anomericAtom->coordinate();
+        const std::vector<std::string>& names                                  = glycosylationTable.atomNames[index];
+        const std::vector<glycoproteinMetadata::SuperimpositionValues>& values = glycosylationTable.values[index];
+        Residue* reducing                                                      = attachment.reducing;
+        Atom* anomericAtom                                                     = reducing->FindAtom("C1");
+        Coordinate coordC5                                                     = reducing->FindAtom("C5")->coordinate();
+        Coordinate coordO5                                                     = reducing->FindAtom("O5")->coordinate();
+        Coordinate coordC1                                                     = anomericAtom->coordinate();
         std::vector<Coordinate> coords {coordC5, coordO5, coordC1};
         for (size_t n = 0; n < values.size(); n++)
         {
