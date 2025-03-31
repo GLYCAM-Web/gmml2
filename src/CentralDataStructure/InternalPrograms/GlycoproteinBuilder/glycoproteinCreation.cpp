@@ -81,22 +81,6 @@ namespace
         return residueIds.size();
     }
 
-    cds::Atom* getConnectingProteinAtom(cds::Residue* residue)
-    {
-        std::string residueName        = residue->getName();
-        std::string connectionAtomName = glycoproteinMetadata::GetGlycositeConnectionAtomName(residueName);
-        if (connectionAtomName == "")
-        {
-            std::string message =
-                "Problem in GetConnectingProteinAtom. The amino acid requested: " + residueName +
-                " has name that isn't supported. Currently you can glycosylate ASN, THR, SER or TYR. " +
-                "Email us to request " + "others. Ideally include examples of 3D structures we can use as a template.";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
-        }
-        return residue->FindAtom(connectionAtomName);
-    }
-
     // Step 1. If the C1 atom has a neighbor that isn't in the queryResidue, return C1.
     // Step 2. If the C2 atom has a neighbor that isn't in the queryResidue, return C2.
     // Step 3. Panic.
@@ -143,27 +127,29 @@ namespace
         }
     }
 
-    // This function prepares the glycan molecule in the glycan_ assembly for superimpostion onto an amino acid in the
-    // protein It does this by "growing" the atoms of the amino acid side chain (e.g. Asn, Thr or Ser) out from the
-    // glycan reducing terminal Another function will use these additional atoms to superimpose the glycan onto residue
-    void prepareGlycansForSuperimpositionToParticularResidue(std::string aminoAcid, Attachment& attachment,
-                                                             const glycoproteinBuilder::GlycositeInput& input)
+    size_t glycosylationTableIndex(const glycoproteinMetadata::GlycosylationTable& table, const std::string& aminoAcid,
+                                   const std::string& proteinResidueId)
     {
-        const glycoproteinMetadata::GlycosylationTable glycosylationTable =
-            glycoproteinMetadata::defaultGlycosylationTable();
-        size_t index = codeUtils::indexOf(glycosylationTable.residueNames, aminoAcid);
-        if (index == glycosylationTable.residueNames.size())
+        size_t index = codeUtils::indexOf(table.residueNames, aminoAcid);
+        if (index == table.residueNames.size())
         {
-            std::string message =
-                "Problem creating glycosylation site. The amino acid requested: " + input.proteinResidueId +
-                " has name (" + aminoAcid +
-                ") that isn't supported. Currently you can glycosylate ASN, THR, SER or TYR. "
-                "Email us to request " +
-                "others. Ideally include examples of 3D structures we can use as a template.";
+            std::string message = "Problem creating glycosylation site. The amino acid requested: " + proteinResidueId +
+                                  " has name (" + aminoAcid +
+                                  ") that isn't supported. Currently you can glycosylate ASN, THR, SER or TYR. "
+                                  "Email us to request " +
+                                  "others. Ideally include examples of 3D structures we can use as a template.";
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }
+        return index;
+    }
 
+    // This function prepares the glycan molecule in the glycan_ assembly for superimpostion onto an amino acid in the
+    // protein It does this by "growing" the atoms of the amino acid side chain (e.g. Asn, Thr or Ser) out from the
+    // glycan reducing terminal Another function will use these additional atoms to superimpose the glycan onto residue
+    void prepareGlycansForSuperimpositionToParticularResidue(const glycoproteinMetadata::GlycosylationTable& table,
+                                                             size_t index, Attachment& attachment)
+    {
         // Want: residue.FindAtomByTag("anomeric-carbon"); The below is risky as it uses atoms names, i.e. would break
         // for Sialic acid. ToDo Ok so I reckon the below is just assuming alpha or beta depending on the concext. Need
         // to fix a lot, but need to reproduce functionality after refactor first.
@@ -179,8 +165,8 @@ namespace
         }
         aglycone->setName("SUP");
 
-        const std::vector<std::string>& names                                  = glycosylationTable.atomNames[index];
-        const std::vector<glycoproteinMetadata::SuperimpositionValues>& values = glycosylationTable.values[index];
+        const std::vector<std::string>& names                                  = table.atomNames[index];
+        const std::vector<glycoproteinMetadata::SuperimpositionValues>& values = table.values[index];
         Residue* reducing                                                      = attachment.reducing;
         Atom* anomericAtom                                                     = reducing->FindAtom("C1");
         Coordinate coordC5                                                     = reducing->FindAtom("C5")->coordinate();
@@ -272,6 +258,8 @@ namespace glycoproteinBuilder
     std::vector<GlycosylationSite> createGlycosites(cds::Assembly* glycoprotein,
                                                     std::vector<GlycositeInput> glycositesInputVector)
     {
+        const glycoproteinMetadata::GlycosylationTable glycosylationTable =
+            glycoproteinMetadata::defaultGlycosylationTable();
         std::vector<GlycosylationSite> glycosites;
         std::vector<cds::Residue*> residues = glycoprotein->getResidues();
         std::vector<std::string> numberAndInsertionCodes;
@@ -313,12 +301,13 @@ namespace glycoproteinBuilder
             cds::Residue* glycositeResidue       = glycosite.residue;
             std::string glycositeResidueName     = glycositeResidue->getName();
             const GlycositeInput& glycositeInput = glycosite.input;
-            prepareGlycansForSuperimpositionToParticularResidue(glycositeResidueName, attachment, glycositeInput);
+            size_t tableIndex =
+                glycosylationTableIndex(glycosylationTable, glycositeResidueName, glycositeInput.proteinResidueId);
+            prepareGlycansForSuperimpositionToParticularResidue(glycosylationTable, tableIndex, attachment);
             superimposeGlycanToGlycosite(glycositeResidue, attachment);
-            cds::addBond(getConnectingProteinAtom(glycositeResidue),
+            cds::addBond(glycositeResidue->FindAtom(glycosylationTable.connectingAtomNames[tableIndex]),
                          guessAnomericAtomByForeignNeighbor(attachment.reducing));
-            glycositeResidue->setName(
-                glycoproteinMetadata::ConvertGlycosylatedResidueName(glycositeResidueName)); // e.g. ASN to NLN
+            glycositeResidue->setName(glycosylationTable.renamedResidues[tableIndex]);
             std::vector<cds::ResidueLinkage>& linkages = glycan->GetGlycosidicLinkages();
             std::vector<size_t> aglyconeLinkages       = linkagesContainingResidue(linkages, aglycone);
             if (aglyconeLinkages.size() != 1)
