@@ -12,7 +12,7 @@ numberOfSamples                          2
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
-overlapRejectionThreshold                0.500000
+overlapRejectionThreshold                0.000000
 useInitialGlycositeResidueConformation   true    
 moveOverlappingSidechains                false   
 deleteUnresolvableGlycosites             false   
@@ -20,7 +20,7 @@ deleteUnresolvableGlycosites             false
 #### Structures ####
 
 Filename       | Status   | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
-default                     15.569909              A_24                                                     
-0_glycoprotein   rejected   67.644327              A_24                                                     
-1_glycoprotein   rejected   70.122646              A_24                                                     
+default                     15.569909              A_24 A_38                                                
+0_glycoprotein   rejected   67.644327              A_24 A_38                                                
+1_glycoprotein   rejected   70.122646              A_24 A_38                                                
 

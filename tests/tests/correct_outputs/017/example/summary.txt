@@ -12,7 +12,7 @@ numberOfSamples                          1
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
-overlapRejectionThreshold                0.500000
+overlapRejectionThreshold                0.000000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                false   
 deleteUnresolvableGlycosites             false   

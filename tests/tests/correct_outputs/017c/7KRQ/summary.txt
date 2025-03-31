@@ -12,7 +12,7 @@ numberOfSamples                          0
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
-overlapRejectionThreshold                0.500000
+overlapRejectionThreshold                0.000000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                false   
 deleteUnresolvableGlycosites             false   
@@ -20,5 +20,5 @@ deleteUnresolvableGlycosites             false
 #### Structures ####
 
 Filename | Status | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
-default             0.023265                                                                        
+default             0.002628               A_17 A_61                                                
 
