@@ -22,9 +22,15 @@ namespace glycoproteinMetadata
         std::vector<std::vector<SuperimpositionValues>> values;
     };
 
-    std::string LookupCodeForAminoAcidName(const std::string queryName);
-    std::string LookupLinkTypeForAminoAcidName(const std::string queryName);
+    struct AminoAcidLinkTable
+    {
+        std::vector<std::string> names;
+        std::vector<std::string> codes;
+        std::vector<std::string> linkTypes;
+    };
+
     const GlycosylationTable& defaultGlycosylationTable();
+    const AminoAcidLinkTable& defaultAminoAcidLinkTable();
 } // namespace glycoproteinMetadata
 
 #endif

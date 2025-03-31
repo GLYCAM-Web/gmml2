@@ -37,8 +37,18 @@ namespace
 
     std::string GetSequenceContextAndDetermineTags(cds::Residue* residue, std::vector<std::string>& tags)
     {
+        const glycoproteinMetadata::AminoAcidLinkTable& table = glycoproteinMetadata::defaultAminoAcidLinkTable();
+        auto getCode                                          = [&table](const std::string& name)
+        {
+            size_t index = codeUtils::indexOf(table.names, name);
+            if (index == table.names.size())
+            {
+                throw std::runtime_error("Error: no amino acid table entry found for: " + name);
+            }
+            return table.codes[index];
+        };
         // Tags based on residue name only:
-        std::string conjugationResidueCode     = glycoproteinMetadata::LookupCodeForAminoAcidName(residue->getName());
+        std::string conjugationResidueCode     = getCode(residue->getName());
         std::vector<std::string> nameBasedTags = GetTagsForSequence(conjugationResidueCode, "", "");
         codeUtils::insertInto(tags, nameBasedTags);
         // Now look for context around residue via atom connectivity.
@@ -47,14 +57,12 @@ namespace
         cds::Residue* secondPrecedingNeighbor = nullptr;
         if (firstPrecedingNeighbor)
         {
-            precedingContext = glycoproteinMetadata::LookupCodeForAminoAcidName(firstPrecedingNeighbor->getName());
+            precedingContext = getCode(firstPrecedingNeighbor->getName());
             secondPrecedingNeighbor =
                 cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(firstPrecedingNeighbor, "N");
             if (secondPrecedingNeighbor)
             {
-                precedingContext =
-                    glycoproteinMetadata::LookupCodeForAminoAcidName(secondPrecedingNeighbor->getName()) +
-                    precedingContext;
+                precedingContext = getCode(secondPrecedingNeighbor->getName()) + precedingContext;
             }
         }
         std::string followingContext         = "";
@@ -62,16 +70,14 @@ namespace
         cds::Residue* secondFollowingNeighbor = nullptr;
         if (firstFollowingNeighbor)
         {
-            std::string midResCode =
-                glycoproteinMetadata::LookupCodeForAminoAcidName(firstFollowingNeighbor->getName());
-            followingContext = midResCode;
+            std::string midResCode = getCode(firstFollowingNeighbor->getName());
+            followingContext       = midResCode;
             secondFollowingNeighbor =
                 cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(firstFollowingNeighbor, "C");
             if (secondFollowingNeighbor)
             {
-                std::string lastResCode =
-                    glycoproteinMetadata::LookupCodeForAminoAcidName(secondFollowingNeighbor->getName());
-                followingContext += lastResCode;
+                std::string lastResCode = getCode(secondFollowingNeighbor->getName());
+                followingContext        += lastResCode;
                 std::vector<std::string> contextTags =
                     GetTagsForSequence(conjugationResidueCode, midResCode, lastResCode);
                 codeUtils::insertInto(tags, contextTags);
@@ -87,13 +93,14 @@ namespace glycoproteinBuilder
 {
     std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const std::vector<cds::Residue*>& residues)
     {
+        const glycoproteinMetadata::AminoAcidLinkTable& table = glycoproteinMetadata::defaultAminoAcidLinkTable();
         std::vector<GlycosylationSiteInfo> result;
         for (auto& residue : residues)
         {
-            std::string linkType = glycoproteinMetadata::LookupLinkTypeForAminoAcidName(residue->getName());
-            if (!linkType.empty())
+            size_t index = codeUtils::indexOf(table.names, residue->getName());
+            if (index < table.names.size() && table.linkTypes[index] != "")
             {
-                std::vector<std::string> tags = {linkType};
+                std::vector<std::string> tags = {table.linkTypes[index]};
                 std::string context           = GetSequenceContextAndDetermineTags(residue, tags);
                 pdb::ResidueId residueId      = residue->getId();
                 result.push_back(GlycosylationSiteInfo {residueId.getChainId(), residueId.getNumber(),

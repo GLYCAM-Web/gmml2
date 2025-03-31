@@ -16,6 +16,13 @@ namespace
         std::vector<SuperimpositionValues> values;
     };
 
+    struct AminoAcidEntry
+    {
+        std::string name;
+        std::string code;
+        std::string linkType = "";
+    };
+
     // Dear future self, the order that you add the atoms to the residue matters for superimposition
     // ie N, CA, CB, not CB, CA, N.
     const std::vector<GlycosylationEntry> glycosylationTableData {
@@ -56,14 +63,15 @@ namespace
         codeUtils::vectorMap(getGlycosylationConnectingAtom, glycosylationTableData),
         codeUtils::vectorMap(getGlycosylationAtoms, glycosylationTableData),
         codeUtils::vectorMap(getGlycosylationValues, glycosylationTableData)};
-} // namespace
 
-std::string glycoproteinMetadata::LookupCodeForAminoAcidName(const std::string queryName)
-{
-    static const std::unordered_map<std::string, std::string> aminoAcidNameToCodeMap({
+    const std::string nLink = "nLink";
+    const std::string oLink = "oLink";
+    const std::string cLink = "cLink";
+
+    const std::vector<AminoAcidEntry> aminoAcidLinkTableData {
         {"ALA", "A"},
         {"ARG", "R"},
-        {"ASN", "N"},
+        {"ASN", "N", nLink},
         {"ASP", "D"},
         {"CYS", "C"},
         {"GLN", "Q"},
@@ -76,38 +84,42 @@ std::string glycoproteinMetadata::LookupCodeForAminoAcidName(const std::string q
         {"MET", "M"},
         {"PHE", "F"},
         {"PRO", "P"},
-        {"SER", "S"},
-        {"THR", "T"},
-        {"TRP", "W"},
-        {"TYR", "Y"},
+        {"SER", "S", oLink},
+        {"THR", "T", oLink},
+        {"TRP", "W", cLink},
+        {"TYR", "Y", oLink},
         {"VAL", "V"},
-        {"NLN", "N"},
-        {"OLT", "T"},
-        {"OLS", "S"},
-        {"OLY", "Y"},
-        {"CLW", "W"}
-    });
-    return codeUtils::FindStringInStringMap(queryName, aminoAcidNameToCodeMap);
-}
+        {"NLN", "N", nLink},
+        {"OLT", "T", oLink},
+        {"OLS", "S", oLink},
+        {"OLY", "Y", oLink},
+        {"CLW", "W", cLink}
+    };
 
-std::string glycoproteinMetadata::LookupLinkTypeForAminoAcidName(const std::string queryName)
-{
-    static const std::unordered_map<std::string, std::string> residueLinkMap({
-        {"ASN", "nLink"},
-        {"THR", "oLink"},
-        {"SER", "oLink"},
-        {"TYR", "oLink"},
-        {"TRP", "cLink"},
-        {"NLN", "nLink"},
-        {"OLT", "oLink"},
-        {"OLS", "oLink"},
-        {"OLY", "oLink"},
-        {"CLW", "cLink"}
-    });
-    return codeUtils::FindStringInStringMap(queryName, residueLinkMap);
-}
+    std::function<std::string(const AminoAcidEntry&)> getAminoAcidName = [](const AminoAcidEntry& a)
+    {
+        return a.name;
+    };
+    std::function<std::string(const AminoAcidEntry&)> getAminoAcidCode = [](const AminoAcidEntry& a)
+    {
+        return a.code;
+    };
+    std::function<std::string(const AminoAcidEntry&)> getAminoAcidLinkType = [](const AminoAcidEntry& a)
+    {
+        return a.linkType;
+    };
+
+    const AminoAcidLinkTable aminoAcidLinkTable {codeUtils::vectorMap(getAminoAcidName, aminoAcidLinkTableData),
+                                                 codeUtils::vectorMap(getAminoAcidCode, aminoAcidLinkTableData),
+                                                 codeUtils::vectorMap(getAminoAcidLinkType, aminoAcidLinkTableData)};
+} // namespace
 
 const GlycosylationTable& glycoproteinMetadata::defaultGlycosylationTable()
 {
     return glycosylationTable;
+}
+
+const AminoAcidLinkTable& glycoproteinMetadata::defaultAminoAcidLinkTable()
+{
+    return aminoAcidLinkTable;
 }
