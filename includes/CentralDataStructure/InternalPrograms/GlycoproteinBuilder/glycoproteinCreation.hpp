@@ -15,12 +15,14 @@ namespace glycoproteinBuilder
     struct GlycosylationSite
     {
         cds::Residue* residue;
-        cdsCondensedSequence::Carbohydrate* glycan;
         GlycositeInput input;
     };
 
     std::vector<GlycosylationSite> createGlycosites(cds::Assembly* glycoprotein,
-                                                    std::vector<GlycositeInput> glycositesInputVector);
+                                                    const std::vector<GlycositeInput>& glycositesInputVector);
+
+    std::vector<cdsCondensedSequence::Carbohydrate*>
+    addGlycansToProtein(cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites);
 } // namespace glycoproteinBuilder
 
 #endif

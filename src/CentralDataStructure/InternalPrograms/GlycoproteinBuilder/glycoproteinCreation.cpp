@@ -255,12 +255,11 @@ namespace
 
 namespace glycoproteinBuilder
 {
+
     std::vector<GlycosylationSite> createGlycosites(cds::Assembly* glycoprotein,
-                                                    std::vector<GlycositeInput> glycositesInputVector)
+                                                    const std::vector<GlycositeInput>& glycositesInputVector)
     {
-        const glycoproteinMetadata::GlycosylationTable glycosylationTable =
-            glycoproteinMetadata::defaultGlycosylationTable();
-        std::vector<GlycosylationSite> glycosites;
+        std::vector<GlycosylationSite> result;
         std::vector<cds::Residue*> residues = glycoprotein->getResidues();
         std::vector<std::string> numberAndInsertionCodes;
         std::vector<std::string> chainIds;
@@ -285,17 +284,26 @@ namespace glycoproteinBuilder
                                          glycositeInput.proteinResidueId + "\n");
             }
             cds::Residue* glycositeResidue = residues[residueIndex];
-            Carbohydrate* glycan           = codeUtils::erratic_cast<Carbohydrate*>(
-                glycoprotein->addMolecule(std::make_unique<Carbohydrate>(glycositeInput.glycanInput)));
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "About to push to glycosites with: " + glycositeInput.proteinResidueId + " and glycan " +
                           glycositeInput.glycanInput);
-            glycosites.push_back({glycositeResidue, glycan, glycositeInput});
+            result.push_back({glycositeResidue, glycositeInput});
         }
+        return result;
+    }
+
+    std::vector<cdsCondensedSequence::Carbohydrate*>
+    addGlycansToProtein(cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites)
+    {
+        const glycoproteinMetadata::GlycosylationTable glycosylationTable =
+            glycoproteinMetadata::defaultGlycosylationTable();
+        std::vector<Carbohydrate*> result;
         for (auto& glycosite : glycosites)
         {
-            Carbohydrate* glycan                 = glycosite.glycan;
-            Attachment attachment                = toAttachment(glycosite.glycan);
+            Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(
+                glycoprotein->addMolecule(std::make_unique<Carbohydrate>(glycosite.input.glycanInput)));
+            result.push_back(glycan);
+            Attachment attachment                = toAttachment(glycan);
             cds::Residue* aglycone               = attachment.aglycone;
             cds::Residue* reducingResidue        = attachment.reducing;
             cds::Residue* glycositeResidue       = glycosite.residue;
@@ -324,6 +332,6 @@ namespace glycoproteinBuilder
                       "Completed creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                           glycositeInput.glycanInput);
         }
-        return glycosites;
+        return result;
     }
 } // namespace glycoproteinBuilder

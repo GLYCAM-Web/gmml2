@@ -176,6 +176,8 @@ int main(int argc, char* argv[])
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
+        std::vector<cdsCondensedSequence::Carbohydrate*> glycans =
+            glycoproteinBuilder::addGlycansToProtein(glycoprotein, glycosites);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
         double selfWeight    = 1.0;
@@ -188,7 +190,7 @@ int main(int argc, char* argv[])
         bool excludeHydrogen                               = false;
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
             sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                                   molecules, glycosites, overlapMultiplier, settings.overlapTolerance,
+                                   molecules, glycosites, glycans, overlapMultiplier, settings.overlapTolerance,
                                    settings.overlapRejectionThreshold, excludeHydrogen));
         if (settings.moveOverlappingSidechains)
         {

@@ -23,6 +23,7 @@ namespace glycoproteinBuilder
 {
     GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
                                                        std::vector<GlycosylationSite>& glycosites,
+                                                       std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
                                                        const OverlapMultiplier overlapWeight, double overlapTolerance,
                                                        double overlapRejectionThreshold, bool excludeHydrogen)
     {
@@ -58,9 +59,9 @@ namespace glycoproteinBuilder
         };
 
         std::vector<std::vector<cds::ResidueLinkage>> glycosidicLinkages;
-        for (auto& a : glycosites)
+        for (auto& a : glycans)
         {
-            glycosidicLinkages.push_back(a.glycan->GetGlycosidicLinkages());
+            glycosidicLinkages.push_back(a->GetGlycosidicLinkages());
         }
 
         std::vector<MoleculeType> moleculeTypes(graphIndices.molecules.size(), MoleculeType::protein);
@@ -76,9 +77,8 @@ namespace glycoproteinBuilder
         std::vector<std::vector<size_t>> glycanLinkages;
         for (size_t n = 0; n < glycosites.size(); n++)
         {
-            size_t site = codeUtils::indexOf(residues, glycosites[n].residue);
-            size_t moleculeIndex =
-                codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycosites[n].glycan));
+            size_t site          = codeUtils::indexOf(residues, glycosites[n].residue);
+            size_t moleculeIndex = codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycans[n]));
             const std::vector<cds::ResidueLinkage>& linkages = glycosidicLinkages[n];
             std::vector<size_t> linkageIds = codeUtils::indexVectorWithOffset(residueLinkages.size(), linkages);
             for (size_t k = 0; k < linkages.size(); k++)
