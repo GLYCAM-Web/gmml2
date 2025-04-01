@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/version.h"
@@ -126,30 +127,40 @@ int main(int argc, char** argv)
                                          overwriteFlag);
             }
         }
-        // Convert command line inputs to legible variables
-        std::ifstream infile(inputFile);
-        std::string line;
-        while (std::getline(infile, line))
+
+        struct SequenceInput
         {
-            try
+            std::string id;
+            std::string sequence;
+        };
+
+        std::vector<SequenceInput> lines;
+        auto processLine = [&](const std::string& line, size_t lineNumber)
+        {
+            if (!line.empty())
             {
-                if (line.empty())
-                {
-                    continue;
-                }
                 std::vector<std::string> splitLine = codeUtils::split(line, delimiter);
-                if (splitLine.size() != 2)
+                if (splitLine.size() == 2)
+                {
+                    lines.push_back({splitLine[0], splitLine[1]});
+                }
+                else
                 {
                     std::cerr << "Encountered problem when splitting this line >>>" << line << "<<< from file >>>"
                               << argv[1] << "<<< into an ID and carb string separated by your specified delimiter: >>>"
                               << argv[2] << "<<<\n";
                     std::exit(EXIT_FAILURE);
                 }
-                std::string inputSequence = splitLine.at(1);
-                std::cout << "\n*********************\nBuilding " << inputSequence << "\n*********************\n";
-                cdsCondensedSequence::carbohydrateBuilder carbBuilder(inputSequence);
-                std::string inputGlycanID = splitLine.at(0);
-                carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputDir, inputGlycanID, headerLines);
+            }
+        };
+        codeUtils::readFileLineByLine(inputFile, processLine);
+        for (auto& line : lines)
+        {
+            try
+            {
+                std::cout << "\n*********************\nBuilding " << line.sequence << "\n*********************\n";
+                cdsCondensedSequence::carbohydrateBuilder carbBuilder(line.sequence);
+                carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputDir, line.id, headerLines);
             }
             catch (const std::runtime_error& error)
             {
