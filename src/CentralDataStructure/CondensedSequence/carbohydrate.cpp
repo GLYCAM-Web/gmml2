@@ -249,7 +249,8 @@ namespace
     {
         // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after
         // more residues are added.
-        auto shapePreference = cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage));
+        auto shapePreference =
+            cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage.rotamerType, linkage.dihedralMetadata));
         cds::setShapeToPreference(linkage, shapePreference);
         auto searchPreference             = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
         const cds::GraphIndexData indices = cds::toIndexData({molecule});
@@ -467,7 +468,9 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
         for (auto& linkage : glycosidicLinkages_)
         {
             auto preference = cds::angleSearchPreference(
-                searchSettings.deviation, cds::currentRotamerOnly(linkage, cds::defaultShapePreference(linkage)));
+                searchSettings.deviation,
+                cds::currentRotamerOnly(linkage,
+                                        cds::defaultShapePreference(linkage.rotamerType, linkage.dihedralMetadata)));
             bounds = cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
                                                       searchSettings.angles, linkage.rotatableDihedrals,
                                                       linkage.dihedralMetadata, preference, indices, graph, selection,

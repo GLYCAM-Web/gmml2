@@ -87,8 +87,10 @@ namespace cds
     void setShapeToPreference(std::vector<ResidueLinkage>& linkages, const GlycanShapePreference& preferences);
     ResidueLinkageShapePreference linkageShapePreference(MetadataDistribution metadataDistribution,
                                                          AngleDistribution angleDistribution,
-                                                         const ResidueLinkage& linkage);
-    ResidueLinkageShapePreference defaultShapePreference(const ResidueLinkage& linkage);
+                                                         const GlycamMetadata::RotamerType rotamerType,
+                                                         const DihedralAngleMetadata& dihedralMetadata);
+    ResidueLinkageShapePreference defaultShapePreference(const GlycamMetadata::RotamerType rotamerType,
+                                                         const DihedralAngleMetadata& dihedralMetadata);
     ResidueLinkageShapePreference selectedRotamersOnly(MetadataPreferenceSelection metadataSelection,
                                                        const ResidueLinkage& linkage,
                                                        const ResidueLinkageShapePreference& preference);

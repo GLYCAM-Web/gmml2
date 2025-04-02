@@ -327,7 +327,8 @@ namespace glycoproteinBuilder
             cds::ResidueLinkage newLinkage = replaceAglycone(reducingResidue, glycositeResidue);
             size_t aglyconeLinkage         = aglyconeLinkages[0];
             linkages[aglyconeLinkage]      = newLinkage;
-            cds::setShapeToPreference(newLinkage, cds::defaultShapePreference(newLinkage));
+            cds::setShapeToPreference(newLinkage,
+                                      cds::defaultShapePreference(newLinkage.rotamerType, newLinkage.dihedralMetadata));
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Completed creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                           glycositeInput.glycanInput);

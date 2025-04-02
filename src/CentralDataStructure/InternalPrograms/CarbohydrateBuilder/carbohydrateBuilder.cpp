@@ -171,7 +171,9 @@ void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds
             {
                 return std::vector<size_t> {shapeNumber};
             };
-            cds::setShapeToPreference(*linkage, cds::linkageShapePreference(specificShape, defaultAngle, *linkage));
+            cds::setShapeToPreference(*linkage,
+                                      cds::linkageShapePreference(specificShape, defaultAngle, linkage->rotamerType,
+                                                                  linkage->dihedralMetadata));
             if (std::next(linkage) != end)
             {
                 this->generateLinkagePermutationsRecursively(std::next(linkage), end, maxRotamers, rotamerCount);
