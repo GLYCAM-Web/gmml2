@@ -13,6 +13,8 @@ namespace glycoproteinBuilder
 {
     std::array<cds::Coordinate, 4> dihedralCoordinates(const AssemblyData& data, const assembly::Bounds& bounds,
                                                        size_t dihedralId);
+    cds::AngleWithMetadata currentDihedralShape(const AssemblyData& data, const MutableData& mutableData,
+                                                size_t dihedralId);
     void setDihedralAngle(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                           size_t dihedralId, const cds::AngleWithMetadata& target);
     void setLinkageShape(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,

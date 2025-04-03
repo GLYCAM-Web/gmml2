@@ -20,6 +20,15 @@ namespace glycoproteinBuilder
         return {coord(3), coord(2), coord(1), coord(0)};
     }
 
+    cds::AngleWithMetadata currentDihedralShape(const AssemblyData& data, const MutableData& mutableData,
+                                                size_t dihedralId)
+    {
+        size_t metadataIndex  = mutableData.dihedralCurrentMetadata[dihedralId];
+        auto& currentMetadata = data.rotatableDihedralData.metadata[dihedralId][metadataIndex];
+        return {constants::toDegrees(cds::angle(dihedralCoordinates(data, mutableData.bounds, dihedralId))),
+                currentMetadata.default_angle, metadataIndex};
+    }
+
     void setDihedralAngle(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,
                           size_t dihedralId, const cds::AngleWithMetadata& target)
     {
