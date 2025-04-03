@@ -49,35 +49,26 @@ namespace GlycamMetadata
         std::string atom3_;
         std::string atom4_;
 
-        inline std::string print()
+        inline std::string print() const
         {
             return atom1_ + "_" + atom2_ + "_" + atom3_ + "_" + atom4_ + " : " + rotamer_name_;
         }
-
-        //////////////////////////////////////////////////////////
-        //                       OPERATORS                      //
-        //////////////////////////////////////////////////////////
-        inline bool operator==(const DihedralAngleData& other)
-        {
-            return (this->index_ == other.index_ &&
-                    this->number_of_bonds_from_anomeric_carbon_ == other.number_of_bonds_from_anomeric_carbon_);
-        }
-
-        inline bool operator!=(const DihedralAngleData& other)
-        {
-            return !(operator==(other));
-        }
     };
 
-    typedef std::vector<DihedralAngleData> DihedralAngleDataVector;
+    struct DihedralAngleDataTable
+    {
+        std::vector<DihedralAngleData> entries;
+        std::vector<double> weights;
+    };
+
+    const DihedralAngleDataTable& dihedralAngleDataTable();
 
     // Pass in the two atoms on either side the residue-residue linkage
-    std::vector<DihedralAngleDataVector> getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name,
-                                                                               const std::string& residue1Name,
-                                                                               const std::string& atom2Name,
-                                                                               const std::string& residue2Name);
-    std::vector<double> dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector);
-    DihedralAngleDataVector likelyMetadata(const DihedralAngleDataVector& entries);
+    std::vector<std::vector<size_t>> getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name,
+                                                                           const std::string& residue1Name,
+                                                                           const std::string& atom2Name,
+                                                                           const std::string& residue2Name);
+    std::vector<size_t> likelyMetadata(const DihedralAngleDataTable& table, const std::vector<size_t>& entries);
 
     template<typename T>
     T onAngleDeviation(std::function<T(const AngleLimit&)>& onLimit, std::function<T(const AngleStd&)>& onStd,

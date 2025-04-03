@@ -3,6 +3,7 @@
 
 // This is becoming an interface to the carbohydrate class in gmml for Gems.
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include <string>
 #include <vector>
 
@@ -96,7 +97,8 @@ namespace cdsCondensedSequence
             int maxRotamers = 32); // Will not be used by gems, but leaving the functionality as could be useful.
                                    //  std::string GetNumberOfShapes(bool likelyShapesOnly = false);
       private:
-        void generateLinkagePermutationsRecursively(std::vector<cds::ResidueLinkage>::iterator linkage,
+        void generateLinkagePermutationsRecursively(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                                    std::vector<cds::ResidueLinkage>::iterator linkage,
                                                     std::vector<cds::ResidueLinkage>::iterator end,
                                                     int maxRotamers = 32, int rotamerCount = 0);
         //  void resetLinkageIDsToStartFromZero(ResidueLinkageVector &inputLinkages);

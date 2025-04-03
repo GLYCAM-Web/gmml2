@@ -112,10 +112,11 @@ size_t cds::bestOverlapResultIndex(const std::vector<AngleOverlap>& results)
 }
 
 cds::OverlapState cds::wiggleUsingRotamers(cds::SearchOverlap searchOverlap, SearchAngles searchAngles,
+                                           const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                            const assembly::Graph& graph, const assembly::Bounds& initialBounds,
                                            const std::vector<size_t>& movingAtoms,
                                            const cds::DihedralCoordinates coordinates,
-                                           const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
+                                           const std::vector<size_t>& indices, const std::vector<size_t>& rotamers,
                                            const AngleSearchPreference& preference)
 {
     auto resultState = [&](const AngleOverlap best)
@@ -128,11 +129,11 @@ cds::OverlapState cds::wiggleUsingRotamers(cds::SearchOverlap searchOverlap, Sea
     std::vector<AngleOverlap> results;
     for (size_t n : preference.metadataOrder)
     {
-        double angle     = preference.angles[n];
-        double deviation = preference.deviation;
-        AngleOverlap best =
-            WiggleAnglesOverlaps(searchOverlap, graph, initialBounds, movingAtoms, coordinates, indices[n],
-                                 preference.angles[n], searchAngles(rotamers[n], angle, deviation));
+        double angle      = preference.angles[n];
+        double deviation  = preference.deviation;
+        AngleOverlap best = WiggleAnglesOverlaps(searchOverlap, graph, initialBounds, movingAtoms, coordinates,
+                                                 indices[n], preference.angles[n],
+                                                 searchAngles(metadataTable.entries[rotamers[n]], angle, deviation));
         // found something with no overlaps
         // if metadata and angles are sorted in order of preference, we can quit here
         if (best.overlaps.count <= 0.0)
@@ -146,11 +147,11 @@ cds::OverlapState cds::wiggleUsingRotamers(cds::SearchOverlap searchOverlap, Sea
 }
 
 assembly::Bounds cds::simpleWiggleCurrentRotamers(
-    const MolecularMetadata::PotentialTable& potential, double overlapTolerance, SearchAngles searchAngles,
-    std::vector<RotatableDihedral>& dihedrals, const std::vector<DihedralAngleDataVector>& metadata,
-    const std::vector<AngleSearchPreference>& preference, const GraphIndexData& indices, const assembly::Graph& graph,
-    const assembly::Selection& selection, const assembly::Bounds& initialBounds,
-    const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge)
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable, const MolecularMetadata::PotentialTable& potential,
+    double overlapTolerance, SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
+    const std::vector<std::vector<size_t>>& metadata, const std::vector<AngleSearchPreference>& preference,
+    const GraphIndexData& indices, const assembly::Graph& graph, const assembly::Selection& selection,
+    const assembly::Bounds& initialBounds, const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge)
 {
     assembly::Bounds bounds                              = initialBounds;
     std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(indices.atoms);
@@ -184,8 +185,8 @@ assembly::Bounds cds::simpleWiggleCurrentRotamers(
                                                               selectionB, atomElements, overlapWeight,
                                                               residueAtomsCloseToEdge));
         };
-        OverlapState best = wiggleUsingRotamers(searchOverlap, searchAngles, graph, bounds, movingAtoms, coordinates,
-                                                index, metadata[n], preference[n]);
+        OverlapState best = wiggleUsingRotamers(searchOverlap, searchAngles, metadataTable, graph, bounds, movingAtoms,
+                                                coordinates, index, metadata[n], preference[n]);
         bounds            = best.bounds;
     }
     return bounds;

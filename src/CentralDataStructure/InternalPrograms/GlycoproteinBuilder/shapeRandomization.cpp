@@ -25,8 +25,8 @@ namespace glycoproteinBuilder
             randomAngle,
         bool freezeGlycositeResidueConformation)
     {
-        const std::vector<size_t>& linkages                               = data.glycans.linkages[glycanId];
-        const std::vector<cds::DihedralAngleDataVector>& dihedralMetadata = data.rotatableDihedralData.metadata;
+        const std::vector<size_t>& linkages                      = data.glycans.linkages[glycanId];
+        const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
         cds::GlycanShapePreference result;
         for (size_t n = 0; n < linkages.size(); n++)
         {
@@ -40,13 +40,14 @@ namespace glycoproteinBuilder
                 size_t dihedralId = rotatableDihedrals[k];
                 for (auto& metadata : dihedralMetadata[dihedralId])
                 {
-                    angles[k].push_back(randomAngle(rng, settings, metadata));
+                    angles[k].push_back(randomAngle(rng, settings, data.dihedralAngleTable.entries[metadata]));
                 }
             }
             if (data.residueLinkageData.rotamerTypes[linkageId] == GlycamMetadata::RotamerType::conformer)
             {
-                size_t firstDihedralId    = rotatableDihedrals[0];
-                std::vector<size_t> order = settings.randomMetadata(rng, dihedralMetadata[firstDihedralId]);
+                size_t firstDihedralId = rotatableDihedrals[0];
+                std::vector<size_t> order =
+                    settings.randomMetadata(rng, data.dihedralAngleTable, dihedralMetadata[firstDihedralId]);
                 std::vector<bool> isFrozen(rotatableDihedrals.size(), false);
                 cds::ConformerShapePreference pref {isFrozen, angles, order};
                 if (isGlycositeLinkage && freezeGlycositeResidueConformation)
@@ -54,7 +55,8 @@ namespace glycoproteinBuilder
                     for (size_t n = 0; n < rotatableDihedrals.size(); n++)
                     {
                         size_t dihedralId = rotatableDihedrals[n];
-                        if (isChiAngle(dihedralMetadata[dihedralId][0].dihedral_angle_name_))
+                        if (isChiAngle(
+                                data.dihedralAngleTable.entries[dihedralMetadata[dihedralId][0]].dihedral_angle_name_))
                         {
                             pref.isFrozen[n] = true;
                             size_t metadata  = data.rotatableDihedralData.initialShape[dihedralId].metadataIndex;
@@ -72,7 +74,8 @@ namespace glycoproteinBuilder
                 order.reserve(rotatableDihedrals.size());
                 for (size_t dihedralId : rotatableDihedrals)
                 {
-                    order.push_back(settings.randomMetadata(rng, dihedralMetadata[dihedralId]));
+                    order.push_back(
+                        settings.randomMetadata(rng, data.dihedralAngleTable, dihedralMetadata[dihedralId]));
                 }
                 result.push_back(cds::PermutationShapePreference {angles, order});
             }

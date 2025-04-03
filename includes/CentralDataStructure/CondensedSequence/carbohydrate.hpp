@@ -66,7 +66,8 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming,
                                       const std::vector<std::string>& headerLines);
-        void ResolveOverlaps(const cds::AngleSearchSettings& searchSettings);
+        void ResolveOverlaps(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                             const cds::AngleSearchSettings& searchSettings);
         unsigned long int CountShapes(bool likelyShapesOnly = false) const;
         std::string GetNumberOfShapes(
             bool likelyShapesOnly = false) const; // This one is for gems. ToDo try to deprecate and use CountShapes.

@@ -11,18 +11,18 @@ using cds::RotatableDihedral;
 
 namespace
 {
-    using GlycamMetadata::DihedralAngleDataVector;
-
-    int
-    getNumberOfShapesBase(std::function<const DihedralAngleDataVector(const DihedralAngleDataVector&)> selectedMetadata,
-                          GlycamMetadata::RotamerType rotamerType, const std::vector<DihedralAngleDataVector>& metadata)
+    int getNumberOfShapesBase(
+        std::function<std::vector<size_t>(const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>&)>
+            selectedMetadata,
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable, GlycamMetadata::RotamerType rotamerType,
+        const std::vector<std::vector<size_t>>& metadata)
     {
         if (rotamerType == GlycamMetadata::RotamerType::permutation)
         {
             int numberOfShapes = 1;
             for (auto& entry : metadata)
             {
-                numberOfShapes *= selectedMetadata(entry).size();
+                numberOfShapes *= selectedMetadata(metadataTable, entry).size();
             }
             return numberOfShapes;
         }
@@ -30,7 +30,7 @@ namespace
         { // Conformer should mean that each dihedral will have the same number of metadata entries.
             // numberOfShapes = RotatableDihedrals_.size(); // This was correct for ASN for the wrong reason. 4
             // conformers and 4 dihedrals...
-            return selectedMetadata(metadata[0]).size();
+            return selectedMetadata(metadataTable, metadata[0]).size();
         }
         else
         {
@@ -43,7 +43,7 @@ namespace
     }
 } // namespace
 
-std::vector<size_t> cds::rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata)
+std::vector<size_t> cds::rotatableDihedralsWithMultipleRotamers(const std::vector<std::vector<size_t>>& metadata)
 {
     std::vector<size_t> indices;
     for (size_t n = 0; n < metadata.size(); n++)
@@ -68,20 +68,21 @@ std::vector<cds::ResidueLinkage> cds::nonDerivativeResidueLinkages(const std::ve
     return result;
 }
 
-size_t cds::numberOfShapes(GlycamMetadata::RotamerType rotamerType,
-                           const std::vector<DihedralAngleDataVector>& metadata)
+size_t cds::numberOfShapes(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                           GlycamMetadata::RotamerType rotamerType, const std::vector<std::vector<size_t>>& metadata)
 {
-    auto selectMetadata = [](const DihedralAngleDataVector& data)
+    auto selectMetadata = [](const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>& data)
     {
         return data;
     };
-    return getNumberOfShapesBase(selectMetadata, rotamerType, metadata);
+    return getNumberOfShapesBase(selectMetadata, metadataTable, rotamerType, metadata);
 }
 
-size_t cds::numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,
-                                 const std::vector<DihedralAngleDataVector>& metadata)
+size_t cds::numberOfLikelyShapes(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                 GlycamMetadata::RotamerType rotamerType,
+                                 const std::vector<std::vector<size_t>>& metadata)
 {
-    return getNumberOfShapesBase(GlycamMetadata::likelyMetadata, rotamerType, metadata);
+    return getNumberOfShapesBase(GlycamMetadata::likelyMetadata, metadataTable, rotamerType, metadata);
 }
 
 cds::DihedralCoordinates cds::dihedralCoordinates(const cds::RotatableDihedral& dihedral)
@@ -109,11 +110,11 @@ std::string cds::print(const RotatableDihedral& dihedral)
     return ss.str();
 }
 
-std::string cds::print(const ResidueLinkage& linkage)
+std::string cds::print(const GlycamMetadata::DihedralAngleDataTable& table, const ResidueLinkage& linkage)
 {
     std::stringstream ss;
     ss << "ResidueLinkage Index: " << linkage.index << ", Name: " << linkage.name
-       << ", NumberOfShapes: " << numberOfShapes(linkage.rotamerType, linkage.dihedralMetadata) << ", "
+       << ", NumberOfShapes: " << numberOfShapes(table, linkage.rotamerType, linkage.dihedralMetadata) << ", "
        << print(linkage.link);
     gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
     for (auto& rotatableDihedral : linkage.rotatableDihedrals)

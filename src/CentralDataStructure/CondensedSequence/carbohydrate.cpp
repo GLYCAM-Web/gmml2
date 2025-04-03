@@ -244,13 +244,14 @@ namespace
         }
     }
 
-    void initialWiggleLinkage(cds::Molecule* molecule, cds::Residue* residue, cds::ResidueLinkage& linkage,
+    void initialWiggleLinkage(const GlycamMetadata::DihedralAngleDataTable& metadataTable, cds::Molecule* molecule,
+                              cds::Residue* residue, cds::ResidueLinkage& linkage,
                               const cds::AngleSearchSettings& searchSettings)
     {
         // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after
         // more residues are added.
-        auto shapePreference =
-            cds::firstRotamerOnly(linkage, cds::defaultShapePreference(linkage.rotamerType, linkage.dihedralMetadata));
+        auto shapePreference = cds::firstRotamerOnly(
+            linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata));
         cds::setShapeToPreference(linkage, shapePreference);
         auto searchPreference             = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
         const cds::GraphIndexData indices = cds::toIndexData({molecule});
@@ -263,9 +264,9 @@ namespace
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
-            MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
-            linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, indices, graph, selection, bounds,
-            residueAtomsCloseToEdge);
+            GlycamMetadata::dihedralAngleDataTable(), MolecularMetadata::potentialTable(), constants::overlapTolerance,
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, indices,
+            graph, selection, bounds, residueAtomsCloseToEdge);
         for (size_t n = 0; n < graph.atomCount; n++)
         {
             indices.atoms[n]->setCoordinate(newBounds.atoms[n].center);
@@ -276,6 +277,7 @@ namespace
     void depthFirstSetConnectivityAndGeometry(cds::Molecule* molecule,
                                               std::vector<cds::ResidueLinkage>& glycosidicLinkages,
                                               const cds::AngleSearchSettings& searchSettings,
+                                              const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                               cds::Residue* currentParent)
     {
         // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
@@ -298,10 +300,11 @@ namespace
         for (auto& child : currentParent->getChildren())
         {
             connectAndSetGeometry(currentParent, child);
-            cds::ResidueLink link        = cds::findResidueLink({child, currentParent});
-            cds::ResidueLinkage& linkage = glycosidicLinkages.emplace_back(cds::createResidueLinkage(link));
-            initialWiggleLinkage(molecule, child, linkage, searchSettings);
-            depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, child);
+            cds::ResidueLink link = cds::findResidueLink({child, currentParent});
+            cds::ResidueLinkage& linkage =
+                glycosidicLinkages.emplace_back(cds::createResidueLinkage(metadataTable, link));
+            initialWiggleLinkage(metadataTable, molecule, child, linkage, searchSettings);
+            depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, metadataTable, child);
         }
     }
 } // namespace
@@ -346,9 +349,10 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
 
     cds::serializeNumbers(this->getAtoms());
-    auto searchSettings = defaultSearchSettings;
+    auto searchSettings                                         = defaultSearchSettings;
     // Set 3D structure
-    depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings,
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
+    depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings, metadataTable,
                                          getResidues().front()); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
@@ -359,7 +363,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
         cds::determineAtomsThatMove(linkage.rotatableDihedrals);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Final carbohydrate overlap resolution starting.");
-    this->ResolveOverlaps(searchSettings);
+    this->ResolveOverlaps(metadataTable, searchSettings);
     gmml::log(__LINE__, __FILE__, gmml::INF,
               "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
     return;
@@ -440,13 +444,14 @@ std::string Carbohydrate::GetNumberOfShapes(bool likelyShapesOnly) const
 
 unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 {
-    unsigned long long int numberOfShapes = 1;
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
+    unsigned long long int numberOfShapes                       = 1;
     for (auto& linkage : cds::nonDerivativeResidueLinkages(glycosidicLinkages_))
     {
         auto rotamerType = linkage.rotamerType;
         auto& metadata   = linkage.dihedralMetadata;
-        numberOfShapes   *= likelyShapesOnly ? cds::numberOfLikelyShapes(rotamerType, metadata)
-                                             : cds::numberOfShapes(rotamerType, metadata);
+        numberOfShapes   *= likelyShapesOnly ? cds::numberOfLikelyShapes(metadataTable, rotamerType, metadata)
+                                             : cds::numberOfShapes(metadataTable, rotamerType, metadata);
     }
     return numberOfShapes;
 }
@@ -455,7 +460,8 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
 
-void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSettings)
+void Carbohydrate::ResolveOverlaps(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                   const cds::AngleSearchSettings& searchSettings)
 {
     const cds::GraphIndexData indices = cds::toIndexData({this});
     const assembly::Graph graph = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
@@ -469,12 +475,12 @@ void Carbohydrate::ResolveOverlaps(const cds::AngleSearchSettings& searchSetting
         {
             auto preference = cds::angleSearchPreference(
                 searchSettings.deviation,
-                cds::currentRotamerOnly(linkage,
-                                        cds::defaultShapePreference(linkage.rotamerType, linkage.dihedralMetadata)));
-            bounds = cds::simpleWiggleCurrentRotamers(MolecularMetadata::potentialTable(), constants::overlapTolerance,
-                                                      searchSettings.angles, linkage.rotatableDihedrals,
-                                                      linkage.dihedralMetadata, preference, indices, graph, selection,
-                                                      bounds, residueAtomsCloseToEdge);
+                cds::currentRotamerOnly(linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType,
+                                                                             linkage.dihedralMetadata)));
+            bounds = cds::simpleWiggleCurrentRotamers(metadataTable, MolecularMetadata::potentialTable(),
+                                                      constants::overlapTolerance, searchSettings.angles,
+                                                      linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
+                                                      indices, graph, selection, bounds, residueAtomsCloseToEdge);
         }
     }
     for (size_t n = 0; n < graph.atomCount; n++)

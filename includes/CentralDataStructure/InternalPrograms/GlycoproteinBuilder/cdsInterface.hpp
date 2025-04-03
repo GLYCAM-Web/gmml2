@@ -9,10 +9,11 @@
 
 namespace glycoproteinBuilder
 {
-    GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
-                                                       std::vector<GlycosylationSite>& glycosites,
-                                                       std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
-                                                       const OverlapMultiplier overlapWeight, double overlapTolerance,
-                                                       double overlapRejectionThreshold, bool excludeHydrogen);
+    GlycoproteinAssembly
+    toGlycoproteinAssemblyStructs(const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+                                  std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
+                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
+                                  const OverlapMultiplier overlapWeight, double overlapTolerance,
+                                  double overlapRejectionThreshold, bool excludeHydrogen);
 } // namespace glycoproteinBuilder
 #endif

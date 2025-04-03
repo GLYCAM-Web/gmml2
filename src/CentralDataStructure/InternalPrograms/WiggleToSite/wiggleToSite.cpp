@@ -16,6 +16,7 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
@@ -46,9 +47,10 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
                                                               inputStruct.carbohydrateSuperimpositionResidue_);
     Residue* wiggleMe      = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
                                                               inputStruct.carbohydrateWigglingResidue_);
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
     this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed", {});
-    this->determineWiggleLinkages(superimposeMe, wiggleMe);
+    this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
     std::vector<cds::Atom*> substrateWithoutSuperimpositionAtoms = codeUtils::findElementsNotInVector(
         pdb::getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
     std::vector<cds::Atom*> substrateAtomsToAvoidOverlappingWith =
@@ -67,19 +69,21 @@ WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
         throw std::runtime_error("Did not find the cooordinates of the atoms required for wiggling\n");
     }
     this->setCurrentDistance(this->calculateDistance());
-    int structureCount = this->minimizeDistance(inputStruct.persistCycles_, !inputStruct.isDeterministic_);
-    this->minimizeDistance(inputStruct.persistCycles_, false, structureCount);
+    int structureCount =
+        this->minimizeDistance(metadataTable, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
+    this->minimizeDistance(metadataTable, inputStruct.persistCycles_, false, structureCount);
     this->getCarbohydrate().Generate3DStructureFiles("./", "finished", {});
 }
 
-int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int structureCount)
+int WiggleToSite::minimizeDistance(const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles,
+                                   bool useMonteCarlo, int structureCount)
 {
     uint64_t seed = codeUtils::generateRandomSeed();
     pcg32 rng(seed);
-    auto randomMetadata = [&rng](GlycamMetadata::DihedralAngleDataVector metadataVector)
+    auto randomMetadata =
+        [&rng](const GlycamMetadata::DihedralAngleDataTable& table, const std::vector<size_t>& indices)
     {
-        auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
-        return codeUtils::weightedRandomOrder(rng, weights);
+        return codeUtils::weightedRandomOrder(rng, codeUtils::indicesToValues(table.weights, indices));
     };
     double angleStandardDeviation = 2.0;
     auto randomAngle              = [&rng, &angleStandardDeviation](GlycamMetadata::DihedralAngleData metadata)
@@ -109,10 +113,10 @@ int WiggleToSite::minimizeDistance(int persistCycles, bool useMonteCarlo, int st
         gmml::log(__LINE__, __FILE__, gmml::INF, ss.str());
         for (auto& linkage : codeUtils::shuffleVector(rng, this->getWiggleLinkages()))
         {
-            auto recordedShape = cds::currentShape(linkage.rotatableDihedrals, linkage.dihedralMetadata);
+            auto recordedShape = cds::currentShape(metadataTable, linkage.rotatableDihedrals, linkage.dihedralMetadata);
             cds::setShapeToPreference(linkage,
-                                      cds::linkageShapePreference(randomMetadata, randomAngle, linkage.rotamerType,
-                                                                  linkage.dihedralMetadata));
+                                      cds::linkageShapePreference(randomMetadata, randomAngle, metadataTable,
+                                                                  linkage.rotamerType, linkage.dihedralMetadata));
             double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
             if (this->acceptDistance(useMonteCarlo, acceptance) && this->acceptOverlaps())
             {
@@ -146,7 +150,9 @@ void WiggleToSite::superimpose(std::vector<cds::CoordinateReference>& carbohydra
     return;
 }
 
-std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue* startResidue, Residue* endResidue)
+std::vector<cds::ResidueLinkage>&
+WiggleToSite::determineWiggleLinkages(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                      Residue* startResidue, Residue* endResidue)
 {
     std::vector<Residue*> residuesInPath;
     bool targetFound = false;
@@ -160,15 +166,15 @@ std::vector<cds::ResidueLinkage>& WiggleToSite::determineWiggleLinkages(Residue*
         if (previousResidue != nullptr)
         {
             cds::ResidueLink link = cds::findResidueLink({previousResidue, residue});
-            wiggleLinkages_.emplace_back(cds::createResidueLinkage(link));
+            wiggleLinkages_.emplace_back(cds::createResidueLinkage(metadataTable, link));
         }
         previousResidue = residue;
     }
     std::cout << "\nLinkages I behold:\n" << std::endl;
     for (auto& linkage : this->getWiggleLinkages())
     {
-        std::cout << linkage.name << ": " << cds::numberOfShapes(linkage.rotamerType, linkage.dihedralMetadata)
-                  << std::endl;
+        std::cout << linkage.name << ": "
+                  << cds::numberOfShapes(metadataTable, linkage.rotamerType, linkage.dihedralMetadata) << std::endl;
     }
     return this->getWiggleLinkages();
 }

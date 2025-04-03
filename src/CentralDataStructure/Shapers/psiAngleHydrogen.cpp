@@ -24,14 +24,16 @@ cds::Atom* cds::findHydrogenForPsiAngle(const Atom* atom)
     return nullptr;
 }
 
-void cds::createHydrogenForPsiAngles(Residue* residue, std::vector<DihedralAtoms>& dihedralAtoms,
-                                     const DihedralAngleMetadata& metadata)
+void cds::createHydrogenForPsiAngles(const GlycamMetadata::DihedralAngleDataTable& metadataTable, Residue* residue,
+                                     std::vector<DihedralAtoms>& dihedralAtoms,
+                                     const std::vector<std::vector<size_t>>& metadataIndices)
 {
     for (size_t n = 0; n < dihedralAtoms.size(); n++)
     {
-        for (auto& entry : metadata[n])
+        for (auto& entry : metadataIndices[n])
         {
-            if (entry.dihedral_angle_name_ == "Psi" && entry.atom4_.at(0) == 'H')
+            if (metadataTable.entries[entry].dihedral_angle_name_ == "Psi" &&
+                metadataTable.entries[entry].atom4_.at(0) == 'H')
             { // If it's a psi angle and is supposed to be defined by a H...
                 Atom* atom     = dihedralAtoms[n][2];
                 Atom* hydrogen = findHydrogenForPsiAngle(atom);

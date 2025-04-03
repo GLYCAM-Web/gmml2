@@ -18,9 +18,6 @@
 
 namespace cds
 {
-    using GlycamMetadata::DihedralAngleData;
-    using GlycamMetadata::DihedralAngleDataVector;
-
     struct ResidueLink
     {
         std::pair<cds::Residue*, cds::Residue*> residues;
@@ -45,29 +42,28 @@ namespace cds
         size_t currentMetadataIndex;
     };
 
-    typedef std::vector<GlycamMetadata::DihedralAngleDataVector> DihedralAngleMetadata;
-
     struct ResidueLinkage
     {
         ResidueLink link;
         std::vector<RotatableDihedral> rotatableDihedrals;
-        std::vector<DihedralAngleDataVector> dihedralMetadata;
+        std::vector<std::vector<size_t>> dihedralMetadata;
         GlycamMetadata::RotamerType rotamerType;
         bool isDerivative;
         unsigned long long index = 0;
         std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
     };
 
-    std::vector<size_t> rotatableDihedralsWithMultipleRotamers(const std::vector<DihedralAngleDataVector>& metadata);
+    std::vector<size_t> rotatableDihedralsWithMultipleRotamers(const std::vector<std::vector<size_t>>& metadata);
     std::vector<ResidueLinkage> nonDerivativeResidueLinkages(const std::vector<cds::ResidueLinkage>& linkages);
-    size_t numberOfShapes(GlycamMetadata::RotamerType rotamerType,
-                          const std::vector<DihedralAngleDataVector>& metadata);
-    size_t numberOfLikelyShapes(GlycamMetadata::RotamerType rotamerType,
-                                const std::vector<DihedralAngleDataVector>& metadata);
+    size_t numberOfShapes(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                          GlycamMetadata::RotamerType rotamerType, const std::vector<std::vector<size_t>>& metadata);
+    size_t numberOfLikelyShapes(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                GlycamMetadata::RotamerType rotamerType,
+                                const std::vector<std::vector<size_t>>& metadata);
     DihedralCoordinates dihedralCoordinates(const cds::RotatableDihedral& dihedral);
     std::string print(const ResidueLink& link);
     std::string print(const RotatableDihedral& dihedral);
-    std::string print(const ResidueLinkage& linkage);
+    std::string print(const GlycamMetadata::DihedralAngleDataTable& table, const ResidueLinkage& linkage);
 
 } // namespace cds
 #endif

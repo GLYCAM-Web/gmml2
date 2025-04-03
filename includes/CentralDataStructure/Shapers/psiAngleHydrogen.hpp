@@ -11,7 +11,8 @@
 namespace cds
 {
     Atom* findHydrogenForPsiAngle(const Atom* atom);
-    void createHydrogenForPsiAngles(Residue* residue, std::vector<DihedralAtoms>& dihedralAtoms,
-                                    const DihedralAngleMetadata& metadata);
+    void createHydrogenForPsiAngles(const GlycamMetadata::DihedralAngleDataTable& metadataTable, Residue* residue,
+                                    std::vector<DihedralAtoms>& dihedralAtoms,
+                                    const std::vector<std::vector<size_t>>& metadataIndices);
 } // namespace cds
 #endif

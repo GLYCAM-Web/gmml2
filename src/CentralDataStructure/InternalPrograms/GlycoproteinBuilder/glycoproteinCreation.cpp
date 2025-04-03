@@ -244,12 +244,13 @@ namespace
         return codeUtils::filter(contains, codeUtils::indexVector(glycosidicLinkages));
     }
 
-    cds::ResidueLinkage replaceAglycone(cds::Residue* reducingResidue, cds::Residue* newAglycone)
+    cds::ResidueLinkage replaceAglycone(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                        cds::Residue* reducingResidue, cds::Residue* newAglycone)
     {
         // Old aglycone atoms are connected to reducing residue, are found during creation of rotatable dihedrals.
         newAglycone->addNeighbor(newAglycone->getName() + "-" + reducingResidue->getName(), reducingResidue);
         cds::ResidueLink link = cds::findResidueLink({reducingResidue, newAglycone});
-        return cds::createResidueLinkage(link);
+        return cds::createResidueLinkage(metadataTable, link);
     }
 } // namespace
 
@@ -293,7 +294,8 @@ namespace glycoproteinBuilder
     }
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites)
+    addGlycansToProtein(cds::Assembly* glycoprotein, const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                        const std::vector<GlycosylationSite>& glycosites)
     {
         const glycoproteinMetadata::GlycosylationTable glycosylationTable =
             glycoproteinMetadata::defaultGlycosylationTable();
@@ -324,11 +326,11 @@ namespace glycoproteinBuilder
                                          glycositeInput.glycanInput);
             }
             glycan->cds::Molecule::deleteResidue(aglycone);
-            cds::ResidueLinkage newLinkage = replaceAglycone(reducingResidue, glycositeResidue);
+            cds::ResidueLinkage newLinkage = replaceAglycone(metadataTable, reducingResidue, glycositeResidue);
             size_t aglyconeLinkage         = aglyconeLinkages[0];
             linkages[aglyconeLinkage]      = newLinkage;
-            cds::setShapeToPreference(newLinkage,
-                                      cds::defaultShapePreference(newLinkage.rotamerType, newLinkage.dihedralMetadata));
+            cds::setShapeToPreference(newLinkage, cds::defaultShapePreference(metadataTable, newLinkage.rotamerType,
+                                                                              newLinkage.dihedralMetadata));
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Completed creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                           glycositeInput.glycanInput);

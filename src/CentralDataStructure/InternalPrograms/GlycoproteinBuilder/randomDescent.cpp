@@ -20,8 +20,6 @@ namespace glycoproteinBuilder
 {
     namespace
     {
-        using GlycamMetadata::DihedralAngleData;
-        using GlycamMetadata::DihedralAngleDataVector;
         using GlycamMetadata::RotamerType;
 
         void wigglePermutationLinkage(const assembly::Graph& graph, const AssemblyData& data,
@@ -30,7 +28,7 @@ namespace glycoproteinBuilder
                                       const cds::PermutationShapePreference& shapePreference)
         {
             const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
-            const std::vector<cds::DihedralAngleDataVector>& dihedralMetadata = data.rotatableDihedralData.metadata;
+            const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
             //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
             //  rotatable bond in Asn outwards
             for (size_t rn = 0; rn < dihedrals.size(); rn++)
@@ -48,16 +46,16 @@ namespace glycoproteinBuilder
                 assembly::Selection nonMoving = assembly::intersection(
                     graph, selection, assembly::selectByAtoms(graph, codeUtils::vectorNot(atomMoving)));
 
-                const GlycamMetadata::DihedralAngleDataVector& metadata = dihedralMetadata[dihedralId];
-                auto searchOverlap                                      = [&](const assembly::Bounds& bounds)
+                const std::vector<size_t>& metadata = dihedralMetadata[dihedralId];
+                auto searchOverlap                  = [&](const assembly::Bounds& bounds)
                 {
                     return cds::overlapVectorSum(cds::overlapsBetweenSelections(
                         data.potentialTable, data.overlapTolerance, graph, bounds, moving, nonMoving,
                         data.atoms.elements, data.defaultWeight, data.residueEdges.atomsCloseToEdge));
                 };
-                cds::OverlapState best =
-                    cds::wiggleUsingRotamers(searchOverlap, settings.angles, graph, mutableData.bounds, movingAtoms,
-                                             coordinates, codeUtils::indexVector(metadata), metadata, preference);
+                cds::OverlapState best = cds::wiggleUsingRotamers(
+                    searchOverlap, settings.angles, data.dihedralAngleTable, graph, mutableData.bounds, movingAtoms,
+                    coordinates, codeUtils::indexVector(metadata), metadata, preference);
                 mutableData.bounds                              = best.bounds;
                 mutableData.dihedralCurrentMetadata[dihedralId] = best.angle.metadataIndex;
             }
@@ -69,10 +67,10 @@ namespace glycoproteinBuilder
                                     const cds::ConformerShapePreference& shapePreference)
         {
             const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
-            const std::vector<cds::DihedralAngleDataVector>& dihedralMetadata = data.rotatableDihedralData.metadata;
-            size_t numberOfMetadata                                           = shapePreference.metadataOrder.size();
-            const std::vector<std::vector<double>>& preferenceAngles          = shapePreference.angles;
-            const std::vector<bool>& isFrozen                                 = shapePreference.isFrozen;
+            const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
+            size_t numberOfMetadata                                  = shapePreference.metadataOrder.size();
+            const std::vector<std::vector<double>>& preferenceAngles = shapePreference.angles;
+            const std::vector<bool>& isFrozen                        = shapePreference.isFrozen;
             std::vector<assembly::Selection> dihedralMoving;
             dihedralMoving.reserve(dihedrals.size());
             std::vector<assembly::Selection> dihedralNonMoving;
@@ -119,9 +117,9 @@ namespace glycoproteinBuilder
                                                            dihedralMoving[n], dihedralNonMoving[n], data.atoms.elements,
                                                            data.defaultWeight, data.residueEdges.atomsCloseToEdge));
                     };
-                    cds::OverlapState best =
-                        cds::wiggleUsingRotamers(searchOverlap, settings.angles, graph, mutableData.bounds, movingAtoms,
-                                                 coordinates, index, dihedralMetadata[dihedralId], preference);
+                    cds::OverlapState best = cds::wiggleUsingRotamers(
+                        searchOverlap, settings.angles, data.dihedralAngleTable, graph, mutableData.bounds, movingAtoms,
+                        coordinates, index, dihedralMetadata[dihedralId], preference);
                     mutableData.bounds = best.bounds;
                 }
                 std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(

@@ -21,11 +21,12 @@
 
 namespace glycoproteinBuilder
 {
-    GlycoproteinAssembly toGlycoproteinAssemblyStructs(std::vector<cds::Molecule*>& molecules,
-                                                       std::vector<GlycosylationSite>& glycosites,
-                                                       std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
-                                                       const OverlapMultiplier overlapWeight, double overlapTolerance,
-                                                       double overlapRejectionThreshold, bool excludeHydrogen)
+    GlycoproteinAssembly
+    toGlycoproteinAssemblyStructs(const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+                                  std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
+                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
+                                  const OverlapMultiplier overlapWeight, double overlapTolerance,
+                                  double overlapRejectionThreshold, bool excludeHydrogen)
     {
         using MolecularMetadata::Element;
 
@@ -69,7 +70,7 @@ namespace glycoproteinBuilder
         std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
         std::vector<ResidueLinkageIndices> residueLinkages;
         std::vector<GlycamMetadata::RotamerType> linkageRotamerTypes;
-        std::vector<GlycamMetadata::DihedralAngleDataVector> dihedralMetadata;
+        std::vector<std::vector<size_t>> dihedralMetadata;
         std::vector<size_t> dihedralCurrentMetadata;
         std::vector<bool> isGlycositeLinkage;
         std::vector<size_t> glycanAttachmentResidue;
@@ -88,8 +89,9 @@ namespace glycoproteinBuilder
                 const std::vector<cds::RotatableDihedral>& linkageDihedrals = linkage.rotatableDihedrals;
                 std::vector<size_t> dihedralIndices =
                     codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
-                codeUtils::insertInto(rotatableDihedralShape,
-                                      cds::currentShape(linkage.rotatableDihedrals, linkage.dihedralMetadata));
+                codeUtils::insertInto(
+                    rotatableDihedralShape,
+                    cds::currentShape(dihedralAngleDataTable, linkage.rotatableDihedrals, linkage.dihedralMetadata));
                 codeUtils::insertInto(dihedralMetadata, linkage.dihedralMetadata);
                 for (size_t q = 0; q < linkageDihedrals.size(); q++)
                 {
@@ -288,6 +290,7 @@ namespace glycoproteinBuilder
                            rotatableDihedralData,
                            residueLinkageData,
                            indices,
+                           dihedralAngleDataTable,
                            MolecularMetadata::potentialTable(),
                            defaultOverlapWeight,
                            equalOverlapWeight,

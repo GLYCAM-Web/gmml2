@@ -17,14 +17,15 @@ void cds::setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata t
     dihedral.currentMetadataIndex = target.metadataIndex;
 }
 
-bool cds::setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
-                           std::string dihedralName, std::string selectedRotamer)
+bool cds::setSpecificShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable, RotatableDihedral& dihedral,
+                           const std::vector<size_t>& metadataVector, std::string dihedralName,
+                           std::string selectedRotamer)
 {
-    if (dihedralName == metadataVector[0].dihedral_angle_name_)
+    if (dihedralName == metadataTable.entries[metadataVector[0]].dihedral_angle_name_)
     {
         for (size_t n = 0; n < metadataVector.size(); n++)
         {
-            auto& metadata = metadataVector[n];
+            auto& metadata = metadataTable.entries[metadataVector[n]];
             if (metadata.rotamer_name_ == selectedRotamer)
             {
                 setDihedralAngle(dihedral, {metadata.default_angle, metadata.default_angle, n});
@@ -35,14 +36,14 @@ bool cds::setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataV
     return false;
 }
 
-void cds::setSpecificShape(std::vector<RotatableDihedral>& dihedrals,
-                           const std::vector<DihedralAngleDataVector>& metadata, std::string dihedralName,
-                           std::string selectedRotamer)
+void cds::setSpecificShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                           std::vector<RotatableDihedral>& dihedrals, const std::vector<std::vector<size_t>>& metadata,
+                           std::string dihedralName, std::string selectedRotamer)
 {
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
         // This will call RotatableDihedrals that don't have dihedralName (phi,psi), and nothing will happen. Hmmm.
-        if (setSpecificShape(dihedrals[n], metadata[n], dihedralName, selectedRotamer))
+        if (setSpecificShape(metadataTable, dihedrals[n], metadata[n], dihedralName, selectedRotamer))
         {
             return; // Return once you manage to set a shape.
         }
@@ -53,8 +54,9 @@ void cds::setSpecificShape(std::vector<RotatableDihedral>& dihedrals,
     throw std::runtime_error(errorMessage);
 }
 
-std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<RotatableDihedral>& dihedrals,
-                                                      const std::vector<DihedralAngleDataVector>& metadata)
+std::vector<cds::AngleWithMetadata> cds::currentShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                                      const std::vector<RotatableDihedral>& dihedrals,
+                                                      const std::vector<std::vector<size_t>>& metadata)
 {
     std::vector<AngleWithMetadata> result;
     result.reserve(dihedrals.size());
@@ -65,20 +67,22 @@ std::vector<cds::AngleWithMetadata> cds::currentShape(const std::vector<Rotatabl
         auto& metadataIndex   = dihedral.currentMetadataIndex;
         auto& currentMetadata = metadata[n][metadataIndex];
         result.push_back({constants::toDegrees(cds::angle(dihedralCoordinates(dihedral))),
-                          currentMetadata.default_angle, metadataIndex});
+                          metadataTable.entries[currentMetadata].default_angle, metadataIndex});
     }
 
     return result;
 }
 
-std::vector<std::vector<cds::AngleWithMetadata>> cds::currentShape(const std::vector<ResidueLinkage>& linkages)
+std::vector<std::vector<cds::AngleWithMetadata>>
+cds::currentShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                  const std::vector<ResidueLinkage>& linkages)
 {
     std::vector<std::vector<AngleWithMetadata>> result;
     result.reserve(linkages.size());
 
     for (auto& a : linkages)
     {
-        result.push_back(currentShape(a.rotatableDihedrals, a.dihedralMetadata));
+        result.push_back(currentShape(metadataTable, a.rotatableDihedrals, a.dihedralMetadata));
     }
 
     return result;
@@ -140,10 +144,11 @@ void cds::setShapeToPreference(std::vector<ResidueLinkage>& linkages, const Glyc
     }
 }
 
-cds::ResidueLinkageShapePreference cds::linkageShapePreference(MetadataDistribution metadataDistribution,
-                                                               AngleDistribution angleDistribution,
-                                                               const GlycamMetadata::RotamerType rotamerType,
-                                                               const DihedralAngleMetadata& dihedralMetadata)
+cds::ResidueLinkageShapePreference
+cds::linkageShapePreference(MetadataDistribution metadataDistribution, AngleDistribution angleDistribution,
+                            const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                            const GlycamMetadata::RotamerType rotamerType,
+                            const std::vector<std::vector<size_t>>& dihedralMetadata)
 {
     std::vector<std::vector<double>> angles;
     angles.resize(dihedralMetadata.size());
@@ -151,12 +156,12 @@ cds::ResidueLinkageShapePreference cds::linkageShapePreference(MetadataDistribut
     {
         for (auto& metadata : dihedralMetadata[n])
         {
-            angles[n].push_back(angleDistribution(metadata));
+            angles[n].push_back(angleDistribution(metadataTable.entries[metadata]));
         }
     }
     if (rotamerType == GlycamMetadata::RotamerType::conformer)
     {
-        auto order    = metadataDistribution(dihedralMetadata[0]);
+        auto order    = metadataDistribution(metadataTable, dihedralMetadata[0]);
         auto isFrozen = std::vector<bool>(dihedralMetadata.size(), false);
         return ConformerShapePreference {isFrozen, angles, order};
     }
@@ -166,24 +171,26 @@ cds::ResidueLinkageShapePreference cds::linkageShapePreference(MetadataDistribut
         order.reserve(dihedralMetadata.size());
         for (auto& metadataVector : dihedralMetadata)
         {
-            order.push_back(metadataDistribution(metadataVector));
+            order.push_back(metadataDistribution(metadataTable, metadataVector));
         }
         return PermutationShapePreference {angles, order};
     }
 }
 
-cds::ResidueLinkageShapePreference cds::defaultShapePreference(const GlycamMetadata::RotamerType rotamerType,
-                                                               const DihedralAngleMetadata& dihedralMetadata)
+cds::ResidueLinkageShapePreference
+cds::defaultShapePreference(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                            const GlycamMetadata::RotamerType rotamerType,
+                            const std::vector<std::vector<size_t>>& dihedralMetadata)
 {
-    auto metadataOrder = [](const DihedralAngleDataVector metadataVector)
+    auto metadataOrder = [](const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t> metadataVector)
     {
         return codeUtils::indexVector(metadataVector);
     };
-    auto defaultAngle = [](const DihedralAngleData& metadata)
+    auto defaultAngle = [](const GlycamMetadata::DihedralAngleData& metadata)
     {
         return metadata.default_angle;
     };
-    return linkageShapePreference(metadataOrder, defaultAngle, rotamerType, dihedralMetadata);
+    return linkageShapePreference(metadataOrder, defaultAngle, metadataTable, rotamerType, dihedralMetadata);
 }
 
 cds::ResidueLinkageShapePreference cds::selectedRotamersOnly(MetadataPreferenceSelection metadataSelection,
@@ -234,25 +241,27 @@ cds::ResidueLinkageShapePreference cds::currentRotamerOnly(const ResidueLinkage&
 
 cds::GlycanShapePreference cds::linkageShapePreference(MetadataDistribution metadataDistribution,
                                                        AngleDistribution angleDistribution,
+                                                       const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                                        const std::vector<ResidueLinkage>& linkages)
 {
     GlycanShapePreference result;
     result.reserve(linkages.size());
     for (auto& linkage : linkages)
     {
-        result.push_back(linkageShapePreference(metadataDistribution, angleDistribution, linkage.rotamerType,
-                                                linkage.dihedralMetadata));
+        result.push_back(linkageShapePreference(metadataDistribution, angleDistribution, metadataTable,
+                                                linkage.rotamerType, linkage.dihedralMetadata));
     }
     return result;
 }
 
-cds::GlycanShapePreference cds::defaultShapePreference(const std::vector<ResidueLinkage>& linkages)
+cds::GlycanShapePreference cds::defaultShapePreference(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                                       const std::vector<ResidueLinkage>& linkages)
 {
     GlycanShapePreference result;
     result.reserve(linkages.size());
     for (auto& linkage : linkages)
     {
-        result.push_back(defaultShapePreference(linkage.rotamerType, linkage.dihedralMetadata));
+        result.push_back(defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata));
     }
     return result;
 }

@@ -26,7 +26,7 @@ namespace glycoproteinBuilder
         size_t metadataIndex  = mutableData.dihedralCurrentMetadata[dihedralId];
         auto& currentMetadata = data.rotatableDihedralData.metadata[dihedralId][metadataIndex];
         return {constants::toDegrees(cds::angle(dihedralCoordinates(data, mutableData.bounds, dihedralId))),
-                currentMetadata.default_angle, metadataIndex};
+                data.dihedralAngleTable.entries[currentMetadata].default_angle, metadataIndex};
     }
 
     void setDihedralAngle(const assembly::Graph& graph, const AssemblyData& data, MutableData& mutableData,

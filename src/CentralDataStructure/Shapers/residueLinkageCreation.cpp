@@ -38,13 +38,13 @@ namespace
         return linkageName.str();
     }
 
-    cds::DihedralAngleMetadata findResidueLinkageMetadata(cds::ResidueLinkNames link)
+    std::vector<std::vector<size_t>> findResidueLinkageMetadata(cds::ResidueLinkNames link)
     {
         std::string firstAtom     = link.atoms.first;
         std::string secondAtom    = link.atoms.second;
         std::string firstResidue  = link.residues.first;
         std::string secondResidue = link.residues.second;
-        cds::DihedralAngleMetadata matching_entries =
+        std::vector<std::vector<size_t>> matching_entries =
             GlycamMetadata::getDihedralAngleDataEntriesForLinkage(firstAtom, firstResidue, secondAtom, secondResidue);
         if (matching_entries.empty())
         {
@@ -64,15 +64,15 @@ namespace
         return matching_entries;
     }
 
-    std::vector<cds::RotatableDihedral> createRotatableDihedrals(const std::string& linkageName,
-                                                                 const std::vector<cds::DihedralAtoms>& dihedralAtoms,
-                                                                 const cds::DihedralAngleMetadata& metadata)
+    std::vector<cds::RotatableDihedral>
+    createRotatableDihedrals(const std::string& linkageName, const std::vector<cds::DihedralAtoms>& dihedralAtoms,
+                             const std::vector<std::vector<size_t>>& metadataIndices)
     {
         std::vector<cds::RotatableDihedral> rotatableDihedrals;
         rotatableDihedrals.reserve(dihedralAtoms.size());
         for (size_t n = 0; n < dihedralAtoms.size(); n++)
         {
-            auto& currentMetadata = metadata[n];
+            const std::vector<size_t>& currentMetadata = metadataIndices[n];
             if (!currentMetadata.empty())
             {
                 rotatableDihedrals.emplace_back(cds::RotatableDihedral {dihedralAtoms[n], {}, 0});
@@ -91,21 +91,22 @@ namespace
         return rotatableDihedrals;
     }
 
-    void validateRotamerTypes(const cds::ResidueLinkage& linkage)
+    void validateRotamerTypes(const GlycamMetadata::DihedralAngleDataTable& table, const cds::ResidueLinkage& linkage)
     {
         for (auto& metadataVector : linkage.dihedralMetadata)
         {
             for (auto& metadata : metadataVector)
             {
-                if (metadata.rotamer_type_ != linkage.rotamerType)
+                if (table.entries[metadata].rotamer_type_ != linkage.rotamerType)
                 {
-                    throw std::runtime_error("mismatching rotamer types in residue linkage: " + print(linkage));
+                    throw std::runtime_error("mismatching rotamer types in residue linkage: " + print(table, linkage));
                 }
             }
         }
     }
 
-    void validateConformerMetadata(const cds::ResidueLinkage& linkage)
+    void validateConformerMetadata(const GlycamMetadata::DihedralAngleDataTable& table,
+                                   const cds::ResidueLinkage& linkage)
     {
         auto& dihedrals       = linkage.rotatableDihedrals;
         auto& metadata        = linkage.dihedralMetadata;
@@ -114,19 +115,20 @@ namespace
         {
             if (metadata[n].size() != conformerCount)
             {
-                throw std::runtime_error("error: different number of conformers in linkage: " + cds::print(linkage));
+                throw std::runtime_error("error: different number of conformers in linkage: " +
+                                         cds::print(table, linkage));
             }
         }
 
         for (size_t conformer = 0; conformer < conformerCount; conformer++)
         {
-            double weight = metadata[0][conformer].weight_;
+            double weight = table.entries[metadata[0][conformer]].weight_;
             for (size_t n = 1; n < dihedrals.size(); n++)
             {
-                if (std::fabs(weight - metadata[n][conformer].weight_) >= 1e-10)
+                if (std::fabs(weight - table.entries[metadata[n][conformer]].weight_) >= 1e-10)
                 {
                     throw std::runtime_error("error: conformers have different weight in linkage: " +
-                                             cds::print(linkage));
+                                             cds::print(table, linkage));
                 }
             }
         }
@@ -134,10 +136,10 @@ namespace
 
     void throwMissingMetadataError(const cds::ResidueLinkNames& names,
                                    const std::vector<cds::DihedralAtoms>& dihedralAtoms,
-                                   const cds::DihedralAngleMetadata& metadata)
+                                   const std::vector<std::vector<size_t>>& metadataIndices)
     {
         size_t dihedralCount = dihedralAtoms.size();
-        size_t missingCount  = dihedralCount - metadata.size();
+        size_t missingCount  = dihedralCount - metadataIndices.size();
         std::ostringstream stream;
         stream << "Insufficient metadata found for the linkage between " << names.residues.first << " and "
                << names.residues.second << ". Missing metadata for ";
@@ -150,7 +152,7 @@ namespace
             stream << "dihedral " << dihedralCount;
         }
         std::vector<std::string> dihedralInfo;
-        for (size_t n = metadata.size(); n < dihedralAtoms.size(); n++)
+        for (size_t n = metadataIndices.size(); n < dihedralAtoms.size(); n++)
         {
             std::vector<std::string> atomNames;
             for (auto& atom : dihedralAtoms[n])
@@ -202,7 +204,8 @@ void cds::determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals)
     }
 }
 
-cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
+cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                              ResidueLink& link)
 {
     ResidueLinkNames names = toNames(link);
     int local_debug        = -1;
@@ -227,7 +230,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
                   "Finding metadata for " + link.residues.first->getStringId() +
                       " :: " + link.residues.second->getStringId());
     }
-    DihedralAngleMetadata metadata = findResidueLinkageMetadata(names);
+    std::vector<std::vector<size_t>> metadata = findResidueLinkageMetadata(names);
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Metadata found:");
@@ -235,7 +238,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
         {
             for (auto& dihedralAngleData : entry)
             {
-                gmml::log(__LINE__, __FILE__, gmml::INF, dihedralAngleData.print());
+                gmml::log(__LINE__, __FILE__, gmml::INF, metadataTable.entries[dihedralAngleData].print());
             }
         }
     }
@@ -255,7 +258,7 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
     metadata.erase(metadata.begin() + dihedralAtoms.size(), metadata.end());
 
     auto& residues = link.residues;
-    createHydrogenForPsiAngles(residues.second, dihedralAtoms, metadata);
+    createHydrogenForPsiAngles(metadataTable, residues.second, dihedralAtoms, metadata);
     std::string name                         = determineLinkageNameFromResidueNames(names);
     std::vector<RotatableDihedral> dihedrals = createRotatableDihedrals(name, dihedralAtoms, metadata);
     determineAtomsThatMove(dihedrals);
@@ -267,16 +270,16 @@ cds::ResidueLinkage cds::createResidueLinkage(ResidueLink& link)
         throw std::runtime_error("missing dihedrals or metadata in residue linkage: " + print(link));
     }
 
-    const GlycamMetadata::DihedralAngleData& firstMetadata = metadata[0][0];
+    const GlycamMetadata::DihedralAngleData& firstMetadata = metadataTable.entries[metadata[0][0]];
     GlycamMetadata::RotamerType rotamerType                = firstMetadata.rotamer_type_;
     const std::vector<std::string>& cond1                  = firstMetadata.residue1_conditions_;
     bool isDerivative                                      = cond1.size() > 0 && cond1[0] == "derivative";
     ResidueLinkage linkage {link, dihedrals, metadata, rotamerType, isDerivative, index, name};
 
-    validateRotamerTypes(linkage);
+    validateRotamerTypes(metadataTable, linkage);
     if (rotamerType == GlycamMetadata::RotamerType::conformer)
     {
-        validateConformerMetadata(linkage);
+        validateConformerMetadata(metadataTable, linkage);
     }
 
     return linkage;

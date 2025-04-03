@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 namespace gmmlPrograms
 {
@@ -22,7 +23,8 @@ namespace gmmlPrograms
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        int minimizeDistance(int persistCycles = 25, bool useMonteCarlo = true, int structureCount = 0);
+        int minimizeDistance(const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles = 25,
+                             bool useMonteCarlo = true, int structureCount = 0);
 
       private:
         //////////////////////////////////////////////////////////
@@ -73,7 +75,9 @@ namespace gmmlPrograms
 
         void superimpose(std::vector<cds::CoordinateReference>& carbohydrateCoordinates,
                          const Residue* superimpositionTarget, Residue* superimposeMe);
-        std::vector<cds::ResidueLinkage>& determineWiggleLinkages(Residue* startResidue, Residue* endResidue);
+        std::vector<cds::ResidueLinkage>&
+        determineWiggleLinkages(const GlycamMetadata::DihedralAngleDataTable& metadataTable, Residue* startResidue,
+                                Residue* endResidue);
 
         double calculateDistance();
         bool acceptOverlaps();

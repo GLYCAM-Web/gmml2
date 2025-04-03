@@ -14,9 +14,6 @@
 
 namespace cds
 {
-    using GlycamMetadata::DihedralAngleData;
-    using GlycamMetadata::DihedralAngleDataVector;
-
     struct Bounds
     {
         double lower;
@@ -30,8 +27,9 @@ namespace cds
         size_t metadataIndex;
     };
 
-    typedef std::function<std::vector<size_t>(DihedralAngleDataVector)> MetadataDistribution;
-    typedef std::function<double(DihedralAngleData)> AngleDistribution;
+    typedef std::function<std::vector<size_t>(const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>)>
+        MetadataDistribution;
+    typedef std::function<double(const GlycamMetadata::DihedralAngleData&)> AngleDistribution;
 
     typedef std::function<std::vector<size_t>(std::vector<size_t>, const RotatableDihedral&)>
         MetadataPreferenceSelection;
@@ -73,24 +71,30 @@ namespace cds
     };
 
     void setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata target);
-    bool setSpecificShape(RotatableDihedral& dihedral, const DihedralAngleDataVector& metadataVector,
-                          std::string dihedralName, std::string selectedRotamer);
-    void setSpecificShape(std::vector<RotatableDihedral>& dihedrals,
-                          const std::vector<DihedralAngleDataVector>& metadata, std::string dihedralName,
+    bool setSpecificShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable, RotatableDihedral& dihedral,
+                          const std::vector<size_t>& metadataVector, std::string dihedralName,
                           std::string selectedRotamer);
-    std::vector<AngleWithMetadata> currentShape(const std::vector<RotatableDihedral>& dihedrals,
-                                                const std::vector<DihedralAngleDataVector>& metadata);
-    std::vector<std::vector<AngleWithMetadata>> currentShape(const std::vector<ResidueLinkage>& linkages);
+    void setSpecificShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                          std::vector<RotatableDihedral>& dihedrals, const std::vector<std::vector<size_t>>& metadata,
+                          std::string dihedralName, std::string selectedRotamer);
+    std::vector<AngleWithMetadata> currentShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                                const std::vector<RotatableDihedral>& dihedrals,
+                                                const std::vector<std::vector<size_t>>& metadata);
+    std::vector<std::vector<AngleWithMetadata>>
+    currentShape(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                 const std::vector<ResidueLinkage>& linkages);
     void setShape(std::vector<ResidueLinkage>& linkages, const std::vector<std::vector<AngleWithMetadata>>& angles);
     void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles);
     void setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference);
     void setShapeToPreference(std::vector<ResidueLinkage>& linkages, const GlycanShapePreference& preferences);
     ResidueLinkageShapePreference linkageShapePreference(MetadataDistribution metadataDistribution,
                                                          AngleDistribution angleDistribution,
+                                                         const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                                          const GlycamMetadata::RotamerType rotamerType,
-                                                         const DihedralAngleMetadata& dihedralMetadata);
-    ResidueLinkageShapePreference defaultShapePreference(const GlycamMetadata::RotamerType rotamerType,
-                                                         const DihedralAngleMetadata& dihedralMetadata);
+                                                         const std::vector<std::vector<size_t>>& dihedralMetadata);
+    ResidueLinkageShapePreference defaultShapePreference(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                                         const GlycamMetadata::RotamerType rotamerType,
+                                                         const std::vector<std::vector<size_t>>& dihedralMetadata);
     ResidueLinkageShapePreference selectedRotamersOnly(MetadataPreferenceSelection metadataSelection,
                                                        const ResidueLinkage& linkage,
                                                        const ResidueLinkageShapePreference& preference);
@@ -100,8 +104,10 @@ namespace cds
                                                      const ResidueLinkageShapePreference& preference);
     GlycanShapePreference linkageShapePreference(MetadataDistribution metadataDistribution,
                                                  AngleDistribution angleDistribution,
+                                                 const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                                  const std::vector<ResidueLinkage>& linkages);
-    GlycanShapePreference defaultShapePreference(const std::vector<ResidueLinkage>& linkages);
+    GlycanShapePreference defaultShapePreference(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                                                 const std::vector<ResidueLinkage>& linkages);
     GlycanShapePreference firstRotamerOnly(const std::vector<ResidueLinkage>& linkages,
                                            const GlycanShapePreference& preferences);
     GlycanShapePreference currentRotamerOnly(const std::vector<ResidueLinkage>& linkages,

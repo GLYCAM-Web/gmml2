@@ -57,15 +57,15 @@ namespace glycoproteinBuilder
         uint64_t seed                  = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
         pcg32 seedingRng(seed);
 
-        MetadataOrder initialMetadataOrder = [](pcg32&, const GlycamMetadata::DihedralAngleDataVector& metadataVector)
+        MetadataOrder initialMetadataOrder =
+            [](pcg32&, const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>& metadataVector)
         {
             return codeUtils::indexVector(metadataVector);
         };
-        MetadataOrder randomMetadataOrder =
-            [](pcg32& rng, const GlycamMetadata::DihedralAngleDataVector& metadataVector)
+        MetadataOrder randomMetadataOrder = [](pcg32& rng, const GlycamMetadata::DihedralAngleDataTable& table,
+                                               const std::vector<size_t>& metadataIndices)
         {
-            auto weights = GlycamMetadata::dihedralAngleDataWeights(metadataVector);
-            return codeUtils::weightedRandomOrder(rng, weights);
+            return codeUtils::weightedRandomOrder(rng, codeUtils::indicesToValues(table.weights, metadataIndices));
         };
         bool freezeGlycositeResidueConformation = settings.useInitialGlycositeResidueConformation;
         auto standardDeviation = [](const AngleSettings& settings, const GlycamMetadata::DihedralAngleData& metadata)

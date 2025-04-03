@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <string>
 #include <vector>
@@ -22,7 +23,8 @@ namespace glycoproteinBuilder
                                                     const std::vector<GlycositeInput>& glycositesInputVector);
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites);
+    addGlycansToProtein(cds::Assembly* glycoprotein, const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+                        const std::vector<GlycosylationSite>& glycosites);
 } // namespace glycoproteinBuilder
 
 #endif

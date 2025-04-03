@@ -71,6 +71,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
     // whereas for linkages with combinatorial rotamers (e,g, phi -g/t, omg gt/gg/tg), we need to set each dihedral as
     // specified, but maybe it will be ok to go through and find the value for "A" in each rotatable dihedral.. yeah
     // actually it should be fine. Leaving comment for time being.
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     for (auto& rotamerInfo : conformerInfo)
     {
         std::stringstream ss;
@@ -82,11 +83,11 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
         cds::ResidueLinkage* currentLinkage =
             cdsSelections::selectLinkageWithIndex(this->carbohydrate_.GetGlycosidicLinkages(), currentLinkageIndex);
         std::string standardDihedralName = this->convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
-        cds::setSpecificShape(currentLinkage->rotatableDihedrals, currentLinkage->dihedralMetadata,
+        cds::setSpecificShape(metadataTable, currentLinkage->rotatableDihedrals, currentLinkage->dihedralMetadata,
                               standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
-    this->carbohydrate_.ResolveOverlaps(cdsCondensedSequence::defaultSearchSettings);
+    this->carbohydrate_.ResolveOverlaps(metadataTable, cdsCondensedSequence::defaultSearchSettings);
     this->Generate3DStructureFiles(fileOutputDirectory, fileName);
     return;
 }
@@ -100,14 +101,16 @@ std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly) const
 // build a single, specific rotamer.
 void carbohydrateBuilder::GenerateUpToNRotamers(int maxRotamers)
 {
+    const GlycamMetadata::DihedralAngleDataTable metadataTable = GlycamMetadata::dihedralAngleDataTable();
     std::vector<cds::ResidueLinkage> linkagesOrderedForPermutation =
         cdsSelections::SplitLinkagesIntoPermutants(this->carbohydrate_.GetGlycosidicLinkages());
-    this->generateLinkagePermutationsRecursively(linkagesOrderedForPermutation.begin(),
+    this->generateLinkagePermutationsRecursively(metadataTable, linkagesOrderedForPermutation.begin(),
                                                  linkagesOrderedForPermutation.end(), maxRotamers);
 }
 
 cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOptionsDataStruct()
 {
+    const GlycamMetadata::DihedralAngleDataTable metadataTable = GlycamMetadata::dihedralAngleDataTable();
     cdsCondensedSequence::LinkageOptionsVector userOptionsForSequence;
     // carbohydrate_.SetIndexByConnectivity();
     for (auto& linkage : cds::nonDerivativeResidueLinkages(this->carbohydrate_.GetGlycosidicLinkages()))
@@ -122,15 +125,15 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
             auto& metadataVector = linkage.dihedralMetadata[index];
             for (auto& metadata : metadataVector)
             {
-                buffer.push_back(metadata.rotamer_name_);
+                buffer.push_back(metadataTable.entries[metadata].rotamer_name_);
             }
-            auto likely              = GlycamMetadata::likelyMetadata(metadataVector);
-            std::string dihedralName = likely.empty() ? "Boo" : likely[0].dihedral_angle_name_;
+            std::vector<size_t> likely = GlycamMetadata::likelyMetadata(metadataTable, metadataVector);
+            std::string dihedralName   = likely.empty() ? "Boo" : metadataTable.entries[likely[0]].dihedral_angle_name_;
             possibleRotamers.emplace_back(dihedralName, buffer);
             buffer.clear();
             for (auto& metadata : likely)
             {
-                buffer.push_back(metadata.rotamer_name_);
+                buffer.push_back(metadataTable.entries[metadata].rotamer_name_);
             }
             likelyRotamers.emplace_back(dihedralName, buffer);
             buffer.clear();
@@ -152,31 +155,35 @@ cdsCondensedSequence::LinkageOptionsVector carbohydrateBuilder::GenerateUserOpti
 //////////////////////////////////////////////////////////
 // Adapted from resolve_overlaps.
 // Goes deep and then as it falls out of the iteration it's setting and writing the shapes.
-void carbohydrateBuilder::generateLinkagePermutationsRecursively(std::vector<cds::ResidueLinkage>::iterator linkage,
-                                                                 std::vector<cds::ResidueLinkage>::iterator end,
-                                                                 int maxRotamers, int rotamerCount)
+void carbohydrateBuilder::generateLinkagePermutationsRecursively(
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable, std::vector<cds::ResidueLinkage>::iterator linkage,
+    std::vector<cds::ResidueLinkage>::iterator end, int maxRotamers, int rotamerCount)
 {
     auto defaultAngle = [](const GlycamMetadata::DihedralAngleData metadata)
     {
         return metadata.default_angle;
     };
 
-    for (size_t shapeNumber = 0; shapeNumber < cds::numberOfShapes(linkage->rotamerType, linkage->dihedralMetadata);
+    for (size_t shapeNumber = 0;
+         shapeNumber < cds::numberOfShapes(metadataTable, linkage->rotamerType, linkage->dihedralMetadata);
          ++shapeNumber)
     {
         ++rotamerCount;
         if (rotamerCount <= maxRotamers)
         {
-            auto specificShape = [&shapeNumber](const GlycamMetadata::DihedralAngleDataVector)
+            std::function<std::vector<size_t>(const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>)>
+                specificShape =
+                    [&shapeNumber](const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>&)
             {
                 return std::vector<size_t> {shapeNumber};
             };
             cds::setShapeToPreference(*linkage,
-                                      cds::linkageShapePreference(specificShape, defaultAngle, linkage->rotamerType,
-                                                                  linkage->dihedralMetadata));
+                                      cds::linkageShapePreference(specificShape, defaultAngle, metadataTable,
+                                                                  linkage->rotamerType, linkage->dihedralMetadata));
             if (std::next(linkage) != end)
             {
-                this->generateLinkagePermutationsRecursively(std::next(linkage), end, maxRotamers, rotamerCount);
+                this->generateLinkagePermutationsRecursively(metadataTable, std::next(linkage), end, maxRotamers,
+                                                             rotamerCount);
             }
             // else // At the end
             // {

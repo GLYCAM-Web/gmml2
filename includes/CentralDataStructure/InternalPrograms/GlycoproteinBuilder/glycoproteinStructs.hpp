@@ -88,7 +88,7 @@ namespace glycoproteinBuilder
 
     struct RotatableDihedralData
     {
-        std::vector<GlycamMetadata::DihedralAngleDataVector> metadata;
+        std::vector<std::vector<size_t>> metadata;
         std::vector<cds::AngleWithMetadata> initialShape;
     };
 
@@ -127,6 +127,7 @@ namespace glycoproteinBuilder
         RotatableDihedralData rotatableDihedralData;
         ResidueLinkageData residueLinkageData;
         AssemblyIndices indices;
+        GlycamMetadata::DihedralAngleDataTable dihedralAngleTable;
         MolecularMetadata::PotentialTable potentialTable;
         cds::MoleculeOverlapWeight defaultWeight;
         cds::MoleculeOverlapWeight equalWeight;
@@ -177,8 +178,8 @@ namespace glycoproteinBuilder
         return serialized ? data.residues.serializedNumbers : data.residues.numbers;
     }
 
-    typedef std::function<std::vector<size_t>(pcg32& rng,
-                                              const GlycamMetadata::DihedralAngleDataVector& metadataVector)>
+    typedef std::function<std::vector<size_t>(pcg32&, const GlycamMetadata::DihedralAngleDataTable&,
+                                              const std::vector<size_t>&)>
         MetadataOrder;
 
     struct AngleSettings

@@ -5,12 +5,11 @@
 
 #include <regex>
 
-using GlycamMetadata::DihedralAngleDataVector;
-
 namespace
 {
     using GlycamMetadata::AngleLimit;
     using GlycamMetadata::AngleStd;
+    using GlycamMetadata::DihedralAngleData;
     using GlycamMetadata::RotamerType;
 
     // Struct is copied here for reference.
@@ -44,7 +43,7 @@ namespace
      */
 
     // clang-format off
-    DihedralAngleDataVector dihedralAngleDataVector_ {
+    std::vector<DihedralAngleData> dihedralAngleDataVector_ {
       { // Regex1  , Regex2   , Name   , Angle  , Deviation               , Weight, Entry Type               , Name , B , I , Res1 Condition , Res2 Conditions           , Atom names                                                               // Atom names this applies to
           { "C1"   , "O[1-9]" , "Phi"  , 180.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"aldose"}     , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
           { "C2"   , "O[1-9]" , "Phi"  , -60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"n-carbon=6", "ketose", "alpha"}     , {"monosaccharide"}            , "C1" , "C2" , "O." , "C."  }, // Phi is defined by C1-C2(ano)-Ox-Cx for ketoses like Fru
@@ -249,6 +248,15 @@ namespace
     // Most entries have "none" for condition. This checks first if condition is "none", and therefore satisfied.
     // Otherwise (else if) it checks if any of the residue_types match the condition for the entry, e.g.
     // gauche_effect=galacto.
+
+    std::function<double(const DihedralAngleData&)> metadataWeight = [](const DihedralAngleData& entry)
+    {
+        return entry.weight_;
+    };
+
+    const GlycamMetadata::DihedralAngleDataTable dihedralAngleDataTable_ {
+        dihedralAngleDataVector_, codeUtils::vectorMap(metadataWeight, dihedralAngleDataVector_)};
+
     bool checkIfResidueConditionsAreSatisfied(const std::vector<std::string>& residue_types,
                                               const std::vector<std::string>& entry_conditions)
     {
@@ -263,17 +271,25 @@ namespace
     }
 } // namespace
 
-// Pass in the two atoms on either side the residue-residue linkage
-std::vector<DihedralAngleDataVector>
-GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name, const std::string& residue1Name,
-                                                      const std::string& atom2Name, const std::string& residue2Name)
+const GlycamMetadata::DihedralAngleDataTable& GlycamMetadata::dihedralAngleDataTable()
 {
-    DihedralAngleDataVector matching_entries;
+    return dihedralAngleDataTable_;
+}
+
+// Pass in the two atoms on either side the residue-residue linkage
+std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name,
+                                                                                       const std::string& residue1Name,
+                                                                                       const std::string& atom2Name,
+                                                                                       const std::string& residue2Name)
+{
+    const DihedralAngleDataTable& table = dihedralAngleDataTable();
+    std::vector<size_t> matching_entries;
     std::vector<std::string> residue1_types = getTypesForResidue(residue1Name);
     std::vector<std::string> residue2_types = getTypesForResidue(residue2Name);
     // Go through each entry in the metadata
-    for (const auto& entry : dihedralAngleDataVector_)
+    for (size_t n = 0; n < table.entries.size(); n++)
     {
+        const DihedralAngleData& entry = table.entries[n];
         // Create a regex of each entry's linking_atom1_ and 2_. These are regex queries.
         std::regex regex1(entry.linking_atom1_, std::regex_constants::ECMAScript);
         std::regex regex2(entry.linking_atom2_, std::regex_constants::ECMAScript);
@@ -282,15 +298,23 @@ GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string& atom1Na
         {
             // Some entries have conditions for the residue, that they have certain tags. Make sure any conditions are
             // met:
-            if ((checkIfResidueConditionsAreSatisfied(residue1_types, entry.residue1_conditions_)) &&
-                (checkIfResidueConditionsAreSatisfied(residue2_types, entry.residue2_conditions_)))
+            if (checkIfResidueConditionsAreSatisfied(residue1_types, entry.residue1_conditions_) &&
+                checkIfResidueConditionsAreSatisfied(residue2_types, entry.residue2_conditions_))
             {
+
                 // Always add a later entry, but remove earlier match if number_of_bonds_from_anomeric_carbon_ AND index
                 // number are the same. I've overloaded the == and != operators in the DihedralAngleData struct to
                 // evaluate those.
-                matching_entries.erase(std::remove(matching_entries.begin(), matching_entries.end(), entry),
+                auto areEquivalent = [&](size_t k)
+                {
+                    const DihedralAngleData& a = table.entries[n];
+                    const DihedralAngleData& b = table.entries[k];
+                    return a.index_ == b.index_ &&
+                           a.number_of_bonds_from_anomeric_carbon_ == b.number_of_bonds_from_anomeric_carbon_;
+                };
+                matching_entries.erase(std::remove_if(matching_entries.begin(), matching_entries.end(), areEquivalent),
                                        matching_entries.end());
-                matching_entries.push_back(entry);
+                matching_entries.push_back(n);
             }
         }
     }
@@ -298,40 +322,29 @@ GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string& atom1Na
     unsigned int maxMetadataDihedral = 0;
     for (auto& entry : matching_entries)
     {
-        maxMetadataDihedral = std::max(maxMetadataDihedral, entry.number_of_bonds_from_anomeric_carbon_);
+        maxMetadataDihedral = std::max(maxMetadataDihedral, table.entries[entry].number_of_bonds_from_anomeric_carbon_);
     }
-    std::vector<DihedralAngleDataVector> orderedEntries;
+    std::vector<std::vector<size_t>> orderedEntries;
     orderedEntries.resize(maxMetadataDihedral);
     for (size_t n = 0; n < maxMetadataDihedral; n++)
     {
         std::copy_if(matching_entries.begin(), matching_entries.end(), std::back_inserter(orderedEntries[n]),
-                     [&](auto& entry)
+                     [&](size_t entry)
                      {
-                         return entry.number_of_bonds_from_anomeric_carbon_ - 1 == n;
+                         return table.entries[entry].number_of_bonds_from_anomeric_carbon_ - 1 == n;
                      });
     }
     return orderedEntries;
 }
 
-std::vector<double> GlycamMetadata::dihedralAngleDataWeights(const DihedralAngleDataVector& metadataVector)
+std::vector<size_t> GlycamMetadata::likelyMetadata(const DihedralAngleDataTable& table,
+                                                   const std::vector<size_t>& entries)
 {
-    auto metadataWeight = [](const DihedralAngleData& a)
-    {
-        return a.weight_;
-    };
-
-    std::vector<double> weights;
-    std::transform(metadataVector.begin(), metadataVector.end(), std::back_inserter(weights), metadataWeight);
-    return weights;
-}
-
-DihedralAngleDataVector GlycamMetadata::likelyMetadata(const DihedralAngleDataVector& entries)
-{
-    DihedralAngleDataVector returningMetadata;
+    std::vector<size_t> returningMetadata;
     returningMetadata.reserve(entries.size());
     for (auto& entry : entries)
     {
-        if (entry.weight_ >= 0.01) // HARDCODE EVERYTHING.
+        if (table.entries[entry].weight_ >= 0.01) // HARDCODE EVERYTHING.
         {
             returningMetadata.push_back(entry);
         }

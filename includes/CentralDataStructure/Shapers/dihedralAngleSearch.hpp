@@ -19,9 +19,6 @@
 
 namespace cds
 {
-    using GlycamMetadata::DihedralAngleData;
-    using GlycamMetadata::DihedralAngleDataVector;
-
     struct AngleOverlap
     {
         cds::Overlap overlaps;
@@ -42,7 +39,7 @@ namespace cds
         std::vector<size_t> metadataOrder;
     };
 
-    typedef std::function<std::vector<double>(const DihedralAngleData&, double, double)> SearchAngles;
+    typedef std::function<std::vector<double>(const GlycamMetadata::DihedralAngleData&, double, double)> SearchAngles;
     typedef std::function<cds::Overlap(const assembly::Bounds&)> SearchOverlap;
 
     struct AngleSearchSettings
@@ -53,16 +50,17 @@ namespace cds
 
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     OverlapState wiggleUsingRotamers(cds::SearchOverlap searchOverlap, SearchAngles searchAngles,
+                                     const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                      const assembly::Graph& graph, const assembly::Bounds& bounds,
                                      const std::vector<size_t>& movingAtoms, const DihedralCoordinates coordinates,
-                                     const std::vector<size_t>& indices, const DihedralAngleDataVector& rotamers,
+                                     const std::vector<size_t>& indices, const std::vector<size_t>& rotamers,
                                      const AngleSearchPreference& preference);
     assembly::Bounds simpleWiggleCurrentRotamers(
-        const MolecularMetadata::PotentialTable& potential, double overlapTolerance, SearchAngles searchAngles,
-        std::vector<RotatableDihedral>& dihedrals, const std::vector<DihedralAngleDataVector>& metadata,
-        const std::vector<AngleSearchPreference>& preference, const GraphIndexData& indices,
-        const assembly::Graph& graph, const assembly::Selection& selection, const assembly::Bounds& bounds,
-        const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge);
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable, const MolecularMetadata::PotentialTable& potential,
+        double overlapTolerance, SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
+        const std::vector<std::vector<size_t>>& metadata, const std::vector<AngleSearchPreference>& preference,
+        const GraphIndexData& indices, const assembly::Graph& graph, const assembly::Selection& selection,
+        const assembly::Bounds& bounds, const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge);
     std::vector<double> evenlySpacedAngles(double preference, double lowerDeviation, double upperDeviation,
                                            double increment);
     std::vector<AngleSearchPreference> angleSearchPreference(double deviation,
