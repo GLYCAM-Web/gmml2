@@ -225,10 +225,11 @@ namespace glycoproteinBuilder
 
         std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
         {
-            cds::Residue* residue = residues[n];
-            return (residueMoleculeTypes[n] == MoleculeType::protein)
-                       ? codeUtils::erratic_cast<pdb::PdbResidue*>(residue)->getChainId()
-                       : "";
+            size_t residueId =
+                (residueMoleculeTypes[n] == MoleculeType::protein)
+                    ? n
+                    : glycanAttachmentResidue[codeUtils::indexOf(glycanMoleculeId, graphIndices.residueMolecule[n])];
+            return codeUtils::erratic_cast<pdb::PdbResidue*>(residues[residueId])->getChainId();
         };
 
         std::vector<std::string> chainIds = codeUtils::vectorMap(chainId, codeUtils::indexVector(residues));
