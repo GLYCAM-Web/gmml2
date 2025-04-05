@@ -9,19 +9,20 @@ namespace MolecularMetadata
 {
     typedef std::vector<std::pair<std::string, std::string>> BondVector;
 
-    struct AminoAcid
+    struct AminoAcidTable
     {
-        std::vector<std::string> atomNames;
-        BondVector bonds;
+        std::vector<std::string> names;
+        std::vector<std::string> originalName;
+        std::vector<double> weights;
+        std::vector<std::vector<std::string>> atomNames;
+        std::vector<BondVector> bonds;
+        std::vector<std::vector<std::array<std::string, 4>>> sidechainDihedralAtoms;
     };
 
+    const AminoAcidTable& aminoAcidTable();
+    size_t aminoAcidIndex(const AminoAcidTable& table, const std::string& name);
     std::string originalResidueName(const std::string& str);
     const BondVector& carboxylBonds();
-    const std::vector<std::string>& aminoAcidNames();
-    const std::vector<AminoAcid>& aminoAcids();
-    const AminoAcid& aminoAcid(size_t index);
-    const AminoAcid& aminoAcid(const std::string& name);
-    const std::vector<std::array<std::string, 4>>& aminoAcidDihedrals(size_t index);
 } // namespace MolecularMetadata
 
 #endif

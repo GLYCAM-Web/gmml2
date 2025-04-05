@@ -2,10 +2,11 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_SIDECHAINS_HPP
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/MolecularMetadata/aminoAcids.hpp"
+#include "includes/MolecularMetadata/sidechainRotamers.hpp"
 
 #include <vector>
 
@@ -46,15 +47,17 @@ namespace glycoproteinBuilder
                                                             const MutableData& mutableData,
                                                             const std::vector<bool>& includedAtoms,
                                                             size_t sidechainResidue);
-    std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(const assembly::Graph& graph,
-                                                                   const AssemblyData& data);
+    std::vector<std::vector<SidechainDihedral>>
+    sidechainDihedrals(const MolecularMetadata::AminoAcidTable& aminoAcidTable, const assembly::Graph& graph,
+                       const AssemblyData& data);
     SidechainRotationsAndWeights
     sidechainRotationsAndWeights(const assembly::Graph& graph, const AssemblyData& data,
                                  const MolecularMetadata::SidechainRotamerData& sidechains);
     std::vector<cds::Sphere> sidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
                                                       const MutableData& mutableData,
                                                       const MolecularMetadata::SidechainRotamerData& sidechains);
-    GlycoproteinAssembly addSidechainRotamers(const MolecularMetadata::SidechainRotamerData& sidechains,
+    GlycoproteinAssembly addSidechainRotamers(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
+                                              const MolecularMetadata::SidechainRotamerData& sidechains,
                                               GlycoproteinAssembly assembly);
     std::vector<bool> partOfMovableSidechain(const assembly::Graph& graph, const AssemblyData& data);
 } // namespace glycoproteinBuilder

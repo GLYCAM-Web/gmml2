@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/MolecularMetadata/aminoAcids.hpp"
 
 #include <utility>
 #include <array>
@@ -16,8 +17,8 @@ namespace cds
     std::vector<std::pair<Atom*, Atom*>> atomPairsConnectedToOtherResidues(std::vector<Atom*> atoms);
     std::vector<std::pair<Atom*, Atom*>> atomPairsConnectedToOtherResidues(std::vector<Residue*> residues);
     std::vector<Atom*> atomsConnectedToOtherResidues(std::vector<Atom*> atoms);
-    void setIntraConnectivity(std::vector<Residue*> residues);
-    void setInterConnectivity(std::vector<Residue*> residues);
+    void setIntraConnectivity(const MolecularMetadata::AminoAcidTable& table, std::vector<Residue*> residues);
+    void setInterConnectivity(const MolecularMetadata::AminoAcidTable& table, std::vector<Residue*> residues);
 } // namespace cds
 
 #endif

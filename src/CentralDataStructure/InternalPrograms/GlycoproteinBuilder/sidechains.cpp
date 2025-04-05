@@ -241,19 +241,19 @@ std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(con
 }
 
 std::vector<std::vector<glycoproteinBuilder::SidechainDihedral>>
-glycoproteinBuilder::sidechainDihedrals(const assembly::Graph& graph, const AssemblyData& data)
+glycoproteinBuilder::sidechainDihedrals(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
+                                        const assembly::Graph& graph, const AssemblyData& data)
 {
     std::vector<std::vector<SidechainDihedral>> result(graph.residueCount, std::vector<SidechainDihedral> {});
-    const std::vector<std::string>& aminoAcids = MolecularMetadata::aminoAcidNames();
     for (size_t n = 0; n < graph.residueCount; n++)
     {
         bool isProtein        = data.residues.types[n] == cds::ResidueType::Protein;
         bool hasExpectedAtoms = data.residues.hasAllExpectedAtoms[n];
         if (isProtein && hasExpectedAtoms)
         {
-            const std::string& residue                               = data.residues.names[n];
-            size_t aminoAcid                                         = codeUtils::indexOf(aminoAcids, residue);
-            const std::vector<std::array<std::string, 4>>& dihedrals = MolecularMetadata::aminoAcidDihedrals(aminoAcid);
+            const std::string& residue = data.residues.names[n];
+            size_t aminoAcid           = MolecularMetadata::aminoAcidIndex(aminoAcidTable, residue);
+            const std::vector<std::array<std::string, 4>>& dihedrals = aminoAcidTable.sidechainDihedralAtoms[aminoAcid];
             if (dihedrals.size() > 0)
             {
                 const std::vector<size_t>& atomIndices = residueAtoms(graph, n);
@@ -362,10 +362,11 @@ std::vector<bool> glycoproteinBuilder::partOfMovableSidechain(const assembly::Gr
 }
 
 glycoproteinBuilder::GlycoproteinAssembly
-glycoproteinBuilder::addSidechainRotamers(const MolecularMetadata::SidechainRotamerData& sidechains,
+glycoproteinBuilder::addSidechainRotamers(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
+                                          const MolecularMetadata::SidechainRotamerData& sidechains,
                                           GlycoproteinAssembly assembly)
 {
-    assembly.data.residues.sidechainDihedrals = sidechainDihedrals(assembly.graph, assembly.data);
+    assembly.data.residues.sidechainDihedrals = sidechainDihedrals(aminoAcidTable, assembly.graph, assembly.data);
     SidechainRotationsAndWeights rotationsAndWeights =
         sidechainRotationsAndWeights(assembly.graph, assembly.data, sidechains);
     assembly.data.residues.sidechainRotations       = rotationsAndWeights.rotations;

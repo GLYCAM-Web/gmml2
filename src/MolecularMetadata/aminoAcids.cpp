@@ -9,8 +9,39 @@
 
 namespace
 {
-    using MolecularMetadata::AminoAcid;
     using MolecularMetadata::BondVector;
+
+    struct AminoAcid
+    {
+        std::vector<std::string> atomNames;
+        BondVector bonds;
+    };
+
+    const std::vector<std::pair<std::string, double>> molecularWeight {
+        {"ALA",  89},
+        {"ARG", 174},
+        {"ASN", 132},
+        {"ASP", 133},
+        {"CYS", 121},
+        {"CYX", 120},
+        {"GLN", 146},
+        {"GLU", 147},
+        {"GLY",  75},
+        {"HIS", 155},
+        {"ILE", 131},
+        {"LEU", 131},
+        {"LYS", 146},
+        {"MET", 149},
+        {"MSE",   0},
+        {"PHE", 165},
+        {"PRO", 115},
+        {"SEC",   0},
+        {"SER", 105},
+        {"THR", 119},
+        {"TRP", 204},
+        {"TYR", 181},
+        {"VAL", 117}
+    };
 
     const std::vector<std::pair<std::string, std::string>> originalResidueNames = {
         {"HIE", "HIS"},
@@ -77,40 +108,19 @@ namespace
         return result;
     }
 
-    std::vector<std::vector<std::array<std::string, 4>>>
-    dihedralAtomsInOrder(const std::vector<std::string>& names, const std::vector<AminoAcid>& definitions,
-                         const std::vector<std::pair<std::string, std::vector<std::string>>>& entries)
+    std::vector<std::array<std::string, 4>> splitDihedralAtoms(const std::string& name,
+                                                               const std::vector<std::string>& dihedrals)
     {
-        std::vector<std::vector<std::array<std::string, 4>>> result;
-        result.resize(names.size(), {});
-        for (auto& entry : entries)
+        std::vector<std::array<std::string, 4>> result;
+        result.reserve(dihedrals.size());
+        for (auto& dihedral : dihedrals)
         {
-            const std::string& name = entry.first;
-            size_t index            = codeUtils::indexOf(names, name);
-            if (index >= names.size())
+            std::vector<std::string> split = codeUtils::split(dihedral, '-');
+            if (split.size() != 4)
             {
-                throw std::runtime_error("unknown amino acid: " + name);
+                throw std::runtime_error("error in amino acid metadata for " + name + ", dihedral needs 4 atoms");
             }
-            const AminoAcid& definition = definitions[index];
-            result[index].reserve(entry.second.size());
-            for (auto& dihedral : entry.second)
-            {
-                std::vector<std::string> split = codeUtils::split(dihedral, '-');
-                if (split.size() != 4)
-                {
-                    throw std::runtime_error("error in amino acid metadata for " + name + ", dihedral needs 4 atoms");
-                }
-                std::array<std::string, 4> atoms {split[0], split[1], split[2], split[3]};
-                for (auto& atom : atoms)
-                {
-                    if (!codeUtils::contains(definition.atomNames, atom))
-                    {
-                        throw std::runtime_error("unknown atom " + atom + " in dihedral metadata for amino acid " +
-                                                 name);
-                    }
-                }
-                result[index].push_back(atoms);
-            }
+            result.push_back({split[0], split[1], split[2], split[3]});
         }
         return result;
     }
@@ -180,14 +190,75 @@ namespace
         {"TYR", {"N-CA-CB-CG", "CA-CB-CG-CD1"}},
         {"VAL", {"N-CA-CB-CG1"}}
     };
+
     // clang-format on
 
-    const std::vector<std::string> names     = namesOnly(sidechainBonds);
-    const std::vector<AminoAcid> definitions = withBackbones(sidechainBonds);
-    const std::vector<std::vector<std::array<std::string, 4>>> dihedralAtoms =
-        dihedralAtomsInOrder(names, definitions, sidechainDihedralAtoms);
+    MolecularMetadata::AminoAcidTable createTable()
+    {
+        MolecularMetadata::AminoAcidTable table;
+        size_t count = molecularWeight.size() + originalResidueNames.size();
+        table.names.reserve(count);
+        table.originalName.reserve(count);
+        table.weights.reserve(count);
+        for (auto& a : molecularWeight)
+        {
+            table.names.push_back(a.first);
+            table.originalName.push_back(a.first);
+            table.weights.push_back(a.second);
+        }
+        for (auto& a : originalResidueNames)
+        {
+            table.names.push_back(a.first);
+            table.originalName.push_back(a.second);
+            size_t originalIndex = codeUtils::indexOf(table.names, a.second);
+            table.weights.push_back(table.weights[originalIndex]);
+        }
+        table.bonds.resize(count);
+        table.atomNames.resize(count);
+        const std::vector<std::string> atomDefinitionNames = namesOnly(sidechainBonds);
+        const std::vector<AminoAcid> atomDefinitions       = withBackbones(sidechainBonds);
+        for (size_t n = 0; n < atomDefinitionNames.size(); n++)
+        {
+            size_t index = codeUtils::indexOf(table.names, atomDefinitionNames[n]);
+            if (index == table.names.size())
+            {
+                throw std::runtime_error(atomDefinitionNames[n] + " from atom definitions not found\n");
+            }
+            table.atomNames[index] = atomDefinitions[n].atomNames;
+            table.bonds[index]     = atomDefinitions[n].bonds;
+        }
+        table.sidechainDihedralAtoms.resize(count);
+        for (auto& a : sidechainDihedralAtoms)
+        {
+            size_t index = codeUtils::indexOf(table.names, a.first);
+            if (index == table.names.size())
+            {
+                throw std::runtime_error(a.first + " from dihedrals not found\n");
+            }
+            std::vector<std::array<std::string, 4>> atoms = splitDihedralAtoms(a.first, a.second);
+            table.sidechainDihedralAtoms[index]           = atoms;
+        }
+        return table;
+    }
+
+    const MolecularMetadata::AminoAcidTable aminoAcidTableVar = createTable();
 
 } // namespace
+
+const MolecularMetadata::AminoAcidTable& MolecularMetadata::aminoAcidTable()
+{
+    return aminoAcidTableVar;
+}
+
+size_t MolecularMetadata::aminoAcidIndex(const AminoAcidTable& table, const std::string& name)
+{
+    size_t index = codeUtils::indexOf(table.names, name);
+    if (index >= table.names.size())
+    {
+        throw std::runtime_error("Error: amino acid not found in metadata: " + name);
+    }
+    return index;
+}
 
 std::string MolecularMetadata::originalResidueName(const std::string& str)
 {
@@ -206,37 +277,4 @@ std::string MolecularMetadata::originalResidueName(const std::string& str)
 const MolecularMetadata::BondVector& MolecularMetadata::carboxylBonds()
 {
     return carboxylBondVector;
-}
-
-const std::vector<std::string>& MolecularMetadata::aminoAcidNames()
-{
-    return names;
-}
-
-const std::vector<AminoAcid>& MolecularMetadata::aminoAcids()
-{
-    return definitions;
-}
-
-const AminoAcid& MolecularMetadata::aminoAcid(size_t index)
-{
-    return definitions[index];
-}
-
-const AminoAcid& MolecularMetadata::aminoAcid(const std::string& name)
-{
-    size_t index = codeUtils::indexOf(aminoAcidNames(), name);
-    if (index >= aminoAcidNames().size())
-    {
-        throw std::runtime_error("Oliver! Each query residue residue should be in biology::proteinResidueNames (you "
-                                 "need to confirm this before calling this code), or if it's there then it needs an "
-                                 "entry in this table. Git gud son. This was the problem residue: " +
-                                 name);
-    }
-    return aminoAcid(index);
-}
-
-const std::vector<std::array<std::string, 4>>& MolecularMetadata::aminoAcidDihedrals(size_t index)
-{
-    return dihedralAtoms[index];
 }

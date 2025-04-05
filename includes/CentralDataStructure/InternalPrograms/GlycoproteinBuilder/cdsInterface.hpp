@@ -4,13 +4,15 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/MolecularMetadata/aminoAcids.hpp"
 
 #include <vector>
 
 namespace glycoproteinBuilder
 {
     GlycoproteinAssembly
-    toGlycoproteinAssemblyStructs(const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+    toGlycoproteinAssemblyStructs(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
+                                  const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
                                   std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
                                   const OverlapMultiplier overlapWeight, double overlapTolerance,

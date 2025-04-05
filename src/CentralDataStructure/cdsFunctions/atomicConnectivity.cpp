@@ -68,11 +68,11 @@ namespace
         }
     }
 
-    void setBondingForAminoAcid(cds::Residue* proteinRes)
+    void setBondingForAminoAcid(const MolecularMetadata::AminoAcidTable& table, cds::Residue* proteinRes)
     {
-        const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(proteinRes->getName());
-        std::vector<cds::Atom*> nonHydrogenAtoms      = proteinRes->getNonHydrogenAtoms();
-        addBonds(proteinRes, aminoAcid.bonds);
+        size_t aminoAcid                         = MolecularMetadata::aminoAcidIndex(table, proteinRes->getName());
+        std::vector<cds::Atom*> nonHydrogenAtoms = proteinRes->getNonHydrogenAtoms();
+        addBonds(proteinRes, table.bonds[aminoAcid]);
         addBonds(proteinRes, MolecularMetadata::carboxylBonds());
         if (nonHydrogenAtoms.size() > 0)
         {
@@ -95,22 +95,24 @@ namespace
         return false;
     }
 
-    void setProteinIntraConnectivity(std::vector<cds::Residue*> proteinResidues)
+    void setProteinIntraConnectivity(const MolecularMetadata::AminoAcidTable& table,
+                                     std::vector<cds::Residue*> proteinResidues)
     {
         for (auto& aa : proteinResidues)
         {
-            setBondingForAminoAcid(aa);
+            setBondingForAminoAcid(table, aa);
         }
         return;
     }
 
-    void setProteinInterConnectivity(std::vector<cds::Residue*> proteinResidues)
+    void setProteinInterConnectivity(const MolecularMetadata::AminoAcidTable& table,
+                                     std::vector<cds::Residue*> proteinResidues)
     {
         if (proteinResidues.empty())
         {
             return;
         }
-        setBondingForAminoAcid(proteinResidues.front()); // does the first one, and handles when size is 1.
+        setBondingForAminoAcid(table, proteinResidues.front()); // does the first one, and handles when size is 1.
         cds::Residue* previousRes = proteinResidues.front();
         for (std::vector<cds::Residue*>::iterator it = proteinResidues.begin() + 1; it != proteinResidues.end(); ++it)
         {
@@ -193,16 +195,16 @@ std::vector<cds::Atom*> cds::atomsConnectedToOtherResidues(std::vector<Atom*> at
     return foundAtoms;
 }
 
-void cds::setIntraConnectivity(std::vector<cds::Residue*> residues)
+void cds::setIntraConnectivity(const MolecularMetadata::AminoAcidTable& table, std::vector<cds::Residue*> residues)
 {
-    setProteinIntraConnectivity(cdsSelections::selectResiduesByType(residues, ResidueType::Protein));
+    setProteinIntraConnectivity(table, cdsSelections::selectResiduesByType(residues, ResidueType::Protein));
     bool invertSelection = true;
     cds::distanceBondIntra(cdsSelections::selectResiduesByType(residues, ResidueType::Protein, invertSelection));
 }
 
-void cds::setInterConnectivity(std::vector<cds::Residue*> residues)
+void cds::setInterConnectivity(const MolecularMetadata::AminoAcidTable& table, std::vector<cds::Residue*> residues)
 {
-    setProteinInterConnectivity(cdsSelections::selectResiduesByType(residues, ResidueType::Protein));
+    setProteinInterConnectivity(table, cdsSelections::selectResiduesByType(residues, ResidueType::Protein));
     bool invertSelection = true;
     cds::distanceBondInter(cdsSelections::selectResiduesByType(residues, ResidueType::Protein, invertSelection));
 }

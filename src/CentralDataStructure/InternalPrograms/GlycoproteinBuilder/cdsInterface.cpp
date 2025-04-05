@@ -22,7 +22,8 @@
 namespace glycoproteinBuilder
 {
     GlycoproteinAssembly
-    toGlycoproteinAssemblyStructs(const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+    toGlycoproteinAssemblyStructs(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
+                                  const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
                                   std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
                                   const OverlapMultiplier overlapWeight, double overlapTolerance,
@@ -156,19 +157,20 @@ namespace glycoproteinBuilder
         {
             if (residueTypes[n] == cds::ResidueType::Protein)
             {
-                const MolecularMetadata::AminoAcid& aminoAcid = MolecularMetadata::aminoAcid(residueNames[n]);
-                std::vector<size_t> nonHydrogenAtoms          = codeUtils::filter(nonHydrogen, residueAtoms(graph, n));
-                std::vector<std::string> nonHydrogenNames     = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
-                auto atomIndex                                = [&](const std::string& str)
+                size_t aminoAcidIndex = MolecularMetadata::aminoAcidIndex(aminoAcidTable, residueNames[n]);
+                std::vector<size_t> nonHydrogenAtoms      = codeUtils::filter(nonHydrogen, residueAtoms(graph, n));
+                std::vector<std::string> nonHydrogenNames = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
+                auto atomIndex                            = [&](const std::string& str)
                 {
                     return nonHydrogenAtoms[codeUtils::indexOf(nonHydrogenNames, str)];
                 };
-                size_t atomN          = atomIndex("N");
-                size_t atomCA         = atomIndex("CA");
-                size_t atomC          = atomIndex("C");
-                bool hasExpectedAtoms = (codeUtils::sorted(nonHydrogenNames) == aminoAcid.atomNames);
-                bool isNTerminal      = true;
-                bool isCTerminal      = true;
+                size_t atomN  = atomIndex("N");
+                size_t atomCA = atomIndex("CA");
+                size_t atomC  = atomIndex("C");
+                bool hasExpectedAtoms =
+                    (codeUtils::sorted(nonHydrogenNames) == aminoAcidTable.atomNames[aminoAcidIndex]);
+                bool isNTerminal = true;
+                bool isCTerminal = true;
                 for (size_t residueBondId : graph.residues.nodes.edgeAdjacencies[n])
                 {
                     bool direction    = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);

@@ -170,11 +170,12 @@ int main(int argc, char* argv[])
             pdbFile.PreProcess(pdb::PreprocessorOptions());
         }
 
+        const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
         cds::Assembly* glycoprotein                                          = &pdbFile.mutableAssemblies().front();
         std::vector<cds::Residue*> gpInitialResidues                         = glycoprotein->getResidues();
-        cds::setIntraConnectivity(gpInitialResidues);
-        cds::setInterConnectivity(gpInitialResidues);
+        cds::setIntraConnectivity(aminoAcidTable, gpInitialResidues);
+        cds::setInterConnectivity(aminoAcidTable, gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
@@ -191,9 +192,10 @@ int main(int argc, char* argv[])
 
         bool excludeHydrogen                               = false;
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
-            sidechainRotamers, glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                                   dihedralAngleDataTable, molecules, glycosites, glycans, overlapMultiplier,
-                                   settings.overlapTolerance, settings.overlapRejectionThreshold, excludeHydrogen));
+            aminoAcidTable, sidechainRotamers,
+            glycoproteinBuilder::toGlycoproteinAssemblyStructs(
+                aminoAcidTable, dihedralAngleDataTable, molecules, glycosites, glycans, overlapMultiplier,
+                settings.overlapTolerance, settings.overlapRejectionThreshold, excludeHydrogen));
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck =
