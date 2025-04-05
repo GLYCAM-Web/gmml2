@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
@@ -221,10 +222,20 @@ namespace glycoproteinBuilder
             codeUtils::indicesToValues(moleculeTypes, graph.residueMolecule);
         std::vector<MoleculeType> atomMoleculeTypes =
             codeUtils::indicesToValues(residueMoleculeTypes, graph.atomResidue);
-        std::vector<bool> proteinResidue = codeUtils::vectorMap(isProtein, residueMoleculeTypes);
-        std::vector<bool> proteinAtom    = codeUtils::vectorMap(isProtein, atomMoleculeTypes);
-        std::vector<int> residueNumbers  = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
-        std::vector<int> atomNumbers     = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
+
+        std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
+        {
+            cds::Residue* residue = residues[n];
+            return (residueMoleculeTypes[n] == MoleculeType::protein)
+                       ? codeUtils::erratic_cast<pdb::PdbResidue*>(residue)->getChainId()
+                       : "";
+        };
+
+        std::vector<std::string> chainIds = codeUtils::vectorMap(chainId, codeUtils::indexVector(residues));
+        std::vector<bool> proteinResidue  = codeUtils::vectorMap(isProtein, residueMoleculeTypes);
+        std::vector<bool> proteinAtom     = codeUtils::vectorMap(isProtein, atomMoleculeTypes);
+        std::vector<int> residueNumbers   = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
+        std::vector<int> atomNumbers      = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
 
         AtomData atomData {atomNames,
                            cds::atomTypes(atoms),
@@ -248,6 +259,7 @@ namespace glycoproteinBuilder
                                  cds::residueStringIds(residues),
                                  residueNumbers,
                                  cds::serializedNumberVector(residues.size()),
+                                 chainIds,
                                  sidechainDihedrals,
                                  sidechainRotations,
                                  sidechainWeights,

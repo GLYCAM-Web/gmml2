@@ -312,8 +312,8 @@ namespace glycoproteinBuilder
                                 const std::vector<std::array<size_t, 2>>& connectionIndices,
                                 const std::string& outputDir, const std::string& prefix)
         {
-            cds::PdbFileData pdbData =
-                toPdbFileData(graph, data, coordinates, atomNumbers, residueNumbers, headerLines);
+            cds::PdbFileData pdbData = toPdbFileData(graph, data, coordinates, atomNumbers, residueNumbers,
+                                                     data.residues.chainIds, headerLines);
             std::vector<std::vector<size_t>> residueIndices =
                 codeUtils::boolsToValues(graph.molecules.nodes.constituents, includedMolecules);
             std::vector<std::vector<bool>> TER = residueTER(data, residueIndices);

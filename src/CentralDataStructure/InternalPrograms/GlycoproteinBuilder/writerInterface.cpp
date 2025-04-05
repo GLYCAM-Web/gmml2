@@ -45,12 +45,12 @@ namespace glycoproteinBuilder
     cds::PdbFileData toPdbFileData(const assembly::Graph& graph, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates,
                                    const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers,
+                                   const std::vector<std::string>& chainIds,
                                    const std::vector<std::string>& headerLines)
     {
         size_t atomCount    = graph.atomCount;
         size_t residueCount = graph.residueCount;
         std::vector<std::string> recordNames(atomCount, "ATOM");
-        std::vector<std::string> chainIds(residueCount, "");
         std::vector<std::string> insertionCodes(residueCount, "");
 
         cds::PdbFileResidueData residuePdbData {residueNumbers, data.residues.names, chainIds, insertionCodes};
