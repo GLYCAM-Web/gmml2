@@ -11,6 +11,123 @@ using cdsCondensedSequence::ParsedResidue;
 
 namespace
 {
+    using cds::ResidueType;
+    using cdsCondensedSequence::ParsedResidueComponents;
+    using cdsCondensedSequence::RingShapeAndModifier;
+
+    RingShapeAndModifier ringShapeAndModifier(const std::string& modifier)
+    { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
+        size_t leftParenthesisPosition  = modifier.find('(');
+        size_t rightParenthesisPosition = modifier.find(')');
+
+        if ((leftParenthesisPosition == std::string::npos) || (rightParenthesisPosition == std::string::npos))
+        { // If there isn't a ring shape declared.
+            return {"", modifier};
+        }
+        else
+        { // Assumes it's always at end of modifiers
+            return {modifier.substr(leftParenthesisPosition), modifier.substr(0, leftParenthesisPosition)};
+        }
+    }
+
+    ParsedResidueComponents parseAglycone(const std::string& residueString)
+    {
+        return {
+            residueString, ResidueType::Aglycone, residueString, "", "", "", "", {"", ""}
+        };
+    }
+
+    ParsedResidueComponents parseDerivative(const std::string& residueString)
+    { // A derivative e.g. 3S, 6Me. Linkage followed by residue name. No configuration.
+        std::string name      = residueString.substr(1); // From position 1 to the end.
+        cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
+        std::string linkage   = residueString.substr(0, 1);
+        return {
+            residueString, type, name, linkage, "", "", "", {"", ""}
+        };
+    }
+
+    ParsedResidueComponents parseSugar(const std::string& residueString)
+    { // E.g. DManpNAca1-4 . Isomer (D or L), residueName (ManNAc), ring type (f or p), configuration (a or b), linkage
+        // (1-4)
+        ParsedResidueComponents result;
+        result.fullString    = residueString;
+        // Reading from front.
+        result.type          = ResidueType::Sugar;
+        // Assumptions
+        size_t residueStart  = 0; // e.g. Gal, Glc, Ido
+        size_t modifierStart = 3; // E.g. NAc, A, A(1C4)
+        // Checks
+        std::string isomer   = residueString.substr(0, 1);
+        if ((isomer == "D") || (isomer == "L"))
+        {
+            result.isomer = isomer;
+            ++residueStart;  // 1
+            ++modifierStart; // 4
+        }
+        result.name          = residueString.substr(residueStart, 3);
+        size_t ringPosition  = (residueStart + 3);
+        std::string ringType = residueString.substr(ringPosition, 1);
+        if ((ringType == "p") || (ringType == "f"))
+        {
+            result.ringType = ringType;
+            ++modifierStart; // 5
+        }
+        // Find the dash, read around it.
+        size_t dashPosition = residueString.find('-');
+        if (dashPosition == std::string::npos) // There is no -. e.g. Fru in DGlcpa1-2DFrufb
+        {
+            dashPosition = residueString.size() + 1;
+        }
+        else
+        {
+            result.linkage = residueString.substr((dashPosition - 1), 3);
+        }
+        size_t modifierEnd = dashPosition - 2; // They are 2 apart if no modifier i.e. DGlcpa1-2, the "a1" size is 2
+        std::string configuration = residueString.substr(dashPosition - 2, 1);
+        if ((configuration == "a" || configuration == "b"))
+        {
+            result.configuration = configuration;
+        }
+        else
+        {
+            modifierEnd++; // e.g. if ano is missing DGlcpA1-OH
+        }
+        // Find any special modifiers e.g. NAc, Gc, A in DGlcpAa1-OH NAc in DGlcpNAca1-2
+        size_t modifierLength = (modifierEnd - modifierStart);
+        if (modifierLength > 100)
+        {
+            std::string message = "This is a non-standard residue string that gmml can't handle: " + residueString;
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+        if (modifierLength > 0 && modifierLength < 100)
+        {
+            std::string modifier        = residueString.substr(modifierStart, modifierLength);
+            result.ringShapeAndModifier = ringShapeAndModifier(modifier);
+        }
+        return result;
+    }
+
+    ParsedResidueComponents parseResidueStringIntoComponents(const std::string& residueString,
+                                                             ResidueType specifiedType)
+    {
+        if ((residueString.find('-') != std::string::npos) || (specifiedType == ResidueType::Sugar))
+        {
+            return parseSugar(residueString);
+        }
+        else if (isdigit(residueString[0]))
+        {
+            return parseDerivative(residueString);
+        }
+        else
+        { // Dunno.
+            std::string message = "Error: we can't parse this residue: \"" + residueString + "\"";
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+    }
+
     std::string substr(const std::string& str, size_t windowStart, size_t windowEnd)
     {
         return str.substr(windowStart, (windowEnd - windowStart));
@@ -99,6 +216,18 @@ namespace
         }
     }
 
+    void addLinkage(ParsedResidue* thisRes, ParsedResidue* otherRes)
+    {
+        if (thisRes->GetType() == cds::ResidueType::Sugar)
+        {
+            thisRes->addParent(thisRes->GetConfiguration() + thisRes->GetLinkage(), otherRes);
+        }
+        else
+        {
+            thisRes->addParent(thisRes->GetLinkage(), otherRes);
+        }
+    }
+
     ParsedResidue* saveResidue(std::vector<std::unique_ptr<ParsedResidue>>& savedResidues,
                                std::vector<std::string>& savedDerivatives, std::string residueString,
                                ParsedResidue* parent)
@@ -111,11 +240,15 @@ namespace
         }
         else
         {
-            savedResidues.emplace_back(std::make_unique<ParsedResidue>(residueString, parent));
+            savedResidues.emplace_back(std::make_unique<ParsedResidue>(
+                parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined)));
+            addLinkage(savedResidues.back().get(), parent);
             ParsedResidue* newRes = savedResidues.back().get();
             for (auto& derivative : savedDerivatives)
             {
-                savedResidues.emplace_back(std::make_unique<ParsedResidue>(derivative, newRes));
+                savedResidues.emplace_back(std::make_unique<ParsedResidue>(
+                    parseResidueStringIntoComponents(derivative, cds::ResidueType::Undefined)));
+                addLinkage(savedResidues.back().get(), newRes);
             }
             savedDerivatives.clear();
             return newRes;
@@ -177,7 +310,7 @@ namespace
         return i;
     }
 
-    bool parseCondensedSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues,
+    void parseCondensedSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues,
                                 std::vector<std::string>& savedDerivatives, const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
@@ -189,20 +322,21 @@ namespace
             {
                 ++i;
             }
-            residues.emplace_back(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Sugar));
+            residues.emplace_back(std::make_unique<ParsedResidue>(
+                parseResidueStringIntoComponents(sequence.substr(i), cds::ResidueType::Sugar)));
         }
         else
         { // e.g. DGlcpa1-OH
-            residues.emplace_back(std::make_unique<ParsedResidue>(sequence.substr(i), cds::ResidueType::Aglycone));
+            residues.emplace_back(std::make_unique<ParsedResidue>(parseAglycone(sequence.substr(i))));
         }
         ParsedResidue* terminal = residues.back().get();
         recurveParseAlt(residues, savedDerivatives, i, sequence, terminal);
-        return true;
     }
 
     // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,
-    // Heads yes and have become optional. Examples: DGlcpa1-2[4DGlcpa1-]<4>OH becomes
-    // DGlcpa1-2DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH [4DGlcpa1-]<4>OH becomes DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH
+    // Heads yes and have become optional. Examples:
+    // DGlcpa1-2[4DGlcpa1-]<4>OH becomes DGlcpa1-2DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH
+    // [4DGlcpa1-]<4>OH becomes DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH
     // DGlcpa1-3[4DGlcpa1-]<9>2DManpa1-[4DGalpNAca1-]<4>OH // Multiple repeats
     // DGlcpa1-2[4DGlcpa1-3DManpa1-]<9>OH // Disacc repeats
     // DGlcpa1-2[4DGlcpa1-3[DAllpb1-2]DManpa1-]<9>OH // Branched repeats, unavailable on legacy

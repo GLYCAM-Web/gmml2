@@ -31,7 +31,9 @@ cdsCondensedSequence::SequenceGraph cdsCondensedSequence::toSequenceGraph(const 
         residue->setIndex(n);
         result.types.push_back(residue->GetType());
         result.names.push_back(residue->GetName());
-        result.monosaccharideNames.push_back(residue->GetMonosaccharideName());
+        std::string monosaccharideName =
+            residue->GetIsomer() + residue->GetResidueName() + residue->GetResidueModifier() + residue->GetRingShape();
+        result.monosaccharideNames.push_back(monosaccharideName);
         result.ringTypes.push_back(residue->GetRingType());
         result.linkageNames.push_back(residue->GetLinkageName());
         result.configurations.push_back(residue->GetConfiguration());

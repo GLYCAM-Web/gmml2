@@ -15,12 +15,21 @@ using cdsCondensedSequence::ParsedResidue;
 
 namespace
 {
+    std::string iupacName(const ParsedResidue* residue)
+    { // Iupac doesn't write -OH, but does include reducing terminal when it's sugar-sugar ano-ano
+        if (residue->GetType() == cds::ResidueType::Sugar)
+        {
+            return residue->GetResidueName() + residue->GetResidueModifier();
+        }
+        return ""; // The chase where you have an aglycone.
+    }
+
     void recurvePrintIupac(ParsedResidue* currentResidue, int& branchStackSize, std::vector<std::string>& output)
     {
         auto neighbors                  = currentResidue->GetChildren();
         size_t numberOfNeighbors        = neighbors.size();
         // Derivatives. E.g. 2S,3Me in DManp[2S,3Me]a1-6DManpa1-OH
-        std::string outputResidueString = currentResidue->GetIupacName();
+        std::string outputResidueString = iupacName(currentResidue);
         std::vector<std::string> derivatives;
         for (auto& neighbor : neighbors)
         {
