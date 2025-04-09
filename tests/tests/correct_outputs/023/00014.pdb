@@ -66,14 +66,14 @@ ATOM     59 O1   SO3     6      -0.670   3.769  -6.455  1.00  0.00           O
 ATOM     60 O2   SO3     6      -1.962   3.298  -4.445  1.00  0.00           O
 ATOM     61 O3   SO3     6       0.461   3.065  -4.433  1.00  0.00           O
 TER
-CONECT    6    5
 CONECT    5    6
-CONECT   24   22
+CONECT    6    5
 CONECT   22   24
-CONECT   50   35
-CONECT   35   50
-CONECT   54   49
-CONECT   49   54
-CONECT   58   23
 CONECT   23   58
+CONECT   24   22
+CONECT   35   50
+CONECT   49   54
+CONECT   50   35
+CONECT   54   49
+CONECT   58   23
 END

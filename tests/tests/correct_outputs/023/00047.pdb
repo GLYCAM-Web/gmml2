@@ -37,6 +37,6 @@ ATOM     34 H5O  0KN     2       0.504  10.100  -4.417  1.00  0.00           H
 ATOM     35 O4   0KN     2       0.524   8.421  -1.695  1.00  0.00           O
 ATOM     36 H4O  0KN     2       1.082   9.166  -1.928  1.00  0.00           H
 TER
-CONECT    6    5
 CONECT    5    6
+CONECT    6    5
 END

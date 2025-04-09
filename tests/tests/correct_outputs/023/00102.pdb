@@ -72,10 +72,10 @@ ATOM     67 H11  0CU     4      -8.536   2.325   4.834  1.00  0.00           H
 ATOM     68 O1   0CU     4      -9.564   2.018   3.073  1.00  0.00           O
 ATOM     69 H1O  0CU     4     -10.037   1.261   3.426  1.00  0.00           H
 TER
-CONECT    6    5
 CONECT    5    6
-CONECT   27   26
+CONECT    6    5
 CONECT   26   27
-CONECT   48   47
+CONECT   27   26
 CONECT   47   48
+CONECT   48   47
 END

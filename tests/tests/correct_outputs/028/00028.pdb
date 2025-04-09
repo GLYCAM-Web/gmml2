@@ -49,10 +49,10 @@ ATOM     44 H1   MEX     4      -1.671   6.589 -10.241  1.00  0.00           H
 ATOM     45 H2   MEX     4      -1.709   7.898 -11.418  1.00  0.00           H
 ATOM     46 H3   MEX     4      -2.508   6.383 -11.777  1.00  0.00           H
 TER
-CONECT    3    2
 CONECT    2    3
-CONECT   23   22
+CONECT    3    2
 CONECT   22   23
-CONECT   43   42
+CONECT   23   22
 CONECT   42   43
+CONECT   43   42
 END

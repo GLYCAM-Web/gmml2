@@ -43,6 +43,6 @@ ATOM     40 C1   0SB     2      -1.659   6.117  -5.036  1.00  0.00           C
 ATOM     41 O1B  0SB     2      -2.110   5.032  -5.489  1.00  0.00           O
 ATOM     42 O1A  0SB     2      -0.845   6.869  -5.624  1.00  0.00           O
 TER
-CONECT    6    5
 CONECT    5    6
+CONECT    6    5
 END

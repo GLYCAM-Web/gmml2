@@ -78,12 +78,12 @@ ATOM     72 H2   0AU     5      -3.770  14.709  -5.600  1.00  0.00           H
 ATOM     73 O2   0AU     5      -2.648  15.687  -7.042  1.00  0.00           O
 ATOM     74 H2O  0AU     5      -1.998  15.288  -7.636  1.00  0.00           H
 TER
-CONECT    6    5
 CONECT    5    6
-CONECT   23   22
+CONECT    6    5
 CONECT   22   23
-CONECT   40   39
+CONECT   23   22
 CONECT   39   40
-CONECT   57   56
+CONECT   40   39
 CONECT   56   57
+CONECT   57   56
 END

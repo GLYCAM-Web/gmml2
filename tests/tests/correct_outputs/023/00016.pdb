@@ -49,8 +49,8 @@ ATOM     45 H2   0fA     3      -0.544   8.189  -8.984  1.00  0.00           H
 ATOM     46 O2   0fA     3      -1.425   9.505  -7.661  1.00  0.00           O
 ATOM     47 H2O  0fA     3      -1.265  10.151  -8.354  1.00  0.00           H
 TER
-CONECT    6    5
 CONECT    5    6
-CONECT   27   26
+CONECT    6    5
 CONECT   26   27
+CONECT   27   26
 END

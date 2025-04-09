@@ -102,12 +102,12 @@ ATOM     96 O1   SO3     5       6.039  21.332  -4.046  1.00  0.00           O
 ATOM     97 O2   SO3     5       5.667  22.951  -5.825  1.00  0.00           O
 ATOM     98 O3   SO3     5       7.858  21.932  -5.527  1.00  0.00           O
 TER
-CONECT   24    1
 CONECT    1   24
-CONECT   51   50
+CONECT   24    1
 CONECT   50   51
-CONECT   78   77
+CONECT   51   50
 CONECT   77   78
-CONECT   95   94
+CONECT   78   77
 CONECT   94   95
+CONECT   95   94
 END

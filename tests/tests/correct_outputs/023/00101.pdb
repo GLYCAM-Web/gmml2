@@ -21,6 +21,6 @@ ATOM     18 H3O  0RA     2      -6.778   8.832  -4.906  1.00  0.00           H
 ATOM     19 O2   0RA     2      -3.115   9.544  -4.914  1.00  0.00           O
 ATOM     20 H2O  0RA     2      -3.684  10.276  -4.665  1.00  0.00           H
 TER
-CONECT    3    2
 CONECT    2    3
+CONECT    3    2
 END

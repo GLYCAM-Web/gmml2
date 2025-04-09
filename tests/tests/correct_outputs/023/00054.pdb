@@ -83,10 +83,10 @@ ATOM     78 H82  0KO     4      -6.327  17.951  -6.815  1.00  0.00           H
 ATOM     79 O8   0KO     4      -5.905  16.968  -5.026  1.00  0.00           O
 ATOM     80 H8O  0KO     4      -5.174  16.900  -4.372  1.00  0.00           H
 TER
-CONECT    3    2
 CONECT    2    3
-CONECT   23   18
+CONECT    3    2
 CONECT   18   23
-CONECT   54   22
 CONECT   22   54
+CONECT   23   18
+CONECT   54   22
 END
