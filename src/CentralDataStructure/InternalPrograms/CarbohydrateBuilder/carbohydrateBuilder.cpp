@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
@@ -20,7 +21,7 @@ using cdsCondensedSequence::carbohydrateBuilder;
 //////////////////////////////////////////////////////////
 carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
-try : carbohydrate_(codeUtils::gmmlHomeDirPath, condensedSequence)
+try : carbohydrate_(cdsParameters::ParameterManager(codeUtils::gmmlHomeDirPath), condensedSequence)
 {}
 
 // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.

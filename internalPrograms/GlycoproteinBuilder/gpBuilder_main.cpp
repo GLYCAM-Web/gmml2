@@ -12,6 +12,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapResolution.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
@@ -154,11 +155,12 @@ int main(int argc, char* argv[])
         glycoproteinBuilder::GlycoproteinBuilderInputs settings = glycoproteinBuilder::readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
+        const cdsParameters::ParameterManager parameterManager(baseDir);
         pdb::PdbFile pdbFile(settings.substrateFileName);
         if (settings.MDprep)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
-            pdbFile.PreProcess(baseDir, pdb::PreprocessorOptions());
+            pdbFile.PreProcess(parameterManager, pdb::PreprocessorOptions());
         }
 
         const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
@@ -170,8 +172,8 @@ int main(int argc, char* argv[])
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
-        std::vector<cdsCondensedSequence::Carbohydrate*> glycans =
-            glycoproteinBuilder::addGlycansToProtein(baseDir, glycoprotein, dihedralAngleDataTable, glycosites);
+        std::vector<cdsCondensedSequence::Carbohydrate*> glycans = glycoproteinBuilder::addGlycansToProtein(
+            parameterManager, glycoprotein, dihedralAngleDataTable, glycosites);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
         double selfWeight    = 1.0;

@@ -59,20 +59,6 @@ namespace
         return code;
     }
 
-    std::vector<std::string> getGlycamNamesOfResidues(const std::vector<cdsCondensedSequence::ParsedResidue*>& residues)
-    {
-        std::vector<std::string> names;
-        names.reserve(residues.size());
-        for (auto& residue : residues)
-        {
-            if (residue->GetType() != cds::ResidueType::Deoxy)
-            {
-                names.push_back(getGlycamResidueName(residue));
-            }
-        }
-        return names;
-    }
-
     cds::Coordinate guessCoordinateOfMissingNeighbor(const cds::Atom* centralAtom, double distance)
     {
         if (centralAtom->getNeighbors().size() < 1)
@@ -312,7 +298,8 @@ namespace
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-Carbohydrate::Carbohydrate(const std::string& baseDir, std::string inputSequence) : cds::Molecule()
+Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManager, std::string inputSequence)
+    : cds::Molecule()
 {
     {
         std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
@@ -320,7 +307,6 @@ Carbohydrate::Carbohydrate(const std::string& baseDir, std::string inputSequence
         reorderSequence(residuePtrs); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
                                       // Gala1-3[Fuca1-2]Glca. Same 3D structure.
         std::vector<ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
-        cdsParameters::ParameterManager parameterManager(baseDir, getGlycamNamesOfResidues(residues));
         for (auto& residue : residues)
         { // Move atoms from prep file into parsedResidues.
             if (residue->GetType() != cds::ResidueType::Deoxy)

@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
@@ -26,7 +27,8 @@ int main(int argc, char* argv[])
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(baseDir, options);
+    const cdsParameters::ParameterManager parameterManager(baseDir);
+    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
     cds::Assembly* firstModel           = &pdbFile.mutableAssemblies().front();
     for (auto& molecule : firstModel->getMolecules())
     {

@@ -12,6 +12,7 @@
 #include "includes/CodeUtils/references.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
@@ -26,8 +27,8 @@ using gmmlPrograms::WiggleToSite;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-WiggleToSite::WiggleToSite(const std::string& baseDir, WiggleToSiteInputs inputStruct)
-    : substrate_(inputStruct.substrateFile_), carbohydrate_(baseDir, inputStruct.carbohydrateSequence_)
+WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
+    : substrate_(inputStruct.substrateFile_), carbohydrate_(parameterManager, inputStruct.carbohydrateSequence_)
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
     const Residue* superimpositionTarget = pdb::residueSelector(

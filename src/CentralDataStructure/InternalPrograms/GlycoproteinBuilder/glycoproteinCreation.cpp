@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
@@ -294,7 +295,7 @@ namespace glycoproteinBuilder
     }
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(const std::string& baseDir, cds::Assembly* glycoprotein,
+    addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager, cds::Assembly* glycoprotein,
                         const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                         const std::vector<GlycosylationSite>& glycosites)
     {
@@ -303,8 +304,8 @@ namespace glycoproteinBuilder
         std::vector<Carbohydrate*> result;
         for (auto& glycosite : glycosites)
         {
-            Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(
-                glycoprotein->addMolecule(std::make_unique<Carbohydrate>(baseDir, glycosite.input.glycanInput)));
+            Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(glycoprotein->addMolecule(
+                std::make_unique<Carbohydrate>(parameterManager, glycosite.input.glycanInput)));
             result.push_back(glycan);
             Attachment attachment                = toAttachment(glycan);
             cds::Residue* aglycone               = attachment.aglycone;

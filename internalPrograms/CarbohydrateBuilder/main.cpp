@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
@@ -165,13 +166,14 @@ int main(int argc, char** argv)
             }
         };
         codeUtils::readFileLineByLine(inputFile, processLine);
+        const cdsParameters::ParameterManager parameterManager(baseDir);
         for (auto& line : lines)
         {
             try
             {
                 std::cout << "\n*********************\nBuilding " << line.sequence << "\n*********************\n";
-                cdsCondensedSequence::carbohydrateBuilder carbBuilder(line.sequence);
-                carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputDir, line.id, headerLines);
+                cdsCondensedSequence::Carbohydrate carbohydrate(parameterManager, line.sequence);
+                carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
                 cdsCondensedSequence::GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
                 CondensedSequence::drawGlycan(config, line.sequence);
             }

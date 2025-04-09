@@ -189,19 +189,19 @@ const float& PdbFile::GetBFactor() const
     return this->GetRemarkRecord().GetBFactor();
 }
 
-pdb::PreprocessorInformation PdbFile::PreProcess(const std::string& baseDir, PreprocessorOptions inputOptions)
+pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterManager& parameterManager,
+                                                 PreprocessorOptions inputOptions)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocesssing has begun");
     pdb::PreprocessorInformation ppInfo;
-    cdsParameters::ParameterManager parmManager(baseDir); // ToDo pass this into preProcessMissingUnrecognized
-    for (auto& model : mutableAssemblies())               // Now we do all, but maybe user can select at some point.
+    for (auto& model : mutableAssemblies()) // Now we do all, but maybe user can select at some point.
     {
         model.preProcessCysResidues(ppInfo);
         model.preProcessHisResidues(ppInfo, inputOptions);
         model.preProcessChainTerminals(ppInfo, inputOptions);
         model.preProcessGapsUsingDistance(ppInfo, inputOptions);
-        model.preProcessMissingUnrecognized(ppInfo, parmManager);
-        parmManager.setAtomChargesForResidues(model.getResidues());
+        model.preProcessMissingUnrecognized(ppInfo, parameterManager);
+        parameterManager.setAtomChargesForResidues(model.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing completed");
     return ppInfo;

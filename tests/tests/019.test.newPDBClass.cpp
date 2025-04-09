@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/files.hpp"
@@ -24,7 +25,9 @@ int main(int argc, char* argv[])
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(baseDir, options);
+
+    const cdsParameters::ParameterManager parameterManager(baseDir);
+    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
     for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in Ensemble.
                                                    // ToDo: Why is there a const blockage in Ensemble?
     {

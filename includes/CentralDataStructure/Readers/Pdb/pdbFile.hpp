@@ -12,6 +12,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/titleRecord.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include <string>
 #include <istream>
 #include <ostream>
@@ -86,7 +87,8 @@ namespace pdb
         std::string GetUniprotIDs() const;
         const float& GetResolution() const;
         const float& GetBFactor() const;
-        PreprocessorInformation PreProcess(const std::string& baseDir, PreprocessorOptions options);
+        PreprocessorInformation PreProcess(const cdsParameters::ParameterManager& parameterManager,
+                                           PreprocessorOptions options);
         //////////////////////////////////////////////////////////
         //                        DISPLAY                       //
         //////////////////////////////////////////////////////////

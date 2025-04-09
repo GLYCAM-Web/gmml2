@@ -1,6 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
@@ -37,7 +38,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        Carbohydrate(const std::string& baseDir, std::string inputSequence);
+        Carbohydrate(const cdsParameters::ParameterManager& parameterManager, std::string inputSequence);
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
