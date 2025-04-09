@@ -1,0 +1,34 @@
+graph G {graph [splines=false dpi=72 outputorder="edgesfirst"];
+node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fixedsize="true" scale="true"];
+edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
+rankdir=LR nodesep="0.05" ranksep="0.8";
+0 [shape=box label="OH"]
+1 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGalNAc.svg"];
+2 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/LFuc.svg"];
+3 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DAra.svg"];
+4 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGal.svg"];
+5 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DMan.svg"];
+b5 [shape="plaintext" fontsize="12" height="0.3" labelloc=b label="3A 4A"];
+{rank="same" b5 5};
+{nodesep="0.2" b5 5};
+b5--5 [style=invis];
+6 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DXyl.svg"];
+7 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/LIdoA.svg"];
+8 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGalA.svg"];
+9 [shape=circle height="0.7" label="D"];
+10 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DSor.svg"];
+b10 [shape="plaintext" fontsize="12" height="0.3" labelloc=b label="3S"];
+{rank="same" b10 10};
+{nodesep="0.2" b10 10};
+b10--10 [style=invis];
+1--0 [label="a1-" headclip=true tailclip=false];
+2--1 [label="a1-3" headclip=false tailclip=false];
+3--2 [label="a1-2" headclip=false tailclip=false];
+4--2 [label="b1-4" headclip=false tailclip=false];
+5--4 [label="a1-3" headclip=false tailclip=false];
+6--5 [label="a1-2" headclip=false tailclip=false];
+7--6 [label="a1-3" headclip=false tailclip=false];
+8--7 [label="b1-2" headclip=false tailclip=false];
+9--8 [label="3" headclip=false tailclip=true];
+10--8 [label="a2-4" headclip=false tailclip=false];
+}

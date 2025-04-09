@@ -1,0 +1,16 @@
+graph G {graph [splines=false dpi=72 outputorder="edgesfirst"];
+node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fixedsize="true" scale="true"];
+edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
+rankdir=LR nodesep="0.05" ranksep="0.8";
+0 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DFru.svg"];
+1 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DManNAc.svg"];
+2 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DManNAc.svg"];
+3 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DXyl.svg"];
+b3 [shape="plaintext" fontsize="12" height="0.3" labelloc=b label="4S"];
+{rank="same" b3 3};
+{nodesep="0.2" b3 3};
+b3--3 [style=invis];
+1--0 [label="a1-2" headclip=false tailclip=false];
+2--1 [label="b1-4" headclip=false tailclip=false];
+3--2 [label="a1-6" headclip=false tailclip=false];
+}
