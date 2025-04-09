@@ -75,16 +75,24 @@ void cds::writeConectCards(std::ostream& stream, const std::vector<int>& atomNum
                            const std::vector<std::array<size_t, 2>>& connectionIndices)
 { // These are only written for atoms connecting residues. The numbers overflow/truncate when longer than 5, but the
   // format is what the format is.
-    for (auto& atomPair : connectionIndices)
+    std::function<bool(const std::array<size_t, 2>&, const std::array<size_t, 2>&)> ascending =
+        [&](const std::array<size_t, 2> a, const std::array<size_t, 2> b)
+    {
+        return atomNumbers[a[0]] < atomNumbers[b[0]];
+    };
+    std::vector<std::array<size_t, 2>> doubled = connectionIndices;
+    doubled.reserve(connectionIndices.size() * 2);
+    for (auto& a : connectionIndices)
+    {
+        doubled.push_back({a[1], a[0]});
+    }
+    for (auto& atomPair : codeUtils::sortedBy(ascending, doubled))
     {
         auto writeLine = [&](int a, int b)
         {
             stream << "CONECT" << std::right << std::setw(5) << a << std::right << std::setw(5) << b << "\n";
         };
-        int first  = atomNumbers[atomPair[0]];
-        int second = atomNumbers[atomPair[1]];
-        writeLine(first, second);
-        writeLine(second, first);
+        writeLine(atomNumbers[atomPair[0]], atomNumbers[atomPair[1]]);
     }
 }
 
