@@ -324,6 +324,7 @@ namespace glycoproteinBuilder
                                    {
                                        cds::writeAssemblyToPdb(stream, graph, residueIndices, TER, connectionIndices,
                                                                pdbData);
+                                       cds::theEnd(stream);
                                    });
         };
 
