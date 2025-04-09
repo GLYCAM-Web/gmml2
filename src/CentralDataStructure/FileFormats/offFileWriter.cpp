@@ -224,7 +224,7 @@ void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const assembl
     }
     for (size_t n = 0; n < residueCount; n++)
     {
-        cds::WriteOffFileUnit(stream, data.format, graph, data.residues, data.atoms, {n}, data.residues.names[n]);
+        WriteOffFileUnit(stream, data.format, graph, data.residues, data.atoms, {n}, data.residues.names[n]);
     }
 }
 
@@ -235,5 +235,5 @@ void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const assembly::G
            << "\n";
     stream << " \"" << unitName << "\""
            << "\n";
-    cds::WriteOffFileUnit(stream, data.format, graph, data.residues, data.atoms, residueIndices, unitName);
+    WriteOffFileUnit(stream, data.format, graph, data.residues, data.atoms, residueIndices, unitName);
 }

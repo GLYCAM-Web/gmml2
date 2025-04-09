@@ -20,9 +20,9 @@ void cds::writeAssemblyToPdb(std::ostream& stream, const assembly::Graph& graph,
     }
     for (size_t n = 0; n < residueIndices.size(); n++)
     {
-        cds::writeMoleculeToPdb(stream, graph, residueIndices[n], residueTER[n], data);
+        writeMoleculeToPdb(stream, graph, residueIndices[n], residueTER[n], data);
     }
-    cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);
+    writeConectCards(stream, data.atoms.numbers, connectionIndices);
 }
 
 void cds::writeMoleculeToPdb(std::ostream& stream, const assembly::Graph& graph,
@@ -37,7 +37,7 @@ void cds::writeMoleculeToPdb(std::ostream& stream, const assembly::Graph& graph,
         for (size_t residueAtom : residueAtoms(graph, residueIndex))
         {
             size_t atomIndex = graph.residues.source.nodes[residueAtom];
-            cds::writeAtomToPdb(stream, data.format, residues, residueIndex, atoms, atomIndex);
+            writeAtomToPdb(stream, data.format, residues, residueIndex, atoms, atomIndex);
         }
         if (residueTER[n])
         {
@@ -51,7 +51,7 @@ void cds::writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, cons
                          size_t residueIndex, const PdbFileAtomData& atoms, size_t atomIndex)
 {
     std::string residueAlternativeLocation = ""; // don't know if this should live in residue or atom..
-    const cds::Coordinate& coord           = atoms.coordinates[atomIndex];
+    const Coordinate& coord                = atoms.coordinates[atomIndex];
     stream << std::left << std::setw(6) << atoms.recordNames[atomIndex];
     stream << std::right << std::setw(5) << atoms.numbers[atomIndex] << std::left << std::setw(1) << " ";
     stream << std::left << std::setw(4) << atoms.names[atomIndex];
