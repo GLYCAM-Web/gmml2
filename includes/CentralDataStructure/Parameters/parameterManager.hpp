@@ -15,8 +15,7 @@ namespace cdsParameters
     {
       public:
         // Constructor
-        ParameterManager(const std::string& baseDir); // Loading everything by default
-        ParameterManager(const std::string& baseDir, const std::vector<std::string> queryNames);
+        ParameterManager(const std::string& baseDir);
         // Functions
         cds::Residue* findParameterResidue(const std::string name) const;
         bool setAtomChargesForResidue(cds::Residue* queryResidue) const;

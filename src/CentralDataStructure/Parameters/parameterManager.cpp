@@ -37,22 +37,6 @@ ParameterManager::ParameterManager(const std::string& baseDir)
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
 }
 
-ParameterManager::ParameterManager(const std::string& baseDir, const std::vector<std::string> queryNames)
-{
-    gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + baseDir);
-    for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
-    {
-        auto& file = prepFiles_.emplace_back(baseDir + "/" + prepFilePath, queryNames);
-        this->InitializeResidueMap(file.getResidues());
-    }
-    for (auto& libFilePath : cdsParameters::libFilesToLoad)
-    {
-        auto& file = libFiles_.emplace_back(baseDir + "/" + libFilePath, queryNames);
-        this->InitializeResidueMap(file.getResidues());
-    }
-    gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
-}
-
 cds::Residue* ParameterManager::findParameterResidue(const std::string name) const
 {
     auto search = parameterResidueMap_.find(name);
