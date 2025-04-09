@@ -4,8 +4,9 @@
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
-#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/version.h"
 
 #include <vector>
@@ -19,7 +20,7 @@ using cdsCondensedSequence::carbohydrateBuilder;
 //////////////////////////////////////////////////////////
 carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
-try : carbohydrate_(condensedSequence)
+try : carbohydrate_(codeUtils::gmmlHomeDirPath, condensedSequence)
 {}
 
 // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.

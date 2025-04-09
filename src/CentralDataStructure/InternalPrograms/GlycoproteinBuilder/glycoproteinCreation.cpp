@@ -294,7 +294,8 @@ namespace glycoproteinBuilder
     }
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(cds::Assembly* glycoprotein, const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+    addGlycansToProtein(const std::string& baseDir, cds::Assembly* glycoprotein,
+                        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                         const std::vector<GlycosylationSite>& glycosites)
     {
         const glycoproteinMetadata::GlycosylationTable glycosylationTable =
@@ -303,7 +304,7 @@ namespace glycoproteinBuilder
         for (auto& glycosite : glycosites)
         {
             Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(
-                glycoprotein->addMolecule(std::make_unique<Carbohydrate>(glycosite.input.glycanInput)));
+                glycoprotein->addMolecule(std::make_unique<Carbohydrate>(baseDir, glycosite.input.glycanInput)));
             result.push_back(glycan);
             Attachment attachment                = toAttachment(glycan);
             cds::Residue* aglycone               = attachment.aglycone;

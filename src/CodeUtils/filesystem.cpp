@@ -1,5 +1,6 @@
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
@@ -11,6 +12,11 @@ codeUtils::Path codeUtils::toPath(const std::string& str)
 {
     bool absolute = str[0] == '/';
     return Path {absolute, split(str, '/')};
+}
+
+std::string codeUtils::toString(const Path& path)
+{
+    return (path.absolute ? "/" : "") + codeUtils::join("/", path.constituents);
 }
 
 bool codeUtils::pathExists(const std::string& path)
@@ -56,39 +62,26 @@ void codeUtils::createDirectories(const std::string& pathName)
 
 std::string codeUtils::readSymlink(const std::string& filename)
 {
-    return pathExists(filename) && std::filesystem::is_symlink(filename) ? std::filesystem::read_symlink(filename) : "";
+    return std::filesystem::is_symlink(filename) ? std::filesystem::read_symlink(filename) : "";
 }
 
 codeUtils::Path codeUtils::pathToCurrentExecutable()
 {
-    return toPath(readSymlink("/proc/%d/exe"));
+    return toPath(readSymlink("/proc/" + std::to_string(getpid()) + "/exe"));
 }
 
-std::string codeUtils::getSNFGSymbolsDir()
+codeUtils::Path codeUtils::pathAboveCurrentExecutableDir()
 {
-    return snfgSymbolsDirPath.string();
-}
-
-std::string codeUtils::getGmmlHomeDir()
-{
-    std::string gmmlHome = gmmlHomeDirPath.string();
-    // TODO: Fix this gross ish
-    if (gmmlHome.empty())
+    Path path       = pathToCurrentExecutable();
+    size_t pathSize = path.constituents.size();
+    if (pathSize < 3)
     {
-        if (gemsHomeDirPath.string().empty())
-        {
-            std::string errorMessage =
-                "$GMMLHOME and $GEMSHOME environmental variable not set (or std::getenv doesn't work on this system)";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
-            throw errorMessage;
-        }
-        gmmlHome = gemsHomeDirPath.string() + "/gmml/"; // guessing.
-        if (!codeUtils::directoryExists(gmmlHome))
-        {
-            std::string errorMessage = "$GMMLHOME not set and directory $GEMSHOME/gmml/ doesn't exist.";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, errorMessage);
-            throw errorMessage;
-        }
+        throw std::runtime_error("Unexpected application path: " + join("/", path.constituents));
     }
-    return gmmlHome;
+    return {path.absolute, codeUtils::take(pathSize - 2, path.constituents)};
+}
+
+std::string codeUtils::SNFGSymbolsDir()
+{
+    return "includes/MolecularMetadata/Sugars/SNFG_Symbol_Images";
 }

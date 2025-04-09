@@ -48,13 +48,7 @@ int main(int argc, char* argv[])
         {ArgReq::optional,    ArgType::flag, OVERWRITE_EXISTING, overwriteFlag, ' ',                 ""}
     };
     std::string programName = codeUtils::programName(argv);
-    codeUtils::Path path    = codeUtils::toPath(argv[0]);
-    size_t pathSize         = path.constituents.size();
-    if (pathSize < 3 || path.constituents[pathSize - 2] != std::string("bin"))
-    {
-        throw std::runtime_error("expected application to be located in bin/" + path.constituents[pathSize - 1] +
-                                 ", actually located in " + programName);
-    }
+    std::string baseDir     = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
 
     codeUtils::Arguments arguments;
     try
@@ -153,10 +147,7 @@ int main(int argc, char* argv[])
 
         MolecularMetadata::SidechainRotamerData sidechainRotamers;
         {
-            std::string basePath =
-                (path.absolute ? "/" : "") +
-                codeUtils::join("/", codeUtils::take(path.constituents.size() - 2, path.constituents));
-            std::string dunbrackLib = basePath + "/dat/dunbrack/sidechainRotamers.txt";
+            std::string dunbrackLib = baseDir + "/dat/dunbrack/sidechainRotamers.txt";
             sidechainRotamers       = MolecularMetadata::readSidechainRotamerData(dunbrackLib);
         }
         std::cout << "Input file is " << inputFile << "\n";
@@ -167,7 +158,7 @@ int main(int argc, char* argv[])
         if (settings.MDprep)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");
-            pdbFile.PreProcess(pdb::PreprocessorOptions());
+            pdbFile.PreProcess(baseDir, pdb::PreprocessorOptions());
         }
 
         const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
@@ -180,7 +171,7 @@ int main(int argc, char* argv[])
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
         std::vector<cdsCondensedSequence::Carbohydrate*> glycans =
-            glycoproteinBuilder::addGlycansToProtein(glycoprotein, dihedralAngleDataTable, glycosites);
+            glycoproteinBuilder::addGlycansToProtein(baseDir, glycoprotein, dihedralAngleDataTable, glycosites);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
         double selfWeight    = 1.0;

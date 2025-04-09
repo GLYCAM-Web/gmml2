@@ -17,7 +17,7 @@ echo -n "Testing 016 drawGlycan ${filename} ${sequence}... "
 
 rm "${output}" >/dev/null 2>&1
 mkdir -p "output/${directory}"
-"${BIN_PATH}" "${sequence}" "${output}" --base-dir "${GMML_ROOT_DIR}/" --relative-paths 2>&1
+"${BIN_PATH}" "${sequence}" "${output}" --relative-paths 2>&1
 
 if ! cmp "${output}" "tests/correct_outputs/${directory}/${filename}" >/dev/null 2>&1; then
     echo "Test FAILED! Output file different"

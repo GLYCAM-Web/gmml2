@@ -37,7 +37,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        Carbohydrate(std::string inputSequence);
+        Carbohydrate(const std::string& baseDir, std::string inputSequence);
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //

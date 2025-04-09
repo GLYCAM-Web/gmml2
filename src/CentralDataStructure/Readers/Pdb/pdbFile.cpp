@@ -189,12 +189,12 @@ const float& PdbFile::GetBFactor() const
     return this->GetRemarkRecord().GetBFactor();
 }
 
-pdb::PreprocessorInformation PdbFile::PreProcess(PreprocessorOptions inputOptions)
+pdb::PreprocessorInformation PdbFile::PreProcess(const std::string& baseDir, PreprocessorOptions inputOptions)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocesssing has begun");
     pdb::PreprocessorInformation ppInfo;
-    cdsParameters::ParameterManager parmManager; // ToDo pass this into preProcessMissingUnrecognized
-    for (auto& model : mutableAssemblies())      // Now we do all, but maybe user can select at some point.
+    cdsParameters::ParameterManager parmManager(baseDir); // ToDo pass this into preProcessMissingUnrecognized
+    for (auto& model : mutableAssemblies())               // Now we do all, but maybe user can select at some point.
     {
         model.preProcessCysResidues(ppInfo);
         model.preProcessHisResidues(ppInfo, inputOptions);

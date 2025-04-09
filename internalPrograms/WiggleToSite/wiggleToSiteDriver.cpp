@@ -1,6 +1,6 @@
-// #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include <iostream>
 
 int main(int argc, char* argv[])
@@ -16,7 +16,8 @@ int main(int argc, char* argv[])
     gmmlPrograms::WiggleToSiteInputs inputStruct(inputFile);
     std::cout << "Reading input file complete\n" << std::flush;
     std::cout << inputStruct.Print();
-    gmmlPrograms::WiggleToSite wiggler(inputStruct);
+    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    gmmlPrograms::WiggleToSite wiggler(baseDir, inputStruct);
     std::cout << "Program got to end ok" << std::endl;
     return 0;
 }

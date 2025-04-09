@@ -86,7 +86,7 @@ namespace pdb
         std::string GetUniprotIDs() const;
         const float& GetResolution() const;
         const float& GetBFactor() const;
-        PreprocessorInformation PreProcess(PreprocessorOptions options);
+        PreprocessorInformation PreProcess(const std::string& baseDir, PreprocessorOptions options);
         //////////////////////////////////////////////////////////
         //                        DISPLAY                       //
         //////////////////////////////////////////////////////////

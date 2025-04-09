@@ -312,7 +312,7 @@ namespace
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
+Carbohydrate::Carbohydrate(const std::string& baseDir, std::string inputSequence) : cds::Molecule()
 {
     {
         std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
@@ -320,7 +320,7 @@ Carbohydrate::Carbohydrate(std::string inputSequence) : cds::Molecule()
         reorderSequence(residuePtrs); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
                                       // Gala1-3[Fuca1-2]Glca. Same 3D structure.
         std::vector<ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
-        cdsParameters::ParameterManager parameterManager(getGlycamNamesOfResidues(residues));
+        cdsParameters::ParameterManager parameterManager(baseDir, getGlycamNamesOfResidues(residues));
         for (auto& residue : residues)
         { // Move atoms from prep file into parsedResidues.
             if (residue->GetType() != cds::ResidueType::Deoxy)

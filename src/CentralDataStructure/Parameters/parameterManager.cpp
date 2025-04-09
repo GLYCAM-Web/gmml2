@@ -21,35 +21,33 @@ namespace cdsParameters
 
 using cdsParameters::ParameterManager;
 
-ParameterManager::ParameterManager()
+ParameterManager::ParameterManager(const std::string& baseDir)
 { // Library files of 3D structures with parameters for simulations.
-    const std::string gmmlhome = codeUtils::getGmmlHomeDir();
-    gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + gmmlhome);
+    gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + baseDir);
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        auto& file = prepFiles_.emplace_back(gmmlhome + prepFilePath);
+        auto& file = prepFiles_.emplace_back(baseDir + "/" + prepFilePath);
         this->InitializeResidueMap(file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        auto& file = libFiles_.emplace_back(gmmlhome + libFilePath);
+        auto& file = libFiles_.emplace_back(baseDir + "/" + libFilePath);
         this->InitializeResidueMap(file.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
 }
 
-ParameterManager::ParameterManager(const std::vector<std::string> queryNames)
+ParameterManager::ParameterManager(const std::string& baseDir, const std::vector<std::string> queryNames)
 {
-    const std::string gmmlhome = codeUtils::getGmmlHomeDir();
-    gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + gmmlhome);
+    gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + baseDir);
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        auto& file = prepFiles_.emplace_back(gmmlhome + prepFilePath, queryNames);
+        auto& file = prepFiles_.emplace_back(baseDir + "/" + prepFilePath, queryNames);
         this->InitializeResidueMap(file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        auto& file = libFiles_.emplace_back(gmmlhome + libFilePath, queryNames);
+        auto& file = libFiles_.emplace_back(baseDir + "/" + libFilePath, queryNames);
         this->InitializeResidueMap(file.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");

@@ -26,8 +26,8 @@ using gmmlPrograms::WiggleToSite;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-WiggleToSite::WiggleToSite(WiggleToSiteInputs inputStruct)
-    : substrate_(inputStruct.substrateFile_), carbohydrate_(inputStruct.carbohydrateSequence_)
+WiggleToSite::WiggleToSite(const std::string& baseDir, WiggleToSiteInputs inputStruct)
+    : substrate_(inputStruct.substrateFile_), carbohydrate_(baseDir, inputStruct.carbohydrateSequence_)
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
     const Residue* superimpositionTarget = pdb::residueSelector(

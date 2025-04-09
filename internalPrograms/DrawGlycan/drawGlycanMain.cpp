@@ -16,7 +16,6 @@ int main(int argc, char* argv[])
         FILENAME,
         HELP,
         VERSION,
-        BASE_DIR,
         RELATIVE_PATHS
     };
 
@@ -27,7 +26,6 @@ int main(int argc, char* argv[])
         {ArgReq::required, ArgType::unnamed,       FILENAME,               "", ' ', "filename"},
         {ArgReq::optional,    ArgType::flag,           HELP,           "help", 'h',         ""},
         {ArgReq::optional,    ArgType::flag,        VERSION,        "version", 'v',         ""},
-        {ArgReq::optional,  ArgType::option,       BASE_DIR,       "base-dir", ' ',     "path"},
         {ArgReq::optional,    ArgType::flag, RELATIVE_PATHS, "relative-paths", ' ',         ""}
     };
     std::string programName = codeUtils::programName(argv);
@@ -58,11 +56,11 @@ int main(int argc, char* argv[])
         std::exit(1);
     }
 
+    std::string baseDir  = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    std::string SNFGDir  = codeUtils::SNFGSymbolsDir();
+    std::string filename = "";
     std::string sequence;
-    std::string basePath  = codeUtils::gmmlHomeDirPath;
-    std::string directory = codeUtils::relativeSnfgSymbolDirPath;
-    std::string filename  = "";
-    bool relative         = false;
+    bool relative = false;
 
     for (const auto& arg : arguments.args)
     {
@@ -78,11 +76,6 @@ int main(int argc, char* argv[])
                     filename = arg.value;
                     break;
                 }
-            case ARGUMENTS::BASE_DIR:
-                {
-                    basePath = arg.value;
-                    break;
-                }
             case ARGUMENTS::RELATIVE_PATHS:
                 {
                     relative = true;
@@ -93,13 +86,14 @@ int main(int argc, char* argv[])
         }
     }
 
+    baseDir += "/";
     if (!relative)
     {
-        directory = basePath + directory;
-        basePath  = "";
+        SNFGDir = baseDir + SNFGDir;
+        baseDir = "";
     }
 
-    cdsCondensedSequence::GraphVizDotConfig config(basePath, directory, filename);
+    cdsCondensedSequence::GraphVizDotConfig config(baseDir, SNFGDir, filename);
 
     CondensedSequence::drawGlycan(config, sequence);
     return 0;

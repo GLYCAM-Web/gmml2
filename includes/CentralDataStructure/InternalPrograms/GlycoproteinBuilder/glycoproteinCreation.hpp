@@ -23,7 +23,8 @@ namespace glycoproteinBuilder
                                                     const std::vector<GlycositeInput>& glycositesInputVector);
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(cds::Assembly* glycoprotein, const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+    addGlycansToProtein(const std::string& baseDir, cds::Assembly* glycoprotein,
+                        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                         const std::vector<GlycosylationSite>& glycosites);
 } // namespace glycoproteinBuilder
 

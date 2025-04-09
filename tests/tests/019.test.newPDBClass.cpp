@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -20,9 +21,10 @@ int main(int argc, char* argv[])
         std::exit(EXIT_FAILURE);
     }
     pdb::PdbFile pdbFile(argv[1]);
+    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(options);
+    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(baseDir, options);
     for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in Ensemble.
                                                    // ToDo: Why is there a const blockage in Ensemble?
     {
