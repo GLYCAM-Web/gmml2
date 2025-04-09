@@ -210,5 +210,11 @@ namespace codeUtils
         return values;
     }
 
+    template<class T> std::vector<T> sortedBy(std::function<bool(const T&, const T&)>& comp, std::vector<T> values)
+    {
+        std::sort(values.begin(), values.end(), comp);
+        return values;
+    }
+
 } // namespace codeUtils
 #endif
