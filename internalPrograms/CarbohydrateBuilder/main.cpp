@@ -1,4 +1,6 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
@@ -38,6 +40,8 @@ int main(int argc, char** argv)
     };
 
     std::string programName = codeUtils::programName(argv);
+    std::string baseDir     = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    std::string SNFGDir     = codeUtils::SNFGSymbolsDir();
 
     codeUtils::Arguments arguments;
     try
@@ -128,6 +132,13 @@ int main(int argc, char** argv)
             }
         }
 
+        std::string dotBaseDir = baseDir + "/";
+        if (!testMode)
+        {
+            SNFGDir    = dotBaseDir + SNFGDir;
+            dotBaseDir = "";
+        }
+
         struct SequenceInput
         {
             std::string id;
@@ -161,6 +172,8 @@ int main(int argc, char** argv)
                 std::cout << "\n*********************\nBuilding " << line.sequence << "\n*********************\n";
                 cdsCondensedSequence::carbohydrateBuilder carbBuilder(line.sequence);
                 carbBuilder.GetCarbohydrate().Generate3DStructureFiles(outputDir, line.id, headerLines);
+                cdsCondensedSequence::GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
+                CondensedSequence::drawGlycan(config, line.sequence);
             }
             catch (const std::runtime_error& error)
             {
