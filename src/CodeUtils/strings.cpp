@@ -28,6 +28,18 @@ void codeUtils::RemoveQuotes(std::string& str)
     str.erase(std::remove(str.begin(), str.end(), '\"'), str.end());
 }
 
+std::string codeUtils::withoutSpaces(std::string str)
+{
+    RemoveSpaces(str);
+    return str;
+}
+
+std::string codeUtils::withoutQuotes(std::string str)
+{
+    RemoveQuotes(str);
+    return str;
+}
+
 int codeUtils::GetSizeOfIntInString(const std::string& str)
 {
     int size = 0;

@@ -13,6 +13,8 @@ namespace codeUtils
     std::string RemoveWhiteSpace(std::string str);
     void RemoveSpaces(std::string& str);
     void RemoveQuotes(std::string& str);
+    std::string withoutSpaces(std::string str);
+    std::string withoutQuotes(std::string str);
     int GetSizeOfIntInString(const std::string& str);
     std::string& Trim(std::string& str);
     void removeMultipleSpaces(std::string& str);
