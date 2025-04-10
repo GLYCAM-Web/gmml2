@@ -67,7 +67,9 @@ std::string codeUtils::readSymlink(const std::string& filename)
 
 codeUtils::Path codeUtils::pathToCurrentExecutable()
 {
-    return toPath(readSymlink("/proc/" + std::to_string(getpid()) + "/exe"));
+    Path path = toPath(readSymlink("/proc/" + std::to_string(getpid()) + "/exe"));
+    gmml::log(__LINE__, __FILE__, gmml::INF, "program running from: " + toString(path));
+    return path;
 }
 
 codeUtils::Path codeUtils::pathAboveCurrentExecutableDir()
