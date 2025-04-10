@@ -38,9 +38,7 @@
 ./src/CentralDataStructure/Measurements/measurements.cpp
 ./src/CentralDataStructure/Overlaps/atomOverlaps.cpp
 ./src/CentralDataStructure/Parameters/parameterManager.cpp
-./src/CentralDataStructure/Readers/Lib/LibraryAtom.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryFile.cpp
-./src/CentralDataStructure/Readers/Lib/LibraryResidue.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbAtom.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbChain.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbFile.cpp

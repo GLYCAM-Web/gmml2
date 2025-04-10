@@ -31,8 +31,9 @@ ParameterManager::ParameterManager(const std::string& baseDir)
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        auto& file = libFiles_.emplace_back(baseDir + "/" + libFilePath);
-        this->InitializeResidueMap(file.getResidues());
+        cds::Molecule& molecule = libFiles_.emplace_back(cds::Molecule());
+        lib::parseMolecule(&molecule, baseDir + "/" + libFilePath);
+        this->InitializeResidueMap(molecule.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
 }

@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 
 #include <iostream>
@@ -24,13 +25,14 @@ int main()
     //    }
     //    std::cout << "*\n*\n*\n*\n*\n*\n*\n*\n*\n";
     // std::vector<std::string> residuesToLoadFromPrep = {"0GA"};
-    lib::LibraryFile libFile(libFilePath);
+    cds::Molecule molecule;
+    lib::parseMolecule(&molecule, libFilePath);
     std::cout << "Finished loading libfile" << std::endl;
     // Need a central place for this:
     std::string fileName = "./libAsPdbFile.pdb";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData({&libFile});
+        cds::GraphIndexData indices = cds::toIndexData({&molecule});
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)
                                {
@@ -43,15 +45,15 @@ int main()
         throw std::runtime_error("Error when writing pdbFile class to file:\n" + fileName);
     }
     // OFF molecule
-    libFile.setName("MOLECULE");
+    molecule.setName("MOLECULE");
     fileName = "./libAsOffFile.off";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData({&libFile});
+        cds::GraphIndexData indices = cds::toIndexData({&molecule});
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)
                                {
-                                   cds::WriteOff(stream, libFile.getName(), indices);
+                                   cds::WriteOff(stream, molecule.getName(), indices);
                                });
     }
     catch (...)
@@ -60,11 +62,11 @@ int main()
         throw std::runtime_error("Error when writing to file:\n" + fileName);
     }
     // OFF separate residues
-    libFile.setName("LIBRARY");
+    molecule.setName("LIBRARY");
     fileName = "./libAsLibFile.lib";
     try
     {
-        cds::GraphIndexData indices     = cds::toIndexData(libFile.getResidues());
+        cds::GraphIndexData indices     = cds::toIndexData(molecule.getResidues());
         std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
         assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
         cds::serializeResiduesIndividually(indices.residues);

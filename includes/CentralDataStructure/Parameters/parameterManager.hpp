@@ -30,7 +30,7 @@ namespace cdsParameters
         // Attributes
         std::unordered_map<std::string, cds::Residue*> parameterResidueMap_;
         std::vector<prep::PrepFile> prepFiles_;
-        std::vector<lib::LibraryFile> libFiles_;
+        std::vector<cds::Molecule> libFiles_;
     };
 
     // Separate cause it can be
