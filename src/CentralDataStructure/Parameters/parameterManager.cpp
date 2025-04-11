@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 
 // How exactly this happens can be improved, but the information should only ever be loaded into gmml in one place.
@@ -21,60 +22,92 @@ namespace cdsParameters
 
 using cdsParameters::ParameterManager;
 
-ParameterManager::ParameterManager(const std::string& baseDir)
+namespace
+{
+    void initializeResidueMap(ParameterManager& parameters, std::vector<cds::Residue*> incomingResidues)
+    {
+        for (auto& residue : incomingResidues)
+        {
+            parameters.residueNames.push_back(residue->getName());
+            parameters.residues.push_back(residue);
+            gmml::log(__LINE__, __FILE__, gmml::INF, "Added this to map: " + residue->getName());
+        }
+    }
+
+    bool setChargeForAtom(cds::Atom* queryAtom, std::vector<cds::Atom*> referenceAtoms)
+    {
+        for (auto& refAtom : referenceAtoms)
+        {
+            if (queryAtom->getName() == refAtom->getName())
+            {
+                queryAtom->setCharge(refAtom->getCharge());
+                queryAtom->setType(refAtom->getType());
+                return true;
+            }
+        }
+        gmml::log(__LINE__, __FILE__, gmml::WAR, "No charges found for atom named " + queryAtom->getName());
+        return false;
+    }
+
+    cds::Residue copyParameterResidue(const ParameterManager& parameters, const std::string name)
+    {
+        cds::Residue* reference = findParameterResidue(parameters, name);
+        if (reference == nullptr)
+        {
+            std::string message = "Did not find and therefore cannot copy a parameter residue with this name: " + name;
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+        return *reference; // copy
+    }
+} // namespace
+
+ParameterManager cdsParameters::loadParameters(const std::string& baseDir)
 { // Library files of 3D structures with parameters for simulations.
     gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + baseDir);
+    ParameterManager result;
     for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
     {
-        auto& file = prepFiles_.emplace_back(baseDir + "/" + prepFilePath);
-        this->InitializeResidueMap(file.getResidues());
+        auto& file = result.prepFiles.emplace_back(baseDir + "/" + prepFilePath);
+        initializeResidueMap(result, file.getResidues());
     }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        cds::Molecule& molecule = libFiles_.emplace_back(cds::Molecule());
+        cds::Molecule& molecule = result.libFiles.emplace_back(cds::Molecule());
         lib::parseMolecule(&molecule, baseDir + "/" + libFilePath);
-        this->InitializeResidueMap(molecule.getResidues());
+        initializeResidueMap(result, molecule.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
+    return result;
 }
 
-cds::Residue* ParameterManager::findParameterResidue(const std::string name) const
+cds::Residue* cdsParameters::findParameterResidue(const ParameterManager& parameters, const std::string name)
 {
-    auto search = parameterResidueMap_.find(name);
-    if (search != parameterResidueMap_.end())
+    size_t index = codeUtils::indexOf(parameters.residueNames, name);
+    if (index < parameters.residueNames.size())
     {
-        return search->second;
+        return parameters.residues[index];
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR, "Did not find parameters for residue named: " + name);
     return nullptr;
 }
 
-cds::Residue ParameterManager::copyParameterResidue(const std::string name) const
-{
-    cds::Residue* reference = this->findParameterResidue(name);
-    if (reference == nullptr)
-    {
-        std::string message = "Did not find and therefore cannot copy a parameter residue with this name: " + name;
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
-    return *reference; // copy
-}
-
-void ParameterManager::setAtomChargesForResidues(std::vector<cds::Residue*> queryResidues) const
+void cdsParameters::setAtomChargesForResidues(const ParameterManager& parameters,
+                                              std::vector<cds::Residue*> queryResidues)
 {
     for (auto& residue : queryResidues)
     {
-        this->setAtomChargesForResidue(residue);
+        setAtomChargesForResidue(parameters, residue);
     }
 }
 
-void ParameterManager::createAtomsForResidue(cdsCondensedSequence::ParsedResidue* queryResidue,
-                                             const std::string glycamNameForResidue) const
+void cdsParameters::createAtomsForResidue(const ParameterManager& parameters,
+                                          cdsCondensedSequence::ParsedResidue* queryResidue,
+                                          const std::string glycamNameForResidue)
 {
     try
     {
-        cds::Residue parameterResidue = this->copyParameterResidue(glycamNameForResidue);
+        cds::Residue parameterResidue = copyParameterResidue(parameters, glycamNameForResidue);
         queryResidue->setName(parameterResidue.getName());
         queryResidue->setAtoms(parameterResidue.extractAtoms());
         return;
@@ -87,21 +120,10 @@ void ParameterManager::createAtomsForResidue(cdsCondensedSequence::ParsedResidue
     }
 }
 
-// PRIVATE FUNCTIONS
-
-void ParameterManager::InitializeResidueMap(std::vector<cds::Residue*> incomingResidues)
-{
-    for (auto& residue : incomingResidues)
-    {
-        parameterResidueMap_[residue->getName()] = residue;
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Added this to map: " + residue->getName());
-    }
-}
-
-bool ParameterManager::setAtomChargesForResidue(cds::Residue* queryResidue) const
+bool cdsParameters::setAtomChargesForResidue(const ParameterManager& parameters, cds::Residue* queryResidue)
 {
     bool allAtomsPresent           = true;
-    cds::Residue* parameterResidue = this->findParameterResidue(queryResidue->GetParmName());
+    cds::Residue* parameterResidue = findParameterResidue(parameters, queryResidue->GetParmName());
     if (parameterResidue == nullptr)
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
@@ -112,25 +134,10 @@ bool ParameterManager::setAtomChargesForResidue(cds::Residue* queryResidue) cons
     std::vector<cds::Atom*> parameterAtoms = parameterResidue->getAtoms();
     for (auto& queryAtom : queryResidue->getAtoms())
     {
-        if (!cdsParameters::setChargeForAtom(queryAtom, parameterAtoms))
+        if (!setChargeForAtom(queryAtom, parameterAtoms))
         {
             allAtomsPresent = false;
         }
     }
     return allAtomsPresent;
-}
-
-bool cdsParameters::setChargeForAtom(cds::Atom* queryAtom, std::vector<cds::Atom*> referenceAtoms)
-{
-    for (auto& refAtom : referenceAtoms)
-    {
-        if (queryAtom->getName() == refAtom->getName())
-        {
-            queryAtom->setCharge(refAtom->getCharge());
-            queryAtom->setType(refAtom->getType());
-            return true;
-        }
-    }
-    gmml::log(__LINE__, __FILE__, gmml::WAR, "No charges found for atom named " + queryAtom->getName());
-    return false;
 }

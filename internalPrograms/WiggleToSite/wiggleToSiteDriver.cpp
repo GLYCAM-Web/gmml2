@@ -18,7 +18,7 @@ int main(int argc, char* argv[])
     std::cout << "Reading input file complete\n" << std::flush;
     std::cout << inputStruct.Print();
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
-    const cdsParameters::ParameterManager parameterManager(baseDir);
+    const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
     gmmlPrograms::WiggleToSite wiggler(parameterManager, inputStruct);
     std::cout << "Program got to end ok" << std::endl;
     return 0;

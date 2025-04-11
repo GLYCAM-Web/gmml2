@@ -166,7 +166,7 @@ int main(int argc, char** argv)
             }
         };
         codeUtils::readFileLineByLine(inputFile, processLine);
-        const cdsParameters::ParameterManager parameterManager(baseDir);
+        const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
         for (auto& line : lines)
         {
             try

@@ -21,7 +21,8 @@ using cdsCondensedSequence::carbohydrateBuilder;
 //////////////////////////////////////////////////////////
 carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
-try : carbohydrate_(cdsParameters::ParameterManager(codeUtils::gmmlHomeDirPath), condensedSequence)
+try : parameters_(cdsParameters::loadParameters(codeUtils::gmmlHomeDirPath)),
+    carbohydrate_(parameters_, condensedSequence)
 {}
 
 // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.

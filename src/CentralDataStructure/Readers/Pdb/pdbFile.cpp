@@ -201,7 +201,7 @@ pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterM
         model.preProcessChainTerminals(ppInfo, inputOptions);
         model.preProcessGapsUsingDistance(ppInfo, inputOptions);
         model.preProcessMissingUnrecognized(ppInfo, parameterManager);
-        parameterManager.setAtomChargesForResidues(model.getResidues());
+        cdsParameters::setAtomChargesForResidues(parameterManager, model.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing completed");
     return ppInfo;

@@ -106,6 +106,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
+        cdsParameters::ParameterManager parameters_;
         cdsCondensedSequence::Carbohydrate carbohydrate_;
     };
 } // namespace cdsCondensedSequence

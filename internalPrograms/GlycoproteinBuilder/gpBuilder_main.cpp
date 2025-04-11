@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
         glycoproteinBuilder::GlycoproteinBuilderInputs settings = glycoproteinBuilder::readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
-        const cdsParameters::ParameterManager parameterManager(baseDir);
+        const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
         pdb::PdbFile pdbFile(settings.substrateFileName);
         if (settings.MDprep)
         {

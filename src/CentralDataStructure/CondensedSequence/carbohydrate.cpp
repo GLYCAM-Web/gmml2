@@ -311,7 +311,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
         { // Move atoms from prep file into parsedResidues.
             if (residue->GetType() != cds::ResidueType::Deoxy)
             {
-                parameterManager.createAtomsForResidue(residue, getGlycamResidueName(residue));
+                cdsParameters::createAtomsForResidue(parameterManager, residue, getGlycamResidueName(residue));
                 if (residue->GetType() == cds::ResidueType::Derivative)
                 { // Deal with adjusting charges for derivatives
                     derivativeChargeAdjustment(residue);

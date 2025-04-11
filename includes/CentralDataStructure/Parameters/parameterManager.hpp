@@ -11,29 +11,21 @@
 
 namespace cdsParameters
 {
-    class ParameterManager
+    struct ParameterManager
     {
-      public:
-        // Constructor
-        ParameterManager(const std::string& baseDir);
-        // Functions
-        cds::Residue* findParameterResidue(const std::string name) const;
-        bool setAtomChargesForResidue(cds::Residue* queryResidue) const;
-        void setAtomChargesForResidues(std::vector<cds::Residue*> queryResidues) const;
-        void createAtomsForResidue(cdsCondensedSequence::ParsedResidue* queryResidue,
-                                   const std::string glycamNameForResidue) const;
-
-      private:
-        // Functions
-        cds::Residue copyParameterResidue(const std::string name) const;
-        void InitializeResidueMap(std::vector<cds::Residue*> incomingResidues);
-        // Attributes
-        std::unordered_map<std::string, cds::Residue*> parameterResidueMap_;
-        std::vector<prep::PrepFile> prepFiles_;
-        std::vector<cds::Molecule> libFiles_;
+        std::vector<std::string> residueNames;
+        std::vector<cds::Residue*> residues;
+        std::vector<prep::PrepFile> prepFiles;
+        std::vector<cds::Molecule> libFiles;
     };
 
-    // Separate cause it can be
-    bool setChargeForAtom(cds::Atom* queryAtom, std::vector<cds::Atom*> referenceAtoms);
+    ParameterManager loadParameters(const std::string& baseDir);
+    // Functions
+    cds::Residue* findParameterResidue(const ParameterManager& parameters, const std::string name);
+    bool setAtomChargesForResidue(const ParameterManager& parameters, cds::Residue* queryResidue);
+    void setAtomChargesForResidues(const ParameterManager& parameters, std::vector<cds::Residue*> queryResidues);
+    void createAtomsForResidue(const ParameterManager& parameters, cdsCondensedSequence::ParsedResidue* queryResidue,
+                               const std::string glycamNameForResidue);
+    // Attributes
 } // namespace cdsParameters
 #endif

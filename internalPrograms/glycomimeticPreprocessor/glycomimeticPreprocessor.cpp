@@ -27,9 +27,9 @@ int main(int argc, char* argv[])
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-    const cdsParameters::ParameterManager parameterManager(baseDir);
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
-    cds::Assembly* firstModel           = &pdbFile.mutableAssemblies().front();
+    const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
+    pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
+    cds::Assembly* firstModel                              = &pdbFile.mutableAssemblies().front();
     for (auto& molecule : firstModel->getMolecules())
     {
         for (auto& residue : molecule->getResidues())

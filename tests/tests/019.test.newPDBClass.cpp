@@ -26,8 +26,8 @@ int main(int argc, char* argv[])
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
 
-    const cdsParameters::ParameterManager parameterManager(baseDir);
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
+    const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
+    pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
     for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in Ensemble.
                                                    // ToDo: Why is there a const blockage in Ensemble?
     {
