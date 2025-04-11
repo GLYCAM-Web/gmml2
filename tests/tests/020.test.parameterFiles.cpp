@@ -40,9 +40,8 @@ int main()
     fileName = "./prepAsOffFile.off";
     try
     {
-        cds::GraphIndexData indices     = cds::toIndexData(glycamPrepFileSelect.getResidues());
-        std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
-        assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
+        cds::GraphIndexData indices = cds::toIndexData(glycamPrepFileSelect.getResidues());
+        assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
         cds::serializeResiduesIndividually(indices.residues);
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)
@@ -61,9 +60,8 @@ int main()
     fileName = "./prepAsLibFile.lib";
     try
     {
-        cds::GraphIndexData indices     = cds::toIndexData(glycamPrepFileSelect.getResidues());
-        std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
-        assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
+        cds::GraphIndexData indices = cds::toIndexData(glycamPrepFileSelect.getResidues());
+        assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
         cds::serializeResiduesIndividually(indices.residues);
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)

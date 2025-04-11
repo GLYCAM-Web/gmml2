@@ -64,9 +64,8 @@ int main()
     fileName = "./libAsLibFile.lib";
     try
     {
-        cds::GraphIndexData indices     = cds::toIndexData(molecule.getResidues());
-        std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
-        assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
+        cds::GraphIndexData indices = cds::toIndexData(molecule.getResidues());
+        assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
         cds::serializeResiduesIndividually(indices.residues);
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)

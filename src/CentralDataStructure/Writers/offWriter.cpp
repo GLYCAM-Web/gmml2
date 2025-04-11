@@ -56,10 +56,9 @@ void cds::serializeResiduesIndividually(std::vector<cds::Residue*>& residues)
 
 void cds::WriteOff(std::ostream& stream, const std::string& name, const GraphIndexData& indices)
 {
-    std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
-    assembly::Graph graph           = createAssemblyGraph(indices, includedAtoms);
-    cds::OffFileData data           = cds::toOffFileData(indices.residues);
-    data.atoms.numbers              = serializedNumberVector(includedAtoms);
-    data.residues.numbers           = serializedNumberVector(indices.residues.size());
+    assembly::Graph graph = createVisibleAssemblyGraph(indices);
+    cds::OffFileData data = cds::toOffFileData(indices.residues);
+    data.atoms.numbers    = serializedNumberVector(graph.atoms.source.nodeAlive);
+    data.residues.numbers = serializedNumberVector(indices.residues.size());
     cds::WriteResiduesTogetherToOffFile(stream, graph, data, codeUtils::indexVector(indices.residues), name);
 }

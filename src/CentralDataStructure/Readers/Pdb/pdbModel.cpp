@@ -400,9 +400,8 @@ void PdbModel::Write(std::ostream& stream) const
         std::vector<cds::Residue*> residues = pdbChain->getResidues();
         for (auto& residue : residues)
         {
-            cds::GraphIndexData indices = cds::toIndexData({residue});
-            std::vector<bool> includedAtoms(indices.atoms.size(), true);
-            assembly::Graph graph         = cds::createAssemblyGraph(indices, includedAtoms);
+            cds::GraphIndexData indices   = cds::toIndexData({residue});
+            assembly::Graph graph         = cds::createCompleteAssemblyGraph(indices);
             PdbResidue* pdbResidue        = codeUtils::erratic_cast<PdbResidue*>(residue);
             std::vector<cds::Atom*> atoms = pdbResidue->getAtoms();
             std::vector<std::string> recordName;

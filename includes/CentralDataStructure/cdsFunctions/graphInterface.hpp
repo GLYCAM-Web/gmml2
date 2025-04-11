@@ -29,6 +29,8 @@ namespace cds
     GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
     graph::Database createGraphData(const GraphIndexData& indices);
     assembly::Graph createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms);
+    assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& indices);
+    assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& indices);
     assembly::Bounds toAssemblyBounds(const GraphIndexData& indices, const assembly::Graph& graph);
 } // namespace cds
 

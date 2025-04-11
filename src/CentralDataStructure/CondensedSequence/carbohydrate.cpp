@@ -241,8 +241,8 @@ namespace
         cds::setShapeToPreference(linkage, shapePreference);
         auto searchPreference             = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
         const cds::GraphIndexData indices = cds::toIndexData({molecule});
-        const assembly::Graph graph = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
-        size_t residueIndex         = codeUtils::indexOf(indices.residues, residue);
+        const assembly::Graph graph       = cds::createCompleteAssemblyGraph(indices);
+        size_t residueIndex               = codeUtils::indexOf(indices.residues, residue);
         std::vector<bool> reachable =
             graph::reachableNodes(graph.residues, std::vector<bool>(graph.residueCount, false), residueIndex);
         const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
@@ -449,8 +449,8 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 void Carbohydrate::ResolveOverlaps(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                    const cds::AngleSearchSettings& searchSettings)
 {
-    const cds::GraphIndexData indices = cds::toIndexData({this});
-    const assembly::Graph graph = cds::createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+    const cds::GraphIndexData indices                                     = cds::toIndexData({this});
+    const assembly::Graph graph                                           = cds::createCompleteAssemblyGraph(indices);
     const assembly::Selection selection                                   = assembly::selectAll(graph);
     assembly::Bounds bounds                                               = cds::toAssemblyBounds(indices, graph);
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);

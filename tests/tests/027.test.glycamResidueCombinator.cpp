@@ -103,9 +103,8 @@ int main(int argc, char* argv[])
     }
 
     cds::serializeResiduesIndividually(allGeneratedResidues);
-    cds::GraphIndexData indices     = cds::toIndexData(allGeneratedResidues);
-    std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
-    assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
+    cds::GraphIndexData indices = cds::toIndexData(allGeneratedResidues);
+    assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
     codeUtils::writeToFile("GLYCAM_06k.lib",
                            [&](std::ostream& stream)
                            {

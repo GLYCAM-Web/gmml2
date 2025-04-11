@@ -32,9 +32,8 @@ namespace glycoproteinBuilder
     {
         using MolecularMetadata::Element;
 
-        cds::GraphIndexData graphIndices = cds::toIndexData(molecules);
-        std::vector<bool> includedAtoms(graphIndices.atoms.size(), true);
-        assembly::Graph graph                = cds::createAssemblyGraph(graphIndices, includedAtoms);
+        cds::GraphIndexData graphIndices     = cds::toIndexData(molecules);
+        assembly::Graph graph                = cds::createCompleteAssemblyGraph(graphIndices);
         std::vector<cds::Atom*>& atoms       = graphIndices.atoms;
         std::vector<cds::Residue*>& residues = graphIndices.residues;
 

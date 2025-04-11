@@ -36,10 +36,9 @@ int main(int argc, char* argv[])
         // OFF molecule
         try
         {
-            cds::GraphIndexData indices     = cds::toIndexData(assembly.getMolecules());
-            std::vector<bool> includedAtoms = cds::atomVisibility(indices.atoms);
-            assembly::Graph graph           = cds::createAssemblyGraph(indices, includedAtoms);
-            cds::OffFileData data           = cds::toOffFileData(indices.residues);
+            cds::GraphIndexData indices = cds::toIndexData(assembly.getMolecules());
+            assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
+            cds::OffFileData data       = cds::toOffFileData(indices.residues);
             cds::serializeNumbers(indices.atoms);
             cds::serializeNumbers(indices.residues);
             codeUtils::writeToFile("outputOffFile.off",

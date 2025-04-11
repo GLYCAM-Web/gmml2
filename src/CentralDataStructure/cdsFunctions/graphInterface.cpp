@@ -172,6 +172,16 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices, const st
                             assemblyGraph};
 }
 
+assembly::Graph cds::createCompleteAssemblyGraph(const GraphIndexData& indices)
+{
+    return createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+}
+
+assembly::Graph cds::createVisibleAssemblyGraph(const GraphIndexData& indices)
+{
+    return createAssemblyGraph(indices, cds::atomVisibility(indices.atoms));
+}
+
 assembly::Bounds cds::toAssemblyBounds(const GraphIndexData& indices, const assembly::Graph& graph)
 {
     std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(indices.atoms);
