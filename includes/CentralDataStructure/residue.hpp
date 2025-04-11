@@ -50,11 +50,6 @@ namespace cds
         std::vector<std::string> getAtomNames() const;
         std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
 
-        inline const std::vector<std::unique_ptr<Atom>>& getAtomsReference() const
-        {
-            return atoms_;
-        }
-
         inline ResidueType GetType() const
         {
             return type_;
