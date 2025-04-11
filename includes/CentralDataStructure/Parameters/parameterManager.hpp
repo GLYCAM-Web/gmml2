@@ -15,7 +15,6 @@ namespace cdsParameters
     {
         std::vector<std::string> residueNames;
         std::vector<cds::Residue*> residues;
-        std::vector<prep::PrepFile> prepFiles;
         std::vector<cds::Molecule> libFiles;
     };
 

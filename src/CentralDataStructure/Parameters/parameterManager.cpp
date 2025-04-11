@@ -63,14 +63,8 @@ namespace
 } // namespace
 
 ParameterManager cdsParameters::loadParameters(const std::string& baseDir)
-{ // Library files of 3D structures with parameters for simulations.
-    gmml::log(__LINE__, __FILE__, gmml::INF, "gmmlhome is: " + baseDir);
+{ // Library files of 3D structures with parameters for simulations
     ParameterManager result;
-    for (auto& prepFilePath : cdsParameters::prepFilesToLoad)
-    {
-        auto& file = result.prepFiles.emplace_back(baseDir + "/" + prepFilePath);
-        initializeResidueMap(result, file.getResidues());
-    }
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
         cds::Molecule& molecule = result.libFiles.emplace_back(cds::Molecule());
