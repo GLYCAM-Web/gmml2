@@ -99,16 +99,16 @@ Atom* cdsSelections::selectNeighborNotInAtomVector(const Atom* atomWithNeighbors
     return nullptr;
 }
 
-std::vector<Atom*> cdsSelections::FindHeavyAtoms(std::vector<Atom*> queryAtoms)
+std::vector<size_t> cdsSelections::FindHeavyAtoms(const std::vector<MolecularMetadata::Element>& elements)
 {
-    std::vector<Atom*> foundAtoms;
-    foundAtoms.reserve(queryAtoms.size());
+    std::vector<size_t> foundAtoms;
+    foundAtoms.reserve(elements.size());
     std::vector<std::string> heavyList = {"C", "O", "N", "S", "P"};
-    for (auto& atom : queryAtoms)
+    for (size_t n = 0; n < elements.size(); n++)
     {
-        if (codeUtils::contains(heavyList, atom->getElement()))
+        if (MolecularMetadata::isHeavyElement(elements[n]))
         {
-            foundAtoms.push_back(atom);
+            foundAtoms.push_back(n);
         }
     }
     return foundAtoms;
