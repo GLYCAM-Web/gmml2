@@ -50,6 +50,9 @@ namespace
         { Element::I, 2.094}
     });
 
+    std::vector<bool> isHeavy =
+        codeUtils::indicesToBools(Element::ElementCount, {Element::C, Element::O, Element::N, Element::S, Element::P});
+
     std::vector<FlaggedDouble> lennardJonesEpsilons = withValues({
         { Element::H, 4.47789},
         { Element::C, 6.36953},
@@ -128,6 +131,11 @@ double MolecularMetadata::vanDerWaalsRadius(Element element)
         throw std::runtime_error(message);
     }
     return result.value;
+}
+
+bool MolecularMetadata::isHeavyElement(Element element)
+{
+    return isHeavy[element];
 }
 
 const MolecularMetadata::PotentialTable& MolecularMetadata::potentialTable()

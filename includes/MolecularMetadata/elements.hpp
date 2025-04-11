@@ -141,6 +141,7 @@ namespace MolecularMetadata
     Element toElement(const std::string& str);
     const std::string& elementName(Element element);
     double vanDerWaalsRadius(Element element);
+    bool isHeavyElement(Element element);
     const PotentialTable& potentialTable();
     void validateElementsInPotentialTable(const PotentialTable& potential, const std::vector<Element>& vec);
     double potentialWeight(const PotentialTable& table, Element a, Element b);
