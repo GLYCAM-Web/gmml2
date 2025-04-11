@@ -85,11 +85,6 @@ namespace cds
         bool moveAtomToLastPosition(const Atom* atom);
         bool deleteAtom(const Atom* atom);
 
-        std::vector<std::unique_ptr<Atom>> extractAtoms()
-        {
-            return std::move(atoms_);
-        }
-
         inline void SetType(ResidueType type)
         {
             type_ = type;

@@ -1,8 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_LIB_LIBRARYFILE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_LIB_LIBRARYFILE_HPP
 
-#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <istream>
 #include <string>
@@ -13,9 +13,9 @@ namespace lib
 {
     struct AtomData
     {
-        std::vector<size_t> residueIndex;
         std::vector<std::string> names;
         std::vector<std::string> types;
+        std::vector<MolecularMetadata::Element> elements;
         std::vector<double> charges;
         std::vector<int> numbers;
         std::vector<cds::Coordinate> coordinates;
@@ -23,18 +23,18 @@ namespace lib
 
     struct ResidueData
     {
-        std::vector<std::string> names;
-        std::vector<bool> hasCoordinates;
+        bool hasCoordinates;
+        AtomData atoms;
+        std::vector<std::array<size_t, 2>> bonds;
     };
 
     struct LibraryData
     {
-        AtomData atoms;
-        ResidueData residues;
-        std::vector<std::array<size_t, 2>> bonds;
+        std::vector<std::string> residueNames;
+        std::vector<ResidueData> residues;
     };
 
-    void parseMolecule(cds::Molecule* molecule, const std::string& filename);
+    LibraryData loadLibraryData(const std::string& filename);
 
 } // namespace lib
 #endif

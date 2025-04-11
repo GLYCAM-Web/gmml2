@@ -1,7 +1,4 @@
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -38,12 +35,23 @@ namespace
         return {codeUtils::withoutQuotes(name), codeUtils::withoutQuotes(type), charge, atomIndex};
     }
 
-    void readResidue(std::stringstream& residueStream, lib::LibraryData& data, size_t residueIndex,
-                     const std::string& name)
+    MolecularMetadata::Element toElement(const std::string& name)
     {
-        lib::AtomData& atoms = data.atoms;
-        ;
-        size_t offset       = atoms.names.size();
+        if (!name.empty())
+        {
+            if (isalpha(name.at(0))) // if first char is in the alphabet
+            {
+                return MolecularMetadata::toElement(name.substr(0, 1)); // return first character as string
+            }
+        }
+        gmml::log(__LINE__, __FILE__, gmml::WAR, "Did not find an element for atom named: " + name);
+        return MolecularMetadata::Element::Unknown;
+    }
+
+    lib::ResidueData readResidue(std::stringstream& residueStream)
+    {
+        lib::AtomData atoms;
+        std::vector<std::array<size_t, 2>> bonds;
         bool hasCoordinates = false;
         std::string line;
         while (getline(residueStream, line) &&
@@ -51,9 +59,9 @@ namespace
                    '!') // Iterate until to the next section that indicates by ! at the beginning of the read line
         {               // Process atom section
             Atom atom = readAtom(line);
-            atoms.residueIndex.push_back(residueIndex);
             atoms.names.push_back(atom.name);
             atoms.types.push_back(atom.type);
+            atoms.elements.push_back(toElement(atom.name));
             atoms.charges.push_back(atom.charge);
             atoms.numbers.push_back(atom.number);
         }
@@ -86,13 +94,13 @@ namespace
                     size_t to;
                     int throwaway;
                     ss >> from >> to >> throwaway;
-                    data.bonds.push_back({offset + from - 1, offset + to - 1});
+                    bonds.push_back({from - 1, to - 1});
                 }
             }
             if (line.find("positions") != std::string::npos)
             { // order of atoms in atom vector corresponds to order in this section
                 hasCoordinates = true;
-                for (size_t n = offset; n < atoms.names.size(); n++)
+                for (size_t n = 0; n < atoms.names.size(); n++)
                 {
                     getline(residueStream, line);
                     std::stringstream ss(line);
@@ -102,8 +110,7 @@ namespace
                 }
             }
         }
-        data.residues.names.push_back(name);
-        data.residues.hasCoordinates.push_back(hasCoordinates);
+        return {hasCoordinates, atoms, bonds};
     }
 
     std::stringstream extractUnitSection(std::istream& inputFileStream, const std::string unitName)
@@ -127,7 +134,7 @@ namespace
 
 namespace lib
 {
-    void parseMolecule(cds::Molecule* molecule, const std::string& filename)
+    LibraryData loadLibraryData(const std::string& filename)
     {
         codeUtils::ensureFileExists(filename);
         std::ifstream fileStream(filename);
@@ -160,45 +167,18 @@ namespace lib
                 "Error reading library file, I expected the !entry line of an atoms table, but got this: " + line;
             throw std::runtime_error(message);
         }
-        LibraryData data;
+        std::vector<ResidueData> result;
         size_t residueCount = residueNames.size();
-        std::vector<cds::Residue*> residues;
-        residues.reserve(residueCount);
         // Iterate on residue names
         for (size_t residueIndex = 0; residueIndex < residueCount; residueIndex++)
         { // Process the atom section of the file for the corresponding residue
             const std::string& residueName = residueNames[residueIndex];
             std::stringstream residueStream;
-            residueStream = extractUnitSection(fileStream, residueName);
-            readResidue(residueStream, data, residueIndex, residueName);
-            cds::Residue* residue = molecule->addResidue(std::make_unique<cds::Residue>());
-            residues.push_back(residue);
-            const std::string& name = data.residues.names[residueIndex];
-            residue->setName(name);
-            residue->determineType(name);
+            residueStream       = extractUnitSection(fileStream, residueName);
+            ResidueData residue = readResidue(residueStream);
+            result.push_back(residue);
         }
-        size_t atomCount = data.atoms.names.size();
-        std::vector<cds::Atom*> atoms;
-        atoms.reserve(atomCount);
-        for (size_t n = 0; n < atomCount; n++)
-        {
-            size_t residueIndex   = data.atoms.residueIndex[n];
-            cds::Residue* residue = residues[residueIndex];
-            cds::Atom* atom       = residue->addAtom(std::make_unique<cds::Atom>());
-            atoms.push_back(atom);
-            atom->setName(data.atoms.names[n]);
-            atom->setType(data.atoms.types[n]);
-            atom->setCharge(data.atoms.charges[n]);
-            atom->setNumber(data.atoms.numbers[n]);
-            if (data.residues.hasCoordinates[residueIndex])
-            {
-                atom->setCoordinate(data.atoms.coordinates[n]);
-            }
-        }
-        for (auto& bond : data.bonds)
-        {
-            cds::addBond(atoms[bond[0]], atoms[bond[1]]);
-        }
+        return {residueNames, result};
     }
 
 } // namespace lib

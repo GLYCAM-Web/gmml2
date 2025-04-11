@@ -1,4 +1,7 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 
@@ -22,68 +25,17 @@ namespace cdsParameters
 
 using cdsParameters::ParameterManager;
 
-namespace
-{
-    void initializeResidueMap(ParameterManager& parameters, std::vector<cds::Residue*> incomingResidues)
-    {
-        for (auto& residue : incomingResidues)
-        {
-            parameters.residueNames.push_back(residue->getName());
-            parameters.residues.push_back(residue);
-            gmml::log(__LINE__, __FILE__, gmml::INF, "Added this to map: " + residue->getName());
-        }
-    }
-
-    bool setChargeForAtom(cds::Atom* queryAtom, std::vector<cds::Atom*> referenceAtoms)
-    {
-        for (auto& refAtom : referenceAtoms)
-        {
-            if (queryAtom->getName() == refAtom->getName())
-            {
-                queryAtom->setCharge(refAtom->getCharge());
-                queryAtom->setType(refAtom->getType());
-                return true;
-            }
-        }
-        gmml::log(__LINE__, __FILE__, gmml::WAR, "No charges found for atom named " + queryAtom->getName());
-        return false;
-    }
-
-    cds::Residue copyParameterResidue(const ParameterManager& parameters, const std::string name)
-    {
-        cds::Residue* reference = findParameterResidue(parameters, name);
-        if (reference == nullptr)
-        {
-            std::string message = "Did not find and therefore cannot copy a parameter residue with this name: " + name;
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
-        }
-        return *reference; // copy
-    }
-} // namespace
-
 ParameterManager cdsParameters::loadParameters(const std::string& baseDir)
 { // Library files of 3D structures with parameters for simulations
     ParameterManager result;
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
-        cds::Molecule& molecule = result.libFiles.emplace_back(cds::Molecule());
-        lib::parseMolecule(&molecule, baseDir + "/" + libFilePath);
-        initializeResidueMap(result, molecule.getResidues());
+        lib::LibraryData libData = lib::loadLibraryData(baseDir + "/" + libFilePath);
+        result.lib.residueNames  = codeUtils::vectorAppend(result.lib.residueNames, libData.residueNames);
+        result.lib.residues      = codeUtils::vectorAppend(result.lib.residues, libData.residues);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
     return result;
-}
-
-cds::Residue* cdsParameters::findParameterResidue(const ParameterManager& parameters, const std::string name)
-{
-    size_t index = codeUtils::indexOf(parameters.residueNames, name);
-    if (index < parameters.residueNames.size())
-    {
-        return parameters.residues[index];
-    }
-    gmml::log(__LINE__, __FILE__, gmml::WAR, "Did not find parameters for residue named: " + name);
-    return nullptr;
 }
 
 void cdsParameters::setAtomChargesForResidues(const ParameterManager& parameters,
@@ -95,41 +47,67 @@ void cdsParameters::setAtomChargesForResidues(const ParameterManager& parameters
     }
 }
 
-void cdsParameters::createAtomsForResidue(const ParameterManager& parameters,
-                                          cdsCondensedSequence::ParsedResidue* queryResidue,
+void cdsParameters::createAtomsForResidue(const ParameterManager& parameters, cds::Residue* queryResidue,
                                           const std::string glycamNameForResidue)
 {
-    try
+    size_t index = codeUtils::indexOf(parameters.lib.residueNames, glycamNameForResidue);
+    if (index == parameters.lib.residueNames.size())
     {
-        cds::Residue parameterResidue = copyParameterResidue(parameters, glycamNameForResidue);
-        queryResidue->setName(parameterResidue.getName());
-        queryResidue->setAtoms(parameterResidue.extractAtoms());
-        return;
-    }
-    catch (const std::runtime_error& error)
-    { // I just want to throw a nicer error as this happens a lot:
         std::string message = "Did not find a parameter residue for " + queryResidue->getName() +
                               " with this glycam residue code: " + glycamNameForResidue;
         throw std::runtime_error(message);
+    }
+    const std::string& name = parameters.lib.residueNames[index];
+    queryResidue->setName(name);
+    queryResidue->determineType(name);
+    const lib::ResidueData& residue = parameters.lib.residues[index];
+    const lib::AtomData& atoms      = residue.atoms;
+    std::vector<cds::Atom*> atomVec;
+    atomVec.reserve(atoms.names.size());
+    for (size_t n = 0; n < atoms.names.size(); n++)
+    {
+        cds::Atom* atom = queryResidue->addAtom(std::make_unique<cds::Atom>());
+        atomVec.push_back(atom);
+        atom->setName(atoms.names[n]);
+        atom->setType(atoms.types[n]);
+        atom->setCharge(atoms.charges[n]);
+        atom->setNumber(atoms.numbers[n]);
+        if (residue.hasCoordinates)
+        {
+            atom->setCoordinate(atoms.coordinates[n]);
+        }
+    }
+    for (auto& bond : residue.bonds)
+    {
+        cds::addBond(atomVec[bond[0]], atomVec[bond[1]]);
     }
 }
 
 bool cdsParameters::setAtomChargesForResidue(const ParameterManager& parameters, cds::Residue* queryResidue)
 {
-    bool allAtomsPresent           = true;
-    cds::Residue* parameterResidue = findParameterResidue(parameters, queryResidue->GetParmName());
-    if (parameterResidue == nullptr)
+    bool allAtomsPresent = true;
+    size_t index         = codeUtils::indexOf(parameters.lib.residueNames, queryResidue->GetParmName());
+    if (index == parameters.lib.residueNames.size())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
                   "Did not find parameters and so cannot set charges for residue named: " +
                       queryResidue->GetParmName());
         return false;
     }
-    std::vector<cds::Atom*> parameterAtoms = parameterResidue->getAtoms();
+
+    const lib::AtomData& atoms = parameters.lib.residues[index].atoms;
     for (auto& queryAtom : queryResidue->getAtoms())
     {
-        if (!setChargeForAtom(queryAtom, parameterAtoms))
+        const std::string& atomName = queryAtom->getName();
+        size_t atomIndex            = codeUtils::indexOf(atoms.names, atomName);
+        if (atomIndex < atoms.names.size())
         {
+            queryAtom->setCharge(atoms.charges[atomIndex]);
+            queryAtom->setType(atoms.types[atomIndex]);
+        }
+        else
+        {
+            gmml::log(__LINE__, __FILE__, gmml::WAR, "No charges found for atom named " + atomName);
             allAtomsPresent = false;
         }
     }

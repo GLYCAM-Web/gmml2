@@ -336,10 +336,10 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
 {
     for (auto& cdsResidue : this->getResidues())
     {
-        PdbResidue* residue            = codeUtils::erratic_cast<PdbResidue*>(cdsResidue);
-        cds::Residue* parameterResidue = cdsParameters::findParameterResidue(parmManager, residue->GetParmName());
+        PdbResidue* residue = codeUtils::erratic_cast<PdbResidue*>(cdsResidue);
+        size_t index        = codeUtils::indexOf(parmManager.lib.residueNames, residue->GetParmName());
         // Unrecognized residue->
-        if (parameterResidue == nullptr)
+        if (index == parmManager.lib.residueNames.size())
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "ParmManager did not recognize residue: " + residue->GetParmName());
@@ -347,11 +347,11 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
         }
         else // Recognized residue->
         {
-            std::vector<size_t> parmHeavyAtoms =
-                cdsSelections::FindHeavyAtoms(cds::atomElements(parameterResidue->getAtoms()));
-            std::vector<std::string> parmAtomNames      = parameterResidue->getAtomNames();
-            std::vector<std::string> parmHeavyAtomNames = codeUtils::indicesToValues(parmAtomNames, parmHeavyAtoms);
-            std::vector<std::string> pdbAtomNames       = residue->getAtomNames();
+            const lib::ResidueData& parmResidue = parmManager.lib.residues[index];
+            std::vector<size_t> parmHeavyAtoms  = cdsSelections::FindHeavyAtoms(parmResidue.atoms.elements);
+            std::vector<std::string> parmHeavyAtomNames =
+                codeUtils::indicesToValues(parmResidue.atoms.names, parmHeavyAtoms);
+            std::vector<std::string> pdbAtomNames = residue->getAtomNames();
             for (auto& parmHeavyAtomName : parmHeavyAtomNames) // What heavy atoms are missing from the pdb residue?
             {
                 if (!codeUtils::contains(pdbAtomNames, parmHeavyAtomName))
@@ -363,7 +363,7 @@ void PdbModel::preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInf
             }
             for (auto& pdbAtomName : pdbAtomNames) // What atoms in the pdb residue are unrecognized?
             {
-                if (!codeUtils::contains(parmAtomNames, pdbAtomName))
+                if (!codeUtils::contains(parmResidue.atoms.names, pdbAtomName))
                 {
                     // Residue contains unrecognized atom.
                     gmml::log(__LINE__, __FILE__, gmml::INF,

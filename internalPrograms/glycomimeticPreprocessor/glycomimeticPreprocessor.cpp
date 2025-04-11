@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include <string>
 #include <fstream>
@@ -27,9 +28,11 @@ int main(int argc, char* argv[])
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-    const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-    pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
-    cds::Assembly* firstModel                              = &pdbFile.mutableAssemblies().front();
+    cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
+    parameterManager.lib.residueNames                = codeUtils::reverse(parameterManager.lib.residueNames);
+    parameterManager.lib.residues                    = codeUtils::reverse(parameterManager.lib.residues);
+    pdb::PreprocessorInformation ppInfo              = pdbFile.PreProcess(parameterManager, options);
+    cds::Assembly* firstModel                        = &pdbFile.mutableAssemblies().front();
     for (auto& molecule : firstModel->getMolecules())
     {
         for (auto& residue : molecule->getResidues())
