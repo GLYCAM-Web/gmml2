@@ -81,7 +81,7 @@ namespace codeUtils
         return result;
     }
 
-    template<class T> std::vector<T> filter(std::function<bool(const T&)>& condition, const std::vector<T>& vec)
+    template<class T> std::vector<T> vectorFilter(std::function<bool(const T&)>& condition, const std::vector<T>& vec)
     {
         std::vector<T> result;
         result.reserve(vec.size());

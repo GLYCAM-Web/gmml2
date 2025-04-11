@@ -242,7 +242,7 @@ namespace
             auto& linkageResidues = glycosidicLinkages[n].link.residues;
             return (linkageResidues.first == residue || linkageResidues.second == residue);
         };
-        return codeUtils::filter(contains, codeUtils::indexVector(glycosidicLinkages));
+        return codeUtils::vectorFilter(contains, codeUtils::indexVector(glycosidicLinkages));
     }
 
     cds::ResidueLinkage replaceAglycone(const GlycamMetadata::DihedralAngleDataTable& metadataTable,

@@ -159,7 +159,7 @@ namespace glycoproteinBuilder
             if (residueTypes[n] == cds::ResidueType::Protein)
             {
                 size_t aminoAcidIndex = MolecularMetadata::aminoAcidIndex(aminoAcidTable, residueNames[n]);
-                std::vector<size_t> nonHydrogenAtoms      = codeUtils::filter(nonHydrogen, residueAtoms(graph, n));
+                std::vector<size_t> nonHydrogenAtoms = codeUtils::vectorFilter(nonHydrogen, residueAtoms(graph, n));
                 std::vector<std::string> nonHydrogenNames = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
                 auto atomIndex                            = [&](const std::string& str)
                 {
