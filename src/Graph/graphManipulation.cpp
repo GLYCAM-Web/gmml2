@@ -114,10 +114,10 @@ void graph::reserveEdges(Database& graph, size_t size)
 
 graph::Database graph::asData(const Graph& graph)
 {
-    std::vector<size_t> nodes = codeUtils::indexVector(graph.nodes.indices);
-    std::vector<bool> nodeAlive(nodes.size(), true);
-    std::vector<size_t> edges = codeUtils::indexVector(graph.edges.indices);
-    std::vector<bool> edgeAlive(edges.size(), true);
+    std::vector<size_t> nodes   = codeUtils::indexVector(graph.nodes.indices);
+    std::vector<bool> nodeAlive = codeUtils::indicesToValues(graph.source.nodeAlive, graph.nodes.indices);
+    std::vector<size_t> edges   = codeUtils::indexVector(graph.edges.indices);
+    std::vector<bool> edgeAlive = codeUtils::indicesToValues(graph.source.edgeAlive, graph.edges.indices);
     return {nodes, nodeAlive, edges, edgeAlive, graph.edges.nodeAdjacencies};
 }
 
