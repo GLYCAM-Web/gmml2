@@ -5,46 +5,42 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
-#include "includes/CodeUtils/strings.hpp" // split
-#include "includes/CodeUtils/logging.hpp" // split
+#include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include <fstream>
 #include <iostream>
 #include <iomanip>
 #include <ios>
-#include <algorithm> // count
+#include <algorithm>
 
-using prep::PrepFile;
-
-//////////////////////////////////////////////////////////
-//                       Constructor                    //
-//////////////////////////////////////////////////////////
-PrepFile::PrepFile(const std::string& prep_file)
+void prep::readPrepFile(cds::Molecule* molecule, const std::string& prep_file)
 {
-    this->setName("prepFile");
+    molecule->setName("prepFile");
     codeUtils::ensureFileExists(prep_file);
     std::ifstream in_file(prep_file.c_str());
     if (in_file.is_open())
     {
-        this->ReadAllResidues(in_file);
-        in_file.close(); /// Close the prep file
+        ReadAllResidues(molecule, in_file);
+        in_file.close();
     }
     else
     {
         throw std::runtime_error("Prep file exists but couldn't be opened.");
     }
-    this->SetAtomConnectivities();
-    this->Generate3dStructures();
+    SetAtomConnectivities(molecule);
+    Generate3dStructures(molecule);
 }
 
-PrepFile::PrepFile(const std::string& prep_file, const std::vector<std::string> queryNames)
+void prep::readPrepFile(cds::Molecule* molecule, const std::string& prep_file,
+                        const std::vector<std::string> queryNames)
 {
-    this->setName("prepFile");
+    molecule->setName("prepFile");
     codeUtils::ensureFileExists(prep_file);
     std::ifstream in_file(prep_file.c_str());
     if (in_file.is_open())
     {
-        this->ReadQueryResidues(in_file, queryNames);
-        in_file.close(); /// Close the prep files
+        ReadQueryResidues(molecule, in_file, queryNames);
+        in_file.close();
     }
     else
     {
@@ -53,64 +49,27 @@ PrepFile::PrepFile(const std::string& prep_file, const std::vector<std::string> 
     // Note that I'm assuming that given a list of query names, the user wants
     // to use all these residues, thus this isn't wasteful:
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished reading prep file. Now setting atomic connectivities.");
-    this->SetAtomConnectivities();
+    SetAtomConnectivities(molecule);
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished setting atomic connectivities. Now generating 3D structures.");
-    this->Generate3dStructures();
+    Generate3dStructures(molecule);
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished, returning from PreFile constructor..");
 }
 
 //////////////////////////////////////////////////////////
-//                           ACCESSOR                   //
-//////////////////////////////////////////////////////////
-// std::vector<std::string> PrepFile::GetAllResidueNames()
-//{
-//	std::vector<std::string> residue_names;
-//	for(PrepFile::ResidueMap::iterator it = residues_.begin(); it != residues_.end(); it++){
-//		std::string residue_name = (*it).first;
-//		residue_names.push_back(residue_name);
-//	}
-//	return residue_names;
-// }
-
-// gmml::ResidueNameMap PrepFile::GetAllResidueNamesMap()
-//{
-//	gmml::ResidueNameMap residue_names = gmml::ResidueNameMap();
-//	for(PrepFile::ResidueMap::iterator it = residues_.begin(); it != residues_.end(); it++){
-//		std::string residue_name = (*it).first;
-//		residue_names[residue_name] = residue_name;
-//	}
-//	return residue_names;
-// }
-
-// std::vector<std::string> PrepFile::GetAllAtomNamesOfResidue(std::string residue_name)
-//{
-//     std::vector<std::string> atom_names_of_residue;
-//     ResidueMap residue_map = GetResidues();
-//     prep::PrepResidue* prep_file_residue = residue_map[residue_name];
-//     std::vector<PrepFileAtom*> atoms = prep_file_residue->GetAtoms();
-//     for(std::vector<PrepFileAtom*>::iterator it = atoms.begin(); it != atoms.end(); it++)
-//     {
-//         PrepFileAtom* atom = (*it);
-//         atom_names_of_residue.push_back(atom->GetName());
-//     }
-//     return atom_names_of_residue;
-// }
-
-//////////////////////////////////////////////////////////
 //                         MUTATORS                     //
 //////////////////////////////////////////////////////////
-void PrepFile::SetAtomConnectivities()
+void prep::SetAtomConnectivities(cds::Molecule* molecule)
 {
-    for (auto& residue : this->getResidues())
+    for (auto& residue : molecule->getResidues())
     {
         codeUtils::erratic_cast<PrepResidue*>(residue)->SetConnectivities();
     }
     return;
 }
 
-void PrepFile::Generate3dStructures()
+void prep::Generate3dStructures(cds::Molecule* molecule)
 {
-    for (auto& residue : this->getResidues())
+    for (auto& residue : molecule->getResidues())
     {
         codeUtils::erratic_cast<PrepResidue*>(residue)->Generate3dStructure();
     }
@@ -120,7 +79,7 @@ void PrepFile::Generate3dStructures()
 //////////////////////////////////////////////////////////
 //                         FUNCTIONS                    //
 //////////////////////////////////////////////////////////
-void PrepFile::ReadAllResidues(std::istream& in_file)
+void prep::ReadAllResidues(cds::Molecule* molecule, std::istream& in_file)
 {
     std::string line = "";
     getline(in_file, line);
@@ -128,13 +87,13 @@ void PrepFile::ReadAllResidues(std::istream& in_file)
     getline(in_file, line);                                         // This should be first line of residue entry. Title
     while (codeUtils::Trim(line).find("STOP") == std::string::npos) /// End of file
     {
-        this->addResidue(std::make_unique<PrepResidue>(in_file, line));
+        molecule->addResidue(std::make_unique<PrepResidue>(in_file, line));
         getline(in_file, line); // This should be first line of next residue entry or STOP.
     }
 }
 
 // Reads each line of the file. If it finds one of the query residues it reads it in. Won't read in query repeats twice.
-void PrepFile::ReadQueryResidues(std::istream& in_file, const std::vector<std::string>& queryNames)
+void prep::ReadQueryResidues(cds::Molecule* molecule, std::istream& in_file, const std::vector<std::string>& queryNames)
 {
     std::string line = "";
     getline(in_file, line);
@@ -152,13 +111,11 @@ void PrepFile::ReadQueryResidues(std::istream& in_file, const std::vector<std::s
         {
             int numberOfTimesToReadInResidue =
                 std::count(queryNames.begin(), queryNames.end(), residueNameLine.front());
-            //                		std::cout << residueNameLine.front() << " will be read in " <<
-            //                numberOfTimesToReadInResidue << " times.\n";
             while (numberOfTimesToReadInResidue > 0)
             {
                 in_file.seekg(firstResidueLinePosition); // go back here so the residue constructor works
                 line = savedTitle;
-                this->addResidue(std::make_unique<PrepResidue>(in_file, line));
+                molecule->addResidue(std::make_unique<PrepResidue>(in_file, line));
                 --numberOfTimesToReadInResidue;
             }
         }
@@ -170,19 +127,17 @@ void PrepFile::ReadQueryResidues(std::istream& in_file, const std::vector<std::s
             }
         }
         getline(in_file, line); // This should be first line of next residue entry or STOP.
-        // std::cout << "Back out and line is: " << line << std::endl;
     }
-    // std::cout << "Ok this is done with line as:\n " << line << std::endl;
 }
 
-void PrepFile::Write(const std::string& prep_file)
+void prep::Write(cds::Molecule* molecule, const std::string& prep_file)
 {
     try
     {
         codeUtils::writeToFile(prep_file,
                                [&](std::ostream& stream)
                                {
-                                   this->Write(stream);
+                                   Write(molecule, stream);
                                });
     }
     catch (...)
@@ -191,24 +146,21 @@ void PrepFile::Write(const std::string& prep_file)
     }
 }
 
-void PrepFile::Write(std::ostream& stream)
+void prep::Write(cds::Molecule* molecule, std::ostream& stream)
 {
     stream << "\n"
            << "\n";
-    for (auto& residue : this->getResidues())
+    for (auto& residue : molecule->getResidues())
     {
         codeUtils::erratic_cast<PrepResidue*>(residue)->Write(stream);
     }
     stream << "STOP\n";
 }
 
-//////////////////////////////////////////////////////////
-//                     DISPLAY FUNCTIONS                //
-//////////////////////////////////////////////////////////
-std::string PrepFile::Print() const
+std::string prep::Print(cds::Molecule* molecule)
 {
     std::string out;
-    for (auto& residue : this->getResidues())
+    for (auto& residue : molecule->getResidues())
     {
         out += "**********************************************************************************\n";
         out += codeUtils::erratic_cast<PrepResidue*>(residue)->toString();

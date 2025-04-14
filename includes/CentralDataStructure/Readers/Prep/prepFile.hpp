@@ -12,48 +12,15 @@
 
 namespace prep
 {
-    class PrepFile : public cds::Molecule
-    {
-      public:
-        //////////////////////////////////////////////////////////
-        //                     TYPE DEFINITION                  //
-        //////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////
-        //                       Constructor                    //
-        //////////////////////////////////////////////////////////
-        PrepFile(const std::string& prep_file);
-        PrepFile(const std::string& prep_file, const std::vector<std::string> queryNames);
-        //////////////////////////////////////////////////////////
-        //                           ACCESSOR                   //
-        //////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////
-        //                           MUTATOR                    //
-        //////////////////////////////////////////////////////////
-        void SetAtomConnectivities();
-        void Generate3dStructures();
-        //////////////////////////////////////////////////////////
-        //                         FUNCTIONS                    //
-        //////////////////////////////////////////////////////////
-        void Write(const std::string& prep_file);
-        void Write(std::ostream& out_stream);
-        //////////////////////////////////////////////////////////
-        //                     DISPLAY FUNCTIONS                //
-        //////////////////////////////////////////////////////////
-        std::string Print() const;
+    void readPrepFile(cds::Molecule* molecule, const std::string& prep_file);
+    void readPrepFile(cds::Molecule* molecule, const std::string& prep_file, const std::vector<std::string> queryNames);
+    void SetAtomConnectivities(cds::Molecule* molecule);
+    void Generate3dStructures(cds::Molecule* molecule);
+    void Write(cds::Molecule* molecule, const std::string& prep_file);
+    void Write(cds::Molecule* molecule, std::ostream& out_stream);
+    std::string Print(cds::Molecule* molecule);
 
-      private:
-        //////////////////////////////////////////////////////////
-        //                           ACCESSOR                   //
-        //////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////
-        //                           MUTATOR                    //
-        //////////////////////////////////////////////////////////
-        void ReadAllResidues(std::istream& in_file);
-        void ReadQueryResidues(std::istream& in_file, const std::vector<std::string>& queryNames);
-        // void ReadOnlyQueryResidues(std::istream &in_file, std::vector<std::string>& query_residue_names);
-        //////////////////////////////////////////////////////////
-        //                         ATTRIBUTES                   //
-        //////////////////////////////////////////////////////////
-    };
+    void ReadAllResidues(cds::Molecule* molecule, std::istream& in_file);
+    void ReadQueryResidues(cds::Molecule* molecule, std::istream& in_file, const std::vector<std::string>& queryNames);
 } // namespace prep
 #endif

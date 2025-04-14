@@ -23,7 +23,6 @@ int main(int argc, char* argv[])
         std::cout << "Exmpl: " << argv[0] << " ../dat/prep/GLYCAM_06j-1_GAGS_KDN_ABE.prep tests/inputs/027.0LU.prep\n";
         std::exit(1);
     }
-    // std::vector<std::string> residuesToLoadFromPrep = {{"0LD"}, {"0LU"}};
     std::string glycamPrepInputFile                 = argv[1];
     std::vector<std::string> residuesToLoadFromPrep = {
         {"0AA"},  {"0AB"}, {"0AD"}, {"0AU"}, {"0BA"}, {"0BB"}, {"0BC"}, {"0BD"}, {"0BU"}, {"0CA"}, {"0CB"},  {"0CD"},
@@ -44,33 +43,18 @@ int main(int argc, char* argv[])
 
     std::vector<cds::Residue*> allGeneratedResidues;
 
-    for (++argv; *argv; ++argv) // Don't use argv after this.
+    for (++argv; *argv; ++argv)
     {
         char* inputFileName = *argv;
         std::cout << "Loading " << inputFileName << std::endl;
-        prep::PrepFile glycamPrepFile(inputFileName, residuesToLoadFromPrep);
-        // allTheResidues.reserve(residuesToLoadFromPrep.size() * 20);
-        for (auto& residue : glycamPrepFile.getResidues())
+        cds::Molecule prepMolecule = cds::Molecule();
+        prep::readPrepFile(&prepMolecule, inputFileName, residuesToLoadFromPrep);
+        for (auto& residue : prepMolecule.getResidues())
         {
-            //            std::ofstream outFileStream;
-            //            std::string fileName = residue->getName() + "_original.pdb";
-            //            outFileStream.open(fileName.c_str());
-            //            std::vector<cds::Residue*> vec = {residue};
-            //            cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbFileData({vec}));
-            //            outFileStream.close();
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
             residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
         }
     }
-    //    for (auto& combiRes : allGeneratedResidues)
-    //    {
-    //    	std::ofstream outFileStream;
-    //    	std::string fileName = combiRes->getName() + ".pdb";
-    //    	outFileStream.open(fileName.c_str());
-    //    	std::vector<cds::Residue*> vec = {combiRes};
-    //    	cds::writeMoleculeToPdb(outFileStream, {0}, {false}, cds::toPdbFileData({vec}));
-    //    	outFileStream.close();
-    //    }
 
     // Note "CA2" was in the prep file, but Rob said delete. "Perhaps we had it before Amber did"
     // "4YP" is the same as 4YnP, which I'll generate from 0YnP anyway
@@ -96,8 +80,9 @@ int main(int argc, char* argv[])
                                                 {"4uA1"},
                                                 {"4uA2"},
                                                 {"4uA3"}};
-    prep::PrepFile glycamPrepFile2(glycamPrepInputFile, theSpecialCases);
-    for (auto& specialResidue : glycamPrepFile2.getResidues())
+    cds::Molecule prepMolecule               = cds::Molecule();
+    prep::readPrepFile(&prepMolecule, glycamPrepInputFile, theSpecialCases);
+    for (auto& specialResidue : prepMolecule.getResidues())
     {
         allGeneratedResidues.push_back(specialResidue);
     }

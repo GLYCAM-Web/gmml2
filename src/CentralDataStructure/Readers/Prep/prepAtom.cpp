@@ -8,6 +8,69 @@
 #include <iomanip>
 #include <ios>
 
+namespace
+{
+    prep::TopologicalType extractAtomTopologicalType(std::istream& ss)
+    {
+        std::string s;
+        ss >> s;
+        if (s == "M")
+        {
+            return prep::kTopTypeM;
+        }
+        else if (s == "S")
+        {
+            return prep::kTopTypeS;
+        }
+        else if (s == "B")
+        {
+            return prep::kTopTypeB;
+        }
+        else if (s == "E")
+        {
+            return prep::kTopTypeE;
+        }
+        else
+        {
+            return prep::kTopType3;
+        }
+    }
+
+    std::string getStringFormatOfTopologicalType(prep::TopologicalType type)
+    {
+        switch (type)
+        {
+            case prep::kTopTypeE:
+                return "E";
+            case prep::kTopTypeS:
+                return "S";
+            case prep::kTopTypeB:
+                return "B";
+            case prep::kTopType3:
+                return "3";
+            case prep::kTopType4:
+                return "4";
+            case prep::kTopTypeM:
+                return "M";
+            default:
+                return "E";
+        }
+    }
+
+    std::vector<prep::PrepAtom*> findDihedralAtoms(prep::PrepAtom* initial)
+    {
+        std::vector<prep::PrepAtom*> result = {initial};
+        for (int currentDepth = 0; currentDepth < 3; currentDepth++)
+        {
+            prep::PrepAtom* parent = codeUtils::erratic_cast<prep::PrepAtom*>(
+                result.back()->getParents().front()); // Go up the first parent only. Loops may create another parent,
+                                                      // but they should be ignored.
+            result.push_back(parent);
+        }
+        return result;
+    }
+} // namespace
+
 using prep::PrepAtom;
 
 //////////////////////////////////////////////////////////
@@ -19,13 +82,13 @@ PrepAtom::PrepAtom(const std::string& line)
     this->setNumber(codeUtils::extractFromStream(ss, int()));
     this->setName(codeUtils::extractFromStream(ss, std::string()));
     this->setType(codeUtils::extractFromStream(ss, std::string()));
-    this->SetTopologicalType(this->ExtractAtomTopologicalType(ss));
-    this->SetBondIndex(codeUtils::extractFromStream(ss, int()));
-    this->SetAngleIndex(codeUtils::extractFromStream(ss, int()));
-    this->SetDihedralIndex(codeUtils::extractFromStream(ss, int()));
-    this->SetBondLength(codeUtils::extractFromStream(ss, double()));
-    this->SetAngle(codeUtils::extractFromStream(ss, double()));
-    this->SetDihedral(codeUtils::extractFromStream(ss, double()));
+    properties.topologicalType = extractAtomTopologicalType(ss);
+    properties.bondIndex       = codeUtils::extractFromStream(ss, int());
+    properties.angleIndex      = codeUtils::extractFromStream(ss, int());
+    properties.dihedralIndex   = codeUtils::extractFromStream(ss, int());
+    properties.bondLength      = codeUtils::extractFromStream(ss, double());
+    properties.angle           = codeUtils::extractFromStream(ss, double());
+    properties.dihedral        = codeUtils::extractFromStream(ss, double());
     this->setCharge(codeUtils::extractFromStream(ss, double()));
 }
 
@@ -35,10 +98,7 @@ PrepAtom::PrepAtom(PrepAtom&& other) noexcept : PrepAtom() //: cds::Atom(other)
     swap(*this, other);
 }
 
-PrepAtom::PrepAtom(const PrepAtom& other) noexcept
-    : cds::Atom(other), type_(other.type_), topological_type_(other.topological_type_), bond_index_(other.bond_index_),
-      angle_index_(other.angle_index_), dihedral_index_(other.dihedral_index_), bond_length_(other.bond_length_),
-      angle_(other.angle_), dihedral_(other.dihedral_), visitCount_(other.visitCount_)
+PrepAtom::PrepAtom(const PrepAtom& other) noexcept : cds::Atom(other), properties(other.properties)
 {}
 
 PrepAtom& PrepAtom::operator=(PrepAtom other) noexcept
@@ -47,167 +107,10 @@ PrepAtom& PrepAtom::operator=(PrepAtom other) noexcept
     return *this;
 }
 
-//////////////////////////////////////////////////////////
-//                           ACCESSOR                   //
-//////////////////////////////////////////////////////////
-std::string PrepAtom::GetType() const
-{
-    return type_;
-}
-
-prep::TopologicalType PrepAtom::GetTopologicalType() const
-{
-    return topological_type_;
-}
-
-int PrepAtom::GetBondIndex() const
-{
-    return bond_index_;
-}
-
-int PrepAtom::GetAngleIndex() const
-{
-    return angle_index_;
-}
-
-int PrepAtom::GetDihedralIndex() const
-{
-    return dihedral_index_;
-}
-
-double PrepAtom::GetBondLength() const
-{
-    return bond_length_;
-}
-
-double PrepAtom::GetAngle() const
-{
-    return angle_;
-}
-
-double PrepAtom::GetDihedral() const
-{
-    return dihedral_;
-}
-
-std::string PrepAtom::GetStringFormatOfTopologicalType() const
-{
-    switch (this->GetTopologicalType())
-    {
-        case kTopTypeE:
-            return "E";
-        case kTopTypeS:
-            return "S";
-        case kTopTypeB:
-            return "B";
-        case kTopType3:
-            return "3";
-        case kTopType4:
-            return "4";
-        case kTopTypeM:
-            return "M";
-        default:
-            return "E";
-    }
-}
-
-prep::TopologicalType PrepAtom::GetTopologicalTypeFromString(std::string topological_type) const
-{
-    if (topological_type == "E")
-    {
-        return kTopTypeE;
-    }
-    if (topological_type == "S")
-    {
-        return kTopTypeS;
-    }
-    if (topological_type == "B")
-    {
-        return kTopTypeB;
-    }
-    if (topological_type == "3")
-    {
-        return kTopType3;
-    }
-    if (topological_type == "4")
-    {
-        return kTopType4;
-    }
-    if (topological_type == "M")
-    {
-        return kTopTypeM;
-    }
-    return kTopTypeE;
-}
-
-//////////////////////////////////////////////////////////
-//                           MUTATOR                    //
-//////////////////////////////////////////////////////////
-void PrepAtom::SetType(std::string type)
-{
-    type_ = type;
-}
-
-void PrepAtom::SetTopologicalType(TopologicalType topological_type)
-{
-    topological_type_ = topological_type;
-}
-
-void PrepAtom::SetBondIndex(int bond_index)
-{
-    bond_index_ = bond_index;
-}
-
-void PrepAtom::SetAngleIndex(int angle_index)
-{
-    angle_index_ = angle_index;
-}
-
-void PrepAtom::SetDihedralIndex(int dihedral_index)
-{
-    dihedral_index_ = dihedral_index;
-}
-
-void PrepAtom::SetBondLength(double bond_length)
-{
-    bond_length_ = bond_length;
-}
-
-void PrepAtom::SetAngle(double angle)
-{
-    angle_ = angle;
-}
-
-void PrepAtom::SetDihedral(double dihedral)
-{
-    dihedral_ = dihedral;
-}
-
-//////////////////////////////////////////////////////////
-//                         FUNCTIONS                    //
-//////////////////////////////////////////////////////////
-void PrepAtom::FindDihedralAtoms(std::vector<PrepAtom*>& foundAtoms, int currentDepth, const int& targetDepth)
-{
-    // std::cout << "Depth is " << currentDepth << " with target " << targetDepth << std::endl;
-    if (currentDepth == targetDepth)
-    {
-        return;
-    }
-    PrepAtom* parent = codeUtils::erratic_cast<PrepAtom*>(
-        foundAtoms.back()
-            ->getParents()
-            .front()); // Go up the first parent only. Loops may create another parent, but they should be ignored.
-    foundAtoms.push_back(parent);
-    this->FindDihedralAtoms(foundAtoms, ++currentDepth, targetDepth);
-    return;
-}
-
 void PrepAtom::Determine3dCoordinate()
 {
     // std::cout << "Determining 3d Coordinates for " << this->getName() << "\n";
-    std::vector<PrepAtom*> foundAtoms;
-    foundAtoms.push_back(this);
-    this->FindDihedralAtoms(foundAtoms);
+    std::vector<PrepAtom*> foundAtoms = findDihedralAtoms(this);
     if (foundAtoms.at(3)->coordinateReference().invalid())
     {
         std::string message = "This atom has no coordinate: " + foundAtoms.at(3)->getName();
@@ -216,69 +119,37 @@ void PrepAtom::Determine3dCoordinate()
     }
     this->setCoordinate(cds::calculateCoordinateFromInternalCoords(
         foundAtoms.at(3)->coordinate(), foundAtoms.at(2)->coordinate(), foundAtoms.at(1)->coordinate(),
-        this->GetAngle(), this->GetDihedral(), this->GetBondLength()));
+        properties.angle, properties.dihedral, properties.bondLength));
     return;
 }
 
-prep::TopologicalType PrepAtom::ExtractAtomTopologicalType(std::istream& ss)
-{
-    std::string s;
-    ss >> s;
-    if (s == "M")
-    {
-        return kTopTypeM;
-    }
-    else if (s == "S")
-    {
-        return kTopTypeS;
-    }
-    else if (s == "B")
-    {
-        return kTopTypeB;
-    }
-    else if (s == "E")
-    {
-        return kTopTypeE;
-    }
-    else
-    {
-        return kTopType3;
-    }
-}
-
-// void PrepAtom::ExtractIndex(std::istream &ss)
-//{
-//	int index;
-//	ss >> index;
-//	this->setIndex(index);
-// }
 //////////////////////////////////////////////////////////
 //                     DISPLAY FUNCTIONS                //
 //////////////////////////////////////////////////////////
 void PrepAtom::Print(std::ostream& out) const
 {
     out << std::setw(3) << this->getNumber() << std::setw(6) << this->getName() << std::setw(6) << this->getType();
-    if (this->GetTopologicalType() == kTopTypeE)
+    if (properties.topologicalType == kTopTypeE)
     {
         out << std::setw(3) << "E";
     }
-    else if (topological_type_ == kTopTypeS)
+    else if (properties.topologicalType == kTopTypeS)
     {
         out << std::setw(3) << "S";
     }
-    else if (topological_type_ == kTopTypeB)
+    else if (properties.topologicalType == kTopTypeB)
     {
         out << std::setw(3) << "B";
     }
-    else if (topological_type_ == kTopType3)
+    else if (properties.topologicalType == kTopType3)
     {
         out << std::setw(3) << "3";
     }
-    else if (topological_type_ == kTopType4)
+    else if (properties.topologicalType == kTopType4)
     {
         out << std::setw(3) << "4";
     }
-    else if (topological_type_ == kTopTypeM)
+    else if (properties.topologicalType == kTopTypeM)
     {
         out << std::setw(3) << "M";
     }
@@ -287,9 +158,9 @@ void PrepAtom::Print(std::ostream& out) const
         out << std::setw(3) << "-";
     }
 
-    out << std::setw(4) << this->GetBondIndex() << std::setw(4) << this->GetAngleIndex() << std::setw(4)
-        << this->GetDihedralIndex() << std::setw(10) << this->GetBondLength() << std::setw(10) << this->GetAngle()
-        << std::setw(10) << this->GetDihedral() << std::setw(10) << this->getCharge();
+    out << std::setw(4) << properties.bondIndex << std::setw(4) << properties.angleIndex << std::setw(4)
+        << properties.dihedralIndex << std::setw(10) << properties.bondLength << std::setw(10) << properties.angle
+        << std::setw(10) << properties.dihedral << std::setw(10) << this->getCharge();
     //        << endl;
 }
 
@@ -297,12 +168,12 @@ void PrepAtom::Write(std::ostream& stream) const
 {
     stream << std::right << std::setw(2) << this->getNumber() << " " << std::left << std::setw(4) << this->getName()
            << " " << std::left << std::setw(3) << this->getType() << " " << std::setw(1)
-           << this->GetStringFormatOfTopologicalType() << " " << std::right << std::setw(2) << this->GetBondIndex()
-           << " " << std::right << std::setw(2) << this->GetAngleIndex() << " " << std::right << std::setw(2)
-           << this->GetDihedralIndex() << " ";
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->GetBondLength() << " ";
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->GetAngle() << " ";
-    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->GetDihedral();
+           << getStringFormatOfTopologicalType(properties.topologicalType) << " " << std::right << std::setw(2)
+           << properties.bondIndex << " " << std::right << std::setw(2) << properties.angleIndex << " " << std::right
+           << std::setw(2) << properties.dihedralIndex << " ";
+    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << properties.bondLength << " ";
+    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << properties.angle << " ";
+    stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << properties.dihedral;
     stream << "    " << std::right << std::setw(8) << std::fixed << std::setprecision(4) << this->getCharge()
            << std::endl;
 }

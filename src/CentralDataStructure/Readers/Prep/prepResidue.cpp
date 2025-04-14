@@ -18,29 +18,28 @@ using prep::PrepResidue;
 //////////////////////////////////////////////////////////
 PrepResidue::PrepResidue(std::istream& in_file, std::string& line)
 {
-    std::string name, dummy_atom_type;
+    std::string dummy_atom_type;
     std::istringstream ss;
-    this->SetTitle(line);   /// Set title of the residue
-    getline(in_file, line); /// Blank line, skip
-    getline(in_file, line); /// Read the next line
+    properties.title = line; /// Set title of the residue
+    getline(in_file, line);
+    getline(in_file, line);
     // I guess you can extract with spaces as the default delimiter with >> from a stringstream
-    ss.str(line); /// Create an stream from the read line
+    ss.str(line);
     this->ExtractResidueName(ss);
     this->ExtractResidueCoordinateType(ss);
     this->ExtractResidueOutputFormat(ss);
     ss.clear();
-    getline(in_file, line); /// Read the next line
+    getline(in_file, line);
     this->ExtractResidueGeometryType(ss);
     this->ExtractResidueDummyAtomOmission(ss);
     ss >> dummy_atom_type;
-    this->SetDummyAtomType(dummy_atom_type);
+    properties.dummyAtomType = dummy_atom_type;
     this->ExtractResidueDummyAtomPosition(ss);
-    getline(in_file, line); /// Read the next line
-    this->SetCharge(codeUtils::from_string<double>(line));
+    getline(in_file, line);
+    properties.charge = codeUtils::from_string<double>(line);
     /// Process atoms of the residue
     while (getline(in_file, line) && !codeUtils::Trim(line).empty())
     {
-        // cds::Atom* latestAtom = this->addAtom(std::make_unique<PrepAtom>(line));
         this->addAtom(std::make_unique<PrepAtom>(line));
     }
     /// Process the extra sections: IMPROPER, LOOP, DONE
@@ -77,12 +76,7 @@ PrepResidue::PrepResidue(PrepResidue&& other) noexcept : PrepResidue()
 }
 
 // Copy Ctor
-PrepResidue::PrepResidue(const PrepResidue& other)
-    : cds::Residue(other), title_(other.title_), coordinate_type_(other.coordinate_type_),
-      output_format_(other.output_format_), geometry_type_(other.geometry_type_),
-      dummy_atom_omission_(other.dummy_atom_omission_), dummy_atom_type_(other.dummy_atom_type_),
-      dummy_atom_position_(other.dummy_atom_position_), charge_(other.charge_),
-      improper_dihedrals_(other.improper_dihedrals_), loops_(other.loops_)
+PrepResidue::PrepResidue(const PrepResidue& other) : cds::Residue(other), properties(other.properties)
 { // Bro you gotta loop through the atoms here and copy the info over, cause the cds::Residue(other) copies them as
   // cds::Atom types. Update no! you can't, they aren't castable cause they aren't PrepAtom types.
 }
@@ -94,59 +88,6 @@ PrepResidue& PrepResidue::operator=(PrepResidue other)
     return *this;
 }
 
-//////////////////////////////////////////////////////////
-//                           ACCESSOR                   //
-//////////////////////////////////////////////////////////
-std::string PrepResidue::GetTitle() const
-{
-    return title_;
-}
-
-prep::CoordinateType PrepResidue::GetCoordinateType() const
-{
-    return coordinate_type_;
-}
-
-prep::OutputFormat PrepResidue::GetOutputFormat() const
-{
-    return output_format_;
-}
-
-prep::GeometryType PrepResidue::GetGeometryType() const
-{
-    return geometry_type_;
-}
-
-prep::DummyAtomOmission PrepResidue::GetDummyAtomOmission() const
-{
-    return dummy_atom_omission_;
-}
-
-std::string PrepResidue::GetDummyAtomType() const
-{
-    return dummy_atom_type_;
-}
-
-prep::DummyAtomPosition PrepResidue::GetDummyAtomPosition() const
-{
-    return dummy_atom_position_;
-}
-
-double PrepResidue::GetCharge() const
-{
-    return charge_;
-}
-
-PrepResidue::DihedralVector PrepResidue::GetImproperDihedrals() const
-{
-    return improper_dihedrals_;
-}
-
-std::vector<std::pair<std::string, std::string>> PrepResidue::GetLoops() const
-{
-    return loops_;
-}
-
 std::string PrepResidue::GetStringFormatOfCoordinateType(prep::CoordinateType coordinate_type) const
 {
     switch (coordinate_type)
@@ -155,19 +96,6 @@ std::string PrepResidue::GetStringFormatOfCoordinateType(prep::CoordinateType co
             return "INT";
         case prep::kXYZ:
             return "XYZ";
-        default:
-            return "";
-    }
-}
-
-std::string PrepResidue::GetStringFormatOfOutputFormat(prep::OutputFormat output_format) const
-{
-    switch (output_format)
-    {
-        case prep::kFormatted:
-            return "FRM";
-        case prep::kBinary:
-            return "BIN";
         default:
             return "";
     }
@@ -212,109 +140,6 @@ std::string PrepResidue::GetStringFormatOfDummyAtomOmission(prep::DummyAtomOmiss
     }
 }
 
-std::string PrepResidue::GetStringFormatOfSectionType(SectionType section_type) const
-{
-    switch (section_type)
-    {
-        case prep::kSectionLoop:
-            return "SectionLoop";
-        case prep::kSectionImproper:
-            return "SectionImproper";
-        case prep::kSectionDone:
-            return "kSectionDone";
-        case prep::kSectionOther:
-            return "SectionOther";
-        default:
-            return "";
-    }
-}
-
-prep::CoordinateType PrepResidue::GetCoordinateTypeFromString(std::string coordinate_type) const
-{
-    if (coordinate_type == "INT")
-    {
-        return prep::kINT;
-    }
-    if (coordinate_type == "XYZ")
-    {
-        return prep::kXYZ;
-    }
-    return prep::kINT;
-}
-
-prep::OutputFormat PrepResidue::GetOutputFormatFromString(std::string output_format) const
-{
-    if (output_format == "Formatted")
-    {
-        return prep::kFormatted;
-    }
-    if (output_format == "Binary")
-    {
-        return prep::kBinary;
-    }
-    return prep::kBinary;
-}
-
-prep::GeometryType PrepResidue::GetGeometryTypeFromString(std::string geometry_type) const
-{
-    if (geometry_type == "GeometryCorrect")
-    {
-        return prep::kGeometryCorrect;
-    }
-    if (geometry_type == "GeometryChange")
-    {
-        return prep::kGeometryChange;
-    }
-    return prep::kGeometryCorrect;
-}
-
-prep::DummyAtomPosition PrepResidue::GetDummyAtomPositionFromString(std::string dummy_atom_position) const
-{
-    if (dummy_atom_position == "PositionAll")
-    {
-        return prep::kPositionAll;
-    }
-    if (dummy_atom_position == "PositionBeg")
-    {
-        return prep::kPositionBeg;
-    }
-    return prep::kPositionBeg;
-}
-
-prep::DummyAtomOmission PrepResidue::GetDummyAtomOmissionFromString(std::string dummy_atom_omission) const
-{
-    if (dummy_atom_omission == "Omit")
-    {
-        return prep::kOmit;
-    }
-    if (dummy_atom_omission == "Nomit")
-    {
-        return prep::kNomit;
-    }
-    return prep::kOmit;
-}
-
-prep::SectionType PrepResidue::GetSectionTypeFromString(std::string section_type) const
-{
-    if (section_type == "SectionLoop")
-    {
-        return prep::kSectionLoop;
-    }
-    if (section_type == "SectionImproper")
-    {
-        return prep::kSectionImproper;
-    }
-    if (section_type == "SectionDone")
-    {
-        return prep::kSectionDone;
-    }
-    if (section_type == "SectionOther")
-    {
-        return prep::kSectionOther;
-    }
-    return prep::kSectionOther;
-}
-
 std::vector<std::string> PrepResidue::GetAtomNames() const
 {
     std::vector<std::string> foundAtoms;
@@ -339,69 +164,6 @@ std::vector<std::string> PrepResidue::GetHeavyAtomNames() const
 }
 
 //////////////////////////////////////////////////////////
-//                           MUTATOR                    //
-//////////////////////////////////////////////////////////
-void PrepResidue::SetTitle(const std::string title)
-{
-    title_ = title;
-}
-
-void PrepResidue::SetCoordinateType(prep::CoordinateType coordinate_type)
-{
-    coordinate_type_ = coordinate_type;
-}
-
-void PrepResidue::SetOutputFormat(prep::OutputFormat output_format)
-{
-    output_format_ = output_format;
-}
-
-void PrepResidue::SetGeometryType(prep::GeometryType geometry_type)
-{
-    geometry_type_ = geometry_type;
-}
-
-void PrepResidue::SetDummyAtomOmission(prep::DummyAtomOmission dummy_atom_omission)
-{
-    dummy_atom_omission_ = dummy_atom_omission;
-}
-
-void PrepResidue::SetDummyAtomType(const std::string dummy_atom_type)
-{
-    dummy_atom_type_ = dummy_atom_type;
-}
-
-void PrepResidue::SetDummyAtomPosition(DummyAtomPosition dummy_atom_position)
-{
-    dummy_atom_position_ = dummy_atom_position;
-}
-
-void PrepResidue::SetCharge(double charge)
-{
-    charge_ = charge;
-}
-
-void PrepResidue::SetImproperDihedrals(DihedralVector improper_dihedrals)
-{
-    improper_dihedrals_.clear();
-    for (DihedralVector::iterator it = improper_dihedrals.begin(); it != improper_dihedrals.end(); it++)
-    {
-        improper_dihedrals_.push_back(*it);
-    }
-}
-
-void PrepResidue::AddImproperDihedral(Dihedral improper_dihedral)
-{
-    improper_dihedrals_.push_back(improper_dihedral);
-}
-
-void PrepResidue::AddLoop(std::pair<std::string, std::string> loop)
-{
-    loops_.push_back(loop);
-    return;
-}
-
-//////////////////////////////////////////////////////////
 //                         FUNCTIONS                    //
 //////////////////////////////////////////////////////////
 // Read about Amber Prep format. kTopTypeE is an "E" atom. The type determines connectivity and the order the atoms are
@@ -415,8 +177,7 @@ void PrepResidue::SetConnectivities()
     // std::cout << "Attempting to set connectivities in prepResidue: " << this->getName() << std::endl;
     // std::cout << "Number of atoms: " << this->getAtoms().size() << std::endl;
     // std::cout << "First atom is " << this->getAtoms().front()->getName() << std::endl;
-    std::vector<PrepAtom*> connectionPointStack;
-    connectionPointStack.push_back(codeUtils::erratic_cast<PrepAtom*>(this->getAtoms().front()));
+    std::vector<PrepAtom*> connectionPointStack = {codeUtils::erratic_cast<PrepAtom*>(this->getAtoms().front())};
     // while(currentAtom != this->getAtoms().end())
     for (auto& currentAtom : this->getAtoms())
     {
@@ -424,19 +185,20 @@ void PrepResidue::SetConnectivities()
         addBond(connectionPointStack.back(), currentAtomAsPrepType);
         // std::cout << "Bonded " << connectionPointStack.back()->getName() << " to " << currentAtom->getName() <<
         // std::endl;;
-        connectionPointStack.back()->visit();
-        if (connectionPointStack.back()->GetVisits() >= connectionPointStack.back()->GetTopologicalType())
+        connectionPointStack.back()->properties.visitCount++;
+        if (connectionPointStack.back()->properties.visitCount >=
+            connectionPointStack.back()->properties.topologicalType)
         {
             connectionPointStack.pop_back();
         }
-        if (currentAtomAsPrepType->GetTopologicalType() > kTopTypeE)
+        if (currentAtomAsPrepType->properties.topologicalType > kTopTypeE)
         {
             connectionPointStack.push_back(currentAtomAsPrepType);
         }
         ++currentAtom;
     }
     // Now bond any atoms defined in loops.
-    for (auto& loop : this->GetLoops())
+    for (auto& loop : this->properties.loops)
     {
         // gmml::log(__LINE__,__FILE__, gmml::INF, "Bonding loop " + loop.first + " to " + loop.second + "\n");
         PrepAtom* firstAtom =
@@ -475,17 +237,14 @@ void PrepResidue::Generate3dStructure()
         throw std::runtime_error(message);
     }
     this->DeleteDummyAtoms();
-    return;
 }
 
 void PrepResidue::DeleteDummyAtoms()
 {
     for (auto dummyAtom : codeUtils::getElementsWithNames(this->getAtoms(), {"DUMM"}))
     {
-        // gmml::log(__LINE__, __FILE__, gmml::INF, "Deleting: " + dummyAtom->getName());
         this->deleteAtom(dummyAtom);
     }
-    return;
 }
 
 /// Return residue name from a stream line which is the first column of the 3rd line in each residue section
@@ -494,7 +253,6 @@ void PrepResidue::ExtractResidueName(std::istream& ss)
     std::string name;
     ss >> name;
     this->setName(name);
-    return;
 }
 
 /// Return coordinate type from a stream line which is the 2nd column of the 3rd line in each residue section
@@ -502,15 +260,7 @@ void PrepResidue::ExtractResidueCoordinateType(std::istream& ss)
 {
     std::string s;
     ss >> s;
-    if (s == "XYZ")
-    {
-        this->SetCoordinateType(prep::kXYZ);
-    }
-    else
-    {
-        this->SetCoordinateType(prep::kINT);
-    }
-    return;
+    properties.coordinateType = (s == "XYZ") ? prep::kXYZ : prep::kINT;
 }
 
 /// Return output format from a stream line which is the 3rd column of the 3rd line in each residue section
@@ -518,15 +268,7 @@ void PrepResidue::ExtractResidueOutputFormat(std::istream& ss)
 {
     int val;
     ss >> val;
-    if (val == 1)
-    {
-        this->SetOutputFormat(prep::kBinary);
-    }
-    else
-    {
-        this->SetOutputFormat(prep::kFormatted);
-    }
-    return;
+    properties.outputFormat = (val == 1) ? prep::kBinary : prep::kFormatted;
 }
 
 /// Return geometry type from a stream line which is the first column of the 4th line in each residue section
@@ -534,15 +276,7 @@ void PrepResidue::ExtractResidueGeometryType(std::istream& ss)
 {
     std::string s;
     ss >> s;
-    if (s == "CHANGE")
-    {
-        this->SetGeometryType(prep::kGeometryChange);
-    }
-    else
-    {
-        this->SetGeometryType(prep::kGeometryCorrect);
-    }
-    return;
+    properties.geometryType = (s == "CHANGE") ? prep::kGeometryChange : prep::kGeometryCorrect;
 }
 
 /// Return dummy atom omission from a stream line which is the 2nd column of the 4th line in each residue section
@@ -550,15 +284,7 @@ void PrepResidue::ExtractResidueDummyAtomOmission(std::istream& ss)
 {
     std::string s;
     ss >> s;
-    if (s == "NOMIT")
-    {
-        this->SetDummyAtomOmission(prep::kNomit);
-    }
-    else
-    {
-        this->SetDummyAtomOmission(prep::kOmit);
-    }
-    return;
+    properties.dummyAtomOmission = (s == "NOMIT") ? prep::kNomit : prep::kOmit;
 }
 
 /// Return dummy atom position from a stream line which is the 4th column of the 4th line in each residue section
@@ -566,15 +292,7 @@ void PrepResidue::ExtractResidueDummyAtomPosition(std::istream& ss)
 {
     std::string s;
     ss >> s;
-    if (s == "ALL")
-    {
-        this->SetDummyAtomPosition(prep::kPositionAll);
-    }
-    else
-    {
-        this->SetDummyAtomPosition(prep::kPositionBeg);
-    }
-    return;
+    properties.dummyAtomPosition = (s == "ALL") ? prep::kPositionAll : prep::kPositionBeg;
 }
 
 /// Return a corresponding title from a stream line which may appear in each residue section
@@ -604,9 +322,9 @@ void PrepResidue::ExtractLoops(std::istream& in_file)
            !codeUtils::Trim(line).empty()) /// Read file until blank line which determines the end of the section
     {
         ss.clear();
-        ss.str(line); /// Create a stream from the read line
+        ss.str(line);
         std::string atom_names[2];
-        ss >> atom_names[0] >> atom_names[1]; /// Extract atom names from the stream
+        ss >> atom_names[0] >> atom_names[1];
         if (atom_names[0].empty() || atom_names[1].empty())
         {
             std::string message = "Error parsing LOOP section of prep file. Unexpected line >>>" + line +
@@ -614,7 +332,7 @@ void PrepResidue::ExtractLoops(std::istream& in_file)
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }
-        this->AddLoop(std::make_pair(atom_names[0], atom_names[1]));
+        properties.loops.push_back({atom_names[0], atom_names[1]});
     }
     return;
 }
@@ -641,15 +359,13 @@ void PrepResidue::ExtractImproperDihedral(std::istream& in_file)
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }
-        /// Push all atoms into a std::vector of atom types
         for (int i = 0; i < 4; i++)
         {
             dihedral.push_back(atom_names[i]);
         }
         dihedrals.push_back(dihedral); /// Create a new dihedral into the std::vector of dihedrals
     }
-    this->SetImproperDihedrals(dihedrals);
-    return;
+    properties.improperDihedrals = dihedrals;
 }
 
 //////////////////////////////////////////////////////////
@@ -671,18 +387,17 @@ double PrepResidue::CalculatePrepResidueCharge()
 std::string PrepResidue::toString() const
 {
     std::stringstream out;
-    //    BondedAtomIndexMap bonded_atoms_map = this->GetBondingsOfResidue();
-    out << "Title: " << title_ << std::endl;
+    out << "Title: " << properties.title << std::endl;
     out << std::setw(10) << "ResName" << std::setw(10) << "CrdType" << std::setw(10) << "Output" << std::setw(10)
         << "GeoType" << std::setw(15) << "DummyOmission" << std::setw(12) << "DummyType" << std::setw(12) << "DummyPos"
         << std::setw(10) << "Charge" << std::endl;
     out << std::setw(10) << this->getName();
 
-    if (coordinate_type_ == prep::kINT)
+    if (properties.coordinateType == prep::kINT)
     {
         out << std::setw(10) << "INT";
     }
-    else if (coordinate_type_ == prep::kXYZ)
+    else if (properties.coordinateType == prep::kXYZ)
     {
         out << std::setw(10) << "XYZ";
     }
@@ -691,11 +406,11 @@ std::string PrepResidue::toString() const
         out << std::setw(10) << "--";
     }
 
-    if (output_format_ == prep::kBinary)
+    if (properties.outputFormat == prep::kBinary)
     {
         out << std::setw(10) << "Binary";
     }
-    else if (output_format_ == prep::kFormatted)
+    else if (properties.outputFormat == prep::kFormatted)
     {
         out << std::setw(10) << "NBinary";
     }
@@ -704,11 +419,11 @@ std::string PrepResidue::toString() const
         out << std::setw(10) << "--";
     }
 
-    if (geometry_type_ == prep::kGeometryCorrect)
+    if (properties.geometryType == prep::kGeometryCorrect)
     {
         out << std::setw(10) << "Correct";
     }
-    else if (geometry_type_ == prep::kGeometryChange)
+    else if (properties.geometryType == prep::kGeometryChange)
     {
         out << std::setw(10) << "Change";
     }
@@ -717,11 +432,11 @@ std::string PrepResidue::toString() const
         out << std::setw(10) << "--";
     }
 
-    if (dummy_atom_omission_ == prep::kOmit)
+    if (properties.dummyAtomOmission == prep::kOmit)
     {
         out << std::setw(15) << "YES";
     }
-    else if (dummy_atom_omission_ == prep::kNomit)
+    else if (properties.dummyAtomOmission == prep::kNomit)
     {
         out << std::setw(15) << "NO";
     }
@@ -730,13 +445,13 @@ std::string PrepResidue::toString() const
         out << std::setw(15) << "--";
     }
 
-    out << std::setw(12) << dummy_atom_type_;
+    out << std::setw(12) << properties.dummyAtomType;
 
-    if (dummy_atom_position_ == prep::kPositionAll)
+    if (properties.dummyAtomPosition == prep::kPositionAll)
     {
         out << std::setw(12) << "ALL";
     }
-    else if (dummy_atom_position_ == prep::kPositionBeg)
+    else if (properties.dummyAtomPosition == prep::kPositionBeg)
     {
         out << std::setw(12) << "BEG";
     }
@@ -745,31 +460,15 @@ std::string PrepResidue::toString() const
         out << std::setw(12) << "--";
     }
 
-    out << std::setw(10) << charge_ << std::endl << std::endl;
+    out << std::setw(10) << properties.charge << std::endl << std::endl;
 
     out << std::setw(3) << "#" << std::setw(6) << "Name" << std::setw(6) << "Type" << std::setw(3) << "TT"
         << std::setw(4) << "B#" << std::setw(4) << "A#" << std::setw(4) << "D#" << std::setw(10) << "Bond"
         << std::setw(10) << "Angle" << std::setw(10) << "Dihedral" << std::setw(10) << "Charge" << std::setw(10)
         << "Bonded" << std::endl;
 
-    //    for(std::vector<prep::PrepAtom*>::iterator it = atoms_.begin(); it != atoms_.end(); it++)
-    //    {
-    //        (*it)->Print(out);
-    //        std::vector<int> bonded_atoms = bonded_atoms_map[(*it)->GetIndex()];
-    //        out << "\t";
-    //        for(unsigned int i = 0; i < bonded_atoms.size(); i++)
-    //        {
-    //            if(i != bonded_atoms.size() - 1)
-    //                out << this->GetAtomNameByIndex(bonded_atoms.at(i)) << ", ";
-    //            else
-    //                out << this->GetAtomNameByIndex(bonded_atoms.at(i));
-    //        }
-    //        out << std::endl;
-    //
-    //    }
-
     out << std::endl << "Improper dihedrals" << std::endl;
-    for (auto& improperDihedral : this->GetImproperDihedrals())
+    for (auto& improperDihedral : this->properties.improperDihedrals)
     {
         for (auto& dihedralComponent : improperDihedral)
         {
@@ -779,11 +478,6 @@ std::string PrepResidue::toString() const
     }
 
     out << std::endl << "Loops" << std::endl;
-    //    for(Loop::iterator it = loops_.begin(); it != loops_.end(); it++)
-    //    {
-    //        out << std::setw(6) << this->GetAtomNameByIndex(it->first) << std::setw(6) <<
-    //        this->GetAtomNameByIndex(it->second) << std::endl;
-    //    }
 
     out << std::endl;
     return out.str();
@@ -791,24 +485,25 @@ std::string PrepResidue::toString() const
 
 void PrepResidue::Write(std::ostream& stream)
 {
-    stream << this->GetTitle() << std::endl
+    stream << this->properties.title << std::endl
            << std::endl
            << std::left << std::setw(4) << this->getName() << " " << std::right << std::setw(3)
-           << this->GetStringFormatOfCoordinateType(this->GetCoordinateType()) << " " << std::setw(1)
-           << this->GetOutputFormat() << std::endl
-           << this->GetStringFormatOfGeometryType(this->GetGeometryType()) << " "
-           << this->GetStringFormatOfDummyAtomOmission(this->GetDummyAtomOmission()) << " " << this->GetDummyAtomType()
-           << " " << this->GetStringFormatOfDummyAtomPosition(this->GetDummyAtomPosition()) << std::endl
-           << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->GetCharge() << std::endl;
+           << this->GetStringFormatOfCoordinateType(this->properties.coordinateType) << " " << std::setw(1)
+           << this->properties.outputFormat << std::endl
+           << this->GetStringFormatOfGeometryType(this->properties.geometryType) << " "
+           << this->GetStringFormatOfDummyAtomOmission(this->properties.dummyAtomOmission) << " "
+           << this->properties.dummyAtomType << " "
+           << this->GetStringFormatOfDummyAtomPosition(this->properties.dummyAtomPosition) << std::endl
+           << std::right << std::setw(8) << std::fixed << std::setprecision(3) << this->properties.charge << std::endl;
     for (auto& atom : this->getAtoms())
     {
         codeUtils::erratic_cast<PrepAtom*>(atom)->Write(stream);
     }
     stream << std::endl;
-    if (this->GetImproperDihedrals().size() > 0)
+    if (this->properties.improperDihedrals.size() > 0)
     {
         stream << "IMPROPER" << std::endl;
-        for (auto& dihedral : this->GetImproperDihedrals())
+        for (auto& dihedral : this->properties.improperDihedrals)
         {
             stream << std::left << std::setw(4) << dihedral.at(0) << std::left << std::setw(4) << dihedral.at(1)
                    << std::left << std::setw(4) << dihedral.at(2) << std::left << std::setw(4) << dihedral.at(3)
@@ -816,10 +511,10 @@ void PrepResidue::Write(std::ostream& stream)
         }
         stream << std::endl;
     }
-    if (this->GetLoops().size() > 0)
+    if (this->properties.loops.size() > 0)
     {
         stream << "LOOP" << std::endl;
-        for (auto& loop : this->GetLoops())
+        for (auto& loop : this->properties.loops)
         {
             stream << loop.first << " " << loop.second << std::endl;
         }

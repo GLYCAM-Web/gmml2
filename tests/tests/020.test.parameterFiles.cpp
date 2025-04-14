@@ -16,15 +16,15 @@ int main()
 {
     std::string prepFilePath                        = "../dat/prep/GLYCAM_06j-1_GAGS.prep";
     std::vector<std::string> residuesToLoadFromPrep = {"0GA", "4YB", "4uA", "Cake", "4YA"};
-    // std::vector<std::string> residuesToLoadFromPrep = {"0GA"};
-    prep::PrepFile glycamPrepFileSelect(prepFilePath, residuesToLoadFromPrep);
+    cds::Molecule molecule                          = cds::Molecule();
+    prep::readPrepFile(&molecule, prepFilePath, residuesToLoadFromPrep);
     // PREP residues
-    glycamPrepFileSelect.Write("./prepAsPrepFile.prep");
+    prep::Write(&molecule, "./prepAsPrepFile.prep");
     // PDB
     std::string fileName = "./prepAsPdbFile.pdb";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData({&glycamPrepFileSelect});
+        cds::GraphIndexData indices = cds::toIndexData({&molecule});
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)
                                {
@@ -40,7 +40,7 @@ int main()
     fileName = "./prepAsOffFile.off";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData(glycamPrepFileSelect.getResidues());
+        cds::GraphIndexData indices = cds::toIndexData(molecule.getResidues());
         assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
         cds::serializeResiduesIndividually(indices.residues);
         codeUtils::writeToFile(fileName,
@@ -56,11 +56,11 @@ int main()
         throw std::runtime_error("Error when writing to file:\n" + fileName);
     }
     // OFF separate residues
-    glycamPrepFileSelect.setName("LIBRARY");
+    molecule.setName("LIBRARY");
     fileName = "./prepAsLibFile.lib";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData(glycamPrepFileSelect.getResidues());
+        cds::GraphIndexData indices = cds::toIndexData(molecule.getResidues());
         assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
         cds::serializeResiduesIndividually(indices.residues);
         codeUtils::writeToFile(fileName,
