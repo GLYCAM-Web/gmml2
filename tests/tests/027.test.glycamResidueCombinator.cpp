@@ -43,9 +43,9 @@ int main(int argc, char* argv[])
 
     std::vector<cds::Residue*> allGeneratedResidues;
 
-    for (++argv; *argv; ++argv)
+    for (int n = 1; n < argc; n++)
     {
-        char* inputFileName = *argv;
+        char* inputFileName = argv[n];
         std::cout << "Loading " << inputFileName << std::endl;
         cds::Molecule prepMolecule = cds::Molecule();
         prep::readPrepFile(&prepMolecule, inputFileName, residuesToLoadFromPrep);
