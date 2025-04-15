@@ -24,6 +24,8 @@ namespace codeUtils
     std::string trimmedOfWhitespace(std::string str);
     std::vector<std::string> split(const std::string& s, char delim);
     std::string join(const std::string& delim, const std::vector<std::string>& strings);
+    std::string upperCase(std::string str);
+    std::string lowerCase(std::string str);
 
     template<typename T> T from_string(const std::string& str)
     {

@@ -129,3 +129,15 @@ std::string codeUtils::join(const std::string& delim, const std::vector<std::str
     }
     return result.str();
 }
+
+std::string codeUtils::upperCase(std::string str)
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::toupper);
+    return str;
+}
+
+std::string codeUtils::lowerCase(std::string str)
+{
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    return str;
+}
