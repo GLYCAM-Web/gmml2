@@ -277,7 +277,7 @@ std::string cdsCondensedSequence::printSequence(std::vector<ParsedResidue*> resi
     return ss.str();
 }
 
-std::string cdsCondensedSequence::reorderSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues)
+void cdsCondensedSequence::reorderSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues)
 { // Just doing the default by ascending link number for now.
     for (auto& residue : residues)
     {
@@ -300,7 +300,6 @@ std::string cdsCondensedSequence::reorderSequence(std::vector<std::unique_ptr<Pa
         }
         newPosition++;
     }
-    return printSequence(codeUtils::pointerToUniqueVector(residues), false);
 }
 
 ParsedResidue* cdsCondensedSequence::terminalResidue(std::vector<ParsedResidue*> residues)

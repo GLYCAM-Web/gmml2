@@ -16,7 +16,7 @@ namespace cdsCondensedSequence
     std::string printGraphViz(GraphVizDotConfig& configs, std::vector<ParsedResidue*> residues);
     std::string printSequence(std::vector<ParsedResidue*> residues, bool withLabels = false,
                               bool iupacCondensed = false);
-    std::string reorderSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues);
+    void reorderSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues);
     ParsedResidue* terminalResidue(std::vector<ParsedResidue*> residues);
 } // namespace cdsCondensedSequence
 #endif

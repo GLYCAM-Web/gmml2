@@ -16,7 +16,8 @@ Sequence::Sequence(std::string condensedSequence)
     this->setInputSequence(condensedSequence);
     this->setInterpretedSequence(
         cdsCondensedSequence::printSequence(codeUtils::pointerToUniqueVector(residuePtrs), false));
-    this->setIndexOrdered(cdsCondensedSequence::reorderSequence(residuePtrs));
+    cdsCondensedSequence::reorderSequence(residuePtrs);
+    this->setIndexOrdered(cdsCondensedSequence::printSequence(codeUtils::pointerToUniqueVector(residuePtrs), false));
     std::vector<cdsCondensedSequence::ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
     cdsCondensedSequence::labelSequence(residues);
     this->setIndexLabeled(cdsCondensedSequence::printSequence(residues, true));
