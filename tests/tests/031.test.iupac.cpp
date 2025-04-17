@@ -1,8 +1,11 @@
+#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CodeUtils/containers.hpp"
+
 #include <vector>
 #include <string>
+#include <memory>
 #include <iostream>
-
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser2.hpp"
 
 int main()
 {
@@ -38,11 +41,14 @@ int main()
         std::cout << "s" << count << ":\n" << sequence << "\n";
         try
         {
-            cdsCondensedSequence::Sequence glycamSequence(sequence);
-            std::cout << "Index Ordered:\n" << glycamSequence.Print(false) << "\n";
-            std::cout << "Iupac:\n" << glycamSequence.PrintIupac() << "\n";
-            glycamSequence.LabelSequence();
-            std::cout << "Labeled:\n" << glycamSequence.Print(true) << "\n\n";
+            std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residues;
+            parseSequence(residues, sequence);
+            reorderSequence(residues);
+            std::vector<cdsCondensedSequence::ParsedResidue*> residuePtrs = codeUtils::pointerToUniqueVector(residues);
+            std::cout << "Index Ordered:\n" << cdsCondensedSequence::printSequence(residuePtrs, false) << "\n";
+            std::cout << "Iupac:\n" << cdsCondensedSequence::printSequence(residuePtrs, false, true) << "\n";
+            cdsCondensedSequence::labelSequence(residuePtrs);
+            std::cout << "Labeled:\n" << cdsCondensedSequence::printSequence(residuePtrs, true) << "\n\n";
         }
         catch (std::runtime_error& error)
         {
