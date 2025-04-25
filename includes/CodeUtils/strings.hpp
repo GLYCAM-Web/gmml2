@@ -8,7 +8,17 @@
 
 namespace codeUtils
 {
-    // Functions
+    struct Brackets
+    {
+        std::string open;
+        std::string close;
+    };
+
+    static const Brackets noBrackets     = {"", ""};
+    static const Brackets squareBrackets = {"[", "]"};
+    static const Brackets roundBrackets  = {"(", ")"};
+    static const Brackets curlyBrackets  = {"{", "}"};
+
     bool startsWith(const std::string& bigString, const std::string& smallString);
     std::string RemoveWhiteSpace(std::string str);
     void RemoveSpaces(std::string& str);
