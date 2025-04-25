@@ -295,6 +295,8 @@ namespace
     }
 } // namespace
 
+#include <iostream>
+
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
@@ -302,10 +304,10 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
     : cds::Molecule()
 {
     {
-        std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
-        parseSequence(residuePtrs, inputSequence);
-        reorderSequence(residuePtrs); // So output is consistent regardless of input order e.g. Fuca1-2[Gala1-3]Glca vs
-                                      // Gala1-3[Fuca1-2]Glca. Same 3D structure.
+        std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residuePtrs;
+        createParsedResidues(residuePtrs, reordered(parseSequence(inputSequence)));
+        sortResidueEdges(residuePtrs);
+
         std::vector<ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
         for (auto& residue : residues)
         { // Move atoms from prep file into parsedResidues.

@@ -27,7 +27,7 @@ namespace cdsCondensedSequence
         RingShapeAndModifier ringShapeAndModifier;
     };
 
-    std::string getLink(const ParsedResidueComponents& components);
+    std::string getLink(cds::ResidueType type, const std::string& linkage);
 
     //	class ParsedResidue : public Abstract::absResidue , public glygraph::Node<ParsedResidue>
     class ParsedResidue : public cds::Residue
@@ -41,8 +41,8 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
         //////////////////////////////////////////////////////////
-        std::string GetName(const bool withLabels = false, const bool iupacConsensed = false) const;
-        std::string GetLinkageName(const bool withLabels = false) const;
+        std::string GetName() const;
+        std::string GetLinkageName() const;
 
         inline std::string GetInputString() const
         {
@@ -89,7 +89,7 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         inline std::string GetLink() const
         {
-            return getLink(components);
+            return getLink(components.type, components.linkage);
         }
 
         std::vector<ParsedResidue*> GetChildren() const;

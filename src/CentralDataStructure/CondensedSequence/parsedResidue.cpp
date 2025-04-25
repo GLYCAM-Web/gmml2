@@ -5,28 +5,10 @@
 #include "includes/CodeUtils/strings.hpp"
 #include <sstream>
 
-#include <regex>
-
 using cds::ResidueType;
 using cdsCondensedSequence::ParsedResidue;
 using cdsCondensedSequence::ParsedResidueComponents;
 using cdsCondensedSequence::RingShapeAndModifier;
-
-namespace
-{
-    std::string findLabelContaining(const std::string& query, const std::vector<std::string>& labels)
-    {
-        std::regex regexQuery(query, std::regex_constants::ECMAScript);
-        for (auto& label : labels)
-        {
-            if (std::regex_search(label, regexQuery))
-            {
-                return label;
-            }
-        }
-        return "";
-    }
-} // namespace
 
 ParsedResidue::ParsedResidue(const ParsedResidueComponents& components_) : components(components_)
 {
@@ -34,10 +16,9 @@ ParsedResidue::ParsedResidue(const ParsedResidueComponents& components_) : compo
     this->SetType(components_.type);
 }
 
-std::string cdsCondensedSequence::getLink(const ParsedResidueComponents& components)
+std::string cdsCondensedSequence::getLink(cds::ResidueType type, const std::string& linkage)
 {
-    std::string linkage = components.linkage;
-    switch (components.type)
+    switch (type)
     {
         case (ResidueType::Sugar):
             return linkage.substr(linkage.size() - 1, 1);
@@ -104,33 +85,22 @@ std::string ParsedResidue::GetChildLinkagesForGlycamResidueNaming() const
     }
 }
 
-std::string ParsedResidue::GetName(const bool withLabels, const bool iupacConsensed) const
+std::string ParsedResidue::GetName() const
 {
-    if (withLabels)
-    {
-        return findLabelContaining("&Label=", this->getLabels());
-    }
     return this->GetIsomer() + this->GetResidueName() + this->GetRingType() + this->GetResidueModifier() +
            this->GetRingShape();
 }
 
-std::string ParsedResidue::GetLinkageName(const bool withLabels) const
+std::string ParsedResidue::GetLinkageName() const
 { // Should only ever be zero or one inEdges in my current design.
     // e.g  Galb1-4[Glcb1-3]Manb1-OH. OH is the parent to Manb, the linkage is b1-.
     // Manb is parent (has out edges) to both Glc and Gal, but they only have one in edge each from Manb. The inedge
     // from Man to Gal has the linkage name 1-4.
     for (auto& linkage : this->getInEdges())
     {
-        if (withLabels)
-        {
-            return findLabelContaining("&Label=", linkage->getLabels());
-        }
-        else
-        {
-            return linkage->getLabel();
-        }
+        return linkage->getLabel();
     }
-    if (this->getInEdges().empty() && this->GetType() == ResidueType::Sugar && !withLabels)
+    if (this->getInEdges().empty() && this->GetType() == ResidueType::Sugar)
     { // ano-ano linkage as in Glca1-1Glcb, return the "b" of Glc
         return this->GetConfiguration();
     }

@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <vector>
 #include <string>
@@ -41,14 +42,17 @@ int main()
         std::cout << "s" << count << ":\n" << sequence << "\n";
         try
         {
-            std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residues;
-            parseSequence(residues, sequence);
-            reorderSequence(residues);
-            std::vector<cdsCondensedSequence::ParsedResidue*> residuePtrs = codeUtils::pointerToUniqueVector(residues);
-            std::cout << "Index Ordered:\n" << cdsCondensedSequence::printSequence(residuePtrs, false) << "\n";
-            std::cout << "Iupac:\n" << cdsCondensedSequence::printSequence(residuePtrs, false, true) << "\n";
-            cdsCondensedSequence::labelSequence(residuePtrs);
-            std::cout << "Labeled:\n" << cdsCondensedSequence::printSequence(residuePtrs, true) << "\n\n";
+            cdsCondensedSequence::SequenceData sequenceData =
+                cdsCondensedSequence::reordered(cdsCondensedSequence::parseSequence(sequence));
+            std::cout << "Index Ordered:\n"
+                      << cdsCondensedSequence::printSequence(sequenceData, cdsCondensedSequence::defaultConfig())
+                      << "\n";
+            std::cout << "Iupac:\n"
+                      << cdsCondensedSequence::printSequence(sequenceData, cdsCondensedSequence::iupacConfig()) << "\n";
+            std::cout << "Labeled:\n"
+                      << cdsCondensedSequence::printSequence(sequenceData,
+                                                             cdsCondensedSequence::defaultConfigLabelled())
+                      << "\n\n";
         }
         catch (std::runtime_error& error)
         {
@@ -62,8 +66,6 @@ int main()
             ss << "Unknown error type thrown for sequence s" << count << " : " << sequence << "\n\n";
             std::cout << ss.str();
         }
-
-        //    	std::cout << manipulator.PrintGraphViz(config) << std::endl;
         count++;
     }
     std::cout << "Finished test\n\n";

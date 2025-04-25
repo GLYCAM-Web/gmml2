@@ -3,22 +3,19 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
-#include <memory>
 #include <vector>
 
-using CondensedSequence::Sequence;
-
-Sequence::Sequence(std::string condensedSequence)
+CondensedSequence::Sequence::Sequence(std::string condensedSequence)
 {
-    std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residuePtrs;
-    cdsCondensedSequence::parseSequence(residuePtrs, condensedSequence);
-    this->setInputSequence(condensedSequence);
+    cdsCondensedSequence::SequenceData sequence = cdsCondensedSequence::parseSequence(condensedSequence);
     this->setInterpretedSequence(
-        cdsCondensedSequence::printSequence(codeUtils::pointerToUniqueVector(residuePtrs), false));
-    cdsCondensedSequence::reorderSequence(residuePtrs);
-    this->setIndexOrdered(cdsCondensedSequence::printSequence(codeUtils::pointerToUniqueVector(residuePtrs), false));
-    std::vector<cdsCondensedSequence::ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
-    cdsCondensedSequence::labelSequence(residues);
-    this->setIndexLabeled(cdsCondensedSequence::printSequence(residues, true));
+        cdsCondensedSequence::printSequence(sequence, cdsCondensedSequence::defaultConfigUnsorted()));
+    cdsCondensedSequence::SequenceData reordered =
+        cdsCondensedSequence::reordered(cdsCondensedSequence::parseSequence(condensedSequence));
+    this->setInputSequence(condensedSequence);
+    this->setIndexOrdered(cdsCondensedSequence::printSequence(reordered, cdsCondensedSequence::defaultConfig()));
+    this->setIndexLabeled(
+        cdsCondensedSequence::printSequence(reordered, cdsCondensedSequence::defaultConfigLabelled()));
 }

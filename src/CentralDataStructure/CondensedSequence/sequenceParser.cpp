@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
+#include "includes/Graph/graphTypes.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <sstream>
@@ -7,13 +9,12 @@
 #include <cctype> // isdigit()
 #include <vector>
 
-using cdsCondensedSequence::ParsedResidue;
-
 namespace
 {
     using cds::ResidueType;
     using cdsCondensedSequence::ParsedResidueComponents;
     using cdsCondensedSequence::RingShapeAndModifier;
+    using cdsCondensedSequence::SequenceData;
 
     RingShapeAndModifier ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
@@ -216,21 +217,31 @@ namespace
         }
     }
 
-    void addLinkage(ParsedResidue* thisRes, ParsedResidue* otherRes)
+    size_t addResidue(SequenceData& data, const ParsedResidueComponents& components)
     {
-        if (thisRes->GetType() == cds::ResidueType::Sugar)
-        {
-            thisRes->addParent(thisRes->GetConfiguration() + thisRes->GetLinkage(), otherRes);
-        }
-        else
-        {
-            thisRes->addParent(thisRes->GetLinkage(), otherRes);
-        }
+        data.residues.fullString.push_back(components.fullString);
+        data.residues.type.push_back(components.type);
+        data.residues.name.push_back(components.name);
+        data.residues.linkage.push_back(components.linkage);
+        data.residues.ringType.push_back(components.ringType);
+        data.residues.configuration.push_back(components.configuration);
+        data.residues.isomer.push_back(components.isomer);
+        data.residues.ringShape.push_back(components.ringShapeAndModifier.shape);
+        data.residues.modifier.push_back(components.ringShapeAndModifier.modifier);
+        size_t id = graph::addNode(data.graph);
+        return id;
     }
 
-    ParsedResidue* saveResidue(std::vector<std::unique_ptr<ParsedResidue>>& savedResidues,
-                               std::vector<std::string>& savedDerivatives, std::string residueString,
-                               ParsedResidue* parent)
+    void addLinkage(SequenceData& data, size_t resA, size_t resB)
+    {
+        bool isSugar         = data.residues.type[resA] == cds::ResidueType::Sugar;
+        std::string edgeName = (isSugar ? data.residues.configuration[resA] : "") + data.residues.linkage[resA];
+        graph::addEdge(data.graph, {resB, resA});
+        data.edges.names.push_back(edgeName);
+    }
+
+    size_t saveResidue(SequenceData& data, std::vector<std::string>& savedDerivatives, std::string residueString,
+                       size_t parent)
     {
         bool isDerivative = residueString.find('-') == std::string::npos;
         if (isDerivative)
@@ -240,30 +251,27 @@ namespace
         }
         else
         {
-            savedResidues.emplace_back(std::make_unique<ParsedResidue>(
-                parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined)));
-            addLinkage(savedResidues.back().get(), parent);
-            ParsedResidue* newRes = savedResidues.back().get();
-            for (auto& derivative : savedDerivatives)
+            size_t newRes =
+                addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
+            addLinkage(data, newRes, parent);
+            for (auto& derivativeStr : savedDerivatives)
             {
-                savedResidues.emplace_back(std::make_unique<ParsedResidue>(
-                    parseResidueStringIntoComponents(derivative, cds::ResidueType::Undefined)));
-                addLinkage(savedResidues.back().get(), newRes);
+                size_t derivative =
+                    addResidue(data, parseResidueStringIntoComponents(derivativeStr, cds::ResidueType::Undefined));
+                addLinkage(data, derivative, newRes);
             }
             savedDerivatives.clear();
             return newRes;
         }
     }
 
-    size_t recurveParseAlt(std::vector<std::unique_ptr<ParsedResidue>>& residues,
-                           std::vector<std::string>& savedDerivatives, size_t i, const std::string& sequence,
-                           ParsedResidue* parent)
+    size_t recurveParseAlt(SequenceData& data, std::vector<std::string>& savedDerivatives, size_t i,
+                           const std::string& sequence, size_t parent)
     {
-        auto save =
-            [&residues, &savedDerivatives, &sequence](size_t windowStart, size_t windowEnd, ParsedResidue* parent)
+        auto save = [&](size_t windowStart, size_t windowEnd, size_t parent)
         {
             std::string residueString = withoutBranches(substr(sequence, windowStart, windowEnd));
-            return saveResidue(residues, savedDerivatives, residueString, parent);
+            return saveResidue(data, savedDerivatives, residueString, parent);
         };
         size_t windowEnd = i;
         while (i > 0)
@@ -279,16 +287,16 @@ namespace
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
                     parent    = save(i + 1, windowEnd, parent);
-                    i         = recurveParseAlt(residues, savedDerivatives, i, sequence, parent);
+                    i         = recurveParseAlt(data, savedDerivatives, i, sequence, parent);
                     windowEnd = i;
                 }
                 else if ((windowEnd - i) > 1) // and not > 5
                 {                             // Derivative. Note that windowEnd does not move.
-                    i = recurveParseAlt(residues, savedDerivatives, i, sequence, parent);
+                    i = recurveParseAlt(data, savedDerivatives, i, sequence, parent);
                 }
                 else
                 { // Return from branch and find new one. e.g. [Gal][Gal]
-                    i         = recurveParseAlt(residues, savedDerivatives, i, sequence, parent);
+                    i         = recurveParseAlt(data, savedDerivatives, i, sequence, parent);
                     windowEnd = i;
                 }
             }
@@ -310,8 +318,8 @@ namespace
         return i;
     }
 
-    void parseCondensedSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues,
-                                std::vector<std::string>& savedDerivatives, const std::string& sequence)
+    void parseCondensedSequence(SequenceData& data, std::vector<std::string>& savedDerivatives,
+                                const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
         size_t i = (sequence.find_last_of('-') + 1);
@@ -322,15 +330,14 @@ namespace
             {
                 ++i;
             }
-            residues.emplace_back(std::make_unique<ParsedResidue>(
-                parseResidueStringIntoComponents(sequence.substr(i), cds::ResidueType::Sugar)));
+            addResidue(data, parseResidueStringIntoComponents(sequence.substr(i), cds::ResidueType::Sugar));
         }
         else
         { // e.g. DGlcpa1-OH
-            residues.emplace_back(std::make_unique<ParsedResidue>(parseAglycone(sequence.substr(i))));
+            addResidue(data, parseAglycone(sequence.substr(i)));
         }
-        ParsedResidue* terminal = residues.back().get();
-        recurveParseAlt(residues, savedDerivatives, i, sequence, terminal);
+        size_t terminal = data.graph.nodes.size() - 1;
+        recurveParseAlt(data, savedDerivatives, i, sequence, terminal);
     }
 
     // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,
@@ -412,9 +419,9 @@ namespace
     }
 } // namespace
 
-void cdsCondensedSequence::parseSequence(std::vector<std::unique_ptr<ParsedResidue>>& residues,
-                                         std::string inputSequence)
+cdsCondensedSequence::SequenceData cdsCondensedSequence::parseSequence(std::string inputSequence)
 {
+    SequenceData data;
     if (inputSequence.find('<') != std::string::npos)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Found repeating unit in input\n");
@@ -434,9 +441,9 @@ void cdsCondensedSequence::parseSequence(std::vector<std::unique_ptr<ParsedResid
                 __LINE__, __FILE__, gmml::INF,
                 "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
             std::vector<std::string> savedDerivatives;
-            parseCondensedSequence(residues, savedDerivatives, inputSequence);
+            parseCondensedSequence(data, savedDerivatives, inputSequence);
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "parseSequence complete");
-    return;
+    return data;
 }
