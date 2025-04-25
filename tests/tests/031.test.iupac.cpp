@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequencePrinter.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
@@ -45,13 +46,13 @@ int main()
             cdsCondensedSequence::SequenceData sequenceData =
                 cdsCondensedSequence::reordered(cdsCondensedSequence::parseSequence(sequence));
             std::cout << "Index Ordered:\n"
-                      << cdsCondensedSequence::printSequence(sequenceData, cdsCondensedSequence::defaultConfig())
+                      << cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfig(), sequenceData)
                       << "\n";
             std::cout << "Iupac:\n"
-                      << cdsCondensedSequence::printSequence(sequenceData, cdsCondensedSequence::iupacConfig()) << "\n";
+                      << cdsCondensedSequence::printSequence(cdsCondensedSequence::iupacConfig(), sequenceData) << "\n";
             std::cout << "Labeled:\n"
-                      << cdsCondensedSequence::printSequence(sequenceData,
-                                                             cdsCondensedSequence::defaultConfigLabelled())
+                      << cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfigLabelled(),
+                                                             sequenceData)
                       << "\n\n";
         }
         catch (std::runtime_error& error)
