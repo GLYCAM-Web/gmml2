@@ -28,9 +28,9 @@ b7 [shape="plaintext" fontsize="12" height="0.3" labelloc=b label="9A 8A 7A"];
 b7--7 [style=invis];
 1--0 [label="a2-" headclip=true tailclip=false];
 2--1 [label="a2-8" headclip=false tailclip=false];
-6--1 [label="a2-9" headclip=false tailclip=false];
 3--2 [label="a2-7" headclip=false tailclip=false];
 4--2 [label="a2-8" headclip=false tailclip=false];
 5--4 [label="a2-8" headclip=false tailclip=false];
+6--1 [label="a2-9" headclip=false tailclip=false];
 7--6 [label="a2-8" headclip=false tailclip=false];
 }
