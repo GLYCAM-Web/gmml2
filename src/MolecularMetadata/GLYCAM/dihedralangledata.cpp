@@ -54,19 +54,14 @@ namespace
           // Generic psi linkages, why is this labelled "ap"?
           { "C."   , "O[1-5]" , "Psi"  ,   0.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "ap" , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "H."  }, // Psi should be C(ano)-Ox-Cx-Hx, if Cx is ring, otherwise, C(ano)-Ox-Cx-C(x-1)
           { "C."   , "O[6-9]" , "Psi"  , 180.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "t"  , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "C."  },
-          // Omega angle in x-6 pyranose linkages.
+          // Omega angle in x-6 linkages.
           { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
           { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"pyranose", "gauche-effect=galacto"} , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"pyranose", "gauche-effect=gluco"}   , "O6" , "C6" , "C5" , "O5"  },
-          // Omega angle in x-5 furanose linkages.
-          { "C.*"  , "O5"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
-          { "C.*"  , "O5"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
-          { "C.*"  , "O5"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"aldose", "furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
-          // Omega angle in x-6 furanose linkages.
-          { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
-          { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=galacto"} , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=gluco"}   , "O6" , "C6" , "C5" , "O5"  },
+          // Omega angle in x-5 linkages.
+          { "C.*"  , "O5"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
+          { "C.*"  , "O5"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
 		  // Ketose 1-1 linkages. Copied from old GLYCAM-Web builder.
  		  { "C1"   , "O1"     , "Phi"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {}             , {"ketose"}                , "C2" , "C1" , "O1" , "C1" },
   		  { "C1"   , "O1"     , "Psi"  ,-150.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {}             , {"ketose"}                , "C1" , "O1" , "C1" , "C2" },
@@ -82,6 +77,15 @@ namespace
 		  { "C1"   , "O2"     , "Psi"  ,  80.0  , AngleLimit{10.0, 10.0}  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {"pyranose", "aldose"}    , {"furanose", "ketose"}         , "C1" , "O2" , "C2" , "C1" },
 		  { "C2"   , "O1"     , "Phi"  ,  80.0  , AngleLimit{10.0, 10.0}  , 1.0   , RotamerType::permutation , ""   , 1 , 1 , {"furanose", "ketose"}    , {"pyranose", "aldose"}         , "C1" , "C2" , "O1" , "C1" },
 		  { "C2"   , "O1"     , "Psi"  ,-135.0  , AngleLimit{ 5.0,  5.0}  , 1.0   , RotamerType::permutation , ""   , 2 , 1 , {"furanose", "ketose"}    , {"pyranose", "aldose"}         , "C2" , "O1" , "C1" , "C2" },
+		  // x-5 (and x-6) linkages to aldofuranoses, they are likely flexible but I have no data. Used values seen in 0LD prep file.
+		  { "C.*"  , "O5"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 1 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
+		  { "C.*"  , "O5"     , "Omg6" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 4 , 1 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
+		  // x-6
+		  { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
+		  { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
+		  { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
+		  { "C.*"  , "O6"     , "Omg4" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 4 , 1 , {}             , {"aldose", "furanose"}                  , "C6" , "C5" , "C4", "O4"  },
+		  { "C.*"  , "O6"     , "Omg5" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 5 , 1 , {}             , {"aldose", "furanose"}                  , "O6" , "C6" , "C5" , "O5"  },
 		  // 2-7 linkages copied from GlycamWeb Jan 2021. Branching in the linkage causes oddities with the bond number and which atoms are chosen for the torsion.
           { "C2"   , "O7"     , "Phi"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate", "alpha"}  , {"ulosonate"}    , "C3" , "C2" , "O." , "C."  },
           { "C2"   , "O7"     , "Psi"  ,   0.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "c"  , 2 , 1 , {"ulosonate", "alpha"}  , {"ulosonate"}    , "C." , "O." , "C." , "H."  },

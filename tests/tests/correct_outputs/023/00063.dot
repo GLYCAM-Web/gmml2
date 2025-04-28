@@ -3,7 +3,7 @@ node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fix
 edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
 rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OH"]
-1 [shape=circle height="0.7" label="DKo1"];
+1 [shape=circle height="0.7" label="DK3O"];
 2 [shape=circle height="0.7" label="DMurNAc"];
 3 [label="f" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGal.svg"];
 4 [shape=circle height="0.7" label="LFus"];

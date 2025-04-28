@@ -1,0 +1,167 @@
+!!index array str
+ "CONDENSEDSEQUENCE"
+!entry.CONDENSEDSEQUENCE.unit.atoms table  str name  str type  int typex  int resx  int flags  int seq  int elmnt  dbl chg
+ "HO1" "Ho" 0 1 131072 1 1 0.445000
+ "O1" "Oh" 0 1 131072 2 8 -0.639000
+ "C1" "Cg" 0 2 131072 1 6 0.452000
+ "H1" "H2" 0 2 131072 2 1 0.000000
+ "C2" "Cg" 0 2 131072 3 6 0.303000
+ "H2" "H1" 0 2 131072 4 1 0.000000
+ "O2" "Oh" 0 2 131072 5 8 -0.718000
+ "H2O" "Ho" 0 2 131072 6 1 0.424000
+ "C3" "Cg" 0 2 131072 7 6 0.020000
+ "H31" "Hc" 0 2 131072 8 1 0.000000
+ "H32" "Hc" 0 2 131072 9 1 0.000000
+ "C4" "Cg" 0 2 131072 10 6 0.185000
+ "H4" "H1" 0 2 131072 11 1 0.000000
+ "O4" "Oh" 0 2 131072 12 8 -0.654000
+ "H4O" "Ho" 0 2 131072 13 1 0.416000
+ "C5" "Cg" 0 2 131072 14 6 0.225000
+ "H5" "H1" 0 2 131072 15 1 0.000000
+ "O5" "Os" 0 2 131072 16 8 -0.485000
+ "C6" "Cg" 0 2 131072 17 6 0.026000
+ "H61" "Hc" 0 2 131072 18 1 0.000000
+ "H62" "Hc" 0 2 131072 19 1 0.000000
+ "H63" "Hc" 0 2 131072 20 1 0.000000
+!entry.CONDENSEDSEQUENCE.unit.atomspertinfo table  str pname  str ptype  int ptypex  int pelmnt  dbl pchg
+ "HO1" "Ho" 0 -1 0.0
+ "O1" "Oh" 0 -1 0.0
+ "C1" "Cg" 0 -1 0.0
+ "H1" "H2" 0 -1 0.0
+ "C2" "Cg" 0 -1 0.0
+ "H2" "H1" 0 -1 0.0
+ "O2" "Oh" 0 -1 0.0
+ "H2O" "Ho" 0 -1 0.0
+ "C3" "Cg" 0 -1 0.0
+ "H31" "Hc" 0 -1 0.0
+ "H32" "Hc" 0 -1 0.0
+ "C4" "Cg" 0 -1 0.0
+ "H4" "H1" 0 -1 0.0
+ "O4" "Oh" 0 -1 0.0
+ "H4O" "Ho" 0 -1 0.0
+ "C5" "Cg" 0 -1 0.0
+ "H5" "H1" 0 -1 0.0
+ "O5" "Os" 0 -1 0.0
+ "C6" "Cg" 0 -1 0.0
+ "H61" "Hc" 0 -1 0.0
+ "H62" "Hc" 0 -1 0.0
+ "H63" "Hc" 0 -1 0.0
+!entry.CONDENSEDSEQUENCE.unit.boundbox array dbl
+ -1.000000
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+!entry.CONDENSEDSEQUENCE.unit.childsequence single int
+ 3
+!entry.CONDENSEDSEQUENCE.unit.connect array int
+ 1
+ 22
+!entry.CONDENSEDSEQUENCE.unit.connectivity table  int atom1x  int atom2x  int flags
+ 1 2 1
+ 3 18 1
+ 3 4 1
+ 3 5 1
+ 2 3 1
+ 5 6 1
+ 5 7 1
+ 5 9 1
+ 7 8 1
+ 9 10 1
+ 9 11 1
+ 9 12 1
+ 12 13 1
+ 12 14 1
+ 12 16 1
+ 14 15 1
+ 16 17 1
+ 16 18 1
+ 16 19 1
+ 19 20 1
+ 19 21 1
+ 19 22 1
+!entry.CONDENSEDSEQUENCE.unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx
+ "U" 0 "R" 1
+ "R" 1 "A" 1
+ "R" 1 "A" 2
+ "U" 0 "R" 2
+ "R" 2 "A" 3
+ "R" 2 "A" 4
+ "R" 2 "A" 5
+ "R" 2 "A" 6
+ "R" 2 "A" 7
+ "R" 2 "A" 8
+ "R" 2 "A" 9
+ "R" 2 "A" 10
+ "R" 2 "A" 11
+ "R" 2 "A" 12
+ "R" 2 "A" 13
+ "R" 2 "A" 14
+ "R" 2 "A" 15
+ "R" 2 "A" 16
+ "R" 2 "A" 17
+ "R" 2 "A" 18
+ "R" 2 "A" 19
+ "R" 2 "A" 20
+ "R" 2 "A" 21
+ "R" 2 "A" 22
+!entry.CONDENSEDSEQUENCE.unit.name single str
+ "CONDENSEDSEQUENCE"
+!entry.CONDENSEDSEQUENCE.unit.positions table  dbl x  dbl y  dbl z
+ -3.766903 9.089939 -1.562014
+ -4.172209 9.583274 -2.278916
+ -4.990754 9.066538 -1.226363
+ -4.946750 7.966883 -1.169558
+ -6.456757 9.417468 -1.450546
+ -7.063923 8.927318 -0.668162
+ -6.794287 8.915064 -2.729565
+ -6.418385 9.473128 -3.410087
+ -6.653630 10.932801 -1.397172
+ -6.126693 11.392892 -2.247380
+ -7.727281 11.172946 -1.439675
+ -6.078355 11.501523 -0.111492
+ -6.083743 12.600474 -0.159242
+ -6.862828 11.062340 1.000542
+ -6.326671 10.501410 1.562375
+ -4.628355 11.050898 0.059451
+ -4.018938 11.498738 -0.746200
+ -4.527107 9.621308 -0.012996
+ -4.025003 11.462104 1.389174
+ -4.647774 11.055414 2.188688
+ -4.131500 12.543736 1.504855
+ -3.000086 11.085313 1.436305
+!entry.CONDENSEDSEQUENCE.unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x
+ 2 2 0 0 0 0
+ 3 3 0 0 0 0
+!entry.CONDENSEDSEQUENCE.unit.residues table  str name  int seq  int childseq  int startatomx  str restype  int imagingx
+ "ROH" 1 3 1 "?" 0
+ "0AE" 2 21 3 "?" 0
+!entry.CONDENSEDSEQUENCE.unit.solventcap array dbl
+ -1.000000
+ 0.0
+ 0.0
+ 0.0
+ 0.0
+!entry.CONDENSEDSEQUENCE.unit.velocities table  dbl x  dbl y  dbl z
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0
+ 0.0 0.0 0.0

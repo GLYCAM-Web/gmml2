@@ -171,7 +171,8 @@ int main(int argc, char** argv)
         {
             try
             {
-                std::cout << "\n*********************\nBuilding " << line.sequence << "\n*********************\n";
+                std::cout << "\n*********************\nBuilding " << line.id << ": " << line.sequence
+                          << "\n*********************\n";
                 cdsCondensedSequence::Carbohydrate carbohydrate(parameterManager, line.sequence);
                 carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
                 cdsCondensedSequence::GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
