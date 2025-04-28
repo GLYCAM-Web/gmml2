@@ -584,8 +584,8 @@ DFruf&Label=residue-8;b2-6&Label=link-6;DFruf&Label=residue-7;b2-1&Label=link-5;
 Parsed and labelled 00029 with no exceptions thrown.
 
 Number of residues for this sequence is 8
-Number of likely shapes is 64
-Number of possible shapes is 64
+Number of likely shapes is 486
+Number of possible shapes is 486
 ROH_1_?_?
 6CU_2_?_?
 6CU_3_?_?
@@ -595,17 +595,17 @@ XCU_4_?_?
 6CU_7_?_?
 0CU_8_?_?
 Name: DFrufb2-6DFrufb, LinkageIndex: 1, Res1: 3, Res2: 2
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DFrufb2-6DFrufb, LinkageIndex: 2, Res1: 4, Res2: 3
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DFrufb2-6DFrufb, LinkageIndex: 3, Res1: 5, Res2: 4
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DFrufb2-6DFrufb, LinkageIndex: 4, Res1: 6, Res2: 5
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DFrufb2-1DFrufb, LinkageIndex: 5, Res1: 7, Res2: 4
     LikelyRotamers: Omg, gg, gt
 Name: DFrufb2-6DFrufb, LinkageIndex: 6, Res1: 8, Res2: 7
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 
 *********************
 Building id 00030:DGalpb1-OtBu
@@ -1326,8 +1326,8 @@ DAraf&Label=residue-9;a1-3&Label=link-7;DFruf&Label=residue-8;a2-2&Label=link-6;
 Parsed and labelled 00060 with no exceptions thrown.
 
 Number of residues for this sequence is 9
-Number of likely shapes is 2
-Number of possible shapes is 2
+Number of likely shapes is 3
+Number of possible shapes is 3
 ROH_1_?_?
 3PD_2_?_?
 3XD_3_?_?
@@ -1338,7 +1338,7 @@ ROH_1_?_?
 3CD_8_?_?
 0AD_9_?_?
 Name: DLyxfa1-6DTagfa, LinkageIndex: 5, Res1: 7, Res2: 6
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 
 *********************
 Building id 00061:DArafb1-3DFrufb2-2DLyxfb1-6DTagfb2-4LSorfb2-3DRibfb1-3DXylfb1-3DPsifb2-OH
@@ -1354,8 +1354,8 @@ DAraf&Label=residue-9;b1-3&Label=link-7;DFruf&Label=residue-8;b2-2&Label=link-6;
 Parsed and labelled 00061 with no exceptions thrown.
 
 Number of residues for this sequence is 9
-Number of likely shapes is 2
-Number of possible shapes is 2
+Number of likely shapes is 3
+Number of possible shapes is 3
 ROH_1_?_?
 3PU_2_?_?
 3XU_3_?_?
@@ -1366,7 +1366,7 @@ ROH_1_?_?
 3CU_8_?_?
 0AU_9_?_?
 Name: DLyxfb1-6DTagfb, LinkageIndex: 5, Res1: 7, Res2: 6
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 
 *********************
 Building id 00062:LArafb1-3LFrufb2-2LLyxfb1-6LTagfb2-4DSorfb2-3LRibfb1-3LXylfb1-3LPsifb2-OH
@@ -1382,8 +1382,8 @@ LAraf&Label=residue-9;b1-3&Label=link-7;LFruf&Label=residue-8;b2-2&Label=link-6;
 Parsed and labelled 00062 with no exceptions thrown.
 
 Number of residues for this sequence is 9
-Number of likely shapes is 2
-Number of possible shapes is 2
+Number of likely shapes is 3
+Number of possible shapes is 3
 ROH_1_?_?
 3pU_2_?_?
 3xU_3_?_?
@@ -1394,7 +1394,7 @@ ROH_1_?_?
 3cU_8_?_?
 0aU_9_?_?
 Name: LLyxfb1-6LTagfb, LinkageIndex: 5, Res1: 7, Res2: 6
-    LikelyRotamers: Omg, gg, gt
+    LikelyRotamers: Omg, gg, gt, tg
 
 *********************
 Building id 00063:DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DK3Opa2-OH
@@ -1727,8 +1727,8 @@ DAraf&Label=residue-10;a1-6&Label=link-8;DGalf&Label=residue-9;a1-6&Label=link-7
 Parsed and labelled 00079 with no exceptions thrown.
 
 Number of residues for this sequence is 10
-Number of likely shapes is 256
-Number of possible shapes is 256
+Number of likely shapes is 1944
+Number of possible shapes is 1944
 OME_1_?_?
 5LD_2_?_?
 6LD_3_?_?
@@ -1742,16 +1742,16 @@ OME_1_?_?
 Name: DGalfa1-5DGalfa, LinkageIndex: 1, Res1: 3, Res2: 2
     LikelyRotamers: Omg, gt, tg
 Name: DGalfa1-6DGalfa, LinkageIndex: 2, Res1: 4, Res2: 3
-    LikelyRotamers: Omg, gt, tg
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DGalfa1-5DGalfa, LinkageIndex: 3, Res1: 5, Res2: 4
     LikelyRotamers: Omg, gt, tg
 Name: DGalfa1-6DGalfa, LinkageIndex: 4, Res1: 6, Res2: 5
-    LikelyRotamers: Omg, gt, tg
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DGalfa1-5DGalfa, LinkageIndex: 5, Res1: 7, Res2: 6
     LikelyRotamers: Omg, gt, tg
 Name: DGalfa1-6DGalfa, LinkageIndex: 6, Res1: 8, Res2: 7
-    LikelyRotamers: Omg, gt, tg
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DGalfa1-6DGalfa, LinkageIndex: 7, Res1: 9, Res2: 8
-    LikelyRotamers: Omg, gt, tg
+    LikelyRotamers: Omg, gg, gt, tg
 Name: DArafa1-6DGalfa, LinkageIndex: 8, Res1: 10, Res2: 9
-    LikelyRotamers: Omg, gt, tg
+    LikelyRotamers: Omg, gg, gt, tg
