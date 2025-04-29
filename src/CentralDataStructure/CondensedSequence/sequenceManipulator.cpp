@@ -76,13 +76,6 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
     {
         std::vector<size_t> result;
         result.reserve(reorderedEdges.size());
-        for (auto& edge : sequence.graph.edgeNodes)
-        {
-            if (edge[1] == node)
-            {
-                result.push_back(edge[0]);
-            }
-        }
         for (auto& edge : reorderedEdges)
         {
             if (edge[0] == node)
