@@ -6,10 +6,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp" //select
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/metropolisCriterion.hpp"
-#include "includes/CodeUtils/random.hpp"
-#include "includes/CodeUtils/references.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
@@ -18,7 +14,13 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
+#include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/metropolisCriterion.hpp"
+#include "includes/CodeUtils/random.hpp"
+#include "includes/CodeUtils/references.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
 using cds::Atom;
@@ -28,7 +30,8 @@ using gmmlPrograms::WiggleToSite;
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
 WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
-    : substrate_(inputStruct.substrateFile_), carbohydrate_(parameterManager, inputStruct.carbohydrateSequence_)
+    : substrate_(inputStruct.substrateFile_),
+      carbohydrate_(parameterManager, MolecularMetadata::vanDerWaalsRadii(), inputStruct.carbohydrateSequence_)
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
     const Residue* superimpositionTarget = pdb::residueSelector(
@@ -56,9 +59,10 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
         pdb::getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
     std::vector<cds::Atom*> substrateAtomsToAvoidOverlappingWith =
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
-    this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
-    this->setCurrentOverlapCount(
-        cds::CountOverlappingAtoms(constants::overlapTolerance, atomsToAvoid_, this->getCarbohydrate().getAtoms()));
+    this->atomsToAvoid_                                 = substrateAtomsToAvoidOverlappingWith;
+    const codeUtils::SparseVector<double>& elementRadii = MolecularMetadata::vanDerWaalsRadii();
+    this->setCurrentOverlapCount(cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
+                                                            this->getCarbohydrate().getAtoms()));
     this->wiggleMeCoordinates_     = {wiggleMe->FindAtom("C1")->coordinateReference(),
                                       wiggleMe->FindAtom("C3")->coordinateReference(),
                                       wiggleMe->FindAtom("C5")->coordinateReference()};
@@ -71,12 +75,13 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
     }
     this->setCurrentDistance(this->calculateDistance());
     int structureCount =
-        this->minimizeDistance(metadataTable, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
-    this->minimizeDistance(metadataTable, inputStruct.persistCycles_, false, structureCount);
+        this->minimizeDistance(elementRadii, metadataTable, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
+    this->minimizeDistance(elementRadii, metadataTable, inputStruct.persistCycles_, false, structureCount);
     this->getCarbohydrate().Generate3DStructureFiles("./", "finished", {});
 }
 
-int WiggleToSite::minimizeDistance(const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles,
+int WiggleToSite::minimizeDistance(const codeUtils::SparseVector<double>& elementRadii,
+                                   const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles,
                                    bool useMonteCarlo, int structureCount)
 {
     uint64_t seed = codeUtils::generateRandomSeed();
@@ -119,7 +124,7 @@ int WiggleToSite::minimizeDistance(const GlycamMetadata::DihedralAngleDataTable&
                                       cds::linkageShapePreference(randomMetadata, randomAngle, metadataTable,
                                                                   linkage.rotamerType, linkage.dihedralMetadata));
             double acceptance = codeUtils::uniformRandomDoubleWithinRange(rng, 0, 1);
-            if (this->acceptDistance(useMonteCarlo, acceptance) && this->acceptOverlaps())
+            if (this->acceptDistance(useMonteCarlo, acceptance) && this->acceptOverlaps(elementRadii))
             {
                 cycle = 0; // reset when it improves
             }
@@ -185,10 +190,10 @@ double WiggleToSite::calculateDistance()
     return distance(wiggleTargetCoordinates_[0].get(), wiggleMeCoordinates_[0].get());
 }
 
-bool WiggleToSite::acceptOverlaps()
+bool WiggleToSite::acceptOverlaps(const codeUtils::SparseVector<double>& elementRadii)
 {
-    cds::Overlap overlapCount =
-        cds::CountOverlappingAtoms(constants::overlapTolerance, atomsToAvoid_, getCarbohydrate().getAtoms());
+    cds::Overlap overlapCount = cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
+                                                           getCarbohydrate().getAtoms());
     if (cds::compareOverlaps(overlapCount, this->getCurrentOverlapCount()) > 0)
     {
         return false;

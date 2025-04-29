@@ -8,6 +8,7 @@
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Graph/graphTypes.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 
 #include <vector>
 
@@ -31,7 +32,8 @@ namespace cds
     assembly::Graph createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms);
     assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& indices);
     assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& indices);
-    assembly::Bounds toAssemblyBounds(const GraphIndexData& indices, const assembly::Graph& graph);
+    assembly::Bounds toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii,
+                                      const GraphIndexData& indices, const assembly::Graph& graph);
 } // namespace cds
 
 #endif

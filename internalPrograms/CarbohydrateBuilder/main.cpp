@@ -167,13 +167,14 @@ int main(int argc, char** argv)
         };
         codeUtils::readFileLineByLine(inputFile, processLine);
         const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
+        const codeUtils::SparseVector<double>& elementRadii    = MolecularMetadata::vanDerWaalsRadii();
         for (auto& line : lines)
         {
             try
             {
                 std::cout << "\n*********************\nBuilding " << line.id << ": " << line.sequence
                           << "\n*********************\n";
-                cdsCondensedSequence::Carbohydrate carbohydrate(parameterManager, line.sequence);
+                cdsCondensedSequence::Carbohydrate carbohydrate(parameterManager, elementRadii, line.sequence);
                 carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
                 cdsCondensedSequence::GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
                 CondensedSequence::drawGlycan(config, line.sequence);

@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/references.hpp"
 
 #include <array>
@@ -23,15 +24,14 @@ namespace cds
     std::vector<int> serializedNumberVector(const std::vector<bool>& included);
     std::vector<int> serializedNumberVector(size_t count);
     size_t atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* find);
-    cds::Sphere coordinateWithRadius(Atom* atom);
     std::vector<int> atomNumbers(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomNames(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomElementStrings(const std::vector<Atom*>& atoms);
     std::vector<MolecularMetadata::Element> atomElements(const std::vector<Atom*>& atoms);
     std::vector<int> atomAtomicNumbers(const std::vector<Atom*>& atoms);
-    std::vector<double> atomRadii(const std::vector<cds::Atom*>& atoms);
     std::vector<Coordinate> atomCoordinates(const std::vector<Atom*>& atoms);
-    std::vector<Sphere> atomCoordinatesWithRadii(const std::vector<Atom*>& atoms);
+    std::vector<Sphere> atomCoordinatesWithRadii(const codeUtils::SparseVector<double>& elementRadii,
+                                                 const std::vector<Atom*>& atoms);
     std::vector<CoordinateReference> atomCoordinateReferences(std::vector<Atom*>& atoms);
     std::vector<std::string> atomTypes(const std::vector<Atom*>& atoms);
     std::vector<double> atomCharges(const std::vector<Atom*>& atoms);

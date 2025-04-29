@@ -15,6 +15,7 @@
 #include "includes/MolecularMetadata/glycoprotein.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
 #include <vector>
@@ -296,6 +297,7 @@ namespace glycoproteinBuilder
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
     addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager, cds::Assembly* glycoprotein,
+                        const codeUtils::SparseVector<double>& elementRadii,
                         const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                         const std::vector<GlycosylationSite>& glycosites)
     {
@@ -305,7 +307,7 @@ namespace glycoproteinBuilder
         for (auto& glycosite : glycosites)
         {
             Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(glycoprotein->addMolecule(
-                std::make_unique<Carbohydrate>(parameterManager, glycosite.input.glycanInput)));
+                std::make_unique<Carbohydrate>(parameterManager, elementRadii, glycosite.input.glycanInput)));
             result.push_back(glycan);
             Attachment attachment                = toAttachment(glycan);
             cds::Residue* aglycone               = attachment.aglycone;

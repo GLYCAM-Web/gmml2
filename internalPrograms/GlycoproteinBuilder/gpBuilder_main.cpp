@@ -1,11 +1,3 @@
-#include "includes/CodeUtils/arguments.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/parsing.hpp"
-#include "includes/CodeUtils/strings.hpp"
-#include "includes/CodeUtils/threads.hpp"
-#include "includes/version.h"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
@@ -15,6 +7,15 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CodeUtils/arguments.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/strings.hpp"
+#include "includes/CodeUtils/threads.hpp"
+#include "includes/version.h"
 
 #include <string>
 #include <vector>
@@ -163,6 +164,7 @@ int main(int argc, char* argv[])
             pdbFile.PreProcess(parameterManager, pdb::PreprocessorOptions());
         }
 
+        const codeUtils::SparseVector<double>& elementRadii                  = MolecularMetadata::vanDerWaalsRadii();
         const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
         cds::Assembly* glycoprotein                                          = &pdbFile.mutableAssemblies().front();
@@ -173,7 +175,7 @@ int main(int argc, char* argv[])
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
         std::vector<cdsCondensedSequence::Carbohydrate*> glycans = glycoproteinBuilder::addGlycansToProtein(
-            parameterManager, glycoprotein, dihedralAngleDataTable, glycosites);
+            parameterManager, glycoprotein, elementRadii, dihedralAngleDataTable, glycosites);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
         double selfWeight    = 1.0;
@@ -187,7 +189,7 @@ int main(int argc, char* argv[])
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
             aminoAcidTable, sidechainRotamers,
             glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                aminoAcidTable, dihedralAngleDataTable, molecules, glycosites, glycans, overlapMultiplier,
+                aminoAcidTable, dihedralAngleDataTable, elementRadii, molecules, glycosites, glycans, overlapMultiplier,
                 settings.overlapTolerance, settings.overlapRejectionThreshold, excludeHydrogen));
         if (settings.moveOverlappingSidechains)
         {

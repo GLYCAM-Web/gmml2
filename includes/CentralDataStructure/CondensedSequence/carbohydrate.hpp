@@ -6,6 +6,8 @@
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
+
 #include <functional>
 #include <variant>
 #include <vector>
@@ -38,7 +40,8 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        Carbohydrate(const cdsParameters::ParameterManager& parameterManager, std::string inputSequence);
+        Carbohydrate(const cdsParameters::ParameterManager& parameterManager,
+                     const codeUtils::SparseVector<double>& elementRadii, const std::string& inputSequence);
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
@@ -67,7 +70,8 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         void Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming,
                                       const std::vector<std::string>& headerLines);
-        void ResolveOverlaps(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+        void ResolveOverlaps(const codeUtils::SparseVector<double>& elementRadii,
+                             const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                              const cds::AngleSearchSettings& searchSettings);
         unsigned long int CountShapes(bool likelyShapesOnly = false) const;
         std::string GetNumberOfShapes(

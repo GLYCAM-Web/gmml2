@@ -36,7 +36,7 @@ namespace
         return result;
     }
 
-    std::vector<FlaggedDouble> atomRadii = withValues({
+    std::vector<FlaggedDouble> radii = withValues({
   // taken from the worst-case of chimera's united or all atom radii, whichever is larger
         { Element::H,   1.0},
         { Element::C,  1.88},
@@ -106,6 +106,8 @@ namespace
         {values(lennardJonesEpsilons), bools(lennardJonesEpsilons)},
         {  values(lennardJonesSigmas),   bools(lennardJonesSigmas)}
     };
+
+    codeUtils::SparseVector<double> atomRadii = {values(radii), bools(radii)};
 } // namespace
 
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
@@ -123,16 +125,9 @@ const std::string& MolecularMetadata::elementName(Element element)
     return elementNames[element];
 }
 
-double MolecularMetadata::vanDerWaalsRadius(Element element)
+const codeUtils::SparseVector<double>& MolecularMetadata::vanDerWaalsRadii()
 {
-    const FlaggedDouble& result = atomRadii[element];
-    if (!result.valid)
-    {
-        std::string message = "No valid radius for element: " + std::to_string(element);
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
-    return result.value;
+    return atomRadii;
 }
 
 bool MolecularMetadata::isHeavyElement(Element element)

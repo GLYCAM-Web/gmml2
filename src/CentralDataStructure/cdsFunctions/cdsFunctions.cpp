@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/references.hpp"
 
@@ -37,12 +38,6 @@ size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* fin
     }
     // index equals offset from start of vector
     return index;
-}
-
-cds::Sphere cds::coordinateWithRadius(Atom* atom)
-{
-    auto element = atom->cachedElement();
-    return {MolecularMetadata::vanDerWaalsRadius(element), atom->coordinate()};
 }
 
 std::vector<int> cds::atomNumbers(const std::vector<Atom*>& atoms)
@@ -100,18 +95,6 @@ std::vector<int> cds::atomAtomicNumbers(const std::vector<Atom*>& atoms)
     return result;
 }
 
-std::vector<double> cds::atomRadii(const std::vector<cds::Atom*>& atoms)
-{
-    std::vector<double> radii;
-    radii.reserve(atoms.size());
-    for (auto& atom : atoms)
-    {
-        auto element = atom->cachedElement();
-        radii.push_back(MolecularMetadata::vanDerWaalsRadius(element));
-    }
-    return radii;
-}
-
 std::vector<cds::Coordinate> cds::atomCoordinates(const std::vector<cds::Atom*>& atoms)
 {
     std::vector<Coordinate> coordinates;
@@ -123,13 +106,21 @@ std::vector<cds::Coordinate> cds::atomCoordinates(const std::vector<cds::Atom*>&
     return coordinates;
 }
 
-std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const std::vector<Atom*>& atoms)
+std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const codeUtils::SparseVector<double>& elementRadii,
+                                                       const std::vector<Atom*>& atoms)
 {
     std::vector<Sphere> spheres;
     spheres.reserve(atoms.size());
     for (auto& atom : atoms)
     {
-        spheres.push_back(coordinateWithRadius(atom));
+        MolecularMetadata::Element element = atom->cachedElement();
+        if (!elementRadii.hasValue[element])
+        {
+            std::string message = "No valid radius for element: " + std::to_string(element);
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
+        }
+        spheres.push_back({elementRadii.values[element], atom->coordinate()});
     }
     return spheres;
 }

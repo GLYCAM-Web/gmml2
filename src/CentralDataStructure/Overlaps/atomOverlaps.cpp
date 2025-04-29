@@ -95,11 +95,11 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
     return result;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(double overlapTolerance, const std::vector<cds::Atom*>& atomsA,
-                                        const std::vector<cds::Atom*>& atomsB)
+cds::Overlap cds::CountOverlappingAtoms(const codeUtils::SparseVector<double>& elementRadii, double overlapTolerance,
+                                        const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
-    std::vector<Sphere> coordsA                       = atomCoordinatesWithRadii(atomsA);
-    std::vector<Sphere> coordsB                       = atomCoordinatesWithRadii(atomsB);
+    std::vector<Sphere> coordsA                       = atomCoordinatesWithRadii(elementRadii, atomsA);
+    std::vector<Sphere> coordsB                       = atomCoordinatesWithRadii(elementRadii, atomsB);
     std::vector<MolecularMetadata::Element> elementsA = cds::atomElements(atomsA);
     std::vector<MolecularMetadata::Element> elementsB = cds::atomElements(atomsB);
 

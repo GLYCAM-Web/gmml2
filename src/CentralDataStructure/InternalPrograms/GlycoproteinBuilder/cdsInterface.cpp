@@ -10,6 +10,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
@@ -25,6 +26,7 @@ namespace glycoproteinBuilder
     GlycoproteinAssembly
     toGlycoproteinAssemblyStructs(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
                                   const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+                                  const codeUtils::SparseVector<double>& elementRadii,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
                                   std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
                                   const OverlapMultiplier overlapWeight, double overlapTolerance,
@@ -124,7 +126,7 @@ namespace glycoproteinBuilder
         }
 
         std::vector<std::string> atomNames           = cds::atomNames(atoms);
-        std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(atoms);
+        std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(elementRadii, atoms);
         std::vector<bool> partOfMovableSidechain(atoms.size(), false);
         std::vector<Element> atomElements = cds::atomElements(atoms);
         MolecularMetadata::validateElementsInPotentialTable(MolecularMetadata::potentialTable(), atomElements);

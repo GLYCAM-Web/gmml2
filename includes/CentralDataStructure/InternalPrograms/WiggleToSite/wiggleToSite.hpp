@@ -9,6 +9,7 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 
 namespace gmmlPrograms
 {
@@ -24,7 +25,8 @@ namespace gmmlPrograms
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        int minimizeDistance(const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles = 25,
+        int minimizeDistance(const codeUtils::SparseVector<double>& elementRadii,
+                             const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles = 25,
                              bool useMonteCarlo = true, int structureCount = 0);
 
       private:
@@ -81,7 +83,7 @@ namespace gmmlPrograms
                                 Residue* endResidue);
 
         double calculateDistance();
-        bool acceptOverlaps();
+        bool acceptOverlaps(const codeUtils::SparseVector<double>& elementRadii);
         bool acceptDistance(bool useMonteCarlo, double acceptance);
         //////////////////////////////////////////////////////////
         //                 PRIVATE MEMBERS                      //

@@ -1,14 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
-#include "includes/MolecularMetadata/atomicBonds.hpp"
-#include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/files.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
@@ -29,6 +21,15 @@
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Assembly/assemblySelection.hpp"
 #include "includes/Graph/graphFunctions.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
+#include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include <sstream>
 #include <ostream>
 #include <cctype>    // isDigit
@@ -230,7 +231,8 @@ namespace
         }
     }
 
-    void initialWiggleLinkage(const GlycamMetadata::DihedralAngleDataTable& metadataTable, cds::Molecule* molecule,
+    void initialWiggleLinkage(const codeUtils::SparseVector<double>& elementRadii,
+                              const GlycamMetadata::DihedralAngleDataTable& metadataTable, cds::Molecule* molecule,
                               cds::Residue* residue, cds::ResidueLinkage& linkage,
                               const cds::AngleSearchSettings& searchSettings)
     {
@@ -246,7 +248,7 @@ namespace
         std::vector<bool> reachable =
             graph::reachableNodes(graph.residues, std::vector<bool>(graph.residueCount, false), residueIndex);
         const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
-        const assembly::Bounds bounds       = toAssemblyBounds(indices, graph);
+        const assembly::Bounds bounds       = toAssemblyBounds(elementRadii, indices, graph);
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
@@ -263,6 +265,7 @@ namespace
     void depthFirstSetConnectivityAndGeometry(cds::Molecule* molecule,
                                               std::vector<cds::ResidueLinkage>& glycosidicLinkages,
                                               const cds::AngleSearchSettings& searchSettings,
+                                              const codeUtils::SparseVector<double>& elementRadii,
                                               const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                               cds::Residue* currentParent)
     {
@@ -289,18 +292,18 @@ namespace
             cds::ResidueLink link = cds::findResidueLink({child, currentParent});
             cds::ResidueLinkage& linkage =
                 glycosidicLinkages.emplace_back(cds::createResidueLinkage(metadataTable, link));
-            initialWiggleLinkage(metadataTable, molecule, child, linkage, searchSettings);
-            depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, metadataTable, child);
+            initialWiggleLinkage(elementRadii, metadataTable, molecule, child, linkage, searchSettings);
+            depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, elementRadii,
+                                                 metadataTable, child);
         }
     }
 } // namespace
 
-#include <iostream>
-
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManager, std::string inputSequence)
+Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManager,
+                           const codeUtils::SparseVector<double>& elementRadii, const std::string& inputSequence)
     : cds::Molecule()
 {
     {
@@ -340,7 +343,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
     auto searchSettings                                         = defaultSearchSettings;
     // Set 3D structure
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
-    depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings, metadataTable,
+    depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings, elementRadii, metadataTable,
                                          getResidues().front()); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
@@ -351,7 +354,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
         cds::determineAtomsThatMove(linkage.rotatableDihedrals);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Final carbohydrate overlap resolution starting.");
-    this->ResolveOverlaps(metadataTable, searchSettings);
+    this->ResolveOverlaps(elementRadii, metadataTable, searchSettings);
     gmml::log(__LINE__, __FILE__, gmml::INF,
               "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
     return;
@@ -448,13 +451,14 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
 
-void Carbohydrate::ResolveOverlaps(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elementRadii,
+                                   const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                    const cds::AngleSearchSettings& searchSettings)
 {
-    const cds::GraphIndexData indices                                     = cds::toIndexData({this});
-    const assembly::Graph graph                                           = cds::createCompleteAssemblyGraph(indices);
-    const assembly::Selection selection                                   = assembly::selectAll(graph);
-    assembly::Bounds bounds                                               = cds::toAssemblyBounds(indices, graph);
+    const cds::GraphIndexData indices   = cds::toIndexData({this});
+    const assembly::Graph graph         = cds::createCompleteAssemblyGraph(indices);
+    const assembly::Selection selection = assembly::selectAll(graph);
+    assembly::Bounds bounds             = cds::toAssemblyBounds(elementRadii, indices, graph);
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     // wiggle twice for nicer structures
     for (size_t n = 0; n < 2; n++)

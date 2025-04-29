@@ -5,7 +5,9 @@
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/version.h"
@@ -22,7 +24,7 @@ using cdsCondensedSequence::carbohydrateBuilder;
 carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
 try : parameters_(cdsParameters::loadParameters(codeUtils::gmmlHomeDirPath)),
-    carbohydrate_(parameters_, condensedSequence)
+    carbohydrate_(parameters_, MolecularMetadata::vanDerWaalsRadii(), condensedSequence)
 {}
 
 // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.
@@ -74,6 +76,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
     // whereas for linkages with combinatorial rotamers (e,g, phi -g/t, omg gt/gg/tg), we need to set each dihedral as
     // specified, but maybe it will be ok to go through and find the value for "A" in each rotatable dihedral.. yeah
     // actually it should be fine. Leaving comment for time being.
+    const codeUtils::SparseVector<double>& elementRadii         = MolecularMetadata::vanDerWaalsRadii();
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     for (auto& rotamerInfo : conformerInfo)
     {
@@ -90,7 +93,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
                               standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
-    this->carbohydrate_.ResolveOverlaps(metadataTable, cdsCondensedSequence::defaultSearchSettings);
+    this->carbohydrate_.ResolveOverlaps(elementRadii, metadataTable, cdsCondensedSequence::defaultSearchSettings);
     this->Generate3DStructureFiles(fileOutputDirectory, fileName);
     return;
 }

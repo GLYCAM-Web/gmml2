@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 
 #include <vector>
 
@@ -13,6 +14,7 @@ namespace glycoproteinBuilder
     GlycoproteinAssembly
     toGlycoproteinAssemblyStructs(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
                                   const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+                                  const codeUtils::SparseVector<double>& elementRadii,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
                                   std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
                                   const OverlapMultiplier overlapWeight, double overlapTolerance,
