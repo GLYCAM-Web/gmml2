@@ -129,6 +129,10 @@ namespace glycoproteinBuilder
                     {
                         gpInputs.overlapRejectionThreshold = parseDouble(value);
                     }
+                    else if (parameter == overlapToleranceParameter)
+                    {
+                        gpInputs.overlapTolerance = parseDouble(value);
+                    }
                     else if (parameter == atomRadiiSourceParameter)
                     {
                         std::vector<std::string> sources = {"amber", "chimera"};
