@@ -36,18 +36,32 @@ namespace
         return result;
     }
 
-    std::vector<FlaggedDouble> radii = withValues({
+    std::vector<FlaggedDouble> chimeraRadii = withValues({
   // taken from the worst-case of chimera's united or all atom radii, whichever is larger
-        { Element::H,   1.0},
-        { Element::C,  1.88},
-        { Element::N,  1.64},
-        { Element::O,   1.5},
+        { Element::H, 1.000},
+        { Element::C, 1.880},
+        { Element::N, 1.640},
+        { Element::O, 1.500},
         { Element::F, 1.560},
         { Element::P, 1.871},
         { Element::S, 1.782},
         {Element::Cl, 1.735},
         {Element::Br, 1.978},
         { Element::I, 2.094}
+    });
+
+    std::vector<FlaggedDouble> amberRadii = withValues({
+  // taken from the worst-case of chimera's united or all atom radii, whichever is larger
+        { Element::H, 0.6000},
+        { Element::C, 1.9080},
+        { Element::N, 1.8240},
+        { Element::O, 1.6612},
+        { Element::F, 1.7500},
+        { Element::P, 2.1000},
+        { Element::S, 2.0000},
+        {Element::Cl, 1.9480},
+        {Element::Br, 2.2200},
+        { Element::I, 2.3500}
     });
 
     std::vector<bool> isHeavy =
@@ -107,7 +121,8 @@ namespace
         {  values(lennardJonesSigmas),   bools(lennardJonesSigmas)}
     };
 
-    codeUtils::SparseVector<double> atomRadii = {values(radii), bools(radii)};
+    codeUtils::SparseVector<double> amberAtomRadii   = {values(amberRadii), bools(amberRadii)};
+    codeUtils::SparseVector<double> chimeraAtomRadii = {values(chimeraRadii), bools(chimeraRadii)};
 } // namespace
 
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
@@ -125,9 +140,19 @@ const std::string& MolecularMetadata::elementName(Element element)
     return elementNames[element];
 }
 
-const codeUtils::SparseVector<double>& MolecularMetadata::vanDerWaalsRadii()
+const codeUtils::SparseVector<double>& MolecularMetadata::amberVanDerWaalsRadii()
 {
-    return atomRadii;
+    return amberAtomRadii;
+}
+
+const codeUtils::SparseVector<double>& MolecularMetadata::chimeraVanDerWaalsRadii()
+{
+    return chimeraAtomRadii;
+}
+
+const codeUtils::SparseVector<double>& MolecularMetadata::defaultVanDerWaalsRadii()
+{
+    return chimeraVanDerWaalsRadii();
 }
 
 bool MolecularMetadata::isHeavyElement(Element element)

@@ -24,7 +24,7 @@ using cdsCondensedSequence::carbohydrateBuilder;
 carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
 try : parameters_(cdsParameters::loadParameters(codeUtils::gmmlHomeDirPath)),
-    carbohydrate_(parameters_, MolecularMetadata::vanDerWaalsRadii(), condensedSequence)
+    carbohydrate_(parameters_, MolecularMetadata::defaultVanDerWaalsRadii(), condensedSequence)
 {}
 
 // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.
@@ -76,7 +76,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
     // whereas for linkages with combinatorial rotamers (e,g, phi -g/t, omg gt/gg/tg), we need to set each dihedral as
     // specified, but maybe it will be ok to go through and find the value for "A" in each rotatable dihedral.. yeah
     // actually it should be fine. Leaving comment for time being.
-    const codeUtils::SparseVector<double>& elementRadii         = MolecularMetadata::vanDerWaalsRadii();
+    const codeUtils::SparseVector<double>& elementRadii         = MolecularMetadata::defaultVanDerWaalsRadii();
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     for (auto& rotamerInfo : conformerInfo)
     {

@@ -139,7 +139,9 @@ namespace MolecularMetadata
 
     Element toElement(const std::string& str);
     const std::string& elementName(Element element);
-    const codeUtils::SparseVector<double>& vanDerWaalsRadii();
+    const codeUtils::SparseVector<double>& amberVanDerWaalsRadii();
+    const codeUtils::SparseVector<double>& chimeraVanDerWaalsRadii();
+    const codeUtils::SparseVector<double>& defaultVanDerWaalsRadii();
     bool isHeavyElement(Element element);
     const PotentialTable& potentialTable();
     void validateElementsInPotentialTable(const PotentialTable& potential, const std::vector<Element>& vec);

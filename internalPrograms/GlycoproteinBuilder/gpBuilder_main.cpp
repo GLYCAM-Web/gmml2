@@ -164,8 +164,8 @@ int main(int argc, char* argv[])
             pdbFile.PreProcess(parameterManager, pdb::PreprocessorOptions());
         }
 
-        const codeUtils::SparseVector<double>& elementRadii                  = MolecularMetadata::vanDerWaalsRadii();
-        const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
+        const codeUtils::SparseVector<double>& elementRadii     = MolecularMetadata::defaultVanDerWaalsRadii();
+        const MolecularMetadata::AminoAcidTable& aminoAcidTable = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
         cds::Assembly* glycoprotein                                          = &pdbFile.mutableAssemblies().front();
         std::vector<cds::Residue*> gpInitialResidues                         = glycoprotein->getResidues();
