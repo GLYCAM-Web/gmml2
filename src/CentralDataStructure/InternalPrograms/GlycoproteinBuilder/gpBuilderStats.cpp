@@ -77,7 +77,8 @@ namespace glycoproteinBuilder
              {overlapRejectionThresholdParameter, std::to_string(input.overlapRejectionThreshold)},
              {useInitialGlycositeResidueConformationParameter, boolStr(input.useInitialGlycositeResidueConformation)},
              {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
-             {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)}}
+             {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
+             {atomRadiiSourceParameter, input.atomRadiiSource}}
         };
 
         codeUtils::TextTable structureTable {

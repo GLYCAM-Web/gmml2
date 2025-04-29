@@ -129,6 +129,16 @@ namespace glycoproteinBuilder
                     {
                         gpInputs.overlapRejectionThreshold = parseDouble(value);
                     }
+                    else if (parameter == atomRadiiSourceParameter)
+                    {
+                        std::vector<std::string> sources = {"amber", "chimera"};
+                        if (!codeUtils::contains(sources, value))
+                        {
+                            throwError("unknown atom radii source. Expected one of [" + codeUtils::join(", ", sources) +
+                                       "]");
+                        }
+                        gpInputs.atomRadiiSource = value;
+                    }
                     else if (parameter == seedParameter)
                     {
                         if (value != "random")
