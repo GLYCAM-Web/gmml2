@@ -143,6 +143,10 @@ namespace glycoproteinBuilder
                         }
                         gpInputs.atomRadiiSource = value;
                     }
+                    else if (parameter == ignoreHydrogenParameter)
+                    {
+                        gpInputs.ignoreHydrogen = parseBool(value);
+                    }
                     else if (parameter == seedParameter)
                     {
                         if (value != "random")

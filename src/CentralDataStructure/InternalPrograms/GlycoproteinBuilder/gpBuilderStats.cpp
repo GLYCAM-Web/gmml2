@@ -79,7 +79,8 @@ namespace glycoproteinBuilder
              {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
              {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
              {atomRadiiSourceParameter, input.atomRadiiSource},
-             {overlapToleranceParameter, std::to_string(input.overlapTolerance)}}
+             {overlapToleranceParameter, std::to_string(input.overlapTolerance)},
+             {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)}}
         };
 
         codeUtils::TextTable structureTable {

@@ -201,12 +201,11 @@ int main(int argc, char* argv[])
 
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
-        bool excludeHydrogen                               = false;
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
             aminoAcidTable, sidechainRotamers,
             glycoproteinBuilder::toGlycoproteinAssemblyStructs(
                 aminoAcidTable, dihedralAngleDataTable, elementRadii, molecules, glycosites, glycans, overlapMultiplier,
-                settings.overlapTolerance, settings.overlapRejectionThreshold, excludeHydrogen));
+                settings.overlapTolerance, settings.overlapRejectionThreshold, settings.ignoreHydrogen));
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck =
