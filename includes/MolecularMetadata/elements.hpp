@@ -1,6 +1,7 @@
 #ifndef INCLUDES_MOLECULARMETADATA_ELEMENTS_HPP
 #define INCLUDES_MOLECULARMETADATA_ELEMENTS_HPP
 
+#include "includes/CodeUtils/containerTypes.hpp"
 #include <string>
 #include <vector>
 
@@ -132,10 +133,8 @@ namespace MolecularMetadata
 
     struct PotentialTable
     {
-        std::vector<double> epsilon;
-        std::vector<bool> hasEpsilon;
-        std::vector<double> sigma;
-        std::vector<bool> hasSigma;
+        codeUtils::SparseVector<double> epsilon;
+        codeUtils::SparseVector<double> sigma;
     };
 
     Element toElement(const std::string& str);

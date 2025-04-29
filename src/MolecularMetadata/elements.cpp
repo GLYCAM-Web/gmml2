@@ -102,8 +102,10 @@ namespace
         return result;
     };
 
-    MolecularMetadata::PotentialTable defaultPotentialTable {values(lennardJonesEpsilons), bools(lennardJonesEpsilons),
-                                                             values(lennardJonesSigmas), bools(lennardJonesSigmas)};
+    MolecularMetadata::PotentialTable defaultPotentialTable {
+        {values(lennardJonesEpsilons), bools(lennardJonesEpsilons)},
+        {  values(lennardJonesSigmas),   bools(lennardJonesSigmas)}
+    };
 } // namespace
 
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
@@ -149,11 +151,11 @@ void MolecularMetadata::validateElementsInPotentialTable(const PotentialTable& p
     for (Element a : vec)
     {
         const std::string& name = elementNames[a];
-        if (!potential.hasEpsilon[a])
+        if (!potential.epsilon.hasValue[a])
         {
             throw std::runtime_error("Missing Lennard-Jones epsilon for " + name);
         }
-        if (!potential.hasSigma[a])
+        if (!potential.sigma.hasValue[a])
         {
             throw std::runtime_error("Missing Lennard-Jones sigma for " + name);
         }
@@ -162,8 +164,8 @@ void MolecularMetadata::validateElementsInPotentialTable(const PotentialTable& p
 
 double MolecularMetadata::potentialWeight(const PotentialTable& table, Element a, Element b)
 {
-    double epsilon = 0.5 * (table.epsilon[a] + table.epsilon[b]);
-    double sigma   = 0.5 * (table.sigma[a] + table.sigma[b]);
+    double epsilon = 0.5 * (table.epsilon.values[a] + table.epsilon.values[b]);
+    double sigma   = 0.5 * (table.sigma.values[a] + table.sigma.values[b]);
     double sigma2  = sigma * sigma;
     double sigma4  = sigma2 * sigma2;
     return epsilon * sigma4 * sigma4 * sigma4;
