@@ -1366,22 +1366,7 @@ Note that order should be reducing atom - anomeric atom, but I've tried reversin
 
 
 *********************
-Building id 00065:DOlipa1-OH
-*********************
-Input:
-DOlipa1-OH
-Interpreted:
-DOlipa1-OH
-IndexOrdered:
-DOlipa1-OH
-IndexOrderedLabeled:
-DOlip&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
-Parsed and labelled 00065 with no exceptions thrown.
-
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DOlipa1- with this glycam residue code: 0DR
-
-*********************
-Building id 00066:DOlipb1-OH
+Building id 00065:DOlipb1-OH
 *********************
 Input:
 DOlipb1-OH
@@ -1391,9 +1376,28 @@ IndexOrdered:
 DOlipb1-OH
 IndexOrderedLabeled:
 DOlip&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
-Parsed and labelled 00066 with no exceptions thrown.
+Parsed and labelled 00065 with no exceptions thrown.
 
 Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DOlipb1- with this glycam residue code: 0Dr
+
+*********************
+Building id 00066:LOlipa1-OH
+*********************
+Input:
+LOlipa1-OH
+Interpreted:
+LOlipa1-OH
+IndexOrdered:
+LOlipa1-OH
+IndexOrderedLabeled:
+LOlip&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00066 with no exceptions thrown.
+
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0dR_2_?_?
 
 *********************
 Building id 00067:DBacpa1-OH
@@ -1415,19 +1419,23 @@ ROH_1_?_?
 0BC_2_?_?
 
 *********************
-Building id 00068:DBacpb1-OH
+Building id 00068:LBacpa1-OH
 *********************
 Input:
-DBacpb1-OH
+LBacpa1-OH
 Interpreted:
-DBacpb1-OH
+LBacpa1-OH
 IndexOrdered:
-DBacpb1-OH
+LBacpa1-OH
 IndexOrderedLabeled:
-DBacp&Label=residue-2;b1-&Label=link-0;OH&Label=residue-1;
+LBacp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00068 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1- with this glycam residue code: 0Bc
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0bC_2_?_?
 
 *********************
 Building id 00069:DDmanpHepa1-OH

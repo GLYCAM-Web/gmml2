@@ -268,23 +268,21 @@ Note that order should be reducing atom - anomeric atom, but I've tried reversin
 
 
 *********************
-Building 00065: DOlipa1-OH
-*********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DOlipa1- with this glycam residue code: 0DR
-
-*********************
-Building 00066: DOlipb1-OH
+Building 00065: DOlipb1-OH
 *********************
 Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DOlipb1- with this glycam residue code: 0Dr
+
+*********************
+Building 00066: LOlipa1-OH
+*********************
 
 *********************
 Building 00067: DBacpa1-OH
 *********************
 
 *********************
-Building 00068: DBacpb1-OH
+Building 00068: LBacpa1-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1- with this glycam residue code: 0Bc
 
 *********************
 Building 00069: DDmanpHepa1-OH
