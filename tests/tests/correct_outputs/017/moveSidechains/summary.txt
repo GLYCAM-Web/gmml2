@@ -16,6 +16,9 @@ overlapRejectionThreshold                0.010000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                true    
 deleteUnresolvableGlycosites             false   
+atomRadiiSource                          chimera 
+atomOverlapTolerance                     0.600000
+ignoreHydrogen                           false   
 
 #### Structures ####
 
