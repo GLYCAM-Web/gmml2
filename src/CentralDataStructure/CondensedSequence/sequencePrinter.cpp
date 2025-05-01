@@ -1,5 +1,4 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequencePrinter.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceGraph.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"

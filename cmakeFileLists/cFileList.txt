@@ -5,7 +5,6 @@
 ./src/CentralDataStructure/CondensedSequence/graphViz.cpp
 ./src/CentralDataStructure/CondensedSequence/parsedResidue.cpp
 ./src/CentralDataStructure/CondensedSequence/sequenceGraph.cpp
-./src/CentralDataStructure/CondensedSequence/sequenceManipulator.cpp
 ./src/CentralDataStructure/CondensedSequence/sequenceParser.cpp
 ./src/CentralDataStructure/CondensedSequence/sequencePrinter.cpp
 ./src/CentralDataStructure/Editors/amberMdPrep.cpp

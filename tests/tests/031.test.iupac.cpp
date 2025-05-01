@@ -1,4 +1,3 @@
-#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequencePrinter.hpp"
 #include "includes/CodeUtils/containers.hpp"

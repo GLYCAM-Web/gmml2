@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulator.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
@@ -24,6 +24,7 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -39,7 +40,9 @@ using cdsCondensedSequence::Carbohydrate;
 
 namespace
 {
-    std::string getGlycamResidueName(cdsCondensedSequence::ParsedResidue* residue)
+    using cdsCondensedSequence::ParsedResidue;
+
+    std::string getGlycamResidueName(ParsedResidue* residue)
     {
         if (residue->GetType() == cds::ResidueType::Deoxy)
         {
@@ -94,7 +97,7 @@ namespace
         }
     }
 
-    void derivativeChargeAdjustment(cdsCondensedSequence::ParsedResidue* parsedResidue)
+    void derivativeChargeAdjustment(ParsedResidue* parsedResidue)
     {
         std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
         adjustAtomName             += parsedResidue->GetLinkageName().substr(0, 1);
@@ -150,7 +153,7 @@ namespace
         if (childResidue->GetType() == cds::ResidueType::Derivative)
         {
             std::string glycamNameForResidue =
-                getGlycamResidueName(codeUtils::erratic_cast<cdsCondensedSequence::ParsedResidue*>(childResidue));
+                getGlycamResidueName(codeUtils::erratic_cast<ParsedResidue*>(childResidue));
             return GlycamMetadata::GetConnectionAtomForResidue(glycamNameForResidue);
         }
         else if (childResidue->GetType() == cds::ResidueType::Sugar)
@@ -192,12 +195,11 @@ namespace
 
     void connectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue)
     {
-        std::string linkageLabel =
-            codeUtils::erratic_cast<cdsCondensedSequence::ParsedResidue*>(childResidue)->GetLinkageName();
+        std::string linkageLabel = codeUtils::erratic_cast<ParsedResidue*>(childResidue)->GetLinkageName();
         // This is using the new Node<Residue> functionality and the old AtomNode
         // Now go figure out how which Atoms to bond to each other in the residues.
         // Rule: Can't ever have a child aglycone or a parent derivative.
-        Atom* parentAtom = findParentAtom(parentResidue, childResidue, linkageLabel);
+        Atom* parentAtom         = findParentAtom(parentResidue, childResidue, linkageLabel);
         if (parentAtom == nullptr)
         {
             std::string message = "Did not find connection atom in residue: " + parentResidue->getStringId();
@@ -230,6 +232,71 @@ namespace
                 matrix.rotateCoordinates(cds::atomCoordinateReferences(childResidueAtoms));
                 break;
             }
+        }
+    }
+
+    std::vector<ParsedResidue*> residuesOrderedByConnectivity(ParsedResidue* terminalResidue)
+    {
+        std::vector<ParsedResidue*> rawResidues;
+        // Go via Graph so order decided by connectivity, depth first traversal:
+        glygraph::Graph<cds::Residue> sequenceGraph(terminalResidue);
+        for (auto& node : sequenceGraph.getNodes())
+        {
+            rawResidues.push_back(codeUtils::erratic_cast<ParsedResidue*>(node->getDerivedClass()));
+        }
+        return rawResidues;
+    }
+
+    void setResidueIndices(std::vector<ParsedResidue*> residues)
+    {
+        unsigned long long linkIndex    = 0; // Convention to start form 0 for linkages.
+        unsigned long long residueIndex = 1; // Convention to start from 1 for residues.
+        for (auto& residue : residues)
+        {
+            residue->setIndex(residueIndex);
+            residue->setNumber(residueIndex); // ToDo temporary, switch to using number here. Keep index as a gmml
+                                              // internal thing, never shown to user.
+            ++residueIndex;
+            for (auto& edge : residue->getInEdges())
+            {
+                edge->setIndex(linkIndex);
+                ++linkIndex;
+            }
+        }
+        return;
+    }
+
+    void createParsedResidues(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs,
+                              const cdsCondensedSequence::SequenceData& sequence)
+    {
+        size_t residueCount = sequence.residues.name.size();
+        residuePtrs.reserve(residueCount);
+        for (size_t n = 0; n < residueCount; n++)
+        {
+            residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
+                sequence.residues.fullString[n],
+                sequence.residues.type[n],
+                sequence.residues.name[n],
+                sequence.residues.linkage[n],
+                sequence.residues.ringType[n],
+                sequence.residues.configuration[n],
+                sequence.residues.isomer[n],
+                sequence.residues.preIsomerModifier[n],
+                {sequence.residues.ringShape[n], sequence.residues.modifier[n]}
+            }));
+        }
+        for (size_t n = 0; n < sequence.graph.edgeNodes.size(); n++)
+        {
+            auto& edge = sequence.graph.edgeNodes[n];
+            residuePtrs[edge[1]].get()->addParent(sequence.edges.names[n], residuePtrs[edge[0]].get());
+        }
+    }
+
+    void sortResidueEdges(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs)
+    {
+        for (auto& residue : residuePtrs)
+        {
+            residue.get()->sortOutEdgesBySourceTObjectComparator();
         }
     }
 
@@ -309,14 +376,13 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
     : cds::Molecule()
 {
     {
-        std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residuePtrs;
+        std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
         cdsCondensedSequence::SequenceData sequenceData = reordered(parseSequence(inputSequence));
         size_t residueCount                             = sequenceData.residues.name.size();
         createParsedResidues(residuePtrs, sequenceData);
         sortResidueEdges(residuePtrs);
 
-        std::vector<ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
-        for (auto& residue : residues)
+        for (auto& residue : codeUtils::pointerToUniqueVector(residuePtrs))
         { // Move atoms from prep file into parsedResidues.
             if (residue->GetType() != cds::ResidueType::Deoxy)
             {
@@ -331,14 +397,14 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
         { // Apply any deoxy
             if (sequenceData.residues.type[n] == cds::ResidueType::Deoxy)
             {
-                cdsCondensedSequence::ParsedResidue* deoxyResidue         = residuePtrs[n].get();
-                cdsCondensedSequence::ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
+                ParsedResidue* deoxyResidue         = residuePtrs[n].get();
+                ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
                 makeDeoxy(residueToBeDeoxified, deoxyResidue->GetLink());
                 residuePtrs.erase(residuePtrs.begin() + n);
             }
         }
-        residues = codeUtils::pointerToUniqueVector(residuePtrs);
-        setIndexByConnectivity(residues); // For reporting residue index numbers to the user
+        setResidueIndices(
+            residuesOrderedByConnectivity(residuePtrs[0].get())); // For reporting residue index numbers to the user
         for (auto& res : residuePtrs)
         {
             this->addResidue(std::move(res));
