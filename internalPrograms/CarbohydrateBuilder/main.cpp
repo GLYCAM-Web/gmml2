@@ -78,7 +78,6 @@ int main(int argc, char** argv)
         std::string outputDir        = ".";
         std::string headerBaseString = "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
-        int numThreads = 1;
         bool testMode  = false;
         bool overwrite = false;
         for (const auto& arg : arguments.args)
@@ -147,7 +146,7 @@ int main(int argc, char** argv)
         };
 
         std::vector<SequenceInput> lines;
-        auto processLine = [&](const std::string& line, size_t lineNumber)
+        auto processLine = [&](const std::string& line, size_t)
         {
             if (!line.empty())
             {

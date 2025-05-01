@@ -27,10 +27,8 @@ namespace prep
         std::string type = ""; /*!< Atom type; fill by the third column of the residue section of the file */
         TopologicalType topologicalType = kTopTypeM; /*!< Topological type (for chain extraction of the residue); fill
                                                           by th 4th column of the residue section of the file */
-        int bondIndex                   = 0;
-        ; /*!< Bond index; fill by the 5th column of the residue section of the file */
-        int angleIndex = 0;
-        ;                      /*!< Angle index; fill by the 6th column of the residue section of the file */
+        int bondIndex     = 0; /*!< Bond index; fill by the 5th column of the residue section of the file */
+        int angleIndex    = 0; /*!< Angle index; fill by the 6th column of the residue section of the file */
         int dihedralIndex = 0; /*!< Dihedral index; fill by the 7th column of the residue section of the file */
         double bondLength =
             constants::dNotSet; /*!< Bond length; fill by the 8th column of the residue section of the file */
