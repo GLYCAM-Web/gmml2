@@ -133,6 +133,7 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.ringType, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.configuration, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
+                            codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.modifier, residueOrder)};
 
@@ -155,6 +156,7 @@ void cdsCondensedSequence::createParsedResidues(
                 sequence.residues.ringType[n],
                 sequence.residues.configuration[n],
                 sequence.residues.isomer[n],
+                sequence.residues.preIsomerModifier[n],
                 {sequence.residues.ringShape[n], sequence.residues.modifier[n]}
         }));
     }

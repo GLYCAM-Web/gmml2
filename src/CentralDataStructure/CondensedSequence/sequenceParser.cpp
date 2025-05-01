@@ -34,7 +34,7 @@ namespace
     ParsedResidueComponents parseAglycone(const std::string& residueString)
     {
         return {
-            residueString, ResidueType::Aglycone, residueString, "", "", "", "", {"", ""}
+            residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", {"", ""}
         };
     }
 
@@ -44,7 +44,7 @@ namespace
         cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
         std::string linkage   = residueString.substr(0, 1);
         return {
-            residueString, type, name, linkage, "", "", "", {"", ""}
+            residueString, type, name, linkage, "", "", "", "", {"", ""}
         };
     }
 
@@ -53,18 +53,26 @@ namespace
         // (1-4)
         ParsedResidueComponents result;
         result.fullString    = residueString;
-        // Reading from front.
         result.type          = ResidueType::Sugar;
         // Assumptions
+        size_t isomerStart   = 0; // e.g. DGal, DGlc, LIdo
         size_t residueStart  = 0; // e.g. Gal, Glc, Ido
-        size_t modifierStart = 3; // E.g. NAc, A, A(1C4)
+        size_t modifierStart = 3; // e.g. NAc, A, A(1C4)
         // Checks
-        std::string isomer   = residueString.substr(0, 1);
+        if ((residueString.find("LDmanpHep") != std::string::npos) ||
+            (residueString.find("DDmanpHep") != std::string::npos)) // Exceptions for these weirdos
+        {
+            result.preIsomerModifier = residueString.substr(0, 1);
+            ++residueStart;
+            ++modifierStart;
+            ++isomerStart;
+        }
+        std::string isomer = residueString.substr(isomerStart, 1);
         if ((isomer == "D") || (isomer == "L"))
         {
             result.isomer = isomer;
-            ++residueStart;  // 1
-            ++modifierStart; // 4
+            ++residueStart;  // 1 if normal e.g. DGlc..
+            ++modifierStart; // 4 if normal.
         }
         result.name          = residueString.substr(residueStart, 3);
         size_t ringPosition  = (residueStart + 3);
@@ -72,7 +80,7 @@ namespace
         if ((ringType == "p") || (ringType == "f"))
         {
             result.ringType = ringType;
-            ++modifierStart; // 5
+            ++modifierStart; // 5 if normal.
         }
         // Find the dash, read around it.
         size_t dashPosition = residueString.find('-');
@@ -226,6 +234,7 @@ namespace
         data.residues.ringType.push_back(components.ringType);
         data.residues.configuration.push_back(components.configuration);
         data.residues.isomer.push_back(components.isomer);
+        data.residues.preIsomerModifier.push_back(components.preIsomerModifier);
         data.residues.ringShape.push_back(components.ringShapeAndModifier.shape);
         data.residues.modifier.push_back(components.ringShapeAndModifier.modifier);
         size_t id = graph::addNode(data.graph);

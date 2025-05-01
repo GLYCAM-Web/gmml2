@@ -55,8 +55,9 @@ namespace
             linkages = residue->GetChildLinkagesForGlycamResidueNaming();
         }
         std::string code = GlycamMetadata::Glycam06ResidueNameGenerator(
-            linkages, residue->GetIsomer(), residue->GetResidueName(), residue->GetRingType(),
-            residue->GetResidueModifier() + residue->GetRingShape(), residue->GetConfiguration());
+            linkages, residue->GetPreIsomerModifier(), residue->GetIsomer(), residue->GetResidueName(),
+            residue->GetRingType(), residue->GetResidueModifier() + residue->GetRingShape(),
+            residue->GetConfiguration());
         return code;
     }
 

@@ -3,8 +3,10 @@
 #include "includes/CodeUtils/logging.hpp"
 #include <stdexcept>
 
-std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& linkages, const std::string& isomer,
-                                                         const std::string& inputResName, const std::string& ringType,
+std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& linkages,
+                                                         const std::string& preIsomerModifier,
+                                                         const std::string& isomer, const std::string& inputResName,
+                                                         const std::string& ringType,
                                                          const std::string& residueModifier,
                                                          const std::string& configuration)
 {
@@ -20,8 +22,8 @@ std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& link
                         UYB, 0GA etc. See glycam naming / nomenclature.
      */
     // Link code e.g. 0, 1, 2, W, Z etc
-    std::string inputs = "\nInputs:\nlinkages: " + linkages + "\nisomer: " + isomer +
-                         "\ninputResName: " + inputResName + "\nringType: " + ringType +
+    std::string inputs = "\nInputs:\nlinkages: " + linkages + "\npreIsomerModifier: " + preIsomerModifier +
+                         "\nisomer: " + isomer + "\ninputResName: " + inputResName + "\nringType: " + ringType +
                          "\nresidueModifier: " + residueModifier + "\nconfiguration: " + configuration;
     gmml::log(__LINE__, __FILE__, gmml::INF, inputs);
 
@@ -72,6 +74,11 @@ std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& link
     if (residueCode.empty())
     {
         residueCode = GlycamMetadata::GetCodeForName(isomer + inputResName + ringType + residueModifier);
+    }
+    if (residueCode.empty())
+    { // LDmanpHepa or DDmanpHepb
+        residueCode = GlycamMetadata::GetCodeForName(preIsomerModifier + isomer + inputResName + ringType +
+                                                     residueModifier + configuration);
     }
     if (residueCode.empty())
     {

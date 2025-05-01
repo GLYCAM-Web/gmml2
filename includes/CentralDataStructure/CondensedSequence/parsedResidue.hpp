@@ -24,6 +24,7 @@ namespace cdsCondensedSequence
         std::string ringType;
         std::string configuration;
         std::string isomer;
+        std::string preIsomerModifier;
         RingShapeAndModifier ringShapeAndModifier;
     };
 
@@ -47,6 +48,11 @@ namespace cdsCondensedSequence
         inline std::string GetInputString() const
         {
             return components.fullString;
+        }
+
+        inline std::string GetPreIsomerModifier() const
+        {
+            return components.preIsomerModifier;
         }
 
         inline std::string GetIsomer() const

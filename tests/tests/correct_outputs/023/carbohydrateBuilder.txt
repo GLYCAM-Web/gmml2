@@ -79,6 +79,7 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: No link
 Check these inputs for mistakes: 
 Inputs:
 linkages: 5,2,1
+preIsomerModifier: 
 isomer: D
 inputResName: Fru
 ringType: f
@@ -92,6 +93,7 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: No link
 Check these inputs for mistakes: 
 Inputs:
 linkages: 5,2,1
+preIsomerModifier: 
 isomer: D
 inputResName: Fru
 ringType: f
@@ -291,7 +293,6 @@ Building 00069: DDmanpHepa1-OH
 *********************
 Building 00070: LDmanpHepa1-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for LDmanpHepa1- with this glycam residue code: 0lH
 
 *********************
 Building 00071: DAbepa1-OH

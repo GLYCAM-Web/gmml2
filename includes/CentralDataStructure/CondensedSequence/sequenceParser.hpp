@@ -19,6 +19,7 @@ namespace cdsCondensedSequence
         std::vector<std::string> ringType;
         std::vector<std::string> configuration;
         std::vector<std::string> isomer;
+        std::vector<std::string> preIsomerModifier;
         std::vector<std::string> ringShape;
         std::vector<std::string> modifier;
     };

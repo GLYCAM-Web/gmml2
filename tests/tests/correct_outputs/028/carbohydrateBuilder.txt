@@ -422,6 +422,7 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: No link
 Check these inputs for mistakes: 
 Inputs:
 linkages: 5,2,1
+preIsomerModifier: 
 isomer: D
 inputResName: Fru
 ringType: f
@@ -445,6 +446,7 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: No link
 Check these inputs for mistakes: 
 Inputs:
 linkages: 5,2,1
+preIsomerModifier: 
 isomer: D
 inputResName: Fru
 ringType: f
@@ -1469,7 +1471,11 @@ IndexOrderedLabeled:
 LDmanpHep&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00070 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for LDmanpHepa1- with this glycam residue code: 0lH
+Number of residues for this sequence is 2
+Number of likely shapes is 1
+Number of possible shapes is 1
+ROH_1_?_?
+0LH_2_?_?
 
 *********************
 Building id 00071:DAbepa1-OH

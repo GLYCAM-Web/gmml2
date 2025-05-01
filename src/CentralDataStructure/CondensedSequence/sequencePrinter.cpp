@@ -28,8 +28,8 @@ namespace
         result.reserve(residueCount);
         for (size_t n = 0; n < residueCount; n++)
         {
-            result.push_back(residues.isomer[n] + residues.name[n] + residues.ringType[n] + residues.modifier[n] +
-                             residues.ringShape[n]);
+            result.push_back(residues.preIsomerModifier[n] + residues.isomer[n] + residues.name[n] +
+                             residues.ringType[n] + residues.modifier[n] + residues.ringShape[n]);
         }
         return result;
     };
@@ -50,8 +50,8 @@ namespace
             }
             else if (codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, type))
             {
-                result.push_back(residues.isomer[n] + residues.name[n] + residues.ringType[n] + residues.modifier[n] +
-                                 residues.ringShape[n]);
+                result.push_back(residues.preIsomerModifier[n] + residues.isomer[n] + residues.name[n] +
+                                 residues.ringType[n] + residues.modifier[n] + residues.ringShape[n]);
             }
             else
             {
