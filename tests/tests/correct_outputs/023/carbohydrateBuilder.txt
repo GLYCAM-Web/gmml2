@@ -307,11 +307,11 @@ Building 00073: LArap4Na1-OH
 *********************
 
 *********************
-Building 00074: GlcpNAc3NAcAa1-OH
+Building 00074: DGlcpNAc3NAcAa1-OH
 *********************
 
 *********************
-Building 00075: QuipNAc4NAcb1-OH
+Building 00075: DQuipNAc4NAcb1-OH
 *********************
 
 *********************
@@ -353,3 +353,10 @@ Building 00084: DFrufb2-4DFrufa2-4DFrufa2-OME
 *********************
 Building 00085: DFrufb2-2DFrufa
 *********************
+
+*********************
+Building 00086: DDmanpHepb1-7LDmanpHepb1-7DDmanpHepb1-3DQuipNAc4NAcb1-4DGlcpNAc3NAcAa1-8DK3Opb2-3LArap4Na1-3DBacpa1-OH
+*********************
+Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 3aN@C1 and 3BC@O3
+Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
+
