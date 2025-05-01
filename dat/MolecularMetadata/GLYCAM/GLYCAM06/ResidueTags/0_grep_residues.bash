@@ -161,7 +161,7 @@ for i in QF; do
     grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
     echo '"' >>"${OutputFile}"
 done
-for i in qF; do
+for i in Qf; do
     echo 'i=$((i + 1))' >>"${OutputFile}"
     echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
     echo 'NAMES[${i}]="' >>"${OutputFile}"
@@ -180,7 +180,7 @@ for i in ZF; do
     grep ^."${i}"$ "${ResidueNames}" >>"${ScriptHandledList}"
     echo '"' >>"${OutputFile}"
 done
-for i in zF; do
+for i in Zf; do
     echo 'i=$((i + 1))' >>"${OutputFile}"
     echo "TYPES[\${i}]=\" ${TYPE_BASE} beta \" " >>"${OutputFile}"
     echo 'NAMES[${i}]="' >>"${OutputFile}"

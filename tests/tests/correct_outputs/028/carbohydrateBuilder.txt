@@ -1363,9 +1363,23 @@ IndexOrderedLabeled:
 DLegp&Label=residue-8;a2-4&Label=link-6;LPsep&Label=residue-7;a2-4&Label=link-5;LAcip&Label=residue-6;a2-4&Label=link-4;LFusp&Label=residue-5;a2-3&Label=link-3;DGalf&Label=residue-4;b1-4&Label=link-2;DMurpNAc&Label=residue-3;a1-4&Label=link-1;DK3Op&Label=residue-2;b2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00064 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 4MR@C1 and 4Kx@O4
-Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
-
+Number of residues for this sequence is 8
+Number of likely shapes is 8
+Number of possible shapes is 8
+ROH_1_?_?
+4Kx_2_?_?
+4MR_3_?_?
+3LU_4_?_?
+4gF_5_?_?
+4eC_6_?_?
+4mP_7_?_?
+0LG_8_?_?
+Name: LFuspa2-3DGalfb, LinkageIndex: 3, Res1: 5, Res2: 4
+    LikelyRotamers: Phi, t, -g
+Name: LAcipa2-4LFuspa, LinkageIndex: 4, Res1: 6, Res2: 5
+    LikelyRotamers: Phi, t, -g
+Name: LPsepa2-4LAcipa, LinkageIndex: 5, Res1: 7, Res2: 6
+    LikelyRotamers: Phi, t, -g
 
 *********************
 Building id 00065:DOlipb1-OH
@@ -1860,6 +1874,4 @@ IndexOrderedLabeled:
 DDmanpHep&Label=residue-9;b1-7&Label=link-7;LDmanpHep&Label=residue-8;b1-7&Label=link-6;DDmanpHep&Label=residue-7;b1-3&Label=link-5;DQuipNAc4NAc&Label=residue-6;b1-4&Label=link-4;DGlcpNAc3NAcA&Label=residue-5;a1-8&Label=link-3;DK3Op&Label=residue-4;b2-3&Label=link-2;LArap4N&Label=residue-3;a1-3&Label=link-1;DBacp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00086 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 3aN@C1 and 3BC@O3
-Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 7Lh and 7Dh. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]

@@ -265,9 +265,6 @@ Building 00063: DLegpb2-4LPsepb2-4LAcipb2-4LFuspb2-3DGalfa1-4DMurpNAcb1-4DK3Opa2
 *********************
 Building 00064: DLegpa2-4LPsepa2-4LAcipa2-4LFuspa2-3DGalfb1-4DMurpNAca1-4DK3Opb2-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 4MR@C1 and 4Kx@O4
-Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
-
 
 *********************
 Building 00065: DOlipb1-OH
@@ -357,6 +354,4 @@ Building 00085: DFrufb2-2DFrufa
 *********************
 Building 00086: DDmanpHepb1-7LDmanpHepb1-7DDmanpHepb1-3DQuipNAc4NAcb1-4DGlcpNAc3NAcAa1-8DK3Opb2-3LArap4Na1-3DBacpa1-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 3aN@C1 and 3BC@O3
-Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 7Lh and 7Dh. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
