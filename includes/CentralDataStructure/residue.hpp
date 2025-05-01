@@ -102,7 +102,6 @@ namespace cds
         Atom* FindAtom(const std::string queryName) const;
         Atom* FindAtom(const int& queryNumber) const;
         bool contains(const Atom* queryAtom) const;
-        void MakeDeoxy(const std::string oxygenNumber);
         ResidueType determineType(const std::string& residueName);
 
         //////////////////////////////////////////////////////////

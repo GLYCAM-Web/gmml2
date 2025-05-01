@@ -94,22 +94,6 @@ namespace
         }
     }
 
-    void applyDeoxy(std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>>& residues,
-                    cdsCondensedSequence::ParsedResidue* deoxyResidue)
-    {
-        cdsCondensedSequence::ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
-        residueToBeDeoxified->MakeDeoxy(deoxyResidue->GetLink());
-        auto it = std::find_if(residues.begin(), residues.end(),
-                               [&](auto& i)
-                               {
-                                   return deoxyResidue == i.get();
-                               });
-        if (it != residues.end())
-        {
-            it = residues.erase(it);
-        }
-    }
-
     void derivativeChargeAdjustment(cdsCondensedSequence::ParsedResidue* parsedResidue)
     {
         std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
@@ -187,6 +171,23 @@ namespace
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }
+    }
+
+    void makeDeoxy(cds::Residue* residue, const std::string oxygenNumber)
+    { // if oxygenNumber is 6, then C6-O6-H6O becomes C6-Hd
+        Atom* hydrogenAtom = residue->FindAtom("H" + oxygenNumber + "O");
+        Atom* oxygenAtom   = residue->FindAtom("O" + oxygenNumber);
+        Atom* carbonAtom   = residue->FindAtom("C" + oxygenNumber);
+        // Add O and H charge to the C atom.
+        carbonAtom->setCharge(carbonAtom->getCharge() + oxygenAtom->getCharge() + hydrogenAtom->getCharge());
+        // Delete the H of O-H
+        residue->deleteAtom(hydrogenAtom);
+        // Now transform the Oxygen to a Hd. Easier than deleting O and creating H. Note: this H looks weird in LiteMol
+        // as bond length is too long.
+        oxygenAtom->setName("Hd");
+        oxygenAtom->setType("H1");
+        oxygenAtom->setCharge(0.0000);
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Completed MakeDeoxy\n");
     }
 
     void connectAndSetGeometry(cds::Residue* parentResidue, cds::Residue* childResidue)
@@ -309,7 +310,9 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
 {
     {
         std::vector<std::unique_ptr<cdsCondensedSequence::ParsedResidue>> residuePtrs;
-        createParsedResidues(residuePtrs, reordered(parseSequence(inputSequence)));
+        cdsCondensedSequence::SequenceData sequenceData = reordered(parseSequence(inputSequence));
+        size_t residueCount                             = sequenceData.residues.name.size();
+        createParsedResidues(residuePtrs, sequenceData);
         sortResidueEdges(residuePtrs);
 
         std::vector<ParsedResidue*> residues = codeUtils::pointerToUniqueVector(residuePtrs);
@@ -324,13 +327,17 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 }
             }
         }
-        for (auto& residue : residues)
+        for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy
-            if (residue->GetType() == cds::ResidueType::Deoxy)
+            if (sequenceData.residues.type[n] == cds::ResidueType::Deoxy)
             {
-                applyDeoxy(residuePtrs, residue);
+                cdsCondensedSequence::ParsedResidue* deoxyResidue         = residuePtrs[n].get();
+                cdsCondensedSequence::ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
+                makeDeoxy(residueToBeDeoxified, deoxyResidue->GetLink());
+                residuePtrs.erase(residuePtrs.begin() + n);
             }
         }
+        residues = codeUtils::pointerToUniqueVector(residuePtrs);
         setIndexByConnectivity(residues); // For reporting residue index numbers to the user
         for (auto& res : residuePtrs)
         {
