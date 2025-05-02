@@ -131,12 +131,15 @@ namespace MolecularMetadata
         ElementCount = 119
     };
 
+    typedef std::vector<std::pair<Element, int>> ChemicalFormula;
+
     struct PotentialTable
     {
         codeUtils::SparseVector<double> epsilon;
         codeUtils::SparseVector<double> sigma;
     };
 
+    ChemicalFormula parseFormula(const std::string& formula);
     Element toElement(const std::string& str);
     const std::string& elementName(Element element);
     const codeUtils::SparseVector<double>& amberVanDerWaalsRadii();

@@ -1,11 +1,14 @@
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
+#include <functional>
 #include <vector>
 #include <map>
 #include <utility>
+#include <optional>
 
 namespace
 {
@@ -125,6 +128,35 @@ namespace
     codeUtils::SparseVector<double> chimeraAtomRadii = {values(chimeraRadii), bools(chimeraRadii)};
 } // namespace
 
+// expects element names and numbers together, separated by space. Implicit 1 is not supported
+// e.g "C3 H5 N1 O1 Se1"
+MolecularMetadata::ChemicalFormula MolecularMetadata::parseFormula(const std::string& formula)
+{
+    auto isUpper = [](char c)
+    {
+        return std::isupper(c);
+    };
+    auto isDigit = [](char c)
+    {
+        return std::isdigit(c);
+    };
+    ChemicalFormula result;
+    result.reserve(std::count_if(formula.begin(), formula.end(), isUpper));
+    auto begin = formula.begin();
+    auto from  = begin;
+    while (from != formula.end())
+    {
+        auto until      = std::find(from, formula.end(), ' ');
+        auto firstDigit = std::find_if(from, until, isDigit);
+        MolecularMetadata::Element element =
+            MolecularMetadata::toElement(formula.substr(from - begin, firstDigit - from));
+        std::optional<int> count = codeUtils::parseInt(formula.substr(firstDigit - begin, until - firstDigit));
+        result.push_back({element, count.value()});
+        from = (until == formula.end()) ? formula.end() : until + 1;
+    }
+    return result;
+};
+
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
 {
     auto it = std::find(elementNames.begin(), elementNames.end(), str);
@@ -158,6 +190,11 @@ const codeUtils::SparseVector<double>& MolecularMetadata::defaultVanDerWaalsRadi
 bool MolecularMetadata::isHeavyElement(Element element)
 {
     return isHeavy[element];
+}
+
+const codeUtils::SparseVector<double>& MolecularMetadata::elementMass()
+{
+    return atomicMass;
 }
 
 const MolecularMetadata::PotentialTable& MolecularMetadata::potentialTable()
