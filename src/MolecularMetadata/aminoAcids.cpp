@@ -1,4 +1,5 @@
 #include "includes/MolecularMetadata/aminoAcids.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
@@ -10,6 +11,7 @@
 namespace
 {
     using MolecularMetadata::BondVector;
+    using MolecularMetadata::ChemicalFormula;
 
     struct AminoAcid
     {
@@ -17,30 +19,38 @@ namespace
         BondVector bonds;
     };
 
-    const std::vector<std::pair<std::string, double>> molecularWeight {
-        {"ALA",  89},
-        {"ARG", 174},
-        {"ASN", 132},
-        {"ASP", 133},
-        {"CYS", 121},
-        {"CYX", 120},
-        {"GLN", 146},
-        {"GLU", 147},
-        {"GLY",  75},
-        {"HIS", 155},
-        {"ILE", 131},
-        {"LEU", 131},
-        {"LYS", 146},
-        {"MET", 149},
-        {"MSE",   0},
-        {"PHE", 165},
-        {"PRO", 115},
-        {"SEC",   0},
-        {"SER", 105},
-        {"THR", 119},
-        {"TRP", 204},
-        {"TYR", 181},
-        {"VAL", 117}
+    std::function<std::pair<std::string, ChemicalFormula>(const std::pair<std::string, std::string>&)> parseFormula =
+        [](const std::pair<std::string, std::string>& p)
+    {
+        ChemicalFormula parsed = MolecularMetadata::parseFormula(p.second);
+        return std::pair<std::string, ChemicalFormula> {p.first, parsed};
+    };
+
+    std::vector<std::pair<std::string, std::string>> formulaStrings = {
+        {"ALA",     "C3 H5 N1 O1"},
+        {"ARG",    "C6 H12 N4 O1"},
+        {"ASN",     "C4 H6 N2 O2"},
+        {"ASP",     "C4 H5 N1 O3"},
+        {"CYS",  "C3 H5 N1 O1 S1"},
+        {"CYX",  "C3 H4 N1 O1 S1"},
+        {"GLN",     "C5 H8 N2 O2"},
+        {"GLU",     "C5 H7 N1 O3"},
+        {"GLY",     "C2 H3 N1 O1"},
+        {"HIS",     "C6 H7 N3 O1"},
+        {"ILE",    "C6 H11 N1 O1"},
+        {"LEU",    "C6 H11 N1 O1"},
+        {"LYS",    "C6 H12 N2 O1"},
+        {"MET",  "C5 H9 N1 O1 S1"},
+        {"MSE", "C5 H9 N1 O1 Se1"},
+        {"PHE",     "C9 H9 N1 O1"},
+        {"PRO",     "C5 H7 N1 O1"},
+        {"PYL",   "C12 H19 N3 O2"},
+        {"SEC", "C3 H5 N1 O1 Se1"},
+        {"SER",     "C3 H5 N1 O2"},
+        {"THR",     "C4 H7 N1 O2"},
+        {"TRP",   "C11 H10 N2 O1"},
+        {"TYR",     "C9 H9 N1 O2"},
+        {"VAL",     "C5 H9 N1 O1"}
     };
 
     const std::vector<std::pair<std::string, std::string>> originalResidueNames = {
@@ -195,23 +205,25 @@ namespace
 
     MolecularMetadata::AminoAcidTable createTable()
     {
+        std::vector<std::pair<std::string, ChemicalFormula>> formulas =
+            codeUtils::vectorMap(parseFormula, formulaStrings);
         MolecularMetadata::AminoAcidTable table;
-        size_t count = molecularWeight.size() + originalResidueNames.size();
+        size_t count = formulas.size() + originalResidueNames.size();
         table.names.reserve(count);
         table.originalName.reserve(count);
-        table.weights.reserve(count);
-        for (auto& a : molecularWeight)
+        table.formulas.reserve(count);
+        for (auto& a : formulas)
         {
             table.names.push_back(a.first);
             table.originalName.push_back(a.first);
-            table.weights.push_back(a.second);
+            table.formulas.push_back(a.second);
         }
         for (auto& a : originalResidueNames)
         {
             table.names.push_back(a.first);
             table.originalName.push_back(a.second);
             size_t originalIndex = codeUtils::indexOf(table.names, a.second);
-            table.weights.push_back(table.weights[originalIndex]);
+            table.formulas.push_back(table.formulas[originalIndex]);
         }
         table.bonds.resize(count);
         table.atomNames.resize(count);
@@ -240,14 +252,19 @@ namespace
         }
         return table;
     }
-
-    const MolecularMetadata::AminoAcidTable aminoAcidTableVar = createTable();
-
 } // namespace
 
-const MolecularMetadata::AminoAcidTable& MolecularMetadata::aminoAcidTable()
+MolecularMetadata::AminoAcidTable MolecularMetadata::aminoAcidTable()
 {
-    return aminoAcidTableVar;
+    return createTable();
+}
+
+MolecularMetadata::ChemicalFormula MolecularMetadata::aminoAcidTerminalAtoms()
+{
+    return {
+        {Element::H, 2},
+        {Element::O, 1}
+    };
 }
 
 size_t MolecularMetadata::aminoAcidIndex(const AminoAcidTable& table, const std::string& name)
