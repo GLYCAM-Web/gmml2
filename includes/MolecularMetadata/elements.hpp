@@ -140,12 +140,15 @@ namespace MolecularMetadata
     };
 
     ChemicalFormula parseFormula(const std::string& formula);
+    ChemicalFormula formulaSum(const std::vector<ChemicalFormula>& formulas);
     Element toElement(const std::string& str);
     const std::string& elementName(Element element);
     const codeUtils::SparseVector<double>& amberVanDerWaalsRadii();
     const codeUtils::SparseVector<double>& chimeraVanDerWaalsRadii();
     const codeUtils::SparseVector<double>& defaultVanDerWaalsRadii();
     bool isHeavyElement(Element element);
+    const codeUtils::SparseVector<double>& elementMass();
+    double totalMass(const codeUtils::SparseVector<double>& mass, const ChemicalFormula& formula);
     const PotentialTable& potentialTable();
     void validateElementsInPotentialTable(const PotentialTable& potential, const std::vector<Element>& vec);
     double potentialWeight(const PotentialTable& table, Element a, Element b);

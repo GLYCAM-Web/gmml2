@@ -96,6 +96,20 @@ namespace
         { Element::I, 2.476700}
     });
 
+    std::vector<FlaggedDouble> mass = withValues({
+        { Element::H,   1.0},
+        { Element::C,  12.0},
+        { Element::N,  14.0},
+        { Element::O,  16.0},
+        { Element::F,  19.0},
+        { Element::P,  31.0},
+        { Element::S,  32.1},
+        {Element::Cl,  35.5},
+        {Element::Se,  78.9},
+        {Element::Br,  79.9},
+        { Element::I, 126.9}
+    });
+
     auto values = [](const std::vector<FlaggedDouble>& vec)
     {
         std::vector<double> result(vec.size(), 0.0);
@@ -124,6 +138,7 @@ namespace
         {  values(lennardJonesSigmas),   bools(lennardJonesSigmas)}
     };
 
+    codeUtils::SparseVector<double> atomicMass       = {values(mass), bools(mass)};
     codeUtils::SparseVector<double> amberAtomRadii   = {values(amberRadii), bools(amberRadii)};
     codeUtils::SparseVector<double> chimeraAtomRadii = {values(chimeraRadii), bools(chimeraRadii)};
 } // namespace
@@ -156,6 +171,27 @@ MolecularMetadata::ChemicalFormula MolecularMetadata::parseFormula(const std::st
     }
     return result;
 };
+
+MolecularMetadata::ChemicalFormula MolecularMetadata::formulaSum(const std::vector<ChemicalFormula>& formulas)
+{
+    std::vector<int> count(ElementCount, 0);
+    for (auto& formula : formulas)
+    {
+        for (auto& a : formula)
+        {
+            count[a.first] += a.second;
+        }
+    }
+    ChemicalFormula result;
+    for (size_t n = 0; n < ElementCount; n++)
+    {
+        if (count[n] != 0)
+        {
+            result.push_back({Element(n), count[n]});
+        }
+    }
+    return result;
+}
 
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
 {
@@ -195,6 +231,21 @@ bool MolecularMetadata::isHeavyElement(Element element)
 const codeUtils::SparseVector<double>& MolecularMetadata::elementMass()
 {
     return atomicMass;
+}
+
+double MolecularMetadata::totalMass(const codeUtils::SparseVector<double>& mass, const ChemicalFormula& formula)
+{
+    double result = 0.0;
+    for (auto& a : formula)
+    {
+        Element element = a.first;
+        if (!mass.hasValue[element])
+        {
+            throw std::runtime_error("Error: missing atomic mass for element: " + elementName(element));
+        }
+        result += mass.values[element] * a.second;
+    }
+    return result;
 }
 
 const MolecularMetadata::PotentialTable& MolecularMetadata::potentialTable()
