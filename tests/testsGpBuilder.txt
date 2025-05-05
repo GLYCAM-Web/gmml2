@@ -5,4 +5,5 @@
 ./017.test.GlycoproteinBuilder.sh Freeze_glycosite_conformation tests/inputs/017.GlycoproteinBuilder/freezeGSConformation.txt 017/freezeGSConformation
 ./017.test.GlycoproteinBuilder.sh Delete_incompatible_sites tests/inputs/017.GlycoproteinBuilder/deleteSites.txt 017/deleteSites
 ./017.test.GlycoproteinBuilder.sh Move_sidechains tests/inputs/017.GlycoproteinBuilder/moveSidechains.txt 017/moveSidechains
+./017.test.GlycoproteinBuilder.sh 3SGK tests/inputs/017.GlycoproteinBuilder/3SGK.txt 017/3SGK
 ./017.test.GlycoproteinBuilder.sh Failure tests/inputs/017.GlycoproteinBuilder/createError.txt 017/failure

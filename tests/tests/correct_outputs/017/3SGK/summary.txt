@@ -1,0 +1,29 @@
+##### Glycoprotein Builder #####
+
+Produced by GMML (https://github.com/GLYCAM-Web/gmml2) in test mode
+
+#### Input ####
+
+Filename: tests/inputs/017.GlycoproteinBuilder/3SGK.txt
+Protein: tests/inputs/017.GlycoproteinBuilder/3SGK.pdb
+
+Parameter                              | Value   
+numberOfSamples                          2       
+rngSeed                                  0       
+prepareForMD                             false   
+persistCycles                            20      
+overlapRejectionThreshold                0.000000
+useInitialGlycositeResidueConformation   false   
+moveOverlappingSidechains                true    
+deleteUnresolvableGlycosites             false   
+atomRadiiSource                          chimera 
+atomOverlapTolerance                     0.600000
+ignoreHydrogen                           false   
+
+#### Structures ####
+
+Filename       | Status | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains                  
+default                   0.000000                                                        TYR296 ARG155                     
+0_glycoprotein            0.000000                                                        PHE241 ARG155                     
+1_glycoprotein            0.000000                                                        PHE243 SER375 ASP376 PHE153 ARG155
+

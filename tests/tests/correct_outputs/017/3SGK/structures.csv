@@ -1,0 +1,4 @@
+Filename,Status,Highest atom overlap,Failed glycosites,Deleted glycosites,Moved sidechains
+default,,0.000000,,,TYR296 ARG155
+0_glycoprotein,,0.000000,,,PHE241 ARG155
+1_glycoprotein,,0.000000,,,PHE243 SER375 ASP376 PHE153 ARG155
