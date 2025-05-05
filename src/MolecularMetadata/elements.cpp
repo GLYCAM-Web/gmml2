@@ -55,7 +55,7 @@ namespace
 
     std::vector<FlaggedDouble> amberRadii = withValues({
   // taken from the worst-case of chimera's united or all atom radii, whichever is larger
-        { Element::H, 0.6000},
+        { Element::H, 1.2000},
         { Element::C, 1.9080},
         { Element::N, 1.8240},
         { Element::O, 1.6612},
