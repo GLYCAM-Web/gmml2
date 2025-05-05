@@ -134,12 +134,6 @@ void PdbModel::extractCoordinatesFromModel(std::stringstream& stream_block, std:
     return;
 }
 
-void PdbModel::addConectRecord(const cds::Atom* atom1, const cds::Atom* atom2)
-{
-    conectRecords_.emplace_back(std::vector<const cds::Atom*> {atom1, atom2});
-    return;
-}
-
 void PdbModel::ChangeResidueName(const std::string& selector, const std::string& newName)
 {
     for (auto& residue : this->getResidues())
@@ -186,7 +180,6 @@ void PdbModel::preProcessCysResidues(pdb::PreprocessorInformation& ppInfo)
                     cysRes2->setName("CYX");
                     // gmml::log(__LINE__, __FILE__, gmml::INF, "Names set");
                     addBond(sgAtom1, sgAtom2); // I think I want this here. Not 100%.
-                    this->addConectRecord(sgAtom1, sgAtom2);
                     ppInfo.cysBondResidues_.emplace_back(cysRes1->getId(), cysRes2->getId(), distance);
                     // gmml::log(__LINE__, __FILE__, gmml::INF, "ThisNoHappen?");
                     std::stringstream message;

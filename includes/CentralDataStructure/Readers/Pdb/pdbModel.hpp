@@ -1,7 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBMODEL_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBMODEL_HPP
 #include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/conectRecord.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include <vector>
@@ -47,21 +46,10 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       PRIVATE FUNCTIONS              //
         //////////////////////////////////////////////////////////
-        void addConectRecord(const cds::Atom* atom1, const cds::Atom* atom2);
-
-        inline const std::vector<ConectRecord>& GetConectRecords() const
-        {
-            return conectRecords_;
-        }
-
         std::string extractChainId(const std::string& line);
         std::stringstream extractSingleChainFromRecordSection(std::stringstream& stream_block, std::string line,
                                                               const std::string& initialChainID);
         void extractCoordinatesFromModel(std::stringstream& stream_block, std::string line);
-        //////////////////////////////////////////////////////////
-        //                       ATTRIBUTES                     //
-        //////////////////////////////////////////////////////////
-        std::vector<ConectRecord> conectRecords_;
     };
 } // namespace pdb
 #endif

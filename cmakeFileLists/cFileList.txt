@@ -47,7 +47,6 @@
 ./src/CentralDataStructure/Readers/Pdb/pdbResidueId.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbSelections.cpp
 ./src/CentralDataStructure/Readers/Pdb/sectionClasses/authorRecord.cpp
-./src/CentralDataStructure/Readers/Pdb/sectionClasses/conectRecord.cpp
 ./src/CentralDataStructure/Readers/Pdb/sectionClasses/databaseReferenceRecord.cpp
 ./src/CentralDataStructure/Readers/Pdb/sectionClasses/headerRecord.cpp
 ./src/CentralDataStructure/Readers/Pdb/sectionClasses/journalRecord.cpp
