@@ -54,12 +54,12 @@ void PdbChain::tagTerminalResidues()
     PdbResidue* nTer = this->getNTerminal();
     if (nTer != nullptr)
     {
-        nTer->addLabel("NTerminal");
+        nTer->setNTerminal();
     }
     PdbResidue* cTer = this->getCTerminal();
     if (cTer != nullptr)
     {
-        cTer->addLabel("CTerminal");
+        cTer->setCTerminal();
     }
     return;
 }

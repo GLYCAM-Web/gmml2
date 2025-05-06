@@ -95,6 +95,16 @@ namespace cds
             return atoms_.size();
         }
 
+        inline void setCTerminal()
+        {
+            isCTerminal = true;
+        }
+
+        inline void setNTerminal()
+        {
+            isNTerminal = true;
+        }
+
         //////////////////////////////////////////////////////////
         //                    FUNCTIONS                         //
         //////////////////////////////////////////////////////////
@@ -149,6 +159,8 @@ namespace cds
         ResidueType type_ = Undefined; // enum Type. See enum above.
         int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
+        bool isCTerminal = false;
+        bool isNTerminal = false;
     };
 } // namespace cds
 #endif
