@@ -70,11 +70,6 @@ namespace cds
             name_ = s;
         }
 
-        inline void setAtoms(std::vector<std::unique_ptr<Atom>> v)
-        {
-            atoms_ = std::move(v);
-        }
-
         Atom* addAtom(std::unique_ptr<Atom> myAtom);
         Atom* addAtomToFront(std::unique_ptr<Atom> myAtom);
         bool moveAtomToLastPosition(const Atom* atom);
