@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
@@ -39,11 +40,9 @@ int main(int argc, char* argv[])
         {
             if (residue->GetType() != cds::ResidueType::Protein)
             {
-                for (auto& atom : residue->getAtoms())
-                {
-                    pdb::PdbAtom* castPdbAtomPtr = codeUtils::erratic_cast<pdb::PdbAtom*>(atom);
-                    castPdbAtomPtr->SetRecordName("ATOM");
-                }
+                pdb::PdbResidue* pdbResidue           = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
+                std::vector<std::string>& recordNames = pdbResidue->atomData.recordNames;
+                std::fill(recordNames.begin(), recordNames.end(), "ATOM");
             }
             if (residue->getName() == "HOH" || residue->getName() == "WAT")
             {

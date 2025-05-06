@@ -89,12 +89,13 @@ void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, -60.0, 1.09);
         cds::Residue* newNMEResidue =
             molecule->insertNewResidue(std::make_unique<PdbResidue>("NME", &refResidue), refResidue);
-        cds::Atom* nAtom    = newNMEResidue->addAtom(std::make_unique<PdbAtom>("N", nCoordNME));
-        cds::Atom* hAtom    = newNMEResidue->addAtom(std::make_unique<PdbAtom>("H", hCoordNME));
-        cds::Atom* ch3Atom  = newNMEResidue->addAtom(std::make_unique<PdbAtom>("CH3", ch3CoordNME));
-        cds::Atom* hh31Atom = newNMEResidue->addAtom(std::make_unique<PdbAtom>("HH31", hh31CoordNME));
-        cds::Atom* hh32Atom = newNMEResidue->addAtom(std::make_unique<PdbAtom>("HH32", hh32CoordNME));
-        cds::Atom* hh33Atom = newNMEResidue->addAtom(std::make_unique<PdbAtom>("HH33", hh33CoordNME));
+        PdbResidue* newPdbNMEResidue = codeUtils::erratic_cast<PdbResidue*>(newNMEResidue);
+        cds::Atom* nAtom             = newPdbNMEResidue->addPdbAtom("N", nCoordNME);
+        cds::Atom* hAtom             = newPdbNMEResidue->addPdbAtom("H", hCoordNME);
+        cds::Atom* ch3Atom           = newPdbNMEResidue->addPdbAtom("CH3", ch3CoordNME);
+        cds::Atom* hh31Atom          = newPdbNMEResidue->addPdbAtom("HH31", hh31CoordNME);
+        cds::Atom* hh32Atom          = newPdbNMEResidue->addPdbAtom("HH32", hh32CoordNME);
+        cds::Atom* hh33Atom          = newPdbNMEResidue->addPdbAtom("HH33", hh33CoordNME);
         addBond(nAtom, refResidue.FindAtom("C"));
         addBond(nAtom, hAtom);
         addBond(nAtom, ch3Atom);
@@ -134,12 +135,13 @@ void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const
             (*refPosition).get()); // Its an iterator to a unique ptr, so deref and get the raw. Ugh.
         cds::Residue* newACEResidue =
             molecule->insertNewResidue(std::make_unique<PdbResidue>("ACE", previousResidue), *previousResidue);
-        cds::Atom* cAtom    = newACEResidue->addAtom(std::make_unique<PdbAtom>("C", cCoordACE));
-        cds::Atom* oAtom    = newACEResidue->addAtom(std::make_unique<PdbAtom>("O", oCoordACE));
-        cds::Atom* ch3Atom  = newACEResidue->addAtom(std::make_unique<PdbAtom>("CH3", ch3CoordACE));
-        cds::Atom* hh31Atom = newACEResidue->addAtom(std::make_unique<PdbAtom>("HH31", hh31CoordACE));
-        cds::Atom* hh32Atom = newACEResidue->addAtom(std::make_unique<PdbAtom>("HH32", hh32CoordACE));
-        cds::Atom* hh33Atom = newACEResidue->addAtom(std::make_unique<PdbAtom>("HH33", hh33CoordACE));
+        PdbResidue* newPdbACEResidue = codeUtils::erratic_cast<PdbResidue*>(newACEResidue);
+        cds::Atom* cAtom             = newPdbACEResidue->addPdbAtom("C", cCoordACE);
+        cds::Atom* oAtom             = newPdbACEResidue->addPdbAtom("O", oCoordACE);
+        cds::Atom* ch3Atom           = newPdbACEResidue->addPdbAtom("CH3", ch3CoordACE);
+        cds::Atom* hh31Atom          = newPdbACEResidue->addPdbAtom("HH31", hh31CoordACE);
+        cds::Atom* hh32Atom          = newPdbACEResidue->addPdbAtom("HH32", hh32CoordACE);
+        cds::Atom* hh33Atom          = newPdbACEResidue->addPdbAtom("HH33", hh33CoordACE);
         addBond(cAtom, refResidue.FindAtom("N"));
         addBond(cAtom, oAtom);
         addBond(cAtom, ch3Atom);
@@ -157,14 +159,7 @@ void pdb::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
     if (type == "NH3+") // For now, leaving it to tleap to add the correct H's
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + terminalResidue->printId());
-        cds::Atom* found = terminalResidue->FindAtom("H");
-        if (found != nullptr)
-        {
-            const PdbAtom* atom = codeUtils::erratic_cast<const PdbAtom*>(terminalResidue->FindAtom("H"));
-            gmml::log(__LINE__, __FILE__, gmml::INF, "Deleting atom with id: " + atom->GetId());
-            terminalResidue->deleteAtom(atom);
-        }
-        return;
+        terminalResidue->deletePdbAtom(terminalResidue->FindAtom("H"));
     }
     else if (type == "CO2-")
     {
@@ -173,7 +168,7 @@ void pdb::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
         if (atom != nullptr)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "OXT atom already exists: " + codeUtils::erratic_cast<const PdbAtom*>(atom)->GetId());
+                      "OXT atom already exists: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
             return;
         }
         // I don't like this, but at least it's somewhat contained:
@@ -189,10 +184,10 @@ void pdb::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
         }
         cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(atomCA->coordinate(), atomC->coordinate(),
                                                                               atomO->coordinate(), 120.0, 180.0, 1.25);
-        cds::Atom* oxtAtom       = terminalResidue->addAtom(std::make_unique<PdbAtom>("OXT", oxtCoord));
+        cds::Atom* oxtAtom       = terminalResidue->addPdbAtom("OXT", oxtCoord);
         addBond(oxtAtom, atomC);
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created new atom named OXT after " + codeUtils::erratic_cast<const PdbAtom*>(atomO)->GetId());
+                  "Created new atom named OXT after " + atomO->getName() + "_" + std::to_string(atomO->getNumber()));
         return;
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);

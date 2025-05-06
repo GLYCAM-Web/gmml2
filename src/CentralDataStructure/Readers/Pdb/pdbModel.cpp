@@ -370,21 +370,13 @@ void pdb::Write(const cds::Assembly& assembly, std::ostream& stream)
             assembly::Graph graph         = cds::createCompleteAssemblyGraph(indices);
             PdbResidue* pdbResidue        = codeUtils::erratic_cast<PdbResidue*>(residue);
             std::vector<cds::Atom*> atoms = pdbResidue->getAtoms();
-            std::vector<std::string> recordName;
-            std::vector<double> occupancy;
-            std::vector<double> temperatureFactor;
-            for (auto& atom : atoms)
-            {
-                PdbAtom* pdbAtom = codeUtils::erratic_cast<PdbAtom*>(atom);
-                recordName.push_back(pdbAtom->GetRecordName());
-                occupancy.push_back(pdbAtom->GetOccupancy());
-                temperatureFactor.push_back(pdbAtom->GetTemperatureFactor());
-            }
             cds::PdbFileResidueData residueData {{pdbResidue->getNumber()},
                                                  {cds::truncatedResidueName(pdbResidue)},
                                                  {pdbResidue->getChainId()},
                                                  {pdbResidue->getInsertionCode()}};
-            cds::PdbFileAtomData atomData = cds::toPdbFileAtomData(atoms, recordName, occupancy, temperatureFactor);
+            cds::PdbFileAtomData atomData =
+                cds::toPdbFileAtomData(atoms, pdbResidue->atomData.recordNames, pdbResidue->atomData.occupancies,
+                                       pdbResidue->atomData.temperatureFactors);
             cds::PdbFileFormat format;
             cds::PdbFileData writerData {format, {}, residueData, atomData};
             cds::writeAssemblyToPdb(stream, graph, {{0}}, {{pdbResidue->HasTerCard()}}, {}, writerData);

@@ -64,6 +64,10 @@ namespace pdb
             chainId_ = s;
         }
 
+        cds::Atom* addPdbAtom(const std::string& line);
+        cds::Atom* addPdbAtom(const std::string& name, const cds::Coordinate& c);
+        void deletePdbAtom(cds::Atom* atom);
+
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
@@ -90,6 +94,9 @@ namespace pdb
         std::string insertionCode_ = "";
         std::string chainId_       = "";
         bool hasTerCard_           = false;
+
+      public:
+        AtomData atomData;
     };
 } // namespace pdb
 #endif
