@@ -8,30 +8,12 @@
 // #include <functional>
 namespace pdb
 {
-    class PdbAtom;
-    class PdbResidue;
-
-    class PdbChain : public cds::Molecule
-    {
-      public:
-        //////////////////////////////////////////////////////////
-        //                       CONSTRUCTOR                    //
-        //////////////////////////////////////////////////////////
-        PdbChain(std::stringstream& stream_block, const std::string& chainId);
-        //////////////////////////////////////////////////////////
-        //                       FUNCTIONS                      //
-        //////////////////////////////////////////////////////////
-        void tagTerminalResidues();
-        void InsertCap(const PdbResidue& refResidue, const std::string& type);
-        void ModifyTerminal(const std::string& type, PdbResidue* terminalResidue);
-        PdbResidue* getNTerminal();
-        PdbResidue* getCTerminal();
-
-      private:
-        //////////////////////////////////////////////////////////
-        //                       FUNCTIONS                      //
-        //////////////////////////////////////////////////////////
-        std::stringstream extractSingleResidueFromRecordSection(std::stringstream& pdbFileStream, std::string line);
-    };
+    void readChain(cds::Molecule* molecule, std::stringstream& stream_block);
+    std::stringstream extractSingleResidueFromRecordSection(std::stringstream& pdbFileStream, std::string line);
+    void tagTerminalResidues(cds::Molecule* molecule);
+    PdbResidue* getNTerminal(cds::Molecule* molecule);
+    PdbResidue* getCTerminal(cds::Molecule* molecule);
+    void ModifyTerminal(const std::string& type, PdbResidue* terminalResidue);
+    void InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const std::string& type);
 } // namespace pdb
 #endif

@@ -52,20 +52,12 @@ PdbResidue::PdbResidue(std::stringstream& singleResidueSecion, std::string first
 PdbResidue::PdbResidue(const std::string residueName, const PdbResidue* referenceResidue)
     : cds::Residue(residueName, referenceResidue)
 { // should instead call copy constructor and then rename with residueName?
-    //    this->setName(residueName); // handled by cdsResidue cTor
-    //    this->setNumber(referenceResidue->getNumber()); // handled by cdsResidue cTor
     this->setInsertionCode(referenceResidue->getInsertionCode());
     this->setChainId(referenceResidue->getChainId());
-    // this->SetType(referenceResidue->GetType());
     this->SetType(this->determineType(this->getName()));
     return;
 }
 
-// PdbResidue::PdbResidue(std::vector<std::unique_ptr<AtomRecord>>& atomRecords)
-//{
-//     atomRecordss_.swap(atomRecords); // atomRecords will become empty, atoms_ will contain contents of atomRecords.
-//     hasTerCard_ = false;
-// }
 //////////////////////////////////////////////////////////
 //                         ACCESSOR                     //
 //////////////////////////////////////////////////////////
@@ -80,9 +72,6 @@ const std::string PdbResidue::getNumberAndInsertionCode() const
     return std::to_string(this->getNumber()) + this->getInsertionCode();
 }
 
-//////////////////////////////////////////////////////////
-//                    MUTATOR                           //
-//////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 //                    FUNCTIONS                         //
 //////////////////////////////////////////////////////////

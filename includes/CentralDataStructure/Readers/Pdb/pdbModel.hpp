@@ -9,47 +9,29 @@
 
 namespace pdb
 {
-    class PdbAtom;
-    class PdbResidue;
-    class PdbChain;
+    void readAssembly(cds::Assembly& assembly, std::stringstream& stream_block);
+    void ChangeResidueName(cds::Assembly& assembly, const std::string& selector, const std::string& newName);
 
-    class PdbModel : public cds::Assembly
-    {
-      public:
-        //////////////////////////////////////////////////////////
-        //                       CONSTRUCTOR                    //
-        //////////////////////////////////////////////////////////
-        PdbModel();
-        PdbModel(std::stringstream& stream_block);
-        //////////////////////////////////////////////////////////
-        //                       FUNCTIONS                      //
-        //////////////////////////////////////////////////////////
-        void ChangeResidueName(const std::string& selector, const std::string& newName);
+    // Preprocessing functions
+    void preProcessCysResidues(cds::Assembly& assembly, PreprocessorInformation& ppInfo);
+    void preProcessHisResidues(cds::Assembly& assembly, PreprocessorInformation& ppInfo,
+                               const PreprocessorOptions& inputOptions);
+    void preProcessChainTerminals(cds::Assembly& assembly, PreprocessorInformation& ppInfo,
+                                  const PreprocessorOptions& inputOptions);
+    void preProcessGapsUsingDistance(cds::Assembly& assembly, PreprocessorInformation& ppInfo,
+                                     const PreprocessorOptions& inputOptions);
+    void preProcessMissingUnrecognized(cds::Assembly& assembly, PreprocessorInformation& ppInfo,
+                                       const cdsParameters::ParameterManager& parmManager);
+    //        void bondAtomsByDistance();
+    //////////////////////////////////////////////////////////
+    //                       DISPLAY FUNCTION               //
+    //////////////////////////////////////////////////////////
+    void Print(const cds::Assembly& assembly, std::ostream& out);
+    void Write(const cds::Assembly& assembly, std::ostream& stream);
 
-        // Preprocessing functions
-        void preProcessCysResidues(pdb::PreprocessorInformation& ppInfo);
-        void preProcessHisResidues(pdb::PreprocessorInformation& ppInfo, const pdb::PreprocessorOptions& inputOptions);
-        void preProcessChainTerminals(pdb::PreprocessorInformation& ppInfo,
-                                      const pdb::PreprocessorOptions& inputOptions);
-        void preProcessGapsUsingDistance(pdb::PreprocessorInformation& ppInfo,
-                                         const pdb::PreprocessorOptions& inputOptions);
-        void preProcessMissingUnrecognized(pdb::PreprocessorInformation& ppInfo,
-                                           const cdsParameters::ParameterManager& parmManager);
-        //        void bondAtomsByDistance();
-        //////////////////////////////////////////////////////////
-        //                       DISPLAY FUNCTION               //
-        //////////////////////////////////////////////////////////
-        void Print(std::ostream& out) const;
-        void Write(std::ostream& stream) const;
-
-      private:
-        //////////////////////////////////////////////////////////
-        //                       PRIVATE FUNCTIONS              //
-        //////////////////////////////////////////////////////////
-        std::string extractChainId(const std::string& line);
-        std::stringstream extractSingleChainFromRecordSection(std::stringstream& stream_block, std::string line,
-                                                              const std::string& initialChainID);
-        void extractCoordinatesFromModel(std::stringstream& stream_block, std::string line);
-    };
+    std::string extractChainId(const std::string& line);
+    std::stringstream extractSingleChainFromRecordSection(std::stringstream& stream_block, std::string line,
+                                                          const std::string& initialChainID);
+    void extractCoordinatesFromModel(cds::Assembly& assembly, std::stringstream& stream_block, std::string line);
 } // namespace pdb
 #endif

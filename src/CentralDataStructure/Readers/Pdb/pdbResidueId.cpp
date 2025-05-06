@@ -28,11 +28,6 @@ ResidueId::ResidueId(const std::string name, const std::string number, const std
 
 ResidueId::ResidueId(std::vector<std::string> inputVector)
 {
-    //    std::cout << "Inputs:\n";
-    //    for(auto & input : inputVector)
-    //    {
-    //        std::cout << input << std::endl;
-    //    }
     if (inputVector.size() < 4)
     {
         throw std::runtime_error("ResidueId cannot be constructed from inputs");
@@ -107,17 +102,3 @@ std::string ResidueId::print() const
     }
     return formattedId;
 }
-
-// pdb::ResidueId pdb::extractResidueId(const std::string &line)
-//{
-//     // Dealing with number overruns for serialNumber and residueNumber
-//     ResidueId residueId;
-//         int shift = pdb::checkShiftFromSerialNumberOverrun(line);
-//     residueId.residueName_ = codeUtils::RemoveWhiteSpace(line.substr(17 + shift, 3));
-//     residueId.chainId_ = codeUtils::RemoveWhiteSpace(line.substr(21 + shift, 1));
-//     int secondShift = codeUtils::GetSizeOfIntInString(line.substr(26 + shift));
-//     residueId.sequenceNumber_ = codeUtils::RemoveWhiteSpace(line.substr(22 + shift, 4 + secondShift));
-//     // Insertion code gets shifted right by every overrun in residue number.
-//     residueId.insertionCode_ = codeUtils::RemoveWhiteSpace(line.substr(26 + shift + secondShift, 1));
-//     return residueId;
-// }

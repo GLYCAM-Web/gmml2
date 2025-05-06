@@ -10,14 +10,8 @@ using pdb::PdbAtom;
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-// pdbAtom::pdbAtom(const std::string& name, const Coordinate& coord)
-//{
-//	this->setCoordinate(coord);
-//	this->setName(name);
-// }
 PdbAtom::PdbAtom(const std::string& line)
 {
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "Parsing " + line);
     //  In the PDB file the residue number overruns after 9999 and serial number overruns after 99999. First overun for
     //  serial doesn't matter as there should be a space between the number and the name. So the problem is above 999999
     this->SetRecordName(codeUtils::RemoveWhiteSpace(line.substr(0, 6)));
@@ -42,9 +36,6 @@ PdbAtom::PdbAtom(const std::string& line)
     {
         this->setName(atomName);
     }
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "Hi, my name is " + this->getName());
-    // alternateLocation_ = ""; // OG Dec2021, we don't want alt locations in gmml for now. Messes with the
-    // preprocessor.
     residueName_ = codeUtils::RemoveWhiteSpace(line.substr(17 + shift, 3));
     if (residueName_.empty())
     {
@@ -56,7 +47,6 @@ PdbAtom::PdbAtom(const std::string& line)
         chainId_ = " ";
     }
     int secondShift = pdb::checkSecondShiftFromResidueNumberOverrun(line, shift);
-    // int secondShift = codeUtils::GetSizeOfIntInString(line.substr(26 + shift));
     try
     {
         residueSequenceNumber_ = std::stoi(codeUtils::RemoveWhiteSpace(line.substr(22 + shift, 4 + secondShift)));
@@ -176,10 +166,6 @@ void PdbAtom::SetCharge(const std::string atom_charge)
     charge_ = atom_charge;
 }
 
-// void AtomRecord::AddAlternateLocation(AtomRecord* alternate_atom)
-//{
-//   alternateLocations_.push_back(alternate_atom);
-// }
 //////////////////////////////////////////////////////////
 //                       FUNCTION                       //
 //////////////////////////////////////////////////////////

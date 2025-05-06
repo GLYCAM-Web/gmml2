@@ -2,31 +2,22 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
+#include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/biology.hpp" // proteinResidueNames
+#include "includes/CodeUtils/biology.hpp"
 
-using pdb::PdbChain;
-
-////////////////////////////////////////////////////////////
-////                       CONSTRUCTOR                    //
-////////////////////////////////////////////////////////////
-PdbChain::PdbChain(std::stringstream& stream_block, const std::string& chainId) : cds::Molecule(chainId)
+void pdb::readChain(cds::Molecule* molecule, std::stringstream& stream_block)
 {
-    // gmml::log(__LINE__, __FILE__, gmml::INF,
-    //           "Constructing PdbChain from stream_block >>>>>>>>>:\n" + stream_block.str() +
-    //               "\n<<<<<<<<<<<<<< end stream_block");
     std::string line;
     while (getline(stream_block, line))
     {
-        // gmml::log(__LINE__,__FILE__,gmml::INF, "Constructing chain with line: " + line);
         std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         if ((recordName == "ATOM") || (recordName == "HETATM"))
         {
-            std::stringstream singleResidueSection = this->extractSingleResidueFromRecordSection(stream_block, line);
-            this->addResidue(std::make_unique<PdbResidue>(singleResidueSection, line));
+            std::stringstream singleResidueSection = extractSingleResidueFromRecordSection(stream_block, line);
+            molecule->addResidue(std::make_unique<PdbResidue>(singleResidueSection, line));
         }
         else
         {
@@ -35,28 +26,17 @@ PdbChain::PdbChain(std::stringstream& stream_block, const std::string& chainId) 
             break;
         }
     }
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "Adding NTerminal and CTerminal tags if protein present");
-    this->tagTerminalResidues();
-    // gmml::log(__LINE__, __FILE__, gmml::INF, "PdbChain Constructor Complete Captain");
-    return;
+    tagTerminalResidues(molecule);
 }
 
-////////////////////////////////////////////////////////////
-////                         ACCESSOR                     //
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-////                    FUNCTIONS                         //
-////////////////////////////////////////////////////////////
-
-void PdbChain::tagTerminalResidues()
+void pdb::tagTerminalResidues(cds::Molecule* molecule)
 {
-    PdbResidue* nTer = this->getNTerminal();
+    PdbResidue* nTer = getNTerminal(molecule);
     if (nTer != nullptr)
     {
         nTer->setNTerminal();
     }
-    PdbResidue* cTer = this->getCTerminal();
+    PdbResidue* cTer = getCTerminal(molecule);
     if (cTer != nullptr)
     {
         cTer->setCTerminal();
@@ -64,7 +44,7 @@ void PdbChain::tagTerminalResidues()
     return;
 }
 
-std::stringstream PdbChain::extractSingleResidueFromRecordSection(std::stringstream& pdbFileStream, std::string line)
+std::stringstream pdb::extractSingleResidueFromRecordSection(std::stringstream& pdbFileStream, std::string line)
 {
     std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
     std::stringstream singleResidueSection;
@@ -82,18 +62,15 @@ std::stringstream PdbChain::extractSingleResidueFromRecordSection(std::stringstr
     }
     // Go back to previous line position. E.g. was reading HEADER and found TITLE:
     pdbFileStream.seekg(previousLinePosition);
-    //    gmml::log(__LINE__, __FILE__, gmml::INF,
-    //              "Single residue section is:\n" + singleResidueSection.str() + "\nEnd of single residue section.");
     return singleResidueSection;
 }
 
-void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
+void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const std::string& type)
 {
     // This approach is bad. When parameter manager is good we can use that to remove the get_carestian stuff
     using cds::Coordinate;
     if (type == "NHCH3") // NME
     {
-        //        int sequenceNumber = refResidue.GetSequenceNumber() + 1; // Single gaps will end up with the same ACE
         //        NME resid numbers. Otherwise good.
         Coordinate cCoordProtein  = refResidue.FindAtom("C")->coordinate();
         Coordinate caCoordProtein = refResidue.FindAtom("CA")->coordinate();
@@ -111,7 +88,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         Coordinate hh33CoordNME =
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, -60.0, 1.09);
         cds::Residue* newNMEResidue =
-            this->insertNewResidue(std::make_unique<PdbResidue>("NME", &refResidue), refResidue);
+            molecule->insertNewResidue(std::make_unique<PdbResidue>("NME", &refResidue), refResidue);
         cds::Atom* nAtom    = newNMEResidue->addAtom(std::make_unique<PdbAtom>("N", nCoordNME));
         cds::Atom* hAtom    = newNMEResidue->addAtom(std::make_unique<PdbAtom>("H", hCoordNME));
         cds::Atom* ch3Atom  = newNMEResidue->addAtom(std::make_unique<PdbAtom>("CH3", ch3CoordNME));
@@ -129,7 +106,6 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
     }
     else if (type == "COCH3") // ACE
     {
-        //        int sequenceNumber = refResidue.GetSequenceNumber() - 1; // Single gaps will end up with the same ACE
         //        NME resid numbers. Otherwise good.
         // These are the atoms in residue that I use to build the ACE out from.
         Coordinate cCoordProtein  = refResidue.FindAtom("C")->coordinate();
@@ -152,12 +128,12 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
         // insert the new Atom before it, and get passed back the position of the newly created atom, so I can use that
         // when creating the next one and so on. With ACE we want to insert before the residue, so I'm finding the
         // residue before here:
-        auto refPosition = this->findPositionOfResidue(&refResidue);
+        auto refPosition = molecule->findPositionOfResidue(&refResidue);
         --refPosition;
         PdbResidue* previousResidue = codeUtils::erratic_cast<PdbResidue*>(
             (*refPosition).get()); // Its an iterator to a unique ptr, so deref and get the raw. Ugh.
         cds::Residue* newACEResidue =
-            this->insertNewResidue(std::make_unique<PdbResidue>("ACE", previousResidue), *previousResidue);
+            molecule->insertNewResidue(std::make_unique<PdbResidue>("ACE", previousResidue), *previousResidue);
         cds::Atom* cAtom    = newACEResidue->addAtom(std::make_unique<PdbAtom>("C", cCoordACE));
         cds::Atom* oAtom    = newACEResidue->addAtom(std::make_unique<PdbAtom>("O", oCoordACE));
         cds::Atom* ch3Atom  = newACEResidue->addAtom(std::make_unique<PdbAtom>("CH3", ch3CoordACE));
@@ -176,7 +152,7 @@ void PdbChain::InsertCap(const PdbResidue& refResidue, const std::string& type)
     }
 }
 
-void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
+void pdb::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
 {
     if (type == "NH3+") // For now, leaving it to tleap to add the correct H's
     {
@@ -225,9 +201,9 @@ void PdbChain::ModifyTerminal(const std::string& type, PdbResidue* terminalResid
 
 // Only makes sense for proteins.
 // Assumes vector is populated from N-terminal to C-terminal.
-pdb::PdbResidue* PdbChain::getNTerminal()
+pdb::PdbResidue* pdb::getNTerminal(cds::Molecule* molecule)
 {
-    std::vector<cds::Residue*> proteinResidues = this->getResidues(biology::proteinResidueNames);
+    std::vector<cds::Residue*> proteinResidues = molecule->getResidues(biology::proteinResidueNames);
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
@@ -236,9 +212,9 @@ pdb::PdbResidue* PdbChain::getNTerminal()
     return codeUtils::erratic_cast<PdbResidue*>(proteinResidues.front());
 }
 
-pdb::PdbResidue* PdbChain::getCTerminal()
+pdb::PdbResidue* pdb::getCTerminal(cds::Molecule* molecule)
 {
-    std::vector<cds::Residue*> proteinResidues = this->getResidues(biology::proteinResidueNames);
+    std::vector<cds::Residue*> proteinResidues = molecule->getResidues(biology::proteinResidueNames);
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");

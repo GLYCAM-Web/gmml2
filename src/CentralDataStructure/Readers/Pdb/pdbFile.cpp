@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
+#include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -53,7 +54,8 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
         {
             std::stringstream recordSection =
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
-            assemblies_.emplace_back(PdbModel(recordSection));
+            cds::Assembly& assembly = assemblies_.emplace_back(cds::Assembly());
+            readAssembly(assembly, recordSection);
         }
         else if (recordName == "HEADER")
         {
@@ -194,14 +196,14 @@ pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterM
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocesssing has begun");
     pdb::PreprocessorInformation ppInfo;
-    for (auto& model : mutableAssemblies()) // Now we do all, but maybe user can select at some point.
+    for (auto& assembly : mutableAssemblies()) // Now we do all, but maybe user can select at some point.
     {
-        model.preProcessCysResidues(ppInfo);
-        model.preProcessHisResidues(ppInfo, inputOptions);
-        model.preProcessChainTerminals(ppInfo, inputOptions);
-        model.preProcessGapsUsingDistance(ppInfo, inputOptions);
-        model.preProcessMissingUnrecognized(ppInfo, parameterManager);
-        cdsParameters::setAtomChargesForResidues(parameterManager, model.getResidues());
+        preProcessCysResidues(assembly, ppInfo);
+        preProcessHisResidues(assembly, ppInfo, inputOptions);
+        preProcessChainTerminals(assembly, ppInfo, inputOptions);
+        preProcessGapsUsingDistance(assembly, ppInfo, inputOptions);
+        preProcessMissingUnrecognized(assembly, ppInfo, parameterManager);
+        cdsParameters::setAtomChargesForResidues(parameterManager, assembly.getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing completed");
     return ppInfo;
@@ -236,14 +238,14 @@ void PdbFile::Write(std::ostream& out) const
     {
         dbref.Write(out);
     }
-    const std::vector<PdbModel>& assemblies = this->getAssemblies();
-    for (auto& model : assemblies)
+    const std::vector<cds::Assembly>& assemblies = this->getAssemblies();
+    for (auto& assembly : assemblies)
     {
         if (assemblies.size() > 1)
         {
-            out << "MODEL " << std::right << std::setw(4) << model.getNumber() << "\n";
+            out << "MODEL " << std::right << std::setw(4) << assembly.getNumber() << "\n";
         }
-        model.Write(out);
+        pdb::Write(assembly, out);
         if (assemblies.size() > 1)
         {
             out << "ENDMDL\n";

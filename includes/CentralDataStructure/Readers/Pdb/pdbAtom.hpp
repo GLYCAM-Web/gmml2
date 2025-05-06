@@ -4,7 +4,7 @@
 // formats in PDB files
 
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CodeUtils/constants.hpp" // codeUtils::iNotSet
+#include "includes/CodeUtils/constants.hpp"
 #include <string>
 #include <ostream>
 

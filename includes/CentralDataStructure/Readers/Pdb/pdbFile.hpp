@@ -4,6 +4,7 @@
 // ToDo Warning about gaps being 1 residue.
 // ToDo make more direct queries here instead of giving out HeaderRecord etc.
 // ToDo ACE/NME between residues with same number but an insertion code.
+#include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/authorRecord.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/databaseReferenceRecord.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/headerRecord.hpp"
@@ -71,12 +72,12 @@ namespace pdb
             return remarkRecord_;
         }
 
-        inline const std::vector<PdbModel>& getAssemblies() const
+        inline const std::vector<cds::Assembly>& getAssemblies() const
         {
             return assemblies_;
         }
 
-        inline std::vector<PdbModel>& mutableAssemblies()
+        inline std::vector<cds::Assembly>& mutableAssemblies()
         {
             return assemblies_;
         }
@@ -122,7 +123,7 @@ namespace pdb
         JournalRecord journalRecord_;
         RemarkRecord remarkRecord_;
         std::vector<DatabaseReference> databaseReferences_;
-        std::vector<PdbModel> assemblies_;
+        std::vector<cds::Assembly> assemblies_;
     };
 } // namespace pdb
 #endif

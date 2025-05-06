@@ -54,41 +54,9 @@ int main(int argc, char* argv[])
     }
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
-    pdb::PdbModel* castPdbModelPtr = codeUtils::erratic_cast<pdb::PdbModel*>(firstModel);
-    castPdbModelPtr->Write(outFileStream);
-    //    cds::writeAssemblyToPdb(outFileStream, firstModel->getMolecules());
+    pdb::Write(*firstModel, outFileStream);
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();
-
-    // for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in
-    // Ensemble.
-    //                                                // ToDo: Why is there a const blockage in Ensemble?
-    // {
-    //     std::cout << "Bonding atoms by distance for assembly" << std::endl;
-    //     cds::bondAtomsByDistance(assembly->getAtoms());
-    //     // OFF molecule
-    //     try
-    //     {
-    //         std::ofstream outFileStream;
-    //         outFileStream.open("outputOffFile.off");
-    //         std::string outFileName = "Assembly";
-    //         cds::WriteAssemblyToOffFile(assembly, outFileStream, outFileName.c_str());
-    //         outFileStream.close();
-    //     }
-    //     catch (std::runtime_error& error)
-    //     {
-    //         std::stringstream ss;
-    //         ss << "Runtime error thrown when writing to off file:\n" << error.what() << "\n";
-    //         std::cout << ss.str();
-    //         gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-    //     }
-    //     catch (...)
-    //     {
-    //         std::cout << "Unknown error when writing to off file.\n";
-    //         gmml::log(__LINE__, __FILE__, gmml::ERR, "Unknown error when writing to off file.\n");
-    //     }
-    // }
-    // pdbFile.Write("./gmPreProcessed1.pdb");
 
     // Just showing what's in the ppInfo and how to access it
     std::cout << "Unrecognized atoms:\n";
