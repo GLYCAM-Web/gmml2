@@ -20,9 +20,23 @@ namespace codeUtils
     std::vector<bool> groupContainsSelected(size_t count, const std::vector<size_t>& group,
                                             const std::vector<bool>& selection);
 
-    template<class T> size_t indexOf(const std::vector<T>& vector, const T element)
+    template<class T> size_t indexOf(const std::vector<T>& vector, const T& element)
     {
         return std::find(vector.begin(), vector.end(), element) - vector.begin();
+    }
+
+    template<class T> std::vector<size_t> indicesOfElement(const std::vector<T>& vector, const T& element)
+    {
+        std::vector<size_t> result;
+        result.reserve(vector.size());
+        for (size_t n = 0; n < vector.size(); n++)
+        {
+            if (vector[n] == element)
+            {
+                result.push_back(n);
+            }
+        }
+        return result;
     }
 
     template<class T> std::vector<size_t> indicesOf(const std::vector<T>& vector, const std::vector<T>& elements)
