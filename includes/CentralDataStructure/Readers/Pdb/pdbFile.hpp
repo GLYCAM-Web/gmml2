@@ -13,6 +13,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/titleRecord.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include <string>
 #include <istream>
@@ -72,14 +73,15 @@ namespace pdb
             return remarkRecord_;
         }
 
-        inline const std::vector<cds::Assembly>& getAssemblies() const
+        inline std::vector<cds::Assembly*> getAssemblies()
         {
-            return assemblies_;
-        }
-
-        inline std::vector<cds::Assembly>& mutableAssemblies()
-        {
-            return assemblies_;
+            std::vector<cds::Assembly*> result;
+            result.reserve(assemblies_.size());
+            for (auto& a : assemblies_)
+            {
+                result.push_back(&a);
+            }
+            return result;
         }
 
         //////////////////////////////////////////////////////////
@@ -93,8 +95,8 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                        DISPLAY                       //
         //////////////////////////////////////////////////////////
-        void Write(const std::string outName) const;
-        void Write(std::ostream& stream) const;
+        void Write(const std::string outName);
+        void Write(std::ostream& stream);
 
       private:
         //////////////////////////////////////////////////////////
@@ -124,6 +126,9 @@ namespace pdb
         RemarkRecord remarkRecord_;
         std::vector<DatabaseReference> databaseReferences_;
         std::vector<cds::Assembly> assemblies_;
+
+      public:
+        PdbData data;
     };
 } // namespace pdb
 #endif

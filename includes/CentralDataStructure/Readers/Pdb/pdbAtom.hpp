@@ -8,13 +8,6 @@
 
 namespace pdb
 {
-    struct AtomData
-    {
-        std::vector<std::string> recordNames;
-        std::vector<double> occupancies;
-        std::vector<double> temperatureFactors;
-    };
-
     void readAtom(cds::Atom* atom, const std::string& line);
 } // namespace pdb
 #endif

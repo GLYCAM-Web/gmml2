@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
     for (auto& residue : residues)
     {
         codeUtils::erratic_cast<pdb::PdbResidue*>(residue)->setChainId("Y");
-        // std::cout << "Set chain of " << residue->getStringId() << "\n";
     }
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:
     std::vector<cds::Residue*> ligandResidues =

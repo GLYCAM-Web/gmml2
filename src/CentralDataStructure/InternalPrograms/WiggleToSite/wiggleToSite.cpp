@@ -34,10 +34,13 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
       carbohydrate_(parameterManager, MolecularMetadata::defaultVanDerWaalsRadii(), inputStruct.carbohydrateSequence_)
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
-    const Residue* superimpositionTarget = pdb::residueSelector(
-        this->getSubstrate(), inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
-    const Residue* wigglingTarget = pdb::residueSelector(this->getSubstrate(), inputStruct.wigglingTargetResidue_,
-                                                         inputStruct.substrateModelNumber_);
+    pdb::PdbData& pdbData = this->getSubstrate().data;
+    size_t superimpositionTargetId =
+        pdb::residueSelector(pdbData, inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
+    cds::Residue* superimpositionTarget = pdbData.indices.residues[superimpositionTargetId];
+    size_t wigglingTargetId =
+        pdb::residueSelector(pdbData, inputStruct.wigglingTargetResidue_, inputStruct.substrateModelNumber_);
+    cds::Residue* wigglingTarget = pdbData.indices.residues[wigglingTargetId];
     if (superimpositionTarget == nullptr || wigglingTarget == nullptr)
     {
         std::stringstream ss;

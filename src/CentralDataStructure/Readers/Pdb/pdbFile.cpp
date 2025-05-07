@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -19,7 +20,6 @@ using pdb::PdbFile;
 //////////////////////////////////////////////////////////
 PdbFile::PdbFile()
 {
-    // this->Initialize();
     inFilePath_ = "GMML-Generated";
 }
 
@@ -38,10 +38,9 @@ PdbFile::PdbFile(const std::string& pdbFilePath, const InputType pdbFileType) : 
 
 void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdbFileType)
 {
-    //    std::cout << "Parsing inputfile\n";
+    size_t assemblyId = 0;
     for (std::string line; std::getline(pdbFileStream, line);)
     {
-        // std::cout << "Parsing the line: " << line << "\n";
         pdb::expandLine(line, pdb::iPdbLineLength);
         std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER", "HETATM"};
@@ -55,7 +54,8 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
             std::stringstream recordSection =
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
             cds::Assembly& assembly = assemblies_.emplace_back(cds::Assembly());
-            readAssembly(assembly, recordSection);
+            readAssembly(data, assemblyId, assembly, recordSection);
+            assemblyId++;
         }
         else if (recordName == "HEADER")
         {
@@ -99,7 +99,7 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "PdbFile Constructor Complete Captain");
-    return;
+    data.indices.assemblies = getAssemblies();
 }
 
 // Initializers used by constructors
@@ -196,20 +196,22 @@ pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterM
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocesssing has begun");
     pdb::PreprocessorInformation ppInfo;
-    for (auto& assembly : mutableAssemblies()) // Now we do all, but maybe user can select at some point.
+    for (size_t assemblyId = 0; assemblyId < assemblies_.size();
+         assemblyId++) // Now we do all, but maybe user can select at some point.
     {
-        preProcessCysResidues(assembly, ppInfo);
-        preProcessHisResidues(assembly, ppInfo, inputOptions);
-        preProcessChainTerminals(assembly, ppInfo, inputOptions);
-        preProcessGapsUsingDistance(assembly, ppInfo, inputOptions);
-        preProcessMissingUnrecognized(assembly, ppInfo, parameterManager);
-        cdsParameters::setAtomChargesForResidues(parameterManager, assembly.getResidues());
+        cds::Assembly* assembly = &assemblies_[assemblyId];
+        preProcessCysResidues(data, assemblyId, ppInfo);
+        preProcessHisResidues(data, assemblyId, ppInfo, inputOptions);
+        preProcessChainTerminals(data, assemblyId, ppInfo, inputOptions);
+        preProcessGapsUsingDistance(data, assemblyId, ppInfo, inputOptions);
+        preProcessMissingUnrecognized(data, assemblyId, ppInfo, parameterManager);
+        cdsParameters::setAtomChargesForResidues(parameterManager, assembly->getResidues());
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing completed");
     return ppInfo;
 }
 
-void PdbFile::Write(const std::string outName) const
+void PdbFile::Write(const std::string outName)
 {
     try
     {
@@ -227,7 +229,7 @@ void PdbFile::Write(const std::string outName) const
     return;
 }
 
-void PdbFile::Write(std::ostream& out) const
+void PdbFile::Write(std::ostream& out)
 {
     this->GetHeaderRecord().Write(out);
     this->GetTitleRecord().Write(out);
@@ -238,15 +240,15 @@ void PdbFile::Write(std::ostream& out) const
     {
         dbref.Write(out);
     }
-    const std::vector<cds::Assembly>& assemblies = this->getAssemblies();
-    for (auto& assembly : assemblies)
+    for (size_t n = 0; n < data.indices.assemblies.size(); n++)
     {
-        if (assemblies.size() > 1)
+        if (data.indices.assemblies.size() > 1)
         {
-            out << "MODEL " << std::right << std::setw(4) << assembly.getNumber() << "\n";
+            out << "MODEL " << std::right << std::setw(4) << data.indices.assemblies[n]->getNumber() << "\n";
         }
-        pdb::Write(assembly, out);
-        if (assemblies.size() > 1)
+        std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(data.indices.moleculeAssembly, n);
+        pdb::Write(data, codeUtils::indicesToValues(data.moleculeResidueOrder, moleculeIds), out);
+        if (data.indices.assemblies.size() > 1)
         {
             out << "ENDMDL\n";
         }

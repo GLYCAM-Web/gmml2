@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -12,7 +13,7 @@
 
 using pdb::PdbResidue;
 
-cds::Atom* PdbResidue::addPdbAtom(const std::string& line)
+cds::Atom* PdbResidue::addPdbAtom(PdbData& data, size_t residueId, const std::string& line)
 {
     int shift                = checkShiftFromSerialNumberOverrun(line);
     int secondShift          = checkSecondShiftFromResidueNumberOverrun(line, shift);
@@ -40,33 +41,39 @@ cds::Atom* PdbResidue::addPdbAtom(const std::string& line)
                   "Problem converting to temperatureFactor_ from: " + temperatureFactorStr);
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Problematic line is:" + line);
     }
-    atomData.recordNames.push_back(codeUtils::RemoveWhiteSpace(line.substr(0, 6)));
-    atomData.occupancies.push_back(occupancy);
-    atomData.temperatureFactors.push_back(temperatureFactor);
     cds::Atom* atom = this->addAtom(std::make_unique<cds::Atom>());
     readAtom(atom, line);
+    data.indices.atoms.push_back(atom);
+    data.indices.atomResidue.push_back(residueId);
+    data.atoms.recordNames.push_back(codeUtils::RemoveWhiteSpace(line.substr(0, 6)));
+    data.atoms.occupancies.push_back(occupancy);
+    data.atoms.temperatureFactors.push_back(temperatureFactor);
     return atom;
 }
 
-cds::Atom* PdbResidue::addPdbAtom(const std::string& name, const cds::Coordinate& c)
+cds::Atom* PdbResidue::addPdbAtom(PdbData& data, size_t residueId, const std::string& name, const cds::Coordinate& c)
 {
-    atomData.recordNames.push_back("ATOM");
-    atomData.occupancies.push_back(1.0);
-    atomData.temperatureFactors.push_back(0.0);
-    return this->addAtom(std::make_unique<cds::Atom>(name, c));
+    cds::Atom* atom = this->addAtom(std::make_unique<cds::Atom>(name, c));
+    data.indices.atoms.push_back(atom);
+    data.indices.atomResidue.push_back(residueId);
+    data.atoms.recordNames.push_back("ATOM");
+    data.atoms.occupancies.push_back(1.0);
+    data.atoms.temperatureFactors.push_back(0.0);
+    return atom;
 }
 
-void PdbResidue::deletePdbAtom(cds::Atom* atom)
+void PdbResidue::deletePdbAtom(PdbData& data, size_t, cds::Atom* atom)
 {
     if (atom != nullptr)
     {
-        const std::vector<cds::Atom*> atoms = this->getAtoms();
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Deleting atom with id: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
-        size_t index = codeUtils::indexOf(atoms, atom);
-        atomData.recordNames.erase(atomData.recordNames.begin() + index);
-        atomData.occupancies.erase(atomData.occupancies.begin() + index);
-        atomData.temperatureFactors.erase(atomData.temperatureFactors.begin() + index);
+        size_t index = codeUtils::indexOf(data.indices.atoms, atom);
+        codeUtils::eraseNth(index, data.atoms.recordNames);
+        codeUtils::eraseNth(index, data.atoms.occupancies);
+        codeUtils::eraseNth(index, data.atoms.temperatureFactors);
+        codeUtils::eraseNth(index, data.indices.atomResidue);
+        codeUtils::eraseNth(index, data.indices.atoms);
         this->deleteAtom(atom);
     }
 }
@@ -74,7 +81,7 @@ void PdbResidue::deletePdbAtom(cds::Atom* atom)
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-PdbResidue::PdbResidue(std::stringstream& singleResidueSecion, std::string firstLine)
+PdbResidue::PdbResidue(PdbData& data, size_t residueId, std::stringstream& singleResidueSecion, std::string firstLine)
 {
     ResidueId resId(firstLine);
     this->setName(resId.getName());
@@ -92,13 +99,13 @@ PdbResidue::PdbResidue(std::stringstream& singleResidueSecion, std::string first
             if (id.getAlternativeLocation().empty() ||
                 id.getAlternativeLocation() == firstFoundAlternativeLocationIndicator)
             { // If no alternative location (normal case) or alternateLocation is the first one (normally "A").
-                this->addPdbAtom(line);
+                this->addPdbAtom(data, residueId, line);
             }
             else if (firstFoundAlternativeLocationIndicator.empty())
             { // Sometimes first atom has one location, but later atoms have alternatives. Just set and use the first
               // one (normally "A")
                 firstFoundAlternativeLocationIndicator = id.getAlternativeLocation();
-                this->addPdbAtom(line);
+                this->addPdbAtom(data, residueId, line);
             }
             else
             {
@@ -109,7 +116,7 @@ PdbResidue::PdbResidue(std::stringstream& singleResidueSecion, std::string first
     this->SetType(this->determineType(this->getName()));
 }
 
-PdbResidue::PdbResidue(const std::string residueName, const PdbResidue* referenceResidue)
+PdbResidue::PdbResidue(PdbData&, size_t, const std::string residueName, const PdbResidue* referenceResidue)
     : cds::Residue(residueName, referenceResidue)
 { // should instead call copy constructor and then rename with residueName?
     this->setInsertionCode(referenceResidue->getInsertionCode());
@@ -134,12 +141,12 @@ const std::string PdbResidue::getNumberAndInsertionCode() const
 //////////////////////////////////////////////////////////
 //                    FUNCTIONS                         //
 //////////////////////////////////////////////////////////
-void PdbResidue::modifyNTerminal(const std::string& type)
+void PdbResidue::modifyNTerminal(PdbData& data, size_t residueId, const std::string& type)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + this->printId());
     if (type == "NH3+")
     {
-        this->deletePdbAtom(this->FindAtom("H"));
+        this->deletePdbAtom(data, residueId, this->FindAtom("H"));
     }
     else
     {
@@ -148,7 +155,7 @@ void PdbResidue::modifyNTerminal(const std::string& type)
     return;
 }
 
-void PdbResidue::modifyCTerminal(const std::string& type)
+void PdbResidue::modifyCTerminal(PdbData& data, size_t residueId, const std::string& type)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + this->printId());
     if (type == "CO2-")
@@ -162,7 +169,7 @@ void PdbResidue::modifyCTerminal(const std::string& type)
             const cds::Atom* atomO   = this->FindAtom("O");
             cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(
                 atomCA->coordinate(), atomC->coordinate(), atomO->coordinate(), 120.0, 180.0, 1.25);
-            this->addPdbAtom("OXT", oxtCoord);
+            this->addPdbAtom(data, residueId, "OXT", oxtCoord);
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Created new atom named OXT after " + atomO->getName() + "_" +
                           std::to_string(atomO->getNumber()));

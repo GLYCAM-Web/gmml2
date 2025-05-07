@@ -183,7 +183,7 @@ int main(int argc, char* argv[])
         const codeUtils::SparseVector<double>& elementRadii     = readElementRadii(settings.atomRadiiSource);
         const MolecularMetadata::AminoAcidTable& aminoAcidTable = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
-        cds::Assembly* glycoprotein                                          = &pdbFile.mutableAssemblies().front();
+        cds::Assembly* glycoprotein                                          = pdbFile.getAssemblies().front();
         std::vector<cds::Residue*> gpInitialResidues                         = glycoprotein->getResidues();
         cds::setIntraConnectivity(aminoAcidTable, gpInitialResidues);
         cds::setInterConnectivity(aminoAcidTable, gpInitialResidues);

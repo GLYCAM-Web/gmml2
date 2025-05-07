@@ -3,65 +3,66 @@
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 using pdb::residueSelector;
 
-std::vector<cds::Atom*> pdb::getAtoms(const std::vector<cds::Assembly>& assemblies)
+std::vector<cds::Atom*> pdb::getAtoms(const std::vector<cds::Assembly*>& assemblies)
 {
     std::vector<cds::Atom*> result;
     for (auto& assembly : assemblies)
     {
-        codeUtils::insertInto(result, assembly.getAtoms());
+        codeUtils::insertInto(result, assembly->getAtoms());
     }
     return result;
 }
 
-std::vector<cds::Residue*> pdb::getResidues(const std::vector<cds::Assembly>& assemblies)
+std::vector<cds::Residue*> pdb::getResidues(const std::vector<cds::Assembly*>& assemblies)
 {
     std::vector<cds::Residue*> result;
     for (auto& assembly : assemblies)
     {
-        codeUtils::insertInto(result, assembly.getResidues());
+        codeUtils::insertInto(result, assembly->getResidues());
     }
     return result;
 }
 
-pdb::PdbResidue* pdb::residueSelector(const PdbFile& pdbFile, const pdb::ResidueId& residueId, const int modelNumber)
+size_t pdb::residueSelector(const PdbData& data, const pdb::ResidueId& residueId, const int modelNumber)
 {
-    for (auto& model : pdbFile.getAssemblies())
+    for (size_t n = 0; n < data.indices.assemblies.size(); n++)
     {
-        // std::cout << model->getNumber() << ":" << modelNumber << std::endl;
-        if (model.getNumber() == modelNumber)
+        if (data.indices.assemblies[n]->getNumber() == modelNumber)
         {
-            return pdb::residueSelector(model.getResidues(), residueId);
+            std::vector<size_t> residueAssembly =
+                codeUtils::indicesToValues(data.indices.moleculeAssembly, data.indices.residueMolecule);
+            return residueSelector(data, codeUtils::indicesOfElement(residueAssembly, n), residueId);
         }
     }
-    return nullptr;
+    return data.indices.residues.size();
 }
 
-pdb::PdbResidue* pdb::residueSelector(std::vector<cds::Residue*> residues, const pdb::ResidueId& queryId)
+size_t pdb::residueSelector(const PdbData& data, std::vector<size_t> residueIds, const pdb::ResidueId& queryId)
 { // I'm using empty() to mean that it could be anything.
-    for (auto& residue : residues)
+    for (size_t residueId : residueIds)
     {
-        PdbResidue* pdbResidue = codeUtils::erratic_cast<PdbResidue*>(residue);
-        // std::cout << "currentId vs queryId: " << pdbResidue->getId() << " vs " << queryId << std::endl;
-        if (queryId.getName().empty() || queryId.getName() == pdbResidue->getId().getName())
+        ResidueId id = codeUtils::erratic_cast<PdbResidue*>(data.indices.residues[residueId])->getId();
+        if (queryId.getName().empty() || queryId.getName() == id.getName())
         {
-            if (queryId.getNumber().empty() || queryId.getNumber() == pdbResidue->getId().getNumber())
+            if (queryId.getNumber().empty() || queryId.getNumber() == id.getNumber())
             {
-                if (queryId.getInsertionCode().empty() ||
-                    queryId.getInsertionCode() == pdbResidue->getId().getInsertionCode())
+                if (queryId.getInsertionCode().empty() || queryId.getInsertionCode() == id.getInsertionCode())
                 {
-                    if ((queryId.getChainId().empty() || queryId.getChainId() == pdbResidue->getId().getChainId()))
+                    if ((queryId.getChainId().empty() || queryId.getChainId() == id.getChainId()))
                     {
-                        return pdbResidue;
+                        return residueId;
                     }
                 }
             }
         }
     }
-    return nullptr;
+    return data.indices.residues.size();
 }

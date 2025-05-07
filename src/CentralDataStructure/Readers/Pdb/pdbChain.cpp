@@ -8,7 +8,7 @@
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/biology.hpp"
 
-void pdb::readChain(cds::Molecule* molecule, std::stringstream& stream_block)
+void pdb::readChain(PdbData& data, size_t moleculeId, cds::Molecule* molecule, std::stringstream& stream_block)
 {
     std::string line;
     while (getline(stream_block, line))
@@ -17,7 +17,12 @@ void pdb::readChain(cds::Molecule* molecule, std::stringstream& stream_block)
         if ((recordName == "ATOM") || (recordName == "HETATM"))
         {
             std::stringstream singleResidueSection = extractSingleResidueFromRecordSection(stream_block, line);
-            molecule->addResidue(std::make_unique<PdbResidue>(singleResidueSection, line));
+            size_t residueId                       = data.indices.residueMolecule.size();
+            data.indices.residueMolecule.push_back(moleculeId);
+            data.moleculeResidueOrder[moleculeId].push_back(residueId);
+            cds::Residue* residue =
+                molecule->addResidue(std::make_unique<PdbResidue>(data, residueId, singleResidueSection, line));
+            data.indices.residues.push_back(residue);
         }
         else
         {
@@ -65,7 +70,8 @@ std::stringstream pdb::extractSingleResidueFromRecordSection(std::stringstream& 
     return singleResidueSection;
 }
 
-void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const std::string& type)
+void pdb::InsertCap(PdbData& data, size_t moleculeId, cds::Molecule* molecule, PdbResidue& refResidue,
+                    const std::string& type)
 {
     // This approach is bad. When parameter manager is good we can use that to remove the get_carestian stuff
     using cds::Coordinate;
@@ -87,15 +93,22 @@ void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, 60.0, 1.09);
         Coordinate hh33CoordNME =
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, -60.0, 1.09);
+        size_t residueId = data.indices.residueMolecule.size();
+        size_t refId = codeUtils::indexOf(data.indices.residues, codeUtils::erratic_cast<cds::Residue*>(&refResidue));
+        size_t refIndex = codeUtils::indexOf(data.moleculeResidueOrder[moleculeId], refId);
+        data.indices.residueMolecule.push_back(moleculeId);
+        std::vector<size_t>& residueOrder = data.moleculeResidueOrder[moleculeId];
+        residueOrder.insert(residueOrder.begin() + refIndex + 1, residueId);
         cds::Residue* newNMEResidue =
-            molecule->insertNewResidue(std::make_unique<PdbResidue>("NME", &refResidue), refResidue);
+            molecule->insertNewResidue(std::make_unique<PdbResidue>(data, residueId, "NME", &refResidue), refResidue);
+        data.indices.residues.push_back(newNMEResidue);
         PdbResidue* newPdbNMEResidue = codeUtils::erratic_cast<PdbResidue*>(newNMEResidue);
-        cds::Atom* nAtom             = newPdbNMEResidue->addPdbAtom("N", nCoordNME);
-        cds::Atom* hAtom             = newPdbNMEResidue->addPdbAtom("H", hCoordNME);
-        cds::Atom* ch3Atom           = newPdbNMEResidue->addPdbAtom("CH3", ch3CoordNME);
-        cds::Atom* hh31Atom          = newPdbNMEResidue->addPdbAtom("HH31", hh31CoordNME);
-        cds::Atom* hh32Atom          = newPdbNMEResidue->addPdbAtom("HH32", hh32CoordNME);
-        cds::Atom* hh33Atom          = newPdbNMEResidue->addPdbAtom("HH33", hh33CoordNME);
+        cds::Atom* nAtom             = newPdbNMEResidue->addPdbAtom(data, residueId, "N", nCoordNME);
+        cds::Atom* hAtom             = newPdbNMEResidue->addPdbAtom(data, residueId, "H", hCoordNME);
+        cds::Atom* ch3Atom           = newPdbNMEResidue->addPdbAtom(data, residueId, "CH3", ch3CoordNME);
+        cds::Atom* hh31Atom          = newPdbNMEResidue->addPdbAtom(data, residueId, "HH31", hh31CoordNME);
+        cds::Atom* hh32Atom          = newPdbNMEResidue->addPdbAtom(data, residueId, "HH32", hh32CoordNME);
+        cds::Atom* hh33Atom          = newPdbNMEResidue->addPdbAtom(data, residueId, "HH33", hh33CoordNME);
         addBond(nAtom, refResidue.FindAtom("C"));
         addBond(nAtom, hAtom);
         addBond(nAtom, ch3Atom);
@@ -133,15 +146,23 @@ void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const
         --refPosition;
         PdbResidue* previousResidue = codeUtils::erratic_cast<PdbResidue*>(
             (*refPosition).get()); // Its an iterator to a unique ptr, so deref and get the raw. Ugh.
-        cds::Residue* newACEResidue =
-            molecule->insertNewResidue(std::make_unique<PdbResidue>("ACE", previousResidue), *previousResidue);
+        size_t residueId = data.indices.residueMolecule.size();
+        size_t refId =
+            codeUtils::indexOf(data.indices.residues, codeUtils::erratic_cast<cds::Residue*>(previousResidue));
+        size_t refIndex = codeUtils::indexOf(data.moleculeResidueOrder[moleculeId], refId);
+        data.indices.residueMolecule.push_back(moleculeId);
+        std::vector<size_t>& residueOrder = data.moleculeResidueOrder[moleculeId];
+        residueOrder.insert(residueOrder.begin() + refIndex + 1, residueId);
+        cds::Residue* newACEResidue = molecule->insertNewResidue(
+            std::make_unique<PdbResidue>(data, residueId, "ACE", previousResidue), *previousResidue);
+        data.indices.residues.push_back(newACEResidue);
         PdbResidue* newPdbACEResidue = codeUtils::erratic_cast<PdbResidue*>(newACEResidue);
-        cds::Atom* cAtom             = newPdbACEResidue->addPdbAtom("C", cCoordACE);
-        cds::Atom* oAtom             = newPdbACEResidue->addPdbAtom("O", oCoordACE);
-        cds::Atom* ch3Atom           = newPdbACEResidue->addPdbAtom("CH3", ch3CoordACE);
-        cds::Atom* hh31Atom          = newPdbACEResidue->addPdbAtom("HH31", hh31CoordACE);
-        cds::Atom* hh32Atom          = newPdbACEResidue->addPdbAtom("HH32", hh32CoordACE);
-        cds::Atom* hh33Atom          = newPdbACEResidue->addPdbAtom("HH33", hh33CoordACE);
+        cds::Atom* cAtom             = newPdbACEResidue->addPdbAtom(data, residueId, "C", cCoordACE);
+        cds::Atom* oAtom             = newPdbACEResidue->addPdbAtom(data, residueId, "O", oCoordACE);
+        cds::Atom* ch3Atom           = newPdbACEResidue->addPdbAtom(data, residueId, "CH3", ch3CoordACE);
+        cds::Atom* hh31Atom          = newPdbACEResidue->addPdbAtom(data, residueId, "HH31", hh31CoordACE);
+        cds::Atom* hh32Atom          = newPdbACEResidue->addPdbAtom(data, residueId, "HH32", hh32CoordACE);
+        cds::Atom* hh33Atom          = newPdbACEResidue->addPdbAtom(data, residueId, "HH33", hh33CoordACE);
         addBond(cAtom, refResidue.FindAtom("N"));
         addBond(cAtom, oAtom);
         addBond(cAtom, ch3Atom);
@@ -154,12 +175,13 @@ void pdb::InsertCap(cds::Molecule* molecule, const PdbResidue& refResidue, const
     }
 }
 
-void pdb::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
+void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& type)
 {
+    PdbResidue* terminalResidue = codeUtils::erratic_cast<PdbResidue*>(data.indices.residues[residueId]);
     if (type == "NH3+") // For now, leaving it to tleap to add the correct H's
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + terminalResidue->printId());
-        terminalResidue->deletePdbAtom(terminalResidue->FindAtom("H"));
+        terminalResidue->deletePdbAtom(data, residueId, terminalResidue->FindAtom("H"));
     }
     else if (type == "CO2-")
     {
@@ -184,7 +206,7 @@ void pdb::ModifyTerminal(const std::string& type, PdbResidue* terminalResidue)
         }
         cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(atomCA->coordinate(), atomC->coordinate(),
                                                                               atomO->coordinate(), 120.0, 180.0, 1.25);
-        cds::Atom* oxtAtom       = terminalResidue->addPdbAtom("OXT", oxtCoord);
+        cds::Atom* oxtAtom       = terminalResidue->addPdbAtom(data, residueId, "OXT", oxtCoord);
         addBond(oxtAtom, atomC);
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Created new atom named OXT after " + atomO->getName() + "_" + std::to_string(atomO->getNumber()));

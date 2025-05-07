@@ -27,18 +27,17 @@ int main(int argc, char* argv[])
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-
     const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
     pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
     for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in Ensemble.
                                                    // ToDo: Why is there a const blockage in Ensemble?
     {
         std::cout << "Bonding atoms by distance for assembly" << std::endl;
-        cds::bondAtomsByDistance(assembly.getAtoms());
+        cds::bondAtomsByDistance(assembly->getAtoms());
         // OFF molecule
         try
         {
-            cds::GraphIndexData indices = cds::toIndexData(assembly.getMolecules());
+            cds::GraphIndexData indices = cds::toIndexData(assembly->getMolecules());
             assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
             cds::OffFileData data       = cds::toOffFileData(indices.residues);
             cds::serializeNumbers(indices.atoms);
@@ -63,6 +62,7 @@ int main(int argc, char* argv[])
             gmml::log(__LINE__, __FILE__, gmml::ERR, "Unknown error when writing to off file.\n");
         }
     }
+
     std::cout << "Finished bonding atoms by distance" << std::endl;
     pdbFile.Write(outputFile);
 

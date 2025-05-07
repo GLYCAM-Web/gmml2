@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
@@ -26,6 +27,20 @@ int main(int argc, char* argv[])
         std::exit(EXIT_FAILURE);
     }
     pdb::PdbFile pdbFile(argv[1]);
+    auto panic = [&]()
+    {
+        for (size_t n = 0; n < pdbFile.data.indices.residues.size(); n++)
+        {
+            auto atomIds = codeUtils::indicesOfElement(pdbFile.data.indices.atomResidue, n);
+            auto atoms   = pdbFile.data.indices.residues[n]->getAtoms();
+            if (atomIds.size() != atoms.size())
+            {
+                std::cout << "residue " << n << "\n";
+                std::cout << atomIds.size() << " vs " << atoms.size() << "\n";
+                throw std::runtime_error("panic");
+            }
+        }
+    };
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
@@ -33,27 +48,44 @@ int main(int argc, char* argv[])
     parameterManager.lib.residueNames                = codeUtils::reverse(parameterManager.lib.residueNames);
     parameterManager.lib.residues                    = codeUtils::reverse(parameterManager.lib.residues);
     pdb::PreprocessorInformation ppInfo              = pdbFile.PreProcess(parameterManager, options);
-    cds::Assembly* firstModel                        = &pdbFile.mutableAssemblies().front();
-    for (auto& molecule : firstModel->getMolecules())
+    std::vector<cds::Assembly*> assemblies           = pdbFile.getAssemblies();
+    cds::GraphIndexData& graphIndices                = pdbFile.data.indices;
+    std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
+    size_t residueCount             = pdbFile.data.indices.residues.size();
+    std::vector<bool> residueAlive(residueCount, true);
+    for (size_t residueId = 0; residueId < residueCount; residueId++)
     {
-        for (auto& residue : molecule->getResidues())
+        cds::Residue* residue = graphIndices.residues[residueId];
+        if (residue->GetType() != cds::ResidueType::Protein)
         {
-            if (residue->GetType() != cds::ResidueType::Protein)
+            std::vector<size_t> atomIds = codeUtils::indicesOfElement(graphIndices.atomResidue, residueId);
+            for (size_t atomId : atomIds)
             {
-                pdb::PdbResidue* pdbResidue           = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
-                std::vector<std::string>& recordNames = pdbResidue->atomData.recordNames;
-                std::fill(recordNames.begin(), recordNames.end(), "ATOM");
+                pdbFile.data.atoms.recordNames[atomId] = "ATOM";
             }
-            if (residue->getName() == "HOH" || residue->getName() == "WAT")
-            {
-                std::cout << "Deleting " << residue->getName() << "\n";
-                molecule->deleteResidue(residue);
-            }
+        }
+        if (residue->getName() == "HOH" || residue->getName() == "WAT")
+        {
+            std::cout << "Deleting " << residue->getName() << "\n";
+            residueAlive[residueId] = false;
         }
     }
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
-    pdb::Write(*firstModel, outFileStream);
+    std::vector<size_t> firstAssemblyMoleculeIds =
+        codeUtils::indicesOfElement(pdbFile.data.indices.moleculeAssembly, size_t(0));
+    std::function<std::vector<size_t>(const std::vector<size_t>&)> onlyAliveResidues =
+        [&](const std::vector<size_t>& residueIds)
+    {
+        std::function<bool(const size_t&)> isAlive = [&](size_t id)
+        {
+            return residueAlive[id];
+        };
+        return codeUtils::vectorFilter(isAlive, residueIds);
+    };
+    std::vector<std::vector<size_t>> residueOrder = codeUtils::vectorMap(
+        onlyAliveResidues, codeUtils::indicesToValues(pdbFile.data.moleculeResidueOrder, firstAssemblyMoleculeIds));
+    pdb::Write(pdbFile.data, residueOrder, outFileStream);
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();
 
