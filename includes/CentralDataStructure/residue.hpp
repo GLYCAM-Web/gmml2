@@ -4,7 +4,6 @@
 #include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // getId
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 #include "includes/CodeUtils/constants.hpp" // iNotSet
 
@@ -48,7 +47,6 @@ namespace cds
         std::vector<Atom*> getNonHydrogenAtoms() const;
         std::vector<Atom*> mutableAtoms();
         std::vector<std::string> getAtomNames() const;
-        std::string getStringId(std::string moleculeNumber = constants::sNotSet) const;
 
         inline ResidueType GetType() const
         {
@@ -60,7 +58,10 @@ namespace cds
             return number_;
         }
 
-        virtual pdb::ResidueId getId() const;
+        inline bool isPdbResidue() const
+        {
+            return isPdbResidue_;
+        }
 
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
@@ -98,6 +99,11 @@ namespace cds
         inline void setNTerminal()
         {
             isNTerminal = true;
+        }
+
+        inline void setPdbResidue()
+        {
+            isPdbResidue_ = true;
         }
 
         //////////////////////////////////////////////////////////
@@ -154,8 +160,11 @@ namespace cds
         ResidueType type_ = Undefined; // enum Type. See enum above.
         int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
-        bool isCTerminal = false;
-        bool isNTerminal = false;
+        bool isCTerminal   = false;
+        bool isNTerminal   = false;
+        bool isPdbResidue_ = false;
     };
+
+    std::string residueStringId(cds::Residue* residue);
 } // namespace cds
 #endif

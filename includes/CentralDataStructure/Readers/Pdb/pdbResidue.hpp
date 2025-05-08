@@ -12,6 +12,8 @@
 
 namespace pdb
 {
+    ResidueId pdbResidueId(const PdbData& data, size_t residueId);
+
     class PdbResidue : public cds::Residue
     {
       public:
@@ -20,11 +22,10 @@ namespace pdb
         //////////////////////////////////////////////////////////
         PdbResidue(PdbData& data, size_t residueId, std::stringstream& singleResidueSecion, std::string firstLine);
         PdbResidue(PdbData&, size_t, const std::string residueName, const PdbResidue* referenceResidue);
+
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
         //////////////////////////////////////////////////////////
-        ResidueId getId() const;
-
         inline const std::string& getInsertionCode() const
         {
             return insertionCode_;
@@ -74,16 +75,6 @@ namespace pdb
         //////////////////////////////////////////////////////////
         void modifyNTerminal(PdbData& data, size_t residueId, const std::string& type);
         void modifyCTerminal(PdbData& data, size_t residueId, const std::string& type);
-
-        //////////////////////////////////////////////////////////
-        //                       DISPLAY FUNCTION               //
-        //////////////////////////////////////////////////////////
-        inline std::string printId() const
-        {
-            return this->getId().print();
-        }
-
-        void Print(std::ostream& out) const;
 
       private:
         //////////////////////////////////////////////////////////

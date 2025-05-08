@@ -66,7 +66,7 @@ int main(int argc, char** argv)
             std::cout << "Number of possible shapes is " << carbBuilder.GetNumberOfShapes() << "\n";
             for (auto& residue : carbBuilder.GetCarbohydrate().getResidues())
             {
-                std::cout << residue->getStringId() << "\n";
+                std::cout << cds::residueStringId(residue) << "\n";
             }
             for (auto& linkageInfo : carbBuilder.GenerateUserOptionsDataStruct())
             {

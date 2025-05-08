@@ -89,7 +89,7 @@ namespace
         if ((cAtom != nullptr) && (nAtom != nullptr) && (oxtAtom == nullptr) && isWithinBondingDistance(cAtom, nAtom))
         {
             addBond(cAtom, nAtom);
-            cTermRes->addNeighbor(nTermRes->getStringId() + "-" + cTermRes->getStringId(), nTermRes);
+            cTermRes->addNeighbor(cds::residueStringId(nTermRes) + "-" + cds::residueStringId(cTermRes), nTermRes);
             return true;
         }
         return false;
@@ -119,7 +119,8 @@ namespace
             if (!autoConnectSuccessiveResidues(previousRes, *it))
             { // Automatically bond the N and C atoms of successive residues
                 gmml::log(__LINE__, __FILE__, gmml::WAR,
-                          "Gap detected between " + previousRes->getStringId() + " and " + (*it)->getStringId());
+                          "Gap detected between " + cds::residueStringId(previousRes) + " and " +
+                              cds::residueStringId(*it));
             }
             previousRes = *it;
         }

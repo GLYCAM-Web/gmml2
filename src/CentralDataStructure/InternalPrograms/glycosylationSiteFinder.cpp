@@ -1,8 +1,13 @@
 #include "includes/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+
+#include <string>
+#include <vector>
 
 namespace
 {
@@ -100,11 +105,12 @@ namespace glycoproteinBuilder
             size_t index = codeUtils::indexOf(table.names, residue->getName());
             if (index < table.names.size() && table.linkTypes[index] != "")
             {
+                pdb::PdbResidue* pdbResidue   = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
                 std::vector<std::string> tags = {table.linkTypes[index]};
                 std::string context           = GetSequenceContextAndDetermineTags(residue, tags);
-                pdb::ResidueId residueId      = residue->getId();
-                result.push_back(GlycosylationSiteInfo {residueId.getChainId(), residueId.getNumber(),
-                                                        residueId.getInsertionCode(), context, tags});
+                result.push_back(GlycosylationSiteInfo {pdbResidue->getChainId(),
+                                                        std::to_string(pdbResidue->getNumber()),
+                                                        pdbResidue->getInsertionCode(), context, tags});
             }
         }
         return result;

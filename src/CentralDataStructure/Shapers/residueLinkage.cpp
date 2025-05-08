@@ -95,8 +95,8 @@ std::string cds::print(const ResidueLink& link)
 {
     std::stringstream ss;
     auto& linkageResidues = link.residues;
-    ss << "ids: " << linkageResidues.first->getStringId() << "@" << link.atoms.first->getName() << " -- "
-       << linkageResidues.second->getStringId() << "@" << link.atoms.second->getName() << "\n";
+    ss << "ids: " << cds::residueStringId(linkageResidues.first) << "@" << link.atoms.first->getName() << " -- "
+       << cds::residueStringId(linkageResidues.second) << "@" << link.atoms.second->getName() << "\n";
     return ss.str();
 }
 

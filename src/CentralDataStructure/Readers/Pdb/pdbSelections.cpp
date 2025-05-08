@@ -49,7 +49,7 @@ size_t pdb::residueSelector(const PdbData& data, std::vector<size_t> residueIds,
 { // I'm using empty() to mean that it could be anything.
     for (size_t residueId : residueIds)
     {
-        ResidueId id = codeUtils::erratic_cast<PdbResidue*>(data.indices.residues[residueId])->getId();
+        ResidueId id = pdbResidueId(data, residueId);
         if (queryId.getName().empty() || queryId.getName() == id.getName())
         {
             if (queryId.getNumber().empty() || queryId.getNumber() == id.getNumber())

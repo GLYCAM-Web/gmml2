@@ -15,6 +15,7 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
@@ -31,6 +32,7 @@
 #include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
+
 #include <sstream>
 #include <ostream>
 #include <cctype>    // isDigit
@@ -202,7 +204,7 @@ namespace
         Atom* parentAtom         = findParentAtom(parentResidue, childResidue, linkageLabel);
         if (parentAtom == nullptr)
         {
-            std::string message = "Did not find connection atom in residue: " + parentResidue->getStringId();
+            std::string message = "Did not find connection atom in residue: " + residueStringId(parentResidue);
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }
@@ -211,8 +213,8 @@ namespace
         Atom* childAtom           = childResidue->FindAtom(childAtomName);
         if (childAtom == nullptr)
         {
-            std::string message =
-                "Did not find child atom named " + childAtomName + " in child residue: " + childResidue->getStringId();
+            std::string message = "Did not find child atom named " + childAtomName +
+                                  " in child residue: " + residueStringId(childResidue);
             gmml::log(__LINE__, __FILE__, gmml::ERR, message);
             throw std::runtime_error(message);
         }

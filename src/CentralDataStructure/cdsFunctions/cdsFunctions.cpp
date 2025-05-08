@@ -197,7 +197,7 @@ std::vector<std::string> cds::residueStringIds(const std::vector<Residue*>& resi
     result.reserve(residues.size());
     for (auto& residue : residues)
     {
-        result.push_back(residue->getStringId());
+        result.push_back(residueStringId(residue));
     }
     return result;
 }

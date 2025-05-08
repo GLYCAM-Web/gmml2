@@ -8,10 +8,17 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp" //RemoveWhiteSpace
-#include <sstream>
+
 #include <string>
 
 using pdb::PdbResidue;
+
+pdb::ResidueId pdb::pdbResidueId(const PdbData& data, size_t residueId)
+{
+    PdbResidue* residue = codeUtils::erratic_cast<PdbResidue*>(data.indices.residues[residueId]);
+    return ResidueId(residue->getName(), std::to_string(residue->getNumber()), residue->getInsertionCode(),
+                     residue->getChainId());
+}
 
 cds::Atom* PdbResidue::addPdbAtom(PdbData& data, size_t residueId, const std::string& line)
 {
@@ -83,6 +90,7 @@ void PdbResidue::deletePdbAtom(PdbData& data, size_t, cds::Atom* atom)
 //////////////////////////////////////////////////////////
 PdbResidue::PdbResidue(PdbData& data, size_t residueId, std::stringstream& singleResidueSecion, std::string firstLine)
 {
+    this->setPdbResidue();
     ResidueId resId(firstLine);
     this->setName(resId.getName());
     this->setNumber(std::stoi(resId.getNumber()));
@@ -119,6 +127,7 @@ PdbResidue::PdbResidue(PdbData& data, size_t residueId, std::stringstream& singl
 PdbResidue::PdbResidue(PdbData&, size_t, const std::string residueName, const PdbResidue* referenceResidue)
     : cds::Residue(residueName, referenceResidue)
 { // should instead call copy constructor and then rename with residueName?
+    this->setPdbResidue();
     this->setInsertionCode(referenceResidue->getInsertionCode());
     this->setChainId(referenceResidue->getChainId());
     this->SetType(this->determineType(this->getName()));
@@ -127,12 +136,6 @@ PdbResidue::PdbResidue(PdbData&, size_t, const std::string residueName, const Pd
 //////////////////////////////////////////////////////////
 //                         ACCESSOR                     //
 //////////////////////////////////////////////////////////
-pdb::ResidueId PdbResidue::getId() const
-{
-    ResidueId temp(this->getName(), std::to_string(this->getNumber()), this->getInsertionCode(), this->getChainId());
-    return temp;
-}
-
 const std::string PdbResidue::getNumberAndInsertionCode() const
 {
     return std::to_string(this->getNumber()) + this->getInsertionCode();
@@ -143,7 +146,7 @@ const std::string PdbResidue::getNumberAndInsertionCode() const
 //////////////////////////////////////////////////////////
 void PdbResidue::modifyNTerminal(PdbData& data, size_t residueId, const std::string& type)
 {
-    gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + this->printId());
+    gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + pdbResidueId(data, residueId).print());
     if (type == "NH3+")
     {
         this->deletePdbAtom(data, residueId, this->FindAtom("H"));
@@ -157,7 +160,7 @@ void PdbResidue::modifyNTerminal(PdbData& data, size_t residueId, const std::str
 
 void PdbResidue::modifyCTerminal(PdbData& data, size_t residueId, const std::string& type)
 {
-    gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + this->printId());
+    gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
     if (type == "CO2-")
     {
         const cds::Atom* atom = this->FindAtom("OXT");
@@ -180,18 +183,4 @@ void PdbResidue::modifyCTerminal(PdbData& data, size_t residueId, const std::str
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);
     }
     return;
-}
-
-//////////////////////////////////////////////////////////
-//                      DISPLAY FUNCTION                //
-//////////////////////////////////////////////////////////
-void PdbResidue::Print(std::ostream& out) const
-{
-    out << "pdb::Residue : " << this->printId() << std::endl;
-    for (auto& atom : this->getAtoms())
-    {
-        auto coord = atom->coordinate();
-        out << "    atom : " << atom->getName() << "_" << atom->getNumber() << " X: " << coord.GetX()
-            << " Y: " << coord.GetY() << " Z: " << coord.GetZ() << "\n";
-    }
 }

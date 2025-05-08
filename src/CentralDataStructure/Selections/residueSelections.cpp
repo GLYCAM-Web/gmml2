@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -37,7 +38,8 @@ Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* que
     if (queryAtom == nullptr)
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Warning: An atom named " + queryAtomName + " not found in residue: " + queryResidue->getStringId());
+                  "Warning: An atom named " + queryAtomName +
+                      " not found in residue: " + cds::residueStringId(queryResidue));
         return nullptr;
     }
     cds::Atom* foreignAtomNeighbor = cdsSelections::selectNeighborNotInAtomVector(queryAtom, queryResidue->getAtoms());
@@ -45,7 +47,7 @@ Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* que
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
                   "Warning: Did not find foreign neighbors for an atom named " + queryAtomName +
-                      " in residue: " + queryResidue->getStringId());
+                      " in residue: " + cds::residueStringId(queryResidue));
         return nullptr;
     }
     for (auto& residueNeighbor : queryResidue->getNeighbors())
@@ -57,7 +59,7 @@ Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* que
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR,
               "Warning: Did not find a neighbor residue connected via " + queryAtomName +
-                  " to residue: " + queryResidue->getStringId());
+                  " to residue: " + cds::residueStringId(queryResidue));
     return nullptr;
 }
 

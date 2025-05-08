@@ -207,28 +207,24 @@ void cds::determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals)
 cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                               ResidueLink& link)
 {
+    std::string firstId    = cds::residueStringId(link.residues.first);
+    std::string secondId   = cds::residueStringId(link.residues.second);
     ResidueLinkNames names = toNames(link);
     int local_debug        = -1;
     if (local_debug > 0)
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Maybe Finding connection between " + link.residues.first->getStringId() +
-                      " :: " + link.residues.second->getStringId());
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Maybe Finding connection between " + firstId + " :: " + secondId);
     }
     if (local_debug > 0)
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Finding connection between " + link.residues.first->getStringId() +
-                      " :: " + link.residues.second->getStringId());
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Finding connection between " + firstId + " :: " + secondId);
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Connection atoms are from: " + link.atoms.first->getId() + " to " + link.atoms.second->getId());
     }
     std::vector<DihedralAtoms> dihedralAtoms = cdsSelections::findRotatableDihedralsConnectingResidues(link);
     if (local_debug > 0)
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Finding metadata for " + link.residues.first->getStringId() +
-                      " :: " + link.residues.second->getStringId());
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Finding metadata for " + firstId + " :: " + secondId);
     }
     std::vector<std::vector<size_t>> metadata = findResidueLinkageMetadata(names);
     if (local_debug > 0)

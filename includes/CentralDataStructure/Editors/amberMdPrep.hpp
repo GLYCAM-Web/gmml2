@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 
 #include <vector>
 
@@ -11,8 +12,8 @@
 // of ~May 2023
 namespace amberMdPrep
 {
-    bool checkForNonNaturalProteinResidues(std::vector<cds::Residue*> unknownResidues, const cds::Atom* cAtom,
-                                           pdb::PreprocessorInformation& ppInfo);
+    bool checkForNonNaturalProteinResidues(const pdb::PdbData& data, std::vector<cds::Residue*> unknownResidues,
+                                           const cds::Atom* cAtom, pdb::PreprocessorInformation& ppInfo);
 }
 
 #endif

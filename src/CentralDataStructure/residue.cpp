@@ -1,11 +1,13 @@
 #include "includes/CentralDataStructure/residue.hpp"
 
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/biology.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <string>
 #include <vector>
@@ -146,19 +148,6 @@ std::vector<std::string> Residue::getAtomNames() const
     return foundAtomNames;
 }
 
-std::string Residue::getStringId(std::string moleculeNumber) const
-{
-    const std::string insertionCode = constants::sNotSet;
-    pdb::ResidueId temp(this->getName(), std::to_string(this->getNumber()), insertionCode, moleculeNumber);
-    return temp.print();
-}
-
-pdb::ResidueId Residue::getId() const
-{
-    pdb::ResidueId temp(this->getName(), std::to_string(this->getNumber()), constants::sNotSet, constants::sNotSet);
-    return temp;
-}
-
 //////////////////////////////////////////////////////////
 //                    MUTATOR                           //
 //////////////////////////////////////////////////////////
@@ -249,4 +238,23 @@ cds::ResidueType Residue::determineType(const std::string& residueName)
     }
     // ToDo we want to figure out solvent, aglycone etc here too?.
     return ResidueType::Undefined;
+}
+
+std::string cds::residueStringId(cds::Residue* residue)
+{
+    std::function<std::string(const std::string&)> strOrNotSet = [](const std::string& str)
+    {
+        return str.empty() ? constants::sNotSet : str;
+    };
+    std::string name          = residue->getName();
+    std::string number        = std::to_string(residue->getNumber());
+    std::string insertionCode = "";
+    std::string chainId       = "";
+    if (residue->isPdbResidue())
+    {
+        pdb::PdbResidue* pdbResidue = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
+        insertionCode               = pdbResidue->getInsertionCode();
+        chainId                     = pdbResidue->getChainId();
+    }
+    return codeUtils::join("_", codeUtils::vectorMap(strOrNotSet, {name, number, insertionCode, chainId}));
 }

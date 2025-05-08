@@ -101,7 +101,7 @@ namespace
             }
         }
         std::string message =
-            "Did not find a C1 or C2 with a foreign neighbor in residue: " + queryResidue->getStringId() +
+            "Did not find a C1 or C2 with a foreign neighbor in residue: " + cds::residueStringId(queryResidue) +
             ", thus no anomeric atom was found.";
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw std::runtime_error(message);
@@ -194,7 +194,7 @@ namespace
         // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g. CG,
         // ND2, we will superimpose them onto the correspoinding "target" atoms in the protein residue
         // (glycosite_residue).
-        std::string residueId                      = glycosite->getStringId();
+        std::string residueId                      = cds::residueStringId(glycosite);
         std::vector<cds::Atom*> proteinAtoms       = glycosite->getAtoms();
         std::vector<std::string> proteinAtomNames  = cds::atomNames(proteinAtoms);
         std::vector<cds::Atom*> aglyconeAtoms      = attachment.aglycone->mutableAtoms();
@@ -272,7 +272,7 @@ namespace glycoproteinBuilder
             pdb::PdbResidue* pdbResidue = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
             numberAndInsertionCodes.push_back(pdbResidue->getNumberAndInsertionCode());
             chainIds.push_back(pdbResidue->getChainId());
-            residueIds.push_back(pdbResidue->printId());
+            residueIds.push_back(cds::residueStringId(pdbResidue));
         }
         for (auto& glycositeInput : glycositesInputVector)
         {

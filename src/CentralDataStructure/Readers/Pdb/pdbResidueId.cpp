@@ -2,6 +2,11 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containers.hpp"
+
+#include <functional>
+#include <string>
+#include <vector>
 
 using pdb::ResidueId;
 
@@ -64,41 +69,10 @@ const std::string ResidueId::getNumberAndInsertionCode() const
 //////////////////////////////////////////////////////////
 std::string ResidueId::print() const
 {
-    std::string formattedId = "";
-    if (this->getName().empty())
+    std::function<std::string(const std::string&)> strOrNotSet = [](const std::string& str)
     {
-        formattedId += constants::sNotSet;
-    }
-    else
-    {
-        formattedId += this->getName();
-    }
-    formattedId += "_";
-    if (this->getNumber().empty())
-    {
-        formattedId += constants::sNotSet;
-    }
-    else
-    {
-        formattedId += this->getNumber();
-    }
-    formattedId += "_";
-    if (this->getInsertionCode().empty())
-    {
-        formattedId += constants::sNotSet;
-    }
-    else
-    {
-        formattedId += this->getInsertionCode();
-    }
-    formattedId += "_";
-    if (this->getChainId().empty())
-    {
-        formattedId += constants::sNotSet;
-    }
-    else
-    {
-        formattedId += this->getChainId();
-    }
-    return formattedId;
+        return str.empty() ? constants::sNotSet : str;
+    };
+    return codeUtils::join("_", codeUtils::vectorMap(strOrNotSet, {this->getName(), this->getNumber(),
+                                                                   this->getInsertionCode(), this->getChainId()}));
 }

@@ -55,7 +55,7 @@ namespace
         }
         if (residuesAreConnected)
         {
-            std::string edgeName = residueA->getStringId() + "--" + residueB->getStringId();
+            std::string edgeName = cds::residueStringId(residueA) + "--" + cds::residueStringId(residueB);
             residueA->addNeighbor(edgeName, residueB);
         }
     }

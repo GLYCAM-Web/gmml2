@@ -170,8 +170,7 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, cds::Molecule* molecule, P
         addBond(ch3Atom, hh32Atom);
         addBond(ch3Atom, hh33Atom);
         newACEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created ACE residue: " + codeUtils::erratic_cast<PdbResidue*>(newACEResidue)->printId());
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Created ACE residue: " + pdbResidueId(data, residueId).print());
     }
 }
 
@@ -180,12 +179,12 @@ void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& typ
     PdbResidue* terminalResidue = codeUtils::erratic_cast<PdbResidue*>(data.indices.residues[residueId]);
     if (type == "NH3+") // For now, leaving it to tleap to add the correct H's
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + terminalResidue->printId());
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + pdbResidueId(data, residueId).print());
         terminalResidue->deletePdbAtom(data, residueId, terminalResidue->FindAtom("H"));
     }
     else if (type == "CO2-")
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + terminalResidue->printId());
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
         const cds::Atom* atom = terminalResidue->FindAtom("OXT");
         if (atom != nullptr)
         {
