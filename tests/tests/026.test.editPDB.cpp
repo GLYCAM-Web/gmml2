@@ -23,11 +23,8 @@ int main(int argc, char* argv[])
     // requirement: a chain ID for every single ATOM entry, and all ligand atoms should be put in a single residue.
     pdb::PdbFile pdbFile(argv[1]); // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
                                    // every molecule to have any chain ID you can do:
-    auto residues = pdb::getResidues(pdbFile.getAssemblies());
-    for (auto& residue : residues)
-    {
-        codeUtils::erratic_cast<pdb::PdbResidue*>(residue)->setChainId("Y");
-    }
+    std::vector<cds::Residue*>& residues = pdbFile.data.indices.residues;
+    pdbFile.data.residues.chainIds       = std::vector<std::string>(residues.size(), "Y");
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:
     std::vector<cds::Residue*> ligandResidues =
         cdsSelections::selectResiduesByType(residues, cds::ResidueType::Undefined);

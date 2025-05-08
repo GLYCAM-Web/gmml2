@@ -186,12 +186,12 @@ int main(int argc, char* argv[])
         cds::Assembly* glycoprotein                                          = pdbFile.getAssemblies().front();
         std::vector<cds::Residue*> gpInitialResidues                         = glycoprotein->getResidues();
         cds::setIntraConnectivity(aminoAcidTable, gpInitialResidues);
-        cds::setInterConnectivity(aminoAcidTable, gpInitialResidues);
+        cds::setInterConnectivity(aminoAcidTable, pdbFile.data, gpInitialResidues);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
-            glycoproteinBuilder::createGlycosites(glycoprotein, settings.glycositesInputVector);
+            glycoproteinBuilder::createGlycosites(pdbFile.data, glycoprotein, settings.glycositesInputVector);
         std::vector<cdsCondensedSequence::Carbohydrate*> glycans = glycoproteinBuilder::addGlycansToProtein(
-            parameterManager, glycoprotein, elementRadii, dihedralAngleDataTable, glycosites);
+            parameterManager, elementRadii, dihedralAngleDataTable, pdbFile.data, glycoprotein, glycosites);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
         double selfWeight    = 1.0;
@@ -201,11 +201,12 @@ int main(int argc, char* argv[])
 
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
-        glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
-            aminoAcidTable, sidechainRotamers,
-            glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                aminoAcidTable, dihedralAngleDataTable, elementRadii, molecules, glycosites, glycans, overlapMultiplier,
-                settings.overlapTolerance, settings.overlapRejectionThreshold, settings.ignoreHydrogen));
+        glycoproteinBuilder::GlycoproteinAssembly assembly =
+            addSidechainRotamers(aminoAcidTable, sidechainRotamers,
+                                 glycoproteinBuilder::toGlycoproteinAssemblyStructs(
+                                     aminoAcidTable, dihedralAngleDataTable, elementRadii, pdbFile.data, molecules,
+                                     glycosites, glycans, overlapMultiplier, settings.overlapTolerance,
+                                     settings.overlapRejectionThreshold, settings.ignoreHydrogen));
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck =

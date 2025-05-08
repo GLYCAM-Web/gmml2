@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -12,17 +14,20 @@ namespace
 {
     struct ResidueAndAtoms
     {
+        std::string residueId;
         cds::Residue* residue;
         std::vector<cds::Atom*> atoms;
     };
 
-    std::vector<ResidueAndAtoms> residueAndAtomVector(std::vector<cds::Residue*>& residues)
+    std::vector<ResidueAndAtoms> residueAndAtomVector(const pdb::PdbData& pdbData, std::vector<cds::Residue*>& residues)
     {
         std::vector<ResidueAndAtoms> result;
         result.reserve(residues.size());
         for (auto& res : residues)
         {
-            result.push_back({res, res->getAtoms()});
+            size_t index         = codeUtils::indexOf(pdbData.indices.residues, res);
+            std::string stringId = pdb::residueStringId(pdbData, index);
+            result.push_back({stringId, res, res->getAtoms()});
         }
         return result;
     }
@@ -55,7 +60,7 @@ namespace
         }
         if (residuesAreConnected)
         {
-            std::string edgeName = cds::residueStringId(residueA) + "--" + cds::residueStringId(residueB);
+            std::string edgeName = a.residueId + "--" + b.residueId;
             residueA->addNeighbor(edgeName, residueB);
         }
     }
@@ -97,9 +102,9 @@ void cds::bondAtomsByDistance(std::vector<cds::Atom*> atoms)
     }
 }
 
-void cds::bondAtomsAndResiduesByDistance(std::vector<cds::Residue*> residues)
+void cds::bondAtomsAndResiduesByDistance(pdb::PdbData& pdbData, std::vector<cds::Residue*> residues)
 {
-    std::vector<ResidueAndAtoms> vec = residueAndAtomVector(residues);
+    std::vector<ResidueAndAtoms> vec = residueAndAtomVector(pdbData, residues);
     for (size_t n = 0; n < residues.size(); n++)
     { // First bond by distance for atoms within each residue
         cds::bondAtomsByDistance(vec[n].atoms);
@@ -116,9 +121,9 @@ void cds::distanceBondIntra(std::vector<cds::Residue*> residues)
     }
 }
 
-void cds::distanceBondInter(std::vector<cds::Residue*> residues)
+void cds::distanceBondInter(pdb::PdbData& pdbData, std::vector<cds::Residue*> residues)
 {
-    std::vector<ResidueAndAtoms> vec = residueAndAtomVector(residues);
+    std::vector<ResidueAndAtoms> vec = residueAndAtomVector(pdbData, residues);
     for (size_t n = 0; n < vec.size(); n++)
     {
         bondResidueAtoms(vec, n);

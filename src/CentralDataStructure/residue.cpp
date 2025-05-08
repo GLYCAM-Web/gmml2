@@ -246,15 +246,7 @@ std::string cds::residueStringId(cds::Residue* residue)
     {
         return str.empty() ? constants::sNotSet : str;
     };
-    std::string name          = residue->getName();
-    std::string number        = std::to_string(residue->getNumber());
-    std::string insertionCode = "";
-    std::string chainId       = "";
-    if (residue->isPdbResidue())
-    {
-        pdb::PdbResidue* pdbResidue = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
-        insertionCode               = pdbResidue->getInsertionCode();
-        chainId                     = pdbResidue->getChainId();
-    }
-    return codeUtils::join("_", codeUtils::vectorMap(strOrNotSet, {name, number, insertionCode, chainId}));
+    std::string name   = residue->getName();
+    std::string number = std::to_string(residue->getNumber());
+    return codeUtils::join("_", codeUtils::vectorMap(strOrNotSet, {name, number, "", ""}));
 }

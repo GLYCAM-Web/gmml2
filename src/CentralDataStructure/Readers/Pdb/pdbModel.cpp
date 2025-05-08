@@ -61,13 +61,13 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
             // Function that will read from stringstream until chain ID changes or TER or just not ATOM/HETATM
             std::stringstream singleChainSection =
                 extractSingleChainFromRecordSection(stream_block, line, extractChainId(line));
-            std::unique_ptr<cds::Molecule> molecule = std::make_unique<cds::Molecule>(extractChainId(line));
-            size_t moleculeId                       = data.indices.moleculeAssembly.size();
+            size_t moleculeId = data.indices.molecules.size();
             data.indices.moleculeAssembly.push_back(assemblyId);
             data.moleculeResidueOrder.push_back({});
-            readChain(data, moleculeId, molecule.get(), singleChainSection);
-            cds::Molecule* mol = assembly.addMolecule(std::move(molecule));
+            std::unique_ptr<cds::Molecule> molecule = std::make_unique<cds::Molecule>(extractChainId(line));
+            cds::Molecule* mol                      = assembly.addMolecule(std::move(molecule));
             data.indices.molecules.push_back(mol);
+            readChain(data, moleculeId, singleChainSection);
         }
         else if (recordName == "ENDMDL")
         { // Only happens when reading "modelsAsCoordinates", now read the rest of the entry as extra coords for
@@ -175,24 +175,29 @@ void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorIn
     for (std::vector<cds::Residue*>::iterator it1 = cysResidues.begin(); it1 != cysResidues.end(); ++it1)
     { // I want to go through the list and compare from current item to end. Thus it2 = std::next it1
         cds::Residue* cysRes1 = *it1;
-        cds::Atom* sgAtom1    = cysRes1->FindAtom("SG");
+        size_t cysRes1Id      = codeUtils::indexOf(data.indices.residues, cysRes1);
+        size_t sgAtom1Id      = findResidueAtom(data, cysRes1Id, "SG");
+        cds::Atom* sgAtom1    = data.indices.atoms[sgAtom1Id];
         for (std::vector<cds::Residue*>::iterator it2 = std::next(it1, 1); it2 != cysResidues.end(); ++it2)
         {
             cds::Residue* cysRes2 = *it2;
-            cds::Atom* sgAtom2    = cysRes2->FindAtom("SG");
-            if ((sgAtom1 != nullptr) && (sgAtom2 != nullptr))
+            size_t cysRes2Id      = codeUtils::indexOf(data.indices.residues, cysRes2);
+            size_t sgAtom2Id      = findResidueAtom(data, cysRes2Id, "SG");
+            cds::Atom* sgAtom2    = data.indices.atoms[sgAtom2Id];
+            size_t atomCount      = data.indices.atoms.size();
+            if ((sgAtom1Id < atomCount) && (sgAtom2Id < atomCount))
             {
                 double distance = cds::distance(sgAtom1->coordinate(), sgAtom2->coordinate());
                 if (distance < constants::dSulfurCutoff && distance > 0.001)
                 {
                     cysRes1->setName("CYX");
                     cysRes2->setName("CYX");
-                    ResidueId cysRes1Id = pdbResidueId(data, codeUtils::indexOf(data.indices.residues, cysRes1));
-                    ResidueId cysRes2Id = pdbResidueId(data, codeUtils::indexOf(data.indices.residues, cysRes2));
-                    addBond(sgAtom1, sgAtom2); // I think I want this here. Not 100%.
-                    ppInfo.cysBondResidues_.emplace_back(cysRes1Id, cysRes2Id, distance);
+                    ResidueId Res1Id = pdbResidueId(data, cysRes1Id);
+                    ResidueId Res2Id = pdbResidueId(data, cysRes2Id);
+                    addBond(data, sgAtom1Id, sgAtom2Id); // I think I want this here. Not 100%.
+                    ppInfo.cysBondResidues_.emplace_back(Res1Id, Res2Id, distance);
                     std::stringstream message;
-                    message << "Bonding " << cysRes1Id.print() << " and " << cysRes2Id.print() << " with distance "
+                    message << "Bonding " << Res1Id.print() << " and " << Res2Id.print() << " with distance "
                             << distance;
                     gmml::log(__LINE__, __FILE__, gmml::INF, message.str());
                 }
@@ -213,21 +218,23 @@ void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorIn
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Auto His protonation");
     // HIS protonation, automatic handling.
-    for (auto cdsresidue : assemblyResidues(data, assemblyId))
+    for (auto residue : assemblyResidues(data, assemblyId))
     {
-        PdbResidue* residue = codeUtils::erratic_cast<PdbResidue*>(cdsresidue);
-        size_t residueId    = codeUtils::indexOf(data.indices.residues, cdsresidue);
+        size_t residueId = codeUtils::indexOf(data.indices.residues, residue);
         if (residue->getName() == "HIE" || residue->getName() == "HID" || residue->getName() == "HIP")
         {
             ppInfo.hisResidues_.emplace_back(pdbResidueId(data, residueId));
         }
         else if (residue->getName() == "HIS")
         {
-            if ((residue->FindAtom("HE2") == nullptr) && (residue->FindAtom("HD1") != nullptr))
+            size_t atomCount = data.indices.atoms.size();
+            size_t atomHE2   = findResidueAtom(data, residueId, "HE2");
+            size_t atomHD1   = findResidueAtom(data, residueId, "HD1");
+            if ((atomHE2 == atomCount) && (atomHD1 < atomCount))
             {
                 residue->setName("HID");
             }
-            else if ((residue->FindAtom("HE2") != nullptr) && (residue->FindAtom("HD1") != nullptr))
+            else if ((atomHE2 < atomCount) && (atomHD1 < atomCount))
             {
                 residue->setName("HIP");
             }
@@ -252,26 +259,22 @@ void pdb::preProcessChainTerminals(PdbData& data, size_t assemblyId, Preprocesso
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Chain termination processing started for this chain");
         // Do the thing
-        cds::Molecule* molecule = data.indices.molecules[moleculeId];
-        PdbResidue* nTerResidue = getNTerminal(molecule);
-        if (nTerResidue == nullptr)
+        size_t nTerResidue = getNTerminal(data, moleculeId);
+        if (nTerResidue >= data.indices.residues.size())
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Could not modify terminals of this chain.");
         }
         else
         {
-            size_t nTerResidueId =
-                codeUtils::indexOf(data.indices.residues, codeUtils::erratic_cast<cds::Residue*>(nTerResidue));
-            ModifyTerminal(data, nTerResidueId, inputOptions.chainNTermination_);
-            PdbResidue* cTerResidue = getCTerminal(molecule);
-            size_t cTerResidueId =
-                codeUtils::indexOf(data.indices.residues, codeUtils::erratic_cast<cds::Residue*>(cTerResidue));
-            ModifyTerminal(data, cTerResidueId, inputOptions.chainCTermination_);
-            gmml::log(__LINE__, __FILE__, gmml::INF, "N term : " + pdbResidueId(data, nTerResidueId).print());
-            gmml::log(__LINE__, __FILE__, gmml::INF, "C term : " + pdbResidueId(data, cTerResidueId).print());
+            ModifyTerminal(data, nTerResidue, inputOptions.chainNTermination_);
+            size_t cTerResidue = getCTerminal(data, moleculeId);
+            ModifyTerminal(data, cTerResidue, inputOptions.chainCTermination_);
+            gmml::log(__LINE__, __FILE__, gmml::INF, "N term : " + pdbResidueId(data, nTerResidue).print());
+            gmml::log(__LINE__, __FILE__, gmml::INF, "C term : " + pdbResidueId(data, cTerResidue).print());
             // Report the thing
-            ppInfo.chainTerminals_.emplace_back(nTerResidue->getChainId(), nTerResidue->getNumberAndInsertionCode(),
-                                                cTerResidue->getNumberAndInsertionCode(),
+            ppInfo.chainTerminals_.emplace_back(data.residues.chainIds[nTerResidue],
+                                                getNumberAndInsertionCode(data, nTerResidue),
+                                                getNumberAndInsertionCode(data, cTerResidue),
                                                 inputOptions.chainNTermination_, inputOptions.chainCTermination_);
         }
         gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing complete for this chain");
@@ -303,33 +306,34 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
         for (std::vector<cds::Residue*>::iterator it1 = proteinResidues.begin(); it1 != proteinResidues.end() - 1;
              ++it1)
         {
-            it2                        = std::next(it1);
-            PdbResidue* res1           = codeUtils::erratic_cast<PdbResidue*>(*it1);
-            size_t res1Id              = codeUtils::indexOf(data.indices.residues, *it1);
-            PdbResidue* res2           = codeUtils::erratic_cast<PdbResidue*>(*it2);
-            size_t res2Id              = codeUtils::indexOf(data.indices.residues, *it2);
-            const cds::Atom* res1AtomC = res1->FindAtom("C");
-            const cds::Atom* res2AtomN = res2->FindAtom("N");
-            if ((res1AtomC != nullptr) && (res2AtomN != nullptr) && (!isWithinBondingDistance(res1AtomC, res2AtomN)))
+            it2              = std::next(it1);
+            size_t res1      = codeUtils::indexOf(data.indices.residues, *it1);
+            size_t res2      = codeUtils::indexOf(data.indices.residues, *it2);
+            size_t atomCount = data.indices.atoms.size();
+            size_t res1AtomC = findResidueAtom(data, res1, "C");
+            size_t res2AtomN = findResidueAtom(data, res2, "N");
+            if ((res1AtomC < atomCount) && (res2AtomN < atomCount) &&
+                (!isWithinBondingDistance(data.indices.atoms[res1AtomC], data.indices.atoms[res2AtomN])))
             { // GAP detected
                 // Look for non-natural protein residues within bonding distance, they fall under ResidueType
                 // Undefined, this indicates it's not gap.
                 if (!amberMdPrep::checkForNonNaturalProteinResidues(
                         data,
                         cdsSelections::selectResiduesByType(cdsMolecule->getResidues(), cds::ResidueType::Undefined),
-                        res1AtomC, ppInfo))
+                        data.indices.atoms[res1AtomC], ppInfo))
                 {
                     // Log it
                     gmml::log(__LINE__, __FILE__, gmml::INF,
-                              inputOptions.gapCTermination_ + " cap for : " + pdbResidueId(data, res1Id).print());
+                              inputOptions.gapCTermination_ + " cap for : " + pdbResidueId(data, res1).print());
                     gmml::log(__LINE__, __FILE__, gmml::INF,
-                              inputOptions.gapNTermination_ + " cap for : " + pdbResidueId(data, res2Id).print());
+                              inputOptions.gapNTermination_ + " cap for : " + pdbResidueId(data, res2).print());
                     // Do it
-                    InsertCap(data, moleculeId, cdsMolecule, *res1, inputOptions.gapCTermination_);
-                    InsertCap(data, moleculeId, cdsMolecule, *res2, inputOptions.gapNTermination_);
+                    InsertCap(data, moleculeId, res1, inputOptions.gapCTermination_);
+                    InsertCap(data, moleculeId, res2, inputOptions.gapNTermination_);
                     // Record it
-                    ppInfo.missingResidues_.emplace_back(res1->getChainId(), res1->getNumberAndInsertionCode(),
-                                                         res2->getNumberAndInsertionCode(),
+                    ppInfo.missingResidues_.emplace_back(data.residues.chainIds[res1],
+                                                         getNumberAndInsertionCode(data, res1),
+                                                         getNumberAndInsertionCode(data, res2),
                                                          inputOptions.gapCTermination_, inputOptions.gapNTermination_);
                 }
             }
@@ -342,10 +346,9 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
 void pdb::preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo,
                                         const cdsParameters::ParameterManager& parmManager)
 {
-    for (auto cdsResidue : assemblyResidues(data, assemblyId))
+    for (auto residue : assemblyResidues(data, assemblyId))
     {
-        PdbResidue* residue = codeUtils::erratic_cast<PdbResidue*>(cdsResidue);
-        ResidueId residueId = pdbResidueId(data, codeUtils::indexOf(data.indices.residues, cdsResidue));
+        ResidueId residueId = pdbResidueId(data, codeUtils::indexOf(data.indices.residues, residue));
         size_t index        = codeUtils::indexOf(parmManager.lib.residueNames, residue->GetParmName());
         // Unrecognized residue->
         if (index == parmManager.lib.residueNames.size())
@@ -403,19 +406,18 @@ void pdb::Write(const PdbData& data, const std::vector<std::vector<size_t>>& mol
             cds::Residue* residue              = data.indices.residues[residueId];
             cds::GraphIndexData residueIndices = cds::toIndexData({residue});
             assembly::Graph graph              = cds::createCompleteAssemblyGraph(residueIndices);
-            PdbResidue* pdbResidue             = codeUtils::erratic_cast<PdbResidue*>(residue);
-            std::vector<cds::Atom*> atoms      = pdbResidue->getAtoms();
-            cds::PdbFileResidueData residueData {{pdbResidue->getNumber()},
-                                                 {cds::truncatedResidueName(pdbResidue)},
-                                                 {pdbResidue->getChainId()},
-                                                 {pdbResidue->getInsertionCode()}};
+            std::vector<cds::Atom*> atoms      = residue->getAtoms();
+            cds::PdbFileResidueData residueData {{residue->getNumber()},
+                                                 {cds::truncatedResidueName(residue)},
+                                                 {data.residues.chainIds[residueId]},
+                                                 {data.residues.insertionCodes[residueId]}};
             cds::PdbFileAtomData atomData =
                 cds::toPdbFileAtomData(atoms, codeUtils::indicesToValues(data.atoms.recordNames, residueAtoms),
                                        codeUtils::indicesToValues(data.atoms.occupancies, residueAtoms),
                                        codeUtils::indicesToValues(data.atoms.temperatureFactors, residueAtoms));
             cds::PdbFileFormat format;
             cds::PdbFileData writerData {format, {}, residueData, atomData};
-            cds::writeAssemblyToPdb(stream, graph, {{0}}, {{pdbResidue->HasTerCard()}}, {}, writerData);
+            cds::writeAssemblyToPdb(stream, graph, {{0}}, {{data.residues.hasTerCard[residueId]}}, {}, writerData);
         }
         if (!residueIds.empty())
         { // Sometimes you get empty chains after things have been deleted I guess.

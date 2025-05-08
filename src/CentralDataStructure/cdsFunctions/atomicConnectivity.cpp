@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
@@ -81,7 +83,7 @@ namespace
         }
     }
 
-    bool autoConnectSuccessiveResidues(cds::Residue* cTermRes, cds::Residue* nTermRes)
+    bool autoConnectSuccessiveResidues(pdb::PdbData& pdbData, cds::Residue* cTermRes, cds::Residue* nTermRes)
     {
         cds::Atom* cAtom   = cTermRes->FindAtom("C");
         cds::Atom* oxtAtom = cTermRes->FindAtom("OXT");
@@ -89,7 +91,10 @@ namespace
         if ((cAtom != nullptr) && (nAtom != nullptr) && (oxtAtom == nullptr) && isWithinBondingDistance(cAtom, nAtom))
         {
             addBond(cAtom, nAtom);
-            cTermRes->addNeighbor(cds::residueStringId(nTermRes) + "-" + cds::residueStringId(cTermRes), nTermRes);
+            size_t cTermIndex = codeUtils::indexOf(pdbData.indices.residues, cTermRes);
+            size_t nTermIndex = codeUtils::indexOf(pdbData.indices.residues, nTermRes);
+            cTermRes->addNeighbor(
+                pdb::residueStringId(pdbData, nTermIndex) + "-" + pdb::residueStringId(pdbData, cTermIndex), nTermRes);
             return true;
         }
         return false;
@@ -105,7 +110,7 @@ namespace
         return;
     }
 
-    void setProteinInterConnectivity(const MolecularMetadata::AminoAcidTable& table,
+    void setProteinInterConnectivity(const MolecularMetadata::AminoAcidTable& table, pdb::PdbData& pdbData,
                                      std::vector<cds::Residue*> proteinResidues)
     {
         if (proteinResidues.empty())
@@ -116,7 +121,7 @@ namespace
         cds::Residue* previousRes = proteinResidues.front();
         for (std::vector<cds::Residue*>::iterator it = proteinResidues.begin() + 1; it != proteinResidues.end(); ++it)
         {
-            if (!autoConnectSuccessiveResidues(previousRes, *it))
+            if (!autoConnectSuccessiveResidues(pdbData, previousRes, *it))
             { // Automatically bond the N and C atoms of successive residues
                 gmml::log(__LINE__, __FILE__, gmml::WAR,
                           "Gap detected between " + cds::residueStringId(previousRes) + " and " +
@@ -203,9 +208,11 @@ void cds::setIntraConnectivity(const MolecularMetadata::AminoAcidTable& table, s
     cds::distanceBondIntra(cdsSelections::selectResiduesByType(residues, ResidueType::Protein, invertSelection));
 }
 
-void cds::setInterConnectivity(const MolecularMetadata::AminoAcidTable& table, std::vector<cds::Residue*> residues)
+void cds::setInterConnectivity(const MolecularMetadata::AminoAcidTable& table, pdb::PdbData& pdbData,
+                               std::vector<cds::Residue*> residues)
 {
-    setProteinInterConnectivity(table, cdsSelections::selectResiduesByType(residues, ResidueType::Protein));
+    setProteinInterConnectivity(table, pdbData, cdsSelections::selectResiduesByType(residues, ResidueType::Protein));
     bool invertSelection = true;
-    cds::distanceBondInter(cdsSelections::selectResiduesByType(residues, ResidueType::Protein, invertSelection));
+    cds::distanceBondInter(pdbData,
+                           cdsSelections::selectResiduesByType(residues, ResidueType::Protein, invertSelection));
 }

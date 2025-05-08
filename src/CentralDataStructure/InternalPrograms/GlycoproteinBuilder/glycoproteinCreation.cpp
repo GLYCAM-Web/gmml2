@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
@@ -189,12 +190,13 @@ namespace
         cds::addBond(anomericAtom, atoms[0]);
     }
 
-    void superimposeGlycanToGlycosite(Residue* glycosite, Attachment& attachment)
+    void superimposeGlycanToGlycosite(const pdb::PdbData& pdbData, Residue* glycosite, Attachment& attachment)
     {
         // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g. CG,
         // ND2, we will superimpose them onto the correspoinding "target" atoms in the protein residue
         // (glycosite_residue).
-        std::string residueId                      = cds::residueStringId(glycosite);
+        size_t glycositeId                         = codeUtils::indexOf(pdbData.indices.residues, glycosite);
+        std::string residueId                      = pdb::residueStringId(pdbData, glycositeId);
         std::vector<cds::Atom*> proteinAtoms       = glycosite->getAtoms();
         std::vector<std::string> proteinAtomNames  = cds::atomNames(proteinAtoms);
         std::vector<cds::Atom*> aglyconeAtoms      = attachment.aglycone->mutableAtoms();
@@ -259,7 +261,7 @@ namespace
 namespace glycoproteinBuilder
 {
 
-    std::vector<GlycosylationSite> createGlycosites(cds::Assembly* glycoprotein,
+    std::vector<GlycosylationSite> createGlycosites(const pdb::PdbData& pdbData, cds::Assembly* glycoprotein,
                                                     const std::vector<GlycositeInput>& glycositesInputVector)
     {
         std::vector<GlycosylationSite> result;
@@ -269,10 +271,10 @@ namespace glycoproteinBuilder
         std::vector<std::string> residueIds;
         for (auto residue : residues)
         {
-            pdb::PdbResidue* pdbResidue = codeUtils::erratic_cast<pdb::PdbResidue*>(residue);
-            numberAndInsertionCodes.push_back(pdbResidue->getNumberAndInsertionCode());
-            chainIds.push_back(pdbResidue->getChainId());
-            residueIds.push_back(cds::residueStringId(pdbResidue));
+            size_t residueId = codeUtils::indexOf(pdbData.indices.residues, residue);
+            numberAndInsertionCodes.push_back(pdb::getNumberAndInsertionCode(pdbData, residueId));
+            chainIds.push_back(pdbData.residues.chainIds[residueId]);
+            residueIds.push_back(pdb::residueStringId(pdbData, residueId));
         }
         for (auto& glycositeInput : glycositesInputVector)
         {
@@ -296,10 +298,10 @@ namespace glycoproteinBuilder
     }
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager, cds::Assembly* glycoprotein,
+    addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager,
                         const codeUtils::SparseVector<double>& elementRadii,
-                        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                        const std::vector<GlycosylationSite>& glycosites)
+                        const GlycamMetadata::DihedralAngleDataTable& metadataTable, const pdb::PdbData& pdbData,
+                        cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites)
     {
         const glycoproteinMetadata::GlycosylationTable glycosylationTable =
             glycoproteinMetadata::defaultGlycosylationTable();
@@ -318,7 +320,7 @@ namespace glycoproteinBuilder
             size_t tableIndex =
                 glycosylationTableIndex(glycosylationTable, glycositeResidueName, glycositeInput.proteinResidueId);
             prepareGlycansForSuperimpositionToParticularResidue(glycosylationTable, tableIndex, attachment);
-            superimposeGlycanToGlycosite(glycositeResidue, attachment);
+            superimposeGlycanToGlycosite(pdbData, glycositeResidue, attachment);
             cds::addBond(glycositeResidue->FindAtom(glycosylationTable.connectingAtomNames[tableIndex]),
                          guessAnomericAtomByForeignNeighbor(attachment.reducing));
             glycositeResidue->setName(glycosylationTable.renamedResidues[tableIndex]);

@@ -15,9 +15,17 @@ namespace pdb
         std::vector<double> temperatureFactors;
     };
 
+    struct ResidueData
+    {
+        std::vector<std::string> insertionCodes;
+        std::vector<std::string> chainIds;
+        std::vector<bool> hasTerCard;
+    };
+
     struct PdbData
     {
         AtomData atoms;
+        ResidueData residues;
         std::vector<std::vector<size_t>> moleculeResidueOrder;
         cds::GraphIndexData indices;
     };

@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -26,7 +27,7 @@ namespace glycoproteinBuilder
     GlycoproteinAssembly
     toGlycoproteinAssemblyStructs(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
                                   const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
-                                  const codeUtils::SparseVector<double>& elementRadii,
+                                  const codeUtils::SparseVector<double>& elementRadii, const pdb::PdbData& pdbData,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
                                   std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
                                   const OverlapMultiplier overlapWeight, double overlapTolerance,
@@ -230,7 +231,8 @@ namespace glycoproteinBuilder
                 (residueMoleculeTypes[n] == MoleculeType::protein)
                     ? n
                     : glycanAttachmentResidue[codeUtils::indexOf(glycanMoleculeId, graphIndices.residueMolecule[n])];
-            return codeUtils::erratic_cast<pdb::PdbResidue*>(residues[residueId])->getChainId();
+            size_t pdbResidueId = codeUtils::indexOf(pdbData.indices.residues, residues[residueId]);
+            return pdbData.residues.chainIds[pdbResidueId];
         };
 
         std::vector<std::string> chainIds = codeUtils::vectorMap(chainId, codeUtils::indexVector(residues));

@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 
 namespace glycoproteinBuilder
 {
@@ -16,7 +17,8 @@ namespace glycoproteinBuilder
         std::vector<std::string> tags; // e.g. oLink, nLink, sequon, cysteineSequon, all, etc
     };
 
-    std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const std::vector<cds::Residue*>& residues);
+    std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const pdb::PdbData& pdbData,
+                                                                    const std::vector<cds::Residue*>& residues);
 } // namespace glycoproteinBuilder
 
 #endif

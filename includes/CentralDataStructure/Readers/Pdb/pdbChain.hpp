@@ -3,19 +3,21 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
+
 #include <string>
 #include <sstream>
+#include <vector>
+#include <variant>
 
 // #include <functional>
 namespace pdb
 {
-    void readChain(PdbData& data, size_t moleculeId, cds::Molecule* molecule, std::stringstream& stream_block);
+    void readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_block);
     std::stringstream extractSingleResidueFromRecordSection(std::stringstream& pdbFileStream, std::string line);
-    void tagTerminalResidues(cds::Molecule* molecule);
-    PdbResidue* getNTerminal(cds::Molecule* molecule);
-    PdbResidue* getCTerminal(cds::Molecule* molecule);
+    void tagTerminalResidues(PdbData& data, size_t moleculeId);
+    size_t getNTerminal(const PdbData& data, size_t moleculeId);
+    size_t getCTerminal(const PdbData& data, size_t moleculeId);
     void ModifyTerminal(PdbData& data, size_t residueId, const std::string& type);
-    void InsertCap(PdbData& data, size_t moleculeId, cds::Molecule* molecule, PdbResidue& refResidue,
-                   const std::string& type);
+    void InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const std::string& type);
 } // namespace pdb
 #endif

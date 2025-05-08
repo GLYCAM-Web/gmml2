@@ -3,6 +3,8 @@
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -31,15 +33,16 @@ std::vector<Residue*> cdsSelections::selectResiduesByType(std::vector<Residue*> 
 }
 
 // Not having Atom know which Residue it is in makes this funky. Make a decision about whether that happens or not.
-Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* queryResidue,
+Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(const pdb::PdbData& pdbData, Residue* queryResidue,
                                                                     const std::string& queryAtomName)
 {
-    cds::Atom* queryAtom = queryResidue->FindAtom(queryAtomName);
+    size_t queryResidueId       = codeUtils::indexOf(pdbData.indices.residues, queryResidue);
+    std::string queryResidueStr = pdb::residueStringId(pdbData, queryResidueId);
+    cds::Atom* queryAtom        = queryResidue->FindAtom(queryAtomName);
     if (queryAtom == nullptr)
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Warning: An atom named " + queryAtomName +
-                      " not found in residue: " + cds::residueStringId(queryResidue));
+                  "Warning: An atom named " + queryAtomName + " not found in residue: " + queryResidueStr);
         return nullptr;
     }
     cds::Atom* foreignAtomNeighbor = cdsSelections::selectNeighborNotInAtomVector(queryAtom, queryResidue->getAtoms());
@@ -47,7 +50,7 @@ Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* que
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
                   "Warning: Did not find foreign neighbors for an atom named " + queryAtomName +
-                      " in residue: " + cds::residueStringId(queryResidue));
+                      " in residue: " + queryResidueStr);
         return nullptr;
     }
     for (auto& residueNeighbor : queryResidue->getNeighbors())
@@ -59,7 +62,7 @@ Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(Residue* que
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR,
               "Warning: Did not find a neighbor residue connected via " + queryAtomName +
-                  " to residue: " + cds::residueStringId(queryResidue));
+                  " to residue: " + queryResidueStr);
     return nullptr;
 }
 

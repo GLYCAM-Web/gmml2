@@ -213,20 +213,11 @@ pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterM
 
 void PdbFile::Write(const std::string outName)
 {
-    try
-    {
-        codeUtils::writeToFile(outName,
-                               [&](std::ostream& stream)
-                               {
-                                   this->Write(stream);
-                               });
-    }
-    catch (...)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::ERR, "Error when writing pdbFile class to file:\n" + outName);
-        throw std::runtime_error("Error when writing pdbFile class to file:\n" + outName);
-    }
-    return;
+    codeUtils::writeToFile(outName,
+                           [&](std::ostream& stream)
+                           {
+                               this->Write(stream);
+                           });
 }
 
 void PdbFile::Write(std::ostream& out)

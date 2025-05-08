@@ -7,6 +7,7 @@
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 
@@ -21,14 +22,14 @@ namespace glycoproteinBuilder
         GlycositeInput input;
     };
 
-    std::vector<GlycosylationSite> createGlycosites(cds::Assembly* glycoprotein,
+    std::vector<GlycosylationSite> createGlycosites(const pdb::PdbData& pdbData, cds::Assembly* glycoprotein,
                                                     const std::vector<GlycositeInput>& glycositesInputVector);
 
     std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager, cds::Assembly* glycoprotein,
+    addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager,
                         const codeUtils::SparseVector<double>& elementRadii,
-                        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                        const std::vector<GlycosylationSite>& glycosites);
+                        const GlycamMetadata::DihedralAngleDataTable& metadataTable, const pdb::PdbData& pdbData,
+                        cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites);
 } // namespace glycoproteinBuilder
 
 #endif

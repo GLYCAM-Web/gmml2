@@ -58,11 +58,6 @@ namespace cds
             return number_;
         }
 
-        inline bool isPdbResidue() const
-        {
-            return isPdbResidue_;
-        }
-
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
@@ -99,11 +94,6 @@ namespace cds
         inline void setNTerminal()
         {
             isNTerminal = true;
-        }
-
-        inline void setPdbResidue()
-        {
-            isPdbResidue_ = true;
         }
 
         //////////////////////////////////////////////////////////
@@ -160,9 +150,8 @@ namespace cds
         ResidueType type_ = Undefined; // enum Type. See enum above.
         int number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
-        bool isCTerminal   = false;
-        bool isNTerminal   = false;
-        bool isPdbResidue_ = false;
+        bool isCTerminal = false;
+        bool isNTerminal = false;
     };
 
     std::string residueStringId(cds::Residue* residue);
