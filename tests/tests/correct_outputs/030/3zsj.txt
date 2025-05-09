@@ -1,0 +1,569 @@
+Preprocessing
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Deleting HOH
+Unrecognized atoms:
+Missing heavy atoms:
+CD | PRO | A | 113
+CG | PRO | A | 113
+NZ | LYS | A | 139
+Unrecognized residues:
+BGC | B | 1
+GAL | B | 2
+HOH | A | 2001
+HOH | A | 2002
+HOH | A | 2003
+HOH | A | 2004
+HOH | A | 2005
+HOH | A | 2006
+HOH | A | 2007
+HOH | A | 2008
+HOH | A | 2009
+HOH | A | 2010
+HOH | A | 2011
+HOH | A | 2018
+HOH | A | 2019
+HOH | A | 2020
+HOH | A | 2021
+HOH | A | 2022
+HOH | A | 2023
+HOH | A | 2024
+HOH | A | 2025
+HOH | A | 2026
+HOH | A | 2027
+HOH | A | 2028
+HOH | A | 2029
+HOH | A | 2030
+HOH | A | 2031
+HOH | A | 2032
+HOH | A | 2033
+HOH | A | 2034
+HOH | A | 2035
+HOH | A | 2036
+HOH | A | 2037
+HOH | A | 2038
+HOH | A | 2039
+HOH | A | 2040
+HOH | A | 2041
+HOH | A | 2042
+HOH | A | 2043
+HOH | A | 2044
+HOH | A | 2045
+HOH | A | 2046
+HOH | A | 2047
+HOH | A | 2048
+HOH | A | 2049
+HOH | A | 2050
+HOH | A | 2051
+HOH | A | 2052
+HOH | A | 2053
+HOH | A | 2054
+HOH | A | 2055
+HOH | A | 2056
+HOH | A | 2057
+HOH | A | 2058
+HOH | A | 2059
+HOH | A | 2060
+HOH | A | 2061
+HOH | A | 2062
+HOH | A | 2063
+HOH | A | 2064
+HOH | A | 2065
+HOH | A | 2066
+HOH | A | 2067
+HOH | A | 2068
+HOH | A | 2069
+HOH | A | 2070
+HOH | A | 2071
+HOH | A | 2072
+HOH | A | 2073
+HOH | A | 2074
+HOH | A | 2075
+HOH | A | 2076
+HOH | A | 2077
+HOH | A | 2078
+HOH | A | 2079
+HOH | A | 2080
+HOH | A | 2081
+HOH | A | 2082
+HOH | A | 2083
+HOH | A | 2084
+HOH | A | 2085
+HOH | A | 2086
+HOH | A | 2087
+HOH | A | 2088
+HOH | A | 2089
+HOH | A | 2090
+HOH | A | 2091
+HOH | A | 2092
+HOH | A | 2093
+HOH | A | 2094
+HOH | A | 2095
+HOH | A | 2096
+HOH | A | 2097
+HOH | A | 2098
+HOH | A | 2099
+HOH | A | 2100
+HOH | A | 2101
+HOH | A | 2102
+HOH | A | 2103
+HOH | A | 2104
+HOH | A | 2105
+HOH | A | 2106
+HOH | A | 2107
+HOH | A | 2108
+HOH | A | 2109
+HOH | A | 2110
+HOH | A | 2111
+HOH | A | 2112
+HOH | A | 2113
+HOH | A | 2114
+HOH | A | 2115
+HOH | A | 2116
+HOH | A | 2117
+HOH | A | 2118
+HOH | A | 2119
+HOH | A | 2120
+HOH | A | 2121
+HOH | A | 2122
+HOH | A | 2123
+HOH | A | 2124
+HOH | A | 2125
+HOH | A | 2126
+HOH | A | 2127
+HOH | A | 2128
+HOH | A | 2129
+HOH | A | 2130
+HOH | A | 2131
+HOH | A | 2132
+HOH | A | 2133
+HOH | A | 2134
+HOH | A | 2135
+HOH | A | 2136
+HOH | A | 2137
+HOH | A | 2138
+HOH | A | 2139
+HOH | A | 2140
+HOH | A | 2141
+HOH | A | 2142
+HOH | A | 2143
+HOH | A | 2144
+HOH | A | 2145
+HOH | A | 2146
+HOH | A | 2147
+HOH | A | 2148
+HOH | A | 2149
+HOH | A | 2150
+HOH | A | 2151
+HOH | A | 2152
+HOH | A | 2153
+HOH | A | 2154
+HOH | A | 2155
+HOH | A | 2156
+HOH | A | 2157
+HOH | A | 2158
+HOH | A | 2159
+HOH | A | 2160
+HOH | A | 2161
+HOH | A | 2162
+HOH | A | 2163
+HOH | A | 2164
+HOH | A | 2165
+HOH | A | 2166
+HOH | A | 2167
+HOH | A | 2168
+HOH | A | 2169
+HOH | A | 2170
+HOH | A | 2171
+HOH | A | 2172
+HOH | A | 2173
+HOH | A | 2174
+HOH | A | 2175
+HOH | A | 2176
+HOH | A | 2177
+HOH | A | 2178
+HOH | A | 2179
+HOH | A | 2180
+HOH | A | 2181
+HOH | A | 2182
+HOH | A | 2183
+HOH | A | 2184
+HOH | A | 2185
+HOH | A | 2186
+HOH | A | 2187
+HOH | A | 2188
+HOH | A | 2189
+HOH | A | 2190
+HOH | A | 2191
+HOH | A | 2192
+HOH | A | 2193
+HOH | A | 2194
+HOH | A | 2195
+HOH | A | 2196
+HOH | A | 2197
+HOH | A | 2198
+HOH | A | 2199
+HOH | A | 2200
+HOH | A | 2201
+HOH | A | 2202
+HOH | A | 2203
+HOH | A | 2204
+HOH | A | 2205
+HOH | A | 2206
+HOH | A | 2207
+HOH | A | 2208
+HOH | A | 2209
+HOH | A | 2210
+HOH | A | 2211
+HOH | A | 2212
+HOH | A | 2213
+HOH | A | 2214
+HOH | A | 2215
+HOH | A | 2216
+HOH | A | 2217
+HOH | A | 2218
+HOH | A | 2219
+HOH | A | 2220
+HOH | A | 2221
+HOH | A | 2222
+HOH | A | 2223
+HOH | A | 2224
+HOH | A | 2225
+HOH | A | 2226
+HOH | A | 2227
+HOH | A | 2228
+HOH | A | 2229
+HOH | A | 2230
+HOH | A | 2231
+HOH | A | 2232
+HOH | A | 2233
+HOH | A | 2234
+HOH | A | 2235
+HOH | A | 2236
+HOH | A | 2237
+HOH | A | 2238
+HOH | A | 2239
+HOH | A | 2240
+HOH | A | 2241
+HOH | A | 2242
+HOH | A | 2243
+HOH | A | 2244
+HOH | A | 2245
+HOH | A | 2246
+HOH | A | 2247
+HOH | A | 2248
+HOH | A | 2249
+HOH | A | 2250
+HOH | A | 2251
+HOH | A | 2252
+HOH | A | 2253
+HOH | A | 2254
+HOH | A | 2255
+HOH | A | 2256
+HOH | A | 2257
+HOH | A | 2258
+HOH | A | 2259
+HOH | A | 2260
+HOH | A | 2261
+HOH | A | 2262
+HOH | A | 2263
+HOH | A | 2264
+HOH | A | 2265
+HOH | A | 2266
+HOH | A | 2267
+HOH | A | 2268
+HOH | A | 2269
+HOH | A | 2270
+HOH | A | 2271
+HOH | A | 2272
+HOH | A | 2273
+HOH | A | 2274
+HOH | A | 2275
+HOH | A | 2276
+HOH | A | 2277
+HOH | A | 2278
+HOH | A | 2279
+HOH | A | 2280
+HOH | A | 2281
+Gaps in amino acid chain:
+Histidine Protonation:
+HIE | A | 158
+HIE | A | 208
+HIE | A | 217
+HIE | A | 223
+Disulphide bonds:
+Chain terminations:
+A | 113 | NH3+ | 250 | CO2-
+NonNatural Protein Residues:

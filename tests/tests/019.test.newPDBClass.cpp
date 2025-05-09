@@ -15,12 +15,14 @@
 
 int main(int argc, char* argv[])
 {
-    if (argc != 2)
+    if (argc != 3)
     {
-        std::cout << "Usage: " << argv[0] << " inputFile.pdb\n";
-        std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb\n";
+        std::cout << "Usage: " << argv[0] << " inputFile.pdb outputFile.pdb\n";
+        std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb output/4mbz.pdb\n";
         std::exit(EXIT_FAILURE);
     }
+    std::string inputFile  = argv[1];
+    std::string outputFile = argv[2];
     pdb::PdbFile pdbFile(argv[1]);
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
@@ -62,7 +64,7 @@ int main(int argc, char* argv[])
         }
     }
     std::cout << "Finished bonding atoms by distance" << std::endl;
-    pdbFile.Write("./019.outputPdbFile.pdb");
+    pdbFile.Write(outputFile);
 
     // Just showing what's in the ppInfo and how to access it
     std::cout << "Unrecognized atoms:\n";
