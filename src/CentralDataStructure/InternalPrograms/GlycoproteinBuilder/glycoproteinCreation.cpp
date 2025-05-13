@@ -195,7 +195,7 @@ namespace
         // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g. CG,
         // ND2, we will superimpose them onto the correspoinding "target" atoms in the protein residue
         // (glycosite_residue).
-        size_t glycositeId                         = codeUtils::indexOf(pdbData.indices.residues, glycosite);
+        size_t glycositeId                         = codeUtils::indexOf(pdbData.objects.residues, glycosite);
         std::string residueId                      = pdb::residueStringId(pdbData, glycositeId);
         std::vector<cds::Atom*> proteinAtoms       = glycosite->getAtoms();
         std::vector<std::string> proteinAtomNames  = cds::atomNames(proteinAtoms);
@@ -271,7 +271,7 @@ namespace glycoproteinBuilder
         std::vector<std::string> residueIds;
         for (auto residue : residues)
         {
-            size_t residueId = codeUtils::indexOf(pdbData.indices.residues, residue);
+            size_t residueId = codeUtils::indexOf(pdbData.objects.residues, residue);
             numberAndInsertionCodes.push_back(pdb::getNumberAndInsertionCode(pdbData, residueId));
             chainIds.push_back(pdbData.residues.chainIds[residueId]);
             residueIds.push_back(pdb::residueStringId(pdbData, residueId));

@@ -8,9 +8,9 @@ namespace assembly
 {
     Selection selectAll(const Graph& graph)
     {
-        std::vector<bool> atoms(graph.atomCount, true);
-        std::vector<bool> residues(graph.residueCount, true);
-        std::vector<bool> molecules(graph.moleculeCount, true);
+        std::vector<bool> atoms(graph.indices.atomCount, true);
+        std::vector<bool> residues(graph.indices.residueCount, true);
+        std::vector<bool> molecules(graph.indices.moleculeCount, true);
         return {atoms, residues, molecules};
     }
 
@@ -59,24 +59,25 @@ namespace assembly
                 result[index] = result[index] || value[n];
             }
         };
-        std::vector<bool> atoms(graph.atomCount, false);
-        std::vector<bool> residues(graph.residueCount, false);
-        std::vector<bool> molecules(graph.moleculeCount, false);
+        const Indices& indices = graph.indices;
+        std::vector<bool> atoms(indices.atomCount, false);
+        std::vector<bool> residues(indices.residueCount, false);
+        std::vector<bool> molecules(indices.moleculeCount, false);
 
-        for (size_t n = 0; n < graph.moleculeCount; n++)
+        for (size_t n = 0; n < indices.moleculeCount; n++)
         {
             molecules[n] = first.molecules[n] && second.molecules[n];
         }
-        for (size_t n = 0; n < graph.residueCount; n++)
+        for (size_t n = 0; n < indices.residueCount; n++)
         {
-            residues[n] = molecules[graph.residueMolecule[n]] && first.residues[n] && second.residues[n];
+            residues[n] = molecules[indices.residueMolecule[n]] && first.residues[n] && second.residues[n];
         }
-        for (size_t n = 0; n < graph.atomCount; n++)
+        for (size_t n = 0; n < indices.atomCount; n++)
         {
-            atoms[n] = residues[graph.atomResidue[n]] && first.atoms[n] && second.atoms[n];
+            atoms[n] = residues[indices.atomResidue[n]] && first.atoms[n] && second.atoms[n];
         }
-        setValues(residues, graph.atomResidue, atoms);
-        setValues(molecules, graph.residueMolecule, residues);
+        setValues(residues, indices.atomResidue, atoms);
+        setValues(molecules, indices.residueMolecule, residues);
         return {atoms, residues, molecules};
     }
 

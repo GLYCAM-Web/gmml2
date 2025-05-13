@@ -57,7 +57,8 @@ namespace pdb
         ResidueData residues;
         graph::Database atomGraph;
         std::vector<std::vector<size_t>> moleculeResidueOrder;
-        cds::GraphIndexData indices;
+        assembly::Indices indices;
+        cds::GraphObjects objects;
     };
 } // namespace pdb
 

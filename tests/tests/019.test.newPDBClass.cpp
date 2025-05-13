@@ -37,16 +37,17 @@ int main(int argc, char* argv[])
         // OFF molecule
         try
         {
-            cds::GraphIndexData indices = cds::toIndexData(assembly->getMolecules());
-            assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
-            cds::OffFileData data       = cds::toOffFileData(indices.residues);
-            cds::serializeNumbers(indices.atoms);
-            cds::serializeNumbers(indices.residues);
+            cds::GraphIndexData graphData = cds::toIndexData(assembly->getMolecules());
+            assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
+            cds::OffFileData data         = cds::toOffFileData(graphData.objects.residues);
+            cds::serializeNumbers(graphData.objects.atoms);
+            cds::serializeNumbers(graphData.objects.residues);
             codeUtils::writeToFile("outputOffFile.off",
                                    [&](std::ostream& stream)
                                    {
                                        cds::WriteResiduesTogetherToOffFile(
-                                           stream, graph, data, codeUtils::indexVector(indices.residues), "Assembly");
+                                           stream, graph, data, codeUtils::indexVector(graphData.objects.residues),
+                                           "Assembly");
                                    });
         }
         catch (std::runtime_error& error)

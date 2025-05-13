@@ -145,7 +145,7 @@ std::vector<cds::Overlap> cds::overlapsBetweenSelections(
     const std::vector<MolecularMetadata::Element>& atomElements, const MoleculeOverlapWeight& weight,
     const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge)
 {
-    std::vector<Overlap> result(graph.atomCount, {0.0, 0.0});
+    std::vector<Overlap> result(graph.indices.atomCount, {0.0, 0.0});
     std::vector<size_t> moleculesA                     = selectedMolecules(selectionA);
     std::vector<size_t> moleculesB                     = selectedMolecules(selectionB);
     std::vector<std::vector<size_t>> moleculeResiduesA = moleculeSelectedResidues(graph, selectionA, moleculesA);
@@ -191,7 +191,7 @@ std::vector<cds::Overlap> cds::overlapsWithinSelection(
     const std::vector<MolecularMetadata::Element>& atomElements, const MoleculeOverlapWeight& weight,
     const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge)
 {
-    std::vector<Overlap> result(graph.atomCount, {0.0, 0.0});
+    std::vector<Overlap> result(graph.indices.atomCount, {0.0, 0.0});
     std::vector<size_t> molecules                     = selectedMolecules(selection);
     std::vector<std::vector<size_t>> moleculeResidues = moleculeSelectedResidues(graph, selection, molecules);
     for (size_t maIndex = 0; maIndex < molecules.size(); maIndex++)

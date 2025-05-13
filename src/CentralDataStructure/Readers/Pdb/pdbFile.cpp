@@ -99,7 +99,7 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "PdbFile Constructor Complete Captain");
-    data.indices.assemblies = getAssemblies();
+    data.objects.assemblies = getAssemblies();
 }
 
 // Initializers used by constructors
@@ -231,15 +231,15 @@ void PdbFile::Write(std::ostream& out)
     {
         dbref.Write(out);
     }
-    for (size_t n = 0; n < data.indices.assemblies.size(); n++)
+    for (size_t n = 0; n < data.objects.assemblies.size(); n++)
     {
-        if (data.indices.assemblies.size() > 1)
+        if (data.objects.assemblies.size() > 1)
         {
-            out << "MODEL " << std::right << std::setw(4) << data.indices.assemblies[n]->getNumber() << "\n";
+            out << "MODEL " << std::right << std::setw(4) << data.objects.assemblies[n]->getNumber() << "\n";
         }
         std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(data.indices.moleculeAssembly, n);
         pdb::Write(data, codeUtils::indicesToValues(data.moleculeResidueOrder, moleculeIds), out);
-        if (data.indices.assemblies.size() > 1)
+        if (data.objects.assemblies.size() > 1)
         {
             out << "ENDMDL\n";
         }

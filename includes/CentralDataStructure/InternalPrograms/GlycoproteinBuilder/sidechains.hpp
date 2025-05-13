@@ -36,11 +36,11 @@ namespace glycoproteinBuilder
                                           const assembly::Graph& graph, const AssemblyData& data,
                                           MutableData& mutableData, const std::vector<size_t>& preference,
                                           size_t residue);
-    std::vector<cds::Overlap> sidechainOverlap(const assembly::Graph& graph, const AssemblyData& data,
+    std::vector<cds::Overlap> sidechainOverlap(const assembly::Indices& indices, const AssemblyData& data,
                                                const std::vector<cds::Sphere>& bounds,
                                                const std::vector<size_t>& atomsA, const std::vector<size_t>& atomsB);
     IndexedOverlap lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
-                                                  const assembly::Graph& graph, const AssemblyData& data,
+                                                  const assembly::Indices& indices, const AssemblyData& data,
                                                   const MutableData& mutableData, const std::vector<size_t>& preference,
                                                   size_t sidechainResidue, const std::vector<size_t>& otherAtoms);
     std::vector<size_t> atomsWithinSidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
@@ -51,14 +51,14 @@ namespace glycoproteinBuilder
     sidechainDihedrals(const MolecularMetadata::AminoAcidTable& aminoAcidTable, const assembly::Graph& graph,
                        const AssemblyData& data);
     SidechainRotationsAndWeights
-    sidechainRotationsAndWeights(const assembly::Graph& graph, const AssemblyData& data,
+    sidechainRotationsAndWeights(const assembly::Indices& indices, const AssemblyData& data,
                                  const MolecularMetadata::SidechainRotamerData& sidechains);
-    std::vector<cds::Sphere> sidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
+    std::vector<cds::Sphere> sidechainPotentialBounds(const assembly::Indices& indices, const AssemblyData& data,
                                                       const MutableData& mutableData,
                                                       const MolecularMetadata::SidechainRotamerData& sidechains);
     GlycoproteinAssembly addSidechainRotamers(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
                                               const MolecularMetadata::SidechainRotamerData& sidechains,
                                               GlycoproteinAssembly assembly);
-    std::vector<bool> partOfMovableSidechain(const assembly::Graph& graph, const AssemblyData& data);
+    std::vector<bool> partOfMovableSidechain(const assembly::Indices& indices, const AssemblyData& data);
 } // namespace glycoproteinBuilder
 #endif

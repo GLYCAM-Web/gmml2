@@ -18,9 +18,9 @@ namespace cds
     PdbFileAtomData toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames);
     PdbFileAtomData toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
                                       std::vector<double> occupancies, std::vector<double> temperatureFactors);
-    PdbFileData toPdbFileData(const cds::GraphIndexData& indices);
+    PdbFileData toPdbFileData(const cds::GraphObjects& objects);
 
     void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules);
-    void WritePdb(std::ostream& stream, const GraphIndexData& indices, const std::vector<std::string>& headerLines);
+    void WritePdb(std::ostream& stream, const GraphIndexData& graphData, const std::vector<std::string>& headerLines);
 } // namespace cds
 #endif

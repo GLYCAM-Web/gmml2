@@ -36,7 +36,7 @@ std::vector<Residue*> cdsSelections::selectResiduesByType(std::vector<Residue*> 
 Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(const pdb::PdbData& pdbData, Residue* queryResidue,
                                                                     const std::string& queryAtomName)
 {
-    size_t queryResidueId       = codeUtils::indexOf(pdbData.indices.residues, queryResidue);
+    size_t queryResidueId       = codeUtils::indexOf(pdbData.objects.residues, queryResidue);
     std::string queryResidueStr = pdb::residueStringId(pdbData, queryResidueId);
     cds::Atom* queryAtom        = queryResidue->FindAtom(queryAtomName);
     if (queryAtom == nullptr)

@@ -41,7 +41,7 @@ namespace
 
 pdb::ResidueId pdb::pdbResidueId(const PdbData& data, size_t residueId)
 {
-    cds::Residue* residue = data.indices.residues[residueId];
+    cds::Residue* residue = data.objects.residues[residueId];
     return ResidueId(residue->getName(), std::to_string(residue->getNumber()), data.residues.insertionCodes[residueId],
                      data.residues.chainIds[residueId]);
 }
@@ -53,9 +53,9 @@ std::string pdb::residueStringId(const PdbData& data, size_t residueId)
 
 size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
 {
-    cds::Atom* atom = data.indices.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
-    size_t atomId   = data.indices.atoms.size();
-    data.indices.atoms.push_back(atom);
+    cds::Atom* atom = data.objects.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
+    size_t atomId   = data.objects.atoms.size();
+    data.objects.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
     data.atoms.recordNames.push_back(entry.recordName);
     data.atoms.names.push_back(entry.name);
@@ -91,25 +91,25 @@ size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const std::string& name,
 
 void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
 {
-    if (atomId < data.indices.atoms.size())
+    if (atomId < data.objects.atoms.size())
     {
-        cds::Atom* atom = data.indices.atoms[atomId];
+        cds::Atom* atom = data.objects.atoms[atomId];
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Deleting atom with id: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
         data.atomGraph.nodeAlive[atomId] = false;
-        data.indices.residues[residueId]->deleteAtom(atom);
+        data.objects.residues[residueId]->deleteAtom(atom);
     }
 }
 
 size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const ResidueEntry& entry)
 {
-    size_t residueId = data.indices.residues.size();
+    size_t residueId = data.objects.residues.size();
     cds::Residue* residue =
-        data.indices.molecules[moleculeId]->insertNewResidue(std::make_unique<cds::Residue>(), position);
+        data.objects.molecules[moleculeId]->insertNewResidue(std::make_unique<cds::Residue>(), position);
     std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
     order.insert(order.begin() + position, residueId);
     data.indices.residueMolecule.push_back(moleculeId);
-    data.indices.residues.push_back(residue);
+    data.objects.residues.push_back(residue);
     data.residues.names.push_back(entry.name);
     data.residues.numbers.push_back(entry.number);
     data.residues.insertionCodes.push_back(entry.insertionCode);
@@ -172,7 +172,7 @@ size_t pdb::readResidue(PdbData& data, size_t moleculeId, const std::string& nam
 //////////////////////////////////////////////////////////
 std::string pdb::getNumberAndInsertionCode(const PdbData& data, size_t residueId)
 {
-    return std::to_string(data.indices.residues[residueId]->getNumber()) + data.residues.insertionCodes[residueId];
+    return std::to_string(data.objects.residues[residueId]->getNumber()) + data.residues.insertionCodes[residueId];
 }
 
 //////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ void pdb::modifyNTerminal(PdbData& data, size_t residueId, const std::string& ty
     gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + pdbResidueId(data, residueId).print());
     if (type == "NH3+")
     {
-        size_t atomId = codeUtils::indexOf(data.indices.atoms, data.indices.residues[residueId]->FindAtom("H"));
+        size_t atomId = codeUtils::indexOf(data.objects.atoms, data.objects.residues[residueId]->FindAtom("H"));
         deletePdbAtom(data, residueId, atomId);
     }
     else
@@ -201,19 +201,19 @@ void pdb::modifyCTerminal(PdbData& data, size_t residueId, const std::string& ty
     };
     auto coord = [&](size_t n)
     {
-        return data.indices.atoms[n]->coordinate();
+        return data.objects.atoms[n]->coordinate();
     };
     gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
     if (type == "CO2-")
     {
         size_t atomOXT = findAtom("OXT");
-        if (atomOXT == data.indices.atoms.size())
+        if (atomOXT == data.objects.atoms.size())
         {
             // I don't like this, but at least it's somewhat contained:
             size_t atomCA            = findAtom("CA");
             size_t atomC             = findAtom("C");
             size_t atomO             = findAtom("O");
-            cds::Atom* atomOptr      = data.indices.atoms[atomO];
+            cds::Atom* atomOptr      = data.objects.atoms[atomO];
             cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(coord(atomCA), coord(atomC),
                                                                                   coord(atomO), 120.0, 180.0, 1.25);
             addPdbAtom(data, residueId, "OXT", oxtCoord);

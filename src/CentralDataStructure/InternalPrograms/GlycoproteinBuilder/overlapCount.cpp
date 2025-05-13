@@ -15,7 +15,7 @@ namespace glycoproteinBuilder
     {
         assembly::Selection selectMolecule(const assembly::Graph& graph, const assembly::Selection& selection, size_t n)
         {
-            std::vector<bool> molecule(graph.moleculeCount, false);
+            std::vector<bool> molecule(graph.indices.moleculeCount, false);
             molecule[n] = true;
             return assembly::selectByAtomsAndMolecules(graph, selection.atoms, molecule);
         };
@@ -73,7 +73,8 @@ namespace glycoproteinBuilder
         {
             assembly::Selection glycanSelection  = selectGlycan(graph, data, selection, n);
             assembly::Selection proteinSelection = assembly::selectByAtomsAndMolecules(
-                graph, selection.atoms, codeUtils::indicesToBools(graph.moleculeCount, data.indices.proteinMolecules));
+                graph, selection.atoms,
+                codeUtils::indicesToBools(graph.indices.moleculeCount, data.indices.proteinMolecules));
 
             return containsOverlapExceedingThreshold(
                 threshold, cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds,
@@ -82,7 +83,7 @@ namespace glycoproteinBuilder
         };
         auto hasSelfOverlap = [&](size_t n)
         {
-            std::vector<bool> glycanMolecule(graph.moleculeCount, false);
+            std::vector<bool> glycanMolecule(graph.indices.moleculeCount, false);
             glycanMolecule[data.glycans.moleculeId[n]] = true;
             assembly::Selection glycanSelection =
                 assembly::selectByAtomsAndMolecules(graph, selection.atoms, glycanMolecule);

@@ -150,18 +150,18 @@ assembly::Bounds cds::simpleWiggleCurrentRotamers(
     const GlycamMetadata::DihedralAngleDataTable& metadataTable, const MolecularMetadata::PotentialTable& potential,
     double overlapTolerance, SearchAngles searchAngles, std::vector<RotatableDihedral>& dihedrals,
     const std::vector<std::vector<size_t>>& metadata, const std::vector<AngleSearchPreference>& preference,
-    const GraphIndexData& indices, const assembly::Graph& graph, const assembly::Selection& selection,
+    const GraphObjects& objects, const assembly::Graph& graph, const assembly::Selection& selection,
     const assembly::Bounds& initialBounds, const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge)
 {
     assembly::Bounds bounds                              = initialBounds;
-    std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(indices.atoms);
-    MoleculeOverlapWeight overlapWeight {std::vector<double>(graph.moleculeCount, 1.0),
-                                         std::vector<double>(graph.moleculeCount, 1.0)};
+    std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(objects.atoms);
+    MoleculeOverlapWeight overlapWeight {std::vector<double>(graph.indices.moleculeCount, 1.0),
+                                         std::vector<double>(graph.indices.moleculeCount, 1.0)};
     auto dihedralCoords = [&](const RotatableDihedral& dihedral)
     {
         auto coord = [&](size_t n)
         {
-            return bounds.atoms[codeUtils::indexOf(indices.atoms, dihedral.atoms[n])].center;
+            return bounds.atoms[codeUtils::indexOf(objects.atoms, dihedral.atoms[n])].center;
         };
         return std::array<Coordinate, 4> {coord(3), coord(2), coord(1), coord(0)};
     };
@@ -169,8 +169,8 @@ assembly::Bounds cds::simpleWiggleCurrentRotamers(
     for (size_t n = 0; n < dihedrals.size(); n++)
     {
         RotatableDihedral& dihedral           = dihedrals[n];
-        std::vector<size_t> movingAtoms       = codeUtils::indicesOf(indices.atoms, dihedral.movingAtoms);
-        std::vector<bool> atomMoving          = codeUtils::indicesToBools(graph.atomCount, movingAtoms);
+        std::vector<size_t> movingAtoms       = codeUtils::indicesOf(objects.atoms, dihedral.movingAtoms);
+        std::vector<bool> atomMoving          = codeUtils::indicesToBools(graph.indices.atomCount, movingAtoms);
         std::array<Coordinate, 4> coordinates = dihedralCoords(dihedral);
         assembly::Selection selectionA =
             assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));

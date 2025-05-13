@@ -13,7 +13,7 @@ namespace
         close[codeUtils::indexOf(atomIndices, atomIndex)] = true;
         for (size_t adj : atomAdj)
         {
-            if (graph.atomResidue[adj] == residueIndex)
+            if (graph.indices.atomResidue[adj] == residueIndex)
             {
                 close[codeUtils::indexOf(atomIndices, adj)] = true;
             }

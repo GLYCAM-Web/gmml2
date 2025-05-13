@@ -37,7 +37,10 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Residue*> inputResidues)
         residueIndex++;
     }
 
-    return {atoms, residues, {}, {}, atomResidue, residueMolecule, moleculeAssembly};
+    return {
+        {atoms.size(), residues.size(), 1, 1, atomResidue, residueMolecule, moleculeAssembly},
+        {atoms, residues, {}, {}}
+    };
 }
 
 cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
@@ -70,7 +73,10 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
         moleculeIndex++;
     }
 
-    return {atoms, residues, molecules, {}, atomResidue, residueMolecule, moleculeAssembly};
+    return {
+        {atoms.size(), residues.size(), molecules.size(), 1, atomResidue, residueMolecule, moleculeAssembly},
+        {atoms, residues, molecules, {}}
+    };
 }
 
 cds::GraphIndexData cds::toIndexData(const std::vector<Assembly*> assemblies)
@@ -110,19 +116,23 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Assembly*> assemblies)
         assemblyIndex++;
     }
 
-    return {atoms, residues, molecules, assemblies, atomResidue, residueMolecule, moleculeAssembly};
+    return {
+        {atoms.size(), residues.size(), molecules.size(), assemblies.size(), atomResidue, residueMolecule,
+         moleculeAssembly},
+        {atoms, residues, molecules, assemblies}
+    };
 }
 
-graph::Database cds::createGraphData(const GraphIndexData& indices)
+graph::Database cds::createGraphData(const GraphObjects& objects)
 {
     std::vector<uint> initialIndices;
     // save indices
-    for (auto& atom : indices.atoms)
+    for (auto& atom : objects.atoms)
     {
         initialIndices.push_back(atom->getIndex());
     }
     graph::Database graph;
-    auto& atoms = indices.atoms;
+    auto& atoms = objects.atoms;
     for (size_t n = 0; n < atoms.size(); n++)
     {
         atoms[n]->setIndex(n);
@@ -132,7 +142,7 @@ graph::Database cds::createGraphData(const GraphIndexData& indices)
     {
         for (auto& neighbor : atoms[n]->getChildren())
         {
-            if (codeUtils::contains(indices.atoms, neighbor))
+            if (codeUtils::contains(objects.atoms, neighbor))
             {
                 size_t index = neighbor->getIndex();
                 addEdge(graph, {n, index});
@@ -140,60 +150,59 @@ graph::Database cds::createGraphData(const GraphIndexData& indices)
         }
     }
     // restore indices
-    for (size_t n = 0; n < indices.atoms.size(); n++)
+    for (size_t n = 0; n < objects.atoms.size(); n++)
     {
-        indices.atoms[n]->setIndex(initialIndices[n]);
+        objects.atoms[n]->setIndex(initialIndices[n]);
     }
     return graph;
 }
 
-assembly::Graph cds::createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms)
+assembly::Graph cds::createAssemblyGraph(const GraphIndexData& data, const std::vector<bool>& includedAtoms)
 {
-    graph::Database atomGraphData = cds::createGraphData(indices);
-    atomGraphData.nodeAlive       = includedAtoms;
-    graph::Graph atomGraph        = graph::identity(atomGraphData);
-    graph::Graph residueGraph     = graph::quotient(atomGraphData, indices.atomResidue);
-    graph::Database residueData   = graph::asData(residueGraph);
+    const assembly::Indices& indices = data.indices;
+    const GraphObjects& objects      = data.objects;
+    graph::Database atomGraphData    = cds::createGraphData(objects);
+    atomGraphData.nodeAlive          = includedAtoms;
+    graph::Graph atomGraph           = graph::identity(atomGraphData);
+    graph::Graph residueGraph        = graph::quotient(atomGraphData, indices.atomResidue);
+    graph::Database residueData      = graph::asData(residueGraph);
     graph::Graph moleculeGraph =
         graph::quotient(residueData, codeUtils::indicesToValues(indices.residueMolecule, residueData.nodes));
     graph::Database moleculeData = graph::asData(moleculeGraph);
     graph::Graph assemblyGraph =
         graph::quotient(moleculeData, codeUtils::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
-    return assembly::Graph {indices.atoms.size(),
-                            indices.residues.size(),
-                            indices.molecules.size(),
-                            indices.assemblies.size(),
-                            indices.atomResidue,
-                            indices.residueMolecule,
-                            indices.moleculeAssembly,
-                            atomGraph,
-                            residueGraph,
-                            moleculeGraph,
-                            assemblyGraph};
+    return assembly::Graph {
+        {objects.atoms.size(), objects.residues.size(), objects.molecules.size(), objects.assemblies.size(),
+         indices.atomResidue, indices.residueMolecule, indices.moleculeAssembly},
+        atomGraph,
+        residueGraph,
+        moleculeGraph,
+        assemblyGraph
+    };
 }
 
-assembly::Graph cds::createCompleteAssemblyGraph(const GraphIndexData& indices)
+assembly::Graph cds::createCompleteAssemblyGraph(const GraphIndexData& data)
 {
-    return createAssemblyGraph(indices, std::vector<bool>(indices.atoms.size(), true));
+    return createAssemblyGraph(data, std::vector<bool>(data.objects.atoms.size(), true));
 }
 
-assembly::Graph cds::createVisibleAssemblyGraph(const GraphIndexData& indices)
+assembly::Graph cds::createVisibleAssemblyGraph(const GraphIndexData& data)
 {
-    return createAssemblyGraph(indices, cds::atomVisibility(indices.atoms));
+    return createAssemblyGraph(data, cds::atomVisibility(data.objects.atoms));
 }
 
-assembly::Bounds cds::toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii,
-                                       const GraphIndexData& indices, const assembly::Graph& graph)
+assembly::Bounds cds::toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii, const GraphIndexData& data,
+                                       const assembly::Graph& graph)
 {
-    std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(elementRadii, indices.atoms);
-    size_t residueCount            = indices.residues.size();
+    std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(elementRadii, data.objects.atoms);
+    size_t residueCount            = data.objects.residues.size();
     std::vector<Sphere> residueBounds;
     residueBounds.reserve(residueCount);
     for (size_t n = 0; n < residueCount; n++)
     {
         residueBounds.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms(graph, n))));
     }
-    size_t moleculeCount = indices.molecules.size();
+    size_t moleculeCount = data.objects.molecules.size();
     std::vector<Sphere> moleculeBounds;
     moleculeBounds.reserve(moleculeCount);
     for (size_t n = 0; n < moleculeCount; n++)

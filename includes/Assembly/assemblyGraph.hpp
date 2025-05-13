@@ -9,15 +9,20 @@
 
 namespace assembly
 {
-    struct Graph
+    struct Indices
     {
-        size_t atomCount;
-        size_t residueCount;
-        size_t moleculeCount;
-        size_t assemblyCount;
+        size_t atomCount     = 0;
+        size_t residueCount  = 0;
+        size_t moleculeCount = 0;
+        size_t assemblyCount = 0;
         std::vector<size_t> atomResidue;
         std::vector<size_t> residueMolecule;
         std::vector<size_t> moleculeAssembly;
+    };
+
+    struct Graph
+    {
+        Indices indices;
         graph::Graph atoms;
         graph::Graph residues;
         graph::Graph molecules;
@@ -41,7 +46,7 @@ namespace assembly
     {
         std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
         {
-            return graph.residueMolecule[graph.atomResidue[n]] == moleculeId;
+            return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId;
         };
         std::vector<bool> selected = codeUtils::vectorMap(inMolecule, graph.atoms.nodes.indices);
         return codeUtils::boolsToIndices(selected);

@@ -13,6 +13,6 @@ namespace cds
 {
     OffFileData toOffFileData(const std::vector<Residue*>& residues);
     void serializeResiduesIndividually(std::vector<cds::Residue*>& residues);
-    void WriteOff(std::ostream& stream, const std::string& name, const GraphIndexData& indices);
+    void WriteOff(std::ostream& stream, const std::string& name, const GraphIndexData& data);
 } // namespace cds
 #endif

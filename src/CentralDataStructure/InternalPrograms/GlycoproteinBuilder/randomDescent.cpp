@@ -40,7 +40,7 @@ namespace glycoproteinBuilder
                 const std::array<cds::Coordinate, 4> coordinates =
                     dihedralCoordinates(data, mutableData.bounds, dihedralId);
                 const std::vector<size_t>& movingAtoms = data.indices.rotatableDihedrals[dihedralId].movingAtoms;
-                std::vector<bool> atomMoving           = codeUtils::indicesToBools(graph.atomCount, movingAtoms);
+                std::vector<bool> atomMoving = codeUtils::indicesToBools(graph.indices.atomCount, movingAtoms);
                 assembly::Selection moving =
                     assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
                 assembly::Selection nonMoving = assembly::intersection(
@@ -80,7 +80,7 @@ namespace glycoproteinBuilder
                 size_t n                               = dihedrals.size() - 1 - rn;
                 size_t dihedralId                      = dihedrals[n];
                 const std::vector<size_t>& movingAtoms = data.indices.rotatableDihedrals[dihedralId].movingAtoms;
-                std::vector<bool> atomMoving           = codeUtils::indicesToBools(graph.atomCount, movingAtoms);
+                std::vector<bool> atomMoving = codeUtils::indicesToBools(graph.indices.atomCount, movingAtoms);
                 assembly::Selection moving =
                     assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
                 assembly::Selection nonMoving = assembly::intersection(

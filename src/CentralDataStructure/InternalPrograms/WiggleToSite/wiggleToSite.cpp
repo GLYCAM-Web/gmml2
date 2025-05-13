@@ -37,10 +37,10 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
     pdb::PdbData& pdbData = this->getSubstrate().data;
     size_t superimpositionTargetId =
         pdb::residueSelector(pdbData, inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
-    cds::Residue* superimpositionTarget = pdbData.indices.residues[superimpositionTargetId];
+    cds::Residue* superimpositionTarget = pdbData.objects.residues[superimpositionTargetId];
     size_t wigglingTargetId =
         pdb::residueSelector(pdbData, inputStruct.wigglingTargetResidue_, inputStruct.substrateModelNumber_);
-    cds::Residue* wigglingTarget = pdbData.indices.residues[wigglingTargetId];
+    cds::Residue* wigglingTarget = pdbData.objects.residues[wigglingTargetId];
     if (superimpositionTarget == nullptr || wigglingTarget == nullptr)
     {
         std::stringstream ss;

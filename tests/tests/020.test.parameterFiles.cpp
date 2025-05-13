@@ -40,14 +40,14 @@ int main()
     fileName = "./prepAsOffFile.off";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData(molecule.getResidues());
-        assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
-        cds::serializeResiduesIndividually(indices.residues);
+        cds::GraphIndexData graphData = cds::toIndexData(molecule.getResidues());
+        assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
+        cds::serializeResiduesIndividually(graphData.objects.residues);
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)
                                {
-                                   cds::WriteResiduesIndividuallyToOffFile(stream, graph,
-                                                                           cds::toOffFileData(indices.residues));
+                                   cds::WriteResiduesIndividuallyToOffFile(
+                                       stream, graph, cds::toOffFileData(graphData.objects.residues));
                                });
     }
     catch (...)
@@ -60,14 +60,14 @@ int main()
     fileName = "./prepAsLibFile.lib";
     try
     {
-        cds::GraphIndexData indices = cds::toIndexData(molecule.getResidues());
-        assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
-        cds::serializeResiduesIndividually(indices.residues);
+        cds::GraphIndexData graphData = cds::toIndexData(molecule.getResidues());
+        assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
+        cds::serializeResiduesIndividually(graphData.objects.residues);
         codeUtils::writeToFile(fileName,
                                [&](std::ostream& stream)
                                {
-                                   cds::WriteResiduesIndividuallyToOffFile(stream, graph,
-                                                                           cds::toOffFileData(indices.residues));
+                                   cds::WriteResiduesIndividuallyToOffFile(
+                                       stream, graph, cds::toOffFileData(graphData.objects.residues));
                                });
     }
     catch (...)

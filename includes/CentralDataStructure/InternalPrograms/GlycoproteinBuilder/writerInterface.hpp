@@ -10,7 +10,7 @@ namespace glycoproteinBuilder
 {
     cds::OffFileData toOffFileData(const assembly::Graph& graph, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates);
-    cds::PdbFileData toPdbFileData(const assembly::Graph& graph, const AssemblyData& data,
+    cds::PdbFileData toPdbFileData(const assembly::Indices& indices, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates,
                                    const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers,
                                    const std::vector<std::string>& chainIds,

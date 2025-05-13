@@ -17,7 +17,7 @@ namespace glycoproteinBuilder
         cds::OffFileAtomData atomData {data.atoms.serializedNumbers, data.atoms.names,   data.atoms.types,
                                        data.atoms.atomicNumbers,     data.atoms.charges, atomCoordinates};
 
-        size_t residueCount = graph.residueCount;
+        size_t residueCount = graph.indices.residueCount;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
         atomsConnectedToOtherResidues.resize(residueCount);
         for (size_t n = 0; n < edgeCount(graph.residues); n++)
@@ -42,14 +42,14 @@ namespace glycoproteinBuilder
         return cds::OffFileData {format, residueData, atomData};
     }
 
-    cds::PdbFileData toPdbFileData(const assembly::Graph& graph, const AssemblyData& data,
+    cds::PdbFileData toPdbFileData(const assembly::Indices& indices, const AssemblyData& data,
                                    const std::vector<cds::Coordinate>& atomCoordinates,
                                    const std::vector<int>& atomNumbers, const std::vector<int>& residueNumbers,
                                    const std::vector<std::string>& chainIds,
                                    const std::vector<std::string>& headerLines)
     {
-        size_t atomCount    = graph.atomCount;
-        size_t residueCount = graph.residueCount;
+        size_t atomCount    = indices.atomCount;
+        size_t residueCount = indices.residueCount;
         std::vector<std::string> recordNames(atomCount, "ATOM");
         std::vector<std::string> insertionCodes(residueCount, "");
 

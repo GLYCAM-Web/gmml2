@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
@@ -29,10 +30,10 @@ int main(int argc, char* argv[])
     pdb::PdbFile pdbFile(argv[1]);
     auto panic = [&]()
     {
-        for (size_t n = 0; n < pdbFile.data.indices.residues.size(); n++)
+        for (size_t n = 0; n < pdbFile.data.objects.residues.size(); n++)
         {
             auto atomIds = codeUtils::indicesOfElement(pdbFile.data.indices.atomResidue, n);
-            auto atoms   = pdbFile.data.indices.residues[n]->getAtoms();
+            auto atoms   = pdbFile.data.objects.residues[n]->getAtoms();
             if (atomIds.size() != atoms.size())
             {
                 std::cout << "residue " << n << "\n";
@@ -49,13 +50,13 @@ int main(int argc, char* argv[])
     parameterManager.lib.residues                    = codeUtils::reverse(parameterManager.lib.residues);
     pdb::PreprocessorInformation ppInfo              = pdbFile.PreProcess(parameterManager, options);
     std::vector<cds::Assembly*> assemblies           = pdbFile.getAssemblies();
-    cds::GraphIndexData& graphIndices                = pdbFile.data.indices;
+    assembly::Indices& graphIndices                  = pdbFile.data.indices;
     std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
-    size_t residueCount             = pdbFile.data.indices.residues.size();
+    size_t residueCount             = pdbFile.data.objects.residues.size();
     std::vector<bool> residueAlive(residueCount, true);
     for (size_t residueId = 0; residueId < residueCount; residueId++)
     {
-        cds::Residue* residue = graphIndices.residues[residueId];
+        cds::Residue* residue = pdbFile.data.objects.residues[residueId];
         if (residue->GetType() != cds::ResidueType::Protein)
         {
             std::vector<size_t> atomIds = codeUtils::indicesOfElement(graphIndices.atomResidue, residueId);

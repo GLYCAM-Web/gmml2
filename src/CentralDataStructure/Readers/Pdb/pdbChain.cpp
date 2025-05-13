@@ -70,14 +70,14 @@ void pdb::readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_
 void pdb::tagTerminalResidues(PdbData& data, size_t moleculeId)
 {
     size_t nTer = getNTerminal(data, moleculeId);
-    if (nTer < data.indices.residues.size())
+    if (nTer < data.objects.residues.size())
     {
-        data.indices.residues[nTer]->setNTerminal();
+        data.objects.residues[nTer]->setNTerminal();
     }
     size_t cTer = getCTerminal(data, moleculeId);
-    if (cTer < data.indices.residues.size())
+    if (cTer < data.objects.residues.size())
     {
-        data.indices.residues[cTer]->setCTerminal();
+        data.objects.residues[cTer]->setCTerminal();
     }
 }
 
@@ -108,7 +108,7 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
     using cds::Coordinate;
     auto coord = [&](size_t n)
     {
-        return data.indices.atoms[n]->coordinate();
+        return data.objects.atoms[n]->coordinate();
     };
     if (type == "NHCH3") // NME
     {
@@ -209,12 +209,12 @@ void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& typ
     }
     else if (type == "CO2-")
     {
-        size_t atomCount = data.indices.atoms.size();
+        size_t atomCount = data.objects.atoms.size();
         gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
         size_t atomOXT = findResidueAtom(data, residueId, "OXT");
         if (atomOXT < atomCount)
         {
-            cds::Atom* atom = data.indices.atoms[atomOXT];
+            cds::Atom* atom = data.objects.atoms[atomOXT];
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "OXT atom already exists: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
             return;
@@ -232,13 +232,13 @@ void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& typ
         }
         auto coord = [&](size_t n)
         {
-            return data.indices.atoms[n]->coordinate();
+            return data.objects.atoms[n]->coordinate();
         };
         cds::Coordinate oxtCoord =
             cds::calculateCoordinateFromInternalCoords(coord(atomCA), coord(atomC), coord(atomO), 120.0, 180.0, 1.25);
         size_t oxtAtom = addPdbAtom(data, residueId, "OXT", oxtCoord);
         addBond(data, oxtAtom, atomC);
-        cds::Atom* atomOptr = data.indices.atoms[atomO];
+        cds::Atom* atomOptr = data.objects.atoms[atomO];
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Created new atom named OXT after " + atomOptr->getName() + "_" +
                       std::to_string(atomOptr->getNumber()));
@@ -254,13 +254,13 @@ size_t pdb::getNTerminal(const PdbData& data, size_t moleculeId)
 {
     std::function<bool(const size_t&)> isProtein = [&](size_t id)
     {
-        return codeUtils::contains(biology::proteinResidueNames, data.indices.residues[id]->getName());
+        return codeUtils::contains(biology::proteinResidueNames, data.objects.residues[id]->getName());
     };
     std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.moleculeResidueOrder[moleculeId]);
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
-        return data.indices.residues.size();
+        return data.objects.residues.size();
     }
     return proteinResidues.front();
 }
@@ -269,13 +269,13 @@ size_t pdb::getCTerminal(const PdbData& data, size_t moleculeId)
 {
     std::function<bool(const size_t&)> isProtein = [&](size_t id)
     {
-        return codeUtils::contains(biology::proteinResidueNames, data.indices.residues[id]->getName());
+        return codeUtils::contains(biology::proteinResidueNames, data.objects.residues[id]->getName());
     };
     std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.moleculeResidueOrder[moleculeId]);
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
-        return data.indices.residues.size();
+        return data.objects.residues.size();
     }
     return proteinResidues.back();
 }

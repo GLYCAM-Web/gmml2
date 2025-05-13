@@ -30,7 +30,7 @@ namespace
         std::vector<size_t> residueAssembly =
             codeUtils::indicesToValues(data.indices.moleculeAssembly, data.indices.residueMolecule);
         std::vector<size_t> residueIds = codeUtils::indicesOfElement(residueAssembly, assemblyId);
-        return codeUtils::indicesToValues(data.indices.residues, residueIds);
+        return codeUtils::indicesToValues(data.objects.residues, residueIds);
     }
 } // namespace
 
@@ -61,12 +61,12 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
             // Function that will read from stringstream until chain ID changes or TER or just not ATOM/HETATM
             std::stringstream singleChainSection =
                 extractSingleChainFromRecordSection(stream_block, line, extractChainId(line));
-            size_t moleculeId = data.indices.molecules.size();
+            size_t moleculeId = data.objects.molecules.size();
             data.indices.moleculeAssembly.push_back(assemblyId);
             data.moleculeResidueOrder.push_back({});
             std::unique_ptr<cds::Molecule> molecule = std::make_unique<cds::Molecule>(extractChainId(line));
             cds::Molecule* mol                      = assembly.addMolecule(std::move(molecule));
-            data.indices.molecules.push_back(mol);
+            data.objects.molecules.push_back(mol);
             readChain(data, moleculeId, singleChainSection);
         }
         else if (recordName == "ENDMDL")
@@ -145,7 +145,7 @@ void pdb::ChangeResidueName(PdbData& data, size_t assemblyId, const std::string&
 {
     for (auto residue : assemblyResidues(data, assemblyId))
     {
-        size_t residueId  = codeUtils::indexOf(data.indices.residues, residue);
+        size_t residueId  = codeUtils::indexOf(data.objects.residues, residue);
         std::size_t found = pdbResidueId(data, residueId).print().find(selector);
         if (found != std::string::npos)
         {
@@ -167,7 +167,7 @@ void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorIn
         codeUtils::indicesToValues(data.indices.moleculeAssembly, data.indices.residueMolecule);
     std::vector<size_t> assemblyResidues   = codeUtils::indicesOfElement(residueAssembly, assemblyId);
     std::vector<cds::Residue*> cysResidues = codeUtils::getElementsWithNames(
-        codeUtils::indicesToValues(data.indices.residues, assemblyResidues), std::vector<std::string> {"CYS", "CYX"});
+        codeUtils::indicesToValues(data.objects.residues, assemblyResidues), std::vector<std::string> {"CYS", "CYX"});
     if (cysResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "No CYS or CYX residues detected in this structure\n");
@@ -175,16 +175,16 @@ void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorIn
     for (std::vector<cds::Residue*>::iterator it1 = cysResidues.begin(); it1 != cysResidues.end(); ++it1)
     { // I want to go through the list and compare from current item to end. Thus it2 = std::next it1
         cds::Residue* cysRes1 = *it1;
-        size_t cysRes1Id      = codeUtils::indexOf(data.indices.residues, cysRes1);
+        size_t cysRes1Id      = codeUtils::indexOf(data.objects.residues, cysRes1);
         size_t sgAtom1Id      = findResidueAtom(data, cysRes1Id, "SG");
-        cds::Atom* sgAtom1    = data.indices.atoms[sgAtom1Id];
+        cds::Atom* sgAtom1    = data.objects.atoms[sgAtom1Id];
         for (std::vector<cds::Residue*>::iterator it2 = std::next(it1, 1); it2 != cysResidues.end(); ++it2)
         {
             cds::Residue* cysRes2 = *it2;
-            size_t cysRes2Id      = codeUtils::indexOf(data.indices.residues, cysRes2);
+            size_t cysRes2Id      = codeUtils::indexOf(data.objects.residues, cysRes2);
             size_t sgAtom2Id      = findResidueAtom(data, cysRes2Id, "SG");
-            cds::Atom* sgAtom2    = data.indices.atoms[sgAtom2Id];
-            size_t atomCount      = data.indices.atoms.size();
+            cds::Atom* sgAtom2    = data.objects.atoms[sgAtom2Id];
+            size_t atomCount      = data.objects.atoms.size();
             if ((sgAtom1Id < atomCount) && (sgAtom2Id < atomCount))
             {
                 double distance = cds::distance(sgAtom1->coordinate(), sgAtom2->coordinate());
@@ -220,14 +220,14 @@ void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorIn
     // HIS protonation, automatic handling.
     for (auto residue : assemblyResidues(data, assemblyId))
     {
-        size_t residueId = codeUtils::indexOf(data.indices.residues, residue);
+        size_t residueId = codeUtils::indexOf(data.objects.residues, residue);
         if (residue->getName() == "HIE" || residue->getName() == "HID" || residue->getName() == "HIP")
         {
             ppInfo.hisResidues_.emplace_back(pdbResidueId(data, residueId));
         }
         else if (residue->getName() == "HIS")
         {
-            size_t atomCount = data.indices.atoms.size();
+            size_t atomCount = data.objects.atoms.size();
             size_t atomHE2   = findResidueAtom(data, residueId, "HE2");
             size_t atomHD1   = findResidueAtom(data, residueId, "HD1");
             if ((atomHE2 == atomCount) && (atomHD1 < atomCount))
@@ -260,7 +260,7 @@ void pdb::preProcessChainTerminals(PdbData& data, size_t assemblyId, Preprocesso
         gmml::log(__LINE__, __FILE__, gmml::INF, "Chain termination processing started for this chain");
         // Do the thing
         size_t nTerResidue = getNTerminal(data, moleculeId);
-        if (nTerResidue >= data.indices.residues.size())
+        if (nTerResidue >= data.objects.residues.size())
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Could not modify terminals of this chain.");
         }
@@ -292,7 +292,7 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
     std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(data.indices.moleculeAssembly, assemblyId);
     for (size_t moleculeId : moleculeIds)
     {
-        cds::Molecule* cdsMolecule = data.indices.molecules[moleculeId];
+        cds::Molecule* cdsMolecule = data.objects.molecules[moleculeId];
         gmml::log(__LINE__, __FILE__, gmml::INF, "Gap detection started for chain " + cdsMolecule->GetChainId());
         std::vector<cds::Residue*> proteinResidues =
             cdsSelections::selectResiduesByType(cdsMolecule->getResidues(), cds::ResidueType::Protein);
@@ -307,20 +307,20 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
              ++it1)
         {
             it2              = std::next(it1);
-            size_t res1      = codeUtils::indexOf(data.indices.residues, *it1);
-            size_t res2      = codeUtils::indexOf(data.indices.residues, *it2);
-            size_t atomCount = data.indices.atoms.size();
+            size_t res1      = codeUtils::indexOf(data.objects.residues, *it1);
+            size_t res2      = codeUtils::indexOf(data.objects.residues, *it2);
+            size_t atomCount = data.objects.atoms.size();
             size_t res1AtomC = findResidueAtom(data, res1, "C");
             size_t res2AtomN = findResidueAtom(data, res2, "N");
             if ((res1AtomC < atomCount) && (res2AtomN < atomCount) &&
-                (!isWithinBondingDistance(data.indices.atoms[res1AtomC], data.indices.atoms[res2AtomN])))
+                (!isWithinBondingDistance(data.objects.atoms[res1AtomC], data.objects.atoms[res2AtomN])))
             { // GAP detected
                 // Look for non-natural protein residues within bonding distance, they fall under ResidueType
                 // Undefined, this indicates it's not gap.
                 if (!amberMdPrep::checkForNonNaturalProteinResidues(
                         data,
                         cdsSelections::selectResiduesByType(cdsMolecule->getResidues(), cds::ResidueType::Undefined),
-                        data.indices.atoms[res1AtomC], ppInfo))
+                        data.objects.atoms[res1AtomC], ppInfo))
                 {
                     // Log it
                     gmml::log(__LINE__, __FILE__, gmml::INF,
@@ -348,7 +348,7 @@ void pdb::preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, Prepro
 {
     for (auto residue : assemblyResidues(data, assemblyId))
     {
-        ResidueId residueId = pdbResidueId(data, codeUtils::indexOf(data.indices.residues, residue));
+        ResidueId residueId = pdbResidueId(data, codeUtils::indexOf(data.objects.residues, residue));
         size_t index        = codeUtils::indexOf(parmManager.lib.residueNames, residue->GetParmName());
         // Unrecognized residue->
         if (index == parmManager.lib.residueNames.size())
@@ -403,7 +403,7 @@ void pdb::Write(const PdbData& data, const std::vector<std::vector<size_t>>& mol
         for (size_t residueId : residueIds)
         {
             std::vector<size_t> residueAtoms   = codeUtils::indicesOfElement(data.indices.atomResidue, residueId);
-            cds::Residue* residue              = data.indices.residues[residueId];
+            cds::Residue* residue              = data.objects.residues[residueId];
             cds::GraphIndexData residueIndices = cds::toIndexData({residue});
             assembly::Graph graph              = cds::createCompleteAssemblyGraph(residueIndices);
             std::vector<cds::Atom*> atoms      = residue->getAtoms();

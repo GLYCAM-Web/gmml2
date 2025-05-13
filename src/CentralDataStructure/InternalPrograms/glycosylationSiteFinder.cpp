@@ -110,7 +110,7 @@ namespace glycoproteinBuilder
             size_t index = codeUtils::indexOf(table.names, residue->getName());
             if (index < table.names.size() && table.linkTypes[index] != "")
             {
-                size_t residueId              = codeUtils::indexOf(pdbData.indices.residues, residue);
+                size_t residueId              = codeUtils::indexOf(pdbData.objects.residues, residue);
                 std::vector<std::string> tags = {table.linkTypes[index]};
                 std::string context           = GetSequenceContextAndDetermineTags(pdbData, residue, tags);
                 result.push_back(GlycosylationSiteInfo {pdbData.residues.chainIds[residueId],

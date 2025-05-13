@@ -97,7 +97,7 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     {
         size_t first  = sourceNodeIndex(graph.atoms, bond[0]);
         size_t second = sourceNodeIndex(graph.atoms, bond[1]);
-        if (residueIncluded[graph.atomResidue[first]])
+        if (residueIncluded[graph.indices.atomResidue[first]])
         {
             int number         = atoms.numbers[first];
             int neighborNumber = atoms.numbers[second];

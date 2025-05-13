@@ -15,7 +15,7 @@ namespace assembly
 
     void updateResidueMoleculeBounds(const Graph& graph, Bounds& bounds, size_t index)
     {
-        size_t moleculeIndex = graph.residueMolecule[index];
+        size_t moleculeIndex = graph.indices.residueMolecule[index];
         bounds.molecules[moleculeIndex] =
             cds::boundingSphereIncluding(bounds.molecules[moleculeIndex], bounds.residues[index]);
     }
@@ -28,21 +28,22 @@ namespace assembly
 
     void updateBoundsContainingAtoms(const Graph& graph, Bounds& bounds, const std::vector<size_t>& selectedAtoms)
     {
-        std::vector<bool> updateResidue(graph.residueCount, false);
-        std::vector<bool> updateMolecule(graph.moleculeCount, false);
+        const Indices& indices = graph.indices;
+        std::vector<bool> updateResidue(indices.residueCount, false);
+        std::vector<bool> updateMolecule(indices.moleculeCount, false);
         for (size_t atom : selectedAtoms)
         {
-            updateResidue[graph.atomResidue[atom]] = true;
+            updateResidue[indices.atomResidue[atom]] = true;
         }
-        for (size_t n = 0; n < graph.residueCount; n++)
+        for (size_t n = 0; n < indices.residueCount; n++)
         {
             if (updateResidue[n])
             {
-                updateMolecule[graph.residueMolecule[n]] = true;
+                updateMolecule[indices.residueMolecule[n]] = true;
                 updateResidueBounds(graph, bounds, n);
             }
         }
-        for (size_t n = 0; n < graph.moleculeCount; n++)
+        for (size_t n = 0; n < indices.moleculeCount; n++)
         {
             if (updateMolecule[n])
             {

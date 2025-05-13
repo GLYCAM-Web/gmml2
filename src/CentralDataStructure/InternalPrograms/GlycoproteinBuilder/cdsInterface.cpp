@@ -35,10 +35,10 @@ namespace glycoproteinBuilder
     {
         using MolecularMetadata::Element;
 
-        cds::GraphIndexData graphIndices     = cds::toIndexData(molecules);
-        assembly::Graph graph                = cds::createCompleteAssemblyGraph(graphIndices);
-        std::vector<cds::Atom*>& atoms       = graphIndices.atoms;
-        std::vector<cds::Residue*>& residues = graphIndices.residues;
+        cds::GraphIndexData graphData        = cds::toIndexData(molecules);
+        assembly::Graph graph                = cds::createCompleteAssemblyGraph(graphData);
+        std::vector<cds::Atom*>& atoms       = graphData.objects.atoms;
+        std::vector<cds::Residue*>& residues = graphData.objects.residues;
 
         auto boundingSpheresOf =
             [](const std::vector<cds::Sphere>& spheres, const std::vector<std::vector<size_t>>& indexVector)
@@ -69,7 +69,7 @@ namespace glycoproteinBuilder
             glycosidicLinkages.push_back(a->GetGlycosidicLinkages());
         }
 
-        std::vector<MoleculeType> moleculeTypes(graphIndices.molecules.size(), MoleculeType::protein);
+        std::vector<MoleculeType> moleculeTypes(graphData.objects.molecules.size(), MoleculeType::protein);
         std::vector<cds::AngleWithMetadata> rotatableDihedralShape;
         std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
         std::vector<ResidueLinkageIndices> residueLinkages;
@@ -221,17 +221,17 @@ namespace glycoproteinBuilder
             return type == MoleculeType::protein;
         };
         std::vector<MoleculeType> residueMoleculeTypes =
-            codeUtils::indicesToValues(moleculeTypes, graph.residueMolecule);
+            codeUtils::indicesToValues(moleculeTypes, graph.indices.residueMolecule);
         std::vector<MoleculeType> atomMoleculeTypes =
-            codeUtils::indicesToValues(residueMoleculeTypes, graph.atomResidue);
+            codeUtils::indicesToValues(residueMoleculeTypes, graph.indices.atomResidue);
 
         std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
         {
-            size_t residueId =
-                (residueMoleculeTypes[n] == MoleculeType::protein)
-                    ? n
-                    : glycanAttachmentResidue[codeUtils::indexOf(glycanMoleculeId, graphIndices.residueMolecule[n])];
-            size_t pdbResidueId = codeUtils::indexOf(pdbData.indices.residues, residues[residueId]);
+            size_t residueId    = (residueMoleculeTypes[n] == MoleculeType::protein)
+                                      ? n
+                                      : glycanAttachmentResidue[codeUtils::indexOf(glycanMoleculeId,
+                                                                                   graphData.indices.residueMolecule[n])];
+            size_t pdbResidueId = codeUtils::indexOf(pdbData.objects.residues, residues[residueId]);
             return pdbData.residues.chainIds[pdbResidueId];
         };
 
@@ -292,7 +292,7 @@ namespace glycoproteinBuilder
         cds::MoleculeOverlapWeight defaultOverlapWeight;
         defaultOverlapWeight.within.reserve(molecules.size());
         defaultOverlapWeight.between.reserve(molecules.size());
-        for (size_t molecule : graphIndices.residueMolecule)
+        for (size_t molecule : graphData.indices.residueMolecule)
         {
             bool isProtein = moleculeTypes[molecule] == MoleculeType::protein;
             defaultOverlapWeight.within.push_back(isProtein ? std::pow(overlapWeight.protein, 2.0)
@@ -315,7 +315,7 @@ namespace glycoproteinBuilder
                            overlapTolerance,
                            overlapRejectionThreshold};
 
-        std::vector<bool> moleculeIncluded(graph.moleculeCount, true);
+        std::vector<bool> moleculeIncluded(graph.indices.moleculeCount, true);
         assembly::Bounds bounds {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds};
         MutableData mutableData {bounds, dihedralCurrentMetadata, moleculeIncluded,
                                  std::vector<bool>(residues.size(), false)};

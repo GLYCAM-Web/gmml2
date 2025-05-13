@@ -312,23 +312,23 @@ namespace
         auto shapePreference = cds::firstRotamerOnly(
             linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata));
         cds::setShapeToPreference(linkage, shapePreference);
-        auto searchPreference             = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
-        const cds::GraphIndexData indices = cds::toIndexData({molecule});
-        const assembly::Graph graph       = cds::createCompleteAssemblyGraph(indices);
-        size_t residueIndex               = codeUtils::indexOf(indices.residues, residue);
+        auto searchPreference               = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
+        const cds::GraphIndexData graphData = cds::toIndexData({molecule});
+        const assembly::Graph graph         = cds::createCompleteAssemblyGraph(graphData);
+        size_t residueIndex                 = codeUtils::indexOf(graphData.objects.residues, residue);
         std::vector<bool> reachable =
-            graph::reachableNodes(graph.residues, std::vector<bool>(graph.residueCount, false), residueIndex);
+            graph::reachableNodes(graph.residues, std::vector<bool>(graph.indices.residueCount, false), residueIndex);
         const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
-        const assembly::Bounds bounds       = toAssemblyBounds(elementRadii, indices, graph);
+        const assembly::Bounds bounds       = toAssemblyBounds(elementRadii, graphData, graph);
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
             GlycamMetadata::dihedralAngleDataTable(), MolecularMetadata::potentialTable(), constants::overlapTolerance,
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, indices,
-            graph, selection, bounds, residueAtomsCloseToEdge);
-        for (size_t n = 0; n < graph.atomCount; n++)
+            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference,
+            graphData.objects, graph, selection, bounds, residueAtomsCloseToEdge);
+        for (size_t n = 0; n < graph.indices.atomCount; n++)
         {
-            indices.atoms[n]->setCoordinate(newBounds.atoms[n].center);
+            graphData.objects.atoms[n]->setCoordinate(newBounds.atoms[n].center);
         }
     }
 
@@ -531,10 +531,10 @@ void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elemen
                                    const GlycamMetadata::DihedralAngleDataTable& metadataTable,
                                    const cds::AngleSearchSettings& searchSettings)
 {
-    const cds::GraphIndexData indices   = cds::toIndexData({this});
-    const assembly::Graph graph         = cds::createCompleteAssemblyGraph(indices);
+    const cds::GraphIndexData graphData = cds::toIndexData({this});
+    const assembly::Graph graph         = cds::createCompleteAssemblyGraph(graphData);
     const assembly::Selection selection = assembly::selectAll(graph);
-    assembly::Bounds bounds             = cds::toAssemblyBounds(elementRadii, indices, graph);
+    assembly::Bounds bounds             = cds::toAssemblyBounds(elementRadii, graphData, graph);
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     // wiggle twice for nicer structures
     for (size_t n = 0; n < 2; n++)
@@ -545,15 +545,15 @@ void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elemen
                 searchSettings.deviation,
                 cds::currentRotamerOnly(linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType,
                                                                              linkage.dihedralMetadata)));
-            bounds = cds::simpleWiggleCurrentRotamers(metadataTable, MolecularMetadata::potentialTable(),
-                                                      constants::overlapTolerance, searchSettings.angles,
-                                                      linkage.rotatableDihedrals, linkage.dihedralMetadata, preference,
-                                                      indices, graph, selection, bounds, residueAtomsCloseToEdge);
+            bounds = cds::simpleWiggleCurrentRotamers(
+                metadataTable, MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
+                linkage.rotatableDihedrals, linkage.dihedralMetadata, preference, graphData.objects, graph, selection,
+                bounds, residueAtomsCloseToEdge);
         }
     }
-    for (size_t n = 0; n < graph.atomCount; n++)
+    for (size_t n = 0; n < graph.indices.atomCount; n++)
     {
-        indices.atoms[n]->setCoordinate(bounds.atoms[n].center);
+        graphData.objects.atoms[n]->setCoordinate(bounds.atoms[n].center);
     }
     return;
 }

@@ -25,7 +25,7 @@ namespace
         result.reserve(residues.size());
         for (auto& res : residues)
         {
-            size_t index         = codeUtils::indexOf(pdbData.indices.residues, res);
+            size_t index         = codeUtils::indexOf(pdbData.objects.residues, res);
             std::string stringId = pdb::residueStringId(pdbData, index);
             result.push_back({stringId, res, res->getAtoms()});
         }

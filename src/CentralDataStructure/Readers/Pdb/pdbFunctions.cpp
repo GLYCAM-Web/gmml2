@@ -74,13 +74,13 @@ void pdb::expandLine(std::string& line, int length)
 
 void pdb::addBond(PdbData& data, size_t atom1, size_t atom2)
 {
-    cds::addBond(data.indices.atoms[atom1], data.indices.atoms[atom2]);
+    cds::addBond(data.objects.atoms[atom1], data.objects.atoms[atom2]);
     graph::addEdge(data.atomGraph, {atom1, atom2});
 }
 
 size_t pdb::findResidueAtom(const PdbData& data, size_t residueId, const std::string& atomName)
 {
-    size_t atomCount = data.indices.atoms.size();
+    size_t atomCount = data.objects.atoms.size();
     for (size_t n = 0; n < atomCount; n++)
     {
         if (data.atomGraph.nodeAlive[n] && (data.indices.atomResidue[n] == residueId) &&

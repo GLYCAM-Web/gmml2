@@ -11,7 +11,7 @@ bool amberMdPrep::checkForNonNaturalProteinResidues(const pdb::PdbData& data,
 {
     for (auto& unknownResidue : unknownResidues)
     {
-        size_t residueId = codeUtils::indexOf(data.indices.residues, unknownResidue);
+        size_t residueId = codeUtils::indexOf(data.objects.residues, unknownResidue);
         auto nAtom       = unknownResidue->FindAtom("N");
         if (nAtom != nullptr && isWithinBondingDistance(nAtom, cAtom))
         {

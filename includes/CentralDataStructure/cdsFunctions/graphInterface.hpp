@@ -14,26 +14,29 @@
 
 namespace cds
 {
-    struct GraphIndexData
+    struct GraphObjects
     {
         std::vector<Atom*> atoms;
         std::vector<Residue*> residues;
         std::vector<Molecule*> molecules;
         std::vector<Assembly*> assemblies;
-        std::vector<size_t> atomResidue;
-        std::vector<size_t> residueMolecule;
-        std::vector<size_t> moleculeAssembly;
+    };
+
+    struct GraphIndexData
+    {
+        assembly::Indices indices;
+        GraphObjects objects;
     };
 
     GraphIndexData toIndexData(const std::vector<Residue*> inputResidues);
     GraphIndexData toIndexData(const std::vector<Molecule*> molecules);
     GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
-    graph::Database createGraphData(const GraphIndexData& indices);
-    assembly::Graph createAssemblyGraph(const GraphIndexData& indices, const std::vector<bool>& includedAtoms);
-    assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& indices);
-    assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& indices);
-    assembly::Bounds toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii,
-                                      const GraphIndexData& indices, const assembly::Graph& graph);
+    graph::Database createGraphData(const GraphObjects& objects);
+    assembly::Graph createAssemblyGraph(const GraphIndexData& data, const std::vector<bool>& includedAtoms);
+    assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& data);
+    assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& data);
+    assembly::Bounds toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii, const GraphIndexData& data,
+                                      const assembly::Graph& graph);
 } // namespace cds
 
 #endif

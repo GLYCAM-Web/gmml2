@@ -135,43 +135,44 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
         atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.includeInEachOverlapCheck, residue);
     restoreSidechainRotation(graph, data, mutableData, residue);
     cds::Overlap initialOverlap = cds::overlapVectorSum(sidechainOverlap(
-        graph, data, mutableData.bounds.atoms, sidechainMovingAtoms(data, residue), potentialOverlaps));
-    IndexedOverlap bestRotation =
-        lowestOverlapSidechainRotation(sidechains, graph, data, mutableData, preference, residue, potentialOverlaps);
+        graph.indices, data, mutableData.bounds.atoms, sidechainMovingAtoms(data, residue), potentialOverlaps));
+    IndexedOverlap bestRotation = lowestOverlapSidechainRotation(sidechains, graph.indices, data, mutableData,
+                                                                 preference, residue, potentialOverlaps);
     if (cds::compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
     {
         updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
     }
 }
 
-std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::Graph& graph, const AssemblyData& data,
+std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::Indices& indices,
+                                                                const AssemblyData& data,
                                                                 const std::vector<cds::Sphere>& bounds,
                                                                 const std::vector<size_t>& atomsA,
                                                                 const std::vector<size_t>& atomsB)
 {
     const cds::MoleculeOverlapWeight weight = data.defaultWeight;
-    std::vector<cds::Overlap> result(graph.atomCount, {0.0, 0.0});
+    std::vector<cds::Overlap> result(indices.atomCount, {0.0, 0.0});
     for (size_t n : atomsA)
     {
         MolecularMetadata::Element elementA = data.atoms.elements[n];
         for (size_t k : atomsB)
         {
-            double w = weight.between[graph.residueMolecule[graph.atomResidue[n]]] *
-                       weight.between[graph.residueMolecule[graph.atomResidue[k]]];
+            double w = weight.between[indices.residueMolecule[indices.atomResidue[n]]] *
+                       weight.between[indices.residueMolecule[indices.atomResidue[k]]];
             MolecularMetadata::Element elementB = data.atoms.elements[k];
-            double scale                 = MolecularMetadata::potentialWeight(data.potentialTable, elementA, elementB);
-            cds::Overlap overlap         = cds::overlapAmount(data.overlapTolerance, scale, bounds[n], bounds[k]) * w;
-            result[graph.atomResidue[n]] += overlap;
-            result[graph.atomResidue[k]] += overlap;
+            double scale         = MolecularMetadata::potentialWeight(data.potentialTable, elementA, elementB);
+            cds::Overlap overlap = cds::overlapAmount(data.overlapTolerance, scale, bounds[n], bounds[k]) * w;
+            result[indices.atomResidue[n]] += overlap;
+            result[indices.atomResidue[k]] += overlap;
         }
     }
     return result;
 }
 
 glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainRotation(
-    const MolecularMetadata::SidechainRotamerData& sidechains, const assembly::Graph& graph, const AssemblyData& data,
-    const MutableData& mutableData, const std::vector<size_t>& preference, size_t sidechainResidue,
-    const std::vector<size_t>& otherAtoms)
+    const MolecularMetadata::SidechainRotamerData& sidechains, const assembly::Indices& indices,
+    const AssemblyData& data, const MutableData& mutableData, const std::vector<size_t>& preference,
+    size_t sidechainResidue, const std::vector<size_t>& otherAtoms)
 {
     const std::vector<size_t> rotations             = data.residues.sidechainRotations[sidechainResidue];
     const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[sidechainResidue];
@@ -183,7 +184,7 @@ glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainR
     {
         coords = mutableData.bounds.atoms;
         setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
-        cds::Overlap overlap = cds::overlapVectorSum(sidechainOverlap(graph, data, coords, movingAtoms, otherAtoms));
+        cds::Overlap overlap = cds::overlapVectorSum(sidechainOverlap(indices, data, coords, movingAtoms, otherAtoms));
         overlaps.push_back(overlap);
     }
     size_t lowestIndex = preference[0];
@@ -230,7 +231,7 @@ std::vector<size_t> glycoproteinBuilder::atomsWithinSidechainPotentialBounds(con
             }
         }
     };
-    for (size_t molecule = 0; molecule < graph.moleculeCount; molecule++)
+    for (size_t molecule = 0; molecule < graph.indices.moleculeCount; molecule++)
     {
         if (mutableData.moleculeIncluded[molecule])
         {
@@ -244,8 +245,8 @@ std::vector<std::vector<glycoproteinBuilder::SidechainDihedral>>
 glycoproteinBuilder::sidechainDihedrals(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
                                         const assembly::Graph& graph, const AssemblyData& data)
 {
-    std::vector<std::vector<SidechainDihedral>> result(graph.residueCount, std::vector<SidechainDihedral> {});
-    for (size_t n = 0; n < graph.residueCount; n++)
+    std::vector<std::vector<SidechainDihedral>> result(graph.indices.residueCount, std::vector<SidechainDihedral> {});
+    for (size_t n = 0; n < graph.indices.residueCount; n++)
     {
         bool isProtein        = data.residues.types[n] == cds::ResidueType::Protein;
         bool hasExpectedAtoms = data.residues.hasAllExpectedAtoms[n];
@@ -272,10 +273,11 @@ glycoproteinBuilder::sidechainDihedrals(const MolecularMetadata::AminoAcidTable&
                         return atom(dihedral[k]);
                     };
                     std::array<size_t, 4> indices = dihedralIndices(index);
-                    std::vector<bool> reachable   = graph::reachableNodes(
-                        graph.atoms,
-                        codeUtils::indicesToBools(graph.atomCount, std::vector<size_t> {indices[1], indices[2]}),
-                        indices[2]);
+                    std::vector<bool> reachable =
+                        graph::reachableNodes(graph.atoms,
+                                              codeUtils::indicesToBools(graph.indices.atomCount,
+                                                                        std::vector<size_t> {indices[1], indices[2]}),
+                                              indices[2]);
                     std::vector<size_t> movingAtoms = codeUtils::boolsToIndices(reachable);
                     sidechainDihedrals.push_back({indices, movingAtoms});
                 }
@@ -287,16 +289,16 @@ glycoproteinBuilder::sidechainDihedrals(const MolecularMetadata::AminoAcidTable&
 }
 
 glycoproteinBuilder::SidechainRotationsAndWeights
-glycoproteinBuilder::sidechainRotationsAndWeights(const assembly::Graph& graph, const AssemblyData& data,
+glycoproteinBuilder::sidechainRotationsAndWeights(const assembly::Indices& indices, const AssemblyData& data,
                                                   const MolecularMetadata::SidechainRotamerData& sidechains)
 {
-    std::vector<std::vector<size_t>> rotations(graph.residueCount, std::vector<size_t> {});
-    std::vector<std::vector<double>> weights(graph.residueCount, std::vector<double> {});
+    std::vector<std::vector<size_t>> rotations(indices.residueCount, std::vector<size_t> {});
+    std::vector<std::vector<double>> weights(indices.residueCount, std::vector<double> {});
     std::function<double(const size_t&)> weight = [&](const size_t& n)
     {
         return sidechains.rotations[n].probability;
     };
-    for (size_t n = 0; n < graph.residueCount; n++)
+    for (size_t n = 0; n < indices.residueCount; n++)
     {
         if (!data.residues.sidechainDihedrals[n].empty())
         {
@@ -314,14 +316,14 @@ glycoproteinBuilder::sidechainRotationsAndWeights(const assembly::Graph& graph, 
 }
 
 std::vector<cds::Sphere>
-glycoproteinBuilder::sidechainPotentialBounds(const assembly::Graph& graph, const AssemblyData& data,
+glycoproteinBuilder::sidechainPotentialBounds(const assembly::Indices& indices, const AssemblyData& data,
                                               const MutableData& mutableData,
                                               const MolecularMetadata::SidechainRotamerData& sidechains)
 {
-    std::vector<cds::Sphere> result(graph.residueCount, cds::Sphere {
-                                                            0.0, {0.0, 0.0, 0.0}
+    std::vector<cds::Sphere> result(indices.residueCount, cds::Sphere {
+                                                              0.0, {0.0, 0.0, 0.0}
     });
-    for (size_t n = 0; n < graph.residueCount; n++)
+    for (size_t n = 0; n < indices.residueCount; n++)
     {
         const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[n];
         const std::vector<size_t>& rotations            = data.residues.sidechainRotations[n];
@@ -345,10 +347,11 @@ glycoproteinBuilder::sidechainPotentialBounds(const assembly::Graph& graph, cons
     return result;
 }
 
-std::vector<bool> glycoproteinBuilder::partOfMovableSidechain(const assembly::Graph& graph, const AssemblyData& data)
+std::vector<bool> glycoproteinBuilder::partOfMovableSidechain(const assembly::Indices& indices,
+                                                              const AssemblyData& data)
 {
-    std::vector<bool> result(graph.atomCount, false);
-    for (size_t n = 0; n < graph.residueCount; n++)
+    std::vector<bool> result(indices.atomCount, false);
+    for (size_t n = 0; n < indices.residueCount; n++)
     {
         if (data.residues.sidechainDihedrals[n].size() > 0)
         {
@@ -368,11 +371,11 @@ glycoproteinBuilder::addSidechainRotamers(const MolecularMetadata::AminoAcidTabl
 {
     assembly.data.residues.sidechainDihedrals = sidechainDihedrals(aminoAcidTable, assembly.graph, assembly.data);
     SidechainRotationsAndWeights rotationsAndWeights =
-        sidechainRotationsAndWeights(assembly.graph, assembly.data, sidechains);
+        sidechainRotationsAndWeights(assembly.graph.indices, assembly.data, sidechains);
     assembly.data.residues.sidechainRotations       = rotationsAndWeights.rotations;
     assembly.data.residues.sidechainRotationWeights = rotationsAndWeights.weights;
     assembly.data.residues.sidechainPotentialBounds =
-        sidechainPotentialBounds(assembly.graph, assembly.data, assembly.mutableData, sidechains);
-    assembly.data.atoms.partOfMovableSidechain = partOfMovableSidechain(assembly.graph, assembly.data);
+        sidechainPotentialBounds(assembly.graph.indices, assembly.data, assembly.mutableData, sidechains);
+    assembly.data.atoms.partOfMovableSidechain = partOfMovableSidechain(assembly.graph.indices, assembly.data);
     return assembly;
 }

@@ -91,8 +91,8 @@ namespace
         if ((cAtom != nullptr) && (nAtom != nullptr) && (oxtAtom == nullptr) && isWithinBondingDistance(cAtom, nAtom))
         {
             addBond(cAtom, nAtom);
-            size_t cTermIndex = codeUtils::indexOf(pdbData.indices.residues, cTermRes);
-            size_t nTermIndex = codeUtils::indexOf(pdbData.indices.residues, nTermRes);
+            size_t cTermIndex = codeUtils::indexOf(pdbData.objects.residues, cTermRes);
+            size_t nTermIndex = codeUtils::indexOf(pdbData.objects.residues, nTermRes);
             cTermRes->addNeighbor(
                 pdb::residueStringId(pdbData, nTermIndex) + "-" + pdb::residueStringId(pdbData, cTermIndex), nTermRes);
             return true;

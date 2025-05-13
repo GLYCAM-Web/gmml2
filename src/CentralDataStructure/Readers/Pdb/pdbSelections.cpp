@@ -33,16 +33,16 @@ std::vector<cds::Residue*> pdb::getResidues(const std::vector<cds::Assembly*>& a
 
 size_t pdb::residueSelector(const PdbData& data, const pdb::ResidueId& residueId, const int modelNumber)
 {
-    for (size_t n = 0; n < data.indices.assemblies.size(); n++)
+    for (size_t n = 0; n < data.objects.assemblies.size(); n++)
     {
-        if (data.indices.assemblies[n]->getNumber() == modelNumber)
+        if (data.objects.assemblies[n]->getNumber() == modelNumber)
         {
             std::vector<size_t> residueAssembly =
                 codeUtils::indicesToValues(data.indices.moleculeAssembly, data.indices.residueMolecule);
             return residueSelector(data, codeUtils::indicesOfElement(residueAssembly, n), residueId);
         }
     }
-    return data.indices.residues.size();
+    return data.objects.residues.size();
 }
 
 size_t pdb::residueSelector(const PdbData& data, std::vector<size_t> residueIds, const pdb::ResidueId& queryId)
@@ -64,5 +64,5 @@ size_t pdb::residueSelector(const PdbData& data, std::vector<size_t> residueIds,
             }
         }
     }
-    return data.indices.residues.size();
+    return data.objects.residues.size();
 }

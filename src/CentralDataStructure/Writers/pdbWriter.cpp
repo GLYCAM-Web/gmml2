@@ -52,10 +52,10 @@ cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms
             std::vector<double>(atoms.size(), 0.0)};
 }
 
-cds::PdbFileData cds::toPdbFileData(const cds::GraphIndexData& indices)
+cds::PdbFileData cds::toPdbFileData(const cds::GraphObjects& objects)
 {
-    const std::vector<cds::Atom*>& atoms       = indices.atoms;
-    const std::vector<cds::Residue*>& residues = indices.residues;
+    const std::vector<cds::Atom*>& atoms       = objects.atoms;
+    const std::vector<cds::Residue*>& residues = objects.residues;
     std::vector<std::string> recordNames(atoms.size(), "ATOM");
     std::vector<std::string> chainIds(residues.size(), "");
     std::vector<std::string> insertionCodes(residues.size(), "");
@@ -73,8 +73,8 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
         stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
         for (auto& molecule : molecules)
         {
-            GraphIndexData indices              = toIndexData({molecule});
-            assembly::Graph graph               = createCompleteAssemblyGraph(indices);
+            GraphIndexData graphData            = toIndexData({molecule});
+            assembly::Graph graph               = createCompleteAssemblyGraph(graphData);
             std::vector<cds::Residue*> residues = molecule->getResidues();
             for (auto& atom : molecule->getAtoms())
             {
@@ -82,22 +82,22 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
             }
             std::vector<cds::ResidueType> types = residueTypes(residues);
             std::vector<bool> ter               = residueTER(types);
-            PdbFileData data                    = toPdbFileData(indices);
-            cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, data);
+            PdbFileData pdbData                 = toPdbFileData(graphData.objects);
+            cds::writeMoleculeToPdb(stream, graph, codeUtils::indexVector(residues), ter, pdbData);
         }
         stream << "ENDMDL\n";
     }
     theEnd(stream);
 }
 
-void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices, const std::vector<std::string>& headerLines)
+void cds::WritePdb(std::ostream& stream, const GraphIndexData& graphData, const std::vector<std::string>& headerLines)
 {
-    std::vector<bool> includedAtoms       = cds::atomVisibility(indices.atoms);
-    assembly::Graph graph                 = createAssemblyGraph(indices, includedAtoms);
-    const std::vector<Residue*>& residues = indices.residues;
+    std::vector<bool> includedAtoms       = cds::atomVisibility(graphData.objects.atoms);
+    assembly::Graph graph                 = createAssemblyGraph(graphData, includedAtoms);
+    const std::vector<Residue*>& residues = graphData.objects.residues;
     std::vector<ResidueType> types        = residueTypes(residues);
     std::vector<bool> ter                 = residueTER(types);
-    PdbFileData data                      = toPdbFileData(indices);
+    PdbFileData data                      = toPdbFileData(graphData.objects);
     for (auto& line : headerLines)
     {
         stream << "HEADER    " << line << "\n";
@@ -109,8 +109,8 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& indices, const st
         selectedResidueTypes[type] = true;
     }
     std::vector<bool> residueSelected = codeUtils::indicesToValues(selectedResidueTypes, types);
-    std::vector<bool> atomSelected    = codeUtils::indicesToValues(residueSelected, indices.atomResidue);
-    assembly::Graph subgraph          = createAssemblyGraph(indices, codeUtils::vectorAnd(includedAtoms, atomSelected));
+    std::vector<bool> atomSelected    = codeUtils::indicesToValues(residueSelected, graphData.indices.atomResidue);
+    assembly::Graph subgraph = createAssemblyGraph(graphData, codeUtils::vectorAnd(includedAtoms, atomSelected));
     std::vector<std::array<size_t, 2>> connectionIndices =
         codeUtils::indicesToValues(subgraph.residues.source.edgeNodes, subgraph.residues.edges.indices);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);

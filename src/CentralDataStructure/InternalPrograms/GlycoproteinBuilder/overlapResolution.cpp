@@ -135,7 +135,7 @@ namespace glycoproteinBuilder
                 const std::vector<cds::GlycanShapePreference>& glycositePreferences, const std::vector<size_t>& glycans)
         {
             std::vector<size_t> sidechainResiduesWithGlycanOverlap;
-            sidechainResiduesWithGlycanOverlap.reserve(graph.residueCount);
+            sidechainResiduesWithGlycanOverlap.reserve(graph.indices.residueCount);
 
             for (size_t residue : graph.residues.nodes.indices)
             {
@@ -279,10 +279,10 @@ namespace glycoproteinBuilder
             [](const assembly::Graph& graph, const AssemblyData& data, const std::vector<cds::Coordinate>& coordinates,
                const std::vector<bool>& includedMolecules, const std::string& outputDir, const std::string& prefix)
         {
-            std::vector<bool> residueIncluded(graph.residueCount, false);
-            for (size_t n = 0; n < graph.residueCount; n++)
+            std::vector<bool> residueIncluded(graph.indices.residueCount, false);
+            for (size_t n = 0; n < graph.indices.residueCount; n++)
             {
-                residueIncluded[n] = includedMolecules[graph.residueMolecule[n]];
+                residueIncluded[n] = includedMolecules[graph.indices.residueMolecule[n]];
             }
             cds::OffFileData offData = toOffFileData(graph, data, coordinates);
             std::string fileName     = outputDir + "/" + prefix + ".off";
@@ -312,7 +312,7 @@ namespace glycoproteinBuilder
                                 const std::vector<std::array<size_t, 2>>& connectionIndices,
                                 const std::string& outputDir, const std::string& prefix)
         {
-            cds::PdbFileData pdbData = toPdbFileData(graph, data, coordinates, atomNumbers, residueNumbers,
+            cds::PdbFileData pdbData = toPdbFileData(graph.indices, data, coordinates, atomNumbers, residueNumbers,
                                                      data.residues.chainIds, headerLines);
             std::vector<std::vector<size_t>> residueIndices =
                 codeUtils::boolsToValues(graph.molecules.nodes.constituents, includedMolecules);
@@ -338,7 +338,7 @@ namespace glycoproteinBuilder
 
         auto isNonProteinResidue = [&graph, &data](size_t n)
         {
-            return data.molecules.types[graph.residueMolecule[n]] != MoleculeType::protein;
+            return data.molecules.types[graph.indices.residueMolecule[n]] != MoleculeType::protein;
         };
 
         std::vector<std::array<size_t, 2>> atomPairsConnectingNonProteinResidues;
@@ -357,7 +357,7 @@ namespace glycoproteinBuilder
         auto nonViableSites = [&settings](const assembly::Graph& graph, const assembly::Selection& selection,
                                           const AssemblyData& data, const std::vector<cds::Overlap>& overlaps)
         {
-            std::vector<bool> result(graph.moleculeCount, false);
+            std::vector<bool> result(graph.indices.moleculeCount, false);
             for (size_t molecule : includedGlycanMoleculeIds(data, selection.molecules))
             {
                 for (size_t n : assembly::moleculeSelectedAtoms(graph, selection, molecule))
