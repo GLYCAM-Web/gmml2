@@ -27,6 +27,16 @@ namespace
         // ToDo we want to figure out solvent, aglycone etc here too?.
         return ResidueType::Undefined;
     }
+
+    MolecularMetadata::Element atomElement(const std::string& name)
+    {
+        if (isalpha(name.at(0))) // if first char is in the alphabet
+        {
+            return MolecularMetadata::toElement(name.substr(0, 1));
+        }
+        gmml::log(__LINE__, __FILE__, gmml::WAR, "Did not find an element for atom named: " + name);
+        return MolecularMetadata::Unknown;
+    }
 } // namespace
 
 pdb::ResidueId pdb::pdbResidueId(const PdbData& data, size_t residueId)
@@ -44,18 +54,20 @@ std::string pdb::residueStringId(const PdbData& data, size_t residueId)
 size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
 {
     cds::Atom* atom = data.indices.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
-    atom->setNumber(entry.number);
-    atom->setName(entry.name);
-    atom->setCoordinate(entry.coordinate);
-    size_t atomId = data.indices.atoms.size();
+    size_t atomId   = data.indices.atoms.size();
     data.indices.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
     data.atoms.recordNames.push_back(entry.recordName);
     data.atoms.names.push_back(entry.name);
+    data.atoms.elements.push_back(atomElement(entry.name));
     data.atoms.numbers.push_back(entry.number);
     data.atoms.coordinates.push_back(entry.coordinate);
     data.atoms.occupancies.push_back(entry.occupancy);
     data.atoms.temperatureFactors.push_back(entry.temperatureFactor);
+    atom->setNumber(entry.number);
+    atom->setName(entry.name);
+    atom->setCoordinate(entry.coordinate);
+    atom->setElement(data.atoms.elements[atomId]);
     size_t nodeId = graph::addNode(data.atomGraph);
     if (nodeId != atomId)
     {

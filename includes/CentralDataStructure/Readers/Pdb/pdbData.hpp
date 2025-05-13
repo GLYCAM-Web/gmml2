@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
 #include <string>
@@ -25,6 +26,7 @@ namespace pdb
         std::vector<std::string> recordNames;
         std::vector<uint> numbers;
         std::vector<std::string> names;
+        std::vector<MolecularMetadata::Element> elements;
         std::vector<cds::Coordinate> coordinates;
         std::vector<double> occupancies;
         std::vector<double> temperatureFactors;

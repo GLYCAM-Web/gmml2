@@ -87,6 +87,7 @@ namespace cds
             isVisible_ = false;
         }
 
+        void setElement(MolecularMetadata::Element element);
         void setCoordinate(const Coordinate& c);
         void setCurrentCoordinate(size_t coordinateIndex);
         void addCoordinate(const Coordinate& c);

@@ -83,6 +83,12 @@ unsigned int Atom::getNumberFromName() const
 //////////////////////////////////////////////////////////
 //                    MUTATOR                           //
 //////////////////////////////////////////////////////////
+void Atom::setElement(MolecularMetadata::Element element)
+{
+    element_    = element;
+    gotElement_ = true;
+}
+
 void Atom::setCoordinate(const Coordinate& newCoord)
 {
     addCoordinate(newCoord);
