@@ -4,12 +4,30 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" // get_cartesian_point_from_internal_coords
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/CodeUtils/biology.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp" //RemoveWhiteSpace
 
 #include <string>
+
+namespace
+{
+    using cds::ResidueType;
+
+    ResidueType residueType(const std::string& name)
+    {
+        if (codeUtils::contains(biology::proteinResidueNames, name))
+        {
+            return ResidueType::Protein;
+        }
+        // ToDo we want to figure out solvent, aglycone etc here too?.
+        return ResidueType::Undefined;
+    }
+} // namespace
 
 pdb::ResidueId pdb::pdbResidueId(const PdbData& data, size_t residueId)
 {
@@ -23,55 +41,40 @@ std::string pdb::residueStringId(const PdbData& data, size_t residueId)
     return pdbResidueId(data, residueId).print();
 }
 
-size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const std::string& line)
+size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
 {
-    int shift                = checkShiftFromSerialNumberOverrun(line);
-    int secondShift          = checkSecondShiftFromResidueNumberOverrun(line, shift);
-    shift                    += std::max(1, secondShift) - 1;
-    double occupancy         = 1.0;
-    std::string occupancyStr = line.substr(54 + shift, 6);
-    try
-    {
-        occupancy = std::stod(codeUtils::RemoveWhiteSpace(occupancyStr));
-    }
-    catch (...)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::WAR, "Problem converting to occupancy from: " + occupancyStr);
-        gmml::log(__LINE__, __FILE__, gmml::WAR, "Problematic line is:" + line);
-    }
-    double temperatureFactor         = 0.0;
-    std::string temperatureFactorStr = line.substr(60 + shift, 6);
-    try
-    {
-        temperatureFactor = std::stod(codeUtils::RemoveWhiteSpace(temperatureFactorStr));
-    }
-    catch (...)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Problem converting to temperatureFactor_ from: " + temperatureFactorStr);
-        gmml::log(__LINE__, __FILE__, gmml::WAR, "Problematic line is:" + line);
-    }
     cds::Atom* atom = data.indices.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
-    readAtom(atom, line);
+    atom->setNumber(entry.number);
+    atom->setName(entry.name);
+    atom->setCoordinate(entry.coordinate);
     size_t atomId = data.indices.atoms.size();
     data.indices.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
-    data.atoms.recordNames.push_back(codeUtils::RemoveWhiteSpace(line.substr(0, 6)));
-    data.atoms.occupancies.push_back(occupancy);
-    data.atoms.temperatureFactors.push_back(temperatureFactor);
+    data.atoms.recordNames.push_back(entry.recordName);
+    data.atoms.names.push_back(entry.name);
+    data.atoms.numbers.push_back(entry.number);
+    data.atoms.coordinates.push_back(entry.coordinate);
+    data.atoms.occupancies.push_back(entry.occupancy);
+    data.atoms.temperatureFactors.push_back(entry.temperatureFactor);
+    size_t nodeId = graph::addNode(data.atomGraph);
+    if (nodeId != atomId)
+    {
+        throw std::runtime_error("atom id mismatch");
+    }
     return atomId;
 }
 
-size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const std::string& name, const cds::Coordinate& c)
+size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const std::string& line)
 {
-    cds::Atom* atom = data.indices.residues[residueId]->addAtom(std::make_unique<cds::Atom>(name, c));
-    size_t atomId   = data.indices.atoms.size();
-    data.indices.atoms.push_back(atom);
-    data.indices.atomResidue.push_back(residueId);
-    data.atoms.recordNames.push_back("ATOM");
-    data.atoms.occupancies.push_back(1.0);
-    data.atoms.temperatureFactors.push_back(0.0);
-    return atomId;
+    AtomEntry entry = readAtom(line);
+    return addPdbAtom(data, residueId, entry);
+}
+
+size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const std::string& name, const cds::Coordinate& coordinate)
+{
+    double occupancy         = 1.0;
+    double temperatureFactor = 0.0;
+    return addPdbAtom(data, residueId, {"ATOM", name, 1, coordinate, occupancy, temperatureFactor});
 }
 
 void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
@@ -81,27 +84,39 @@ void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
         cds::Atom* atom = data.indices.atoms[atomId];
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Deleting atom with id: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
-        codeUtils::eraseNth(atomId, data.atoms.recordNames);
-        codeUtils::eraseNth(atomId, data.atoms.occupancies);
-        codeUtils::eraseNth(atomId, data.atoms.temperatureFactors);
-        codeUtils::eraseNth(atomId, data.indices.atomResidue);
-        codeUtils::eraseNth(atomId, data.indices.atoms);
+        data.atomGraph.nodeAlive[atomId] = false;
         data.indices.residues[residueId]->deleteAtom(atom);
     }
 }
 
-//////////////////////////////////////////////////////////
-//                       CONSTRUCTOR                    //
-//////////////////////////////////////////////////////////
-void pdb::readResidue(PdbData& data, size_t residueId, std::stringstream& singleResidueSecion, std::string firstLine)
+size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const ResidueEntry& entry)
 {
-    cds::Residue* residue = data.indices.residues[residueId];
+    size_t residueId = data.indices.residues.size();
+    cds::Residue* residue =
+        data.indices.molecules[moleculeId]->insertNewResidue(std::make_unique<cds::Residue>(), position);
+    std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
+    order.insert(order.begin() + position, residueId);
+    data.indices.residueMolecule.push_back(moleculeId);
+    data.indices.residues.push_back(residue);
+    data.residues.names.push_back(entry.name);
+    data.residues.numbers.push_back(entry.number);
+    data.residues.insertionCodes.push_back(entry.insertionCode);
+    data.residues.chainIds.push_back(entry.chainId);
+    data.residues.hasTerCard.push_back(entry.hasTerCard);
+    residue->setName(entry.name);
+    residue->SetType(entry.type);
+    residue->setNumber(entry.number);
+    return residueId;
+}
+
+size_t pdb::readResidue(PdbData& data, size_t moleculeId, std::stringstream& singleResidueSecion, std::string firstLine)
+{
     ResidueId resId(firstLine);
-    residue->setName(resId.getName());
-    residue->setNumber(std::stoi(resId.getNumber()));
-    data.residues.insertionCodes.push_back(resId.getInsertionCode());
-    data.residues.chainIds.push_back(resId.getChainId());
-    data.residues.hasTerCard.push_back(false);
+    size_t position                                    = data.moleculeResidueOrder[moleculeId].size();
+    std::string name                                   = resId.getName();
+    size_t residueId                                   = addResidue(data, moleculeId, position,
+                                                                    {name, residueType(name), uint(std::stoi(resId.getNumber())),
+                                                                     resId.getInsertionCode(), resId.getChainId(), false});
     std::string firstFoundAlternativeLocationIndicator = resId.getAlternativeLocation(); // Normally empty
     std::string line;
     while (getline(singleResidueSecion, line))
@@ -127,16 +142,17 @@ void pdb::readResidue(PdbData& data, size_t residueId, std::stringstream& single
             }
         }
     }
-    residue->SetType(residue->determineType(residue->getName()));
+    return residueId;
 }
 
-void pdb::readResidue(PdbData& data, size_t residueId, size_t referenceResidue)
-{ // should instead call copy constructor and then rename with residueName?
-    cds::Residue* residue = data.indices.residues[residueId];
-    residue->SetType(residue->determineType(residue->getName()));
-    data.residues.insertionCodes.push_back(data.residues.insertionCodes[referenceResidue]);
-    data.residues.chainIds.push_back(data.residues.chainIds[referenceResidue]);
-    data.residues.hasTerCard.push_back(false);
+size_t pdb::readResidue(PdbData& data, size_t moleculeId, const std::string& name, cds::ResidueType type,
+                        bool hasTerCard, size_t referenceResidue)
+{
+    size_t position = codeUtils::indexOf(data.moleculeResidueOrder[moleculeId], referenceResidue) + 1;
+    return addResidue(data, moleculeId, position,
+                      {name, type, data.residues.numbers[referenceResidue] + 1,
+                       data.residues.insertionCodes[referenceResidue], data.residues.chainIds[referenceResidue],
+                       hasTerCard});
 }
 
 //////////////////////////////////////////////////////////

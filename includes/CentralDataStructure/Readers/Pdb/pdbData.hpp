@@ -2,21 +2,48 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBDATA_HPP
 
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <string>
 #include <vector>
 
 namespace pdb
 {
+    struct AtomEntry
+    {
+        std::string recordName;
+        std::string name;
+        uint number;
+        cds::Coordinate coordinate;
+        double occupancy;
+        double temperatureFactor;
+    };
+
     struct AtomData
     {
         std::vector<std::string> recordNames;
+        std::vector<uint> numbers;
+        std::vector<std::string> names;
+        std::vector<cds::Coordinate> coordinates;
         std::vector<double> occupancies;
         std::vector<double> temperatureFactors;
     };
 
+    struct ResidueEntry
+    {
+        std::string name;
+        cds::ResidueType type;
+        uint number;
+        std::string insertionCode;
+        std::string chainId;
+        bool hasTerCard;
+    };
+
     struct ResidueData
     {
+        std::vector<std::string> names;
+        std::vector<uint> numbers;
         std::vector<std::string> insertionCodes;
         std::vector<std::string> chainIds;
         std::vector<bool> hasTerCard;
@@ -26,6 +53,7 @@ namespace pdb
     {
         AtomData atoms;
         ResidueData residues;
+        graph::Database atomGraph;
         std::vector<std::vector<size_t>> moleculeResidueOrder;
         cds::GraphIndexData indices;
     };

@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
@@ -74,10 +75,19 @@ void pdb::expandLine(std::string& line, int length)
 void pdb::addBond(PdbData& data, size_t atom1, size_t atom2)
 {
     cds::addBond(data.indices.atoms[atom1], data.indices.atoms[atom2]);
+    graph::addEdge(data.atomGraph, {atom1, atom2});
 }
 
 size_t pdb::findResidueAtom(const PdbData& data, size_t residueId, const std::string& atomName)
 {
-    cds::Atom* atom = data.indices.residues[residueId]->FindAtom(atomName);
-    return codeUtils::indexOf(data.indices.atoms, atom);
+    size_t atomCount = data.indices.atoms.size();
+    for (size_t n = 0; n < atomCount; n++)
+    {
+        if (data.atomGraph.nodeAlive[n] && (data.indices.atomResidue[n] == residueId) &&
+            (data.atoms.names[n] == atomName))
+        {
+            return n;
+        }
+    }
+    return atomCount;
 }

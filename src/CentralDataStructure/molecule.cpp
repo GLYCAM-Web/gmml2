@@ -106,20 +106,25 @@ Residue* Molecule::addResidue(std::unique_ptr<Residue> myResidue)
     return residues_.back().get();
 }
 
-Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, const Residue& positionReferenceResidue)
+Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, size_t position)
 {
-    auto position = this->findPositionOfResidue(&positionReferenceResidue);
-    if (position != residues_.end())
+    if (position <= residues_.size())
     {
-        ++position; // it is ok to insert at end(). I checked. It was ok. Ok.
-        position = residues_.insert(position, std::move(myResidue));
+        auto it = residues_.insert(residues_.begin() + position, std::move(myResidue));
+        return it->get();
     }
     else
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR,
                   "Could not create residue named " + myResidue->getName() + " as referenceResidue was not found\n");
     }
-    return (*position).get(); // Dereference the reference to a uniquePtr, then use get() to create a raw ptr...
+    return nullptr;
+}
+
+Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, const Residue& positionReferenceResidue)
+{
+    auto position = this->findPositionOfResidue(&positionReferenceResidue);
+    return insertNewResidue(std::move(myResidue), 1 + position - residues_.begin());
 }
 
 std::vector<std::unique_ptr<Residue>>::iterator Molecule::findPositionOfResidue(const Residue* queryResidue)

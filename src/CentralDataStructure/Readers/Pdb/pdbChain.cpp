@@ -55,12 +55,7 @@ void pdb::readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_
         if ((recordName == "ATOM") || (recordName == "HETATM"))
         {
             std::stringstream singleResidueSection = extractSingleResidueFromRecordSection(stream_block, line);
-            size_t residueId                       = data.indices.residueMolecule.size();
-            data.indices.residueMolecule.push_back(moleculeId);
-            data.moleculeResidueOrder[moleculeId].push_back(residueId);
-            cds::Residue* residue = data.indices.molecules[moleculeId]->addResidue(std::make_unique<cds::Residue>());
-            data.indices.residues.push_back(residue);
-            readResidue(data, residueId, singleResidueSection, line);
+            readResidue(data, moleculeId, singleResidueSection, line);
         }
         else
         {
@@ -115,8 +110,6 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
     {
         return data.indices.atoms[n]->coordinate();
     };
-    cds::Molecule* molecule  = data.indices.molecules[moleculeId];
-    cds::Residue* refResidue = data.indices.residues[refResidueId];
     if (type == "NHCH3") // NME
     {
         //        NME resid numbers. Otherwise good.
@@ -135,15 +128,8 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, 60.0, 1.09);
         Coordinate hh33CoordNME =
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, -60.0, 1.09);
-        size_t residueId = data.indices.residueMolecule.size();
-        size_t refIndex  = codeUtils::indexOf(data.moleculeResidueOrder[moleculeId], refResidueId);
-        data.indices.residueMolecule.push_back(moleculeId);
-        std::vector<size_t>& residueOrder = data.moleculeResidueOrder[moleculeId];
-        residueOrder.insert(residueOrder.begin() + refIndex + 1, residueId);
-        cds::Residue* newNMEResidue =
-            molecule->insertNewResidue(std::make_unique<cds::Residue>("NME", refResidue), *refResidue);
-        data.indices.residues.push_back(newNMEResidue);
-        readResidue(data, residueId, refResidueId);
+        size_t residueId =
+            readResidue(data, moleculeId, "NME", cds::ResidueType::ProteinCappingGroup, true, refResidueId);
         addResidueAtoms(data, residueId,
                         {
                             {   "N",    nCoordNME},
@@ -162,8 +148,6 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
                             {"CH3", "HH32"},
                             {"CH3", "HH33"}
         });
-        newNMEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
-        data.residues.hasTerCard[residueId] = true;
     }
     else if (type == "COCH3") // ACE
     {
@@ -189,20 +173,10 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
         // insert the new Atom before it, and get passed back the position of the newly created atom, so I can use that
         // when creating the next one and so on. With ACE we want to insert before the residue, so I'm finding the
         // residue before here:
-        auto refPosition = molecule->findPositionOfResidue(refResidue);
-        --refPosition;
-        cds::Residue* previousResidue =
-            (*refPosition).get(); // Its an iterator to a unique ptr, so deref and get the raw. Ugh.
-        size_t residueId = data.indices.residueMolecule.size();
-        size_t refId     = codeUtils::indexOf(data.indices.residues, previousResidue);
-        size_t refIndex  = codeUtils::indexOf(data.moleculeResidueOrder[moleculeId], refId);
-        data.indices.residueMolecule.push_back(moleculeId);
-        std::vector<size_t>& residueOrder = data.moleculeResidueOrder[moleculeId];
-        residueOrder.insert(residueOrder.begin() + refIndex + 1, residueId);
-        cds::Residue* newACEResidue =
-            molecule->insertNewResidue(std::make_unique<cds::Residue>("ACE", previousResidue), *previousResidue);
-        data.indices.residues.push_back(newACEResidue);
-        readResidue(data, residueId, refId);
+        const std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
+        size_t position                  = codeUtils::indexOf(order, refResidueId) - 1;
+        size_t residueId =
+            readResidue(data, moleculeId, "ACE", cds::ResidueType::ProteinCappingGroup, false, order[position]);
         addResidueAtoms(data, residueId,
                         {
                             {   "C",    cCoordACE},
@@ -221,7 +195,6 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
                             {"CH3", "HH32"},
                             {"CH3", "HH33"}
         });
-        newACEResidue->SetType(cds::ResidueType::ProteinCappingGroup);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Created ACE residue: " + pdbResidueId(data, residueId).print());
     }
 }
