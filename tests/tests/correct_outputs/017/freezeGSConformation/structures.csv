@@ -1,4 +1,4 @@
 Filename,Status,Highest atom overlap,Failed glycosites,Deleted glycosites,Moved sidechains
-default,,15.569909,A_24 A_38,,
-0_glycoprotein,rejected,67.644327,A_24 A_38,,
-1_glycoprotein,rejected,70.122646,A_24 A_38,,
+default,,0.008039,A_24 A_38,,
+0_glycoprotein,rejected,0.070975,A_24 A_38,,
+1_glycoprotein,rejected,0.070577,A_24 A_38 A_40,,
