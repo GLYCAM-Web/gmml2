@@ -110,7 +110,7 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
     using cds::Coordinate;
     auto coord = [&](size_t n)
     {
-        return data.objects.atoms[n]->coordinate();
+        return data.atoms.coordinates[n];
     };
     if (type == "NHCH3") // NME
     {
@@ -216,9 +216,9 @@ void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& typ
         size_t atomOXT = findResidueAtom(data, residueId, "OXT");
         if (atomOXT < atomCount)
         {
-            cds::Atom* atom = data.objects.atoms[atomOXT];
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "OXT atom already exists: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
+                      "OXT atom already exists: " + data.atoms.names[atomOXT] + "_" +
+                          std::to_string(data.atoms.numbers[atomOXT]));
             return;
         }
         // I don't like this, but at least it's somewhat contained:
@@ -234,16 +234,15 @@ void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& typ
         }
         auto coord = [&](size_t n)
         {
-            return data.objects.atoms[n]->coordinate();
+            return data.atoms.coordinates[n];
         };
         cds::Coordinate oxtCoord =
             cds::calculateCoordinateFromInternalCoords(coord(atomCA), coord(atomC), coord(atomO), 120.0, 180.0, 1.25);
         size_t oxtAtom = addPdbAtom(data, residueId, "OXT", oxtCoord);
         addBond(data, oxtAtom, atomC);
-        cds::Atom* atomOptr = data.objects.atoms[atomO];
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created new atom named OXT after " + atomOptr->getName() + "_" +
-                      std::to_string(atomOptr->getNumber()));
+                  "Created new atom named OXT after " + data.atoms.names[atomO] + "_" +
+                      std::to_string(data.atoms.numbers[atomO]));
         return;
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);
@@ -256,7 +255,7 @@ size_t pdb::getNTerminal(const PdbData& data, size_t moleculeId)
 {
     std::function<bool(const size_t&)> isProtein = [&](size_t id)
     {
-        return codeUtils::contains(biology::proteinResidueNames, data.objects.residues[id]->getName());
+        return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]);
     };
     std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.moleculeResidueOrder[moleculeId]);
     if (proteinResidues.empty())
@@ -271,7 +270,7 @@ size_t pdb::getCTerminal(const PdbData& data, size_t moleculeId)
 {
     std::function<bool(const size_t&)> isProtein = [&](size_t id)
     {
-        return codeUtils::contains(biology::proteinResidueNames, data.objects.residues[id]->getName());
+        return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]);
     };
     std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.moleculeResidueOrder[moleculeId]);
     if (proteinResidues.empty())

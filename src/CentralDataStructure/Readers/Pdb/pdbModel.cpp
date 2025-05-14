@@ -190,6 +190,8 @@ void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorIn
                 double distance = cds::distance(sgAtom1->coordinate(), sgAtom2->coordinate());
                 if (distance < constants::dSulfurCutoff && distance > 0.001)
                 {
+                    data.residues.names[cysRes1Id] = "CYX";
+                    data.residues.names[cysRes2Id] = "CYX";
                     cysRes1->setName("CYX");
                     cysRes2->setName("CYX");
                     ResidueId Res1Id = pdbResidueId(data, cysRes1Id);
@@ -227,21 +229,27 @@ void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorIn
         }
         else if (residue->getName() == "HIS")
         {
-            size_t atomCount = data.indices.atomCount;
-            size_t atomHE2   = findResidueAtom(data, residueId, "HE2");
-            size_t atomHD1   = findResidueAtom(data, residueId, "HD1");
-            if ((atomHE2 == atomCount) && (atomHD1 < atomCount))
+            size_t atomCount    = data.indices.atomCount;
+            size_t atomHE2      = findResidueAtom(data, residueId, "HE2");
+            size_t atomHD1      = findResidueAtom(data, residueId, "HD1");
+            auto newResidueName = [&]()
             {
-                residue->setName("HID");
-            }
-            else if ((atomHE2 < atomCount) && (atomHD1 < atomCount))
-            {
-                residue->setName("HIP");
-            }
-            else // HIE is default
-            {
-                residue->setName("HIE");
-            }
+                if ((atomHE2 == atomCount) && (atomHD1 < atomCount))
+                {
+                    return "HID";
+                }
+                else if ((atomHE2 < atomCount) && (atomHD1 < atomCount))
+                {
+                    return "HIP";
+                }
+                else // HIE is default
+                {
+                    return "HIE";
+                }
+            };
+            std::string newName            = newResidueName();
+            data.residues.names[residueId] = newName;
+            residue->setName(newName);
             gmml::log(__LINE__, __FILE__, gmml::INF, "About to emplaceBack Id");
             gmml::log(__LINE__, __FILE__, gmml::INF, pdbResidueId(data, residueId).print());
             ppInfo.hisResidues_.emplace_back(pdbResidueId(data, residueId));

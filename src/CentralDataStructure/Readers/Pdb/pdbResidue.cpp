@@ -41,9 +41,8 @@ namespace
 
 pdb::ResidueId pdb::pdbResidueId(const PdbData& data, size_t residueId)
 {
-    cds::Residue* residue = data.objects.residues[residueId];
-    return ResidueId(residue->getName(), std::to_string(residue->getNumber()), data.residues.insertionCodes[residueId],
-                     data.residues.chainIds[residueId]);
+    return ResidueId(data.residues.names[residueId], std::to_string(data.residues.numbers[residueId]),
+                     data.residues.insertionCodes[residueId], data.residues.chainIds[residueId]);
 }
 
 std::string pdb::residueStringId(const PdbData& data, size_t residueId)
@@ -94,10 +93,11 @@ void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
 {
     if (atomId < data.indices.atomCount)
     {
-        cds::Atom* atom = data.objects.atoms[atomId];
         gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Deleting atom with id: " + atom->getName() + "_" + std::to_string(atom->getNumber()));
+                  "Deleting atom with id: " + data.atoms.names[atomId] + "_" +
+                      std::to_string(data.atoms.numbers[atomId]));
         data.atomGraph.nodeAlive[atomId] = false;
+        cds::Atom* atom                  = data.objects.atoms[atomId];
         data.objects.residues[residueId]->deleteAtom(atom);
     }
 }
@@ -177,7 +177,7 @@ size_t pdb::readResidue(PdbData& data, size_t moleculeId, const std::string& nam
 //////////////////////////////////////////////////////////
 std::string pdb::getNumberAndInsertionCode(const PdbData& data, size_t residueId)
 {
-    return std::to_string(data.objects.residues[residueId]->getNumber()) + data.residues.insertionCodes[residueId];
+    return std::to_string(data.residues.numbers[residueId]) + data.residues.insertionCodes[residueId];
 }
 
 //////////////////////////////////////////////////////////
@@ -188,7 +188,7 @@ void pdb::modifyNTerminal(PdbData& data, size_t residueId, const std::string& ty
     gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + pdbResidueId(data, residueId).print());
     if (type == "NH3+")
     {
-        size_t atomId = codeUtils::indexOf(data.objects.atoms, data.objects.residues[residueId]->FindAtom("H"));
+        size_t atomId = findResidueAtom(data, residueId, "H");
         deletePdbAtom(data, residueId, atomId);
     }
     else
@@ -206,7 +206,7 @@ void pdb::modifyCTerminal(PdbData& data, size_t residueId, const std::string& ty
     };
     auto coord = [&](size_t n)
     {
-        return data.objects.atoms[n]->coordinate();
+        return data.atoms.coordinates[n];
     };
     gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
     if (type == "CO2-")
@@ -218,13 +218,12 @@ void pdb::modifyCTerminal(PdbData& data, size_t residueId, const std::string& ty
             size_t atomCA            = findAtom("CA");
             size_t atomC             = findAtom("C");
             size_t atomO             = findAtom("O");
-            cds::Atom* atomOptr      = data.objects.atoms[atomO];
             cds::Coordinate oxtCoord = cds::calculateCoordinateFromInternalCoords(coord(atomCA), coord(atomC),
                                                                                   coord(atomO), 120.0, 180.0, 1.25);
             addPdbAtom(data, residueId, "OXT", oxtCoord);
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Created new atom named OXT after " + atomOptr->getName() + "_" +
-                          std::to_string(atomOptr->getNumber()));
+                      "Created new atom named OXT after " + data.atoms.names[atomO] + "_" +
+                          std::to_string(data.atoms.numbers[atomO]));
         }
     }
     else
