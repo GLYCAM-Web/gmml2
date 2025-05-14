@@ -141,3 +141,9 @@ std::string codeUtils::lowerCase(std::string str)
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
     return str;
 }
+
+std::string codeUtils::truncate(size_t n, const std::string& str)
+{
+    n = std::min(n, str.size());
+    return str.substr(0, n);
+}
