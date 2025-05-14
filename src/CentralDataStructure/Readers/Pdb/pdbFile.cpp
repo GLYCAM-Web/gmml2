@@ -232,15 +232,15 @@ void PdbFile::Write(std::ostream& out)
     {
         dbref.Write(out);
     }
-    for (size_t n = 0; n < data.objects.assemblies.size(); n++)
+    for (size_t n = 0; n < data.indices.assemblyCount; n++)
     {
-        if (data.objects.assemblies.size() > 1)
+        if (data.indices.assemblyCount > 1)
         {
             out << "MODEL " << std::right << std::setw(4) << data.objects.assemblies[n]->getNumber() << "\n";
         }
         std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(data.indices.moleculeAssembly, n);
         pdb::Write(data, codeUtils::indicesToValues(data.moleculeResidueOrder, moleculeIds), out);
-        if (data.objects.assemblies.size() > 1)
+        if (data.indices.assemblyCount > 1)
         {
             out << "ENDMDL\n";
         }

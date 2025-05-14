@@ -54,7 +54,7 @@ std::string pdb::residueStringId(const PdbData& data, size_t residueId)
 size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
 {
     cds::Atom* atom = data.objects.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
-    size_t atomId   = data.objects.atoms.size();
+    size_t atomId   = data.indices.atomCount;
     data.objects.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
     data.indices.atomCount++;
@@ -92,7 +92,7 @@ size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const std::string& name,
 
 void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
 {
-    if (atomId < data.objects.atoms.size())
+    if (atomId < data.indices.atomCount)
     {
         cds::Atom* atom = data.objects.atoms[atomId];
         gmml::log(__LINE__, __FILE__, gmml::INF,
@@ -104,7 +104,7 @@ void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
 
 size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const ResidueEntry& entry)
 {
-    size_t residueId = data.objects.residues.size();
+    size_t residueId = data.indices.residueCount;
     cds::Residue* residue =
         data.objects.molecules[moleculeId]->insertNewResidue(std::make_unique<cds::Residue>(), position);
     std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
@@ -212,7 +212,7 @@ void pdb::modifyCTerminal(PdbData& data, size_t residueId, const std::string& ty
     if (type == "CO2-")
     {
         size_t atomOXT = findAtom("OXT");
-        if (atomOXT == data.objects.atoms.size())
+        if (atomOXT == data.indices.atomCount)
         {
             // I don't like this, but at least it's somewhat contained:
             size_t atomCA            = findAtom("CA");

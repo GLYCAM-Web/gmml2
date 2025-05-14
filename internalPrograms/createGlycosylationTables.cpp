@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
     pdb::PdbFile inputFile(inputFileName);
     pdb::bondAtomsAndResiduesByDistance(inputFile.data);
     std::vector<GlycosylationSiteInfo> table = glycoproteinBuilder::createGlycosylationSiteTable(
-        inputFile.data, codeUtils::indexVector(inputFile.data.objects.residues.size()));
+        inputFile.data, codeUtils::indexVector(inputFile.data.indices.residueCount));
     std::vector<std::string> header {"Chain", "ResidueNumber", "InsertionCode", "SequenceContext", "Tags"};
 
     std::function<std::vector<std::string>(const GlycosylationSiteInfo&)> toRow = [](const GlycosylationSiteInfo& info)

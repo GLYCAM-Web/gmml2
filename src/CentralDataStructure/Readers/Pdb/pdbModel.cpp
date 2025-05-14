@@ -60,7 +60,7 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
             // Function that will read from stringstream until chain ID changes or TER or just not ATOM/HETATM
             std::stringstream singleChainSection =
                 extractSingleChainFromRecordSection(stream_block, line, extractChainId(line));
-            size_t moleculeId = data.objects.molecules.size();
+            size_t moleculeId = data.indices.moleculeCount;
             data.indices.moleculeAssembly.push_back(assemblyId);
             data.indices.moleculeCount++;
             data.moleculeResidueOrder.push_back({});
@@ -184,7 +184,7 @@ void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorIn
             size_t cysRes2Id      = codeUtils::indexOf(data.objects.residues, cysRes2);
             size_t sgAtom2Id      = findResidueAtom(data, cysRes2Id, "SG");
             cds::Atom* sgAtom2    = data.objects.atoms[sgAtom2Id];
-            size_t atomCount      = data.objects.atoms.size();
+            size_t atomCount      = data.indices.atomCount;
             if ((sgAtom1Id < atomCount) && (sgAtom2Id < atomCount))
             {
                 double distance = cds::distance(sgAtom1->coordinate(), sgAtom2->coordinate());
@@ -227,7 +227,7 @@ void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorIn
         }
         else if (residue->getName() == "HIS")
         {
-            size_t atomCount = data.objects.atoms.size();
+            size_t atomCount = data.indices.atomCount;
             size_t atomHE2   = findResidueAtom(data, residueId, "HE2");
             size_t atomHD1   = findResidueAtom(data, residueId, "HD1");
             if ((atomHE2 == atomCount) && (atomHD1 < atomCount))
@@ -260,7 +260,7 @@ void pdb::preProcessChainTerminals(PdbData& data, size_t assemblyId, Preprocesso
         gmml::log(__LINE__, __FILE__, gmml::INF, "Chain termination processing started for this chain");
         // Do the thing
         size_t nTerResidue = getNTerminal(data, moleculeId);
-        if (nTerResidue >= data.objects.residues.size())
+        if (nTerResidue >= data.indices.residueCount)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Could not modify terminals of this chain.");
         }
@@ -309,7 +309,7 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
             it2              = std::next(it1);
             size_t res1      = codeUtils::indexOf(data.objects.residues, *it1);
             size_t res2      = codeUtils::indexOf(data.objects.residues, *it2);
-            size_t atomCount = data.objects.atoms.size();
+            size_t atomCount = data.indices.atomCount;
             size_t res1AtomC = findResidueAtom(data, res1, "C");
             size_t res2AtomN = findResidueAtom(data, res2, "N");
             if ((res1AtomC < atomCount) && (res2AtomN < atomCount) &&

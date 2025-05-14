@@ -82,7 +82,7 @@ void pdb::addBond(PdbData& data, size_t atom1, size_t atom2)
 
 size_t pdb::findResidueAtom(const PdbData& data, size_t residueId, const std::string& atomName)
 {
-    size_t atomCount = data.objects.atoms.size();
+    size_t atomCount = data.indices.atomCount;
     for (size_t n = 0; n < atomCount; n++)
     {
         if (data.atomGraph.nodeAlive[n] && (data.indices.atomResidue[n] == residueId) &&

@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
     pdb::PdbFile pdbFile(argv[1]);
     auto panic = [&]()
     {
-        for (size_t n = 0; n < pdbFile.data.objects.residues.size(); n++)
+        for (size_t n = 0; n < pdbFile.data.indices.residueCount; n++)
         {
             auto atomIds = codeUtils::indicesOfElement(pdbFile.data.indices.atomResidue, n);
             auto atoms   = pdbFile.data.objects.residues[n]->getAtoms();
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
     std::vector<cds::Assembly*> assemblies           = pdbFile.getAssemblies();
     assembly::Indices& graphIndices                  = pdbFile.data.indices;
     std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
-    size_t residueCount             = pdbFile.data.objects.residues.size();
+    size_t residueCount             = pdbFile.data.indices.residueCount;
     std::vector<bool> residueAlive(residueCount, true);
     for (size_t residueId = 0; residueId < residueCount; residueId++)
     {

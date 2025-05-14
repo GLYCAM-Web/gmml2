@@ -70,13 +70,13 @@ void pdb::readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_
 void pdb::tagTerminalResidues(PdbData& data, size_t moleculeId)
 {
     size_t nTer = getNTerminal(data, moleculeId);
-    if (nTer < data.objects.residues.size())
+    if (nTer < data.indices.residueCount)
     {
         data.residues.isNTerminal[nTer] = true;
         data.objects.residues[nTer]->setNTerminal(true);
     }
     size_t cTer = getCTerminal(data, moleculeId);
-    if (cTer < data.objects.residues.size())
+    if (cTer < data.indices.residueCount)
     {
         data.residues.isCTerminal[cTer] = true;
         data.objects.residues[cTer]->setCTerminal(true);
@@ -211,7 +211,7 @@ void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& typ
     }
     else if (type == "CO2-")
     {
-        size_t atomCount = data.objects.atoms.size();
+        size_t atomCount = data.indices.atomCount;
         gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
         size_t atomOXT = findResidueAtom(data, residueId, "OXT");
         if (atomOXT < atomCount)
@@ -262,7 +262,7 @@ size_t pdb::getNTerminal(const PdbData& data, size_t moleculeId)
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
-        return data.objects.residues.size();
+        return data.indices.residueCount;
     }
     return proteinResidues.front();
 }
@@ -277,7 +277,7 @@ size_t pdb::getCTerminal(const PdbData& data, size_t moleculeId)
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
-        return data.objects.residues.size();
+        return data.indices.residueCount;
     }
     return proteinResidues.back();
 }

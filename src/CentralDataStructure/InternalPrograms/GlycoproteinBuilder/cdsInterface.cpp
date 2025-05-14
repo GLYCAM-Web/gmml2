@@ -69,7 +69,7 @@ namespace glycoproteinBuilder
             glycosidicLinkages.push_back(a->GetGlycosidicLinkages());
         }
 
-        std::vector<MoleculeType> moleculeTypes(graphData.objects.molecules.size(), MoleculeType::protein);
+        std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
         std::vector<cds::AngleWithMetadata> rotatableDihedralShape;
         std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
         std::vector<ResidueLinkageIndices> residueLinkages;

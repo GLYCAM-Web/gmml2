@@ -126,13 +126,13 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Assembly*> assemblies)
 graph::Database cds::createGraphData(const GraphObjects& objects)
 {
     std::vector<uint> initialIndices;
+    const std::vector<cds::Atom*>& atoms = objects.atoms;
     // save indices
-    for (auto& atom : objects.atoms)
+    for (auto& atom : atoms)
     {
         initialIndices.push_back(atom->getIndex());
     }
     graph::Database graph;
-    auto& atoms = objects.atoms;
     for (size_t n = 0; n < atoms.size(); n++)
     {
         atoms[n]->setIndex(n);
@@ -142,7 +142,7 @@ graph::Database cds::createGraphData(const GraphObjects& objects)
     {
         for (auto& neighbor : atoms[n]->getChildren())
         {
-            if (codeUtils::contains(objects.atoms, neighbor))
+            if (codeUtils::contains(atoms, neighbor))
             {
                 size_t index = neighbor->getIndex();
                 addEdge(graph, {n, index});
@@ -150,9 +150,9 @@ graph::Database cds::createGraphData(const GraphObjects& objects)
         }
     }
     // restore indices
-    for (size_t n = 0; n < objects.atoms.size(); n++)
+    for (size_t n = 0; n < atoms.size(); n++)
     {
-        objects.atoms[n]->setIndex(initialIndices[n]);
+        atoms[n]->setIndex(initialIndices[n]);
     }
     return graph;
 }
@@ -172,8 +172,8 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& data, const std::
     graph::Graph assemblyGraph =
         graph::quotient(moleculeData, codeUtils::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
     return assembly::Graph {
-        {objects.atoms.size(), objects.residues.size(), objects.molecules.size(), objects.assemblies.size(),
-         indices.atomResidue, indices.residueMolecule, indices.moleculeAssembly},
+        {indices.atomCount, indices.residueCount, indices.moleculeCount, indices.assemblyCount, indices.atomResidue,
+         indices.residueMolecule, indices.moleculeAssembly},
         atomGraph,
         residueGraph,
         moleculeGraph,
@@ -183,7 +183,7 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& data, const std::
 
 assembly::Graph cds::createCompleteAssemblyGraph(const GraphIndexData& data)
 {
-    return createAssemblyGraph(data, std::vector<bool>(data.objects.atoms.size(), true));
+    return createAssemblyGraph(data, std::vector<bool>(data.indices.atomCount, true));
 }
 
 assembly::Graph cds::createVisibleAssemblyGraph(const GraphIndexData& data)
@@ -195,14 +195,14 @@ assembly::Bounds cds::toAssemblyBounds(const codeUtils::SparseVector<double>& el
                                        const assembly::Graph& graph)
 {
     std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(elementRadii, data.objects.atoms);
-    size_t residueCount            = data.objects.residues.size();
+    size_t residueCount            = data.indices.residueCount;
     std::vector<Sphere> residueBounds;
     residueBounds.reserve(residueCount);
     for (size_t n = 0; n < residueCount; n++)
     {
         residueBounds.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms(graph, n))));
     }
-    size_t moleculeCount = data.objects.molecules.size();
+    size_t moleculeCount = data.indices.moleculeCount;
     std::vector<Sphere> moleculeBounds;
     moleculeBounds.reserve(moleculeCount);
     for (size_t n = 0; n < moleculeCount; n++)

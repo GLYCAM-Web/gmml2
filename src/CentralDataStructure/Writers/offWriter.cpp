@@ -76,6 +76,6 @@ void cds::WriteOff(std::ostream& stream, const std::string& name, const GraphInd
     assembly::Graph graph    = createVisibleAssemblyGraph(data);
     cds::OffFileData offData = cds::toOffFileData(data.objects.residues);
     offData.atoms.numbers    = serializedNumberVector(graph.atoms.source.nodeAlive);
-    offData.residues.numbers = serializedNumberVector(data.objects.residues.size());
+    offData.residues.numbers = serializedNumberVector(data.indices.residueCount);
     cds::WriteResiduesTogetherToOffFile(stream, graph, offData, codeUtils::indexVector(data.objects.residues), name);
 }
