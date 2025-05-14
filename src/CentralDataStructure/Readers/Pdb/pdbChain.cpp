@@ -72,12 +72,14 @@ void pdb::tagTerminalResidues(PdbData& data, size_t moleculeId)
     size_t nTer = getNTerminal(data, moleculeId);
     if (nTer < data.objects.residues.size())
     {
-        data.objects.residues[nTer]->setNTerminal();
+        data.residues.isNTerminal[nTer] = true;
+        data.objects.residues[nTer]->setNTerminal(true);
     }
     size_t cTer = getCTerminal(data, moleculeId);
     if (cTer < data.objects.residues.size())
     {
-        data.objects.residues[cTer]->setCTerminal();
+        data.residues.isCTerminal[cTer] = true;
+        data.objects.residues[cTer]->setCTerminal(true);
     }
 }
 

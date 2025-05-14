@@ -49,6 +49,8 @@ namespace pdb
         std::vector<uint> numbers;
         std::vector<std::string> insertionCodes;
         std::vector<std::string> chainIds;
+        std::vector<bool> isCTerminal;
+        std::vector<bool> isNTerminal;
         std::vector<bool> hasTerCard;
     };
 

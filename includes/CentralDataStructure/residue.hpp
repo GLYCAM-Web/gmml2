@@ -86,14 +86,14 @@ namespace cds
             return atoms_.size();
         }
 
-        inline void setCTerminal()
+        inline void setCTerminal(bool b)
         {
-            isCTerminal = true;
+            isCTerminal = b;
         }
 
-        inline void setNTerminal()
+        inline void setNTerminal(bool b)
         {
-            isNTerminal = true;
+            isNTerminal = b;
         }
 
         //////////////////////////////////////////////////////////

@@ -117,6 +117,8 @@ size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const 
     data.residues.numbers.push_back(entry.number);
     data.residues.insertionCodes.push_back(entry.insertionCode);
     data.residues.chainIds.push_back(entry.chainId);
+    data.residues.isCTerminal.push_back(false);
+    data.residues.isNTerminal.push_back(false);
     data.residues.hasTerCard.push_back(entry.hasTerCard);
     residue->setName(entry.name);
     residue->SetType(entry.type);
