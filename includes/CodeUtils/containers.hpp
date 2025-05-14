@@ -103,6 +103,15 @@ namespace codeUtils
         return result;
     }
 
+    template<class T> std::vector<bool> vectorEquals(const std::vector<T>& vec, const T& value)
+    {
+        std::function<bool(const T&)> equals = [&value](const T& a)
+        {
+            return a == value;
+        };
+        return vectorMap(equals, vec);
+    }
+
     template<class A, class T> A vectorSum(const A& initial, const std::vector<T>& vec)
     {
         A result = initial;
