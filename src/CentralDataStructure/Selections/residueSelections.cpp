@@ -32,40 +32,6 @@ std::vector<Residue*> cdsSelections::selectResiduesByType(std::vector<Residue*> 
     return selectedResidues;
 }
 
-// Not having Atom know which Residue it is in makes this funky. Make a decision about whether that happens or not.
-Residue* cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(const pdb::PdbData& pdbData, Residue* queryResidue,
-                                                                    const std::string& queryAtomName)
-{
-    size_t queryResidueId       = codeUtils::indexOf(pdbData.objects.residues, queryResidue);
-    std::string queryResidueStr = pdb::residueStringId(pdbData, queryResidueId);
-    cds::Atom* queryAtom        = queryResidue->FindAtom(queryAtomName);
-    if (queryAtom == nullptr)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Warning: An atom named " + queryAtomName + " not found in residue: " + queryResidueStr);
-        return nullptr;
-    }
-    cds::Atom* foreignAtomNeighbor = cdsSelections::selectNeighborNotInAtomVector(queryAtom, queryResidue->getAtoms());
-    if (foreignAtomNeighbor == nullptr)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Warning: Did not find foreign neighbors for an atom named " + queryAtomName +
-                      " in residue: " + queryResidueStr);
-        return nullptr;
-    }
-    for (auto& residueNeighbor : queryResidue->getNeighbors())
-    {
-        if (residueNeighbor->contains(foreignAtomNeighbor))
-        {
-            return residueNeighbor; // happy path.
-        }
-    }
-    gmml::log(__LINE__, __FILE__, gmml::WAR,
-              "Warning: Did not find a neighbor residue connected via " + queryAtomName +
-                  " to residue: " + queryResidueStr);
-    return nullptr;
-}
-
 void cdsSelections::FindConnectedResidues(std::vector<Residue*>& visitedList, Residue* current)
 {
     visitedList.push_back(current);

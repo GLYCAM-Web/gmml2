@@ -45,6 +45,7 @@ namespace pdb
     struct ResidueData
     {
         std::vector<std::string> names;
+        std::vector<cds::ResidueType> types;
         std::vector<uint> numbers;
         std::vector<std::string> insertionCodes;
         std::vector<std::string> chainIds;

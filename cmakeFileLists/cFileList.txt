@@ -38,6 +38,8 @@
 ./src/CentralDataStructure/Overlaps/atomOverlaps.cpp
 ./src/CentralDataStructure/Parameters/parameterManager.cpp
 ./src/CentralDataStructure/Readers/Lib/LibraryFile.cpp
+./src/CentralDataStructure/Readers/Pdb/atomicConnectivity.cpp
+./src/CentralDataStructure/Readers/Pdb/bondByDistance.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbAtom.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbChain.cpp
 ./src/CentralDataStructure/Readers/Pdb/pdbFile.cpp
@@ -70,9 +72,6 @@
 ./src/CentralDataStructure/Writers/print.cpp
 ./src/CentralDataStructure/assembly.cpp
 ./src/CentralDataStructure/atom.cpp
-./src/CentralDataStructure/cdsFunctions/atomicBonding.cpp
-./src/CentralDataStructure/cdsFunctions/atomicConnectivity.cpp
-./src/CentralDataStructure/cdsFunctions/bondByDistance.cpp
 ./src/CentralDataStructure/cdsFunctions/cdsFunctions.cpp
 ./src/CentralDataStructure/cdsFunctions/graphInterface.cpp
 ./src/CentralDataStructure/molecule.cpp

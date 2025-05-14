@@ -1,6 +1,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
@@ -29,15 +29,23 @@ int main(int argc, char* argv[])
     std::cout << "Preprocessing\n";
     const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
     pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
-    for (auto& assembly : pdbFile.getAssemblies()) // Just testing, doing it this way to get around const in Ensemble.
-                                                   // ToDo: Why is there a const blockage in Ensemble?
+    const std::vector<size_t>& moleculeAssembly            = pdbFile.data.indices.moleculeAssembly;
+    const std::vector<size_t>& residueAssembly =
+        codeUtils::indicesToValues(moleculeAssembly, pdbFile.data.indices.residueMolecule);
+    const std::vector<size_t>& atomAssembly =
+        codeUtils::indicesToValues(residueAssembly, pdbFile.data.indices.atomResidue);
+    std::vector<cds::Assembly*> assemblies = pdbFile.getAssemblies();
+    for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
     {
+        std::vector<bool> thisAssemblyAtoms = codeUtils::vectorEquals(atomAssembly, assemblyId);
+        std::vector<size_t> indices =
+            codeUtils::boolsToIndices(codeUtils::vectorAnd(thisAssemblyAtoms, pdbFile.data.atomGraph.nodeAlive));
         std::cout << "Bonding atoms by distance for assembly" << std::endl;
-        cds::bondAtomsByDistance(assembly->getAtoms());
+        pdb::bondAtomsByDistance(pdbFile.data, indices);
         // OFF molecule
         try
         {
-            cds::GraphIndexData graphData = cds::toIndexData(assembly->getMolecules());
+            cds::GraphIndexData graphData = cds::toIndexData(assemblies[assemblyId]->getMolecules());
             assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
             cds::OffFileData data         = cds::toOffFileData(graphData.objects.residues);
             cds::serializeNumbers(graphData.objects.atoms);

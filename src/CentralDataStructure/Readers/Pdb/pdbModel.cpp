@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
@@ -16,8 +17,6 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Editors/amberMdPrep.hpp" //all preprocessing should move to here.
-#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
@@ -63,6 +62,7 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
                 extractSingleChainFromRecordSection(stream_block, line, extractChainId(line));
             size_t moleculeId = data.objects.molecules.size();
             data.indices.moleculeAssembly.push_back(assemblyId);
+            data.indices.moleculeCount++;
             data.moleculeResidueOrder.push_back({});
             std::unique_ptr<cds::Molecule> molecule = std::make_unique<cds::Molecule>(extractChainId(line));
             cds::Molecule* mol                      = assembly.addMolecule(std::move(molecule));
@@ -313,14 +313,13 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
             size_t res1AtomC = findResidueAtom(data, res1, "C");
             size_t res2AtomN = findResidueAtom(data, res2, "N");
             if ((res1AtomC < atomCount) && (res2AtomN < atomCount) &&
-                (!isWithinBondingDistance(data.objects.atoms[res1AtomC], data.objects.atoms[res2AtomN])))
+                (!isWithinBondingDistance(data, res1AtomC, res2AtomN)))
             { // GAP detected
                 // Look for non-natural protein residues within bonding distance, they fall under ResidueType
                 // Undefined, this indicates it's not gap.
                 if (!amberMdPrep::checkForNonNaturalProteinResidues(
-                        data,
-                        cdsSelections::selectResiduesByType(cdsMolecule->getResidues(), cds::ResidueType::Undefined),
-                        data.objects.atoms[res1AtomC], ppInfo))
+                        data, codeUtils::indicesOfElement(data.residues.types, cds::ResidueType::Undefined), res1AtomC,
+                        ppInfo))
                 {
                     // Log it
                     gmml::log(__LINE__, __FILE__, gmml::INF,

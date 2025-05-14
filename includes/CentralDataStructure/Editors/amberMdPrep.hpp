@@ -12,8 +12,8 @@
 // of ~May 2023
 namespace amberMdPrep
 {
-    bool checkForNonNaturalProteinResidues(const pdb::PdbData& data, std::vector<cds::Residue*> unknownResidues,
-                                           const cds::Atom* cAtom, pdb::PreprocessorInformation& ppInfo);
+    bool checkForNonNaturalProteinResidues(const pdb::PdbData& data, const std::vector<size_t>& unknownResidues,
+                                           size_t cAtom, pdb::PreprocessorInformation& ppInfo);
 }
 
 #endif

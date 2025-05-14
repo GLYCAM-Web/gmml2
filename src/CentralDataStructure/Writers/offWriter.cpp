@@ -1,7 +1,6 @@
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
@@ -23,6 +22,24 @@ namespace
             result.push_back(cds::atomVectorIndex(atoms, find));
         }
         return result;
+    }
+
+    std::vector<cds::Atom*> atomsConnectedToOtherResidues(std::vector<cds::Atom*> atoms)
+    {
+        std::vector<cds::Atom*> foundAtoms;
+        for (auto& atom : atoms)
+        {
+            bool connected = false;
+            for (auto& neighbor : atom->getNeighbors())
+            { // check if neighbor is not one of the atoms in this residue.
+                connected = connected || !codeUtils::contains(atoms, neighbor);
+            }
+            if (connected)
+            {
+                foundAtoms.push_back(atom);
+            }
+        }
+        return foundAtoms;
     }
 } // namespace
 

@@ -228,3 +228,8 @@ std::vector<cds::ResidueType> cds::residueTypes(const std::vector<Residue*>& res
     }
     return result;
 }
+
+void cds::addBond(Atom* atom, Atom* otherAtom)
+{
+    atom->addNeighbor("atomicBond", otherAtom);
+}

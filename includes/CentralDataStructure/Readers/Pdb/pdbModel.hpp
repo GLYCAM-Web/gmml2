@@ -23,7 +23,6 @@ namespace pdb
                                      const PreprocessorOptions& inputOptions);
     void preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo,
                                        const cdsParameters::ParameterManager& parmManager);
-    //        void bondAtomsByDistance();
     //////////////////////////////////////////////////////////
     //                       DISPLAY FUNCTION               //
     //////////////////////////////////////////////////////////

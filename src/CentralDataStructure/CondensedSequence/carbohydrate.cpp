@@ -14,7 +14,6 @@
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
@@ -221,7 +220,7 @@ namespace
         // Geometry
         moveConnectedAtomsAccordingToBondLength(parentAtom, childAtom);
         //   Now bond the atoms. This could also set distance?, and angle? if passed to function?
-        cds::addBond(childAtom, parentAtom); // parentAtom also connected to childAtom. Fancy.
+        addBond(childAtom, parentAtom); // parentAtom also connected to childAtom. Fancy.
         for (auto& parentAtomNeighbor : parentAtom->getNeighbors())
         {
             if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))

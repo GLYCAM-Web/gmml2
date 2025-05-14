@@ -54,6 +54,7 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
             std::stringstream recordSection =
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
             cds::Assembly& assembly = assemblies_.emplace_back(cds::Assembly());
+            data.indices.assemblyCount++;
             readAssembly(data, assemblyId, assembly, recordSection);
             assemblyId++;
         }

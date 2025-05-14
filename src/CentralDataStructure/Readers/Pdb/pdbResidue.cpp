@@ -57,6 +57,7 @@ size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
     size_t atomId   = data.objects.atoms.size();
     data.objects.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
+    data.indices.atomCount++;
     data.atoms.recordNames.push_back(entry.recordName);
     data.atoms.names.push_back(entry.name);
     data.atoms.elements.push_back(atomElement(entry.name));
@@ -109,8 +110,10 @@ size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const 
     std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
     order.insert(order.begin() + position, residueId);
     data.indices.residueMolecule.push_back(moleculeId);
+    data.indices.residueCount++;
     data.objects.residues.push_back(residue);
     data.residues.names.push_back(entry.name);
+    data.residues.types.push_back(entry.type);
     data.residues.numbers.push_back(entry.number);
     data.residues.insertionCodes.push_back(entry.insertionCode);
     data.residues.chainIds.push_back(entry.chainId);

@@ -18,6 +18,5 @@ namespace cdsSelections
     std::vector<Atom*> findCycleAtoms(cds::Atom* const starterAtom);
     Atom* guessAnomericAtomByInternalNeighbors(const std::vector<cds::Atom*> atoms);
     std::vector<size_t> FindHeavyAtoms(const std::vector<MolecularMetadata::Element>& elements);
-    unsigned long int CountAtomsWithinBondingDistance(const Atom* queryAtom, std::vector<Atom*> otherAtoms);
 } // namespace cdsSelections
 #endif

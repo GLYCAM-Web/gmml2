@@ -1,7 +1,6 @@
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
@@ -112,17 +111,4 @@ std::vector<size_t> cdsSelections::FindHeavyAtoms(const std::vector<MolecularMet
         }
     }
     return foundAtoms;
-}
-
-unsigned long int cdsSelections::CountAtomsWithinBondingDistance(const Atom* queryAtom, std::vector<Atom*> otherAtoms)
-{
-    unsigned long int count = 0;
-    for (auto& otherAtom : otherAtoms)
-    {
-        if (isWithinBondingDistance(queryAtom, otherAtom))
-        {
-            ++count;
-        }
-    }
-    return count;
 }

@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicBonding.hpp"
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"

@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
 #include "includes/CodeUtils/arguments.hpp"
@@ -98,10 +98,9 @@ int main(int argc, char* argv[])
     }
     using glycoproteinBuilder::GlycosylationSiteInfo;
     pdb::PdbFile inputFile(inputFileName);
-    std::vector<cds::Residue*> residues = pdb::getResidues(inputFile.getAssemblies());
-    cds::bondAtomsAndResiduesByDistance(inputFile.data, residues);
-    std::vector<GlycosylationSiteInfo> table =
-        glycoproteinBuilder::createGlycosylationSiteTable(inputFile.data, residues);
+    pdb::bondAtomsAndResiduesByDistance(inputFile.data);
+    std::vector<GlycosylationSiteInfo> table = glycoproteinBuilder::createGlycosylationSiteTable(
+        inputFile.data, codeUtils::indexVector(inputFile.data.objects.residues.size()));
     std::vector<std::string> header {"Chain", "ResidueNumber", "InsertionCode", "SequenceContext", "Tags"};
 
     std::function<std::vector<std::string>(const GlycosylationSiteInfo&)> toRow = [](const GlycosylationSiteInfo& info)

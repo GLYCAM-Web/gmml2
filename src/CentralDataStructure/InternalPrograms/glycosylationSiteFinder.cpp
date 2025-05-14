@@ -2,7 +2,9 @@
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/MolecularMetadata/glycoprotein.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -41,13 +43,53 @@ namespace
         return foundTags;
     }
 
-    std::string GetSequenceContextAndDetermineTags(const pdb::PdbData& pdbData, cds::Residue* residue,
-                                                   std::vector<std::string>& tags)
+    size_t firstNeighborInOtherResidue(const pdb::PdbData& pdbData, const graph::Graph& atomGraph, size_t atomId)
     {
-        const glycoproteinMetadata::AminoAcidLinkTable& table = glycoproteinMetadata::defaultAminoAcidLinkTable();
-        auto getCode                                          = [&table](const std::string& name)
+        size_t residueId = pdbData.indices.atomResidue[atomId];
+        for (size_t n : atomGraph.nodes.nodeAdjacencies[atomId])
         {
-            size_t index = codeUtils::indexOf(table.names, name);
+            if (pdbData.indices.atomResidue[n] != residueId)
+            {
+                return n;
+            }
+        }
+        return pdbData.indices.atomCount;
+    }
+
+    // Not having Atom know which Residue it is in makes this funky. Make a decision about whether that happens or not.
+    size_t findNeighborResidueConnectedViaSpecificAtom(const pdb::PdbData& pdbData, const graph::Graph& atomGraph,
+                                                       size_t queryResidueId, const std::string& queryAtomName)
+    {
+        size_t atomCount            = pdbData.indices.atomCount;
+        size_t residueCount         = pdbData.indices.residueCount;
+        std::string queryResidueStr = pdb::residueStringId(pdbData, queryResidueId);
+        size_t queryAtom            = pdb::findResidueAtom(pdbData, queryResidueId, queryAtomName);
+        if (queryAtom == atomCount)
+        {
+            gmml::log(__LINE__, __FILE__, gmml::WAR,
+                      "Warning: An atom named " + queryAtomName + " not found in residue: " + queryResidueStr);
+            return residueCount;
+        }
+        size_t foreignAtomNeighbor = firstNeighborInOtherResidue(pdbData, atomGraph, queryAtom);
+        if (foreignAtomNeighbor == atomCount)
+        {
+            gmml::log(__LINE__, __FILE__, gmml::WAR,
+                      "Warning: Did not find foreign neighbors for an atom named " + queryAtomName +
+                          " in residue: " + queryResidueStr);
+            return residueCount;
+        }
+        return pdbData.indices.atomResidue[foreignAtomNeighbor];
+    }
+
+    std::string GetSequenceContextAndDetermineTags(const glycoproteinMetadata::AminoAcidLinkTable& table,
+                                                   const pdb::PdbData& pdbData, const graph::Graph& atomGraph,
+                                                   size_t residueId, std::vector<std::string>& tags)
+    {
+        size_t residueCount = pdbData.indices.residueCount;
+        auto getCode        = [&](size_t residueId)
+        {
+            const std::string& name = pdbData.residues.names[residueId];
+            size_t index            = codeUtils::indexOf(table.names, name);
             if (index == table.names.size())
             {
                 throw std::runtime_error("Error: no amino acid table entry found for: " + name);
@@ -55,37 +97,33 @@ namespace
             return table.codes[index];
         };
         // Tags based on residue name only:
-        std::string conjugationResidueCode     = getCode(residue->getName());
+        std::string conjugationResidueCode     = getCode(residueId);
         std::vector<std::string> nameBasedTags = GetTagsForSequence(conjugationResidueCode, "", "");
         codeUtils::insertInto(tags, nameBasedTags);
         // Now look for context around residue via atom connectivity.
-        std::string precedingContext = "";
-        cds::Residue* firstPrecedingNeighbor =
-            cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(pdbData, residue, "N");
-        cds::Residue* secondPrecedingNeighbor = nullptr;
-        if (firstPrecedingNeighbor)
+        std::string precedingContext  = "";
+        size_t firstPrecedingNeighbor = findNeighborResidueConnectedViaSpecificAtom(pdbData, atomGraph, residueId, "N");
+        if (firstPrecedingNeighbor < residueCount)
         {
-            precedingContext = getCode(firstPrecedingNeighbor->getName());
-            secondPrecedingNeighbor =
-                cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(pdbData, firstPrecedingNeighbor, "N");
-            if (secondPrecedingNeighbor)
+            precedingContext = getCode(firstPrecedingNeighbor);
+            size_t secondPrecedingNeighbor =
+                findNeighborResidueConnectedViaSpecificAtom(pdbData, atomGraph, firstPrecedingNeighbor, "N");
+            if (secondPrecedingNeighbor < residueCount)
             {
-                precedingContext = getCode(secondPrecedingNeighbor->getName()) + precedingContext;
+                precedingContext = getCode(secondPrecedingNeighbor) + precedingContext;
             }
         }
-        std::string followingContext = "";
-        cds::Residue* firstFollowingNeighbor =
-            cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(pdbData, residue, "C");
-        cds::Residue* secondFollowingNeighbor = nullptr;
-        if (firstFollowingNeighbor)
+        std::string followingContext  = "";
+        size_t firstFollowingNeighbor = findNeighborResidueConnectedViaSpecificAtom(pdbData, atomGraph, residueId, "C");
+        if (firstFollowingNeighbor < residueCount)
         {
-            std::string midResCode = getCode(firstFollowingNeighbor->getName());
+            std::string midResCode = getCode(firstFollowingNeighbor);
             followingContext       = midResCode;
-            secondFollowingNeighbor =
-                cdsSelections::FindNeighborResidueConnectedViaSpecificAtom(pdbData, firstFollowingNeighbor, "C");
-            if (secondFollowingNeighbor)
+            size_t secondFollowingNeighbor =
+                findNeighborResidueConnectedViaSpecificAtom(pdbData, atomGraph, firstFollowingNeighbor, "C");
+            if (secondFollowingNeighbor < residueCount)
             {
-                std::string lastResCode = getCode(secondFollowingNeighbor->getName());
+                std::string lastResCode = getCode(secondFollowingNeighbor);
                 followingContext        += lastResCode;
                 std::vector<std::string> contextTags =
                     GetTagsForSequence(conjugationResidueCode, midResCode, lastResCode);
@@ -101,20 +139,20 @@ namespace
 namespace glycoproteinBuilder
 {
     std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const pdb::PdbData& pdbData,
-                                                                    const std::vector<cds::Residue*>& residues)
+                                                                    const std::vector<size_t>& residues)
     {
         const glycoproteinMetadata::AminoAcidLinkTable& table = glycoproteinMetadata::defaultAminoAcidLinkTable();
+        graph::Graph atomGraph                                = graph::identity(pdbData.atomGraph);
         std::vector<GlycosylationSiteInfo> result;
-        for (auto& residue : residues)
+        for (size_t residueId : residues)
         {
-            size_t index = codeUtils::indexOf(table.names, residue->getName());
+            size_t index = codeUtils::indexOf(table.names, pdbData.residues.names[residueId]);
             if (index < table.names.size() && table.linkTypes[index] != "")
             {
-                size_t residueId              = codeUtils::indexOf(pdbData.objects.residues, residue);
                 std::vector<std::string> tags = {table.linkTypes[index]};
-                std::string context           = GetSequenceContextAndDetermineTags(pdbData, residue, tags);
+                std::string context = GetSequenceContextAndDetermineTags(table, pdbData, atomGraph, residueId, tags);
                 result.push_back(GlycosylationSiteInfo {pdbData.residues.chainIds[residueId],
-                                                        std::to_string(residue->getNumber()),
+                                                        std::to_string(pdbData.residues.numbers[residueId]),
                                                         pdbData.residues.insertionCodes[residueId], context, tags});
             }
         }

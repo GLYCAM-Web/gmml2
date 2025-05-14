@@ -1,10 +1,10 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+
 #include <string>
 #include <vector>
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 
 namespace glycoproteinBuilder
 {
@@ -18,7 +18,7 @@ namespace glycoproteinBuilder
     };
 
     std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const pdb::PdbData& pdbData,
-                                                                    const std::vector<cds::Residue*>& residues);
+                                                                    const std::vector<size_t>& residues);
 } // namespace glycoproteinBuilder
 
 #endif

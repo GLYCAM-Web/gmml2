@@ -3,7 +3,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapResolution.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/atomicConnectivity.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
@@ -184,9 +184,8 @@ int main(int argc, char* argv[])
         const MolecularMetadata::AminoAcidTable& aminoAcidTable = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
         cds::Assembly* glycoprotein                                          = pdbFile.getAssemblies().front();
-        std::vector<cds::Residue*> gpInitialResidues                         = glycoprotein->getResidues();
-        cds::setIntraConnectivity(aminoAcidTable, gpInitialResidues);
-        cds::setInterConnectivity(aminoAcidTable, pdbFile.data, gpInitialResidues);
+        pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
+        pdb::setInterConnectivity(aminoAcidTable, pdbFile.data);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
         std::vector<glycoproteinBuilder::GlycosylationSite> glycosites =
             glycoproteinBuilder::createGlycosites(pdbFile.data, glycoprotein, settings.glycositesInputVector);
