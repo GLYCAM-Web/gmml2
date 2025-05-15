@@ -80,16 +80,20 @@ void pdb::addBond(PdbData& data, size_t atom1, size_t atom2)
     graph::addEdge(data.atomGraph, {atom1, atom2});
 }
 
+std::vector<size_t> pdb::residueAtoms(const PdbData& data, size_t residueId)
+{
+    return codeUtils::boolsToIndices(
+        codeUtils::vectorAnd(data.atomGraph.nodeAlive, codeUtils::vectorEquals(data.indices.atomResidue, residueId)));
+}
+
 size_t pdb::findResidueAtom(const PdbData& data, size_t residueId, const std::string& atomName)
 {
-    size_t atomCount = data.indices.atomCount;
-    for (size_t n = 0; n < atomCount; n++)
+    for (size_t n : residueAtoms(data, residueId))
     {
-        if (data.atomGraph.nodeAlive[n] && (data.indices.atomResidue[n] == residueId) &&
-            (data.atoms.names[n] == atomName))
+        if (data.atoms.names[n] == atomName)
         {
             return n;
         }
     }
-    return atomCount;
+    return data.indices.atomCount;
 }

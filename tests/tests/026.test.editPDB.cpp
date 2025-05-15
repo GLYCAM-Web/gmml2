@@ -23,22 +23,24 @@ int main(int argc, char* argv[])
     // requirement: a chain ID for every single ATOM entry, and all ligand atoms should be put in a single residue.
     pdb::PdbFile pdbFile(argv[1]); // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
                                    // every molecule to have any chain ID you can do:
-    std::vector<cds::Residue*>& residues = pdbFile.data.objects.residues;
-    pdbFile.data.residues.chainIds       = std::vector<std::string>(residues.size(), "Y");
+    pdbFile.data.residues.chainIds = std::vector<std::string>(pdbFile.data.indices.residueCount, "Y");
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:
-    std::vector<cds::Residue*> ligandResidues =
-        cdsSelections::selectResiduesByType(residues, cds::ResidueType::Undefined);
+    std::vector<size_t> ligandResidues =
+        codeUtils::indicesOfElement(pdbFile.data.residues.types, cds::ResidueType::Undefined);
     if (ligandResidues.empty())
     {
         std::cout << "No ligand residues found in input file\n";
         return 0;
     }
-    cds::Residue* firstLigandResidue = ligandResidues.front();
-    for (auto& ligandResidue : ligandResidues) // Each MODEL in PdbFile is converted into an "Assembly"
-    {                                          // Every ligand residue gets the same residue number as the first one.
+    size_t firstLigandResidue    = ligandResidues.front();
+    const std::string& firstName = pdbFile.data.residues.names[firstLigandResidue];
+    uint firstNumber             = pdbFile.data.residues.numbers[firstLigandResidue];
+    for (size_t ligandResidue : ligandResidues) // Each MODEL in PdbFile is converted into an "Assembly"
+    {                                           // Every ligand residue gets the same residue number as the first one.
         // std::cout << "Renumbering and renaming " << ligandResidue->getStringId() << "\n";
-        ligandResidue->setNumber(firstLigandResidue->getNumber());
-        ligandResidue->setName(firstLigandResidue->getName());
+        cds::Residue* residue = pdbFile.data.objects.residues[ligandResidue];
+        residue->setName(firstName);
+        residue->setNumber(firstNumber);
     }
     pdbFile.Write("./026.outputPdbFile.pdb");
     // ************************************************************************ //
