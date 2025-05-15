@@ -1,5 +1,4 @@
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
 
 #include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
