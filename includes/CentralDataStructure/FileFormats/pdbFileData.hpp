@@ -12,7 +12,7 @@ namespace cds
     struct PdbFileAtomData
     {
         std::vector<Coordinate> coordinates;
-        std::vector<int> numbers;
+        std::vector<uint> numbers;
         std::vector<std::string> names;
         std::vector<std::string> elements;
         std::vector<std::string> recordNames;
@@ -22,7 +22,7 @@ namespace cds
 
     struct PdbFileResidueData
     {
-        std::vector<int> numbers;
+        std::vector<uint> numbers;
         std::vector<std::string> names;
         std::vector<std::string> chainIds;
         std::vector<std::string> insertionCodes;

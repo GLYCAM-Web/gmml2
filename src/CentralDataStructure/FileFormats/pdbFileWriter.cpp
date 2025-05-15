@@ -71,7 +71,7 @@ void cds::writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, cons
     stream << std::endl;
 }
 
-void cds::writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
+void cds::writeConectCards(std::ostream& stream, const std::vector<uint>& atomNumbers,
                            const std::vector<std::array<size_t, 2>>& connectionIndices)
 { // These are only written for atoms connecting residues. The numbers overflow/truncate when longer than 5, but the
   // format is what the format is.

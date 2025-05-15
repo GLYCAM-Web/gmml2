@@ -52,7 +52,7 @@ namespace cds
             return atomType_;
         }
 
-        inline int getNumber() const
+        inline uint getNumber() const
         {
             return number_;
         }
@@ -77,7 +77,7 @@ namespace cds
             atomType_ = s;
         }
 
-        inline void setNumber(const int i)
+        inline void setNumber(uint i)
         {
             number_ = i;
         }
@@ -112,7 +112,7 @@ namespace cds
         std::vector<Coordinate> allCoordinates_;
         double charge_                      = constants::dNotSet;
         std::string atomType_               = " ";
-        int number_                         = constants::iNotSet;
+        uint number_                        = constants::iNotSet;
         MolecularMetadata::Element element_ = MolecularMetadata::Element::Unknown;
         bool gotElement_                    = false;
         bool isVisible_                     = true;

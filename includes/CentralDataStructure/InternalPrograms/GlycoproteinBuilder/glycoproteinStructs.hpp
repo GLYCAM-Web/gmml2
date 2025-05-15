@@ -34,9 +34,9 @@ namespace glycoproteinBuilder
     {
         std::vector<std::string> names;
         std::vector<std::string> types;
-        std::vector<int> numbers;
-        std::vector<int> serializedNumbers;
-        std::vector<int> atomicNumbers;
+        std::vector<uint> numbers;
+        std::vector<uint> serializedNumbers;
+        std::vector<uint> atomicNumbers;
         std::vector<std::string> elementStrings;
         std::vector<MolecularMetadata::Element> elements;
         std::vector<double> charges;
@@ -61,8 +61,8 @@ namespace glycoproteinBuilder
         std::vector<double> phiAngles;
         std::vector<double> psiAngles;
         std::vector<std::string> ids;
-        std::vector<int> numbers;
-        std::vector<int> serializedNumbers;
+        std::vector<uint> numbers;
+        std::vector<uint> serializedNumbers;
         std::vector<std::string> chainIds;
         std::vector<std::vector<SidechainDihedral>> sidechainDihedrals;
         std::vector<std::vector<size_t>> sidechainRotations;
@@ -169,12 +169,12 @@ namespace glycoproteinBuilder
         return codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules));
     }
 
-    inline const std::vector<int>& atomNumbers(bool serialized, const AssemblyData& data)
+    inline const std::vector<uint>& atomNumbers(bool serialized, const AssemblyData& data)
     {
         return serialized ? data.atoms.serializedNumbers : data.atoms.numbers;
     }
 
-    inline const std::vector<int>& residueNumbers(bool serialized, const AssemblyData& data)
+    inline const std::vector<uint>& residueNumbers(bool serialized, const AssemblyData& data)
     {
         return serialized ? data.residues.serializedNumbers : data.residues.numbers;
     }

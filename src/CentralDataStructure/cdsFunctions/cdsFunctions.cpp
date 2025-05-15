@@ -11,11 +11,11 @@
 #include <array>
 #include <vector>
 
-std::vector<int> cds::serializedNumberVector(const std::vector<bool>& included)
+std::vector<uint> cds::serializedNumberVector(const std::vector<bool>& included)
 {
-    std::vector<int> result;
+    std::vector<uint> result;
     result.reserve(included.size());
-    int count = 0;
+    uint count = 0;
     for (bool b : included)
     {
         result.push_back(b ? count + 1 : 0);
@@ -24,7 +24,7 @@ std::vector<int> cds::serializedNumberVector(const std::vector<bool>& included)
     return result;
 }
 
-std::vector<int> cds::serializedNumberVector(size_t count)
+std::vector<uint> cds::serializedNumberVector(size_t count)
 {
     return serializedNumberVector(std::vector<bool>(count, true));
 }
@@ -40,9 +40,9 @@ size_t cds::atomVectorIndex(const std::vector<cds::Atom*>& atoms, cds::Atom* fin
     return index;
 }
 
-std::vector<int> cds::atomNumbers(const std::vector<Atom*>& atoms)
+std::vector<uint> cds::atomNumbers(const std::vector<Atom*>& atoms)
 {
-    std::vector<int> result;
+    std::vector<uint> result;
     result.reserve(atoms.size());
     for (auto& atom : atoms)
     {
@@ -84,9 +84,9 @@ std::vector<MolecularMetadata::Element> cds::atomElements(const std::vector<Atom
     return result;
 }
 
-std::vector<int> cds::atomAtomicNumbers(const std::vector<Atom*>& atoms)
+std::vector<uint> cds::atomAtomicNumbers(const std::vector<Atom*>& atoms)
 {
-    std::vector<int> result;
+    std::vector<uint> result;
     result.reserve(atoms.size());
     for (auto& atom : atoms)
     {
@@ -169,9 +169,9 @@ std::vector<bool> cds::atomVisibility(const std::vector<Atom*>& atoms)
     return result;
 }
 
-std::vector<int> cds::residueNumbers(const std::vector<Residue*>& residues)
+std::vector<uint> cds::residueNumbers(const std::vector<Residue*>& residues)
 {
-    std::vector<int> result;
+    std::vector<uint> result;
     result.reserve(residues.size());
     for (auto& residue : residues)
     {

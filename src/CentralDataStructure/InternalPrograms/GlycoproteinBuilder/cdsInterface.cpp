@@ -204,10 +204,10 @@ namespace glycoproteinBuilder
                                                                                0.0, cds::Coordinate {0.0, 0.0, 0.0}
         });
 
-        auto serializeNonProtein = [](const std::vector<int>& numbers, const std::vector<bool>& isProtein)
+        auto serializeNonProtein = [](const std::vector<uint>& numbers, const std::vector<bool>& isProtein)
         {
-            std::vector<int> result = numbers;
-            int maxNumber           = codeUtils::vectorMax(0, codeUtils::boolsToValues(numbers, isProtein));
+            std::vector<uint> result = numbers;
+            int maxNumber            = codeUtils::vectorMax(uint(0), codeUtils::boolsToValues(numbers, isProtein));
             for (size_t n : codeUtils::boolsToIndices(codeUtils::vectorNot(isProtein)))
             {
                 maxNumber++;
@@ -238,8 +238,8 @@ namespace glycoproteinBuilder
         std::vector<std::string> chainIds = codeUtils::vectorMap(chainId, codeUtils::indexVector(residues));
         std::vector<bool> proteinResidue  = codeUtils::vectorMap(isProtein, residueMoleculeTypes);
         std::vector<bool> proteinAtom     = codeUtils::vectorMap(isProtein, atomMoleculeTypes);
-        std::vector<int> residueNumbers   = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
-        std::vector<int> atomNumbers      = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
+        std::vector<uint> residueNumbers  = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
+        std::vector<uint> atomNumbers     = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
 
         AtomData atomData {atomNames,
                            cds::atomTypes(atoms),

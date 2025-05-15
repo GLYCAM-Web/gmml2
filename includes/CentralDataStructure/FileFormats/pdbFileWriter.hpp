@@ -20,7 +20,7 @@ namespace cds
                             const PdbFileData& data);
     void writeAtomToPdb(std::ostream& stream, const PdbFileFormat& format, const PdbFileResidueData& residues,
                         size_t residueIndex, const PdbFileAtomData& atoms, size_t atomIndex);
-    void writeConectCards(std::ostream& stream, const std::vector<int>& atomNumbers,
+    void writeConectCards(std::ostream& stream, const std::vector<uint>& atomNumbers,
                           const std::vector<std::array<size_t, 2>>& connectionIndices);
     void theEnd(std::ostream& stream);
 

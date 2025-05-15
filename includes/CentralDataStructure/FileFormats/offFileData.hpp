@@ -12,17 +12,17 @@ namespace cds
 {
     struct OffFileAtomData
     {
-        std::vector<int> numbers;
+        std::vector<uint> numbers;
         std::vector<std::string> names;
         std::vector<std::string> types;
-        std::vector<int> atomicNumbers;
+        std::vector<uint> atomicNumbers;
         std::vector<double> charges;
         std::vector<Coordinate> coordinates;
     };
 
     struct OffFileResidueData
     {
-        std::vector<int> numbers;
+        std::vector<uint> numbers;
         std::vector<std::string> names;
         std::vector<ResidueType> types;
         std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;

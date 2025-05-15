@@ -17,7 +17,7 @@ namespace lib
         std::vector<std::string> types;
         std::vector<MolecularMetadata::Element> elements;
         std::vector<double> charges;
-        std::vector<int> numbers;
+        std::vector<uint> numbers;
         std::vector<cds::Coordinate> coordinates;
     };
 

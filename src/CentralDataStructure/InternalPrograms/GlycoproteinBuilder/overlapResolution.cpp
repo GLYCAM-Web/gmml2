@@ -307,8 +307,8 @@ namespace glycoproteinBuilder
         };
 
         auto writePdbFile = [&](const assembly::Graph& graph, const AssemblyData& data,
-                                const std::vector<cds::Coordinate>& coordinates, const std::vector<int>& atomNumbers,
-                                const std::vector<int>& residueNumbers, const std::vector<bool>& includedMolecules,
+                                const std::vector<cds::Coordinate>& coordinates, const std::vector<uint>& atomNumbers,
+                                const std::vector<uint>& residueNumbers, const std::vector<bool>& includedMolecules,
                                 const std::vector<std::array<size_t, 2>>& connectionIndices,
                                 const std::string& outputDir, const std::string& prefix)
         {

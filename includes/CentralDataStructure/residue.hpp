@@ -53,7 +53,7 @@ namespace cds
             return type_;
         }
 
-        inline int getNumber() const
+        inline uint getNumber() const
         {
             return number_;
         }
@@ -76,7 +76,7 @@ namespace cds
             type_ = type;
         }
 
-        inline void setNumber(int i)
+        inline void setNumber(uint i)
         {
             number_ = i;
         }
@@ -148,7 +148,7 @@ namespace cds
         std::vector<std::unique_ptr<Atom>> atoms_;
         std::string name_ = "   ";
         ResidueType type_ = Undefined; // enum Type. See enum above.
-        int number_ =
+        uint number_ =
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
         bool isCTerminal = false;
         bool isNTerminal = false;
