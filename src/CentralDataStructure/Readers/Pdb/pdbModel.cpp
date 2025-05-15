@@ -420,14 +420,6 @@ void pdb::preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, Prepro
     return;
 }
 
-void pdb::Print(const cds::Assembly& assembly, std::ostream& out)
-{
-    for (auto& residue : assembly.getResidues())
-    {
-        cds::print(out, *residue);
-    }
-}
-
 void pdb::Write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
 {
     std::function<bool(const size_t&)> atomAlive = [&](size_t n)

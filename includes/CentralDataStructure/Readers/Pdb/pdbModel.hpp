@@ -26,7 +26,6 @@ namespace pdb
     //////////////////////////////////////////////////////////
     //                       DISPLAY FUNCTION               //
     //////////////////////////////////////////////////////////
-    void Print(const cds::Assembly& assembly, std::ostream& out);
     void Write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream);
 
     std::string extractChainId(const std::string& line);
