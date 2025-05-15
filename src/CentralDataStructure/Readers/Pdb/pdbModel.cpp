@@ -65,6 +65,7 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
                           "Model issue: this ain't an int: " + codeUtils::RemoveWhiteSpace(line.substr(10, 4)));
                 currentModelNumber = 1; // Seems like a reasonable default.
             }
+            data.assemblies.numbers[assemblyId] = currentModelNumber;
             assembly.setNumber(currentModelNumber);
         }
         else if ((recordName == "ATOM") || (recordName == "HETATM"))
