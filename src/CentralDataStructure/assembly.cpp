@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/assembly.hpp"
 
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp" // bondIfClose
 
@@ -90,7 +91,10 @@ Molecule* Assembly::addMolecule(std::unique_ptr<Molecule> myMolecule)
     return molecules_.back().get();
 }
 
-const Atom* Assembly::findAtom(int serialNumber) const
+const Atom* Assembly::findAtom(uint serialNumber) const
 {
-    return codeUtils::findElementWithNumber(this->getAtoms(), serialNumber);
+    std::vector<cds::Atom*> atoms = getAtoms();
+    std::vector<uint> numbers     = atomNumbers(atoms);
+    size_t index                  = codeUtils::indexOf(numbers, serialNumber);
+    return index < atoms.size() ? atoms[index] : nullptr;
 }

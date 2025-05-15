@@ -61,7 +61,7 @@ namespace cds
         Residue* insertNewResidue(std::unique_ptr<Residue> myResidue, size_t position);
         Residue* insertNewResidue(std::unique_ptr<Residue> myResidue, const Residue& positionReferenceResidue);
         std::vector<std::unique_ptr<Residue>>::iterator findPositionOfResidue(const Residue* queryResidue);
-        std::vector<Residue*> getResidues(std::vector<std::string> queryNames);
+        std::vector<Residue*> getResidues(const std::vector<std::string>& queryNames);
         Residue* getResidue(const std::string& queryName);
         void deleteResidue(Residue*);
 

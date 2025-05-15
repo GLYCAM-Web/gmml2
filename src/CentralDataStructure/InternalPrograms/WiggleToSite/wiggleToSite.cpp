@@ -48,10 +48,22 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
     }
     auto atoms                                           = getCarbohydrate().mutableAtoms();
     std::vector<cds::Coordinate> carbohydrateCoordinates = cds::atomCoordinates(atoms);
-    Residue* superimposeMe = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
-                                                              inputStruct.carbohydrateSuperimpositionResidue_);
-    Residue* wiggleMe      = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
-                                                              inputStruct.carbohydrateWigglingResidue_);
+    std::vector<cds::Residue*> residues                  = this->getCarbohydrate().getResidues();
+    std::vector<uint> residueNumbers                     = cds::residueNumbers(residues);
+    size_t superimposedIndex = codeUtils::indexOf(residueNumbers, inputStruct.carbohydrateSuperimpositionResidue_);
+    size_t wiggleIndex       = codeUtils::indexOf(residueNumbers, inputStruct.carbohydrateWigglingResidue_);
+    if (superimposedIndex == residues.size())
+    {
+        throw std::runtime_error("Requested residue number not found in structure: " +
+                                 std::to_string(inputStruct.carbohydrateSuperimpositionResidue_));
+    }
+    if (wiggleIndex == residues.size())
+    {
+        throw std::runtime_error("Requested residue number not found in structure: " +
+                                 std::to_string(inputStruct.carbohydrateWigglingResidue_));
+    }
+    Residue* superimposeMe                                      = residues[superimposedIndex];
+    Residue* wiggleMe                                           = residues[wiggleIndex];
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
     cds::setAtomCoordinates(atoms, carbohydrateCoordinates);

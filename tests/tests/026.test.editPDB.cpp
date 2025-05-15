@@ -2,7 +2,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/files.hpp"
@@ -49,7 +49,9 @@ int main(int argc, char* argv[])
     pdb::PdbFile pdbFileTraj(argv[1], pdb::InputType::modelsAsCoordinates);
     std::vector<cds::Residue*> myResidues = pdb::getResidues(pdbFileTraj.getAssemblies());
     // somehow you specify number in inputs. e.g. A_405 chain A, residue 405.
-    cds::Residue* queryResidue            = codeUtils::findElementWithNumber(myResidues, 5);
+    std::vector<uint> residueNumbers      = cds::residueNumbers(myResidues);
+    size_t index                          = codeUtils::indexOf(residueNumbers, uint(5));
+    cds::Residue* queryResidue            = myResidues[index];
     double distance                       = 12.345; // inputs
     std::vector<cds::Residue*> selectedResidues =
         cdsSelections::selectResiduesWithinDistanceN(myResidues, queryResidue, distance);

@@ -9,44 +9,6 @@
 namespace codeUtils
 {
     template<class T>
-    std::vector<T*> getElementsWithNames(const std::vector<T*>& inputVector, const std::vector<std::string>& queryNames)
-    {
-        std::vector<T*> results;
-        for (auto& element : inputVector)
-        {
-            if (codeUtils::contains(queryNames, element->getName()))
-            {
-                results.push_back(element);
-            }
-        }
-        return results;
-    }
-
-    template<class T> T* findElementWithName(const std::vector<T*>& inputVector, const std::string& queryName)
-    {
-        for (auto& element : inputVector)
-        {
-            if (element->getName() == queryName)
-            {
-                return element;
-            }
-        }
-        return nullptr;
-    }
-
-    template<class T> T* findElementWithNumber(const std::vector<T*>& inputVector, uint queryNumber)
-    {
-        for (auto& element : inputVector)
-        {
-            if (element->getNumber() == queryNumber)
-            {
-                return element;
-            }
-        }
-        return nullptr;
-    }
-
-    template<class T>
     std::vector<T> findElementsNotInVector(const std::vector<T>& inputVector, const std::vector<T>& excludeElements)
     {
         std::vector<T> elementsInInputVectorButNotInQueryElements;

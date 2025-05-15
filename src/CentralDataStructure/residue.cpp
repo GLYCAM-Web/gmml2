@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
@@ -215,12 +215,18 @@ typename std::vector<std::unique_ptr<Atom>>::iterator Residue::FindPositionOfAto
 
 Atom* Residue::FindAtom(const std::string queryName) const
 {
-    return codeUtils::findElementWithName(this->getAtoms(), queryName);
+    std::vector<Atom*> atoms       = getAtoms();
+    std::vector<std::string> names = atomNames(atoms);
+    size_t index                   = codeUtils::indexOf(names, queryName);
+    return index < atoms.size() ? atoms[index] : nullptr;
 }
 
-Atom* Residue::FindAtom(const int& queryNumber) const
+Atom* Residue::FindAtom(uint queryNumber) const
 {
-    return codeUtils::findElementWithNumber(this->getAtoms(), queryNumber);
+    std::vector<Atom*> atoms  = getAtoms();
+    std::vector<uint> numbers = atomNumbers(atoms);
+    size_t index              = codeUtils::indexOf(numbers, queryNumber);
+    return index < atoms.size() ? atoms[index] : nullptr;
 }
 
 bool Residue::contains(const Atom* queryAtom) const

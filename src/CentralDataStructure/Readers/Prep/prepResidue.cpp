@@ -1,8 +1,8 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <sstream>
@@ -198,14 +198,16 @@ void PrepResidue::SetConnectivities()
         ++currentAtom;
     }
     // Now bond any atoms defined in loops.
+    std::vector<cds::Atom*> atoms      = this->getAtoms();
+    std::vector<std::string> atomNames = cds::atomNames(atoms);
     for (auto& loop : this->properties.loops)
     {
-        // gmml::log(__LINE__,__FILE__, gmml::INF, "Bonding loop " + loop.first + " to " + loop.second + "\n");
-        PrepAtom* firstAtom =
-            codeUtils::erratic_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.first));
-        PrepAtom* secondAtom =
-            codeUtils::erratic_cast<PrepAtom*>(codeUtils::findElementWithName(this->getAtoms(), loop.second));
-        addBond(firstAtom, secondAtom);
+        size_t firstAtom  = codeUtils::indexOf(atomNames, loop.first);
+        size_t secondAtom = codeUtils::indexOf(atomNames, loop.second);
+        if (firstAtom < atoms.size() && secondAtom < atoms.size())
+        {
+            addBond(atoms[firstAtom], atoms[secondAtom]);
+        }
     }
 }
 
@@ -241,9 +243,11 @@ void PrepResidue::Generate3dStructure()
 
 void PrepResidue::DeleteDummyAtoms()
 {
-    for (auto dummyAtom : codeUtils::getElementsWithNames(this->getAtoms(), {"DUMM"}))
+    std::vector<cds::Atom*> atoms  = this->getAtoms();
+    std::vector<std::string> names = cds::atomNames(atoms);
+    for (size_t n : codeUtils::reverse(codeUtils::indicesOfElement(names, std::string("DUMM"))))
     {
-        this->deleteAtom(dummyAtom);
+        this->deleteAtom(atoms[n]);
     }
 }
 

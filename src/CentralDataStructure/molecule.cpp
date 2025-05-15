@@ -1,5 +1,5 @@
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/Selections/templatedSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
@@ -140,14 +140,24 @@ std::vector<std::unique_ptr<Residue>>::iterator Molecule::findPositionOfResidue(
     return it;
 }
 
-std::vector<Residue*> Molecule::getResidues(std::vector<std::string> queryNames)
+std::vector<Residue*> Molecule::getResidues(const std::vector<std::string>& queryNames)
 {
-    return codeUtils::getElementsWithNames(this->getResidues(), queryNames);
+    std::vector<Residue*> residues             = getResidues();
+    std::vector<std::string> names             = residueNames(residues);
+    std::function<bool(const size_t&)> hasName = [&](size_t n)
+    {
+        return codeUtils::contains(queryNames, names[n]);
+    };
+    return codeUtils::indicesToValues(residues,
+                                      codeUtils::vectorFilter(hasName, codeUtils::indexVector(residues.size())));
 }
 
 Residue* Molecule::getResidue(const std::string& queryName)
 {
-    return codeUtils::findElementWithName(this->getResidues(), queryName);
+    std::vector<Residue*> residues = getResidues();
+    std::vector<std::string> names = residueNames(residues);
+    size_t index                   = codeUtils::indexOf(names, queryName);
+    return index < residues.size() ? residues[index] : nullptr;
 }
 
 void Molecule::deleteResidue(Residue* residue)

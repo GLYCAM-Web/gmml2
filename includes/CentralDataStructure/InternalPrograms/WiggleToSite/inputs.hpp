@@ -10,10 +10,10 @@ namespace gmmlPrograms
         // ctor
         WiggleToSiteInputs(std::string inputFileName);
         // Members
-        std::string carbohydrateSequence_       = "";
-        int carbohydrateSuperimpositionResidue_ = 0;
-        int carbohydrateWigglingResidue_        = 0;
-        std::string substrateFile_              = "";
+        std::string carbohydrateSequence_        = "";
+        uint carbohydrateSuperimpositionResidue_ = 0;
+        uint carbohydrateWigglingResidue_        = 0;
+        std::string substrateFile_               = "";
         pdb::ResidueId superimpositionTargetResidue_;
         pdb::ResidueId wigglingTargetResidue_;
         int substrateModelNumber_ = 1;

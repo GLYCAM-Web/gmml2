@@ -101,7 +101,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         typename std::vector<std::unique_ptr<Atom>>::iterator FindPositionOfAtom(const Atom* queryAtom);
         Atom* FindAtom(const std::string queryName) const;
-        Atom* FindAtom(const int& queryNumber) const;
+        Atom* FindAtom(uint queryNumber) const;
         bool contains(const Atom* queryAtom) const;
         ResidueType determineType(const std::string& residueName);
 
