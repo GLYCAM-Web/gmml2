@@ -16,8 +16,6 @@ namespace cds
 {
     std::vector<bool> residueTER(const std::vector<ResidueType>& types);
     PdbFileAtomData toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames);
-    PdbFileAtomData toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
-                                      std::vector<double> occupancies, std::vector<double> temperatureFactors);
     PdbFileData toPdbFileData(const cds::GraphObjects& objects);
 
     void writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules);

@@ -420,26 +420,39 @@ void pdb::Print(const cds::Assembly& assembly, std::ostream& out)
 
 void pdb::Write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
 {
+    std::function<bool(const size_t&)> atomAlive = [&](size_t n)
+    {
+        return data.atomGraph.nodeAlive[n];
+    };
+    std::function<std::string(const size_t&)> elementString = [&](size_t n)
+    {
+        return data.atoms.names[n].empty() ? "" : data.atoms.names[n].substr(0, 1);
+    };
+    std::function<std::string(const size_t&)> truncatedResidueNames = [&](size_t n)
+    {
+        return codeUtils::truncate(3, data.residues.names[n]);
+    };
+
+    assembly::Graph graph = cds::createAssemblyGraph(data.indices, data.atomGraph);
+    cds::PdbFileResidueData residueData {
+        data.residues.numbers,
+        codeUtils::vectorMap(truncatedResidueNames, codeUtils::indexVector(data.indices.residueCount)),
+        data.residues.chainIds, data.residues.insertionCodes};
+    cds::PdbFileAtomData atomData {data.atoms.coordinates,
+                                   data.atoms.numbers,
+                                   data.atoms.names,
+                                   codeUtils::vectorMap(elementString, codeUtils::indexVector(data.indices.atomCount)),
+                                   data.atoms.recordNames,
+                                   data.atoms.occupancies,
+                                   data.atoms.temperatureFactors};
+    cds::PdbFileFormat format;
+    cds::PdbFileData writerData {format, {}, residueData, atomData};
     for (auto& residueIds : moleculeResidues)
     {
         for (size_t residueId : residueIds)
         {
-            std::vector<size_t> atomIds        = residueAtoms(data, residueId);
-            cds::Residue* residue              = data.objects.residues[residueId];
-            cds::GraphIndexData residueIndices = cds::toIndexData({residue});
-            assembly::Graph graph              = cds::createCompleteAssemblyGraph(residueIndices);
-            std::vector<cds::Atom*> atoms      = residue->getAtoms();
-            cds::PdbFileResidueData residueData {{residue->getNumber()},
-                                                 {cds::truncatedResidueName(residue)},
-                                                 {data.residues.chainIds[residueId]},
-                                                 {data.residues.insertionCodes[residueId]}};
-            cds::PdbFileAtomData atomData =
-                cds::toPdbFileAtomData(atoms, codeUtils::indicesToValues(data.atoms.recordNames, atomIds),
-                                       codeUtils::indicesToValues(data.atoms.occupancies, atomIds),
-                                       codeUtils::indicesToValues(data.atoms.temperatureFactors, atomIds));
-            cds::PdbFileFormat format;
-            cds::PdbFileData writerData {format, {}, residueData, atomData};
-            cds::writeAssemblyToPdb(stream, graph, {{0}}, {{data.residues.hasTerCard[residueId]}}, {}, writerData);
+            cds::writeAssemblyToPdb(stream, graph, {{residueId}}, {{data.residues.hasTerCard[residueId]}}, {},
+                                    writerData);
         }
         if (!residueIds.empty())
         { // Sometimes you get empty chains after things have been deleted I guess.

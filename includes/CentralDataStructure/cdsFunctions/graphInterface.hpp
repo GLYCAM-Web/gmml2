@@ -32,7 +32,7 @@ namespace cds
     GraphIndexData toIndexData(const std::vector<Molecule*> molecules);
     GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
     graph::Database createGraphData(const GraphObjects& objects);
-    assembly::Graph createAssemblyGraph(const GraphIndexData& data, const std::vector<bool>& includedAtoms);
+    assembly::Graph createAssemblyGraph(const assembly::Indices& indices, const graph::Database& atomGraphData);
     assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& data);
     assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& data);
     assembly::Bounds toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii, const GraphIndexData& data,

@@ -32,14 +32,6 @@ std::vector<bool> cds::residueTER(const std::vector<ResidueType>& types)
     return result;
 }
 
-cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames,
-                                            std::vector<double> occupancies, std::vector<double> temperatureFactors)
-{
-    return {atomCoordinates(atoms),    atomNumbers(atoms), atomNames(atoms),
-            atomElementStrings(atoms), recordNames,        occupancies,
-            temperatureFactors};
-}
-
 cds::PdbFileAtomData cds::toPdbFileAtomData(const std::vector<cds::Atom*>& atoms, std::vector<std::string> recordNames)
 {
     return {atomCoordinates(atoms),
@@ -92,7 +84,9 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
 void cds::WritePdb(std::ostream& stream, const GraphIndexData& graphData, const std::vector<std::string>& headerLines)
 {
     std::vector<bool> includedAtoms       = cds::atomVisibility(graphData.objects.atoms);
-    assembly::Graph graph                 = createAssemblyGraph(graphData, includedAtoms);
+    graph::Database atomGraphData         = cds::createGraphData(graphData.objects);
+    atomGraphData.nodeAlive               = cds::atomVisibility(graphData.objects.atoms);
+    assembly::Graph graph                 = createAssemblyGraph(graphData.indices, atomGraphData);
     const std::vector<Residue*>& residues = graphData.objects.residues;
     std::vector<ResidueType> types        = residueTypes(residues);
     std::vector<bool> ter                 = residueTER(types);
@@ -109,7 +103,9 @@ void cds::WritePdb(std::ostream& stream, const GraphIndexData& graphData, const 
     }
     std::vector<bool> residueSelected = codeUtils::indicesToValues(selectedResidueTypes, types);
     std::vector<bool> atomSelected    = codeUtils::indicesToValues(residueSelected, graphData.indices.atomResidue);
-    assembly::Graph subgraph = createAssemblyGraph(graphData, codeUtils::vectorAnd(includedAtoms, atomSelected));
+    graph::Database subgraphData      = cds::createGraphData(graphData.objects);
+    subgraphData.nodeAlive            = codeUtils::vectorAnd(includedAtoms, atomSelected);
+    assembly::Graph subgraph          = createAssemblyGraph(graphData.indices, subgraphData);
     std::vector<std::array<size_t, 2>> connectionIndices =
         codeUtils::indicesToValues(subgraph.residues.source.edgeNodes, subgraph.residues.edges.indices);
     cds::writeConectCards(stream, data.atoms.numbers, connectionIndices);

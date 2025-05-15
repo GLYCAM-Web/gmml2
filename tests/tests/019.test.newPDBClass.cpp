@@ -73,6 +73,8 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Finished bonding atoms by distance" << std::endl;
+    pdbFile.data.atoms.numbers    = cds::atomNumbers(pdbFile.data.objects.atoms);
+    pdbFile.data.residues.numbers = cds::residueNumbers(pdbFile.data.objects.residues);
     pdbFile.Write(outputFile);
 
     // Just showing what's in the ppInfo and how to access it

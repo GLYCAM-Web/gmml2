@@ -157,15 +157,11 @@ graph::Database cds::createGraphData(const GraphObjects& objects)
     return graph;
 }
 
-assembly::Graph cds::createAssemblyGraph(const GraphIndexData& data, const std::vector<bool>& includedAtoms)
+assembly::Graph cds::createAssemblyGraph(const assembly::Indices& indices, const graph::Database& atomGraphData)
 {
-    const assembly::Indices& indices = data.indices;
-    const GraphObjects& objects      = data.objects;
-    graph::Database atomGraphData    = cds::createGraphData(objects);
-    atomGraphData.nodeAlive          = includedAtoms;
-    graph::Graph atomGraph           = graph::identity(atomGraphData);
-    graph::Graph residueGraph        = graph::quotient(atomGraphData, indices.atomResidue);
-    graph::Database residueData      = graph::asData(residueGraph);
+    graph::Graph atomGraph      = graph::identity(atomGraphData);
+    graph::Graph residueGraph   = graph::quotient(atomGraphData, indices.atomResidue);
+    graph::Database residueData = graph::asData(residueGraph);
     graph::Graph moleculeGraph =
         graph::quotient(residueData, codeUtils::indicesToValues(indices.residueMolecule, residueData.nodes));
     graph::Database moleculeData = graph::asData(moleculeGraph);
@@ -183,12 +179,14 @@ assembly::Graph cds::createAssemblyGraph(const GraphIndexData& data, const std::
 
 assembly::Graph cds::createCompleteAssemblyGraph(const GraphIndexData& data)
 {
-    return createAssemblyGraph(data, std::vector<bool>(data.indices.atomCount, true));
+    return createAssemblyGraph(data.indices, cds::createGraphData(data.objects));
 }
 
 assembly::Graph cds::createVisibleAssemblyGraph(const GraphIndexData& data)
 {
-    return createAssemblyGraph(data, cds::atomVisibility(data.objects.atoms));
+    graph::Database atomGraphData = cds::createGraphData(data.objects);
+    atomGraphData.nodeAlive       = cds::atomVisibility(data.objects.atoms);
+    return createAssemblyGraph(data.indices, atomGraphData);
 }
 
 assembly::Bounds cds::toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii, const GraphIndexData& data,

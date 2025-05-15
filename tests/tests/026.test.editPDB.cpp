@@ -37,8 +37,9 @@ int main(int argc, char* argv[])
     uint firstNumber             = pdbFile.data.residues.numbers[firstLigandResidue];
     for (size_t ligandResidue : ligandResidues) // Each MODEL in PdbFile is converted into an "Assembly"
     {                                           // Every ligand residue gets the same residue number as the first one.
-        // std::cout << "Renumbering and renaming " << ligandResidue->getStringId() << "\n";
-        cds::Residue* residue = pdbFile.data.objects.residues[ligandResidue];
+        pdbFile.data.residues.names[ligandResidue]   = firstName;
+        pdbFile.data.residues.numbers[ligandResidue] = firstNumber;
+        cds::Residue* residue                        = pdbFile.data.objects.residues[ligandResidue];
         residue->setName(firstName);
         residue->setNumber(firstNumber);
     }
