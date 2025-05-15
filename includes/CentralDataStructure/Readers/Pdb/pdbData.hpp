@@ -65,12 +65,18 @@ namespace pdb
         std::vector<uint> numbers;
     };
 
+    struct TrajectoryData
+    {
+        std::vector<std::vector<cds::Coordinate>> coordinates;
+    };
+
     struct PdbData
     {
         AtomData atoms;
         ResidueData residues;
         MoleculeData molecules;
         AssemblyData assemblies;
+        TrajectoryData trajectory;
         graph::Database atomGraph;
         assembly::Indices indices;
         cds::GraphObjects objects;

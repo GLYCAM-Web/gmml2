@@ -1,17 +1,15 @@
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CodeUtils/references.hpp"
 #include <eigen3/Eigen/Geometry>
 
 namespace
 {
-    void ReplaceCoordinatesFromMatrix(std::vector<cds::CoordinateReference>& coordinates,
-                                      const Eigen::Matrix3Xd& matrix)
+    void ReplaceCoordinatesFromMatrix(std::vector<cds::Coordinate>& coordinates, const Eigen::Matrix3Xd& matrix)
     {
         for (size_t k = 0; k < coordinates.size(); k++)
         {
-            coordinates[k].set({matrix(0, k), matrix(1, k), matrix(2, k)});
+            coordinates[k] = {matrix(0, k), matrix(1, k), matrix(2, k)};
         }
     }
 
@@ -88,20 +86,6 @@ Eigen::Matrix3Xd cds::generateMatrix(const std::vector<cds::Coordinate>& coordin
     return result;
 }
 
-Eigen::Matrix3Xd cds::generateMatrix(const std::vector<cds::CoordinateReference>& coordinates)
-{
-    Eigen::Matrix3Xd result(3, coordinates.size());
-    for (size_t k = 0; k < coordinates.size(); k++)
-    {
-        cds::Coordinate coord = coordinates[k].get();
-        for (size_t n = 0; n < 3; n++)
-        {
-            result(n, k) = coord.nth(n);
-        }
-    }
-    return result;
-}
-
 std::vector<cds::Coordinate> cds::matrixCoordinates(const Eigen::Matrix3Xd& matrix)
 {
     std::vector<cds::Coordinate> result;
@@ -123,7 +107,7 @@ cds::AffineTransform cds::affineTransform(const std::vector<cds::Coordinate>& ta
     return {movingMatrix, targetMatrix, transform};
 }
 
-void cds::Superimpose(std::vector<CoordinateReference>& moving, const std::vector<CoordinateReference>& target)
+void cds::Superimpose(std::vector<Coordinate>& moving, const std::vector<Coordinate>& target)
 {
     Eigen::Matrix3Xd targetMatrix = generateMatrix(target);
     Eigen::Matrix3Xd movingMatrix = generateMatrix(moving);
@@ -138,8 +122,8 @@ void cds::Superimpose(std::vector<CoordinateReference>& moving, const std::vecto
     ReplaceCoordinatesFromMatrix(moving, movedMatrix);
 }
 
-void cds::Superimpose(std::vector<CoordinateReference>& moving, const std::vector<CoordinateReference>& target,
-                      std::vector<CoordinateReference>& alsoMoving)
+void cds::Superimpose(std::vector<Coordinate>& moving, const std::vector<Coordinate>& target,
+                      std::vector<Coordinate>& alsoMoving)
 {
     Eigen::Matrix3Xd targetMatrix     = generateMatrix(target);
     Eigen::Matrix3Xd movingMatrix     = generateMatrix(moving);

@@ -111,12 +111,6 @@ void PrepAtom::Determine3dCoordinate()
 {
     // std::cout << "Determining 3d Coordinates for " << this->getName() << "\n";
     std::vector<PrepAtom*> foundAtoms = findDihedralAtoms(this);
-    if (foundAtoms.at(3)->coordinateReference().invalid())
-    {
-        std::string message = "This atom has no coordinate: " + foundAtoms.at(3)->getName();
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-        throw std::runtime_error(message);
-    }
     this->setCoordinate(cds::calculateCoordinateFromInternalCoords(
         foundAtoms.at(3)->coordinate(), foundAtoms.at(2)->coordinate(), foundAtoms.at(1)->coordinate(),
         properties.angle, properties.dihedral, properties.bondLength));

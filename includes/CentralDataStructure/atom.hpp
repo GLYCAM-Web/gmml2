@@ -4,8 +4,7 @@
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CodeUtils/constants.hpp" // dNotSet
-#include "includes/CodeUtils/references.hpp"
+#include "includes/CodeUtils/constants.hpp"
 
 #include <string>
 #include <vector>
@@ -28,8 +27,7 @@ namespace cds
         friend void swap(Atom& lhs, Atom& rhs) noexcept
         {
             using std::swap;
-            swap(lhs.currentCoordinate_, rhs.currentCoordinate_);
-            swap(lhs.allCoordinates_, rhs.allCoordinates_);
+            swap(lhs.coordinate_, rhs.coordinate_);
             swap(lhs.charge_, rhs.charge_);
             swap(lhs.atomType_, rhs.atomType_);
             swap(lhs.number_, rhs.number_);
@@ -38,9 +36,10 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
-        Coordinate coordinate() const;
-        CoordinateReference coordinateReference();
-        unsigned int getNumberOfCoordinateSets() const;
+        inline Coordinate coordinate() const
+        {
+            return coordinate_;
+        }
 
         inline double getCharge() const
         {
@@ -88,9 +87,12 @@ namespace cds
         }
 
         void setElement(MolecularMetadata::Element element);
-        void setCoordinate(const Coordinate& c);
-        void setCurrentCoordinate(size_t coordinateIndex);
-        void addCoordinate(const Coordinate& c);
+
+        inline void setCoordinate(const Coordinate& c)
+        {
+            coordinate_ = c;
+        }
+
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
@@ -108,8 +110,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
-        size_t currentCoordinate_ = -1;
-        std::vector<Coordinate> allCoordinates_;
+        Coordinate coordinate_              = {0.0, 0.0, 0.0};
         double charge_                      = constants::dNotSet;
         std::string atomType_               = " ";
         uint number_                        = constants::iNotSet;

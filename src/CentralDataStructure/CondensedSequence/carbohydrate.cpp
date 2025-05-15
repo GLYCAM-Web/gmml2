@@ -93,8 +93,7 @@ namespace
         atomsToMove.erase(atomsToMove.begin()); // delete the parentAtom
         for (auto& atom : atomsToMove)
         {
-            auto coord = atom->coordinateReference();
-            coord.set(coord.get() + cToParent);
+            atom->setCoordinate(atom->coordinate() + cToParent);
         }
     }
 
@@ -229,8 +228,10 @@ namespace
                     cds::rotationTo(std::array<Coordinate, 3> {parentAtomNeighbor->coordinate(),
                                                                parentAtom->coordinate(), childAtom->coordinate()},
                                     constants::toRadians(constants::DEFAULT_ANGLE));
-                auto childResidueAtoms = childResidue->mutableAtoms();
-                matrix.rotateCoordinates(cds::atomCoordinateReferences(childResidueAtoms));
+                std::vector<cds::Atom*> childResidueAtoms = childResidue->mutableAtoms();
+                std::vector<cds::Coordinate> coordinates  = cds::atomCoordinates(childResidueAtoms);
+                matrix.rotateCoordinates(coordinates);
+                cds::setAtomCoordinates(childResidueAtoms, coordinates);
                 break;
             }
         }

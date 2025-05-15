@@ -1,8 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_GEOMETRYTYPES_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_GEOMETRYTYPES_HPP
 
-#include "includes/CodeUtils/references.hpp"
-
 #include <array>
 #include <vector>
 
@@ -61,8 +59,6 @@ namespace cds
         double radius;
         Coordinate center;
     };
-
-    typedef codeUtils::reference<Coordinate> CoordinateReference;
 } // namespace cds
 
 #endif

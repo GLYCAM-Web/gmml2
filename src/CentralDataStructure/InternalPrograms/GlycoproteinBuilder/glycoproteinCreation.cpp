@@ -226,14 +226,8 @@ namespace
         std::vector<cds::Coordinate> updatedAglycone = cds::matrixCoordinates(transform.affine * transform.moving);
         std::vector<cds::Coordinate> updatedGlycan =
             cds::matrixCoordinates(transform.affine * cds::generateMatrix(glycanCoords));
-        for (size_t n = 0; n < aglyconeAtoms.size(); n++)
-        {
-            aglyconeAtoms[n]->setCoordinate(updatedAglycone[n]);
-        }
-        for (size_t n = 0; n < glycanCoords.size(); n++)
-        {
-            glycanAtoms[n]->setCoordinate(updatedGlycan[n]);
-        }
+        cds::setAtomCoordinates(aglyconeAtoms, updatedAglycone);
+        cds::setAtomCoordinates(glycanAtoms, updatedGlycan);
     }
 
     std::vector<size_t> linkagesContainingResidue(const std::vector<cds::ResidueLinkage>& glycosidicLinkages,

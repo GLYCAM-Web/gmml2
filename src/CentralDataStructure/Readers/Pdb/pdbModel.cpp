@@ -87,7 +87,7 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
         { // Only happens when reading "modelsAsCoordinates", now read the rest of the entry as extra coords for
           // MODEL 1.
             gmml::log(__LINE__, __FILE__, gmml::INF, "PdbFile being read in as trajectory");
-            extractCoordinatesFromModel(assembly, stream_block, line);
+            extractCoordinatesFromModel(data, stream_block, line);
         }
     }
     return;
@@ -125,31 +125,41 @@ std::stringstream pdb::extractSingleChainFromRecordSection(std::stringstream& st
     return singleChainSection;
 }
 
-void pdb::extractCoordinatesFromModel(cds::Assembly& assembly, std::stringstream& stream_block, std::string line)
+void pdb::extractCoordinatesFromModel(PdbData& data, std::stringstream& stream_block, std::string line)
 {
     const int iPdbLineLength = 80; // repeat for now, fix later
     gmml::log(__LINE__, __FILE__, gmml::INF, "Section to extract coordinates from is\n" + stream_block.str());
-    std::vector<Atom*> myAtoms = assembly.getAtoms();
-    if (myAtoms.empty())
+    size_t atomCount = data.indices.atomCount;
+    if (atomCount == 0)
     {
         std::string message = "No atoms available when extracting coords from multiple models";
         gmml::log(__LINE__, __FILE__, gmml::ERR, message);
         throw message;
     }
-    std::vector<Atom*>::iterator it = myAtoms.begin();
+    const std::vector<cds::Coordinate>& initial = data.atoms.coordinates;
+    data.trajectory.coordinates                 = {initial};
+    std::vector<cds::Coordinate> current        = initial;
+    size_t atomId                               = 0;
     while ((std::getline(stream_block, line)))
     {
         expandLine(line, iPdbLineLength);
         std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         if (recordName == "ATOM" || recordName == "HETATM")
         {
-            Atom* atomPtr = *it;
-            atomPtr->addCoordinate(checkShiftsAndExtractCoordinate(line));
-            it++;
+            if (atomId >= atomCount)
+            {
+                std::string message = "Trajectory model contains more atoms than initial model";
+                gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+                throw message;
+            }
+            current[atomId] = checkShiftsAndExtractCoordinate(line);
+            atomId++;
         }
         if (recordName == "ENDMDL")
         { // reset to read next set of coords
-            it = myAtoms.begin();
+            atomId = 0;
+            data.trajectory.coordinates.push_back(current);
+            current = initial;
         }
     }
     return;

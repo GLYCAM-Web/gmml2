@@ -6,7 +6,6 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/references.hpp"
 
 #include <array>
 #include <vector>
@@ -106,6 +105,18 @@ std::vector<cds::Coordinate> cds::atomCoordinates(const std::vector<cds::Atom*>&
     return coordinates;
 }
 
+void cds::setAtomCoordinates(std::vector<Atom*>& atoms, const std::vector<Coordinate>& coordinates)
+{
+    if (atoms.size() != coordinates.size())
+    {
+        throw std::runtime_error("Trying to set atom vector coordinates with wrong sized coordinate vector");
+    }
+    for (size_t n = 0; n < atoms.size(); n++)
+    {
+        atoms[n]->setCoordinate(coordinates[n]);
+    }
+}
+
 std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const codeUtils::SparseVector<double>& elementRadii,
                                                        const std::vector<Atom*>& atoms)
 {
@@ -123,17 +134,6 @@ std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const codeUtils::SparseVe
         spheres.push_back({elementRadii.values[element], atom->coordinate()});
     }
     return spheres;
-}
-
-std::vector<cds::CoordinateReference> cds::atomCoordinateReferences(std::vector<cds::Atom*>& atoms)
-{
-    std::vector<CoordinateReference> coordinates;
-    coordinates.reserve(atoms.size());
-    for (auto& atom : atoms)
-    {
-        coordinates.push_back(atom->coordinateReference());
-    }
-    return coordinates;
 }
 
 std::vector<std::string> cds::atomTypes(const std::vector<Atom*>& atoms)

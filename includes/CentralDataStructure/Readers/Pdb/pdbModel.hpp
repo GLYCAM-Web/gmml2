@@ -32,6 +32,6 @@ namespace pdb
     std::string extractChainId(const std::string& line);
     std::stringstream extractSingleChainFromRecordSection(std::stringstream& stream_block, std::string line,
                                                           const std::string& initialChainID);
-    void extractCoordinatesFromModel(cds::Assembly& assembly, std::stringstream& stream_block, std::string line);
+    void extractCoordinatesFromModel(PdbData& data, std::stringstream& stream_block, std::string line);
 } // namespace pdb
 #endif

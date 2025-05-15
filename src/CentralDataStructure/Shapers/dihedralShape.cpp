@@ -12,8 +12,10 @@ using cds::RotatableDihedral;
 
 void cds::setDihedralAngle(RotatableDihedral& dihedral, cds::AngleWithMetadata target)
 {
-    auto matrix = rotationTo(dihedralCoordinates(dihedral), constants::toRadians(target.value));
-    matrix.rotateCoordinates(atomCoordinateReferences(dihedral.movingAtoms));
+    cds::RotationMatrix matrix          = rotationTo(dihedralCoordinates(dihedral), constants::toRadians(target.value));
+    std::vector<Coordinate> coordinates = atomCoordinates(dihedral.movingAtoms);
+    matrix.rotateCoordinates(coordinates);
+    setAtomCoordinates(dihedral.movingAtoms, coordinates);
     dihedral.currentMetadataIndex = target.metadataIndex;
 }
 

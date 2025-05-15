@@ -20,7 +20,6 @@
 #include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CodeUtils/random.hpp"
-#include "includes/CodeUtils/references.hpp"
 
 // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
 using cds::Atom;
@@ -48,14 +47,15 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
            << "\nOr selection for wiggling target: " << inputStruct.wigglingTargetResidue_ << " was not found\n";
         throw std::runtime_error(ss.str());
     }
-    auto atoms                                                    = getCarbohydrate().mutableAtoms();
-    std::vector<cds::CoordinateReference> carbohydrateCoordinates = cds::atomCoordinateReferences(atoms);
+    auto atoms                                           = getCarbohydrate().mutableAtoms();
+    std::vector<cds::Coordinate> carbohydrateCoordinates = cds::atomCoordinates(atoms);
     Residue* superimposeMe = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
                                                               inputStruct.carbohydrateSuperimpositionResidue_);
     Residue* wiggleMe      = codeUtils::findElementWithNumber(this->getCarbohydrate().getResidues(),
                                                               inputStruct.carbohydrateWigglingResidue_);
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
+    cds::setAtomCoordinates(atoms, carbohydrateCoordinates);
     this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed", {});
     this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
     std::vector<cds::Atom*> substrateWithoutSuperimpositionAtoms = codeUtils::findElementsNotInVector(
@@ -66,13 +66,11 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
     const codeUtils::SparseVector<double>& elementRadii = MolecularMetadata::defaultVanDerWaalsRadii();
     this->setCurrentOverlapCount(cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
                                                             this->getCarbohydrate().getAtoms()));
-    this->wiggleMeCoordinates_     = {wiggleMe->FindAtom("C1")->coordinateReference(),
-                                      wiggleMe->FindAtom("C3")->coordinateReference(),
-                                      wiggleMe->FindAtom("C5")->coordinateReference()};
-    this->wiggleTargetCoordinates_ = {wigglingTarget->FindAtom("C1")->coordinateReference(),
-                                      wigglingTarget->FindAtom("C3")->coordinateReference(),
-                                      wigglingTarget->FindAtom("C5")->coordinateReference()};
-    if (wiggleMeCoordinates_.size() < 3 || wiggleTargetCoordinates_.size() < 3)
+    this->wiggleMeAtoms_     = {wiggleMe->FindAtom("C1"), wiggleMe->FindAtom("C3"), wiggleMe->FindAtom("C5")};
+    this->wiggleTargetAtoms_ = {wigglingTarget->FindAtom("C1"), wigglingTarget->FindAtom("C3"),
+                                wigglingTarget->FindAtom("C5")};
+    cds::Atom* nullAtom      = nullptr;
+    if (codeUtils::contains(wiggleMeAtoms_, nullAtom) || codeUtils::contains(wiggleTargetAtoms_, nullAtom))
     {
         throw std::runtime_error("Did not find the cooordinates of the atoms required for wiggling\n");
     }
@@ -143,20 +141,21 @@ int WiggleToSite::minimizeDistance(const codeUtils::SparseVector<double>& elemen
 //////////////////////////////////////////////////////////
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
-void WiggleToSite::superimpose(std::vector<cds::CoordinateReference>& carbohydrateCoordinates,
+void WiggleToSite::superimpose(std::vector<cds::Coordinate>& carbohydrateCoordinates,
                                const Residue* superimpositionTarget, Residue* superimposeMe)
 {
     // Limiting the selection to just these atoms as sometimes hydrogens or an oxygen is missing from xtal. That's ok.
-    std::vector<cds::CoordinateReference> superimposeMeCoordinates = {
-        superimposeMe->FindAtom("C1")->coordinateReference(), superimposeMe->FindAtom("C3")->coordinateReference(),
-        superimposeMe->FindAtom("C5")->coordinateReference()};
-    std::vector<cds::CoordinateReference> superTargetCoordinates = {
-        superimpositionTarget->FindAtom("C1")->coordinateReference(),
-        superimpositionTarget->FindAtom("C3")->coordinateReference(),
-        superimpositionTarget->FindAtom("C5")->coordinateReference()};
+    std::vector<cds::Atom*> superimposeMeAtoms = {superimposeMe->FindAtom("C1"), superimposeMe->FindAtom("C3"),
+                                                  superimposeMe->FindAtom("C5")};
+    std::vector<cds::Atom*> superTargetAtoms   = {superimpositionTarget->FindAtom("C1"),
+                                                  superimpositionTarget->FindAtom("C3"),
+                                                  superimpositionTarget->FindAtom("C5")};
+    std::vector<cds::Coordinate> superimposeMeCoordinates = cds::atomCoordinates(superimposeMeAtoms);
+    std::vector<cds::Coordinate> superTargetCoordinates   = cds::atomCoordinates(superTargetAtoms);
     cds::Superimpose(superimposeMeCoordinates, superTargetCoordinates,
                      carbohydrateCoordinates); // "alsoMoving" are the carbohydrate Coordinates
-    return;
+    cds::setAtomCoordinates(superimposeMeAtoms, superimposeMeCoordinates);
+    cds::setAtomCoordinates(superTargetAtoms, superTargetCoordinates);
 }
 
 std::vector<cds::ResidueLinkage>&
@@ -190,7 +189,7 @@ WiggleToSite::determineWiggleLinkages(const GlycamMetadata::DihedralAngleDataTab
 
 double WiggleToSite::calculateDistance()
 {
-    return distance(wiggleTargetCoordinates_[0].get(), wiggleMeCoordinates_[0].get());
+    return distance(wiggleTargetAtoms_[0]->coordinate(), wiggleMeAtoms_[0]->coordinate());
 }
 
 bool WiggleToSite::acceptOverlaps(const codeUtils::SparseVector<double>& elementRadii)

@@ -56,9 +56,10 @@ cds::PdbFileData cds::toPdbFileData(const cds::GraphObjects& objects)
     return PdbFileData {format, {}, residueData, toPdbFileAtomData(atoms, recordNames)};
 }
 
-void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Molecule*>& molecules)
+void cds::writeTrajectoryToPdb(std::ostream& stream, const pdb::PdbData& data,
+                               const std::vector<cds::Molecule*>& molecules)
 {
-    size_t modelCount = molecules.at(0)->getAtoms().at(0)->getNumberOfCoordinateSets();
+    size_t modelCount = data.trajectory.coordinates.size();
     for (size_t coordinateSet = 0; coordinateSet < modelCount; coordinateSet++)
     {
         stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
@@ -69,7 +70,8 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const std::vector<cds::Mole
             std::vector<cds::Residue*> residues = molecule->getResidues();
             for (auto& atom : molecule->getAtoms())
             {
-                atom->setCurrentCoordinate(coordinateSet);
+                size_t atomId = codeUtils::indexOf(data.objects.atoms, atom);
+                atom->setCoordinate(data.trajectory.coordinates[coordinateSet][atomId]);
             }
             std::vector<cds::ResidueType> types = residueTypes(residues);
             std::vector<bool> ter               = residueTER(types);

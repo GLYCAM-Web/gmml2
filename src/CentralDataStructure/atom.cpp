@@ -25,42 +25,21 @@ Atom::Atom(Atom&& other) noexcept : Node<Atom>(other)
 
 // Copy Ctor
 Atom::Atom(const Atom& other) noexcept
-    : glygraph::Node<cds::Atom>(other), currentCoordinate_(other.currentCoordinate_), charge_(other.charge_),
+    : glygraph::Node<cds::Atom>(other), coordinate_(other.coordinate_), charge_(other.charge_),
       atomType_(other.atomType_), number_(other.number_)
-{
-    //    gmml::log(__LINE__, __FILE__, gmml::INF,
-    //              "Atom copy ctor creating " + this->getName() + "_" + std::to_string(this->getIndex()));
-    allCoordinates_    = other.allCoordinates_;
-    currentCoordinate_ = 0;
-}
+{}
 
 // Move and Copy assignment operator
 Atom& Atom::operator=(Atom other) noexcept
 {
     this->Node<Atom>::operator=(other);
     swap(*this, other);
-    currentCoordinate_ = 0;
     return *this;
 }
 
 //////////////////////////////////////////////////////////
 //                    ACCESSOR                          //
 //////////////////////////////////////////////////////////
-
-cds::Coordinate Atom::coordinate() const
-{
-    return allCoordinates_[currentCoordinate_];
-}
-
-cds::CoordinateReference Atom::coordinateReference()
-{
-    return {currentCoordinate_, &allCoordinates_};
-}
-
-unsigned int Atom::getNumberOfCoordinateSets() const
-{
-    return allCoordinates_.size();
-}
 
 unsigned int Atom::getNumberFromName() const
 {
@@ -87,30 +66,6 @@ void Atom::setElement(MolecularMetadata::Element element)
 {
     element_    = element;
     gotElement_ = true;
-}
-
-void Atom::setCoordinate(const Coordinate& newCoord)
-{
-    addCoordinate(newCoord);
-    currentCoordinate_ = allCoordinates_.size() - 1;
-}
-
-void Atom::setCurrentCoordinate(size_t coordinateIndex)
-{
-    if (allCoordinates_.size() <= coordinateIndex)
-    {
-        std::stringstream ss;
-        ss << "Error: requested coordinateIndex: " << coordinateIndex
-           << " that doesn't exist in Atom class as allCoordinates_ size is " << allCoordinates_.size();
-        gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
-        throw std::runtime_error(ss.str());
-    }
-    currentCoordinate_ = coordinateIndex;
-}
-
-void Atom::addCoordinate(const Coordinate& newCoord)
-{
-    allCoordinates_.push_back(newCoord);
 }
 
 //////////////////////////////////////////////////////////

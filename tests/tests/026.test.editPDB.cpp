@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     codeUtils::writeToFile(outName,
                            [&](std::ostream& stream)
                            {
-                               cds::writeTrajectoryToPdb(stream, newAssembly.getMolecules());
+                               cds::writeTrajectoryToPdb(stream, pdbFileTraj.data, newAssembly.getMolecules());
                            });
     return 0;
 }
