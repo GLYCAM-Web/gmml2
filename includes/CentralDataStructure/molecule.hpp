@@ -18,7 +18,6 @@ namespace cds
         Molecule() : Node<Molecule>("cdsMoleculeDefault", {}), number_(0) {};
 
         Molecule(std::vector<Residue*>& residues);
-        Molecule(const std::string chainId);
         Molecule(Molecule&& other) noexcept; // Move Ctor
         Molecule(const Molecule& other);     // Copy Ctor
         Molecule& operator=(Molecule other); // Move and Copy assignment operator
@@ -46,22 +45,12 @@ namespace cds
         std::vector<Atom*> mutableAtoms();
         std::vector<Residue*> getResidues() const;
 
-        inline std::string GetChainId() const
-        {
-            return chainId_;
-        }
-
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
         inline void setNumber(const int i)
         {
             number_ = i;
-        }
-
-        inline void setChain(const std::string s)
-        {
-            chainId_ = s;
         }
 
         void swapResiduePosition(Residue* queryResidue, size_t newPosition);
@@ -85,7 +74,6 @@ namespace cds
         //////////////////////////////////////////////////////////
         std::vector<std::unique_ptr<Residue>> residues_;
         int number_;
-        std::string chainId_ = "?";
     };
 } // namespace cds
 #endif

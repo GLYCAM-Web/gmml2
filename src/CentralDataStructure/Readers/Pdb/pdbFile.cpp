@@ -55,6 +55,7 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
                 this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
             cds::Assembly& assembly = assemblies_.emplace_back(cds::Assembly());
             data.indices.assemblyCount++;
+            data.assemblies.numbers.push_back(assemblyId + 1);
             readAssembly(data, assemblyId, assembly, recordSection);
             assemblyId++;
         }
@@ -236,10 +237,10 @@ void PdbFile::Write(std::ostream& out)
     {
         if (data.indices.assemblyCount > 1)
         {
-            out << "MODEL " << std::right << std::setw(4) << data.objects.assemblies[n]->getNumber() << "\n";
+            out << "MODEL " << std::right << std::setw(4) << data.assemblies.numbers[n] << "\n";
         }
         std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(data.indices.moleculeAssembly, n);
-        pdb::Write(data, codeUtils::indicesToValues(data.moleculeResidueOrder, moleculeIds), out);
+        pdb::Write(data, codeUtils::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
         if (data.indices.assemblyCount > 1)
         {
             out << "ENDMDL\n";

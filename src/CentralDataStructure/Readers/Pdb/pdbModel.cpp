@@ -58,13 +58,14 @@ void pdb::readAssembly(PdbData& data, size_t assemblyId, cds::Assembly& assembly
         else if ((recordName == "ATOM") || (recordName == "HETATM"))
         { // Gimme everything with the same chain, can be everything with no chain.
             // Function that will read from stringstream until chain ID changes or TER or just not ATOM/HETATM
-            std::stringstream singleChainSection =
-                extractSingleChainFromRecordSection(stream_block, line, extractChainId(line));
-            size_t moleculeId = data.indices.moleculeCount;
+            std::string chainId                  = extractChainId(line);
+            std::stringstream singleChainSection = extractSingleChainFromRecordSection(stream_block, line, chainId);
+            size_t moleculeId                    = data.indices.moleculeCount;
             data.indices.moleculeAssembly.push_back(assemblyId);
             data.indices.moleculeCount++;
-            data.moleculeResidueOrder.push_back({});
-            std::unique_ptr<cds::Molecule> molecule = std::make_unique<cds::Molecule>(extractChainId(line));
+            data.molecules.chainIds.push_back(chainId);
+            data.molecules.residueOrder.push_back({});
+            std::unique_ptr<cds::Molecule> molecule = std::make_unique<cds::Molecule>();
             cds::Molecule* mol                      = assembly.addMolecule(std::move(molecule));
             data.objects.molecules.push_back(mol);
             readChain(data, moleculeId, singleChainSection);
@@ -301,13 +302,14 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
     for (size_t moleculeId : moleculeIds)
     {
         cds::Molecule* cdsMolecule = data.objects.molecules[moleculeId];
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Gap detection started for chain " + cdsMolecule->GetChainId());
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Gap detection started for chain " + data.molecules.chainIds[moleculeId]);
         std::vector<cds::Residue*> proteinResidues =
             cdsSelections::selectResiduesByType(cdsMolecule->getResidues(), cds::ResidueType::Protein);
         if (proteinResidues.empty())
         {
             gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "No protein residues found in chain with id: " + cdsMolecule->GetChainId());
+                      "No protein residues found in chain with id: " + data.molecules.chainIds[moleculeId]);
             break;
         }
         std::vector<cds::Residue*>::iterator it2;
@@ -345,7 +347,8 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
                 }
             }
         }
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Gap detection completed for chain " + cdsMolecule->GetChainId());
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Gap detection completed for chain " + data.molecules.chainIds[moleculeId]);
     }
     return;
 }

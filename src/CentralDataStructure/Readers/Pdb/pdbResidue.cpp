@@ -107,7 +107,7 @@ size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const 
     size_t residueId = data.indices.residueCount;
     cds::Residue* residue =
         data.objects.molecules[moleculeId]->insertNewResidue(std::make_unique<cds::Residue>(), position);
-    std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
+    std::vector<size_t>& order = data.molecules.residueOrder[moleculeId];
     order.insert(order.begin() + position, residueId);
     data.indices.residueMolecule.push_back(moleculeId);
     data.indices.residueCount++;
@@ -129,7 +129,7 @@ size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const 
 size_t pdb::readResidue(PdbData& data, size_t moleculeId, std::stringstream& singleResidueSecion, std::string firstLine)
 {
     ResidueId resId(firstLine);
-    size_t position                                    = data.moleculeResidueOrder[moleculeId].size();
+    size_t position                                    = data.molecules.residueOrder[moleculeId].size();
     std::string name                                   = resId.getName();
     size_t residueId                                   = addResidue(data, moleculeId, position,
                                                                     {name, residueType(name), uint(std::stoi(resId.getNumber())),
@@ -165,7 +165,7 @@ size_t pdb::readResidue(PdbData& data, size_t moleculeId, std::stringstream& sin
 size_t pdb::readResidue(PdbData& data, size_t moleculeId, const std::string& name, cds::ResidueType type,
                         bool hasTerCard, size_t referenceResidue)
 {
-    size_t position = codeUtils::indexOf(data.moleculeResidueOrder[moleculeId], referenceResidue) + 1;
+    size_t position = codeUtils::indexOf(data.molecules.residueOrder[moleculeId], referenceResidue) + 1;
     return addResidue(data, moleculeId, position,
                       {name, type, data.residues.numbers[referenceResidue] + 1,
                        data.residues.insertionCodes[referenceResidue], data.residues.chainIds[referenceResidue],

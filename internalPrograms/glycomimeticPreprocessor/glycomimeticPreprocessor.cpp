@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
         return codeUtils::vectorFilter(isAlive, residueIds);
     };
     std::vector<std::vector<size_t>> residueOrder = codeUtils::vectorMap(
-        onlyAliveResidues, codeUtils::indicesToValues(pdbFile.data.moleculeResidueOrder, firstAssemblyMoleculeIds));
+        onlyAliveResidues, codeUtils::indicesToValues(pdbFile.data.molecules.residueOrder, firstAssemblyMoleculeIds));
     pdb::Write(pdbFile.data, residueOrder, outFileStream);
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();

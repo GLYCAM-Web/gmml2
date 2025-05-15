@@ -54,12 +54,24 @@ namespace pdb
         std::vector<bool> hasTerCard;
     };
 
+    struct MoleculeData
+    {
+        std::vector<std::string> chainIds;
+        std::vector<std::vector<size_t>> residueOrder;
+    };
+
+    struct AssemblyData
+    {
+        std::vector<uint> numbers;
+    };
+
     struct PdbData
     {
         AtomData atoms;
         ResidueData residues;
+        MoleculeData molecules;
+        AssemblyData assemblies;
         graph::Database atomGraph;
-        std::vector<std::vector<size_t>> moleculeResidueOrder;
         assembly::Indices indices;
         cds::GraphObjects objects;
     };

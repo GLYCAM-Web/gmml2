@@ -175,7 +175,7 @@ void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
         // insert the new Atom before it, and get passed back the position of the newly created atom, so I can use that
         // when creating the next one and so on. With ACE we want to insert before the residue, so I'm finding the
         // residue before here:
-        const std::vector<size_t>& order = data.moleculeResidueOrder[moleculeId];
+        const std::vector<size_t>& order = data.molecules.residueOrder[moleculeId];
         size_t position                  = codeUtils::indexOf(order, refResidueId) - 1;
         size_t residueId =
             readResidue(data, moleculeId, "ACE", cds::ResidueType::ProteinCappingGroup, false, order[position]);
@@ -257,7 +257,7 @@ size_t pdb::getNTerminal(const PdbData& data, size_t moleculeId)
     {
         return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]);
     };
-    std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.moleculeResidueOrder[moleculeId]);
+    std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.molecules.residueOrder[moleculeId]);
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
@@ -272,7 +272,7 @@ size_t pdb::getCTerminal(const PdbData& data, size_t moleculeId)
     {
         return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]);
     };
-    std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.moleculeResidueOrder[moleculeId]);
+    std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.molecules.residueOrder[moleculeId]);
     if (proteinResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::WAR, "Looked for terminal residue of chain with protein residues.");
