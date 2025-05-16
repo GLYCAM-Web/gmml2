@@ -5,6 +5,7 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 

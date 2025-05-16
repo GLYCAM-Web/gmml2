@@ -3,6 +3,7 @@
 
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
