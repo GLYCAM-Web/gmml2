@@ -64,7 +64,7 @@ namespace
         std::vector<std::vector<size_t>> result(data.indices.residueCount, std::vector<size_t>());
         for (size_t n = 0; n < data.indices.atomCount; n++)
         {
-            if (data.atomGraph.nodeAlive[n])
+            if (data.indices.atomAlive[n])
             {
                 result[data.indices.atomResidue[n]].push_back(n);
             }

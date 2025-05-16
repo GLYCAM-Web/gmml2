@@ -38,7 +38,8 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Residue*> inputResidues)
     }
 
     return {
-        {atoms.size(), residues.size(), 1, 1, atomResidue, residueMolecule, moleculeAssembly},
+        {atoms.size(), residues.size(), 1, 1, std::vector<bool>(true, atoms.size()), atomResidue, residueMolecule,
+         moleculeAssembly},
         {atoms, residues, {}, {}}
     };
 }
@@ -74,7 +75,8 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Molecule*> molecules)
     }
 
     return {
-        {atoms.size(), residues.size(), molecules.size(), 1, atomResidue, residueMolecule, moleculeAssembly},
+        {atoms.size(), residues.size(), molecules.size(), 1, std::vector<bool>(atoms.size(), true), atomResidue,
+         residueMolecule, moleculeAssembly},
         {atoms, residues, molecules, {}}
     };
 }
@@ -117,8 +119,8 @@ cds::GraphIndexData cds::toIndexData(const std::vector<Assembly*> assemblies)
     }
 
     return {
-        {atoms.size(), residues.size(), molecules.size(), assemblies.size(), atomResidue, residueMolecule,
-         moleculeAssembly},
+        {atoms.size(), residues.size(), molecules.size(), assemblies.size(), std::vector<bool>(atoms.size(), true),
+         atomResidue, residueMolecule, moleculeAssembly},
         {atoms, residues, molecules, assemblies}
     };
 }
@@ -168,8 +170,8 @@ assembly::Graph cds::createAssemblyGraph(const assembly::Indices& indices, const
     graph::Graph assemblyGraph =
         graph::quotient(moleculeData, codeUtils::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
     return assembly::Graph {
-        {indices.atomCount, indices.residueCount, indices.moleculeCount, indices.assemblyCount, indices.atomResidue,
-         indices.residueMolecule, indices.moleculeAssembly},
+        {indices.atomCount, indices.residueCount, indices.moleculeCount, indices.assemblyCount, atomGraphData.nodeAlive,
+         indices.atomResidue, indices.residueMolecule, indices.moleculeAssembly},
         atomGraph,
         residueGraph,
         moleculeGraph,

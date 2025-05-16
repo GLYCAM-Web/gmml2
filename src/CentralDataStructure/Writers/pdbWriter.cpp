@@ -63,7 +63,7 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const pdb::PdbData& data,
 {
     std::function<bool(const size_t&)> atomAlive = [&](size_t n)
     {
-        return data.atomGraph.nodeAlive[n];
+        return data.indices.atomAlive[n];
     };
     std::function<std::string(const size_t&)> elementString = [&](size_t n)
     {
@@ -98,8 +98,8 @@ void cds::writeTrajectoryToPdb(std::ostream& stream, const pdb::PdbData& data,
         stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
         for (size_t moleculeId = 0; moleculeId < data.indices.moleculeCount; moleculeId++)
         {
-            std::vector<size_t> residueIds = codeUtils::boolsToIndices(codeUtils::vectorAnd(
-                residueIncluded, codeUtils::vectorEquals(data.indices.residueMolecule, moleculeId)));
+            std::vector<size_t> residueIds = codeUtils::boolsToIndices(
+                codeUtils::vectorAnd(residueIncluded, isMoleculeResidue(data.indices, moleculeId)));
             if (residueIds.size() > 0)
             {
                 std::vector<cds::ResidueType> types = codeUtils::indicesToValues(data.residues.types, residueIds);

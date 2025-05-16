@@ -37,9 +37,7 @@ size_t pdb::residueSelector(const PdbData& data, const pdb::ResidueId& residueId
     {
         if (data.objects.assemblies[n]->getNumber() == modelNumber)
         {
-            std::vector<size_t> residueAssembly =
-                codeUtils::indicesToValues(data.indices.moleculeAssembly, data.indices.residueMolecule);
-            return residueSelector(data, codeUtils::indicesOfElement(residueAssembly, n), residueId);
+            return residueSelector(data, assemblyResidues(data.indices, n), residueId);
         }
     }
     return data.indices.residueCount;

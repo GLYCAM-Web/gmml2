@@ -221,9 +221,9 @@ namespace glycoproteinBuilder
             return type == MoleculeType::protein;
         };
         std::vector<MoleculeType> residueMoleculeTypes =
-            codeUtils::indicesToValues(moleculeTypes, graph.indices.residueMolecule);
+            codeUtils::indicesToValues(moleculeTypes, residueMolecules(graph.indices));
         std::vector<MoleculeType> atomMoleculeTypes =
-            codeUtils::indicesToValues(residueMoleculeTypes, graph.indices.atomResidue);
+            codeUtils::indicesToValues(residueMoleculeTypes, atomResidues(graph.indices));
 
         std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
         {
@@ -292,7 +292,7 @@ namespace glycoproteinBuilder
         cds::MoleculeOverlapWeight defaultOverlapWeight;
         defaultOverlapWeight.within.reserve(molecules.size());
         defaultOverlapWeight.between.reserve(molecules.size());
-        for (size_t molecule : graphData.indices.residueMolecule)
+        for (size_t molecule : residueMolecules(graphData.indices))
         {
             bool isProtein = moleculeTypes[molecule] == MoleculeType::protein;
             defaultOverlapWeight.within.push_back(isProtein ? std::pow(overlapWeight.protein, 2.0)

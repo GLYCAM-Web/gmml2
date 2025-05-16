@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
     std::function<cds::Coordinate(const size_t&)> residueMean = [&](size_t n)
     {
-        std::vector<size_t> atomIds = pdb::residueAtoms(pdbFileTraj.data, n);
+        std::vector<size_t> atomIds = residueAtoms(pdbFileTraj.data.indices, n);
         return cds::coordinateMean(codeUtils::indicesToValues(pdbFileTraj.data.atoms.coordinates, atomIds));
     };
     std::vector<cds::Coordinate> residueMeans =

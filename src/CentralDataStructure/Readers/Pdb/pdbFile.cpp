@@ -239,7 +239,7 @@ void PdbFile::Write(std::ostream& out)
         {
             out << "MODEL " << std::right << std::setw(4) << data.assemblies.numbers[n] << "\n";
         }
-        std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(data.indices.moleculeAssembly, n);
+        std::vector<size_t> moleculeIds = assemblyMolecules(data.indices, n);
         pdb::Write(data, codeUtils::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
         if (data.indices.assemblyCount > 1)
         {

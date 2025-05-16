@@ -14,8 +14,6 @@ namespace pdb
     cds::Coordinate coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z);
     void expandLine(std::string& line, int length);
     void addBond(PdbData& data, size_t atom1, size_t atom2);
-    std::vector<size_t> residueAtoms(const PdbData& data, size_t residueId);
-    std::vector<size_t> assemblyAtoms(const PdbData& data, size_t assemblyId);
     size_t findResidueAtom(const PdbData& data, size_t residueId, const std::string& atomName);
 }; // namespace pdb
 #endif

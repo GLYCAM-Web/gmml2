@@ -33,12 +33,12 @@ namespace
 
     void bondHydrogenAtomsToClosestNonHydrogen(pdb::PdbData& data, size_t residueId)
     {
-        std::vector<bool> isResidueAtom = codeUtils::vectorAnd(
-            data.atomGraph.nodeAlive, codeUtils::vectorEquals(data.indices.atomResidue, residueId));
-        std::vector<bool> isHydrogen      = codeUtils::vectorEquals(data.atoms.elements, MolecularMetadata::Element::H);
-        std::vector<size_t> hydrogenAtoms = codeUtils::boolsToIndices(codeUtils::vectorAnd(isResidueAtom, isHydrogen));
+        std::vector<bool> isResidueAtom = assembly::isResidueAtom(data.indices, residueId);
+        std::vector<bool> isHydrogen    = codeUtils::vectorEquals(data.atoms.elements, MolecularMetadata::Element::H);
+        std::vector<size_t> hydrogenAtoms =
+            indicesOfLivingAtoms(data.indices, codeUtils::vectorAnd(isResidueAtom, isHydrogen));
         std::vector<size_t> nonHydrogenAtoms =
-            codeUtils::boolsToIndices(codeUtils::vectorAnd(isResidueAtom, codeUtils::vectorNot(isHydrogen)));
+            indicesOfLivingAtoms(data.indices, codeUtils::vectorAnd(isResidueAtom, codeUtils::vectorNot(isHydrogen)));
         if (nonHydrogenAtoms.empty())
         {
             return;

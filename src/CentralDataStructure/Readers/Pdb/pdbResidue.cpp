@@ -56,6 +56,7 @@ size_t pdb::addPdbAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
     size_t atomId   = data.indices.atomCount;
     data.objects.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
+    data.indices.atomAlive.push_back(true);
     data.indices.atomCount++;
     data.atoms.recordNames.push_back(entry.recordName);
     data.atoms.names.push_back(entry.name);
@@ -96,6 +97,7 @@ void pdb::deletePdbAtom(PdbData& data, size_t residueId, size_t atomId)
         gmml::log(__LINE__, __FILE__, gmml::INF,
                   "Deleting atom with id: " + data.atoms.names[atomId] + "_" +
                       std::to_string(data.atoms.numbers[atomId]));
+        data.indices.atomAlive[atomId]   = false;
         data.atomGraph.nodeAlive[atomId] = false;
         cds::Atom* atom                  = data.objects.atoms[atomId];
         data.objects.residues[residueId]->deleteAtom(atom);

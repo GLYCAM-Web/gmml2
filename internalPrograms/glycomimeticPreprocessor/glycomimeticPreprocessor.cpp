@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
     {
         for (size_t n = 0; n < pdbFile.data.indices.residueCount; n++)
         {
-            auto atomIds = codeUtils::indicesOfElement(pdbFile.data.indices.atomResidue, n);
+            auto atomIds = residueAtoms(pdbFile.data.indices, n);
             auto atoms   = pdbFile.data.objects.residues[n]->getAtoms();
             if (atomIds.size() != atoms.size())
             {
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
         cds::Residue* residue = pdbFile.data.objects.residues[residueId];
         if (residue->GetType() != cds::ResidueType::Protein)
         {
-            std::vector<size_t> atomIds = codeUtils::indicesOfElement(graphIndices.atomResidue, residueId);
+            std::vector<size_t> atomIds = residueAtoms(graphIndices, residueId);
             for (size_t atomId : atomIds)
             {
                 pdbFile.data.atoms.recordNames[atomId] = "ATOM";

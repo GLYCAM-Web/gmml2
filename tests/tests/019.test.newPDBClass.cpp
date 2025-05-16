@@ -30,16 +30,10 @@ int main(int argc, char* argv[])
     std::cout << "Preprocessing\n";
     const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
     pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
-    const std::vector<size_t>& moleculeAssembly            = pdbFile.data.indices.moleculeAssembly;
-    const std::vector<size_t>& residueAssembly =
-        codeUtils::indicesToValues(moleculeAssembly, pdbFile.data.indices.residueMolecule);
-    const std::vector<size_t>& atomAssembly =
-        codeUtils::indicesToValues(residueAssembly, pdbFile.data.indices.atomResidue);
-    std::vector<cds::Assembly*> assemblies = pdbFile.getAssemblies();
+    std::vector<cds::Assembly*> assemblies                 = pdbFile.getAssemblies();
     for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
     {
-        std::vector<bool> thisAssemblyAtoms = codeUtils::vectorEquals(atomAssembly, assemblyId);
-        std::vector<size_t> atomIds         = pdb::assemblyAtoms(pdbFile.data, assemblyId);
+        std::vector<size_t> atomIds = assemblyAtoms(pdbFile.data.indices, assemblyId);
         std::cout << "Bonding atoms by distance for assembly" << std::endl;
         pdb::bondAtomsByDistance(pdbFile.data, atomIds);
         // OFF molecule
