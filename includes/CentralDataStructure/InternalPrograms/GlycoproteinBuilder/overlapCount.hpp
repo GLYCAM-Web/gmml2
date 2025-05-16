@@ -12,11 +12,9 @@
 namespace glycoproteinBuilder
 {
     std::vector<cds::Overlap> totalOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                            const assembly::Selection& selection, const assembly::Bounds& bounds,
-                                            const cds::MoleculeOverlapWeight& weight);
+                                            const assembly::Selection& selection, const assembly::Bounds& bounds);
     cds::Overlap localOverlap(const assembly::Graph& graph, const AssemblyData& data,
-                              const assembly::Selection& selection, const assembly::Bounds& bounds,
-                              const cds::MoleculeOverlapWeight& weight, size_t glycanId);
+                              const assembly::Selection& selection, const assembly::Bounds& bounds, size_t glycanId);
     std::vector<size_t> determineSitesWithOverlap(double threshold, const std::vector<size_t>& movedSites,
                                                   const assembly::Graph& graph, const AssemblyData& data,
                                                   const assembly::Selection& selection, const assembly::Bounds& bounds);

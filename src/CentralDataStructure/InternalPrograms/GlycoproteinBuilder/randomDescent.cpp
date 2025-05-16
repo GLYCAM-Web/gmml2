@@ -51,7 +51,7 @@ namespace glycoproteinBuilder
                 {
                     return cds::overlapVectorSum(cds::overlapsBetweenSelections(
                         data.potentialTable, data.overlapTolerance, graph, bounds, moving, nonMoving,
-                        data.atoms.elements, data.defaultWeight, data.residueEdges.atomsCloseToEdge));
+                        data.atoms.elements, data.residueEdges.atomsCloseToEdge));
                 };
                 cds::OverlapState best = cds::wiggleUsingRotamers(
                     searchOverlap, settings.angles, data.dihedralAngleTable, graph, mutableData.bounds, movingAtoms,
@@ -112,10 +112,9 @@ namespace glycoproteinBuilder
 
                     auto searchOverlap = [&](const assembly::Bounds& bounds)
                     {
-                        return cds::overlapVectorSum(
-                            cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds,
-                                                           dihedralMoving[n], dihedralNonMoving[n], data.atoms.elements,
-                                                           data.defaultWeight, data.residueEdges.atomsCloseToEdge));
+                        return cds::overlapVectorSum(cds::overlapsBetweenSelections(
+                            data.potentialTable, data.overlapTolerance, graph, bounds, dihedralMoving[n],
+                            dihedralNonMoving[n], data.atoms.elements, data.residueEdges.atomsCloseToEdge));
                     };
                     cds::OverlapState best = cds::wiggleUsingRotamers(
                         searchOverlap, settings.angles, data.dihedralAngleTable, graph, mutableData.bounds, movingAtoms,
@@ -124,7 +123,7 @@ namespace glycoproteinBuilder
                 }
                 std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(
                     data.potentialTable, data.overlapTolerance, graph, mutableData.bounds, dihedralMoving[0],
-                    dihedralNonMoving[0], data.atoms.elements, data.defaultWeight, data.residueEdges.atomsCloseToEdge);
+                    dihedralNonMoving[0], data.atoms.elements, data.residueEdges.atomsCloseToEdge);
                 bestResults[iteration] = {
                     cds::overlapVectorSum(overlap), {0.0, 0.0, metadataIndex}
                 };
@@ -218,8 +217,7 @@ namespace glycoproteinBuilder
             for (auto& glycanId : codeUtils::shuffleVector(rng, sitesWithOverlap))
             {
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
-                cds::Overlap previousOverlap =
-                    localOverlap(graph, data, eachSelection, mutableData.bounds, data.defaultWeight, glycanId);
+                cds::Overlap previousOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
                 std::vector<cds::GlycanShapePreference> currentPreferences = glycositePreferences;
                 currentPreferences[glycanId] = randomizeShape(rng, settings, data, mutableData, glycanId);
                 cds::GlycanShapePreference& glycanPreferences = currentPreferences[glycanId];
@@ -230,10 +228,9 @@ namespace glycoproteinBuilder
                 }
                 wiggleGlycan(graph, data, mainSelection, settings, glycanPreferences, mutableData, glycanId);
                 adjustSidechains(rng, settings, wiggleGlycan, graph, data, mutableData, currentPreferences, {glycanId});
-                cds::Overlap newOverlap =
-                    localOverlap(graph, data, eachSelection, mutableData.bounds, data.defaultWeight, glycanId);
-                cds::Overlap diff = newOverlap + (previousOverlap * -1);
-                bool isWorse      = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+                cds::Overlap newOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
+                cds::Overlap diff       = newOverlap + (previousOverlap * -1);
+                bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
                 if (isWorse)
                 {
                     mutableData = lastShape;

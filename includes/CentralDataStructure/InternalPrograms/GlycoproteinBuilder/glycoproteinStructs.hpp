@@ -23,13 +23,6 @@ namespace glycoproteinBuilder
         glycan
     };
 
-    struct OverlapMultiplier
-    {
-        double protein;
-        double glycan;
-        double self;
-    };
-
     struct AtomData
     {
         std::vector<std::string> names;
@@ -130,8 +123,6 @@ namespace glycoproteinBuilder
         AssemblyIndices indices;
         GlycamMetadata::DihedralAngleDataTable dihedralAngleTable;
         MolecularMetadata::PotentialTable potentialTable;
-        cds::MoleculeOverlapWeight defaultWeight;
-        cds::MoleculeOverlapWeight equalWeight;
         double overlapTolerance;
         double overlapRejectionThreshold;
     };

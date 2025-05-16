@@ -17,8 +17,7 @@ namespace glycoproteinBuilder
                                   const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
                                   const codeUtils::SparseVector<double>& elementRadii, const pdb::PdbData& pdbData,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
-                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
-                                  const OverlapMultiplier overlapWeight, double overlapTolerance,
+                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans, double overlapTolerance,
                                   double overlapRejectionThreshold, bool excludeHydrogen);
 } // namespace glycoproteinBuilder
 #endif

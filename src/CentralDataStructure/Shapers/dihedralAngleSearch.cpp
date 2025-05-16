@@ -155,9 +155,7 @@ assembly::Bounds cds::simpleWiggleCurrentRotamers(
 {
     assembly::Bounds bounds                              = initialBounds;
     std::vector<MolecularMetadata::Element> atomElements = cds::atomElements(objects.atoms);
-    MoleculeOverlapWeight overlapWeight {std::vector<double>(graph.indices.moleculeCount, 1.0),
-                                         std::vector<double>(graph.indices.moleculeCount, 1.0)};
-    auto dihedralCoords = [&](const RotatableDihedral& dihedral)
+    auto dihedralCoords                                  = [&](const RotatableDihedral& dihedral)
     {
         auto coord = [&](size_t n)
         {
@@ -182,8 +180,7 @@ assembly::Bounds cds::simpleWiggleCurrentRotamers(
         auto searchOverlap = [&](const assembly::Bounds& bounds)
         {
             return overlapVectorSum(overlapsBetweenSelections(potential, overlapTolerance, graph, bounds, selectionA,
-                                                              selectionB, atomElements, overlapWeight,
-                                                              residueAtomsCloseToEdge));
+                                                              selectionB, atomElements, residueAtomsCloseToEdge));
         };
         OverlapState best = wiggleUsingRotamers(searchOverlap, searchAngles, metadataTable, graph, bounds, movingAtoms,
                                                 coordinates, index, metadata[n], preference[n]);

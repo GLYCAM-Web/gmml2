@@ -193,19 +193,13 @@ int main(int argc, char* argv[])
             parameterManager, elementRadii, dihedralAngleDataTable, pdbFile.data, glycoprotein, glycosites);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Initialization of Glycoprotein builder complete!");
 
-        double selfWeight    = 1.0;
-        double proteinWeight = 1.0;
-        double glycanWeight  = 1.0;
-        glycoproteinBuilder::OverlapMultiplier overlapMultiplier {proteinWeight, glycanWeight, selfWeight};
-
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
-        glycoproteinBuilder::GlycoproteinAssembly assembly =
-            addSidechainRotamers(aminoAcidTable, sidechainRotamers,
-                                 glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                                     aminoAcidTable, dihedralAngleDataTable, elementRadii, pdbFile.data, molecules,
-                                     glycosites, glycans, overlapMultiplier, settings.overlapTolerance,
-                                     settings.overlapRejectionThreshold, settings.ignoreHydrogen));
+        glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
+            aminoAcidTable, sidechainRotamers,
+            glycoproteinBuilder::toGlycoproteinAssemblyStructs(
+                aminoAcidTable, dihedralAngleDataTable, elementRadii, pdbFile.data, molecules, glycosites, glycans,
+                settings.overlapTolerance, settings.overlapRejectionThreshold, settings.ignoreHydrogen));
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck =

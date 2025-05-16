@@ -29,8 +29,7 @@ namespace glycoproteinBuilder
                                   const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
                                   const codeUtils::SparseVector<double>& elementRadii, const pdb::PdbData& pdbData,
                                   std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
-                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
-                                  const OverlapMultiplier overlapWeight, double overlapTolerance,
+                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans, double overlapTolerance,
                                   double overlapRejectionThreshold, bool excludeHydrogen)
     {
         using MolecularMetadata::Element;
@@ -287,19 +286,6 @@ namespace glycoproteinBuilder
 
         AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages};
 
-        cds::MoleculeOverlapWeight equalOverlapWeight {std::vector<double>(molecules.size(), 1.0),
-                                                       std::vector<double>(molecules.size(), 1.0)};
-        cds::MoleculeOverlapWeight defaultOverlapWeight;
-        defaultOverlapWeight.within.reserve(molecules.size());
-        defaultOverlapWeight.between.reserve(molecules.size());
-        for (size_t molecule : residueMolecules(graphData.indices))
-        {
-            bool isProtein = moleculeTypes[molecule] == MoleculeType::protein;
-            defaultOverlapWeight.within.push_back(isProtein ? std::pow(overlapWeight.protein, 2.0)
-                                                            : overlapWeight.self);
-            defaultOverlapWeight.between.push_back(isProtein ? overlapWeight.protein : overlapWeight.glycan);
-        }
-
         AssemblyData data {atomData,
                            residueData,
                            moleculeData,
@@ -310,8 +296,6 @@ namespace glycoproteinBuilder
                            indices,
                            dihedralAngleDataTable,
                            MolecularMetadata::potentialTable(),
-                           defaultOverlapWeight,
-                           equalOverlapWeight,
                            overlapTolerance,
                            overlapRejectionThreshold};
 
