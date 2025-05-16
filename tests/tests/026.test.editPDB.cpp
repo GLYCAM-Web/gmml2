@@ -1,9 +1,9 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/files.hpp"
 
@@ -39,29 +39,38 @@ int main(int argc, char* argv[])
     {                                           // Every ligand residue gets the same residue number as the first one.
         pdbFile.data.residues.names[ligandResidue]   = firstName;
         pdbFile.data.residues.numbers[ligandResidue] = firstNumber;
-        cds::Residue* residue                        = pdbFile.data.objects.residues[ligandResidue];
-        residue->setName(firstName);
-        residue->setNumber(firstNumber);
     }
-    pdbFile.Write("./026.outputPdbFile.pdb");
+    pdbFile.Write("026.outputPdbFile.pdb");
     // ************************************************************************ //
     // Separate thing showing how to read/write PDB files as "trajectories/frames"
     pdb::PdbFile pdbFileTraj(argv[1], pdb::InputType::modelsAsCoordinates);
-    std::vector<cds::Residue*> myResidues = pdb::getResidues(pdbFileTraj.getAssemblies());
+
+    std::function<cds::Coordinate(const size_t&)> residueMean = [&](size_t n)
+    {
+        std::vector<size_t> atomIds = pdb::residueAtoms(pdbFileTraj.data, n);
+        return cds::coordinateMean(codeUtils::indicesToValues(pdbFileTraj.data.atoms.coordinates, atomIds));
+    };
+    std::vector<cds::Coordinate> residueMeans =
+        codeUtils::vectorMap(residueMean, codeUtils::indexVector(pdbFileTraj.data.indices.residueCount));
     // somehow you specify number in inputs. e.g. A_405 chain A, residue 405.
-    std::vector<uint> residueNumbers      = cds::residueNumbers(myResidues);
-    size_t index                          = codeUtils::indexOf(residueNumbers, uint(5));
-    cds::Residue* queryResidue            = myResidues[index];
-    double distance                       = 12.345; // inputs
-    std::vector<cds::Residue*> selectedResidues =
-        cdsSelections::selectResiduesWithinDistanceN(myResidues, queryResidue, distance);
+    size_t residueIndex = codeUtils::indexOf(pdbFileTraj.data.residues.numbers, uint(5));
+    double distance     = 12.345; // inputs
+
+    std::vector<size_t> selectedResidues;
+    for (size_t n = 0; n < pdbFileTraj.data.indices.residueCount; n++)
+    {
+        if (cds::withinDistance(distance, residueMeans[residueIndex], residueMeans[n]))
+        {
+            selectedResidues.push_back(n);
+        }
+    }
+
     std::cout << "Found " << selectedResidues.size() << " residues\n";
-    cds::Assembly newAssembly(selectedResidues);
-    const std::string outName = "026.outputSelection.pdb";
-    codeUtils::writeToFile(outName,
+    pdbFileTraj.data.indices.residueMolecule = std::vector<size_t>(pdbFileTraj.data.indices.residueCount, 0);
+    codeUtils::writeToFile("026.outputSelection.pdb",
                            [&](std::ostream& stream)
                            {
-                               cds::writeTrajectoryToPdb(stream, pdbFileTraj.data, newAssembly.getMolecules());
+                               cds::writeTrajectoryToPdb(stream, pdbFileTraj.data, selectedResidues);
                            });
     return 0;
 }

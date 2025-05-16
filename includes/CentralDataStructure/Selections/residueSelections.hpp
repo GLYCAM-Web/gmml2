@@ -15,7 +15,5 @@ namespace cdsSelections
     std::vector<Residue*> selectResiduesByType(std::vector<Residue*> inputResidues,
                                                std::vector<cds::ResidueType> queryTypes, const bool invert = false);
     void FindConnectedResidues(std::vector<Residue*>& visitedList, Residue* current);
-    std::vector<Residue*> selectResiduesWithinDistanceN(std::vector<Residue*> inputResidues, Residue* queryResidue,
-                                                        double n);
 } // namespace cdsSelections
 #endif

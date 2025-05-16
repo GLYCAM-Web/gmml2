@@ -44,18 +44,3 @@ void cdsSelections::FindConnectedResidues(std::vector<Residue*>& visitedList, Re
     }
     return;
 }
-
-std::vector<Residue*> cdsSelections::selectResiduesWithinDistanceN(std::vector<Residue*> inputResidues,
-                                                                   Residue* queryResidue, double queryDistance)
-{
-    std::vector<Residue*> foundResidues;
-    cds::Coordinate queryCenter = cds::coordinateMean(cds::atomCoordinates(queryResidue->getAtoms()));
-    for (auto& inputRes : inputResidues)
-    {
-        if (withinDistance(queryDistance, queryCenter, cds::coordinateMean(cds::atomCoordinates(inputRes->getAtoms()))))
-        {
-            foundResidues.push_back(inputRes);
-        }
-    }
-    return foundResidues;
-}
