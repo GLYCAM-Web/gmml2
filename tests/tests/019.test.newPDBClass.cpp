@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
@@ -38,10 +39,9 @@ int main(int argc, char* argv[])
     for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
     {
         std::vector<bool> thisAssemblyAtoms = codeUtils::vectorEquals(atomAssembly, assemblyId);
-        std::vector<size_t> indices =
-            codeUtils::boolsToIndices(codeUtils::vectorAnd(thisAssemblyAtoms, pdbFile.data.atomGraph.nodeAlive));
+        std::vector<size_t> atomIds         = pdb::assemblyAtoms(pdbFile.data, assemblyId);
         std::cout << "Bonding atoms by distance for assembly" << std::endl;
-        pdb::bondAtomsByDistance(pdbFile.data, indices);
+        pdb::bondAtomsByDistance(pdbFile.data, atomIds);
         // OFF molecule
         try
         {
