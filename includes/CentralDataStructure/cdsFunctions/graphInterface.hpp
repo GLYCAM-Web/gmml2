@@ -36,8 +36,7 @@ namespace cds
     assembly::Graph createAssemblyGraph(const assembly::Indices& indices, const graph::Database& atomGraphData);
     assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& data);
     assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& data);
-    assembly::Bounds toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii, const GraphIndexData& data,
-                                      const assembly::Graph& graph);
+    assembly::Bounds toAssemblyBounds(const assembly::Graph& graph, const std::vector<Sphere>& atomBounds);
 } // namespace cds
 
 #endif

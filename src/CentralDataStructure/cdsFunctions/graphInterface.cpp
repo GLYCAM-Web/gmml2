@@ -191,18 +191,16 @@ assembly::Graph cds::createVisibleAssemblyGraph(const GraphIndexData& data)
     return createAssemblyGraph(data.indices, atomGraphData);
 }
 
-assembly::Bounds cds::toAssemblyBounds(const codeUtils::SparseVector<double>& elementRadii, const GraphIndexData& data,
-                                       const assembly::Graph& graph)
+assembly::Bounds cds::toAssemblyBounds(const assembly::Graph& graph, const std::vector<Sphere>& atomBounds)
 {
-    std::vector<Sphere> atomBounds = atomCoordinatesWithRadii(elementRadii, data.objects.atoms);
-    size_t residueCount            = data.indices.residueCount;
+    size_t residueCount = graph.indices.residueCount;
     std::vector<Sphere> residueBounds;
     residueBounds.reserve(residueCount);
     for (size_t n = 0; n < residueCount; n++)
     {
         residueBounds.push_back(boundingSphere(codeUtils::indicesToValues(atomBounds, residueAtoms(graph, n))));
     }
-    size_t moleculeCount = data.indices.moleculeCount;
+    size_t moleculeCount = graph.indices.moleculeCount;
     std::vector<Sphere> moleculeBounds;
     moleculeBounds.reserve(moleculeCount);
     for (size_t n = 0; n < moleculeCount; n++)

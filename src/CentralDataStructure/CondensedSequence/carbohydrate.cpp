@@ -319,7 +319,8 @@ namespace
         std::vector<bool> reachable =
             graph::reachableNodes(graph.residues, std::vector<bool>(graph.indices.residueCount, false), residueIndex);
         const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
-        const assembly::Bounds bounds       = toAssemblyBounds(elementRadii, graphData, graph);
+        const assembly::Bounds bounds =
+            toAssemblyBounds(graph, cds::atomCoordinatesWithRadii(elementRadii, graphData.objects.atoms));
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
@@ -534,7 +535,8 @@ void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elemen
     const cds::GraphIndexData graphData = cds::toIndexData({this});
     const assembly::Graph graph         = cds::createCompleteAssemblyGraph(graphData);
     const assembly::Selection selection = assembly::selectAll(graph);
-    assembly::Bounds bounds             = cds::toAssemblyBounds(elementRadii, graphData, graph);
+    assembly::Bounds bounds =
+        toAssemblyBounds(graph, cds::atomCoordinatesWithRadii(elementRadii, graphData.objects.atoms));
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     // wiggle twice for nicer structures
     for (size_t n = 0; n < 2; n++)
