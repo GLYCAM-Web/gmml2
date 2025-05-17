@@ -33,6 +33,7 @@ namespace assembly
     std::vector<bool> isAssemblyMolecule(const Indices& indices, size_t assemblyId);
     std::vector<size_t> residueAtoms(const Indices& indices, size_t residueId);
     std::vector<size_t> moleculeAtoms(const Indices& indices, size_t moleculeId);
+    std::vector<size_t> moleculeResidues(const Indices& indices, size_t moleculeId);
     std::vector<size_t> assemblyAtoms(const Indices& indices, size_t assemblyId);
     std::vector<size_t> assemblyResidues(const Indices& indices, size_t assemblyId);
     std::vector<size_t> assemblyMolecules(const Indices& indices, size_t assemblyId);

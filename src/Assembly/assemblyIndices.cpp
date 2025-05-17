@@ -80,6 +80,11 @@ namespace assembly
         return indicesOfLivingAtoms(indices, isMoleculeAtom(indices, moleculeId));
     }
 
+    std::vector<size_t> moleculeResidues(const Indices& indices, size_t moleculeId)
+    {
+        return codeUtils::boolsToIndices(isMoleculeResidue(indices, moleculeId));
+    }
+
     std::vector<size_t> assemblyAtoms(const Indices& indices, size_t assemblyId)
     {
         return indicesOfLivingAtoms(indices, isAssemblyAtom(indices, assemblyId));
