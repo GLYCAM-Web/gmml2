@@ -133,10 +133,16 @@ namespace MolecularMetadata
 
     typedef std::vector<std::pair<Element, int>> ChemicalFormula;
 
+    struct PotentialFactor
+    {
+        double epsilon;
+        double sigma;
+    };
+
     struct PotentialTable
     {
-        codeUtils::SparseVector<double> epsilon;
-        codeUtils::SparseVector<double> sigma;
+        std::vector<size_t> elementIndex;
+        std::vector<std::vector<PotentialFactor>> factors;
     };
 
     ChemicalFormula toFormula(const std::vector<Element>& elements);
@@ -144,6 +150,7 @@ namespace MolecularMetadata
     ChemicalFormula formulaSum(const std::vector<ChemicalFormula>& formulas);
     std::string toString(const ChemicalFormula& formula);
     Element toElement(const std::string& str);
+    std::vector<bool> foundElements(const std::vector<Element>& elements);
     const std::string& elementName(Element element);
     const codeUtils::SparseVector<double>& amberVanDerWaalsRadii();
     const codeUtils::SparseVector<double>& chimeraVanDerWaalsRadii();
@@ -151,9 +158,9 @@ namespace MolecularMetadata
     bool isHeavyElement(Element element);
     const codeUtils::SparseVector<double>& elementMass();
     double totalMass(const codeUtils::SparseVector<double>& mass, const ChemicalFormula& formula);
-    const PotentialTable& potentialTable();
-    void validateElementsInPotentialTable(const PotentialTable& potential, const std::vector<Element>& vec);
-    double potentialWeight(const PotentialTable& table, Element a, Element b);
+    PotentialTable potentialTable(const codeUtils::SparseVector<double>& radii, const std::vector<bool>& usedElements);
+    PotentialFactor potentialFactor(const PotentialTable& table, Element a, Element b);
+    double lennardJonesPotential(const PotentialFactor& factor, double squaredDistance);
     Element findElementAtomicNumber(const std::string& queryElement);
 } // namespace MolecularMetadata
 #endif

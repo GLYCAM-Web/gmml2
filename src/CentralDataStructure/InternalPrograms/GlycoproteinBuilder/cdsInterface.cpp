@@ -130,8 +130,7 @@ namespace glycoproteinBuilder
         std::vector<std::string> atomNames           = cds::atomNames(atoms);
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(elementRadii, atoms);
         std::vector<bool> partOfMovableSidechain(atoms.size(), false);
-        std::vector<Element> atomElements = cds::atomElements(atoms);
-        MolecularMetadata::validateElementsInPotentialTable(MolecularMetadata::potentialTable(), atomElements);
+        std::vector<Element> atomElements              = cds::atomElements(atoms);
         std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
         {
             return atomElements[n] != Element::H;
@@ -288,6 +287,8 @@ namespace glycoproteinBuilder
 
         AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages};
 
+        std::vector<bool> foundElements = MolecularMetadata::foundElements(atomElements);
+
         AssemblyData data {atomData,
                            residueData,
                            moleculeData,
@@ -297,7 +298,7 @@ namespace glycoproteinBuilder
                            residueLinkageData,
                            indices,
                            dihedralAngleDataTable,
-                           MolecularMetadata::potentialTable(),
+                           MolecularMetadata::potentialTable(elementRadii, foundElements),
                            overlapTolerance,
                            overlapRejectionThreshold};
 

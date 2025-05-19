@@ -103,19 +103,22 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
 cds::Overlap cds::CountOverlappingAtoms(const codeUtils::SparseVector<double>& elementRadii, double overlapTolerance,
                                         const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
-    std::vector<Sphere> coordsA                       = atomCoordinatesWithRadii(elementRadii, atomsA);
-    std::vector<Sphere> coordsB                       = atomCoordinatesWithRadii(elementRadii, atomsB);
-    std::vector<MolecularMetadata::Element> elementsA = cds::atomElements(atomsA);
-    std::vector<MolecularMetadata::Element> elementsB = cds::atomElements(atomsB);
+    std::vector<Sphere> coordsA                            = atomCoordinatesWithRadii(elementRadii, atomsA);
+    std::vector<Sphere> coordsB                            = atomCoordinatesWithRadii(elementRadii, atomsB);
+    std::vector<MolecularMetadata::Element> elementsA      = cds::atomElements(atomsA);
+    std::vector<MolecularMetadata::Element> elementsB      = cds::atomElements(atomsB);
+    const MolecularMetadata::PotentialTable potentialTable = MolecularMetadata::potentialTable(
+        elementRadii,
+        codeUtils::vectorOr(MolecularMetadata::foundElements(elementsA), MolecularMetadata::foundElements(elementsB)));
 
     Overlap overlap {0, 0.0};
     for (size_t n = 0; n < atomsA.size(); n++)
     {
         for (size_t k = 0; k < atomsB.size(); k++)
         {
-            double scale =
-                MolecularMetadata::potentialWeight(MolecularMetadata::potentialTable(), elementsA[n], elementsB[k]);
-            overlap += overlapAmount(overlapTolerance, scale, coordsA[n], coordsB[k]);
+            MolecularMetadata::PotentialFactor factor =
+                MolecularMetadata::potentialFactor(potentialTable, elementsA[n], elementsB[k]);
+            overlap += overlapAmount(factor, overlapTolerance, coordsA[n], coordsB[k]);
         }
     }
     return overlap;
@@ -136,8 +139,9 @@ void cds::addResidueOverlaps(std::vector<Overlap>& result, const MolecularMetada
         for (size_t atomB : toCheck[1])
         {
             MolecularMetadata::Element elementB = atomElements[atomB];
-            double scale                        = MolecularMetadata::potentialWeight(potential, elementA, elementB);
-            Overlap overlap = overlapAmount(overlapTolerance, scale, bounds.atoms[atomA], bounds.atoms[atomB]);
+            MolecularMetadata::PotentialFactor factor =
+                MolecularMetadata::potentialFactor(potential, elementA, elementB);
+            Overlap overlap = overlapAmount(factor, overlapTolerance, bounds.atoms[atomA], bounds.atoms[atomB]);
             result[atomA]   += overlap;
             result[atomB]   += overlap;
         }
