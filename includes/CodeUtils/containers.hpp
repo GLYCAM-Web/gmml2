@@ -12,6 +12,7 @@ namespace codeUtils
 {
     std::string FindStringInStringMap(const std::string& s, const std::unordered_map<std::string, std::string>& sMap);
     std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
+    std::vector<bool> vectorOr(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
     std::vector<bool> vectorNot(const std::vector<bool>& vec);
     std::vector<size_t> offsetIndices(size_t offset, std::vector<size_t> indices);
     std::vector<bool> indicesToBools(size_t size, const std::vector<size_t>& indices);
