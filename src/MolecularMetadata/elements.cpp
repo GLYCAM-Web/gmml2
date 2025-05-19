@@ -4,6 +4,7 @@
 #include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
+#include <cmath>
 #include <functional>
 #include <vector>
 #include <map>
@@ -72,29 +73,16 @@ namespace
         codeUtils::indicesToBools(Element::ElementCount, {Element::C, Element::O, Element::N, Element::S, Element::P});
 
     std::vector<FlaggedDouble> lennardJonesEpsilons = withValues({
-        { Element::H, 4.47789},
-        { Element::C, 6.36953},
-        { Element::N, 9.75379},
-        { Element::O, 5.12647},
-        { Element::F, 1.60592},
-        { Element::P, 5.03050},
-        { Element::S, 4.36927},
-        {Element::Cl, 4.48328},
-        {Element::Br, 1.97063},
-        { Element::I, 1.53938}
-    });
-
-    std::vector<FlaggedDouble> lennardJonesSigmas = withValues({
-        { Element::H, 0.552357},
-        { Element::C, 1.354170},
-        { Element::N, 1.265080},
-        { Element::O, 1.175990},
-        { Element::F, 1.015620},
-        { Element::P, 1.906520},
-        { Element::S, 1.870890},
-        {Element::Cl, 1.817430},
-        {Element::Br, 2.138160},
-        { Element::I, 2.476700}
+        { Element::H, 0.0157},
+        { Element::C, 0.0860},
+        { Element::N, 0.1700},
+        { Element::O, 0.2100},
+        { Element::F, 0.0610},
+        { Element::P, 0.2000},
+        { Element::S, 0.2500},
+        {Element::Cl, 0.2650},
+        {Element::Br, 0.4200},
+        { Element::I, 0.5000}
     });
 
     std::vector<FlaggedDouble> mass = withValues({
@@ -132,11 +120,6 @@ namespace
             result[n] = vec[n].valid;
         }
         return result;
-    };
-
-    MolecularMetadata::PotentialTable defaultPotentialTable {
-        {values(lennardJonesEpsilons), bools(lennardJonesEpsilons)},
-        {  values(lennardJonesSigmas),   bools(lennardJonesSigmas)}
     };
 
     codeUtils::SparseVector<double> atomicMass       = {values(mass), bools(mass)};
@@ -231,6 +214,15 @@ MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
     return (it == elementNames.end()) ? Element::Unknown : Element(it - elementNames.begin());
 }
 
+std::vector<bool> MolecularMetadata::foundElements(const std::vector<Element>& elements)
+{
+    std::function<size_t(const Element&)> toIndex = [](Element e)
+    {
+        return size_t(e);
+    };
+    return codeUtils::indicesToBools(ElementCount, codeUtils::vectorMap(toIndex, elements));
+}
+
 const std::string& MolecularMetadata::elementName(Element element)
 {
     if (element >= elementNames.size())
@@ -280,35 +272,58 @@ double MolecularMetadata::totalMass(const codeUtils::SparseVector<double>& mass,
     return result;
 }
 
-const MolecularMetadata::PotentialTable& MolecularMetadata::potentialTable()
+MolecularMetadata::PotentialTable MolecularMetadata::potentialTable(const codeUtils::SparseVector<double>& radii,
+                                                                    const std::vector<bool>& usedElements)
 {
-    return defaultPotentialTable;
-}
-
-void MolecularMetadata::validateElementsInPotentialTable(const PotentialTable& potential,
-                                                         const std::vector<Element>& vec)
-{
-    for (Element a : vec)
+    std::vector<size_t> usedElementIndices = codeUtils::boolsToIndices(usedElements);
+    size_t usedElementCount                = usedElementIndices.size();
+    std::vector<size_t> indices(ElementCount, 0);
+    size_t index = 0;
+    for (size_t n : usedElementIndices)
     {
-        const std::string& name = elementNames[a];
-        if (!potential.epsilon.hasValue[a])
+        indices[n] = index;
+        index++;
+    }
+    const codeUtils::SparseVector<double>& epsilons = {values(lennardJonesEpsilons), bools(lennardJonesEpsilons)};
+    std::vector<std::vector<PotentialFactor>> factors(usedElementCount,
+                                                      std::vector<PotentialFactor>(usedElementCount, {0.0, 0.0}));
+    for (size_t n = 0; n < usedElementCount; n++)
+    {
+        size_t indexN = usedElementIndices[n];
+        for (size_t k = n; k < usedElementCount; k++)
         {
-            throw std::runtime_error("Missing Lennard-Jones epsilon for " + name);
-        }
-        if (!potential.sigma.hasValue[a])
-        {
-            throw std::runtime_error("Missing Lennard-Jones sigma for " + name);
+            size_t indexK = usedElementIndices[k];
+            if (!radii.hasValue[indexK])
+            {
+                throw std::runtime_error("No radius found for element: " + elementName(Element(indexK)));
+            }
+            if (!epsilons.hasValue[indexK])
+            {
+                throw std::runtime_error("No lennard-jones epsilon found for element: " + elementName(Element(indexK)));
+            }
+            double epsilon = std::sqrt(epsilons.values[indexN] * epsilons.values[indexK]);
+            double sigma   = radii.values[indexN] + radii.values[indexK];
+            PotentialFactor factor {epsilon, sigma};
+            factors[n][k] = factor;
+            factors[k][n] = factor;
         }
     }
+    return {indices, factors};
 }
 
-double MolecularMetadata::potentialWeight(const PotentialTable& table, Element a, Element b)
+MolecularMetadata::PotentialFactor MolecularMetadata::potentialFactor(const PotentialTable& table, Element a, Element b)
 {
-    double epsilon = 0.5 * (table.epsilon.values[a] + table.epsilon.values[b]);
-    double sigma   = 0.5 * (table.sigma.values[a] + table.sigma.values[b]);
-    double sigma2  = sigma * sigma;
-    double sigma4  = sigma2 * sigma2;
-    return epsilon * sigma4 * sigma4 * sigma4;
+    return table.factors[table.elementIndex[a]][table.elementIndex[b]];
+}
+
+double MolecularMetadata::lennardJonesPotential(const PotentialFactor& factor, double squaredDistance)
+{
+    double sigma = factor.sigma;
+    double pow2  = (sigma * sigma) / (std::numeric_limits<double>::epsilon() + squaredDistance);
+    double pow4  = pow2 * pow2;
+    double pow6  = pow4 * pow4;
+    double pow12 = pow6 * pow6;
+    return factor.epsilon * (pow12 - 2.0 * pow6);
 }
 
 MolecularMetadata::Element MolecularMetadata::findElementAtomicNumber(const std::string& queryElement)

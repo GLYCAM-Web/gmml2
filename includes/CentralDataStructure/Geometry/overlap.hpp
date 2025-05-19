@@ -2,6 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_GEOMETRY_OVERLAP_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 namespace cds
 {
@@ -28,7 +29,8 @@ namespace cds
     };
 
     int compareOverlaps(const Overlap& a, const Overlap& b);
-    Overlap overlapAmount(double tolerance, double scale, const Sphere& a, const Sphere& b);
+    Overlap overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
+                          const Sphere& b);
     Overlap overlapVectorSum(const std::vector<Overlap>& vec);
     bool containsOverlapExceedingThreshold(double threshold, const std::vector<cds::Overlap>& vec);
     void scaleOverlaps(double scale, std::vector<Overlap>& vec);

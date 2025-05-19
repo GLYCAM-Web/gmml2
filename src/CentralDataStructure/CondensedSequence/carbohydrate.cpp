@@ -323,10 +323,13 @@ namespace
             toAssemblyBounds(graph, cds::atomCoordinatesWithRadii(elementRadii, graphData.objects.atoms));
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
+        std::vector<bool> foundElements = MolecularMetadata::foundElements(cds::atomElements(graphData.objects.atoms));
+        const MolecularMetadata::PotentialTable potentials =
+            MolecularMetadata::potentialTable(elementRadii, foundElements);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
-            GlycamMetadata::dihedralAngleDataTable(), MolecularMetadata::potentialTable(), constants::overlapTolerance,
-            searchSettings.angles, linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference,
-            graphData.objects, graph, selection, bounds, residueAtomsCloseToEdge);
+            GlycamMetadata::dihedralAngleDataTable(), potentials, constants::overlapTolerance, searchSettings.angles,
+            linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, graphData.objects, graph, selection,
+            bounds, residueAtomsCloseToEdge);
         for (size_t n = 0; n < graph.indices.atomCount; n++)
         {
             graphData.objects.atoms[n]->setCoordinate(newBounds.atoms[n].center);
@@ -536,6 +539,8 @@ void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elemen
     const assembly::Selection selection = assembly::selectAll(graph);
     assembly::Bounds bounds =
         toAssemblyBounds(graph, cds::atomCoordinatesWithRadii(elementRadii, graphData.objects.atoms));
+    std::vector<bool> foundElements = MolecularMetadata::foundElements(cds::atomElements(graphData.objects.atoms));
+    const MolecularMetadata::PotentialTable potentials = MolecularMetadata::potentialTable(elementRadii, foundElements);
     std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     // wiggle twice for nicer structures
     for (size_t n = 0; n < 2; n++)
@@ -546,10 +551,10 @@ void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elemen
                 searchSettings.deviation,
                 cds::currentRotamerOnly(linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType,
                                                                              linkage.dihedralMetadata)));
-            bounds = cds::simpleWiggleCurrentRotamers(
-                metadataTable, MolecularMetadata::potentialTable(), constants::overlapTolerance, searchSettings.angles,
-                linkage.rotatableDihedrals, linkage.dihedralMetadata, preference, graphData.objects, graph, selection,
-                bounds, residueAtomsCloseToEdge);
+            bounds = cds::simpleWiggleCurrentRotamers(metadataTable, potentials, constants::overlapTolerance,
+                                                      searchSettings.angles, linkage.rotatableDihedrals,
+                                                      linkage.dihedralMetadata, preference, graphData.objects, graph,
+                                                      selection, bounds, residueAtomsCloseToEdge);
         }
     }
     for (size_t n = 0; n < graph.indices.atomCount; n++)
