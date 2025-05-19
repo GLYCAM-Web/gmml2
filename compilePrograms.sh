@@ -21,3 +21,5 @@ echo -e "Wiggle to site"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/WiggleToSite/wiggleToSiteDriver.cpp -lgmml2 -pthread -o bin/wiggleToSite
 echo -e "Draw glycan"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/DrawGlycan/drawGlycanMain.cpp -lgmml2 -pthread -o bin/drawGlycan
+echo -e "PDB Analyzer"
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/pdbAnalyzer.cpp -lgmml2 -pthread -o bin/pdbAnalyzer
