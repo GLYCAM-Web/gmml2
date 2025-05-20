@@ -16,7 +16,5 @@ namespace pdb
     void tagTerminalResidues(PdbData& data, size_t moleculeId);
     size_t getNTerminal(const PdbData& data, size_t moleculeId);
     size_t getCTerminal(const PdbData& data, size_t moleculeId);
-    void ModifyTerminal(PdbData& data, size_t residueId, const std::string& type);
-    void InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const std::string& type);
 } // namespace pdb
 #endif

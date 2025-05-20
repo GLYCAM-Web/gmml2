@@ -2,7 +2,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -11,40 +10,6 @@
 #include <string>
 #include <vector>
 #include <variant>
-
-namespace
-{
-    void addResidueAtoms(pdb::PdbData& data, size_t residueId,
-                         const std::vector<std::pair<std::string, cds::Coordinate>>& atoms)
-    {
-        for (auto& atom : atoms)
-        {
-            const std::string& name      = atom.first;
-            const cds::Coordinate& coord = atom.second;
-            pdb::addPdbAtom(data, residueId, name, coord);
-        }
-    }
-
-    void addResidueBonds(pdb::PdbData& data, size_t residueId,
-                         const std::vector<std::array<std::variant<size_t, std::string>, 2>>& bonds)
-    {
-        auto atomIndex = [&](const std::variant<size_t, std::string>& key)
-        {
-            if (std::holds_alternative<size_t>(key))
-            {
-                return std::get<size_t>(key);
-            }
-            else
-            {
-                return findResidueAtom(data, residueId, std::get<std::string>(key));
-            }
-        };
-        for (auto& bond : bonds)
-        {
-            pdb::addBond(data, atomIndex(bond[0]), atomIndex(bond[1]));
-        }
-    }
-} // namespace
 
 void pdb::readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_block)
 {
@@ -102,151 +67,6 @@ std::stringstream pdb::extractSingleResidueFromRecordSection(std::stringstream& 
     // Go back to previous line position. E.g. was reading HEADER and found TITLE:
     pdbFileStream.seekg(previousLinePosition);
     return singleResidueSection;
-}
-
-void pdb::InsertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const std::string& type)
-{
-    // This approach is bad. When parameter manager is good we can use that to remove the get_carestian stuff
-    using cds::Coordinate;
-    auto coord = [&](size_t n)
-    {
-        return data.atoms.coordinates[n];
-    };
-    if (type == "NHCH3") // NME
-    {
-        //        NME resid numbers. Otherwise good.
-        Coordinate cCoordProtein  = coord(findResidueAtom(data, refResidueId, "C"));
-        Coordinate caCoordProtein = coord(findResidueAtom(data, refResidueId, "CA"));
-        Coordinate oCoordProtein  = coord(findResidueAtom(data, refResidueId, "O"));
-        Coordinate nCoordNME =
-            cds::calculateCoordinateFromInternalCoords(oCoordProtein, caCoordProtein, cCoordProtein, 120.0, 180.0, 1.4);
-        Coordinate hCoordNME =
-            cds::calculateCoordinateFromInternalCoords(oCoordProtein, caCoordProtein, nCoordNME, 109.0, 180.0, 1.0);
-        Coordinate ch3CoordNME =
-            cds::calculateCoordinateFromInternalCoords(caCoordProtein, cCoordProtein, nCoordNME, 125.0, 180.0, 1.48);
-        Coordinate hh31CoordNME =
-            cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, 180.0, 1.09);
-        Coordinate hh32CoordNME =
-            cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, 60.0, 1.09);
-        Coordinate hh33CoordNME =
-            cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, -60.0, 1.09);
-        size_t residueId =
-            readResidue(data, moleculeId, "NME", cds::ResidueType::ProteinCappingGroup, true, refResidueId);
-        addResidueAtoms(data, residueId,
-                        {
-                            {   "N",    nCoordNME},
-                            {   "H",    hCoordNME},
-                            { "CH3",  ch3CoordNME},
-                            {"HH31", hh31CoordNME},
-                            {"HH32", hh32CoordNME},
-                            {"HH33", hh33CoordNME}
-        });
-        addResidueBonds(data, residueId,
-                        {
-                            {"N", findResidueAtom(data, refResidueId, "C")},
-                            {"N", "H"},
-                            {"N", "CH3"},
-                            {"CH3", "HH31"},
-                            {"CH3", "HH32"},
-                            {"CH3", "HH33"}
-        });
-    }
-    else if (type == "COCH3") // ACE
-    {
-        //        NME resid numbers. Otherwise good.
-        // These are the atoms in residue that I use to build the ACE out from.
-        Coordinate cCoordProtein  = coord(findResidueAtom(data, refResidueId, "C"));
-        Coordinate caCoordProtein = coord(findResidueAtom(data, refResidueId, "CA"));
-        Coordinate nCoordProtein  = coord(findResidueAtom(data, refResidueId, "N"));
-        // This is bad, should use templates loaded from lib/prep file instead.
-        Coordinate cCoordACE = cds::calculateCoordinateFromInternalCoords(cCoordProtein, caCoordProtein, nCoordProtein,
-                                                                          120.0, -130.0, 1.4);
-        Coordinate oCoordACE =
-            cds::calculateCoordinateFromInternalCoords(caCoordProtein, nCoordProtein, cCoordACE, 120.0, 0.0, 1.23);
-        Coordinate ch3CoordACE =
-            cds::calculateCoordinateFromInternalCoords(caCoordProtein, nCoordProtein, cCoordACE, 125.0, 180.0, 1.48);
-        Coordinate hh31CoordACE =
-            cds::calculateCoordinateFromInternalCoords(oCoordACE, cCoordACE, ch3CoordACE, 109.0, 180.0, 1.09);
-        Coordinate hh32CoordACE =
-            cds::calculateCoordinateFromInternalCoords(oCoordACE, cCoordACE, ch3CoordACE, 109.0, 60.0, 1.09);
-        Coordinate hh33CoordACE =
-            cds::calculateCoordinateFromInternalCoords(oCoordACE, cCoordACE, ch3CoordACE, 109.0, -60.0, 1.09);
-        // Ok this next bit is convoluted, but I look up the position of the first atom in the protein residue and
-        // insert the new Atom before it, and get passed back the position of the newly created atom, so I can use that
-        // when creating the next one and so on. With ACE we want to insert before the residue, so I'm finding the
-        // residue before here:
-        const std::vector<size_t>& order = data.molecules.residueOrder[moleculeId];
-        size_t position                  = codeUtils::indexOf(order, refResidueId) - 1;
-        size_t residueId =
-            readResidue(data, moleculeId, "ACE", cds::ResidueType::ProteinCappingGroup, false, order[position]);
-        addResidueAtoms(data, residueId,
-                        {
-                            {   "C",    cCoordACE},
-                            {   "O",    oCoordACE},
-                            { "CH3",  ch3CoordACE},
-                            {"HH31", hh31CoordACE},
-                            {"HH32", hh32CoordACE},
-                            {"HH33", hh33CoordACE}
-        });
-        addResidueBonds(data, residueId,
-                        {
-                            {"C", findResidueAtom(data, refResidueId, "N")},
-                            {"C", "O"},
-                            {"C", "CH3"},
-                            {"CH3", "HH31"},
-                            {"CH3", "HH32"},
-                            {"CH3", "HH33"}
-        });
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Created ACE residue: " + pdbResidueId(data, residueId).print());
-    }
-}
-
-void pdb::ModifyTerminal(PdbData& data, size_t residueId, const std::string& type)
-{
-    if (type == "NH3+") // For now, leaving it to tleap to add the correct H's
-    {
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying N Terminal of : " + pdbResidueId(data, residueId).print());
-        size_t atomId = findResidueAtom(data, residueId, "H");
-        deletePdbAtom(data, residueId, atomId);
-    }
-    else if (type == "CO2-")
-    {
-        size_t atomCount = data.indices.atomCount;
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
-        size_t atomOXT = findResidueAtom(data, residueId, "OXT");
-        if (atomOXT < atomCount)
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "OXT atom already exists: " + data.atoms.names[atomOXT] + "_" +
-                          std::to_string(data.atoms.numbers[atomOXT]));
-            return;
-        }
-        // I don't like this, but at least it's somewhat contained:
-        size_t atomCA = findResidueAtom(data, residueId, "CA");
-        size_t atomC  = findResidueAtom(data, residueId, "C");
-        size_t atomO  = findResidueAtom(data, residueId, "O");
-        if (atomCA == atomCount || atomC == atomCount || atomO == atomCount)
-        {
-            gmml::log(
-                __LINE__, __FILE__, gmml::WAR,
-                "Cterminal residue missing an atoms named CA, C or O, cannot create an OXT atom for this residue.");
-            return;
-        }
-        auto coord = [&](size_t n)
-        {
-            return data.atoms.coordinates[n];
-        };
-        cds::Coordinate oxtCoord =
-            cds::calculateCoordinateFromInternalCoords(coord(atomCA), coord(atomC), coord(atomO), 120.0, 180.0, 1.25);
-        size_t oxtAtom = addPdbAtom(data, residueId, "OXT", oxtCoord);
-        addBond(data, oxtAtom, atomC);
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created new atom named OXT after " + data.atoms.names[atomO] + "_" +
-                      std::to_string(data.atoms.numbers[atomO]));
-        return;
-    }
-    gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);
-    return;
 }
 
 // Only makes sense for proteins.

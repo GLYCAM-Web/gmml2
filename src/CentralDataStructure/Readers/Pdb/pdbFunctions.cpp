@@ -13,6 +13,19 @@
 #include <iostream>
 #include <iomanip>
 
+namespace
+{
+    MolecularMetadata::Element atomElement(const std::string& name)
+    {
+        if (isalpha(name.at(0))) // if first char is in the alphabet
+        {
+            return MolecularMetadata::toElement(name.substr(0, 1));
+        }
+        gmml::log(__LINE__, __FILE__, gmml::WAR, "Did not find an element for atom named: " + name);
+        return MolecularMetadata::Unknown;
+    }
+} // namespace
+
 int pdb::checkShiftFromSerialNumberOverrun(const std::string& line)
 {
     int shift = 0;
@@ -72,6 +85,78 @@ void pdb::expandLine(std::string& line, int length)
         ss << line << std::setw(space) << " ";
         line = ss.str();
     }
+}
+
+size_t pdb::addAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
+{
+    cds::Atom* atom = data.objects.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
+    size_t atomId   = data.indices.atomCount;
+    data.objects.atoms.push_back(atom);
+    data.indices.atomResidue.push_back(residueId);
+    data.indices.atomAlive.push_back(true);
+    data.indices.atomCount++;
+    data.atoms.recordNames.push_back(entry.recordName);
+    data.atoms.names.push_back(entry.name);
+    data.atoms.elements.push_back(atomElement(entry.name));
+    data.atoms.numbers.push_back(entry.number);
+    data.atoms.coordinates.push_back(entry.coordinate);
+    data.atoms.occupancies.push_back(entry.occupancy);
+    data.atoms.temperatureFactors.push_back(entry.temperatureFactor);
+    atom->setNumber(entry.number);
+    atom->setName(entry.name);
+    atom->setCoordinate(entry.coordinate);
+    atom->setElement(data.atoms.elements[atomId]);
+    size_t nodeId = graph::addNode(data.atomGraph);
+    if (nodeId != atomId)
+    {
+        throw std::runtime_error("atom id mismatch");
+    }
+    return atomId;
+}
+
+size_t pdb::addAtom(PdbData& data, size_t residueId, const std::string& name, const cds::Coordinate& coordinate)
+{
+    double occupancy         = 1.0;
+    double temperatureFactor = 0.0;
+    return addAtom(data, residueId, {"ATOM", name, 1, coordinate, occupancy, temperatureFactor});
+}
+
+void pdb::deleteAtom(PdbData& data, size_t residueId, size_t atomId)
+{
+    if (atomId < data.indices.atomCount)
+    {
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Deleting atom with id: " + data.atoms.names[atomId] + "_" +
+                      std::to_string(data.atoms.numbers[atomId]));
+        data.indices.atomAlive[atomId]   = false;
+        data.atomGraph.nodeAlive[atomId] = false;
+        cds::Atom* atom                  = data.objects.atoms[atomId];
+        data.objects.residues[residueId]->deleteAtom(atom);
+    }
+}
+
+size_t pdb::addResidue(PdbData& data, size_t moleculeId, size_t position, const ResidueEntry& entry)
+{
+    size_t residueId = data.indices.residueCount;
+    cds::Residue* residue =
+        data.objects.molecules[moleculeId]->insertNewResidue(std::make_unique<cds::Residue>(), position);
+    std::vector<size_t>& order = data.molecules.residueOrder[moleculeId];
+    order.insert(order.begin() + position, residueId);
+    data.indices.residueMolecule.push_back(moleculeId);
+    data.indices.residueCount++;
+    data.objects.residues.push_back(residue);
+    data.residues.names.push_back(entry.name);
+    data.residues.types.push_back(entry.type);
+    data.residues.numbers.push_back(entry.number);
+    data.residues.insertionCodes.push_back(entry.insertionCode);
+    data.residues.chainIds.push_back(entry.chainId);
+    data.residues.isCTerminal.push_back(false);
+    data.residues.isNTerminal.push_back(false);
+    data.residues.hasTerCard.push_back(entry.hasTerCard);
+    residue->setName(entry.name);
+    residue->SetType(entry.type);
+    residue->setNumber(entry.number);
+    return residueId;
 }
 
 void pdb::addBond(PdbData& data, size_t atom1, size_t atom2)

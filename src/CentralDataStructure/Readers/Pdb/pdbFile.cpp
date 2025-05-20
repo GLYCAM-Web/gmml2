@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbPreProcess.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
