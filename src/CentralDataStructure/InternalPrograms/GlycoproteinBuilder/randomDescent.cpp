@@ -85,4 +85,74 @@ namespace glycoproteinBuilder
         }
         return {globalOverlap, sitesWithOverlap, sitesAboveOverlapThreshold, glycositePreferences};
     }
+
+    void resolveOverlapsWithWiggler(pcg32& rng, const AngleSettings& initialAngleSettings,
+                                    const AngleSettings& mainAngleSettings, SidechainAdjustment adjustSidechains,
+                                    SidechainAdjustment restoreSidechains, GlycanShapeRandomizer& randomizeShape,
+                                    WiggleGlycan wiggleGlycan, const assembly::Graph& graph, const AssemblyData& data,
+                                    MutableData& mutableData, size_t persistCycles, bool deleteSitesUntilResolved)
+    {
+        std::vector<cds::GlycanShapePreference> glycositePreferences;
+        const std::vector<size_t> glycanIndices = codeUtils::indexVector(data.glycans.moleculeId);
+        for (size_t glycanId : glycanIndices)
+        {
+            auto preference = randomizeShape(rng, initialAngleSettings, data, mutableData, glycanId);
+            const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
+            for (size_t k = 0; k < linkageIds.size(); k++)
+            {
+                setLinkageShapeToPreference(graph, data, mutableData, linkageIds[k], preference[k]);
+            }
+            glycositePreferences.push_back(preference);
+        }
+        assembly::Selection glycanSelection = assembly::selectByAtoms(graph, data.atoms.includeInMainOverlapCheck);
+        for (size_t glycanId : codeUtils::shuffleVector(rng, glycanIndices))
+        {
+            wiggleGlycan(graph, data, glycanSelection, initialAngleSettings, glycositePreferences[glycanId],
+                         mutableData, glycanId);
+        }
+        adjustSidechains(rng, initialAngleSettings, wiggleGlycan, graph, data, mutableData, glycositePreferences,
+                         glycanIndices);
+        assembly::Selection selection = assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
+        GlycoproteinState currentState;
+        std::vector<size_t> sitesWithOverlap =
+            determineSitesWithOverlap(0.0, glycanIndices, graph, data, selection, mutableData.bounds);
+        std::vector<size_t> sitesAboveOverlapThreshold = determineSitesWithOverlap(
+            data.overlapRejectionThreshold, sitesWithOverlap, graph, data, selection, mutableData.bounds);
+        for (bool done = false; !done; done = sitesAboveOverlapThreshold.empty() || !deleteSitesUntilResolved)
+        {
+            cds::Overlap initialOverlap =
+                cds::overlapVectorSum(totalOverlaps(graph, data, selection, mutableData.bounds));
+
+            GlycoproteinState initialState = {initialOverlap, sitesWithOverlap, sitesAboveOverlapThreshold,
+                                              glycositePreferences};
+            currentState     = randomDescent(rng, mainAngleSettings, wiggleGlycan, randomizeShape, adjustSidechains,
+                                             persistCycles, graph, data, mutableData, initialState);
+            sitesWithOverlap = currentState.sitesWithOverlap;
+            sitesAboveOverlapThreshold = currentState.sitesAboveOverlapThreshold;
+            if (deleteSitesUntilResolved && !sitesAboveOverlapThreshold.empty())
+            {
+                size_t indexToRemove = codeUtils::randomIndex(rng, sitesAboveOverlapThreshold);
+                size_t glycan        = sitesAboveOverlapThreshold[indexToRemove];
+                deleteMolecule(mutableData, data.glycans.moleculeId[glycan]);
+                selection             = assembly::selectByAtomsAndMolecules(graph, data.atoms.includeInEachOverlapCheck,
+                                                                            mutableData.moleculeIncluded);
+                size_t proteinResidue = data.glycans.attachmentResidue[glycan];
+                // restore atoms to initial shape
+                for (size_t n : residueAtoms(graph, proteinResidue))
+                {
+                    mutableData.bounds.atoms[n] = data.atoms.initialState[n];
+                }
+                updateResidueBounds(graph, mutableData.bounds, proteinResidue);
+                updateResidueMoleculeBounds(graph, mutableData.bounds, proteinResidue);
+                sitesWithOverlap =
+                    determineSitesWithOverlap(0.0, includedGlycanIndices(data, mutableData.moleculeIncluded), graph,
+                                              data, selection, mutableData.bounds);
+                sitesAboveOverlapThreshold = determineSitesWithOverlap(data.overlapRejectionThreshold, sitesWithOverlap,
+                                                                       graph, data, selection, mutableData.bounds);
+            }
+        }
+        restoreSidechains(rng, mainAngleSettings, wiggleGlycan, graph, data, mutableData, glycositePreferences,
+                          includedGlycanIndices(data, mutableData.moleculeIncluded));
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
+    };
 } // namespace glycoproteinBuilder

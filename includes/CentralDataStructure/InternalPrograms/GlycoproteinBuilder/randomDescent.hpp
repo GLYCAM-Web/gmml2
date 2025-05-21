@@ -28,5 +28,10 @@ namespace glycoproteinBuilder
                                     GlycanShapeRandomizer randomizeShape, SidechainAdjustment adjustSidechains,
                                     uint persistCycles, const assembly::Graph& graph, const AssemblyData& data,
                                     MutableData& mutableData, const GlycoproteinState& initialState);
+    void resolveOverlapsWithWiggler(pcg32& rng, const AngleSettings& initialAngleSettings,
+                                    const AngleSettings& mainAngleSettings, SidechainAdjustment adjustSidechains,
+                                    SidechainAdjustment restoreSidechains, GlycanShapeRandomizer& randomizeShape,
+                                    WiggleGlycan wiggleGlycan, const assembly::Graph& graph, const AssemblyData& data,
+                                    MutableData& mutableData, size_t persistCycles, bool deleteSitesUntilResolved);
 } // namespace glycoproteinBuilder
 #endif

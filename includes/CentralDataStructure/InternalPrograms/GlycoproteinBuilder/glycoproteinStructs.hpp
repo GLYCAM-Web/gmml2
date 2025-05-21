@@ -170,6 +170,11 @@ namespace glycoproteinBuilder
         return serialized ? data.residues.serializedNumbers : data.residues.numbers;
     }
 
+    inline void deleteMolecule(MutableData& mutableData, size_t moleculeId)
+    {
+        mutableData.moleculeIncluded[moleculeId] = false;
+    };
+
     typedef std::function<std::vector<size_t>(pcg32&, const GlycamMetadata::DihedralAngleDataTable&,
                                               const std::vector<size_t>&)>
         MetadataOrder;
