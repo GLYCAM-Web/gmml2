@@ -301,8 +301,10 @@ namespace glycoproteinBuilder
         std::vector<Carbohydrate*> result;
         for (auto& glycosite : glycosites)
         {
-            Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(glycoprotein->addMolecule(
-                std::make_unique<Carbohydrate>(parameterManager, elementRadii, glycosite.input.glycanInput)));
+            cdsCondensedSequence::SequenceData sequence =
+                cdsCondensedSequence::parseAndReorder(glycosite.input.glycanInput);
+            Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(
+                glycoprotein->addMolecule(std::make_unique<Carbohydrate>(parameterManager, elementRadii, sequence)));
             result.push_back(glycan);
             Attachment attachment                = toAttachment(glycan);
             cds::Residue* aglycone               = attachment.aglycone;

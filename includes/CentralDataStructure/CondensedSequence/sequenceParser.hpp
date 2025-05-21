@@ -39,5 +39,10 @@ namespace cdsCondensedSequence
     std::vector<size_t> edgesSortedByLink(const SequenceData& sequence, const std::vector<size_t>& edgeIds);
     SequenceData reordered(const SequenceData& sequence);
     SequenceData parseSequence(std::string sequence);
+
+    inline SequenceData parseAndReorder(const std::string& sequence)
+    {
+        return reordered(parseSequence(sequence));
+    }
 } // namespace cdsCondensedSequence
 #endif

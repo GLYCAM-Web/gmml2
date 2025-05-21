@@ -375,14 +375,13 @@ namespace
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
 Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManager,
-                           const codeUtils::SparseVector<double>& elementRadii, const std::string& inputSequence)
+                           const codeUtils::SparseVector<double>& elementRadii, const SequenceData& sequence)
     : cds::Molecule()
 {
     {
         std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
-        cdsCondensedSequence::SequenceData sequenceData = reordered(parseSequence(inputSequence));
-        size_t residueCount                             = sequenceData.residues.name.size();
-        createParsedResidues(residuePtrs, sequenceData);
+        size_t residueCount = sequence.residues.name.size();
+        createParsedResidues(residuePtrs, sequence);
         sortResidueEdges(residuePtrs);
 
         for (auto& residue : codeUtils::pointerToUniqueVector(residuePtrs))
@@ -398,7 +397,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
         }
         for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy
-            if (sequenceData.residues.type[n] == cds::ResidueType::Deoxy)
+            if (sequence.residues.type[n] == cds::ResidueType::Deoxy)
             {
                 ParsedResidue* deoxyResidue         = residuePtrs[n].get();
                 ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();

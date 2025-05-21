@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -24,7 +25,8 @@ using cdsCondensedSequence::carbohydrateBuilder;
 carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
 try : parameters_(cdsParameters::loadParameters(codeUtils::gmmlHomeDirPath)),
-    carbohydrate_(parameters_, MolecularMetadata::defaultVanDerWaalsRadii(), condensedSequence)
+    carbohydrate_(parameters_, MolecularMetadata::defaultVanDerWaalsRadii(),
+                  cdsCondensedSequence::parseAndReorder(condensedSequence))
 {}
 
 // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.

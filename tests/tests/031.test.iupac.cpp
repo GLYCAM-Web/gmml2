@@ -42,8 +42,7 @@ int main()
         std::cout << "s" << count << ":\n" << sequence << "\n";
         try
         {
-            cdsCondensedSequence::SequenceData sequenceData =
-                cdsCondensedSequence::reordered(cdsCondensedSequence::parseSequence(sequence));
+            cdsCondensedSequence::SequenceData sequenceData = cdsCondensedSequence::parseAndReorder(sequence);
             std::cout << "Index Ordered:\n"
                       << cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfig(), sequenceData)
                       << "\n";

@@ -12,8 +12,7 @@ CondensedSequence::Sequence::Sequence(std::string condensedSequence)
     cdsCondensedSequence::SequenceData sequence = cdsCondensedSequence::parseSequence(condensedSequence);
     this->setInterpretedSequence(
         cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfigUnsorted(), sequence));
-    cdsCondensedSequence::SequenceData reordered =
-        cdsCondensedSequence::reordered(cdsCondensedSequence::parseSequence(condensedSequence));
+    cdsCondensedSequence::SequenceData reordered = cdsCondensedSequence::reordered(sequence);
     this->setInputSequence(condensedSequence);
     this->setIndexOrdered(cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfig(), reordered));
     this->setIndexLabeled(

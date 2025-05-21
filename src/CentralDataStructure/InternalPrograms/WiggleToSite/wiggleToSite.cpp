@@ -29,7 +29,8 @@ using gmmlPrograms::WiggleToSite;
 //////////////////////////////////////////////////////////
 WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
     : substrate_(inputStruct.substrateFile_),
-      carbohydrate_(parameterManager, MolecularMetadata::defaultVanDerWaalsRadii(), inputStruct.carbohydrateSequence_)
+      carbohydrate_(parameterManager, MolecularMetadata::defaultVanDerWaalsRadii(),
+                    cdsCondensedSequence::parseAndReorder(inputStruct.carbohydrateSequence_))
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
     pdb::PdbData& pdbData = this->getSubstrate().data;

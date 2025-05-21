@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
@@ -41,7 +42,7 @@ namespace cdsCondensedSequence
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
         Carbohydrate(const cdsParameters::ParameterManager& parameterManager,
-                     const codeUtils::SparseVector<double>& elementRadii, const std::string& inputSequence);
+                     const codeUtils::SparseVector<double>& elementRadii, const SequenceData& sequence);
 
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
