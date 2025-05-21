@@ -24,12 +24,6 @@ namespace glycoproteinBuilder
                                                      const MutableData&, size_t glycanId)>
         GlycanShapeRandomizer;
 
-    void wiggleLinkage(const assembly::Graph& graph, const AssemblyData& data, const assembly::Selection& selection,
-                       MutableData& mutableData, size_t linkageId, const cds::AngleSearchSettings& searchSettings,
-                       const cds::ResidueLinkageShapePreference& shapePreference);
-    void wiggleGlycan(const assembly::Graph& graph, const AssemblyData& data, const assembly::Selection& selection,
-                      const cds::AngleSearchSettings& searchSettings, const cds::GlycanShapePreference& preferences,
-                      MutableData& mutableData, size_t glycanId);
     GlycoproteinState randomDescent(pcg32& rng, const AngleSettings& settings, WiggleGlycan wiggleGlycan,
                                     GlycanShapeRandomizer randomizeShape, SidechainAdjustment adjustSidechains,
                                     uint persistCycles, const assembly::Graph& graph, const AssemblyData& data,
