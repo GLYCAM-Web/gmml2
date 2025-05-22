@@ -9,6 +9,7 @@
 #include <map>
 #include <utility>
 #include <optional>
+#include <sstream>
 
 namespace
 {
@@ -143,6 +144,27 @@ namespace
     codeUtils::SparseVector<double> chimeraAtomRadii = {values(chimeraRadii), bools(chimeraRadii)};
 } // namespace
 
+MolecularMetadata::ChemicalFormula MolecularMetadata::toFormula(const std::vector<Element>& elements)
+{
+    std::vector<int> count(ElementCount, 0);
+    size_t nonzero = 0;
+    for (Element element : elements)
+    {
+        nonzero += (count[element] == 0);
+        count[element]++;
+    }
+    ChemicalFormula result;
+    result.reserve(nonzero);
+    for (size_t n = 0; n < count.size(); n++)
+    {
+        if (count[n] > 0)
+        {
+            result.push_back({Element(n), count[n]});
+        }
+    }
+    return result;
+}
+
 // expects element names and numbers together, separated by space. Implicit 1 is not supported
 // e.g "C3 H5 N1 O1 Se1"
 MolecularMetadata::ChemicalFormula MolecularMetadata::parseFormula(const std::string& formula)
@@ -191,6 +213,16 @@ MolecularMetadata::ChemicalFormula MolecularMetadata::formulaSum(const std::vect
         }
     }
     return result;
+}
+
+std::string MolecularMetadata::toString(const ChemicalFormula& formula)
+{
+    std::ostringstream ss;
+    for (auto& a : formula)
+    {
+        ss << elementName(a.first) << a.second;
+    }
+    return ss.str();
 }
 
 MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)

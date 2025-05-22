@@ -139,8 +139,10 @@ namespace MolecularMetadata
         codeUtils::SparseVector<double> sigma;
     };
 
+    ChemicalFormula toFormula(const std::vector<Element>& elements);
     ChemicalFormula parseFormula(const std::string& formula);
     ChemicalFormula formulaSum(const std::vector<ChemicalFormula>& formulas);
+    std::string toString(const ChemicalFormula& formula);
     Element toElement(const std::string& str);
     const std::string& elementName(Element element);
     const codeUtils::SparseVector<double>& amberVanDerWaalsRadii();
