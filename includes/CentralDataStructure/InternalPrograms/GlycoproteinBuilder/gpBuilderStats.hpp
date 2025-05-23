@@ -4,7 +4,6 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblySelection.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/CodeUtils/structuredFiles.hpp"
@@ -23,7 +22,7 @@ namespace glycoproteinBuilder
         assembly::Selection selection;
         std::vector<bool> nonViableMolecule;
         std::vector<bool> residueSidechainMoved;
-        std::vector<cds::Overlap> overlap;
+        std::vector<double> overlap;
     };
 
     struct Summary

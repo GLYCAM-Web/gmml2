@@ -7,7 +7,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 
@@ -53,9 +52,9 @@ namespace gmmlPrograms
             return atomsToAvoid_;
         }
 
-        cds::Overlap getCurrentOverlapCount()
+        double getCurrentOverlap()
         {
-            return currentOverlapCount_;
+            return currentOverlap_;
         }
 
         double getCurrentDistance()
@@ -66,9 +65,9 @@ namespace gmmlPrograms
         //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
         //////////////////////////////////////////////////////////
-        void setCurrentOverlapCount(cds::Overlap i)
+        void setCurrentOverlap(double a)
         {
-            currentOverlapCount_ = i;
+            currentOverlap_ = a;
         }
 
         void setCurrentDistance(double d)
@@ -94,7 +93,7 @@ namespace gmmlPrograms
         std::vector<cds::Atom*> atomsToAvoid_;
         std::vector<cds::Atom*> wiggleMeAtoms_;
         std::vector<cds::Atom*> wiggleTargetAtoms_;
-        cds::Overlap currentOverlapCount_ = cds::Overlap {0, 0.0};
+        double currentOverlap_ = 0.0;
         double currentDistance_;
     };
 } // namespace gmmlPrograms

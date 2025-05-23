@@ -5,7 +5,6 @@
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CodeUtils/containers.hpp"

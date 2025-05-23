@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
@@ -121,7 +122,7 @@ namespace glycoproteinBuilder
                         coordinates, index, dihedralMetadata[dihedralId], preference);
                     mutableData.bounds = best.bounds;
                 }
-                std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(
+                std::vector<double> overlap = cds::overlapsBetweenSelections(
                     data.potentialTable, data.overlapTolerance, graph, mutableData.bounds, dihedralMoving[0],
                     dihedralNonMoving[0], data.atoms.elements, data.residueEdges.atomsCloseToEdge);
                 bestResults[iteration] = {

@@ -2,7 +2,6 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCH_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
@@ -21,13 +20,13 @@ namespace cds
 {
     struct AngleOverlap
     {
-        cds::Overlap overlaps;
+        double overlaps;
         AngleWithMetadata angle;
     };
 
     struct OverlapState
     {
-        Overlap overlap;
+        double overlap;
         AngleWithMetadata angle;
         assembly::Bounds bounds;
     };
@@ -40,7 +39,7 @@ namespace cds
     };
 
     typedef std::function<std::vector<double>(const GlycamMetadata::DihedralAngleData&, double, double)> SearchAngles;
-    typedef std::function<cds::Overlap(const assembly::Bounds&)> SearchOverlap;
+    typedef std::function<double(const assembly::Bounds&)> SearchOverlap;
 
     struct AngleSearchSettings
     {
