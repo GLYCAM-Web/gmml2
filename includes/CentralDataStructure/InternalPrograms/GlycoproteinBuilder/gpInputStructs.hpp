@@ -16,7 +16,6 @@ namespace glycoproteinBuilder
     static const std::string deleteIncompatibleSitesParameter                = "deleteUnresolvableGlycosites";
     static const std::string overlapRejectionThresholdParameter              = "overlapRejectionThreshold";
     static const std::string overlapToleranceParameter                       = "atomOverlapTolerance";
-    static const std::string atomRadiiSourceParameter                        = "atomRadiiSource";
     static const std::string ignoreHydrogenParameter                         = "ignoreHydrogen";
     static const std::string seedParameter                                   = "rngSeed";
     static const std::string prepareForMDParameter                           = "prepareForMD";
@@ -35,7 +34,6 @@ namespace glycoproteinBuilder
         ulong numberOfSamples                       = 1;
         ulong persistCycles                         = 5;
         double overlapTolerance                     = constants::overlapTolerance;
-        std::string atomRadiiSource                 = "chimera";
         bool ignoreHydrogen                         = false;
         bool useInitialGlycositeResidueConformation = false;
         bool moveOverlappingSidechains              = false;

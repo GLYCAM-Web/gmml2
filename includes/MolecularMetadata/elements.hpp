@@ -136,7 +136,7 @@ namespace MolecularMetadata
     struct PotentialFactor
     {
         double epsilon;
-        double sigma;
+        double rmin;
     };
 
     struct PotentialTable
@@ -152,15 +152,14 @@ namespace MolecularMetadata
     Element toElement(const std::string& str);
     std::vector<bool> foundElements(const std::vector<Element>& elements);
     const std::string& elementName(Element element);
-    const codeUtils::SparseVector<double>& amberVanDerWaalsRadii();
-    const codeUtils::SparseVector<double>& chimeraVanDerWaalsRadii();
-    const codeUtils::SparseVector<double>& defaultVanDerWaalsRadii();
+    codeUtils::SparseVector<double> vanDerWaalsRadii();
     bool isHeavyElement(Element element);
     const codeUtils::SparseVector<double>& elementMass();
     double totalMass(const codeUtils::SparseVector<double>& mass, const ChemicalFormula& formula);
     PotentialTable potentialTable(const codeUtils::SparseVector<double>& radii, const std::vector<bool>& usedElements);
     PotentialFactor potentialFactor(const PotentialTable& table, Element a, Element b);
     double lennardJonesPotential(const PotentialFactor& factor, double squaredDistance);
+    double distanceAtZerolennardJonesPotential(const PotentialFactor& factor);
     Element findElementAtomicNumber(const std::string& queryElement);
 } // namespace MolecularMetadata
 #endif
