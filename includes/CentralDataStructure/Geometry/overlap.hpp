@@ -32,8 +32,14 @@ namespace cds
     Overlap overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
                           const Sphere& b);
     Overlap overlapVectorSum(const std::vector<Overlap>& vec);
+    std::vector<Overlap> overlapAboveThreshold(double threshold, const std::vector<Overlap>& vec);
     bool containsOverlapExceedingThreshold(double threshold, const std::vector<cds::Overlap>& vec);
     void addOverlapsTo(std::vector<Overlap>& vec, const std::vector<Overlap>& added);
+
+    inline Overlap overlapAboveThresholdSum(double threshold, const std::vector<Overlap>& vec)
+    {
+        return overlapVectorSum(overlapAboveThreshold(threshold, vec));
+    }
 } // namespace cds
 
 #endif
