@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
         }
         if (codeUtils::contains<int>(arguments.ids, VERSION))
         {
-            std::cout << "PDB Analyzer & GMML version " << GMML_VERSION << "\n";
+            std::cout << "PDB Analyzer & GMML2 version " << GMML_VERSION << "\n";
             std::exit(0);
         }
         codeUtils::validateArguments(arguments, argumentDefinitions);
