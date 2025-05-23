@@ -18,7 +18,7 @@ cds::Overlap cds::overlapAmount(const MolecularMetadata::PotentialFactor& factor
     double sqDist = squaredDistance(a.center, b.center);
     if (sqDist < cutoff * cutoff)
     {
-        return Overlap {1.0, MolecularMetadata::lennardJonesPotential(factor, sqDist)};
+        return Overlap {1.0, std::max(0.0, MolecularMetadata::lennardJonesPotential(factor, sqDist))};
     }
     else
     {

@@ -169,24 +169,8 @@ int main(int argc, char* argv[])
             pdbFile.PreProcess(parameterManager, pdb::PreprocessorOptions());
         }
 
-        auto readElementRadii = [&](const std::string& source)
-        {
-            if (source == "amber")
-            {
-                return MolecularMetadata::amberVanDerWaalsRadii();
-            }
-            else if (source == "chimera")
-            {
-                return MolecularMetadata::chimeraVanDerWaalsRadii();
-            }
-            else
-            {
-                throw std::runtime_error("Error: unknown atom radii source: " + source);
-            }
-        };
-
-        const codeUtils::SparseVector<double>& elementRadii     = readElementRadii(settings.atomRadiiSource);
-        const MolecularMetadata::AminoAcidTable& aminoAcidTable = MolecularMetadata::aminoAcidTable();
+        codeUtils::SparseVector<double> elementRadii                         = MolecularMetadata::vanDerWaalsRadii();
+        const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
         cds::Assembly* glycoprotein                                          = pdbFile.getAssemblies().front();
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);

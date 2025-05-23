@@ -41,22 +41,7 @@ namespace
         return result;
     }
 
-    std::vector<FlaggedDouble> chimeraRadii = withValues({
-  // taken from the worst-case of chimera's united or all atom radii, whichever is larger
-        { Element::H, 1.000},
-        { Element::C, 1.880},
-        { Element::N, 1.640},
-        { Element::O, 1.500},
-        { Element::F, 1.560},
-        { Element::P, 1.871},
-        { Element::S, 1.782},
-        {Element::Cl, 1.735},
-        {Element::Br, 1.978},
-        { Element::I, 2.094}
-    });
-
-    std::vector<FlaggedDouble> amberRadii = withValues({
-  // taken from the worst-case of chimera's united or all atom radii, whichever is larger
+    std::vector<FlaggedDouble> vdwRadii = withValues({
         { Element::H, 1.2000},
         { Element::C, 1.9080},
         { Element::N, 1.8240},
@@ -122,9 +107,8 @@ namespace
         return result;
     };
 
-    codeUtils::SparseVector<double> atomicMass       = {values(mass), bools(mass)};
-    codeUtils::SparseVector<double> amberAtomRadii   = {values(amberRadii), bools(amberRadii)};
-    codeUtils::SparseVector<double> chimeraAtomRadii = {values(chimeraRadii), bools(chimeraRadii)};
+    codeUtils::SparseVector<double> atomicMass   = {values(mass), bools(mass)};
+    codeUtils::SparseVector<double> atomVdwRadii = {values(vdwRadii), bools(vdwRadii)};
 } // namespace
 
 MolecularMetadata::ChemicalFormula MolecularMetadata::toFormula(const std::vector<Element>& elements)
@@ -232,19 +216,9 @@ const std::string& MolecularMetadata::elementName(Element element)
     return elementNames[element];
 }
 
-const codeUtils::SparseVector<double>& MolecularMetadata::amberVanDerWaalsRadii()
+codeUtils::SparseVector<double> MolecularMetadata::vanDerWaalsRadii()
 {
-    return amberAtomRadii;
-}
-
-const codeUtils::SparseVector<double>& MolecularMetadata::chimeraVanDerWaalsRadii()
-{
-    return chimeraAtomRadii;
-}
-
-const codeUtils::SparseVector<double>& MolecularMetadata::defaultVanDerWaalsRadii()
-{
-    return chimeraVanDerWaalsRadii();
+    return atomVdwRadii;
 }
 
 bool MolecularMetadata::isHeavyElement(Element element)
@@ -318,12 +292,17 @@ MolecularMetadata::PotentialFactor MolecularMetadata::potentialFactor(const Pote
 
 double MolecularMetadata::lennardJonesPotential(const PotentialFactor& factor, double squaredDistance)
 {
-    double sigma = factor.sigma;
-    double pow2  = (sigma * sigma) / (std::numeric_limits<double>::epsilon() + squaredDistance);
+    double rmin  = factor.rmin;
+    double pow2  = (rmin * rmin) / (std::numeric_limits<double>::epsilon() + squaredDistance);
     double pow4  = pow2 * pow2;
     double pow6  = pow4 * pow4;
     double pow12 = pow6 * pow6;
     return factor.epsilon * (pow12 - 2.0 * pow6);
+}
+
+double MolecularMetadata::distanceAtZerolennardJonesPotential(const PotentialFactor& factor)
+{
+    return std::pow(2.0, -1.0 / 6.0) * factor.rmin;
 }
 
 MolecularMetadata::Element MolecularMetadata::findElementAtomicNumber(const std::string& queryElement)

@@ -32,7 +32,7 @@ using gmmlPrograms::WiggleToSite;
 //////////////////////////////////////////////////////////
 WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
     : substrate_(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}),
-      carbohydrate_(parameterManager, MolecularMetadata::defaultVanDerWaalsRadii(),
+      carbohydrate_(parameterManager, MolecularMetadata::vanDerWaalsRadii(),
                     cdsCondensedSequence::parseAndReorder(inputStruct.carbohydrateSequence_))
 {
     this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
@@ -78,7 +78,7 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
     std::vector<cds::Atom*> substrateAtomsToAvoidOverlappingWith =
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
     this->atomsToAvoid_                                 = substrateAtomsToAvoidOverlappingWith;
-    const codeUtils::SparseVector<double>& elementRadii = MolecularMetadata::defaultVanDerWaalsRadii();
+    const codeUtils::SparseVector<double>& elementRadii = MolecularMetadata::vanDerWaalsRadii();
     this->setCurrentOverlapCount(cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
                                                             this->getCarbohydrate().getAtoms()));
     this->wiggleMeAtoms_     = {wiggleMe->FindAtom("C1"), wiggleMe->FindAtom("C3"), wiggleMe->FindAtom("C5")};

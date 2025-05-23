@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
     pdb::bondAtomsAndResiduesByDistance(data);
     assembly::Graph graph                           = cds::createAssemblyGraph(data.indices, data.atomGraph);
     auto residueAtomsCloseToEdge                    = assembly::atomsCloseToResidueEdges(graph);
-    const codeUtils::SparseVector<double> atomRadii = MolecularMetadata::amberVanDerWaalsRadii();
+    const codeUtils::SparseVector<double> atomRadii = MolecularMetadata::vanDerWaalsRadii();
     const MolecularMetadata::PotentialTable potential =
         MolecularMetadata::potentialTable(atomRadii, MolecularMetadata::foundElements(data.atoms.elements));
     std::function<cds::Sphere(const size_t&)> toAtomBounds = [&](size_t atomId)

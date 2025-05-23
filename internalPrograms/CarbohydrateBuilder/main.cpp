@@ -168,7 +168,7 @@ int main(int argc, char** argv)
         };
         codeUtils::readFileLineByLine(inputFile, processLine);
         const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-        const codeUtils::SparseVector<double>& elementRadii    = MolecularMetadata::defaultVanDerWaalsRadii();
+        const codeUtils::SparseVector<double> elementRadii     = MolecularMetadata::vanDerWaalsRadii();
         for (auto& line : lines)
         {
             try
