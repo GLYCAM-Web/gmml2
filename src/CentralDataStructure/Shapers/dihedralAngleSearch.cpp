@@ -73,12 +73,12 @@ namespace
         {
             cds::RotationMatrix matrix = rotationTo(dihedral, constants::toRadians(angle));
             applyMatrix(graph, initialBounds, movingAtoms, matrix, bounds);
-            cds::Overlap overlaps = searchOverlap(bounds);
+            double overlaps = searchOverlap(bounds);
 
             cds::AngleOverlap current {
                 overlaps, cds::AngleWithMetadata {angle, anglePreference, metadataIndex}
             };
-            if (overlaps.count <= 0.0)
+            if (overlaps <= 0.0)
             {
                 // requires that the angles are sorted in order of closest to preference
                 return current;
@@ -139,7 +139,7 @@ cds::OverlapState cds::wiggleUsingRotamers(cds::SearchOverlap searchOverlap, Sea
                                                  searchAngles(metadataTable.entries[rotamers[n]], angle, deviation));
         // found something with no overlaps
         // if metadata and angles are sorted in order of preference, we can quit here
-        if (best.overlaps.count <= 0.0)
+        if (best.overlaps <= 0.0)
         {
             return resultState(best);
         }

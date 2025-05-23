@@ -15,13 +15,13 @@ namespace cds
 {
     struct AngleOverlap
     {
-        cds::Overlap overlaps;
+        double overlaps;
         AngleWithMetadata angle;
     };
 
     struct OverlapState
     {
-        Overlap overlap;
+        double overlap;
         AngleWithMetadata angle;
         assembly::Bounds bounds;
     };
@@ -34,7 +34,7 @@ namespace cds
     };
 
     typedef std::function<std::vector<double>(const GlycamMetadata::DihedralAngleData&, double, double)> SearchAngles;
-    typedef std::function<cds::Overlap(const assembly::Bounds&)> SearchOverlap;
+    typedef std::function<double(const assembly::Bounds&)> SearchOverlap;
 
     struct AngleSearchSettings
     {

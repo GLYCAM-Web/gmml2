@@ -94,10 +94,10 @@ bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph
                             {
                                 MolecularMetadata::PotentialFactor factor = MolecularMetadata::potentialFactor(
                                     data.potentialTable, data.atoms.elements[atom], data.atoms.elements[otherAtom]);
-                                cds::Overlap overlap =
+                                double overlap =
                                     cds::overlapAmount(factor, overlapTolerance, mutableData.bounds.atoms[atom],
                                                        mutableData.bounds.atoms[otherAtom]);
-                                if (overlap.weight > data.overlapRejectionThreshold)
+                                if (cds::compareOverlaps(overlap, data.overlapRejectionThreshold) == 1)
                                 {
                                     return true;
                                 }
@@ -142,7 +142,7 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
     std::vector<size_t> potentialOverlaps =
         atomsWithinSidechainPotentialBounds(graph, data, mutableData, data.atoms.includeInEachOverlapCheck, residue);
     restoreSidechainRotation(graph, data, mutableData, residue);
-    cds::Overlap initialOverlap = cds::overlapVectorSum(sidechainOverlap(
+    double initialOverlap       = cds::overlapVectorSum(sidechainOverlap(
         graph.indices, data, mutableData.bounds.atoms, sidechainMovingAtoms(data, residue), potentialOverlaps));
     IndexedOverlap bestRotation = lowestOverlapSidechainRotation(sidechains, graph.indices, data, mutableData,
                                                                  preference, residue, potentialOverlaps);
@@ -152,13 +152,12 @@ void glycoproteinBuilder::setSidechainToLowestOverlapState(const MolecularMetada
     }
 }
 
-std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::Indices& indices,
-                                                                const AssemblyData& data,
-                                                                const std::vector<cds::Sphere>& bounds,
-                                                                const std::vector<size_t>& atomsA,
-                                                                const std::vector<size_t>& atomsB)
+std::vector<double> glycoproteinBuilder::sidechainOverlap(const assembly::Indices& indices, const AssemblyData& data,
+                                                          const std::vector<cds::Sphere>& bounds,
+                                                          const std::vector<size_t>& atomsA,
+                                                          const std::vector<size_t>& atomsB)
 {
-    std::vector<cds::Overlap> result(indices.atomCount, {0.0, 0.0});
+    std::vector<double> result(indices.atomCount, 0.0);
     for (size_t n : atomsA)
     {
         MolecularMetadata::Element elementA = data.atoms.elements[n];
@@ -167,7 +166,7 @@ std::vector<cds::Overlap> glycoproteinBuilder::sidechainOverlap(const assembly::
             MolecularMetadata::Element elementB = data.atoms.elements[k];
             MolecularMetadata::PotentialFactor factor =
                 MolecularMetadata::potentialFactor(data.potentialTable, elementA, elementB);
-            cds::Overlap overlap           = cds::overlapAmount(factor, data.overlapTolerance, bounds[n], bounds[k]);
+            double overlap                 = cds::overlapAmount(factor, data.overlapTolerance, bounds[n], bounds[k]);
             result[indices.atomResidue[n]] += overlap;
             result[indices.atomResidue[k]] += overlap;
         }
@@ -184,13 +183,13 @@ glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainR
     const std::vector<SidechainDihedral>& dihedrals = data.residues.sidechainDihedrals[sidechainResidue];
     const std::vector<size_t>& movingAtoms          = sidechainMovingAtoms(data, sidechainResidue);
     std::vector<cds::Sphere> coords                 = mutableData.bounds.atoms;
-    std::vector<cds::Overlap> overlaps;
+    std::vector<double> overlaps;
     overlaps.reserve(rotations.size());
     for (size_t n = 0; n < rotations.size(); n++)
     {
         coords = mutableData.bounds.atoms;
         setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
-        cds::Overlap overlap = cds::overlapAboveThresholdSum(
+        double overlap = cds::overlapAboveThresholdSum(
             data.overlapRejectionThreshold, sidechainOverlap(indices, data, coords, movingAtoms, otherAtoms));
         overlaps.push_back(overlap);
     }

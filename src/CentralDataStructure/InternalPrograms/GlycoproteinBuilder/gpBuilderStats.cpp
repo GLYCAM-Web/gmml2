@@ -53,7 +53,7 @@ namespace glycoproteinBuilder
             {
                 for (size_t n : moleculeAtoms(graph, molecule))
                 {
-                    highest = std::max(highest, stat.overlap[n].weight);
+                    highest = std::max(highest, stat.overlap[n]);
                 }
             }
             for (size_t n = 0; n < movedSidechains.size(); n++)

@@ -9,6 +9,7 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 
 #include <numeric>
@@ -100,8 +101,8 @@ std::vector<size_t> cds::intersectingIndices(double overlapTolerance, const cds:
     return result;
 }
 
-cds::Overlap cds::CountOverlappingAtoms(const codeUtils::SparseVector<double>& elementRadii, double overlapTolerance,
-                                        const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
+double cds::CountOverlappingAtoms(const codeUtils::SparseVector<double>& elementRadii, double overlapTolerance,
+                                  const std::vector<cds::Atom*>& atomsA, const std::vector<cds::Atom*>& atomsB)
 {
     std::vector<Sphere> coordsA                            = atomCoordinatesWithRadii(elementRadii, atomsA);
     std::vector<Sphere> coordsB                            = atomCoordinatesWithRadii(elementRadii, atomsB);
@@ -111,7 +112,7 @@ cds::Overlap cds::CountOverlappingAtoms(const codeUtils::SparseVector<double>& e
         elementRadii,
         codeUtils::vectorOr(MolecularMetadata::foundElements(elementsA), MolecularMetadata::foundElements(elementsB)));
 
-    Overlap overlap {0, 0.0};
+    double overlap = 0.0;
     for (size_t n = 0; n < atomsA.size(); n++)
     {
         for (size_t k = 0; k < atomsB.size(); k++)
@@ -124,7 +125,7 @@ cds::Overlap cds::CountOverlappingAtoms(const codeUtils::SparseVector<double>& e
     return overlap;
 }
 
-void cds::addResidueOverlaps(std::vector<Overlap>& result, const MolecularMetadata::PotentialTable& potential,
+void cds::addResidueOverlaps(std::vector<double>& result, const MolecularMetadata::PotentialTable& potential,
                              double overlapTolerance, const assembly::Graph& graph, const assembly::Bounds& bounds,
                              const assembly::Selection& selectionA, const assembly::Selection& selectionB,
                              const std::vector<MolecularMetadata::Element>& atomElements,
@@ -141,21 +142,21 @@ void cds::addResidueOverlaps(std::vector<Overlap>& result, const MolecularMetada
             MolecularMetadata::Element elementB = atomElements[atomB];
             MolecularMetadata::PotentialFactor factor =
                 MolecularMetadata::potentialFactor(potential, elementA, elementB);
-            Overlap overlap = overlapAmount(factor, overlapTolerance, bounds.atoms[atomA], bounds.atoms[atomB]);
-            result[atomA]   += overlap;
-            result[atomB]   += overlap;
+            double overlap = overlapAmount(factor, overlapTolerance, bounds.atoms[atomA], bounds.atoms[atomB]);
+            result[atomA]  += overlap;
+            result[atomB]  += overlap;
         }
     }
 }
 
-std::vector<cds::Overlap>
+std::vector<double>
 cds::overlapsBetweenSelections(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
                                const assembly::Graph& graph, const assembly::Bounds& bounds,
                                const assembly::Selection& selectionA, const assembly::Selection& selectionB,
                                const std::vector<MolecularMetadata::Element>& atomElements,
                                const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge)
 {
-    std::vector<Overlap> result(graph.indices.atomCount, {0.0, 0.0});
+    std::vector<double> result(graph.indices.atomCount, 0.0);
     std::vector<size_t> moleculesA                     = selectedMolecules(selectionA);
     std::vector<size_t> moleculesB                     = selectedMolecules(selectionB);
     std::vector<std::vector<size_t>> moleculeResiduesA = moleculeSelectedResidues(graph, selectionA, moleculesA);
@@ -192,14 +193,14 @@ cds::overlapsBetweenSelections(const MolecularMetadata::PotentialTable& potentia
     return result;
 }
 
-std::vector<cds::Overlap>
+std::vector<double>
 cds::overlapsWithinSelection(const MolecularMetadata::PotentialTable& potential, double overlapTolerance,
                              const assembly::Graph& graph, const assembly::Bounds& bounds,
                              const assembly::Selection& selection,
                              const std::vector<MolecularMetadata::Element>& atomElements,
                              const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge)
 {
-    std::vector<Overlap> result(graph.indices.atomCount, {0.0, 0.0});
+    std::vector<double> result(graph.indices.atomCount, 0.0);
     std::vector<size_t> molecules                     = selectedMolecules(selection);
     std::vector<std::vector<size_t>> moleculeResidues = moleculeSelectedResidues(graph, selection, molecules);
     for (size_t maIndex = 0; maIndex < molecules.size(); maIndex++)

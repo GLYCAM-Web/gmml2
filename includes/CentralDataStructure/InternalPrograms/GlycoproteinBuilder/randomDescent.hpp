@@ -14,7 +14,7 @@ namespace glycoproteinBuilder
 {
     struct GlycoproteinState
     {
-        cds::Overlap overlap;
+        double overlap;
         std::vector<size_t> sitesWithOverlap;
         std::vector<size_t> sitesAboveOverlapThreshold;
         std::vector<cds::GlycanShapePreference> preferences;

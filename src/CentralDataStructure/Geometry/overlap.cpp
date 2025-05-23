@@ -2,56 +2,52 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
+#include "includes/CodeUtils/containers.hpp"
 
 #include <cmath>
 #include <vector>
 
-int cds::compareOverlaps(const Overlap& a, const Overlap& b)
+int cds::compareOverlaps(double a, double b)
 {
-    return (std::fabs(a.weight - b.weight) <= 1e-10) ? 0 : ((a.weight > b.weight) ? 1 : -1);
+    return (std::fabs(a - b) <= 1e-10) ? 0 : ((a > b) ? 1 : -1);
 }
 
-cds::Overlap cds::overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
-                                const Sphere& b)
+double cds::overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
+                          const Sphere& b)
 {
     double cutoff = std::max(0.0, a.radius + b.radius - tolerance);
     double sqDist = squaredDistance(a.center, b.center);
     if (sqDist < cutoff * cutoff)
     {
-        return Overlap {1.0, std::max(0.0, MolecularMetadata::lennardJonesPotential(factor, sqDist))};
+        return std::max(0.0, MolecularMetadata::lennardJonesPotential(factor, sqDist));
     }
     else
     {
-        return Overlap {0.0, 0.0};
+        return 0.0;
     }
 }
 
-cds::Overlap cds::overlapVectorSum(const std::vector<Overlap>& vec)
+double cds::overlapVectorSum(const std::vector<double>& vec)
 {
-    Overlap result {0.0, 0.0};
-    for (auto& a : vec)
-    {
-        result += a;
-    }
-    return result * 0.5;
+    return 0.5 * codeUtils::vectorSum(0.0, vec);
 }
 
-std::vector<cds::Overlap> cds::overlapAboveThreshold(double threshold, const std::vector<Overlap>& vec)
+std::vector<double> cds::overlapAboveThreshold(double threshold, const std::vector<double>& vec)
 {
-    std::vector<Overlap> result;
+    std::vector<double> result;
     result.reserve(vec.size());
     for (auto& a : vec)
     {
-        result.push_back({a.count, std::max(0.0, a.weight - threshold)});
+        result.push_back(std::max(0.0, a - threshold));
     }
     return result;
 }
 
-bool cds::containsOverlapExceedingThreshold(double threshold, const std::vector<cds::Overlap>& vec)
+bool cds::containsOverlapExceedingThreshold(double threshold, const std::vector<double>& vec)
 {
     for (auto& a : vec)
     {
-        if (a.weight > threshold)
+        if (a > threshold)
         {
             return true;
         }
@@ -59,7 +55,7 @@ bool cds::containsOverlapExceedingThreshold(double threshold, const std::vector<
     return false;
 }
 
-void cds::addOverlapsTo(std::vector<Overlap>& vec, const std::vector<Overlap>& added)
+void cds::addOverlapsTo(std::vector<double>& vec, const std::vector<double>& added)
 {
     for (size_t n = 0; n < vec.size(); n++)
     {

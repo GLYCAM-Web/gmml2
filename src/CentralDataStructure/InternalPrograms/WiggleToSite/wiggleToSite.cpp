@@ -79,8 +79,8 @@ WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManag
         codeUtils::findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
     this->atomsToAvoid_                                 = substrateAtomsToAvoidOverlappingWith;
     const codeUtils::SparseVector<double>& elementRadii = MolecularMetadata::vanDerWaalsRadii();
-    this->setCurrentOverlapCount(cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
-                                                            this->getCarbohydrate().getAtoms()));
+    this->setCurrentOverlap(cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
+                                                       this->getCarbohydrate().getAtoms()));
     this->wiggleMeAtoms_     = {wiggleMe->FindAtom("C1"), wiggleMe->FindAtom("C3"), wiggleMe->FindAtom("C5")};
     this->wiggleTargetAtoms_ = {wigglingTarget->FindAtom("C1"), wigglingTarget->FindAtom("C3"),
                                 wigglingTarget->FindAtom("C5")};
@@ -209,13 +209,13 @@ double WiggleToSite::calculateDistance()
 
 bool WiggleToSite::acceptOverlaps(const codeUtils::SparseVector<double>& elementRadii)
 {
-    cds::Overlap overlapCount = cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
-                                                           getCarbohydrate().getAtoms());
-    if (cds::compareOverlaps(overlapCount, this->getCurrentOverlapCount()) > 0)
+    double overlapCount = cds::CountOverlappingAtoms(elementRadii, constants::overlapTolerance, atomsToAvoid_,
+                                                     getCarbohydrate().getAtoms());
+    if (cds::compareOverlaps(overlapCount, this->getCurrentOverlap()) > 0)
     {
         return false;
     }
-    this->setCurrentOverlapCount(overlapCount);
+    this->setCurrentOverlap(overlapCount);
     return true;
 }
 

@@ -35,15 +35,15 @@ namespace glycoproteinBuilder
         };
     } // namespace
 
-    std::vector<cds::Overlap> totalOverlaps(const assembly::Graph& graph, const AssemblyData& data,
-                                            const assembly::Selection& selection, const assembly::Bounds& bounds)
+    std::vector<double> totalOverlaps(const assembly::Graph& graph, const AssemblyData& data,
+                                      const assembly::Selection& selection, const assembly::Bounds& bounds)
     {
         return cds::overlapsWithinSelection(data.potentialTable, data.overlapTolerance, graph, bounds, selection,
                                             data.atoms.elements, data.residueEdges.atomsCloseToEdge);
     }
 
-    cds::Overlap localOverlap(const assembly::Graph& graph, const AssemblyData& data,
-                              const assembly::Selection& selection, const assembly::Bounds& bounds, size_t glycanId)
+    double localOverlap(const assembly::Graph& graph, const AssemblyData& data, const assembly::Selection& selection,
+                        const assembly::Bounds& bounds, size_t glycanId)
     {
         assembly::Selection glycanSelection               = selectGlycan(graph, data, selection, glycanId);
         std::vector<bool> otherMolecules                  = selection.molecules;
@@ -51,10 +51,10 @@ namespace glycoproteinBuilder
         assembly::Selection otherSelection =
             assembly::selectByAtomsAndMolecules(graph, selection.atoms, otherMolecules);
 
-        std::vector<cds::Overlap> overlapWithin =
+        std::vector<double> overlapWithin =
             cds::overlapsWithinSelection(data.potentialTable, data.overlapTolerance, graph, bounds, glycanSelection,
                                          data.atoms.elements, data.residueEdges.atomsCloseToEdge);
-        std::vector<cds::Overlap> overlapBetween =
+        std::vector<double> overlapBetween =
             cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds, glycanSelection,
                                            otherSelection, data.atoms.elements, data.residueEdges.atomsCloseToEdge);
         return cds::overlapVectorSum(overlapWithin) + cds::overlapVectorSum(overlapBetween);
@@ -74,7 +74,7 @@ namespace glycoproteinBuilder
                 graph, selection.atoms,
                 codeUtils::indicesToBools(graph.indices.moleculeCount, data.indices.proteinMolecules));
 
-            return containsOverlapExceedingThreshold(
+            return cds::containsOverlapExceedingThreshold(
                 threshold, cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds,
                                                           glycanSelection, proteinSelection, data.atoms.elements,
                                                           data.residueEdges.atomsCloseToEdge));
@@ -86,7 +86,7 @@ namespace glycoproteinBuilder
             assembly::Selection glycanSelection =
                 assembly::selectByAtomsAndMolecules(graph, selection.atoms, glycanMolecule);
 
-            return containsOverlapExceedingThreshold(
+            return cds::containsOverlapExceedingThreshold(
                 threshold,
                 cds::overlapsWithinSelection(data.potentialTable, data.overlapTolerance, graph, bounds, glycanSelection,
                                              data.atoms.elements, data.residueEdges.atomsCloseToEdge));
@@ -114,9 +114,9 @@ namespace glycoproteinBuilder
                 bool avoidDoubleCount = k > n || !justMoved[k];
                 if (included[k] && (k != n) && avoidDoubleCount && !(glycanOverlap[n] && glycanOverlap[k]))
                 {
-                    assembly::Selection selectionN    = selectGlycan(graph, data, selection, n);
-                    assembly::Selection selectionK    = selectGlycan(graph, data, selection, k);
-                    std::vector<cds::Overlap> overlap = cds::overlapsBetweenSelections(
+                    assembly::Selection selectionN = selectGlycan(graph, data, selection, n);
+                    assembly::Selection selectionK = selectGlycan(graph, data, selection, k);
+                    std::vector<double> overlap    = cds::overlapsBetweenSelections(
                         data.potentialTable, data.overlapTolerance, graph, bounds, selectionN, selectionK,
                         data.atoms.elements, data.residueEdges.atomsCloseToEdge);
                     if (cds::containsOverlapExceedingThreshold(threshold, overlap))

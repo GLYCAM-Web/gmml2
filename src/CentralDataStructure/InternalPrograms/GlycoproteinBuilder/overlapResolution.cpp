@@ -23,6 +23,7 @@
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Assembly/assemblySelection.hpp"
@@ -281,14 +282,14 @@ namespace glycoproteinBuilder
         }
 
         auto nonViableSites = [&settings](const assembly::Graph& graph, const assembly::Selection& selection,
-                                          const AssemblyData& data, const std::vector<cds::Overlap>& overlaps)
+                                          const AssemblyData& data, const std::vector<double>& overlaps)
         {
             std::vector<bool> result(graph.indices.moleculeCount, false);
             for (size_t molecule : includedGlycanMoleculeIds(data, selection.molecules))
             {
                 for (size_t n : assembly::moleculeSelectedAtoms(graph, selection, molecule))
                 {
-                    if (overlaps[n].weight > settings.overlapRejectionThreshold)
+                    if (cds::compareOverlaps(overlaps[n], settings.overlapRejectionThreshold) == 1)
                     {
                         result[molecule] = true;
                     }
@@ -307,7 +308,7 @@ namespace glycoproteinBuilder
                                        settings.persistCycles, false);
             std::vector<cds::Coordinate> resolvedCoords = getCoordinates(mutableData.bounds.atoms);
             assembly::Selection selection               = assembly::selectAll(graph);
-            std::vector<cds::Overlap> atomOverlaps      = totalOverlaps(graph, data, selection, mutableData.bounds);
+            std::vector<double> atomOverlaps            = totalOverlaps(graph, data, selection, mutableData.bounds);
             bool serialized                             = settings.MDprep;
             std::string prefix                          = "default";
             writePdbFile(graph, data, resolvedCoords, atomNumbers(serialized, data), residueNumbers(serialized, data),
@@ -337,11 +338,11 @@ namespace glycoproteinBuilder
             std::string directory         = outputDir;
             assembly::Selection selection = assembly::selectByAtomsAndMolecules(
                 graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
-            std::vector<cds::Overlap> atomOverlaps = totalOverlaps(graph, data, selection, mutableData.bounds);
-            std::vector<bool> nonViable            = nonViableSites(graph, selection, data, atomOverlaps);
-            bool reject                            = codeUtils::contains(nonViable, true);
-            directory                              = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
-            bool serialized                        = settings.MDprep;
+            std::vector<double> atomOverlaps = totalOverlaps(graph, data, selection, mutableData.bounds);
+            std::vector<bool> nonViable      = nonViableSites(graph, selection, data, atomOverlaps);
+            bool reject                      = codeUtils::contains(nonViable, true);
+            directory                        = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
+            bool serialized                  = settings.MDprep;
             writePdbFile(graph, data, coordinates, atomNumbers(serialized, data), residueNumbers(serialized, data),
                          mutableData.moleculeIncluded, atomPairsConnectingNonProteinResidues, directory, prefix);
             if (settings.writeOffFile)

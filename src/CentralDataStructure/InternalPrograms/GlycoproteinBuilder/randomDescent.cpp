@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanWiggle.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
@@ -29,7 +30,7 @@ namespace glycoproteinBuilder
         logss << "Random Decent, persisting for " << persistCycles << " cycles.\n";
         gmml::log(__LINE__, __FILE__, gmml::INF, logss.str());
 
-        cds::Overlap globalOverlap                                   = initialState.overlap;
+        double globalOverlap                                         = initialState.overlap;
         std::vector<size_t> sitesWithOverlap                         = initialState.sitesWithOverlap;
         std::vector<size_t> sitesAboveOverlapThreshold               = initialState.sitesAboveOverlapThreshold;
         std::vector<cds::GlycanShapePreference> glycositePreferences = initialState.preferences;
@@ -43,11 +44,11 @@ namespace glycoproteinBuilder
             gmml::log(__LINE__, __FILE__, gmml::INF,
                       "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles));
             cycle++;
-            cds::Overlap newGlobalOverlap = globalOverlap;
+            double newGlobalOverlap = globalOverlap;
             for (auto& glycanId : codeUtils::shuffleVector(rng, sitesWithOverlap))
             {
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
-                cds::Overlap previousOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
+                double previousOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
                 std::vector<cds::GlycanShapePreference> currentPreferences = glycositePreferences;
                 currentPreferences[glycanId] = randomizeShape(rng, settings, data, mutableData, glycanId);
                 cds::GlycanShapePreference& glycanPreferences = currentPreferences[glycanId];
@@ -58,9 +59,9 @@ namespace glycoproteinBuilder
                 }
                 wiggleGlycan(graph, data, mainSelection, settings, glycanPreferences, mutableData, glycanId);
                 adjustSidechains(rng, settings, wiggleGlycan, graph, data, mutableData, currentPreferences, {glycanId});
-                cds::Overlap newOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
-                cds::Overlap diff       = newOverlap + (previousOverlap * -1);
-                bool isWorse            = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
+                double newOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
+                double diff       = newOverlap + (previousOverlap * -1);
+                bool isWorse      = cds::compareOverlaps(newOverlap, previousOverlap) > 0;
                 if (isWorse)
                 {
                     mutableData = lastShape;
@@ -70,7 +71,7 @@ namespace glycoproteinBuilder
                     newGlobalOverlap     += diff;
                     glycositePreferences = currentPreferences;
                     gmml::log(__LINE__, __FILE__, gmml::INF,
-                              "RandomDescent accepted a change of " + std::to_string(diff.count));
+                              "RandomDescent accepted a change of " + std::to_string(diff));
                 }
             }
 
@@ -121,8 +122,7 @@ namespace glycoproteinBuilder
             data.overlapRejectionThreshold, sitesWithOverlap, graph, data, selection, mutableData.bounds);
         for (bool done = false; !done; done = sitesAboveOverlapThreshold.empty() || !deleteSitesUntilResolved)
         {
-            cds::Overlap initialOverlap =
-                cds::overlapVectorSum(totalOverlaps(graph, data, selection, mutableData.bounds));
+            double initialOverlap = cds::overlapVectorSum(totalOverlaps(graph, data, selection, mutableData.bounds));
 
             GlycoproteinState initialState = {initialOverlap, sitesWithOverlap, sitesAboveOverlapThreshold,
                                               glycositePreferences};
@@ -154,6 +154,6 @@ namespace glycoproteinBuilder
         }
         restoreSidechains(rng, mainAngleSettings, wiggleGlycan, graph, data, mutableData, glycositePreferences,
                           includedGlycanIndices(data, mutableData.moleculeIncluded));
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap.count));
+        gmml::log(__LINE__, __FILE__, gmml::INF, "Overlap: " + std::to_string(currentState.overlap));
     };
 } // namespace glycoproteinBuilder

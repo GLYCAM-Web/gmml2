@@ -6,37 +6,15 @@
 
 namespace cds
 {
-    struct Overlap
-    {
-        double count  = 0.0;
-        double weight = 0.0;
+    int compareOverlaps(double a, double b);
+    double overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
+                         const Sphere& b);
+    double overlapVectorSum(const std::vector<double>& vec);
+    std::vector<double> overlapAboveThreshold(double threshold, const std::vector<double>& vec);
+    bool containsOverlapExceedingThreshold(double threshold, const std::vector<double>& vec);
+    void addOverlapsTo(std::vector<double>& vec, const std::vector<double>& added);
 
-        inline Overlap operator+(const Overlap& a) const
-        {
-            return {count + a.count, weight + a.weight};
-        }
-
-        inline Overlap operator*(double a) const
-        {
-            return {count * a, weight * a};
-        }
-
-        inline Overlap& operator+=(const Overlap& a)
-        {
-            *this = (*this + a);
-            return *this;
-        }
-    };
-
-    int compareOverlaps(const Overlap& a, const Overlap& b);
-    Overlap overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
-                          const Sphere& b);
-    Overlap overlapVectorSum(const std::vector<Overlap>& vec);
-    std::vector<Overlap> overlapAboveThreshold(double threshold, const std::vector<Overlap>& vec);
-    bool containsOverlapExceedingThreshold(double threshold, const std::vector<cds::Overlap>& vec);
-    void addOverlapsTo(std::vector<Overlap>& vec, const std::vector<Overlap>& added);
-
-    inline Overlap overlapAboveThresholdSum(double threshold, const std::vector<Overlap>& vec)
+    inline double overlapAboveThresholdSum(double threshold, const std::vector<double>& vec)
     {
         return overlapVectorSum(overlapAboveThreshold(threshold, vec));
     }

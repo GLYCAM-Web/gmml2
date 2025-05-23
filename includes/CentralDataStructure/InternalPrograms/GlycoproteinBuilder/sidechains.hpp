@@ -15,7 +15,7 @@ namespace glycoproteinBuilder
     struct IndexedOverlap
     {
         size_t index;
-        cds::Overlap overlap;
+        double overlap;
     };
 
     struct SidechainRotationsAndWeights
@@ -36,9 +36,9 @@ namespace glycoproteinBuilder
                                           const assembly::Graph& graph, const AssemblyData& data,
                                           MutableData& mutableData, const std::vector<size_t>& preference,
                                           size_t residue);
-    std::vector<cds::Overlap> sidechainOverlap(const assembly::Indices& indices, const AssemblyData& data,
-                                               const std::vector<cds::Sphere>& bounds,
-                                               const std::vector<size_t>& atomsA, const std::vector<size_t>& atomsB);
+    std::vector<double> sidechainOverlap(const assembly::Indices& indices, const AssemblyData& data,
+                                         const std::vector<cds::Sphere>& bounds, const std::vector<size_t>& atomsA,
+                                         const std::vector<size_t>& atomsB);
     IndexedOverlap lowestOverlapSidechainRotation(const MolecularMetadata::SidechainRotamerData& sidechains,
                                                   const assembly::Indices& indices, const AssemblyData& data,
                                                   const MutableData& mutableData, const std::vector<size_t>& preference,

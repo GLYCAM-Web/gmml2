@@ -22,7 +22,7 @@ namespace glycoproteinBuilder
         assembly::Selection selection;
         std::vector<bool> nonViableMolecule;
         std::vector<bool> residueSidechainMoved;
-        std::vector<cds::Overlap> overlap;
+        std::vector<double> overlap;
     };
 
     struct Summary
