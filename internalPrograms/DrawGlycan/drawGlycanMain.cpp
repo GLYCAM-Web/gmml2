@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
         }
         if (codeUtils::contains<int>(arguments.ids, VERSION))
         {
-            std::cout << "GMML version " << GMML_VERSION << "\n";
+            std::cout << "GMML2 version " << GMML_VERSION << "\n";
             std::exit(0);
         }
         codeUtils::validateArguments(arguments, argumentDefinitions);
