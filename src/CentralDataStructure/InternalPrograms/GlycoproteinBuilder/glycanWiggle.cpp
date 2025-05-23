@@ -45,9 +45,11 @@ namespace glycoproteinBuilder
                 const std::vector<size_t>& metadata = dihedralMetadata[dihedralId];
                 auto searchOverlap                  = [&](const assembly::Bounds& bounds)
                 {
-                    return cds::overlapVectorSum(cds::overlapsBetweenSelections(
-                        data.potentialTable, data.overlapTolerance, graph, bounds, moving, nonMoving,
-                        data.atoms.elements, data.residueEdges.atomsCloseToEdge));
+                    return cds::overlapAboveThresholdSum(
+                        data.overlapRejectionThreshold,
+                        cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds,
+                                                       moving, nonMoving, data.atoms.elements,
+                                                       data.residueEdges.atomsCloseToEdge));
                 };
                 cds::OverlapState best = cds::wiggleUsingRotamers(
                     searchOverlap, settings.angles, data.dihedralAngleTable, graph, mutableData.bounds, movingAtoms,
@@ -108,9 +110,11 @@ namespace glycoproteinBuilder
 
                     auto searchOverlap = [&](const assembly::Bounds& bounds)
                     {
-                        return cds::overlapVectorSum(cds::overlapsBetweenSelections(
-                            data.potentialTable, data.overlapTolerance, graph, bounds, dihedralMoving[n],
-                            dihedralNonMoving[n], data.atoms.elements, data.residueEdges.atomsCloseToEdge));
+                        return cds::overlapAboveThresholdSum(
+                            data.overlapRejectionThreshold,
+                            cds::overlapsBetweenSelections(data.potentialTable, data.overlapTolerance, graph, bounds,
+                                                           dihedralMoving[n], dihedralNonMoving[n], data.atoms.elements,
+                                                           data.residueEdges.atomsCloseToEdge));
                     };
                     cds::OverlapState best = cds::wiggleUsingRotamers(
                         searchOverlap, settings.angles, data.dihedralAngleTable, graph, mutableData.bounds, movingAtoms,

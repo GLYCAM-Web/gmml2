@@ -36,6 +36,17 @@ cds::Overlap cds::overlapVectorSum(const std::vector<Overlap>& vec)
     return result * 0.5;
 }
 
+std::vector<cds::Overlap> cds::overlapAboveThreshold(double threshold, const std::vector<Overlap>& vec)
+{
+    std::vector<Overlap> result;
+    result.reserve(vec.size());
+    for (auto& a : vec)
+    {
+        result.push_back({a.count, std::max(0.0, a.weight - threshold)});
+    }
+    return result;
+}
+
 bool cds::containsOverlapExceedingThreshold(double threshold, const std::vector<cds::Overlap>& vec)
 {
     for (auto& a : vec)

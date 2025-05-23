@@ -92,8 +92,12 @@ bool glycoproteinBuilder::sidechainHasGlycanOverlap(const assembly::Graph& graph
                         {
                             for (size_t otherAtom : sidechainAtoms)
                             {
-                                if (cds::spheresOverlap(overlapTolerance, mutableData.bounds.atoms[atom],
-                                                        mutableData.bounds.atoms[otherAtom]))
+                                MolecularMetadata::PotentialFactor factor = MolecularMetadata::potentialFactor(
+                                    data.potentialTable, data.atoms.elements[atom], data.atoms.elements[otherAtom]);
+                                cds::Overlap overlap =
+                                    cds::overlapAmount(factor, overlapTolerance, mutableData.bounds.atoms[atom],
+                                                       mutableData.bounds.atoms[otherAtom]);
+                                if (overlap.weight > data.overlapRejectionThreshold)
                                 {
                                     return true;
                                 }
@@ -186,7 +190,8 @@ glycoproteinBuilder::IndexedOverlap glycoproteinBuilder::lowestOverlapSidechainR
     {
         coords = mutableData.bounds.atoms;
         setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
-        cds::Overlap overlap = cds::overlapVectorSum(sidechainOverlap(indices, data, coords, movingAtoms, otherAtoms));
+        cds::Overlap overlap = cds::overlapAboveThresholdSum(
+            data.overlapRejectionThreshold, sidechainOverlap(indices, data, coords, movingAtoms, otherAtoms));
         overlaps.push_back(overlap);
     }
     size_t lowestIndex = preference[0];
