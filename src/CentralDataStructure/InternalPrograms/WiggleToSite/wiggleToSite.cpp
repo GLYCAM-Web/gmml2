@@ -28,7 +28,7 @@ using gmmlPrograms::WiggleToSite;
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
 WiggleToSite::WiggleToSite(const cdsParameters::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
-    : substrate_(inputStruct.substrateFile_),
+    : substrate_(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}),
       carbohydrate_(parameterManager, MolecularMetadata::defaultVanDerWaalsRadii(),
                     cdsCondensedSequence::parseAndReorder(inputStruct.carbohydrateSequence_))
 {

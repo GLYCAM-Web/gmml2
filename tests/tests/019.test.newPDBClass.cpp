@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     }
     std::string inputFile  = argv[1];
     std::string outputFile = argv[2];
-    pdb::PdbFile pdbFile(argv[1]);
+    pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";

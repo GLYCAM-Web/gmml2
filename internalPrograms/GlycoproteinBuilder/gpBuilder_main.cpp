@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
         const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-        pdb::PdbFile pdbFile(settings.substrateFileName);
+        pdb::PdbFile pdbFile(settings.substrateFileName, {pdb::InputType::modelsAsMolecules, false});
         if (settings.MDprep)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Performing MDPrep aka preprocessing.");

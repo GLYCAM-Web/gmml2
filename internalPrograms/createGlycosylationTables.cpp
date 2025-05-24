@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
         }
     }
     using glycoproteinBuilder::GlycosylationSiteInfo;
-    pdb::PdbFile inputFile(inputFileName);
+    pdb::PdbFile inputFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
     pdb::bondAtomsAndResiduesByDistance(inputFile.data);
     std::vector<GlycosylationSiteInfo> table = glycoproteinBuilder::createGlycosylationSiteTable(
         inputFile.data, codeUtils::indexVector(inputFile.data.indices.residueCount));

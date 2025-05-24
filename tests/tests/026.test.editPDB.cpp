@@ -21,8 +21,9 @@ int main(int argc, char* argv[])
         std::exit(EXIT_FAILURE);
     }
     // requirement: a chain ID for every single ATOM entry, and all ligand atoms should be put in a single residue.
-    pdb::PdbFile pdbFile(argv[1]); // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
-                                   // every molecule to have any chain ID you can do:
+    pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
+    // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
+    // every molecule to have any chain ID you can do:
     pdbFile.data.residues.chainIds = std::vector<std::string>(pdbFile.data.indices.residueCount, "Y");
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:
     std::vector<size_t> ligandResidues =
@@ -43,7 +44,7 @@ int main(int argc, char* argv[])
     pdbFile.Write("026.outputPdbFile.pdb");
     // ************************************************************************ //
     // Separate thing showing how to read/write PDB files as "trajectories/frames"
-    pdb::PdbFile pdbFileTraj(argv[1], pdb::InputType::modelsAsCoordinates);
+    pdb::PdbFile pdbFileTraj(argv[1], {pdb::InputType::modelsAsCoordinates, false});
 
     std::function<cds::Coordinate(const size_t&)> residueMean = [&](size_t n)
     {

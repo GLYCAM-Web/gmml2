@@ -9,6 +9,7 @@
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include <fstream>
 #include <ostream>
@@ -24,7 +25,7 @@ PdbFile::PdbFile()
     inFilePath_ = "GMML-Generated";
 }
 
-PdbFile::PdbFile(const std::string& pdbFilePath, const InputType pdbFileType) : inFilePath_(pdbFilePath)
+PdbFile::PdbFile(const std::string& pdbFilePath, const ReaderOptions& options) : inFilePath_(pdbFilePath)
 {
     std::ifstream pdbFileStream(pdbFilePath);
     if (pdbFileStream.fail())
@@ -33,28 +34,53 @@ PdbFile::PdbFile(const std::string& pdbFilePath, const InputType pdbFileType) : 
         throw std::runtime_error("PdbFile constructor could not open this file: " + pdbFilePath);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "File opened: " + pdbFilePath + ". Ready to parse!");
-    this->ParseInFileStream(pdbFileStream, pdbFileType);
+    parseInFileStream(*this, pdbFileStream, options);
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished parsing " + pdbFilePath);
 }
 
-void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdbFileType)
+void pdb::readConectRow(PdbData& data, const std::string& line)
 {
+    auto indexOfAtom = [&](const std::string& str)
+    {
+        std::optional<int> parsed = codeUtils::parseInt(str);
+        if (!parsed.has_value())
+        {
+            throw std::runtime_error("Error: could not parse conect id: " + str);
+        }
+        uint number  = parsed.value();
+        size_t index = codeUtils::indexOf(data.atoms.numbers, number);
+        if (index == data.atoms.names.size())
+        {
+            throw std::runtime_error("Error: conect row atom id not found: " + str);
+        }
+        return index;
+    };
+    std::vector<std::string> split = codeUtils::split(line, ' ');
+    size_t first                   = indexOfAtom(split[1]);
+    for (size_t n = 2; n < split.size(); n++)
+    {
+        addBond(data, first, indexOfAtom(split[n]));
+    }
+}
+
+void pdb::parseInFileStream(PdbFile& file, std::istream& pdbFileStream, const ReaderOptions& options)
+{
+    PdbData& data     = file.data;
     size_t assemblyId = 0;
     for (std::string line; std::getline(pdbFileStream, line);)
     {
         pdb::expandLine(line, pdb::iPdbLineLength);
         std::string recordName = codeUtils::RemoveWhiteSpace(line.substr(0, 6));
         std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER", "HETATM"};
-        if (pdbFileType == modelsAsCoordinates)
+        if (options.inputType == modelsAsCoordinates)
         { // want to pass in the whole block to assembly so it can read the extra coords
             coordSectionCards.push_back("ENDMDL");
         }
         std::vector<std::string> databaseCards {"DBREF", "DBREF1", "DBREF2"};
         if (codeUtils::contains(coordSectionCards, recordName))
         {
-            std::stringstream recordSection =
-                this->ExtractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
-            cds::Assembly& assembly = assemblies_.emplace_back(cds::Assembly());
+            std::stringstream recordSection = extractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
+            cds::Assembly& assembly         = file.assemblies_.emplace_back(cds::Assembly());
             data.indices.assemblyCount++;
             data.assemblies.numbers.push_back(assemblyId + 1);
             readAssembly(data, assemblyId, assembly, recordSection);
@@ -62,54 +88,60 @@ void PdbFile::ParseInFileStream(std::istream& pdbFileStream, const InputType pdb
         }
         else if (recordName == "HEADER")
         {
-            std::stringstream recordSection = this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
-            headerRecord_                   = HeaderRecord(recordSection);
+            std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
+            file.headerRecord_              = HeaderRecord(recordSection);
         }
         else if (recordName == "TITLE")
         {
-            std::stringstream recordSection = this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
-            titleRecord_                    = TitleRecord(recordSection);
+            std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
+            file.titleRecord_               = TitleRecord(recordSection);
         }
         else if (recordName == "AUTHOR")
         {
-            std::stringstream recordSection = this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
-            authorRecord_                   = AuthorRecord(recordSection);
+            std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
+            file.authorRecord_              = AuthorRecord(recordSection);
         }
         else if (recordName == "JRNL")
         {
-            std::stringstream recordSection = this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
-            journalRecord_                  = JournalRecord(recordSection);
+            std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
+            file.journalRecord_             = JournalRecord(recordSection);
         }
         else if (recordName == "REMARK")
         {
-            std::stringstream recordSection = this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
-            remarkRecord_                   = RemarkRecord(recordSection);
+            std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
+            file.remarkRecord_              = RemarkRecord(recordSection);
         }
         else if (codeUtils::contains(databaseCards, recordName))
         {
-            std::stringstream databaseSection =
-                this->ExtractHeterogenousRecordSection(pdbFileStream, line, databaseCards);
+            std::stringstream databaseSection = extractHeterogenousRecordSection(pdbFileStream, line, databaseCards);
             while (getline(databaseSection, line))
             {
-                databaseReferences_.emplace_back(line);
+                file.databaseReferences_.emplace_back(line);
             }
         }
         else if (recordName == "CONECT")
         {
-            gmml::log(
-                __LINE__, __FILE__, gmml::WAR,
-                "Reading pdbfile that contains CONECT records. We ignore these due to the potential for overruns.");
+            if (options.readConectRows)
+            {
+                readConectRow(data, line);
+            }
+            else
+            {
+                gmml::log(
+                    __LINE__, __FILE__, gmml::WAR,
+                    "Reading pdbfile that contains CONECT records. We ignore these due to the potential for overruns.");
+            }
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "PdbFile Constructor Complete Captain");
-    data.objects.assemblies = getAssemblies();
+    data.objects.assemblies = file.getAssemblies();
 }
 
 // Initializers used by constructors
 // Should extract all lines that start with the strings in recordNames.
 // Returns when it hits a line that does not start with one of those records.
-std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::istream& pdbFileStream, std::string& line,
-                                                            const std::vector<std::string> recordNames)
+std::stringstream pdb::extractHeterogenousRecordSection(std::istream& pdbFileStream, std::string& line,
+                                                        const std::vector<std::string> recordNames)
 {
     std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
     std::stringstream recordSection;
@@ -118,8 +150,7 @@ std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::istream& pdbFil
     {
         if (recordName != "ANISOU") // Do nothing for ANISOU
         {
-            std::stringstream partialRecordSection =
-                this->ExtractHomogenousRecordSection(pdbFileStream, line, recordName);
+            std::stringstream partialRecordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
             recordSection << partialRecordSection.str();
             previousLinePosition = pdbFileStream.tellg(); // Save current line position.
         }
@@ -139,8 +170,8 @@ std::stringstream PdbFile::ExtractHeterogenousRecordSection(std::istream& pdbFil
 // Goes through a section of the PDB file that contains the same header section. E.g. HEADER.
 // If the header changes, it goes back to the previous line. I wanted the out while loop to trigger the new line. This
 // means I don't have to check recordName between if statement and can have else if.
-std::stringstream PdbFile::ExtractHomogenousRecordSection(std::istream& pdbFileStream, std::string& line,
-                                                          std::string recordName)
+std::stringstream pdb::extractHomogenousRecordSection(std::istream& pdbFileStream, std::string& line,
+                                                      std::string recordName)
 {
     std::stringstream recordSection;
     pdb::expandLine(line, pdb::iPdbLineLength);

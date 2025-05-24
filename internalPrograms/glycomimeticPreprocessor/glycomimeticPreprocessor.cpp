@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb 030.outputPdbFile.pdb\n";
         std::exit(EXIT_FAILURE);
     }
-    pdb::PdbFile pdbFile(argv[1]);
+    pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
     auto panic = [&]()
     {
         for (size_t n = 0; n < pdbFile.data.indices.residueCount; n++)
