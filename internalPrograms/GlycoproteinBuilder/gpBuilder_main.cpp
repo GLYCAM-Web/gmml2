@@ -13,6 +13,7 @@
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/random.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/threads.hpp"
 #include "includes/version.h"
@@ -208,7 +209,9 @@ int main(int argc, char* argv[])
         }
 
         std::cout << "Resolving overlaps" << std::endl;
-        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, assembly, settings, outputDir, headerLines, numThreads);
+        uint64_t rngSeed = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
+        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, assembly, settings, rngSeed, outputDir, headerLines,
+                                             numThreads);
     }
     catch (const std::runtime_error& error)
     {

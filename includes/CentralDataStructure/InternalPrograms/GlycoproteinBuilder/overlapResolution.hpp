@@ -15,7 +15,8 @@ namespace glycoproteinBuilder
 {
     void resolveOverlaps(const MolecularMetadata::SidechainRotamerData& sidechainRotamers,
                          const GlycoproteinAssembly& assembly, const GlycoproteinBuilderInputs& settings,
-                         const std::string& outputDir, const std::vector<std::string>& headerLines, int numThreads);
+                         uint64_t rngSeed, const std::string& outputDir, const std::vector<std::string>& headerLines,
+                         int numThreads);
 } // namespace glycoproteinBuilder
 
 #endif

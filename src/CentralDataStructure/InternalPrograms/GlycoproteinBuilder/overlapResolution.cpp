@@ -50,13 +50,12 @@ namespace glycoproteinBuilder
 {
     void resolveOverlaps(const MolecularMetadata::SidechainRotamerData& sidechainRotamers,
                          const GlycoproteinAssembly& assembly, const GlycoproteinBuilderInputs& settings,
-                         const std::string& outputDir, const std::vector<std::string>& headerLines, int numThreads)
+                         uint64_t rngSeed, const std::string& outputDir, const std::vector<std::string>& headerLines,
+                         int numThreads)
     {
         const std::string structureDir = outputDir + "/samples";
         const std::string rejectDir    = structureDir + "/rejected";
         const std::string deletionDir  = structureDir + "/deletions";
-        uint64_t seed                  = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
-        pcg32 seedingRng(seed);
 
         MetadataOrder initialMetadataOrder =
             [](pcg32&, const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>& metadataVector)
@@ -362,8 +361,9 @@ namespace glycoproteinBuilder
                      initialState.moleculeIncluded, atomPairsConnectingNonProteinResidues, outputDir, "unresolved");
 
         // order of parallel for loop is undefined, so we generate all seeds up front for determinism
-        size_t sampleCount             = settings.numberOfSamples;
-        size_t totalStructures         = sampleCount + 1;
+        size_t sampleCount     = settings.numberOfSamples;
+        size_t totalStructures = sampleCount + 1;
+        pcg32 seedingRng(rngSeed);
         std::vector<uint64_t> rngSeeds = codeUtils::randomIntegers<uint64_t>(totalStructures, seedingRng);
         std::vector<std::string> prefixes;
         prefixes.reserve(sampleCount);
@@ -400,7 +400,7 @@ namespace glycoproteinBuilder
             }
         }
 
-        Summary summary                                   = summarizeStats(graph, data, settings, seed, stats);
+        Summary summary                                   = summarizeStats(graph, data, settings, rngSeed, stats);
         std::vector<codeUtils::TextVariant> textStructure = {
             codeUtils::TextVariant(codeUtils::TextHeader {2, "Glycoprotein Builder"}
              ),
