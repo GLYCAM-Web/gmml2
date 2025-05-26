@@ -15,10 +15,21 @@ namespace codeUtils
         return (uint64_t(rdev()) << 32) | rdev();
     }
 
-    inline uint64_t generateRandomSeed(pcg32& rng)
+    template<class T> T randomInteger(pcg32& rng)
     {
-        std::uniform_int_distribution<uint64_t> distr(0, uint64_t(-1));
+        std::uniform_int_distribution<T> distr(0, T(-1));
         return distr(rng);
+    }
+
+    template<class T> std::vector<T> randomIntegers(size_t count, pcg32& rng)
+    {
+        std::vector<T> result;
+        result.reserve(count);
+        for (size_t n = 0; n < count; n++)
+        {
+            result.push_back(randomInteger<T>(rng));
+        }
+        return result;
     }
 
     template<class T> int uniformRandomVectorIndex(pcg32& rng, const std::vector<T>& vec)
