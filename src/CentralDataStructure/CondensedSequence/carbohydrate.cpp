@@ -290,6 +290,7 @@ namespace
                     sequence.residues.configuration[n],
                     sequence.residues.isomer[n],
                     sequence.residues.preIsomerModifier[n],
+                    sequence.residues.probability[n],
                     {sequence.residues.ringShape[n], sequence.residues.modifier[n]}
                 }));
                 indices.push_back(n);

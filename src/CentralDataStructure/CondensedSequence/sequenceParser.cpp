@@ -4,10 +4,12 @@
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 
+#include <optional>
 #include <sstream>
 #include <string>
-#include <cctype> // isdigit()
+#include <cctype>
 #include <vector>
 
 namespace
@@ -35,17 +37,37 @@ namespace
     ParsedResidueComponents parseAglycone(const std::string& residueString)
     {
         return {
-            residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", {"", ""}
+            residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", 1.0, {"", ""}
         };
     }
 
     ParsedResidueComponents parseDerivative(const std::string& residueString)
     { // A derivative e.g. 3S, 6Me. Linkage followed by residue name. No configuration.
-        std::string name      = residueString.substr(1); // From position 1 to the end.
-        cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
+        size_t qpos           = residueString.find("?");
+        bool hasConditional   = qpos < residueString.size();
         std::string linkage   = residueString.substr(0, 1);
+        std::string name      = residueString.substr(1, qpos - 1); // From position 1 to end or start of conditional
+        cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
+        double probability    = 1.0;
+        if (hasConditional)
+        {
+            if (qpos >= residueString.size() - 2)
+            {
+                throw std::runtime_error("Error: unqualified conditional in: " + residueString);
+            }
+            bool isP = residueString[qpos + 1] == 'p';
+            if (isP)
+            {
+                std::optional<double> prob = codeUtils::parseDouble(residueString.substr(qpos + 2));
+                if (!prob.has_value() || (prob.value() > 1.0) || (prob.value() < 0.0))
+                {
+                    throw std::runtime_error("Error: invalid probability in: " + residueString);
+                }
+                probability = prob.value();
+            }
+        }
         return {
-            residueString, type, name, linkage, "", "", "", "", {"", ""}
+            residueString, type, name, linkage, "", "", "", "", probability, {"", ""}
         };
     }
 
@@ -53,6 +75,7 @@ namespace
     { // E.g. DManpNAca1-4 . Isomer (D or L), residueName (ManNAc), ring type (f or p), configuration (a or b), linkage
         // (1-4)
         ParsedResidueComponents result;
+        result.probability   = 1.0;
         result.fullString    = residueString;
         result.type          = ResidueType::Sugar;
         // Assumptions
@@ -238,6 +261,7 @@ namespace
         data.residues.preIsomerModifier.push_back(components.preIsomerModifier);
         data.residues.ringShape.push_back(components.ringShapeAndModifier.shape);
         data.residues.modifier.push_back(components.ringShapeAndModifier.modifier);
+        data.residues.probability.push_back(components.probability);
         size_t id = graph::addNode(data.graph);
         return id;
     }
@@ -517,7 +541,8 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.modifier, residueOrder)};
+                            codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
+                            codeUtils::indicesToValues(sequence.residues.probability, residueOrder)};
 
     return SequenceData {resultGraph, residues, sequence.edges};
 }

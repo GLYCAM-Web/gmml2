@@ -25,6 +25,7 @@ namespace cdsCondensedSequence
         std::string configuration;
         std::string isomer;
         std::string preIsomerModifier;
+        double probability;
         RingShapeAndModifier ringShapeAndModifier;
     };
 

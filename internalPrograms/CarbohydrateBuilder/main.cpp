@@ -7,6 +7,8 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
+#include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/random.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/version.h"
 
@@ -22,6 +24,7 @@ int main(int argc, char** argv)
         INPUT_FILE,
         DELIMITER,
         OUTPUT_DIR,
+        RNG_SEED,
         HELP,
         VERSION,
         TEST_MODE,
@@ -35,6 +38,7 @@ int main(int argc, char** argv)
         {ArgReq::required, ArgType::unnamed,         INPUT_FILE,            "", ' ',       "input-file"},
         {ArgReq::required, ArgType::unnamed,          DELIMITER,            "", ' ',   "list-delimiter"},
         {ArgReq::required, ArgType::unnamed,         OUTPUT_DIR,            "", ' ', "output-directory"},
+        {ArgReq::optional,  ArgType::option,           RNG_SEED,    "rng-seed", ' ',            "value"},
         {ArgReq::optional,    ArgType::flag,               HELP,        "help", 'h',                 ""},
         {ArgReq::optional,    ArgType::flag,            VERSION,     "version", 'v',                 ""},
         {  ArgReq::hidden,    ArgType::flag,          TEST_MODE,   "test-mode", ' ',                 ""},
@@ -79,8 +83,9 @@ int main(int argc, char** argv)
         std::string outputDir        = ".";
         std::string headerBaseString = "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
-        bool testMode  = false;
-        bool overwrite = false;
+        bool testMode    = false;
+        bool overwrite   = false;
+        uint64_t rngSeed = codeUtils::generateRandomSeed();
         for (const auto& arg : arguments.args)
         {
             switch (arg.id)
@@ -105,6 +110,16 @@ int main(int argc, char** argv)
                     {
                         outputDir = arg.value;
                         codeUtils::createDirectories(outputDir);
+                        break;
+                    }
+                case ARGUMENTS::RNG_SEED:
+                    {
+                        std::optional<ulong> seed = codeUtils::parseUlong(arg.value);
+                        if (!seed.has_value())
+                        {
+                            throw std::runtime_error("Error: rng-seed not a valid non-negative integer: " + arg.value);
+                        }
+                        rngSeed = seed.value();
                         break;
                     }
                 case ARGUMENTS::TEST_MODE:
@@ -168,13 +183,23 @@ int main(int argc, char** argv)
         codeUtils::readFileLineByLine(inputFile, processLine);
         const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
         const codeUtils::SparseVector<double>& elementRadii    = MolecularMetadata::defaultVanDerWaalsRadii();
-        for (auto& line : lines)
+        pcg32 seedingRng(rngSeed);
+        std::vector<uint64_t> rngSeeds = codeUtils::randomIntegers<uint64_t>(lines.size(), seedingRng);
+        for (size_t n = 0; n < lines.size(); n++)
         {
+            const SequenceInput& line = lines[n];
+            pcg32 rng(rngSeeds[n]);
             try
             {
                 std::cout << "\n*********************\nBuilding " << line.id << ": " << line.sequence
                           << "\n*********************\n";
                 cdsCondensedSequence::SequenceData sequenceData = cdsCondensedSequence::parseAndReorder(line.sequence);
+                for (size_t k = 0; k < sequenceData.graph.nodeAlive.size(); k++)
+                {
+                    double d                        = codeUtils::uniformRandomDoubleWithinRange(rng, 0.0, 1.0);
+                    sequenceData.graph.nodeAlive[k] = d < sequenceData.residues.probability[k];
+                }
+
                 cdsCondensedSequence::Carbohydrate carbohydrate(parameterManager, elementRadii, sequenceData);
                 carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
                 cdsCondensedSequence::GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");

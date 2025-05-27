@@ -22,6 +22,7 @@ namespace cdsCondensedSequence
         std::vector<std::string> preIsomerModifier;
         std::vector<std::string> ringShape;
         std::vector<std::string> modifier;
+        std::vector<double> probability;
     };
 
     struct EdgeData
