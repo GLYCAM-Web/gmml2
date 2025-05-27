@@ -15,6 +15,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+
 #include <string>
 #include <istream>
 #include <ostream>
@@ -43,6 +44,7 @@ namespace pdb
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
         PdbFile();
+        PdbFile(const std::string& pdbFilePath, const InputType pdbFileType = modelsAsMolecules);
         PdbFile(const std::string& pdbFilePath, const ReaderOptions& options);
 
         //////////////////////////////////////////////////////////
@@ -127,12 +129,5 @@ namespace pdb
         std::vector<cds::Assembly> assemblies_;
         PdbData data;
     };
-
-    void readConectRow(PdbData& data, const std::string& line);
-    std::stringstream extractHeterogenousRecordSection(std::istream& pdbFileStream, std::string& line,
-                                                       const std::vector<std::string> recordNames);
-    std::stringstream extractHomogenousRecordSection(std::istream& pdbFileStream, std::string& line,
-                                                     std::string previousName);
-    void parseInFileStream(PdbFile& file, std::istream& pdbFileStream, const ReaderOptions& options);
 } // namespace pdb
 #endif
