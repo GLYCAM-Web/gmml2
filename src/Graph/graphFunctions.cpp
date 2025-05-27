@@ -5,6 +5,12 @@
 #include <cstddef>
 #include <vector>
 
+bool graph::edgeAlive(const Database& db, size_t edgeId)
+{
+    const std::array<size_t, 2>& nodes = db.edgeNodes[edgeId];
+    return db.nodeAlive[nodes[0]] && db.nodeAlive[nodes[1]];
+}
+
 std::vector<bool> graph::reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting)
 {
     std::vector<bool> reachable(nodeCount(graph), false);
