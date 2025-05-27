@@ -1,4 +1,4 @@
-HEADER    Produced by GMML (https://github.com/GLYCAM-Web/gmml2) in test mode
+HEADER    Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2) in test mode
 ATOM      1 N    GLN A  14     184.536 253.772 146.822  1.00  0.00           N
 ATOM      2 CA   GLN A  14     185.040 255.106 147.227  1.00  0.00           C
 ATOM      3 C    GLN A  14     186.054 254.959 148.365  1.00  0.00           C

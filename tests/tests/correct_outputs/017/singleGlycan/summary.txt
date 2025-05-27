@@ -1,6 +1,6 @@
 ##### Glycoprotein Builder #####
 
-Produced by GMML (https://github.com/GLYCAM-Web/gmml2) in test mode
+Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2) in test mode
 
 #### Input ####
 
