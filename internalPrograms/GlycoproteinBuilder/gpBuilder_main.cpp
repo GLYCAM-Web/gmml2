@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
         }
         if (codeUtils::contains<int>(arguments.ids, VERSION))
         {
-            std::cout << "Glycoprotein Builder & GMML version " << GMML_VERSION << "\n";
+            std::cout << "Glycoprotein Builder & GMML2 version " << GMML_VERSION << "\n";
             std::exit(0);
         }
         codeUtils::validateArguments(arguments, argumentDefinitions);
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     {
         std::string inputFile        = "";
         std::string outputDir        = ".";
-        std::string headerBaseString = "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)";
+        std::string headerBaseString = "Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
         int numThreads = 1;
         bool testMode  = false;

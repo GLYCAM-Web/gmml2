@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         }
         if (codeUtils::contains<int>(arguments.ids, VERSION))
         {
-            std::cout << "Glycoprotein Builder Table & GMML version " << GMML_VERSION << "\n";
+            std::cout << "Glycoprotein Builder Table & GMML2 version " << GMML_VERSION << "\n";
             std::exit(0);
         }
         codeUtils::validateArguments(arguments, argumentDefinitions);
