@@ -268,29 +268,53 @@ namespace
         return;
     }
 
-    void createParsedResidues(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs,
+    void createParsedResidues(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs, std::vector<size_t>& indices,
                               const cdsCondensedSequence::SequenceData& sequence)
     {
         size_t residueCount = sequence.residues.name.size();
         residuePtrs.reserve(residueCount);
+        indices.reserve(residueCount);
+        std::vector<size_t> newIndices;
+        newIndices.reserve(residueCount);
+        size_t index = 0;
         for (size_t n = 0; n < residueCount; n++)
         {
-            residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
-                sequence.residues.fullString[n],
-                sequence.residues.type[n],
-                sequence.residues.name[n],
-                sequence.residues.linkage[n],
-                sequence.residues.ringType[n],
-                sequence.residues.configuration[n],
-                sequence.residues.isomer[n],
-                sequence.residues.preIsomerModifier[n],
-                {sequence.residues.ringShape[n], sequence.residues.modifier[n]}
-            }));
+            if (sequence.graph.nodeAlive[n])
+            {
+                residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
+                    sequence.residues.fullString[n],
+                    sequence.residues.type[n],
+                    sequence.residues.name[n],
+                    sequence.residues.linkage[n],
+                    sequence.residues.ringType[n],
+                    sequence.residues.configuration[n],
+                    sequence.residues.isomer[n],
+                    sequence.residues.preIsomerModifier[n],
+                    {sequence.residues.ringShape[n], sequence.residues.modifier[n]}
+                }));
+                indices.push_back(n);
+                newIndices.push_back(index);
+                index++;
+            }
+            else
+            {
+                newIndices.push_back(residueCount);
+            }
         }
         for (size_t n = 0; n < sequence.graph.edgeNodes.size(); n++)
         {
             auto& edge = sequence.graph.edgeNodes[n];
-            residuePtrs[edge[1]].get()->addParent(sequence.edges.names[n], residuePtrs[edge[0]].get());
+            if (sequence.graph.nodeAlive[edge[1]] && !sequence.graph.edgeAlive[edge[0]])
+            {
+                throw std::runtime_error(
+                    "Error: required parent residue removed by random chance. Check sequence definition");
+            }
+            if (graph::edgeAlive(sequence.graph, n))
+            {
+                size_t childId  = newIndices[edge[1]];
+                size_t parentId = newIndices[edge[0]];
+                residuePtrs[childId].get()->addParent(sequence.edges.names[n], residuePtrs[parentId].get());
+            }
         }
     }
 
@@ -380,9 +404,10 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
 {
     {
         std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
-        size_t residueCount = sequence.residues.name.size();
-        createParsedResidues(residuePtrs, sequence);
+        std::vector<size_t> indices;
+        createParsedResidues(residuePtrs, indices, sequence);
         sortResidueEdges(residuePtrs);
+        size_t residueCount = residuePtrs.size();
 
         for (auto& residue : codeUtils::pointerToUniqueVector(residuePtrs))
         { // Move atoms from prep file into parsedResidues.
@@ -395,9 +420,10 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 }
             }
         }
+        std::vector<ResidueType> residueTypes = codeUtils::indicesToValues(sequence.residues.type, indices);
         for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy
-            if (sequence.residues.type[n] == cds::ResidueType::Deoxy)
+            if (residueTypes[n] == cds::ResidueType::Deoxy)
             {
                 ParsedResidue* deoxyResidue         = residuePtrs[n].get();
                 ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
