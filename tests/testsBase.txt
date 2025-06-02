@@ -9,3 +9,4 @@
 ./028.test.cdsCarbBuilderAll.sh tests/inputs/023.smallLibrary.txt 028
 ./030.test.gmPreProcessor.sh
 ./031.test.iupac.sh
+./032.test.ringAtomFinder.sh
