@@ -2,16 +2,18 @@
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
 
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
+#include "includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp"
+#include "includes/MolecularModeling/TemplateGraph/LazyPrints/LazyPrinters.hpp"
 
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
-
-#include "includes/MolecularModeling/TemplateGraph/LazyPrints/LazyPrinters.hpp"
-#include "includes/CodeUtils/casting.hpp"
-
-#include "includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
+
+#include "includes/Graph/graphTypes.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <vector>
 #include <map>
@@ -41,7 +43,8 @@ int main(int argc, char* argv[])
     //            )
     pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
     std::cout << "Bonding atoms by distance for assembly" << std::endl;
-    pdb::bondAtomsByDistance(pdbFile.data, codeUtils::indexVector(pdbFile.data.indices.atomCount));
+    size_t atomCount = pdbFile.data.indices.atomCount;
+    pdb::bondAtomsByDistance(pdbFile.data, codeUtils::indexVector(atomCount));
     Graph<cds::Atom>* graph1 = new Graph<cds::Atom>(pdbFile.data.objects.atoms.at(0));
 
     id_connectivity::identifyConnectivity(*graph1);
@@ -97,39 +100,62 @@ int main(int argc, char* argv[])
     //        }
     //    }
 
-    // We had trouble casting the Node<cds::Atom>* to cds::Atom so came up with this instead.
-    auto getAtomNumber = [&](Node<cds::Atom>* currDuder) -> unsigned int
+    std::function<std::vector<size_t>(const std::pair<std::unordered_set<glygraph::Node<cds::Atom>*>,
+                                                      std::unordered_set<glygraph::Edge<cds::Atom>*>>&)>
+        cycleAtomIds = [&](const std::pair<std::unordered_set<glygraph::Node<cds::Atom>*>,
+                                           std::unordered_set<glygraph::Edge<cds::Atom>*>>& cycle)
     {
-        size_t i = codeUtils::indexOf(pdbFile.data.objects.atoms, currDuder->getDerivedClass());
-        return pdbFile.data.objects.atoms.at(i)->getNumber();
+        const std::unordered_set<glygraph::Node<cds::Atom>*>& cycleAtoms = cycle.first;
+        std::vector<size_t> result;
+        result.reserve(cycleAtoms.size());
+        for (auto& a : cycleAtoms)
+        {
+            result.push_back(codeUtils::indexOf(pdbFile.data.objects.atoms, a->getDerivedClass()));
+        }
+        return codeUtils::sorted(result);
     };
 
-    //    std::cout << "\nUnknown Nodes: ";
-    //    for (Node<cds::Atom>* currDude : unknownNodes)
-    //    {
-    //    	std::cout << getAtomNumber(currDude) << ", ";
-    //    }
-    //    std::cout << "\nLeaf Nodes: ";
-    //    for (Node<cds::Atom>* currDude : leafNodes)
-    //    {
-    //    	std::cout << getAtomNumber(currDude) << ", ";
-    //    }
-    //    std::cout << "\nBridge Nodes: ";
-    //    for (Node<cds::Atom>* currDude : bridgeNodes)
-    //    {
-    //    	std::cout << getAtomNumber(currDude) << ", ";
-    //    }
-    //    std::cout << "\nCycle Nodes: ";
-    //    for (Node<cds::Atom>* currDude : cycleNodes)
-    //    {
-    //    	std::cout << getAtomNumber(currDude) << ", ";
-    //    }
-    //    std::cout << "\n\n";
+    graph::Graph traversableGraph = graph::identity(pdbFile.data.atomGraph);
 
-    std::vector<
-        std::pair<std::unordered_set<glygraph::Node<cds::Atom>*>, std::unordered_set<glygraph::Edge<cds::Atom>*>>>
-        g1Cycles          = cycle_decomp::totalCycleDetect(*graph1);
-    std::string separator = "";
+    std::function<std::vector<size_t>(const std::vector<size_t>&)> atomIdsInCycleOrder =
+        [&](const std::vector<size_t>& atomIds)
+    {
+        std::vector<size_t> result;
+        result.reserve(atomIds.size());
+        std::vector<bool> partOfCycle = codeUtils::indicesToBools(atomCount, atomIds);
+        size_t current                = atomIds[0];
+        result.push_back(current);
+        std::vector<bool> traversed = codeUtils::indicesToBools(atomCount, {current});
+        auto untraversedNeighbor    = [&](size_t atomId)
+        {
+            return partOfCycle[atomId] && !traversed[atomId];
+        };
+        while (result.size() < atomIds.size())
+        {
+            const std::vector<size_t>& neighbors = traversableGraph.nodes.nodeAdjacencies[current];
+            auto it = std::find_if(neighbors.begin(), neighbors.end(), untraversedNeighbor);
+            if (it == neighbors.end())
+            {
+                throw std::runtime_error(
+                    "Error in ring traversal. This shouldn't happen, since we already know it's a ring");
+            }
+            current = *it;
+            result.push_back(current);
+            traversed[current] = true;
+        }
+        return result;
+    };
+
+    std::function<std::string(const uint&)> uintToString = [&](uint a)
+    {
+        return std::to_string(a);
+    };
+
+    std::vector<std::string> atomNumberStrings = codeUtils::vectorMap(uintToString, pdbFile.data.atoms.numbers);
+    std::vector<std::vector<size_t>> g1Cycles =
+        codeUtils::vectorMap(cycleAtomIds, cycle_decomp::totalCycleDetect(*graph1));
+    std::vector<std::vector<size_t>> orderedCycles = codeUtils::vectorMap(atomIdsInCycleOrder, g1Cycles);
+    std::string separator                          = "";
     std::cout << "Ring_IDs=(";
     for (int i = 0; i < g1Cycles.size(); ++i)
     {
@@ -139,16 +165,10 @@ int main(int argc, char* argv[])
     std::cout << ")\n";
     int prettyCounter = 0;
     std::cout << "Ring_Atoms=(\n";
-    for (std::pair<std::unordered_set<glygraph::Node<cds::Atom>*>, std::unordered_set<glygraph::Edge<cds::Atom>*>>
-             currCyclePair : g1Cycles)
+    for (auto& atomIds : orderedCycles)
     {
-        std::string separator = "";
         std::cout << "[\"" << prettyCounter << "\"]=\"";
-        for (Node<cds::Atom>* currAtom : currCyclePair.first)
-        {
-            std::cout << separator << getAtomNumber(currAtom);
-            separator = " ";
-        }
+        std::cout << codeUtils::join(" ", codeUtils::indicesToValues(atomNumberStrings, atomIds));
         std::cout << "\"\n";
         prettyCounter++;
     }
