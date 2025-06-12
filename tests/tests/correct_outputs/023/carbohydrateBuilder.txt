@@ -180,11 +180,8 @@ Building 00043: DArafb1-2DArafa1-3DArafa1-5DArafa1-OME
 *********************
 
 *********************
-Building 00044: DKDNpa2-8DKDOpa2-9DKDNpb2-7DKDOpb2-OME
+Building 00044: DKDNpa2-8DKDNpa2-9DKDNpb2-7DKDNpb2-OME
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 9Kn@C2 and 7Ko@O7
-Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
-
 
 *********************
 Building 00045: DKDOpa2-OME
@@ -354,4 +351,6 @@ Building 00085: DFrufb2-2DFrufa
 *********************
 Building 00086: DDmanpHepb1-7LDmanpHepb1-7DDmanpHepb1-3DQuipNAc4NAcb1-4DGlcpNAc3NAcAa1-8DK3Opb2-3LArap4Na1-3DBacpa1-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 7Lh and 7Dh. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
+Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DDDmanpHepb1-3DQuipNAc4NAcb
+At dihedral index: 0
+
