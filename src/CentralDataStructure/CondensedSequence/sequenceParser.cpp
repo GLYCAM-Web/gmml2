@@ -238,6 +238,7 @@ namespace
         data.residues.preIsomerModifier.push_back(components.preIsomerModifier);
         data.residues.ringShape.push_back(components.ringShapeAndModifier.shape);
         data.residues.modifier.push_back(components.ringShapeAndModifier.modifier);
+        data.residues.isInternal.push_back(false);
         size_t id = graph::addNode(data.graph);
         return id;
     }
@@ -245,8 +246,11 @@ namespace
     void addLinkage(SequenceData& data, size_t resA, size_t resB)
     {
         bool isSugar         = data.residues.type[resA] == cds::ResidueType::Sugar;
+        bool isChildDeoxy    = data.residues.type[resA] == cds::ResidueType::Deoxy;
         std::string edgeName = (isSugar ? data.residues.configuration[resA] : "") + data.residues.linkage[resA];
         graph::addEdge(data.graph, {resB, resA});
+        // It remains internal if it's already been made internal, or if the child is a deoxy.
+        data.residues.isInternal[resB] = (!isChildDeoxy || data.residues.isInternal[resB]);
         data.edges.names.push_back(edgeName);
     }
 
@@ -517,7 +521,8 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.modifier, residueOrder)};
+                            codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
+                            codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder)};
 
     return SequenceData {resultGraph, residues, sequence.edges};
 }

@@ -6,6 +6,7 @@
 #include <variant>
 #include <vector>
 #include <stdexcept>
+#include "includes/CentralDataStructure/residueTypes.hpp"
 
 namespace GlycamMetadata
 {
@@ -51,7 +52,8 @@ namespace GlycamMetadata
 
         inline std::string print() const
         {
-            return atom1_ + "_" + atom2_ + "_" + atom3_ + "_" + atom4_ + " : " + rotamer_name_;
+            return atom1_ + "_" + atom2_ + "_" + atom3_ + "_" + atom4_ + " : " + std::to_string(index_) + " " +
+                   rotamer_name_ + " " + dihedral_angle_name_ + " " + std::to_string(default_angle);
         }
     };
 
@@ -63,11 +65,10 @@ namespace GlycamMetadata
 
     const DihedralAngleDataTable& dihedralAngleDataTable();
 
-    // Pass in the two atoms on either side the residue-residue linkage
-    std::vector<std::vector<size_t>> getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name,
-                                                                           const std::string& residue1Name,
-                                                                           const std::string& atom2Name,
-                                                                           const std::string& residue2Name);
+    std::vector<std::vector<size_t>> getDihedralAngleDataEntriesForLinkage(
+        const std::string& atom1Name, const cds::ResidueAttributes& residue1Attributes, const std::string& atom2Name,
+        const cds::ResidueAttributes& residue2Attributes);
+
     std::vector<size_t> likelyMetadata(const DihedralAngleDataTable& table, const std::vector<size_t>& entries);
 
     template<typename T>
@@ -87,5 +88,6 @@ namespace GlycamMetadata
             throw std::runtime_error("unhandled angle deviation in GlycamMetadata::onAngleDeviation");
         }
     };
+
 } // namespace GlycamMetadata
 #endif

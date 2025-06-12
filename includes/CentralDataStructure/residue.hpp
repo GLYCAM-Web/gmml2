@@ -58,6 +58,11 @@ namespace cds
             return number_;
         }
 
+        inline const ResidueAttributes& getAttributes()
+        {
+            return residueAttributes_;
+        }
+
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
@@ -94,6 +99,11 @@ namespace cds
         inline void setNTerminal(bool b)
         {
             isNTerminal = b;
+        }
+
+        inline void setAttributes(const ResidueAttributes ra)
+        {
+            residueAttributes_ = ra;
         }
 
         //////////////////////////////////////////////////////////
@@ -146,6 +156,7 @@ namespace cds
         //                    ATTRIBUTES                        //
         //////////////////////////////////////////////////////////
         std::vector<std::unique_ptr<Atom>> atoms_;
+        ResidueAttributes residueAttributes_;
         std::string name_ = "   ";
         ResidueType type_ = Undefined; // enum Type. See enum above.
         uint number_ =
