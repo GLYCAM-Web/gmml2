@@ -1,9 +1,10 @@
+#include <iostream>
+#include <regex>
+#include <string>
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
-
-#include <regex>
 
 namespace
 {
@@ -50,15 +51,15 @@ namespace
           { "C2"   , "O[1-9]" , "Phi"  ,  60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 1 , {"n-carbon=6", "ketose", "beta"}     , {"monosaccharide"}            , "C1" , "C2" , "O." , "C."  }, // Phi is defined by C1-C2(ano)-Ox-Cx for ketoses like Fru
           { "C2"   , "O[1-9]" , "Phi"  , 180.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "t"  , 1 , 1 , {"ketose", "ulosonate"}     , {"monosaccharide"}      , "C1" , "C2" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
           // Sialic acid type 2- linkages:
-          { "C2"   , "O[3-6]" , "Phi"  , -60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate", "alpha"}  , {"monosaccharide"}         , "C1" , "C2" , "O." , "C."  },
+          { "C2"   , "O[3-6]" , "Phi"  , -60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate" }  , {"monosaccharide"}         , "C1" , "C2" , "O." , "C."  },
           // Generic psi linkages, why is this labelled "ap"?
           { "C."   , "O[1-5]" , "Psi"  ,   0.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "ap" , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "H."  }, // Psi should be C(ano)-Ox-Cx-Hx, if Cx is ring, otherwise, C(ano)-Ox-Cx-C(x-1)
           { "C."   , "O[6-9]" , "Psi"  , 180.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "t"  , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "C."  },
           // Omega angle in x-6 linkages.
           { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
           { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=galacto"} , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=gluco"}   , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"pyranose"} 				 , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=gluco"}       , "O6" , "C6" , "C5" , "O5"  },
           // Omega angle in x-5 linkages.
           { "C.*"  , "O5"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
           { "C.*"  , "O5"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
@@ -280,16 +281,71 @@ const GlycamMetadata::DihedralAngleDataTable& GlycamMetadata::dihedralAngleDataT
     return dihedralAngleDataTable_;
 }
 
+// All of this is rubbish but I want to match what's already in the metadata (strings).
+// Much better to e.g. put the enum type into the metadata than convert to strings.
+// Also how the metadata is structured and applied here is insane.
+std::vector<std::string> getTagsForResidue(const cds::ResidueAttributes& residueAttributes)
+{
+    std::vector<std::string> foundAttributes;
+    std::vector<std::string> nCarbonSix        = {"Tal", "All", "Alt", "Fuc", "Gal", "Glc", "Gul", "Man",
+                                                  "Qui", "Rha", "Ido", "Fru", "Sor", "Tag", "Psi"};
+    std::vector<std::string> glucoGauche       = {"Glc", "All", "Alt", "Man"};
+    std::vector<std::string> aldoseResidues    = {"All", "Alt", "Ara", "Fuc", "Gal", "Glc", "Gul",      "Ido",
+                                                  "Lyx", "Man", "Qui", "Rha", "Rib", "Tal", "Xyl",      "Tyv",
+                                                  "dUA", "Bac", "Abe", "Oli", "AAT", "Mur", "DDmanHep", "LDmanHep"};
+    std::vector<std::string> ketoseResidues    = {"Fru", "Psi", "Sor", "Tag", "Neu", "KDN",
+                                                  "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
+    std::vector<std::string> ulosonateResidues = {"Neu", "KDN", "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
+    if (codeUtils::contains(glucoGauche, residueAttributes.name))
+    {
+        foundAttributes.push_back("gauche-effect=gluco");
+    }
+    if (codeUtils::contains(nCarbonSix, residueAttributes.name))
+    {
+        foundAttributes.push_back("n-carbon=6");
+    }
+    if (codeUtils::contains(aldoseResidues, residueAttributes.name))
+    {
+        foundAttributes.push_back("aldose");
+    }
+    if (codeUtils::contains(ketoseResidues, residueAttributes.name))
+    {
+        foundAttributes.push_back("ketose");
+    }
+    if (codeUtils::contains(ulosonateResidues, residueAttributes.name))
+    {
+        foundAttributes.push_back("ulosonate");
+    }
+    if (residueAttributes.configuration == "a")
+    {
+        foundAttributes.push_back("alpha");
+    };
+    if (residueAttributes.configuration == "b")
+    {
+        foundAttributes.push_back("beta");
+    };
+    if (residueAttributes.ringType == "p")
+    {
+        foundAttributes.push_back("pyranose");
+    };
+    if (residueAttributes.ringType == "f")
+    {
+        foundAttributes.push_back("furanose");
+    };
+    foundAttributes.push_back(residueAttributes.isInternal ? "internal" : "external");
+    foundAttributes.push_back(residueTypeToString(residueAttributes.type));
+    return foundAttributes;
+}
+
 // Pass in the two atoms on either side the residue-residue linkage
-std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForLinkage(const std::string& atom1Name,
-                                                                                       const std::string& residue1Name,
-                                                                                       const std::string& atom2Name,
-                                                                                       const std::string& residue2Name)
+std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForLinkage(
+    const std::string& atom1Name, const cds::ResidueAttributes& residue1Attributes, const std::string& atom2Name,
+    const cds::ResidueAttributes& residue2Attributes)
 {
     const DihedralAngleDataTable& table = dihedralAngleDataTable();
     std::vector<size_t> matching_entries;
-    std::vector<std::string> residue1_types = getTypesForResidue(residue1Name);
-    std::vector<std::string> residue2_types = getTypesForResidue(residue2Name);
+    std::vector<std::string> residue1_types = getTagsForResidue(residue1Attributes);
+    std::vector<std::string> residue2_types = getTagsForResidue(residue2Attributes);
     // Go through each entry in the metadata
     for (size_t n = 0; n < table.entries.size(); n++)
     {
@@ -322,7 +378,6 @@ std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForL
             }
         }
     }
-
     unsigned int maxMetadataDihedral = 0;
     for (auto& entry : matching_entries)
     {
