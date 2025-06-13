@@ -2,7 +2,6 @@
 #include <regex>
 #include <string>
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06residueinfo.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
