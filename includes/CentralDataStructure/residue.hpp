@@ -58,7 +58,7 @@ namespace cds
             return number_;
         }
 
-        inline const ResidueAttributes& getAttributes()
+        inline const ResidueAttributes& getAttributes() const
         {
             return residueAttributes_;
         }

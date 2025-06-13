@@ -435,10 +435,9 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 const ResidueData& rD  = sequence.residues;
                 size_t k               = indices[n];
                 std::string glycamCode = getGlycamResidueName(residuePtrs[n].get());
-                cds::ResidueAttributes ra {
-                    rD.type[k],          rD.name[k],      rD.linkage[k],           rD.ringType[k],
-                    rD.configuration[k], rD.isomer[k],    rD.preIsomerModifier[k], rD.modifier[k],
-                    glycamCode,          rD.isInternal[k]};
+                cds::ResidueAttributes ra {rD.type[k],     rD.name[k],          glycamCode,   rD.linkage[k],
+                                           rD.ringType[k], rD.configuration[k], rD.isomer[k], rD.preIsomerModifier[k],
+                                           rD.modifier[k], rD.isInternal[k]};
                 residuePtrs[n]->setAttributes(ra);
             }
         }

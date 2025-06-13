@@ -1,5 +1,7 @@
+#include <cmath>
+#include <sstream>
+#include <iostream>
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
-
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
@@ -12,17 +14,22 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
-#include <cmath>
-#include <sstream>
-#include <iostream>
-
 namespace
 {
+    cds::ResidueAttributes generateAttributes(const cds::Residue* residue)
+    {
+        if (residue->GetType() == cds::ResidueType::Protein)
+        {
+            return cds::ResidueAttributes {cds::ResidueType::Protein, residue->getName(), residue->getName()};
+        }
+        return residue->getAttributes(); // Only carbs have their attributes set.
+    }
+
     cds::ResidueLinkAttributes toAttributes(const cds::ResidueLink link)
     {
         return {
-            {link.residues.first->getAttributes(), link.residues.second->getAttributes()},
-            {         link.atoms.first->getName(),          link.atoms.second->getName()}
+            {generateAttributes(link.residues.first), generateAttributes(link.residues.second)},
+            {            link.atoms.first->getName(),             link.atoms.second->getName()}
         };
     }
 
