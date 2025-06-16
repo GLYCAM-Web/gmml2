@@ -14,10 +14,9 @@ namespace
 {
     using cds::ResidueType;
     using cdsCondensedSequence::ParsedResidueComponents;
-    using cdsCondensedSequence::RingShapeAndModifier;
     using cdsCondensedSequence::SequenceData;
 
-    RingShapeAndModifier ringShapeAndModifier(const std::string& modifier)
+    std::pair<std::string, std::string> ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
         size_t leftParenthesisPosition  = modifier.find('(');
         size_t rightParenthesisPosition = modifier.find(')');
@@ -34,9 +33,7 @@ namespace
 
     ParsedResidueComponents parseAglycone(const std::string& residueString)
     {
-        return {
-            residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", {"", ""}
-        };
+        return {residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", "", ""};
     }
 
     ParsedResidueComponents parseDerivative(const std::string& residueString)
@@ -44,9 +41,7 @@ namespace
         std::string name      = residueString.substr(1); // From position 1 to the end.
         cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
         std::string linkage   = residueString.substr(0, 1);
-        return {
-            residueString, type, name, linkage, "", "", "", "", {"", ""}
-        };
+        return {residueString, type, name, linkage, "", "", "", "", "", ""};
     }
 
     ParsedResidueComponents parseSugar(const std::string& residueString)
@@ -113,8 +108,10 @@ namespace
         }
         if (modifierLength > 0 && modifierLength < 100)
         {
-            std::string modifier        = residueString.substr(modifierStart, modifierLength);
-            result.ringShapeAndModifier = ringShapeAndModifier(modifier);
+            std::string modifier                           = residueString.substr(modifierStart, modifierLength);
+            std::pair<std::string, std::string> ringAndMod = ringShapeAndModifier(modifier);
+            result.ringShape                               = ringAndMod.first;
+            result.modifier                                = ringAndMod.second;
         }
         return result;
     }
@@ -236,8 +233,8 @@ namespace
         data.residues.configuration.push_back(components.configuration);
         data.residues.isomer.push_back(components.isomer);
         data.residues.preIsomerModifier.push_back(components.preIsomerModifier);
-        data.residues.ringShape.push_back(components.ringShapeAndModifier.shape);
-        data.residues.modifier.push_back(components.ringShapeAndModifier.modifier);
+        data.residues.ringShape.push_back(components.ringShape);
+        data.residues.modifier.push_back(components.modifier);
         data.residues.isInternal.push_back(false);
         size_t id = graph::addNode(data.graph);
         return id;

@@ -8,7 +8,6 @@
 using cds::ResidueType;
 using cdsCondensedSequence::ParsedResidue;
 using cdsCondensedSequence::ParsedResidueComponents;
-using cdsCondensedSequence::RingShapeAndModifier;
 
 ParsedResidue::ParsedResidue(const ParsedResidueComponents& components_) : components(components_)
 {

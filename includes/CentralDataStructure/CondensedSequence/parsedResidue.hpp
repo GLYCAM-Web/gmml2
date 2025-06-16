@@ -9,12 +9,6 @@ namespace cdsCondensedSequence
 {
     using cds::ResidueType;
 
-    struct RingShapeAndModifier
-    {
-        std::string shape;
-        std::string modifier;
-    };
-
     struct ParsedResidueComponents
     {
         std::string fullString;
@@ -25,7 +19,8 @@ namespace cdsCondensedSequence
         std::string configuration;
         std::string isomer;
         std::string preIsomerModifier;
-        RingShapeAndModifier ringShapeAndModifier;
+        std::string ringShape;
+        std::string modifier;
     };
 
     std::string getLink(cds::ResidueType type, const std::string& linkage);
@@ -72,12 +67,12 @@ namespace cdsCondensedSequence
 
         inline std::string GetRingShape() const
         {
-            return components.ringShapeAndModifier.shape;
+            return components.ringShape;
         }
 
         inline std::string GetResidueModifier() const
         {
-            return components.ringShapeAndModifier.modifier;
+            return components.modifier;
         }
 
         inline std::string GetConfiguration() const

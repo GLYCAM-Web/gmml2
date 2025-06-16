@@ -282,16 +282,10 @@ namespace
             if (sequence.graph.nodeAlive[n])
             {
                 residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
-                    sequence.residues.fullString[n],
-                    sequence.residues.type[n],
-                    sequence.residues.name[n],
-                    sequence.residues.linkage[n],
-                    sequence.residues.ringType[n],
-                    sequence.residues.configuration[n],
-                    sequence.residues.isomer[n],
-                    sequence.residues.preIsomerModifier[n],
-                    {sequence.residues.ringShape[n], sequence.residues.modifier[n]}
-                }));
+                    sequence.residues.fullString[n], sequence.residues.type[n], sequence.residues.name[n],
+                    sequence.residues.linkage[n], sequence.residues.ringType[n], sequence.residues.configuration[n],
+                    sequence.residues.isomer[n], sequence.residues.preIsomerModifier[n], sequence.residues.ringShape[n],
+                    sequence.residues.modifier[n]}));
                 indices.push_back(n);
                 newIndices.push_back(index);
                 index++;
