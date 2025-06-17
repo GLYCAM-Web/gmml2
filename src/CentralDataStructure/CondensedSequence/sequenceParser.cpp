@@ -236,6 +236,8 @@ namespace
         data.residues.ringShape.push_back(components.ringShape);
         data.residues.modifier.push_back(components.modifier);
         data.residues.isInternal.push_back(false);
+        data.residues.isDerivative.push_back(
+            codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, components.type));
         size_t id = graph::addNode(data.graph);
         return id;
     }
@@ -251,21 +253,17 @@ namespace
         data.edges.names.push_back(edgeName);
     }
 
-    size_t saveResidue(SequenceData& data, std::vector<size_t>& savedDerivatives, std::string residueString,
+    size_t saveResidue(SequenceData& data, std::vector<size_t>& savedDerivatives, const std::string& residueString,
                        size_t parent)
     {
-        bool isDerivative = residueString.find('-') == std::string::npos;
-        if (isDerivative)
+        size_t newRes = addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
+        if (data.residues.isDerivative[newRes])
         {
-            size_t derivative =
-                addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
-            savedDerivatives.push_back(derivative);
+            savedDerivatives.push_back(newRes);
             return parent;
         }
         else
         {
-            size_t newRes =
-                addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
             addLinkage(data, newRes, parent);
             for (size_t derivative : savedDerivatives)
             {
@@ -519,7 +517,8 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder)};
+                            codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
+                            codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
 
     return SequenceData {resultGraph, residues, sequence.edges};
 }

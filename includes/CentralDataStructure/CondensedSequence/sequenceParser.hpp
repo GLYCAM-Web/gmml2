@@ -23,6 +23,7 @@ namespace cdsCondensedSequence
         std::vector<std::string> ringShape;
         std::vector<std::string> modifier;
         std::vector<bool> isInternal;
+        std::vector<bool> isDerivative;
     };
 
     struct EdgeData
