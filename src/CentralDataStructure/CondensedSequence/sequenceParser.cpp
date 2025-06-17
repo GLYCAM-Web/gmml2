@@ -251,13 +251,15 @@ namespace
         data.edges.names.push_back(edgeName);
     }
 
-    size_t saveResidue(SequenceData& data, std::vector<std::string>& savedDerivatives, std::string residueString,
+    size_t saveResidue(SequenceData& data, std::vector<size_t>& savedDerivatives, std::string residueString,
                        size_t parent)
     {
         bool isDerivative = residueString.find('-') == std::string::npos;
         if (isDerivative)
         {
-            savedDerivatives.push_back(residueString);
+            size_t derivative =
+                addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
+            savedDerivatives.push_back(derivative);
             return parent;
         }
         else
@@ -265,10 +267,8 @@ namespace
             size_t newRes =
                 addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
             addLinkage(data, newRes, parent);
-            for (auto& derivativeStr : savedDerivatives)
+            for (size_t derivative : savedDerivatives)
             {
-                size_t derivative =
-                    addResidue(data, parseResidueStringIntoComponents(derivativeStr, cds::ResidueType::Undefined));
                 addLinkage(data, derivative, newRes);
             }
             savedDerivatives.clear();
@@ -276,7 +276,7 @@ namespace
         }
     }
 
-    size_t recurveParseAlt(SequenceData& data, std::vector<std::string>& savedDerivatives, size_t i,
+    size_t recurveParseAlt(SequenceData& data, std::vector<size_t>& savedDerivatives, size_t i,
                            const std::string& sequence, size_t parent)
     {
         auto save = [&](size_t windowStart, size_t windowEnd, size_t parent)
@@ -329,8 +329,7 @@ namespace
         return i;
     }
 
-    void parseCondensedSequence(SequenceData& data, std::vector<std::string>& savedDerivatives,
-                                const std::string& sequence)
+    void parseCondensedSequence(SequenceData& data, const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
         size_t i = (sequence.find_last_of('-') + 1);
@@ -348,6 +347,7 @@ namespace
             addResidue(data, parseAglycone(sequence.substr(i)));
         }
         size_t terminal = data.graph.nodes.size() - 1;
+        std::vector<size_t> savedDerivatives;
         recurveParseAlt(data, savedDerivatives, i, sequence, terminal);
     }
 
@@ -545,8 +545,7 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::parseSequence(std::stri
             gmml::log(
                 __LINE__, __FILE__, gmml::INF,
                 "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
-            std::vector<std::string> savedDerivatives;
-            parseCondensedSequence(data, savedDerivatives, inputSequence);
+            parseCondensedSequence(data, inputSequence);
         }
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "parseSequence complete");
