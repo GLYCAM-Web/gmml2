@@ -80,3 +80,17 @@
 00084_DFrufb2-4DFrufa2-4DFrufa2-OME
 00085_DFrufb2-2DFrufa
 00086_DDmanpHepb1-7LDmanpHepb1-7DDmanpHepb1-3DQuipNAc4NAcb1-4DGlcpNAc3NAcAa1-8DK3Opb2-3LArap4Na1-3DBacpa1-OH
+00087_DGalpa1-2DGalpa1-2[DGlcpb1-3]DGlcpa1-3DGlcpa1-3[LDmanpHepa1-7]LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
+00088_DGlcpb1-6[LFucpa1-2]DGalpb1-4[DGalfb1-3]LRhapa1-4DKDOpa2-OH
+00089_DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DGlcpa1-4DGalpb1-4[DGlcpa1-6LDmanpHepa1-6]DGlcpb1-4[LDmanpHepa1-6][DGlcpa1-7LDmanpHepa1-2LDmanpHepa1-3]LDmanpHepa1-5DKDOpa2-OH
+00090_DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-OH
+00091_DGlcpAb1-4DGlcpNAc3NAcAb1-3DAATpa1-4DGlcpAb1-4DGlcpNAc3NAcAb1-3DAATpa1-OH
+00092_LFuspb2-4LAltpa1-3DQuipb1-4LFuspb2-4LAltpa1-3DQuipb1-OH
+00093_DGlcpNAc3NAcAb1-3DQuipNAc4NAca1-3DQuipNAc4NAca1-4DGlcpNAc3NAcAb1-3DQuipNAc4NAca1-3DQuipNAc4NAca1-4DGlcpNAc3NAcAa1-OH
+00094_DGalpNAcb1-4[DLegpa2-6]DGalpb1-6[DGlcpNAca1-3]DGalpb1-3DGalpNAcb1-4[DLegpa2-6]DGalpb1-6[DGlcpNAca1-3]DGalpb1-OH
+00095_LDmanpHepa1-7[LDmanpHepa1-2DGlcpa1-3]LDmanpHepa1-3[DGlcpb1-4]LDmanpHepa1-5[LArap4Na1-8DK3Opa2-4]DKDOpa2-OH
+00096_DGlcpNAcb1-3DRhapa1-2[LDmanpHepa1-7][DGlcpb1-3DGalpNAca1-3DGalpNAcb1-3LRhapa1-3]LDmanpHepa1-3[LDmanpHepa1-6DGlcpb1-4]LDmanpHepa1-5[DK3Opa2-4]DKDOpa2-OH
+00097_DGlcpNAcb1-4DMurpNAcb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
+00098_DGalpNAca1-3LFucpa1-3DFucp[2A]a1-3[LAcipa2-6]DGalpNAca1-3LFucpa1-3DFucp[2A]a1-OH
+00099_DGlcpa1-4DGalpb1-7[DGlcpa1-6DDmanpHepa1-2LFucpa1-3DGlcpNAca1-2]DDmanpHepa1-2LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
+00100_DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
