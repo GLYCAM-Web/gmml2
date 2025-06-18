@@ -4617,7 +4617,7 @@ Generating those combos from 0eC
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4645,7 +4645,7 @@ Generating those combos from 0ec
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4725,7 +4725,7 @@ Generating those combos from 0gF
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4757,7 +4757,7 @@ Generating those combos from 0gf
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4789,7 +4789,7 @@ Generating those combos from 0KX
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4833,7 +4833,7 @@ Generating those combos from 0Kx
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4917,7 +4917,7 @@ Generating those combos from 0LG
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4945,7 +4945,7 @@ Generating those combos from 0Lg
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -5097,7 +5097,7 @@ Generating those combos from 0mP
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -5125,7 +5125,7 @@ Generating those combos from 0mp
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
