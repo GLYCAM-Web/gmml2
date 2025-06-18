@@ -139,7 +139,8 @@ namespace
                 "named e.g. O2 and not 2O. Hydrogen to be substituted should be H2O and not HO2. Both must be present. "
                 "This may turn into a fatal issue for the atom numbered: " +
                 hydrogenNumber + " in residue: " + queryResidue.getName();
-            gmml::log(__LINE__, __FILE__, gmml::WAR, message);
+            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+            throw std::runtime_error(message);
             return;
         }
         oxygen->setCharge(oxygen->getCharge() + hydrogen->getCharge() - 0.194);

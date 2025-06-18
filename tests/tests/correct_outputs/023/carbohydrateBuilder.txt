@@ -180,11 +180,8 @@ Building 00043: DArafb1-2DArafa1-3DArafa1-5DArafa1-OME
 *********************
 
 *********************
-Building 00044: DKDNpa2-8DKDOpa2-9DKDNpb2-7DKDOpb2-OME
+Building 00044: DKDNpa2-8DKDNpa2-9DKDNpb2-7DKDNpb2-OME
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No Metadata entries found for connection between 9Kn@C2 and 7Ko@O7
-Note that order should be reducing atom - anomeric atom, but I've tried reversing the order and it didn't fix the issue.
-
 
 *********************
 Building 00045: DKDOpa2-OME
@@ -354,4 +351,62 @@ Building 00085: DFrufb2-2DFrufa
 *********************
 Building 00086: DDmanpHepb1-7LDmanpHepb1-7DDmanpHepb1-3DQuipNAc4NAcb1-4DGlcpNAc3NAcAa1-8DK3Opb2-3LArap4Na1-3DBacpa1-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between 7Lh and 7Dh. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
+
+*********************
+Building 00087: DGalpa1-2DGalpa1-2[DGlcpb1-3]DGlcpa1-3DGlcpa1-3[LDmanpHepa1-7]LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
+*********************
+
+*********************
+Building 00088: DGlcpb1-6[LFucpa1-2]DGalpb1-4[DGalfb1-3]LRhapa1-4DKDOpa2-OH
+*********************
+
+*********************
+Building 00089: DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DGlcpa1-4DGalpb1-4[DGlcpa1-6LDmanpHepa1-6]DGlcpb1-4[LDmanpHepa1-6][DGlcpa1-7LDmanpHepa1-2LDmanpHepa1-3]LDmanpHepa1-5DKDOpa2-OH
+*********************
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedral 4: [O7, C7, C6, O6]
+
+*********************
+Building 00090: DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-OH
+*********************
+
+*********************
+Building 00091: DGlcpAb1-4DGlcpNAc3NAcAb1-3DAATpa1-4DGlcpAb1-4DGlcpNAc3NAcAb1-3DAATpa1-OH
+*********************
+
+*********************
+Building 00092: LFuspb2-4LAltpa1-3DQuipb1-4LFuspb2-4LAltpa1-3DQuipb1-OH
+*********************
+
+*********************
+Building 00093: DGlcpNAc3NAcAb1-3DQuipNAc4NAca1-3DQuipNAc4NAca1-4DGlcpNAc3NAcAb1-3DQuipNAc4NAca1-3DQuipNAc4NAca1-4DGlcpNAc3NAcAa1-OH
+*********************
+
+*********************
+Building 00094: DGalpNAcb1-4[DLegpa2-6]DGalpb1-6[DGlcpNAca1-3]DGalpb1-3DGalpNAcb1-4[DLegpa2-6]DGalpb1-6[DGlcpNAca1-3]DGalpb1-OH
+*********************
+
+*********************
+Building 00095: LDmanpHepa1-7[LDmanpHepa1-2DGlcpa1-3]LDmanpHepa1-3[DGlcpb1-4]LDmanpHepa1-5[LArap4Na1-8DK3Opa2-4]DKDOpa2-OH
+*********************
+
+*********************
+Building 00096: DGlcpNAcb1-3DRhapa1-2[LDmanpHepa1-7][DGlcpb1-3DGalpNAca1-3DGalpNAcb1-3LRhapa1-3]LDmanpHepa1-3[LDmanpHepa1-6DGlcpb1-4]LDmanpHepa1-5[DK3Opa2-4]DKDOpa2-OH
+*********************
+
+*********************
+Building 00097: DGlcpNAcb1-4DMurpNAcb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
+*********************
+
+*********************
+Building 00098: DGalpNAca1-3LFucpa1-3DFucp[2A]a1-3[LAcipa2-6]DGalpNAca1-3LFucpa1-3DFucp[2A]a1-OH
+*********************
+
+*********************
+Building 00099: DGlcpa1-4DGalpb1-7[DGlcpa1-6DDmanpHepa1-2LFucpa1-3DGlcpNAca1-2]DDmanpHepa1-2LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
+*********************
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between Glc and man. Missing metadata for dihedral 4: [O7, C7, C6, O6]
+
+*********************
+Building 00100: DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
+*********************
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1-4 with this glycam residue code: 0Bc

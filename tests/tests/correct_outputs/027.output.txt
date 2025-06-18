@@ -4357,39 +4357,6 @@ Anomer: 2
 4: 4Kn
 Added 2Kn
 Added 0Kn
-Generating those combos from 0Ko
-Copying the input residue 
-Guessing anomeric oxygen
-Names and types of neighbors:
-C3_Cg
-O6_Oy
-C1_C
-No Anomeric Oxygen Found in Template
-O7,O8,O5,O4
-LastLetter is o
-glycamCode is K
-So far for 0Ko we think isomer ringtype config is D_p_b
-Finding name for code: KO
-Found name is: D_KDOpa_p__b
-Anomer: 2
-7,8,5,4,
-7,8,5,4: dKo
-7,8,5: hKo
-7,8,4: EKo
-7,8: HKo
-7,5,4: kKo
-7,5: qKo
-7,4: KKo
-7: 7Ko
-8,5,4: jKo
-8,5: pKo
-8,4: JKo
-8: 8Ko
-5,4: sKo
-5: 5Ko
-4: 4Ko
-Added 2Ko
-Added 0Ko
 Generating those combos from 0KN
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4439,39 +4406,6 @@ Anomer: 2
 4: 4KN
 Added 2KN
 Added 0KN
-Generating those combos from 0KO
-Copying the input residue 
-Guessing anomeric oxygen
-Names and types of neighbors:
-O6_Oy
-C1_C
-C3_Cg
-No Anomeric Oxygen Found in Template
-O4,O5,O7,O8
-LastLetter is O
-glycamCode is K
-So far for 0KO we think isomer ringtype config is D_p_a
-Finding name for code: KO
-Found name is: D_KDOpa_p__a
-Anomer: 2
-4,5,7,8,
-4,5,7,8: dKO
-4,5,7: kKO
-4,5,8: jKO
-4,5: sKO
-4,7,8: EKO
-4,7: KKO
-4,8: JKO
-4: 4KO
-5,7,8: hKO
-5,7: qKO
-5,8: pKO
-5: 5KO
-7,8: HKO
-7: 7KO
-8: 8KO
-Added 2KO
-Added 0KO
 Loading tests/inputs/027.BacterialPrep/0aN-alfa_final.prep
 Generating those combos from 0aN
 Copying the input residue 
@@ -4551,6 +4485,10 @@ Finding name for code: DH
 Found name is: D_DDmanpHepa_p__a
 Anomer: 1
 7,6,2,3,4,
+7,6: ODH
+7,2,3: NDH
+7,2: LDH
+7,3: MDH
 7,4: KDH
 7: 7DH
 6,2,3,4: PDH
@@ -4593,6 +4531,10 @@ Finding name for code: DH
 Found name is: D_DDmanpHepa_p__b
 Anomer: 1
 7,6,2,3,4,
+7,6: ODh
+7,2,3: NDh
+7,2: LDh
+7,3: MDh
 7,4: KDh
 7: 7Dh
 6,2,3,4: PDh
@@ -4617,7 +4559,7 @@ Generating those combos from 0eC
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4645,7 +4587,7 @@ Generating those combos from 0ec
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4725,7 +4667,7 @@ Generating those combos from 0gF
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4757,7 +4699,7 @@ Generating those combos from 0gf
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4789,7 +4731,7 @@ Generating those combos from 0KX
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4815,6 +4757,7 @@ Anomer: 2
 8,4: JKX
 8,5: pKX
 8: 8KX
+7,3: MKX
 7,4,5: kKX
 7,4: KKX
 7,5: qKX
@@ -4833,7 +4776,7 @@ Generating those combos from 0Kx
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4859,6 +4802,7 @@ Anomer: 2
 8,4: JKx
 8,5: pKx
 8: 8Kx
+7,3: MKx
 7,4,5: kKx
 7,4: KKx
 7,5: qKx
@@ -4917,7 +4861,7 @@ Generating those combos from 0LG
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4945,7 +4889,7 @@ Generating those combos from 0Lg
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -4991,6 +4935,10 @@ Finding name for code: LH
 Found name is: D_LDmanpHepa_p__a
 Anomer: 1
 7,6,2,3,4,
+7,6: OLH
+7,2,3: NLH
+7,2: LLH
+7,3: MLH
 7,4: KLH
 7: 7LH
 6,2,3,4: PLH
@@ -5033,6 +4981,10 @@ Finding name for code: LH
 Found name is: D_LDmanpHepa_p__b
 Anomer: 1
 7,6,2,3,4,
+7,6: OLh
+7,2,3: NLh
+7,2: LLh
+7,3: MLh
 7,4: KLh
 7: 7Lh
 6,2,3,4: PLh
@@ -5097,7 +5049,7 @@ Generating those combos from 0mP
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -5125,7 +5077,7 @@ Generating those combos from 0mp
 Copying the input residue 
 Guessing anomeric oxygen
 Names and types of neighbors:
-O6_Os
+O6_Oy
 O_Os
 C1_C
 C3_Cg
@@ -5308,6 +5260,78 @@ Anomer: 1
 4: 4Zf
 Added 1Zf
 Added 0Zf
+Loading tests/inputs/027.BacterialPrep/0KO-alfa_final.prep
+Generating those combos from 0KO
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O6_Oy
+C1_C
+C3_Cg
+No Anomeric Oxygen Found in Template
+O4,O5,O7,O8
+LastLetter is O
+glycamCode is K
+So far for 0KO we think isomer ringtype config is D_p_a
+Finding name for code: KO
+Found name is: D_KDOpa_p__a
+Anomer: 2
+4,5,7,8,
+4,5,7,8: dKO
+4,5,7: kKO
+4,5,8: jKO
+4,5: sKO
+4,7,8: EKO
+4,7: KKO
+4,8: JKO
+4: 4KO
+5,7,8: hKO
+5,7: qKO
+5,8: pKO
+5: 5KO
+7,8: HKO
+7: 7KO
+8: 8KO
+Added 2KO
+Added 0KO
+Loading tests/inputs/027.BacterialPrep/0Ko-beta_final.prep
+Generating those combos from 0Ko
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+C1_C
+O2_Oh
+O6_Oy
+C3_Cg
+Anomeric Oxygen Found
+Copying
+Deleting
+Continuing
+O4,O5,O7,O8
+LastLetter is o
+glycamCode is K
+So far for 0Ko we think isomer ringtype config is D_p_b
+Finding name for code: KO
+Found name is: D_KDOpa_p__b
+Anomer: 2
+4,5,7,8,
+4,5,7,8: dKo
+4,5,7: kKo
+4,5,8: jKo
+4,5: sKo
+4,7,8: EKo
+4,7: KKo
+4,8: JKo
+4: 4Ko
+5,7,8: hKo
+5,7: qKo
+5,8: pKo
+5: 5Ko
+7,8: HKo
+7: 7Ko
+8: 8Ko
+Added 2Ko
+Added 0Ko
 nAD is new in lib file
 tAD is new in lib file
 uAD is new in lib file
@@ -5713,14 +5737,6 @@ iKn is new in lib file
 oKn is new in lib file
 sKn is new in lib file
 2Kn is new in lib file
-dKo is new in lib file
-hKo is new in lib file
-kKo is new in lib file
-qKo is new in lib file
-jKo is new in lib file
-pKo is new in lib file
-sKo is new in lib file
-2Ko is new in lib file
 aKN is new in lib file
 bKN is new in lib file
 zKN is new in lib file
@@ -5737,14 +5753,6 @@ kKN is new in lib file
 qKN is new in lib file
 sKN is new in lib file
 2KN is new in lib file
-dKO is new in lib file
-kKO is new in lib file
-jKO is new in lib file
-sKO is new in lib file
-hKO is new in lib file
-qKO is new in lib file
-pKO is new in lib file
-2KO is new in lib file
 ZaN is new in lib file
 3aN is new in lib file
 2aN is new in lib file
@@ -5755,6 +5763,10 @@ Zan is new in lib file
 2an is new in lib file
 1an is new in lib file
 0an is new in lib file
+ODH is new in lib file
+NDH is new in lib file
+LDH is new in lib file
+MDH is new in lib file
 KDH is new in lib file
 7DH is new in lib file
 PDH is new in lib file
@@ -5774,6 +5786,10 @@ WDH is new in lib file
 4DH is new in lib file
 1DH is new in lib file
 0DH is new in lib file
+ODh is new in lib file
+NDh is new in lib file
+LDh is new in lib file
+MDh is new in lib file
 KDh is new in lib file
 7Dh is new in lib file
 PDh is new in lib file
@@ -5835,6 +5851,7 @@ jKX is new in lib file
 JKX is new in lib file
 pKX is new in lib file
 8KX is new in lib file
+MKX is new in lib file
 kKX is new in lib file
 KKX is new in lib file
 qKX is new in lib file
@@ -5856,6 +5873,7 @@ jKx is new in lib file
 JKx is new in lib file
 pKx is new in lib file
 8Kx is new in lib file
+MKx is new in lib file
 kKx is new in lib file
 KKx is new in lib file
 qKx is new in lib file
@@ -5896,6 +5914,10 @@ JLg is new in lib file
 4Lg is new in lib file
 2Lg is new in lib file
 0Lg is new in lib file
+OLH is new in lib file
+NLH is new in lib file
+LLH is new in lib file
+MLH is new in lib file
 KLH is new in lib file
 7LH is new in lib file
 PLH is new in lib file
@@ -5915,6 +5937,10 @@ WLH is new in lib file
 4LH is new in lib file
 1LH is new in lib file
 0LH is new in lib file
+OLh is new in lib file
+NLh is new in lib file
+LLh is new in lib file
+MLh is new in lib file
 KLh is new in lib file
 7Lh is new in lib file
 PLh is new in lib file
@@ -5983,6 +6009,40 @@ UMr is new in lib file
 4Zf is new in lib file
 1Zf is new in lib file
 0Zf is new in lib file
+dKO is new in lib file
+kKO is new in lib file
+jKO is new in lib file
+sKO is new in lib file
+EKO is new in lib file
+KKO is new in lib file
+JKO is new in lib file
+4KO is new in lib file
+hKO is new in lib file
+qKO is new in lib file
+pKO is new in lib file
+5KO is new in lib file
+HKO is new in lib file
+7KO is new in lib file
+8KO is new in lib file
+2KO is new in lib file
+0KO is new in lib file
+dKo is new in lib file
+kKo is new in lib file
+jKo is new in lib file
+sKo is new in lib file
+EKo is new in lib file
+KKo is new in lib file
+JKo is new in lib file
+4Ko is new in lib file
+hKo is new in lib file
+qKo is new in lib file
+pKo is new in lib file
+5Ko is new in lib file
+HKo is new in lib file
+7Ko is new in lib file
+8Ko is new in lib file
+2Ko is new in lib file
+0Ko is new in lib file
 CA2 not found in lib file
 4YP not found in lib file
 LKn not found in lib file
@@ -5999,13 +6059,6 @@ VKn not found in lib file
 WKn not found in lib file
 XKn not found in lib file
 YKn not found in lib file
-AKo not found in lib file
-BKo not found in lib file
-CKo not found in lib file
-DKo not found in lib file
-FKo not found in lib file
-GKo not found in lib file
-IKo not found in lib file
 LKN not found in lib file
 MKN not found in lib file
 NKN not found in lib file
@@ -6020,10 +6073,3 @@ VKN not found in lib file
 WKN not found in lib file
 XKN not found in lib file
 YKN not found in lib file
-AKO not found in lib file
-BKO not found in lib file
-CKO not found in lib file
-DKO not found in lib file
-FKO not found in lib file
-GKO not found in lib file
-IKO not found in lib file

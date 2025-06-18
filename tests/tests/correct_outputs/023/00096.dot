@@ -1,0 +1,32 @@
+graph G {graph [splines=false dpi=72 outputorder="edgesfirst"];
+node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fixedsize="true" scale="true"];
+edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
+rankdir=LR nodesep="0.05" ranksep="0.8";
+0 [shape=box label="OH"]
+1 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DKDO.svg"];
+2 [shape=circle height="0.7" label="DK3O"];
+3 [shape=circle height="0.7" label="DmanHep"];
+4 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGlc.svg"];
+5 [shape=circle height="0.7" label="DmanHep"];
+6 [shape=circle height="0.7" label="DmanHep"];
+7 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/LRha.svg"];
+8 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGalNAc.svg"];
+9 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGalNAc.svg"];
+10 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGlc.svg"];
+11 [shape=circle height="0.7" label="DmanHep"];
+12 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DRha.svg"];
+13 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGlcNAc.svg"];
+1--0 [label="a2-" headclip=true tailclip=false];
+2--1 [label="a2-4" headclip=false tailclip=true];
+3--1 [label="a1-5" headclip=false tailclip=true];
+4--3 [label="b1-4" headclip=true tailclip=false];
+5--4 [label="a1-6" headclip=false tailclip=true];
+6--3 [label="a1-3" headclip=true tailclip=true];
+7--6 [label="a1-3" headclip=true tailclip=false];
+8--7 [label="b1-3" headclip=false tailclip=false];
+9--8 [label="a1-3" headclip=false tailclip=false];
+10--9 [label="b1-3" headclip=false tailclip=false];
+11--6 [label="a1-7" headclip=true tailclip=true];
+12--6 [label="a1-2" headclip=true tailclip=false];
+13--12 [label="b1-3" headclip=false tailclip=false];
+}

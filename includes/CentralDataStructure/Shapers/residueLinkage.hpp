@@ -24,9 +24,9 @@ namespace cds
         std::pair<cds::Atom*, cds::Atom*> atoms;
     };
 
-    struct ResidueLinkNames
+    struct ResidueLinkAttributes
     {
-        std::pair<std::string, std::string> residues;
+        std::pair<ResidueAttributes, ResidueAttributes> residues;
         std::pair<std::string, std::string> atoms;
     };
 

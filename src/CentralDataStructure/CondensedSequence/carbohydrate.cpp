@@ -422,13 +422,23 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
         }
         std::vector<ResidueType> residueTypes = codeUtils::indicesToValues(sequence.residues.type, indices);
         for (size_t n = residueCount - 1; n < residueCount; n--)
-        { // Apply any deoxy
+        { // Apply any deoxy and set residue attributes
             if (residueTypes[n] == cds::ResidueType::Deoxy)
             {
                 ParsedResidue* deoxyResidue         = residuePtrs[n].get();
                 ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
                 makeDeoxy(residueToBeDeoxified, deoxyResidue->GetLink());
                 residuePtrs.erase(residuePtrs.begin() + n);
+            }
+            else
+            {
+                const ResidueData& rD  = sequence.residues;
+                size_t k               = indices[n];
+                std::string glycamCode = getGlycamResidueName(residuePtrs[n].get());
+                cds::ResidueAttributes ra {rD.type[k],     rD.name[k],          glycamCode,   rD.linkage[k],
+                                           rD.ringType[k], rD.configuration[k], rD.isomer[k], rD.preIsomerModifier[k],
+                                           rD.modifier[k], rD.isInternal[k]};
+                residuePtrs[n]->setAttributes(ra);
             }
         }
         setResidueIndices(

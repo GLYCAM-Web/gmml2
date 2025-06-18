@@ -57,9 +57,9 @@ void cdsParameters::createAtomsForResidue(const ParameterManager& parameters, cd
                               " with this glycam residue code: " + glycamNameForResidue;
         throw std::runtime_error(message);
     }
-    const std::string& name = parameters.lib.residueNames[index];
-    queryResidue->setName(name);
-    queryResidue->determineType(name);
+    const std::string& glycamCode = parameters.lib.residueNames[index];
+    queryResidue->setName(glycamCode);
+    queryResidue->determineType(glycamCode);
     const lib::ResidueData& residue = parameters.lib.residues[index];
     const lib::AtomData& atoms      = residue.atoms;
     std::vector<cds::Atom*> atomVec;
