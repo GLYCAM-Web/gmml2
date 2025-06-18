@@ -174,18 +174,18 @@ namespace
     }
 
     // There may be branches which also use [], so need to check for those and find the [ that starts the repeat
-    unsigned int seekRepeatStart(const std::string& inputSequence, unsigned int i)
+    size_t seekBracketStart(const std::string& str, size_t i)
     {
         int branches = 0;
 
         while (i > 0)
         {
             --i; // skip the initial ]
-            if (inputSequence[i] == ']')
+            if (str[i] == ']')
             {
                 ++branches;
             }
-            if (inputSequence[i] == '[')
+            if (str[i] == '[')
             {
                 if (branches == 0)
                 {
@@ -197,30 +197,12 @@ namespace
                 }
             }
         }
-        throw std::runtime_error("Did not find corresponding '[' in repeat unit of repeating sequence: " +
-                                 inputSequence);
+        throw std::runtime_error("Did not find corresponding '[' in repeat unit of repeating sequence: " + str);
     }
 
     void parseLabelledInput(std::string inString)
     {
         throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
-    }
-
-    std::string withoutBranches(const std::string& residueString)
-    {
-        //  Splice out anything within [ and ].
-        size_t branch_start = residueString.find_first_of('[');
-        if (branch_start != std::string::npos)
-        {
-            size_t branch_finish  = residueString.find_last_of(']') + 1;
-            std::string firstPart = residueString.substr(0, branch_start);
-            std::string lastPart  = residueString.substr(branch_finish);
-            return firstPart + lastPart;
-        }
-        else
-        {
-            return residueString;
-        }
     }
 
     size_t addResidue(SequenceData& data, const ParsedResidueComponents& components)
@@ -274,57 +256,57 @@ namespace
         }
     }
 
-    size_t recurveParseAlt(SequenceData& data, std::vector<size_t>& savedDerivatives, size_t i,
-                           const std::string& sequence, size_t parent)
+    void recurveParseAlt(SequenceData& data, size_t parent, std::vector<size_t>& savedDerivatives,
+                         const std::string& sequence)
     {
-        auto save = [&](size_t windowStart, size_t windowEnd, size_t parent)
+        std::string trail = "";
+        auto save         = [&](const std::string& str, size_t parent)
         {
-            std::string residueString = withoutBranches(substr(sequence, windowStart, windowEnd));
-            return saveResidue(data, savedDerivatives, residueString, parent);
+            size_t id = saveResidue(data, savedDerivatives, str + trail, parent);
+            trail     = "";
+            return id;
         };
+        size_t i         = sequence.length();
         size_t windowEnd = i;
         while (i > 0)
         {
             i--;
             if ((sequence[i] == '-') && ((windowEnd - i) > 5))
             { // dash and have read enough that there is a residue to save.
-                parent    = save(i + 2, windowEnd, parent);
+                parent    = save(substr(sequence, i + 2, windowEnd), parent);
                 windowEnd = i + 2; // Get to the right side of the number e.g. 1-4
             }
             else if (sequence[i] == ']')
             { // Start of branch: recurve. Maybe save if have read enough.
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
-                    parent    = save(i + 1, windowEnd, parent);
-                    i         = recurveParseAlt(data, savedDerivatives, i, sequence, parent);
-                    windowEnd = i;
+                    parent = save(substr(sequence, i + 1, windowEnd), parent);
                 }
                 else if ((windowEnd - i) > 1) // and not > 5
-                {                             // Derivative. Note that windowEnd does not move.
-                    i = recurveParseAlt(data, savedDerivatives, i, sequence, parent);
+                {                             // Derivative, save trailing part of residue
+                    trail = substr(sequence, i + 1, windowEnd);
                 }
-                else
-                { // Return from branch and find new one. e.g. [Gal][Gal]
-                    i         = recurveParseAlt(data, savedDerivatives, i, sequence, parent);
-                    windowEnd = i;
-                }
+                size_t bracketStart = seekBracketStart(sequence, i);
+                recurveParseAlt(data, parent, savedDerivatives, substr(sequence, bracketStart + 1, i));
+                i         = bracketStart;
+                windowEnd = i;
             }
             else if (sequence[i] == '[')
-            { // End of branch
-                save(i + 1, windowEnd, parent);
-                return i;
+            {
+                throw std::runtime_error("Unclosed bracket in: " + sequence);
             }
             else if (sequence[i] == ',')
             { // , in derivative list
-                parent    = save(i + 1, windowEnd, parent);
+                recurveParseAlt(data, parent, savedDerivatives, substr(sequence, i + 1, windowEnd));
                 windowEnd = i;
             }
             else if (i == 0)
             { // Fin.
-                parent = save(i, windowEnd, parent);
+                save(substr(sequence, i, windowEnd), parent);
+                return;
             }
         }
-        return i;
+        return;
     }
 
     void parseCondensedSequence(SequenceData& data, const std::string& sequence)
@@ -346,7 +328,7 @@ namespace
         }
         size_t terminal = data.graph.nodes.size() - 1;
         std::vector<size_t> savedDerivatives;
-        recurveParseAlt(data, savedDerivatives, i, sequence, terminal);
+        recurveParseAlt(data, terminal, savedDerivatives, substr(sequence, 0, i));
     }
 
     // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,
@@ -387,7 +369,7 @@ namespace
             throw std::runtime_error("Missing or incorrect usage of ']' in repeating sequence: " + inputSequence);
         }
         // Ok now go find the position of the start of the repeating unit, considering branches
-        size_t repeatStart       = seekRepeatStart(inputSequence, repeatEnd);
+        size_t repeatStart       = seekBracketStart(inputSequence, repeatEnd);
         std::string beforeRepeat = inputSequence.substr(0, repeatStart);
         // Check if using the old nomenclature. i.e. DGlcpa1-[4DGlcpa1-]<4> was old, DGlcpa1-4[4DGlcpa1-]<3> is new.
         if (inputSequence.find("-[") != std::string::npos)
