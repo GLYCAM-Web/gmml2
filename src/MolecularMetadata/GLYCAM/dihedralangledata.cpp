@@ -285,13 +285,16 @@ const GlycamMetadata::DihedralAngleDataTable& GlycamMetadata::dihedralAngleDataT
 // Also how the metadata is structured and applied here is insane.
 std::vector<std::string> getTagsForResidue(const cds::ResidueAttributes& residueAttributes)
 {
+    std::string message = "Searching for attributes for " + residueAttributes.name;
+    gmml::log(__LINE__, __FILE__, gmml::INF, message);
     std::vector<std::string> foundAttributes;
     std::vector<std::string> nCarbonSix        = {"Tal", "All", "Alt", "Fuc", "Gal", "Glc", "Gul", "Man",
                                                   "Qui", "Rha", "Ido", "Fru", "Sor", "Tag", "Psi"};
     std::vector<std::string> glucoGauche       = {"Glc", "All", "Alt", "Man"};
-    std::vector<std::string> aldoseResidues    = {"All", "Alt", "Ara", "Fuc", "Gal", "Glc", "Gul",      "Ido",
-                                                  "Lyx", "Man", "Qui", "Rha", "Rib", "Tal", "Xyl",      "Tyv",
-                                                  "dUA", "Bac", "Abe", "Oli", "AAT", "Mur", "DDmanHep", "LDmanHep"};
+    std::vector<std::string> aldoseResidues    = {"All", "Alt", "Ara", "Fuc", "Gal", "Glc", "Gul", "Ido",
+                                                  "Lyx", "Man", "Qui", "Rha", "Rib", "Tal", "Xyl", "Tyv",
+                                                  "dUA", "Bac", "Abe", "Oli", "AAT", "Mur", "man"}; // Note lowercase man
+                                                                                                    // as in LDmanHep :(
     std::vector<std::string> ketoseResidues    = {"Fru", "Psi", "Sor", "Tag", "Neu", "KDN",
                                                   "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
     std::vector<std::string> ulosonateResidues = {"Neu", "KDN", "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};

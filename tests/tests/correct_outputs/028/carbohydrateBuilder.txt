@@ -1892,9 +1892,7 @@ IndexOrderedLabeled:
 DDmanpHep&Label=residue-9;b1-7&Label=link-7;LDmanpHep&Label=residue-8;b1-7&Label=link-6;DDmanpHep&Label=residue-7;b1-3&Label=link-5;DQuipNAc4NAc&Label=residue-6;b1-4&Label=link-4;DGlcpNAc3NAcA&Label=residue-5;a1-8&Label=link-3;DK3Op&Label=residue-4;b2-3&Label=link-2;LArap4N&Label=residue-3;a1-3&Label=link-1;DBacp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00086 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DDDmanpHepb1-3DQuipNAc4NAcb
-At dihedral index: 0
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
 
 *********************
 Building id 00087:DGalpa1-2DGalpa1-2[DGlcpb1-3]DGlcpa1-3DGlcpa1-3[LDmanpHepa1-7]LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
@@ -1909,9 +1907,7 @@ IndexOrderedLabeled:
 DGalp&Label=residue-10;a1-2&Label=link-8;DGalp&Label=residue-9;a1-2&Label=link-7;[DGlcp&Label=residue-8;b1-3&Label=link-6;]DGlcp&Label=residue-7;a1-3&Label=link-5;DGlcp&Label=residue-6;a1-3&Label=link-4;[LDmanpHep&Label=residue-5;a1-7&Label=link-3;]LDmanpHep&Label=residue-4;a1-3&Label=link-2;LDmanpHep&Label=residue-3;a1-5&Label=link-1;DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00087 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
-At dihedral index: 0
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
 
 *********************
 Building id 00088:DGlcpb1-6[LFucpa1-2]DGalpb1-4[DGalfb1-3]LRhapa1-4DKDOpa2-OH
@@ -1952,9 +1948,7 @@ IndexOrderedLabeled:
 DGlcp&Label=residue-23;a1-7&Label=link-21;LDmanpHep&Label=residue-22;a1-2&Label=link-20;LDmanpHep&Label=residue-21;a1-3&Label=link-19;[DGalp&Label=residue-20;b1-3&Label=link-18;DAATp&Label=residue-19;a1-4&Label=link-17;DNeup5Ac&Label=residue-18;a2-4&Label=link-16;DGalp&Label=residue-17;b1-3&Label=link-15;DAATp&Label=residue-16;a1-4&Label=link-14;DNeup5Ac&Label=residue-15;a2-4&Label=link-13;DGalp&Label=residue-14;b1-3&Label=link-12;DAATp&Label=residue-13;a1-4&Label=link-11;DNeup5Ac&Label=residue-12;a2-4&Label=link-10;DGalp&Label=residue-11;b1-3&Label=link-9;DAATp&Label=residue-10;a1-4&Label=link-8;DGlcp&Label=residue-9;a1-4&Label=link-7;DGalp&Label=residue-8;b1-4&Label=link-6;[DGlcp&Label=residue-7;a1-6&Label=link-5;LDmanpHep&Label=residue-6;a1-6&Label=link-4;]DGlcp&Label=residue-5;b1-4&Label=link-3;][LDmanpHep&Label=residue-4;a1-6&Label=link-2;]LDmanpHep&Label=residue-3;a1-5&Label=link-1;DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00089 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
-At dihedral index: 0
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedral 4: [O7, C7, C6, O6]
 
 *********************
 Building id 00090:DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-OH
@@ -2115,9 +2109,7 @@ IndexOrderedLabeled:
 LArap4N&Label=residue-10;a1-8&Label=link-8;DK3Op&Label=residue-9;a2-4&Label=link-7;[LDmanpHep&Label=residue-8;a1-2&Label=link-6;DGlcp&Label=residue-7;a1-3&Label=link-5;[LDmanpHep&Label=residue-6;a1-7&Label=link-4;]LDmanpHep&Label=residue-5;a1-3&Label=link-3;[DGlcp&Label=residue-4;b1-4&Label=link-2;]LDmanpHep&Label=residue-3;a1-5&Label=link-1;]DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00095 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
-At dihedral index: 0
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
 
 *********************
 Building id 00096:DGlcpNAcb1-3DRhapa1-2[LDmanpHepa1-7][DGlcpb1-3DGalpNAca1-3DGalpNAcb1-3LRhapa1-3]LDmanpHepa1-3[LDmanpHepa1-6DGlcpb1-4]LDmanpHepa1-5[DK3Opa2-4]DKDOpa2-OH
@@ -2132,9 +2124,7 @@ IndexOrderedLabeled:
 DK3Op&Label=residue-14;a2-4&Label=link-12;[DGlcpNAc&Label=residue-13;b1-3&Label=link-11;DRhap&Label=residue-12;a1-2&Label=link-10;[DGlcp&Label=residue-11;b1-3&Label=link-9;DGalpNAc&Label=residue-10;a1-3&Label=link-8;DGalpNAc&Label=residue-9;b1-3&Label=link-7;LRhap&Label=residue-8;a1-3&Label=link-6;][LDmanpHep&Label=residue-7;a1-7&Label=link-5;]LDmanpHep&Label=residue-6;a1-3&Label=link-4;[LDmanpHep&Label=residue-5;a1-6&Label=link-3;DGlcp&Label=residue-4;b1-4&Label=link-2;]LDmanpHep&Label=residue-3;a1-5&Label=link-1;]DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00096 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
-At dihedral index: 0
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
 
 *********************
 Building id 00097:DGlcpNAcb1-4DMurpNAcb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
@@ -2201,9 +2191,7 @@ IndexOrderedLabeled:
 DGlcp&Label=residue-11;a1-6&Label=link-9;DDmanpHep&Label=residue-10;a1-2&Label=link-8;LFucp&Label=residue-9;a1-3&Label=link-7;DGlcpNAc&Label=residue-8;a1-2&Label=link-6;[DGlcp&Label=residue-7;a1-4&Label=link-5;DGalp&Label=residue-6;b1-7&Label=link-4;]DDmanpHep&Label=residue-5;a1-2&Label=link-3;LDmanpHep&Label=residue-4;a1-3&Label=link-2;LDmanpHep&Label=residue-3;a1-5&Label=link-1;DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00099 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
-At dihedral index: 0
-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between Gal and man. Missing metadata for dihedrals 3-4: [O7, C7, C6, C5], [C7, C6, C5, O5]
 
 *********************
 Building id 00100:DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
