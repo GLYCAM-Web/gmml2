@@ -4551,6 +4551,10 @@ Finding name for code: DH
 Found name is: D_DDmanpHepa_p__a
 Anomer: 1
 7,6,2,3,4,
+7,6: ODH
+7,2,3: NDH
+7,2: LDH
+7,3: MDH
 7,4: KDH
 7: 7DH
 6,2,3,4: PDH
@@ -4593,6 +4597,10 @@ Finding name for code: DH
 Found name is: D_DDmanpHepa_p__b
 Anomer: 1
 7,6,2,3,4,
+7,6: ODh
+7,2,3: NDh
+7,2: LDh
+7,3: MDh
 7,4: KDh
 7: 7Dh
 6,2,3,4: PDh
@@ -4815,6 +4823,7 @@ Anomer: 2
 8,4: JKX
 8,5: pKX
 8: 8KX
+7,3: MKX
 7,4,5: kKX
 7,4: KKX
 7,5: qKX
@@ -4859,6 +4868,7 @@ Anomer: 2
 8,4: JKx
 8,5: pKx
 8: 8Kx
+7,3: MKx
 7,4,5: kKx
 7,4: KKx
 7,5: qKx
@@ -4991,6 +5001,10 @@ Finding name for code: LH
 Found name is: D_LDmanpHepa_p__a
 Anomer: 1
 7,6,2,3,4,
+7,6: OLH
+7,2,3: NLH
+7,2: LLH
+7,3: MLH
 7,4: KLH
 7: 7LH
 6,2,3,4: PLH
@@ -5033,6 +5047,10 @@ Finding name for code: LH
 Found name is: D_LDmanpHepa_p__b
 Anomer: 1
 7,6,2,3,4,
+7,6: OLh
+7,2,3: NLh
+7,2: LLh
+7,3: MLh
 7,4: KLh
 7: 7Lh
 6,2,3,4: PLh
@@ -5755,6 +5773,10 @@ Zan is new in lib file
 2an is new in lib file
 1an is new in lib file
 0an is new in lib file
+ODH is new in lib file
+NDH is new in lib file
+LDH is new in lib file
+MDH is new in lib file
 KDH is new in lib file
 7DH is new in lib file
 PDH is new in lib file
@@ -5774,6 +5796,10 @@ WDH is new in lib file
 4DH is new in lib file
 1DH is new in lib file
 0DH is new in lib file
+ODh is new in lib file
+NDh is new in lib file
+LDh is new in lib file
+MDh is new in lib file
 KDh is new in lib file
 7Dh is new in lib file
 PDh is new in lib file
@@ -5835,6 +5861,7 @@ jKX is new in lib file
 JKX is new in lib file
 pKX is new in lib file
 8KX is new in lib file
+MKX is new in lib file
 kKX is new in lib file
 KKX is new in lib file
 qKX is new in lib file
@@ -5856,6 +5883,7 @@ jKx is new in lib file
 JKx is new in lib file
 pKx is new in lib file
 8Kx is new in lib file
+MKx is new in lib file
 kKx is new in lib file
 KKx is new in lib file
 qKx is new in lib file
@@ -5896,6 +5924,10 @@ JLg is new in lib file
 4Lg is new in lib file
 2Lg is new in lib file
 0Lg is new in lib file
+OLH is new in lib file
+NLH is new in lib file
+LLH is new in lib file
+MLH is new in lib file
 KLH is new in lib file
 7LH is new in lib file
 PLH is new in lib file
@@ -5915,6 +5947,10 @@ WLH is new in lib file
 4LH is new in lib file
 1LH is new in lib file
 0LH is new in lib file
+OLh is new in lib file
+NLh is new in lib file
+LLh is new in lib file
+MLh is new in lib file
 KLh is new in lib file
 7Lh is new in lib file
 PLh is new in lib file

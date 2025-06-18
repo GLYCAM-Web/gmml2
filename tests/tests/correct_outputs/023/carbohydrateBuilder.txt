@@ -358,16 +358,9 @@ At dihedral index: 0
 *********************
 Building 00087: DGalpa1-2DGalpa1-2[DGlcpb1-3]DGlcpa1-3DGlcpa1-3[LDmanpHepa1-7]LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No linkage code found in GMML metadata for a carbohydrate residue with other residues attached at these positions: 7,3
-Check these inputs for mistakes: 
-Inputs:
-linkages: 7,3
-preIsomerModifier: L
-isomer: D
-inputResName: man
-ringType: p
-residueModifier: Hep
-configuration: a
+Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
+At dihedral index: 0
+
 
 *********************
 Building 00088: DGlcpb1-6[LFucpa1-2]DGalpb1-4[DGalfb1-3]LRhapa1-4DKDOpa2-OH
@@ -403,30 +396,16 @@ Building 00094: DGalpNAcb1-4[DLegpa2-6]DGalpb1-6[DGlcpNAca1-3]DGalpb1-3DGalpNAcb
 *********************
 Building 00095: LDmanpHepa1-7[LDmanpHepa1-2DGlcpa1-3]LDmanpHepa1-3[DGlcpb1-4]LDmanpHepa1-5[LArap4Na1-8DK3Opa2-4]DKDOpa2-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No linkage code found in GMML metadata for a carbohydrate residue with other residues attached at these positions: 7,3
-Check these inputs for mistakes: 
-Inputs:
-linkages: 7,3
-preIsomerModifier: L
-isomer: D
-inputResName: man
-ringType: p
-residueModifier: Hep
-configuration: a
+Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
+At dihedral index: 0
+
 
 *********************
 Building 00096: DGlcpNAcb1-3DRhapa1-2[LDmanpHepa1-7][DGlcpb1-3DGalpNAca1-3DGalpNAcb1-3LRhapa1-3]LDmanpHepa1-3[LDmanpHepa1-6DGlcpb1-4]LDmanpHepa1-5[DK3Opa2-4]DKDOpa2-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No linkage code found in GMML metadata for a carbohydrate residue with other residues attached at these positions: 7,3,2
-Check these inputs for mistakes: 
-Inputs:
-linkages: 7,3,2
-preIsomerModifier: L
-isomer: D
-inputResName: man
-ringType: p
-residueModifier: Hep
-configuration: a
+Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
+At dihedral index: 0
+
 
 *********************
 Building 00097: DGlcpNAcb1-4DMurpNAcb1-4DGlcpNAcb1-4DGlcpNAcb1-OH
@@ -439,16 +418,9 @@ Building 00098: DGalpNAca1-3LFucpa1-3DFucp[2A]a1-3[LAcipa2-6]DGalpNAca1-3LFucpa1
 *********************
 Building 00099: DGlcpa1-4DGalpb1-7[DGlcpa1-6DDmanpHepa1-2LFucpa1-3DGlcpNAca1-2]DDmanpHepa1-2LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: No linkage code found in GMML metadata for a carbohydrate residue with other residues attached at these positions: 7,2
-Check these inputs for mistakes: 
-Inputs:
-linkages: 7,2
-preIsomerModifier: D
-isomer: D
-inputResName: man
-ringType: p
-residueModifier: Hep
-configuration: a
+Error thrown by the carbohydrateBuilder in gmml during construction was: Problem with the metadata found in gmml for this linkage. No metadata found for dihedral with bond: DLDmanpHepa1-5DKDOpa
+At dihedral index: 0
+
 
 *********************
 Building 00100: DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH

@@ -112,7 +112,12 @@ namespace
         {    "1,3,5", "n"},
         {    "1,5,6", "m"},
         {  "1,3,5,6", "e"},
- // Unused: L M N O
+ // Oliver just filling these out to better support manHep. Fundamental system change required to support all
+  // linkage possibilities.
+        {      "2,7", "L"},
+        {      "3,7", "M"},
+        {    "2,3,7", "N"},
+        {      "6,7", "O"},
     };
 
     struct NamesCodesTypes
