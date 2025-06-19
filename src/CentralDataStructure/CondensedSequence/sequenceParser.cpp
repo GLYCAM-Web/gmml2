@@ -4,6 +4,8 @@
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <sstream>
 #include <string>
@@ -11,11 +13,30 @@
 #include <vector>
 #include <optional>
 
+#include <iostream>
+
 namespace
 {
     using cds::ResidueType;
+    using cdsCondensedSequence::BranchNode;
+    using cdsCondensedSequence::NodeType;
     using cdsCondensedSequence::ParsedResidueComponents;
+    using cdsCondensedSequence::ProbabilityNode;
     using cdsCondensedSequence::SequenceData;
+
+    struct WeightedNodes
+    {
+        std::vector<std::vector<size_t>> chains;
+        std::vector<double> weights;
+        std::vector<bool> defaultWeight;
+    };
+
+    const std::string probabilityStr = "p=";
+
+    std::string substr(const std::string& str, size_t windowStart, size_t windowEnd)
+    {
+        return str.substr(windowStart, (windowEnd - windowStart));
+    }
 
     std::pair<std::string, std::string> ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
@@ -45,11 +66,17 @@ namespace
         return {residueString, type, name, linkage, "", "", "", "", "", ""};
     }
 
-    ParsedResidueComponents parseSugar(const std::string& residueString)
+    ParsedResidueComponents parseSugar(const std::string& fullString)
     { // E.g. DManpNAca1-4 . Isomer (D or L), residueName (ManNAc), ring type (f or p), configuration (a or b), linkage
         // (1-4)
         ParsedResidueComponents result;
-        result.fullString    = residueString;
+        result.fullString         = fullString;
+        std::string residueString = fullString;
+        if (std::isdigit(fullString[0]))
+        {
+            residueString        = substr(fullString, 1, fullString.length() + 1);
+            result.chainPosition = std::string {fullString[0]};
+        }
         result.type          = ResidueType::Sugar;
         // Assumptions
         size_t isomerStart   = 0; // e.g. DGal, DGlc, LIdo
@@ -136,11 +163,6 @@ namespace
         }
     }
 
-    std::string substr(const std::string& str, size_t windowStart, size_t windowEnd)
-    {
-        return str.substr(windowStart, (windowEnd - windowStart));
-    }
-
     bool checkSequenceSanity(const std::string& sequence)
     {
         if (sequence.empty())
@@ -177,8 +199,7 @@ namespace
     // There may be branches which also use [], so need to check for those and find the [ that starts the repeat
     size_t seekBracketStart(const std::string& str, size_t i)
     {
-        int branches = 0;
-
+        uint branches = 0;
         while (i > 0)
         {
             --i; // skip the initial ]
@@ -198,7 +219,19 @@ namespace
                 }
             }
         }
-        throw std::runtime_error("Did not find corresponding '[' in repeat unit of repeating sequence: " + str);
+        throw std::runtime_error("Could not find opening bracket in: " + str);
+    }
+
+    size_t firstOpeningBracket(const std::string& str, size_t pos)
+    {
+        for (size_t i = pos; i < str.size(); i++)
+        {
+            if (str[i] == '[')
+            {
+                return i;
+            }
+        }
+        return str.length();
     }
 
     void parseLabelledInput(std::string inString)
@@ -208,55 +241,218 @@ namespace
 
     void updateResidue(SequenceData& data, size_t id, const ParsedResidueComponents& components)
     {
-        data.residues.fullString[id]        = components.fullString;
-        data.residues.type[id]              = components.type;
-        data.residues.name[id]              = components.name;
-        data.residues.linkage[id]           = components.linkage;
-        data.residues.ringType[id]          = components.ringType;
-        data.residues.configuration[id]     = components.configuration;
-        data.residues.isomer[id]            = components.isomer;
-        data.residues.preIsomerModifier[id] = components.preIsomerModifier;
-        data.residues.ringShape[id]         = components.ringShape;
-        data.residues.modifier[id]          = components.modifier;
+        data.nodes.fullString[id]        = components.fullString;
+        data.nodes.type[id]              = components.type;
+        data.nodes.name[id]              = components.name;
+        data.nodes.linkage[id]           = components.linkage;
+        data.nodes.chainPosition[id]     = components.chainPosition;
+        data.nodes.ringType[id]          = components.ringType;
+        data.nodes.configuration[id]     = components.configuration;
+        data.nodes.isomer[id]            = components.isomer;
+        data.nodes.preIsomerModifier[id] = components.preIsomerModifier;
+        data.nodes.ringShape[id]         = components.ringShape;
+        data.nodes.modifier[id]          = components.modifier;
     }
 
-    size_t addResidue(SequenceData& data, const ParsedResidueComponents& components)
+    size_t addNode(SequenceData& data, const NodeType& nodeType, const ParsedResidueComponents& components)
     {
-        data.residues.fullString.push_back(components.fullString);
-        data.residues.type.push_back(components.type);
-        data.residues.name.push_back(components.name);
-        data.residues.linkage.push_back(components.linkage);
-        data.residues.ringType.push_back(components.ringType);
-        data.residues.configuration.push_back(components.configuration);
-        data.residues.isomer.push_back(components.isomer);
-        data.residues.preIsomerModifier.push_back(components.preIsomerModifier);
-        data.residues.ringShape.push_back(components.ringShape);
-        data.residues.modifier.push_back(components.modifier);
-        data.residues.isInternal.push_back(false);
-        data.residues.isDerivative.push_back(
+        data.nodes.fullString.push_back(components.fullString);
+        data.nodes.type.push_back(components.type);
+        data.nodes.name.push_back(components.name);
+        data.nodes.linkage.push_back(components.linkage);
+        data.nodes.chainPosition.push_back(components.chainPosition);
+        data.nodes.ringType.push_back(components.ringType);
+        data.nodes.configuration.push_back(components.configuration);
+        data.nodes.isomer.push_back(components.isomer);
+        data.nodes.preIsomerModifier.push_back(components.preIsomerModifier);
+        data.nodes.ringShape.push_back(components.ringShape);
+        data.nodes.modifier.push_back(components.modifier);
+        data.nodes.isInternal.push_back(false);
+        data.nodes.isDerivative.push_back(
             codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, components.type));
+        data.nodes.nodeType.push_back(nodeType);
         size_t id = graph::addNode(data.graph);
         return id;
     }
 
+    size_t addResidue(SequenceData& data, const ParsedResidueComponents& components)
+    {
+        return addNode(data, cdsCondensedSequence::ResidueNode(), components);
+    }
+
     size_t addPlaceholderResidue(SequenceData& data)
     {
-        return addResidue(data, {"", cds::ResidueType::Undefined, "", "", "", "", "", "", "", ""});
+        return addResidue(data, {});
     }
 
-    void addLinkage(SequenceData& data, size_t resA, size_t resB)
+    void addLinkage(SequenceData& data, size_t child, size_t parent)
     {
-        bool isSugar         = data.residues.type[resA] == cds::ResidueType::Sugar;
-        bool isChildDeoxy    = data.residues.type[resA] == cds::ResidueType::Deoxy;
-        std::string edgeName = (isSugar ? data.residues.configuration[resA] : "") + data.residues.linkage[resA];
-        graph::addEdge(data.graph, {resB, resA});
-        // It remains internal if it's already been made internal, or if the child is a deoxy.
-        data.residues.isInternal[resB] = (!isChildDeoxy || data.residues.isInternal[resB]);
-        data.edges.names.push_back(edgeName);
+        graph::addEdge(data.graph, {parent, child});
+        data.edges.names.push_back("");
     }
 
-    std::vector<size_t> recurveParseAlt(SequenceData& data, size_t parent, const std::string& sequence)
+    struct RecurveParseState
     {
+        size_t parent;
+        std::vector<size_t> chain;
+    };
+
+    RecurveParseState parseAny(SequenceData& data, size_t parent, const std::string& sequence);
+
+    WeightedNodes parseWeightedNodes(SequenceData& data, size_t parent, const std::string& str)
+    {
+        std::cout << "prob " << str << "\n";
+        std::vector<std::vector<size_t>> chains;
+        std::vector<double> weights;
+        std::vector<bool> defaultWeight;
+        std::string errorStr = "Malformed syntax in: " + str;
+
+        size_t i = str.length() - 1;
+
+        bool pastFirst = false;
+        while (i < str.length())
+        {
+            // the format is []or[]
+            if (pastFirst && (str[i - 1] != 'o' || str[i] != 'r'))
+            {
+                throw std::runtime_error("'or' missing between options in: " + str);
+            }
+            if (pastFirst)
+            {
+                i -= 2;
+            }
+            pastFirst = true;
+            if (str[i] != ']')
+            {
+                throw std::runtime_error(errorStr);
+            }
+            size_t localEnd         = i;
+            size_t localStart       = seekBracketStart(str, localEnd);
+            std::string localStr    = substr(str, localStart, localEnd + 1);
+            size_t eqPosition       = localStr.length() - 1;
+            double useDefaultWeight = false;
+            for (size_t n = localStr.length() - 2; n > 0; n--)
+            {
+                char c = localStr[n];
+                if (c == '=')
+                {
+                    eqPosition = n;
+                    break;
+                }
+                else if (!(std::isdigit(c) || c == '.'))
+                {
+                    useDefaultWeight = true;
+                    break;
+                }
+            }
+            double weight = 1.0;
+            if (!useDefaultWeight)
+            {
+                std::string weightStr        = substr(localStr, eqPosition + 1, localStr.length() - 1);
+                std::optional<double> parsed = codeUtils::parseDouble(weightStr);
+                if (!parsed.has_value())
+                {
+                    throw std::runtime_error(errorStr + " could not parse " + weightStr);
+                }
+                weight = parsed.value();
+            }
+            RecurveParseState state = parseAny(data, parent, substr(localStr, 1, eqPosition));
+            weights.push_back(weight);
+            defaultWeight.push_back(useDefaultWeight);
+            chains.push_back(state.chain);
+            i = localStart - 1;
+        }
+
+        return {chains, weights, defaultWeight};
+    }
+
+    RecurveParseState parseProbability(SequenceData& data, const size_t initialParent, const std::string& sequence)
+    {
+        size_t openingBracket             = firstOpeningBracket(sequence, 1);
+        std::string numberStr             = substr(sequence, probabilityStr.length(), openingBracket);
+        std::optional<double> probability = codeUtils::parseDouble(numberStr);
+        if (!probability.has_value())
+        {
+            throw std::runtime_error("Couldn't parse probability '" + numberStr + "' in: " + sequence);
+        }
+        size_t nodeId = addNode(data, ProbabilityNode {}, {sequence});
+        addLinkage(data, nodeId, initialParent);
+        WeightedNodes weighted = parseWeightedNodes(data, nodeId, substr(sequence, openingBracket, sequence.length()));
+        // we want at least one option
+        if (weighted.chains.empty())
+        {
+            throw std::runtime_error("Probability lacks options in: " + sequence);
+        }
+        // if there are multiple, we want them all to have explicit proportions
+        else if (weighted.chains.size() > 1)
+        {
+            for (bool def : weighted.defaultWeight)
+            {
+                if (def)
+                {
+                    throw std::runtime_error("Multiple probability options must contain relative proportions in: " +
+                                             sequence);
+                }
+            }
+        }
+        bool isDerivative               = data.nodes.isDerivative[weighted.chains[0][0]];
+        data.nodes.isDerivative[nodeId] = isDerivative;
+        for (std::vector<size_t>& chain : weighted.chains)
+        {
+            if (data.nodes.isDerivative[chain[0]] != isDerivative)
+            {
+                throw std::runtime_error("Probability options must all be sugars or all be derivatives in: " +
+                                         sequence);
+            }
+        }
+        ProbabilityNode& node = std::get<ProbabilityNode>(data.nodes.nodeType[nodeId]);
+        node.probability      = probability.value();
+        if (probability < 0.0 || probability > 1.0)
+        {
+            throw std::runtime_error("Probability value must be between 0 and 1 in: " + sequence);
+        }
+        node.heads.reserve(weighted.chains.size());
+        node.tails.reserve(weighted.chains.size());
+        for (auto& chain : weighted.chains)
+        {
+            node.heads.push_back(chain.front());
+            node.tails.push_back(chain.back());
+        }
+        node.weights = weighted.weights;
+        return {nodeId, {nodeId}};
+    }
+
+    RecurveParseState parseBrackets(SequenceData& data, const size_t initialParent, const std::string& sequence)
+    {
+        std::cout << "brackets " << sequence << "\n";
+        std::string str = substr(sequence, 1, sequence.length() - 1);
+        if (codeUtils::startsWith(str, probabilityStr))
+        {
+            return parseProbability(data, initialParent, str);
+        }
+        else if (!str.empty() && isdigit(str.back()))
+        { // branch, digit at end is linkage
+            std::cout << "branch " << str << "\n";
+            std::string linkage = {str.back()};
+            size_t branchId     = addNode(data, BranchNode {linkage, 0}, {sequence});
+            addLinkage(data, branchId, initialParent);
+            std::cout << "branch linkage " << initialParent << " " << branchId << " " << linkage << "\n";
+            // parse without linkage number
+            RecurveParseState state = parseAny(data, branchId, substr(str, 0, str.length() - 1));
+            BranchNode& node        = std::get<BranchNode>(data.nodes.nodeType[branchId]);
+            node.head               = state.chain[0];
+            return {initialParent, {}};
+        }
+        else
+        {
+            return parseAny(data, initialParent, str);
+        }
+    }
+
+    RecurveParseState parseList(SequenceData& data, const size_t initialParent, const std::string& sequence)
+    {
+        std::cout << "list " << sequence << "\n";
+        size_t parent = initialParent;
         std::vector<size_t> result;
         result.reserve(32);
         std::optional<size_t> placeholder = {};
@@ -269,8 +465,8 @@ namespace
             if (placeholder.has_value())
             { // we've reserved a residue spot to update
                 newRes = placeholder.value();
-                placeholder.reset();
                 updateResidue(data, newRes, components);
+                placeholder.reset();
                 trail = "";
             }
             else
@@ -286,32 +482,41 @@ namespace
         while (i > 0)
         {
             i--;
-            if ((sequence[i] == '-') && ((windowEnd - i) > 5))
+            if (i == 0)
+            { // Fin.
+                save(substr(sequence, i, windowEnd), parent);
+                return {initialParent, result};
+            }
+            else if (std::isdigit(sequence[i]) && (sequence[i - 1] == '-') && ((windowEnd - i) + trail.length() > 6))
             { // dash and have read enough that there is a residue to save.
-                parent    = save(substr(sequence, i + 2, windowEnd), parent);
-                windowEnd = i + 2; // Get to the right side of the number e.g. 1-4
+                parent    = save(substr(sequence, i, windowEnd), parent);
+                windowEnd = i;
             }
             else if (sequence[i] == ']')
             { // Start of branch: recurve. Maybe save if have read enough.
-                size_t bracketStart   = seekBracketStart(sequence, i);
-                std::string substring = substr(sequence, bracketStart + 1, i);
+                size_t startBracket   = seekBracketStart(sequence, i);
+                std::string substring = substr(sequence, startBracket, i + 1);
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
-                    parent = save(substr(sequence, i + 1, windowEnd), parent);
-                    recurveParseAlt(data, parent, substring);
+                    parent                  = save(substr(sequence, i + 1, windowEnd), parent);
+                    RecurveParseState state = parseBrackets(data, parent, substring);
+                    codeUtils::insertInto(result, state.chain);
+                    parent = state.parent;
                 }
                 else if ((windowEnd - i) > 1) // and not > 5
                 {                             // Derivative, save trailing part of residue
                     trail       = substr(sequence, i + 1, windowEnd);
                     // reserve a residue to serve as a parent to derivatives, and update it later
                     placeholder = addPlaceholderResidue(data);
-                    recurveParseAlt(data, placeholder.value(), substring);
+                    parseBrackets(data, placeholder.value(), substring);
                 }
                 else
                 {
-                    recurveParseAlt(data, parent, substring);
+                    RecurveParseState state = parseBrackets(data, parent, substring);
+                    codeUtils::insertInto(result, state.chain);
+                    parent = state.parent;
                 }
-                i         = bracketStart;
+                i         = startBracket;
                 windowEnd = i;
             }
             else if (sequence[i] == '[')
@@ -323,34 +528,47 @@ namespace
                 save(substr(sequence, i + 1, windowEnd), parent);
                 windowEnd = i;
             }
-            else if (i == 0)
-            { // Fin.
-                save(substr(sequence, i, windowEnd), parent);
-                return result;
-            }
         }
-        return result;
+        return {initialParent, result};
+    }
+
+    RecurveParseState parseAny(SequenceData& data, size_t parent, const std::string& sequence)
+    {
+        if (!sequence.empty() && sequence.back() == ']' && seekBracketStart(sequence, sequence.length() - 1) == 0)
+        {
+            return parseBrackets(data, parent, sequence);
+        }
+        else
+        {
+            return parseList(data, parent, sequence);
+        }
     }
 
     void parseCondensedSequence(SequenceData& data, const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
         size_t i = (sequence.find_last_of('-') + 1);
-        if (isdigit(sequence[i]))   // Indicates ano-ano and not e.g. Sugar-OME or -ROH etc
-        {                           // e.g. DGlcpa1-2DFrufb
-            ++i;                    // ano-ano
-            if (sequence[i] == ']') // e.g. DGlcpa1-2[LFucpa1-1]DFrufb also ano-ano, but with branching
+        if (substr(sequence, sequence.length() - 2, sequence.length()) == "OH")
+        {
+            addResidue(data, parseAglycone(sequence.substr(sequence.length() - 2)));
+            parseAny(data, 0, substr(sequence, 0, sequence.length() - 2));
+        }
+        else if (isdigit(sequence[i])) // Indicates ano-ano and not e.g. Sugar-OME or -ROH etc
+        {                              // e.g. DGlcpa1-2DFrufb
+            ++i;                       // ano-ano
+            if (sequence[i] == ']')    // e.g. DGlcpa1-2[LFucpa1-1]DFrufb also ano-ano, but with branching
             {
                 ++i;
             }
             addResidue(data, parseResidueStringIntoComponents(sequence.substr(i), cds::ResidueType::Sugar));
+            size_t terminal = data.graph.nodes.size() - 1;
+            parseAny(data, terminal, substr(sequence, 0, i));
         }
         else
-        { // e.g. DGlcpa1-OH
+        {
             addResidue(data, parseAglycone(sequence.substr(i)));
+            parseAny(data, 0, substr(sequence, 0, i));
         }
-        size_t terminal = data.graph.nodes.size() - 1;
-        recurveParseAlt(data, terminal, substr(sequence, 0, i));
     }
 
     // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,
@@ -436,7 +654,7 @@ std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& 
 {
     auto residueLink = [&](size_t n)
     {
-        return cdsCondensedSequence::getLink(sequence.residues.type[n], sequence.residues.linkage[n]);
+        return cdsCondensedSequence::getLink(sequence.nodes.type[n], sequence.nodes.linkage[n]);
     };
     std::function<bool(const size_t&, const size_t&)> compare = [&](const size_t& n, const size_t& k)
     {
@@ -446,10 +664,76 @@ std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& 
     return codeUtils::sortedBy(compare, edgeIds);
 }
 
+cdsCondensedSequence::SequenceData cdsCondensedSequence::pruned(const SequenceData& sequence)
+{
+    size_t residueCount     = sequence.nodes.name.size();
+    size_t initialEdgeCount = sequence.graph.edges.size();
+    std::vector<size_t> aliveEdges;
+    aliveEdges.reserve(initialEdgeCount);
+    for (size_t n = 0; n < initialEdgeCount; n++)
+    {
+        const std::array<size_t, 2>& arr = sequence.graph.edgeNodes[n];
+        if (sequence.graph.nodeAlive[arr[0]] && sequence.graph.nodeAlive[arr[1]])
+        {
+            aliveEdges.push_back(n);
+        }
+    }
+
+    std::vector<size_t> residueOrder = codeUtils::boolsToIndices(sequence.graph.nodeAlive);
+
+    std::vector<size_t> invertedResidueOrder(residueCount, -1);
+    for (size_t n = 0; n < residueOrder.size(); n++)
+    {
+        invertedResidueOrder[residueOrder[n]] = n;
+    }
+
+    graph::Database resultGraph;
+
+    for (size_t n = 0; n < residueOrder.size(); n++)
+    {
+        graph::addNode(resultGraph);
+    }
+
+    for (size_t n : aliveEdges)
+    {
+        auto& edge = sequence.graph.edgeNodes[n];
+        graph::addEdge(resultGraph, {invertedResidueOrder[edge[0]], invertedResidueOrder[edge[1]]});
+    }
+
+    NodeData nodes = {codeUtils::indicesToValues(sequence.nodes.fullString, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.type, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.name, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.linkage, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.chainPosition, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.ringType, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.configuration, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.isomer, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.preIsomerModifier, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.ringShape, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.modifier, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.isInternal, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.isDerivative, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.nodeType, residueOrder)};
+
+    EdgeData edges = {codeUtils::indicesToValues(sequence.edges.names, aliveEdges)};
+
+    for (size_t n : residueOrder)
+    {
+        const NodeType& nodeType = sequence.nodes.nodeType[n];
+        if (std::holds_alternative<ProbabilityNode>(nodeType) || std::holds_alternative<BranchNode>(nodeType))
+        {
+            throw std::runtime_error("Deactivate and bypass probability / branch nodes before manipulating sequence");
+        }
+    }
+
+    return SequenceData {resultGraph, nodes, edges};
+}
+
 cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const SequenceData& sequence)
 {
-    size_t residueCount           = sequence.residues.name.size();
-    std::vector<size_t> edgeOrder = edgesSortedByLink(sequence, codeUtils::indexVector(sequence.graph.edges));
+    size_t residueCount                               = sequence.nodes.name.size();
+    std::vector<size_t> edgeIndexOrder                = codeUtils::indexVector(sequence.graph.edges);
+    std::vector<size_t> edgeOrder                     = edgesSortedByLink(sequence, edgeIndexOrder);
     std::vector<std::array<size_t, 2>> reorderedEdges = codeUtils::indicesToValues(sequence.graph.edgeNodes, edgeOrder);
 
     size_t current                   = 0;
@@ -486,7 +770,7 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
     std::vector<size_t> missed = codeUtils::boolsToIndices(codeUtils::vectorNot(traversed));
     if (missed.size() > 0)
     {
-        throw std::runtime_error("Error: sequence graph not fully connected");
+        throw std::runtime_error("Sequence graph not fully connected");
     }
 
     std::vector<size_t> invertedResidueOrder(residueCount, -1);
@@ -502,28 +786,37 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
         graph::addNode(resultGraph);
     }
 
-    std::vector<size_t> edgeIndexOrder = codeUtils::indexVector(sequence.graph.edges);
-
     for (size_t n : edgeIndexOrder)
     {
         const std::array<size_t, 2>& edge = sequence.graph.edgeNodes[n];
         graph::addEdge(resultGraph, {invertedResidueOrder[edge[0]], invertedResidueOrder[edge[1]]});
     }
 
-    ResidueData residues = {codeUtils::indicesToValues(sequence.residues.fullString, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.type, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.name, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.linkage, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.ringType, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.configuration, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
+    NodeData nodes = {codeUtils::indicesToValues(sequence.nodes.fullString, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.type, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.name, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.linkage, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.chainPosition, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.ringType, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.configuration, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.isomer, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.preIsomerModifier, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.ringShape, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.modifier, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.isInternal, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.isDerivative, residueOrder),
+                      codeUtils::indicesToValues(sequence.nodes.nodeType, residueOrder)};
 
-    return SequenceData {resultGraph, residues, sequence.edges};
+    for (size_t n : residueOrder)
+    {
+        const NodeType& nodeType = sequence.nodes.nodeType[n];
+        if (std::holds_alternative<ProbabilityNode>(nodeType) || std::holds_alternative<BranchNode>(nodeType))
+        {
+            throw std::runtime_error("Deactivate and bypass probability / branch nodes before manipulating sequence");
+        }
+    }
+
+    return SequenceData {resultGraph, nodes, sequence.edges};
 }
 
 cdsCondensedSequence::SequenceData cdsCondensedSequence::parseSequence(std::string inputSequence)

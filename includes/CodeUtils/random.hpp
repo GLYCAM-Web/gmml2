@@ -79,6 +79,7 @@ namespace codeUtils
         return result;
     }
 
+    size_t weightedRandomIndex(pcg32& rng, const std::vector<double>& weights);
     std::vector<size_t> weightedRandomOrder(pcg32& rng, std::vector<double> weights);
     double normalDistributionRandomDoubleWithCutoff(pcg32& rng, double lowerCutoff, double upperCutoff);
 } // namespace codeUtils

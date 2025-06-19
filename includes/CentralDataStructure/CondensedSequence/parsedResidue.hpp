@@ -11,16 +11,17 @@ namespace cdsCondensedSequence
 
     struct ParsedResidueComponents
     {
-        std::string fullString;
-        cds::ResidueType type;
-        std::string name;
-        std::string linkage;
-        std::string ringType;
-        std::string configuration;
-        std::string isomer;
-        std::string preIsomerModifier;
-        std::string ringShape;
-        std::string modifier;
+        std::string fullString        = "";
+        cds::ResidueType type         = cds::ResidueType::Undefined;
+        std::string name              = "";
+        std::string linkage           = "";
+        std::string ringType          = "";
+        std::string configuration     = "";
+        std::string isomer            = "";
+        std::string preIsomerModifier = "";
+        std::string ringShape         = "";
+        std::string modifier          = "";
+        std::string chainPosition     = "";
     };
 
     std::string getLink(cds::ResidueType type, const std::string& linkage);
