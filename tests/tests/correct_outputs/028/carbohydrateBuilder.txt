@@ -2266,3 +2266,43 @@ DGlcp&Label=residue-9;a1-2&Label=link-7;DGlcp&Label=residue-8;b1-2&Label=link-6;
 Parsed and labelled 00100 with no exceptions thrown.
 
 Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1-4 with this glycam residue code: 0Bc
+
+*********************
+Building id 00101:[DGlcpa1-4]<4>DGlcpa1-2DGlcpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-OH
+*********************
+Input:
+[DGlcpa1-4]<4>DGlcpa1-2DGlcpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-OH
+Interpreted:
+DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-2DGlcpa1-4DGlcpa1-6DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-4DManpa1-4DGlcpa1-6DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-4DManpa1-OH
+IndexOrdered:
+DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-2DGlcpa1-4DGlcpa1-6DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-4DManpa1-4DGlcpa1-6DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-4DManpa1-OH
+IndexOrderedLabeled:
+DGlcp&Label=residue-19;a1-4&Label=link-17;DGlcp&Label=residue-18;a1-4&Label=link-16;DGlcp&Label=residue-17;a1-4&Label=link-15;DGlcp&Label=residue-16;a1-4&Label=link-14;DGlcp&Label=residue-15;a1-2&Label=link-13;DGlcp&Label=residue-14;a1-4&Label=link-12;DGlcp&Label=residue-13;a1-6&Label=link-11;DGlcp&Label=residue-12;a1-4&Label=link-10;DGlcp&Label=residue-11;a1-4&Label=link-9;DGlcp&Label=residue-10;a1-4&Label=link-8;DGlcp&Label=residue-9;a1-4&Label=link-7;DManp&Label=residue-8;a1-4&Label=link-6;DGlcp&Label=residue-7;a1-6&Label=link-5;DGlcp&Label=residue-6;a1-4&Label=link-4;DGlcp&Label=residue-5;a1-4&Label=link-3;DGlcp&Label=residue-4;a1-4&Label=link-2;DGlcp&Label=residue-3;a1-4&Label=link-1;DManp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00101 with no exceptions thrown.
+
+Number of residues for this sequence is 19
+Number of likely shapes is 4
+Number of possible shapes is 9
+ROH_1_?_?
+4MA_2_?_?
+4GA_3_?_?
+4GA_4_?_?
+4GA_5_?_?
+6GA_6_?_?
+4GA_7_?_?
+4MA_8_?_?
+4GA_9_?_?
+4GA_10_?_?
+4GA_11_?_?
+6GA_12_?_?
+4GA_13_?_?
+2GA_14_?_?
+4GA_15_?_?
+4GA_16_?_?
+4GA_17_?_?
+4GA_18_?_?
+0GA_19_?_?
+Name: DGlcpa1-6DGlcpa, LinkageIndex: 5, Res1: 7, Res2: 6
+    LikelyRotamers: Omg, gg, gt
+Name: DGlcpa1-6DGlcpa, LinkageIndex: 11, Res1: 13, Res2: 12
+    LikelyRotamers: Omg, gg, gt
