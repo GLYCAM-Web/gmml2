@@ -375,16 +375,9 @@ namespace
         std::string after          = inputSequence.substr(repeatCharacterEndLocation + 1);
         std::string newInputString = before;
         // Check if using the old nomenclature. i.e. DGlcpa1-[4DGlcpa1-]<3>
-        if (!before.empty() && before.back() == '-')
-        {
-            std::string message = "Old repeat syntax detected as \"-[\" found in " + inputSequence;
-            gmml::log(__LINE__, __FILE__, gmml::INF, message);
-            for (int n = 0; n < numberRepeats; n++)
-            {
-                newInputString += repeat;
-            }
-        }
-        else
+        bool oldNomenclature       = !before.empty() && before.back() == '-';
+        bool numberFirstEndOpen    = !repeat.empty() && std::isdigit(repeat[0]) && repeat.back() == '-';
+        if (numberFirstEndOpen && !oldNomenclature)
         { // New nomenclature, i.e DGlcpa1-4[4DGlcpa1-]<3>
             // firstRepeat does not have the e.g. 4 in 4DGlcpa1-
             newInputString += repeat.substr(1, repeat.length());
@@ -393,6 +386,14 @@ namespace
                 newInputString += repeat;
             }
         }
+        else
+        { // all other cases, repeat as-is
+            for (int n = 0; n < numberRepeats; n++)
+            {
+                newInputString += repeat;
+            }
+        }
+
         newInputString += after;
         // Check if there are more repeating units and deal with them recursively:
         if (after.find('>') != std::string::npos)
