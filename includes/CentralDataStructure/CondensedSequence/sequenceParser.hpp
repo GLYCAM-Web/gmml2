@@ -7,15 +7,36 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <variant>
 
 namespace cdsCondensedSequence
 {
-    struct ResidueData
+    struct ResidueNode
+    {};
+
+    struct BranchNode
+    {
+        std::string linkage;
+        size_t head;
+    };
+
+    struct ProbabilityNode
+    {
+        double probability;
+        std::vector<size_t> heads;
+        std::vector<size_t> tails;
+        std::vector<double> weights;
+    };
+
+    typedef std::variant<ResidueNode, BranchNode, ProbabilityNode> NodeType;
+
+    struct NodeData
     {
         std::vector<std::string> fullString;
         std::vector<cds::ResidueType> type;
         std::vector<std::string> name;
         std::vector<std::string> linkage;
+        std::vector<std::string> chainPosition;
         std::vector<std::string> ringType;
         std::vector<std::string> configuration;
         std::vector<std::string> isomer;
@@ -24,6 +45,7 @@ namespace cdsCondensedSequence
         std::vector<std::string> modifier;
         std::vector<bool> isInternal;
         std::vector<bool> isDerivative;
+        std::vector<NodeType> nodeType;
     };
 
     struct EdgeData
@@ -34,17 +56,10 @@ namespace cdsCondensedSequence
     struct SequenceData
     {
         graph::Database graph;
-        ResidueData residues;
+        NodeData nodes;
         EdgeData edges;
     };
 
-    std::vector<size_t> edgesSortedByLink(const SequenceData& sequence, const std::vector<size_t>& edgeIds);
-    SequenceData reordered(const SequenceData& sequence);
     SequenceData parseSequence(std::string sequence);
-
-    inline SequenceData parseAndReorder(const std::string& sequence)
-    {
-        return reordered(parseSequence(sequence));
-    }
 } // namespace cdsCondensedSequence
 #endif

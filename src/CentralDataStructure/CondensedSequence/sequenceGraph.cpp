@@ -10,21 +10,21 @@
 
 std::vector<std::string> cdsCondensedSequence::sequenceDerivatives(const SequenceData& sequence)
 {
-    std::vector<std::string> derivatives(sequence.residues.name.size(), "");
+    std::vector<std::string> derivatives(sequence.nodes.name.size(), "");
 
     for (size_t n = 0; n < sequence.graph.edgeNodes.size(); n++)
     {
         const std::array<size_t, 2>& adj = sequence.graph.edgeNodes[n];
         size_t parent                    = adj[0];
         size_t child                     = adj[1];
-        if (sequence.residues.type[child] == cds::ResidueType::Derivative)
+        if (sequence.nodes.type[child] == cds::ResidueType::Derivative)
         {
             std::string& str = derivatives[parent];
             if (!str.empty())
             {
                 str += " ";
             }
-            str += sequence.edges.names[n] + sequence.residues.name[child];
+            str += sequence.edges.names[n] + sequence.nodes.name[child];
         }
     }
 
@@ -35,10 +35,10 @@ std::vector<std::string> cdsCondensedSequence::sequenceMonosaccharideNames(const
 {
     std::function<std::string(const size_t&)> monosaccharideName = [&](size_t n)
     {
-        return sequence.residues.isomer[n] + sequence.residues.name[n] + sequence.residues.modifier[n] +
-               sequence.residues.ringShape[n];
+        return sequence.nodes.isomer[n] + sequence.nodes.name[n] + sequence.nodes.modifier[n] +
+               sequence.nodes.ringShape[n];
     };
-    return codeUtils::vectorMap(monosaccharideName, codeUtils::indexVector(sequence.residues.name.size()));
+    return codeUtils::vectorMap(monosaccharideName, codeUtils::indexVector(sequence.nodes.name.size()));
 }
 
 graph::Graph cdsCondensedSequence::condensedSequenceGraph(const SequenceData& sequence)
@@ -48,6 +48,6 @@ graph::Graph cdsCondensedSequence::condensedSequenceGraph(const SequenceData& se
         return type != cds::ResidueType::Derivative;
     };
     graph::Database db = sequence.graph;
-    db.nodeAlive       = codeUtils::vectorMap(keepNode, sequence.residues.type);
+    db.nodeAlive       = codeUtils::vectorMap(keepNode, sequence.nodes.type);
     return graph::identity(db);
 }

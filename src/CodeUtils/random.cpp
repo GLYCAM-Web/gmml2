@@ -7,6 +7,22 @@
 #include <numeric>
 #include <random>
 
+size_t codeUtils::weightedRandomIndex(pcg32& rng, const std::vector<double>& weights)
+{
+    double sum    = vectorSum(0.0, weights);
+    double target = uniformRandomDoubleWithinRange(rng, 0.0, sum);
+    double accum  = 0.0;
+    for (size_t n = 0; n < weights.size(); n++)
+    {
+        accum += weights[n];
+        if (target < accum)
+        {
+            return n;
+        }
+    }
+    return weights.size() - 1;
+}
+
 std::vector<size_t> codeUtils::weightedRandomOrder(pcg32& rng, std::vector<double> weights)
 {
     std::vector<size_t> result;

@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequencePrinter.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceGraph.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -14,43 +15,43 @@
 
 namespace
 {
-    using cdsCondensedSequence::ResidueData;
+    using cdsCondensedSequence::NodeData;
     using cdsCondensedSequence::SequenceData;
     using cdsCondensedSequence::SequencePrintConfig;
     using codeUtils::squareBrackets;
 
     auto residueNames = [](const SequenceData& sequence)
     {
-        const ResidueData& residues = sequence.residues;
-        size_t residueCount         = residues.name.size();
+        const NodeData& nodes = sequence.nodes;
+        size_t residueCount   = nodes.name.size();
         std::vector<std::string> result;
         result.reserve(residueCount);
         for (size_t n = 0; n < residueCount; n++)
         {
-            result.push_back(residues.preIsomerModifier[n] + residues.isomer[n] + residues.name[n] +
-                             residues.ringType[n] + residues.modifier[n] + residues.ringShape[n]);
+            result.push_back(nodes.preIsomerModifier[n] + nodes.isomer[n] + nodes.name[n] + nodes.ringType[n] +
+                             nodes.modifier[n] + nodes.ringShape[n]);
         }
         return result;
     };
 
     auto iupacNames = [](const SequenceData& sequence)
     {
-        const ResidueData& residues = sequence.residues;
-        size_t residueCount         = residues.name.size();
+        const NodeData& nodes = sequence.nodes;
+        size_t residueCount   = nodes.name.size();
         std::vector<std::string> result;
         result.reserve(residueCount);
         for (size_t n = 0; n < residueCount; n++)
         {
-            cds::ResidueType type = residues.type[n];
+            cds::ResidueType type = nodes.type[n];
             // Iupac doesn't write -OH, but does include reducing terminal when it's sugar-sugar ano-ano
             if (type == cds::ResidueType::Sugar)
             {
-                result.push_back(residues.name[n] + residues.modifier[n]);
+                result.push_back(nodes.name[n] + nodes.modifier[n]);
             }
             else if (codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, type))
             {
-                result.push_back(residues.preIsomerModifier[n] + residues.isomer[n] + residues.name[n] +
-                                 residues.ringType[n] + residues.modifier[n] + residues.ringShape[n]);
+                result.push_back(nodes.preIsomerModifier[n] + nodes.isomer[n] + nodes.name[n] + nodes.ringType[n] +
+                                 nodes.modifier[n] + nodes.ringShape[n]);
             }
             else
             {
@@ -67,8 +68,8 @@ namespace
 
     auto residueLabels = [](const SequenceData& sequence)
     {
-        const ResidueData& residues = sequence.residues;
-        size_t residueCount         = residues.name.size();
+        const NodeData& nodes = sequence.nodes;
+        size_t residueCount   = nodes.name.size();
         std::vector<std::string> result;
         result.reserve(residueCount);
         for (size_t n = 0; n < residueCount; n++)
@@ -80,7 +81,7 @@ namespace
 
     auto residueConfigurations = [](const SequenceData& sequence)
     {
-        return sequence.residues.configuration;
+        return sequence.nodes.configuration;
     };
 
     auto noResidueConfigurations = [](const SequenceData& sequence)
@@ -141,7 +142,7 @@ namespace
         std::vector<codeUtils::Brackets> result(sequence.graph.nodes.size(), {"", ""});
         for (size_t nodeId : sequence.graph.nodes)
         {
-            if (sequence.residues.type[nodeId] != cds::ResidueType::Aglycone)
+            if (sequence.nodes.type[nodeId] != cds::ResidueType::Aglycone)
             {
                 result[nodeId].open = "(";
             }
@@ -149,7 +150,7 @@ namespace
         for (size_t edgeId : sequence.graph.edges)
         {
             const std::array<size_t, 2>& nodes = sequence.graph.edgeNodes[edgeId];
-            if (!codeUtils::contains({sequence.residues.type[nodes[0]], sequence.residues.type[nodes[1]]},
+            if (!codeUtils::contains({sequence.nodes.type[nodes[0]], sequence.nodes.type[nodes[1]]},
                                      cds::ResidueType::Aglycone))
             {
                 result[nodes[1]].close = ")";
@@ -318,7 +319,7 @@ std::string cdsCondensedSequence::printSequence(const SequencePrintConfig& confi
     SequencePrintData data = {config.derivativeBrackets,
                               config.derivativeSeparator,
                               residueChildEdges,
-                              sequence.residues.type,
+                              sequence.nodes.type,
                               residueNames,
                               config.parentlessResidueLabels(sequence),
                               config.residueLinkageBrackets(sequence),
@@ -351,7 +352,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, cons
         size_t index                    = sourceNodeIndex(graph, n);
         std::string& monosaccharideName = monosaccharideNames[index];
         GraphVizImage image =
-            findImage(configs, monosaccharideName, (sequence.residues.ringType[index] == "f") ? "f" : "");
+            findImage(configs, monosaccharideName, (sequence.nodes.ringType[index] == "f") ? "f" : "");
         nodes.push_back({n, image, monosaccharideName, derivatives[index]});
     }
 
@@ -361,8 +362,8 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, cons
         size_t parent              = adj[0];
         size_t child               = adj[1];
         size_t childIndex          = sourceNodeIndex(graph, child);
-        std::string label          = (configs.show_config_labels_ ? sequence.residues.configuration[childIndex] : "") +
-                            (configs.show_position_labels_ ? sequence.residues.linkage[childIndex] : "");
+        std::string label          = (configs.show_config_labels_ ? sequence.nodes.configuration[childIndex] : "") +
+                            (configs.show_position_labels_ ? sequence.nodes.linkage[childIndex] : "");
         linkages.push_back({
             {child, parent},
             label
@@ -378,7 +379,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, cons
     for (size_t n = 0; n < nodes.size(); n++)
     {
         size_t nodeIndex = sourceNodeIndex(graph, n);
-        bool isAglycone  = sequence.residues.type[nodeIndex] == cds::ResidueType::Aglycone;
+        bool isAglycone  = sequence.nodes.type[nodeIndex] == cds::ResidueType::Aglycone;
         ss << (isAglycone ? graphVizAglyconeNode(nodes[n]) : graphVizSugarNode(nodes[n]));
     }
     for (auto& linkage : linkages)

@@ -101,8 +101,7 @@ namespace
     {
         std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
         adjustAtomName             += parsedResidue->GetLinkageName().substr(0, 1);
-
-        cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
+        cds::Atom* atomToAdjust    = parsedResidue->GetParent()->FindAtom(adjustAtomName);
         atomToAdjust->setCharge(atomToAdjust->getCharge() +
                                 GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
     }
@@ -271,7 +270,7 @@ namespace
     void createParsedResidues(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs, std::vector<size_t>& indices,
                               const cdsCondensedSequence::SequenceData& sequence)
     {
-        size_t residueCount = sequence.residues.name.size();
+        size_t residueCount = sequence.nodes.name.size();
         residuePtrs.reserve(residueCount);
         indices.reserve(residueCount);
         std::vector<size_t> newIndices;
@@ -282,10 +281,10 @@ namespace
             if (sequence.graph.nodeAlive[n])
             {
                 residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
-                    sequence.residues.fullString[n], sequence.residues.type[n], sequence.residues.name[n],
-                    sequence.residues.linkage[n], sequence.residues.ringType[n], sequence.residues.configuration[n],
-                    sequence.residues.isomer[n], sequence.residues.preIsomerModifier[n], sequence.residues.ringShape[n],
-                    sequence.residues.modifier[n]}));
+                    sequence.nodes.fullString[n], sequence.nodes.type[n], sequence.nodes.name[n],
+                    sequence.nodes.linkage[n], sequence.nodes.ringType[n], sequence.nodes.configuration[n],
+                    sequence.nodes.isomer[n], sequence.nodes.preIsomerModifier[n], sequence.nodes.ringShape[n],
+                    sequence.nodes.modifier[n]}));
                 indices.push_back(n);
                 newIndices.push_back(index);
                 index++;
@@ -414,7 +413,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 }
             }
         }
-        std::vector<ResidueType> residueTypes = codeUtils::indicesToValues(sequence.residues.type, indices);
+        std::vector<ResidueType> residueTypes = codeUtils::indicesToValues(sequence.nodes.type, indices);
         for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy and set residue attributes
             if (residueTypes[n] == cds::ResidueType::Deoxy)
@@ -426,7 +425,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
             }
             else
             {
-                const ResidueData& rD  = sequence.residues;
+                const NodeData& rD     = sequence.nodes;
                 size_t k               = indices[n];
                 std::string glycamCode = getGlycamResidueName(residuePtrs[n].get());
                 cds::ResidueAttributes ra {rD.type[k],     rD.name[k],          glycamCode,   rD.linkage[k],
