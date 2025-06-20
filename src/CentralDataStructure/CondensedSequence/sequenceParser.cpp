@@ -9,6 +9,7 @@
 #include <string>
 #include <cctype> // isdigit()
 #include <vector>
+#include <optional>
 
 namespace
 {
@@ -205,6 +206,20 @@ namespace
         throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
     }
 
+    void updateResidue(SequenceData& data, size_t id, const ParsedResidueComponents& components)
+    {
+        data.residues.fullString[id]        = components.fullString;
+        data.residues.type[id]              = components.type;
+        data.residues.name[id]              = components.name;
+        data.residues.linkage[id]           = components.linkage;
+        data.residues.ringType[id]          = components.ringType;
+        data.residues.configuration[id]     = components.configuration;
+        data.residues.isomer[id]            = components.isomer;
+        data.residues.preIsomerModifier[id] = components.preIsomerModifier;
+        data.residues.ringShape[id]         = components.ringShape;
+        data.residues.modifier[id]          = components.modifier;
+    }
+
     size_t addResidue(SequenceData& data, const ParsedResidueComponents& components)
     {
         data.residues.fullString.push_back(components.fullString);
@@ -224,6 +239,11 @@ namespace
         return id;
     }
 
+    size_t addPlaceholderResidue(SequenceData& data)
+    {
+        return addResidue(data, {"", cds::ResidueType::Undefined, "", "", "", "", "", "", "", ""});
+    }
+
     void addLinkage(SequenceData& data, size_t resA, size_t resB)
     {
         bool isSugar         = data.residues.type[resA] == cds::ResidueType::Sugar;
@@ -235,36 +255,31 @@ namespace
         data.edges.names.push_back(edgeName);
     }
 
-    size_t saveResidue(SequenceData& data, std::vector<size_t>& savedDerivatives, const std::string& residueString,
-                       size_t parent)
+    std::vector<size_t> recurveParseAlt(SequenceData& data, size_t parent, const std::string& sequence)
     {
-        size_t newRes = addResidue(data, parseResidueStringIntoComponents(residueString, cds::ResidueType::Undefined));
-        if (data.residues.isDerivative[newRes])
+        std::vector<size_t> result;
+        result.reserve(32);
+        std::optional<size_t> placeholder = {};
+        std::string trail                 = "";
+        auto save                         = [&](const std::string& str, size_t parent)
         {
-            savedDerivatives.push_back(newRes);
-            return parent;
-        }
-        else
-        {
-            addLinkage(data, newRes, parent);
-            for (size_t derivative : savedDerivatives)
-            {
-                addLinkage(data, derivative, newRes);
+            ParsedResidueComponents components =
+                parseResidueStringIntoComponents(str + trail, cds::ResidueType::Undefined);
+            size_t newRes = -1;
+            if (placeholder.has_value())
+            { // we've reserved a residue spot to update
+                newRes = placeholder.value();
+                placeholder.reset();
+                updateResidue(data, newRes, components);
+                trail = "";
             }
-            savedDerivatives.clear();
+            else
+            {
+                newRes = addResidue(data, components);
+            }
+            result.push_back(newRes);
+            addLinkage(data, newRes, parent);
             return newRes;
-        }
-    }
-
-    void recurveParseAlt(SequenceData& data, size_t parent, std::vector<size_t>& savedDerivatives,
-                         const std::string& sequence)
-    {
-        std::string trail = "";
-        auto save         = [&](const std::string& str, size_t parent)
-        {
-            size_t id = saveResidue(data, savedDerivatives, str + trail, parent);
-            trail     = "";
-            return id;
         };
         size_t i         = sequence.length();
         size_t windowEnd = i;
@@ -278,16 +293,24 @@ namespace
             }
             else if (sequence[i] == ']')
             { // Start of branch: recurve. Maybe save if have read enough.
+                size_t bracketStart   = seekBracketStart(sequence, i);
+                std::string substring = substr(sequence, bracketStart + 1, i);
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
                     parent = save(substr(sequence, i + 1, windowEnd), parent);
+                    recurveParseAlt(data, parent, substring);
                 }
                 else if ((windowEnd - i) > 1) // and not > 5
                 {                             // Derivative, save trailing part of residue
-                    trail = substr(sequence, i + 1, windowEnd);
+                    trail       = substr(sequence, i + 1, windowEnd);
+                    // reserve a residue to serve as a parent to derivatives, and update it later
+                    placeholder = addPlaceholderResidue(data);
+                    recurveParseAlt(data, placeholder.value(), substring);
                 }
-                size_t bracketStart = seekBracketStart(sequence, i);
-                recurveParseAlt(data, parent, savedDerivatives, substr(sequence, bracketStart + 1, i));
+                else
+                {
+                    recurveParseAlt(data, parent, substring);
+                }
                 i         = bracketStart;
                 windowEnd = i;
             }
@@ -297,16 +320,16 @@ namespace
             }
             else if (sequence[i] == ',')
             { // , in derivative list
-                recurveParseAlt(data, parent, savedDerivatives, substr(sequence, i + 1, windowEnd));
+                save(substr(sequence, i + 1, windowEnd), parent);
                 windowEnd = i;
             }
             else if (i == 0)
             { // Fin.
                 save(substr(sequence, i, windowEnd), parent);
-                return;
+                return result;
             }
         }
-        return;
+        return result;
     }
 
     void parseCondensedSequence(SequenceData& data, const std::string& sequence)
@@ -327,8 +350,7 @@ namespace
             addResidue(data, parseAglycone(sequence.substr(i)));
         }
         size_t terminal = data.graph.nodes.size() - 1;
-        std::vector<size_t> savedDerivatives;
-        recurveParseAlt(data, terminal, savedDerivatives, substr(sequence, 0, i));
+        recurveParseAlt(data, terminal, substr(sequence, 0, i));
     }
 
     // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,
