@@ -94,4 +94,3 @@
 00098_DGalpNAca1-3LFucpa1-3DFucp[2A]a1-3[LAcipa2-6]DGalpNAca1-3LFucpa1-3DFucp[2A]a1-OH
 00099_DGlcpa1-4DGalpb1-7[DGlcpa1-6DDmanpHepa1-2LFucpa1-3DGlcpNAca1-2]DDmanpHepa1-2LDmanpHepa1-3LDmanpHepa1-5DKDOpa2-OH
 00100_DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
-00101_[DGlcpa1-4]<4>DGlcpa1-2DGlcpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-OH

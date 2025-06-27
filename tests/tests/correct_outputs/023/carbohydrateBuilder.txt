@@ -410,7 +410,3 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: Insuffi
 Building 00100: DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
 *********************
 Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1-4 with this glycam residue code: 0Bc
-
-*********************
-Building 00101: [DGlcpa1-4]<4>DGlcpa1-2DGlcpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-4DGlcpa1-6DGlcpa1-4[DGlcpa1-4]<3>DManpa1-OH
-*********************
