@@ -174,31 +174,47 @@ namespace
         return true;
     }
 
-    // There may be branches which also use [], so need to check for those and find the [ that starts the repeat
     size_t seekBracketStart(const std::string& str, size_t i)
     {
-        int branches = 0;
-
-        while (i > 0)
+        const std::vector<char> opening {'(', '[', '{', '<'};
+        const std::vector<char> closing {')', ']', '}', '>'};
+        std::vector<size_t> trace;
+        char firstBracket = str[i];
+        trace.reserve(64);
+        size_t t = codeUtils::indexOf(closing, firstBracket);
+        if (t > closing.size())
         {
-            --i; // skip the initial ]
-            if (str[i] == ']')
+            throw std::runtime_error("Not a closing bracket: '" + std::string {str[i]} + "' in: " + str);
+        }
+        trace.push_back(t);
+
+        for (size_t n = i - 1; n < i; n--)
+        {
+            char c    = str[n];
+            size_t ot = codeUtils::indexOf(opening, c);
+            size_t ct = codeUtils::indexOf(closing, c);
+            if (ct < closing.size())
             {
-                ++branches;
+                trace.push_back(ct);
             }
-            if (str[i] == '[')
+            else if (ot < opening.size())
             {
-                if (branches == 0)
+                if (trace.empty())
                 {
-                    return i;
+                    throw std::runtime_error("Could not parse brackets in: " + str);
                 }
-                else
+                else if (trace.back() == ot)
                 {
-                    --branches;
+                    if (trace.size() == 1)
+                    {
+                        return n;
+                    }
+                    trace.pop_back();
                 }
             }
         }
-        throw std::runtime_error("Did not find corresponding '[' in repeat unit of repeating sequence: " + str);
+        throw std::runtime_error("Did not find corresponding '" + std::string {opening[t]} +
+                                 "' in repeat unit of repeating sequence: " + str);
     }
 
     void parseLabelledInput(std::string inString)
