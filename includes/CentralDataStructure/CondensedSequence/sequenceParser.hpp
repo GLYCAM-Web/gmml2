@@ -1,10 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPARSER_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPARSER_HPP
 
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
-#include <memory>
 #include <string>
 #include <vector>
 
@@ -38,13 +37,6 @@ namespace cdsCondensedSequence
         EdgeData edges;
     };
 
-    std::vector<size_t> edgesSortedByLink(const SequenceData& sequence, const std::vector<size_t>& edgeIds);
-    SequenceData reordered(const SequenceData& sequence);
     SequenceData parseSequence(std::string sequence);
-
-    inline SequenceData parseAndReorder(const std::string& sequence)
-    {
-        return reordered(parseSequence(sequence));
-    }
 } // namespace cdsCondensedSequence
 #endif
