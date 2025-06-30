@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
@@ -14,8 +15,9 @@
 namespace
 {
     using cds::ResidueType;
+    using cdsCondensedSequence::AbstractSequence;
     using cdsCondensedSequence::ParsedResidueComponents;
-    using cdsCondensedSequence::SequenceData;
+    using cdsCondensedSequence::ResidueNode;
 
     std::pair<std::string, std::string> ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
@@ -222,56 +224,23 @@ namespace
         throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
     }
 
-    void updateResidue(SequenceData& data, size_t id, const ParsedResidueComponents& components)
+    void updateResidue(AbstractSequence& data, size_t id, const ParsedResidueComponents& components)
     {
-        data.residues.fullString[id]        = components.fullString;
-        data.residues.type[id]              = components.type;
-        data.residues.name[id]              = components.name;
-        data.residues.linkage[id]           = components.linkage;
-        data.residues.ringType[id]          = components.ringType;
-        data.residues.configuration[id]     = components.configuration;
-        data.residues.isomer[id]            = components.isomer;
-        data.residues.preIsomerModifier[id] = components.preIsomerModifier;
-        data.residues.ringShape[id]         = components.ringShape;
-        data.residues.modifier[id]          = components.modifier;
+        data.nodes[id] = ResidueNode {components};
     }
 
-    size_t addResidue(SequenceData& data, const ParsedResidueComponents& components)
+    size_t addResidue(AbstractSequence& data, const ParsedResidueComponents& components)
     {
-        data.residues.fullString.push_back(components.fullString);
-        data.residues.type.push_back(components.type);
-        data.residues.name.push_back(components.name);
-        data.residues.linkage.push_back(components.linkage);
-        data.residues.ringType.push_back(components.ringType);
-        data.residues.configuration.push_back(components.configuration);
-        data.residues.isomer.push_back(components.isomer);
-        data.residues.preIsomerModifier.push_back(components.preIsomerModifier);
-        data.residues.ringShape.push_back(components.ringShape);
-        data.residues.modifier.push_back(components.modifier);
-        data.residues.isInternal.push_back(false);
-        data.residues.isDerivative.push_back(
-            codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, components.type));
-        size_t id = graph::addNode(data.graph);
-        return id;
+        data.nodes.emplace_back(ResidueNode {components});
+        return graph::addNode(data.graph);
     }
 
-    size_t addPlaceholderResidue(SequenceData& data)
+    size_t addPlaceholderResidue(AbstractSequence& data)
     {
         return addResidue(data, {"", cds::ResidueType::Undefined, "", "", "", "", "", "", "", ""});
     }
 
-    void addLinkage(SequenceData& data, size_t resA, size_t resB)
-    {
-        bool isSugar         = data.residues.type[resA] == cds::ResidueType::Sugar;
-        bool isChildDeoxy    = data.residues.type[resA] == cds::ResidueType::Deoxy;
-        std::string edgeName = (isSugar ? data.residues.configuration[resA] : "") + data.residues.linkage[resA];
-        graph::addEdge(data.graph, {resB, resA});
-        // It remains internal if it's already been made internal, or if the child is a deoxy.
-        data.residues.isInternal[resB] = (!isChildDeoxy || data.residues.isInternal[resB]);
-        data.edges.names.push_back(edgeName);
-    }
-
-    std::vector<size_t> recurveParseAlt(SequenceData& data, size_t parent, const std::string& sequence)
+    std::vector<size_t> recurveParseAlt(AbstractSequence& data, size_t parent, const std::string& sequence)
     {
         std::vector<size_t> result;
         result.reserve(32);
@@ -294,7 +263,7 @@ namespace
                 newRes = addResidue(data, components);
             }
             result.push_back(newRes);
-            addLinkage(data, newRes, parent);
+            graph::addEdge(data.graph, {parent, newRes});
             return newRes;
         };
         size_t i         = sequence.length();
@@ -348,7 +317,7 @@ namespace
         return result;
     }
 
-    void parseCondensedSequence(SequenceData& data, const std::string& sequence)
+    void parseCondensedSequence(AbstractSequence& data, const std::string& sequence)
     {
         // Reading from the rightmost end of the string, get the aglycone first.
         size_t i = (sequence.find_last_of('-') + 1);
@@ -447,9 +416,9 @@ namespace
     }
 } // namespace
 
-cdsCondensedSequence::SequenceData cdsCondensedSequence::parseSequence(std::string inputSequence)
+cdsCondensedSequence::AbstractSequence cdsCondensedSequence::parseSequence(std::string inputSequence)
 {
-    SequenceData data;
+    AbstractSequence data;
     if (inputSequence.find('<') != std::string::npos)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Found repeating unit in input\n");

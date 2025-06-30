@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPRINTER_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPRINTER_HPP
 
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CodeUtils/strings.hpp"
 

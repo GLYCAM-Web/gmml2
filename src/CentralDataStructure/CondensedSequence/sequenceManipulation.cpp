@@ -1,11 +1,49 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 #include <stdexcept>
+
+cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const AbstractSequence& data)
+{
+    SequenceData result;
+    for (size_t n = 0; n < data.nodes.size(); n++)
+    {
+        const ResidueNode& node                   = data.nodes[n];
+        const ParsedResidueComponents& components = node.components;
+        graph::addNode(result.graph);
+        result.residues.fullString.push_back(components.fullString);
+        result.residues.type.push_back(components.type);
+        result.residues.name.push_back(components.name);
+        result.residues.linkage.push_back(components.linkage);
+        result.residues.ringType.push_back(components.ringType);
+        result.residues.configuration.push_back(components.configuration);
+        result.residues.isomer.push_back(components.isomer);
+        result.residues.preIsomerModifier.push_back(components.preIsomerModifier);
+        result.residues.ringShape.push_back(components.ringShape);
+        result.residues.modifier.push_back(components.modifier);
+        result.residues.isInternal.push_back(false);
+        result.residues.isDerivative.push_back(
+            codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, components.type));
+    }
+    for (auto& edge : data.graph.edgeNodes)
+    {
+        size_t parent = edge[0];
+        size_t child  = edge[1];
+
+        bool isSugar         = result.residues.type[child] == cds::ResidueType::Sugar;
+        std::string edgeName = (isSugar ? result.residues.configuration[child] : "") + result.residues.linkage[child];
+        graph::addEdge(result.graph, edge);
+        result.edges.names.push_back(edgeName);
+        // It remains internal if it's already been made internal, or if the child is not a deoxy.
+        bool isChildDeoxy                  = result.residues.type[child] == cds::ResidueType::Deoxy;
+        result.residues.isInternal[parent] = (!isChildDeoxy || result.residues.isInternal[parent]);
+    }
+    return result;
+}
 
 std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& sequence,
                                                             const std::vector<size_t>& edgeIds)

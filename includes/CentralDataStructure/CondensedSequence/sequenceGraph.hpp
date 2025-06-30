@@ -3,7 +3,7 @@
 
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 
 #include <vector>
 #include <string>
