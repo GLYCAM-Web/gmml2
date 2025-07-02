@@ -209,17 +209,26 @@ namespace
                 throw std::runtime_error("Error: sequence cannot contain this:\'" + s + "\':>>>" + sequence + "<<<");
             }
         }
+        auto mismatchingBracketError = [&](char first, char second, size_t position)
+        {
+            throw std::runtime_error("Did not find corresponding '" + std::string {first} + "' for character '" +
+                                     std::string {second} + "' at position " + std::to_string(position + 1) +
+                                     " of sequence: " + sequence);
+        };
         for (size_t n = sequence.length() - 1; n < sequence.length(); n--)
         {
+            size_t u = codeUtils::indexOf(openingBrackets, sequence[n]);
+            if (u < openingBrackets.size())
+            {
+                mismatchingBracketError(closingBrackets[u], sequence[n], n);
+            }
             size_t t = codeUtils::indexOf(closingBrackets, sequence[n]);
             if (t < closingBrackets.size())
             {
                 size_t opening = matchingOpeningBracket(sequence, n);
                 if (opening == sequence.length())
                 {
-                    throw std::runtime_error("Did not find corresponding '" + std::string {openingBrackets[t]} +
-                                             "' for character '" + std::string {sequence[n]} + "' at position " +
-                                             std::to_string(n + 1) + " of sequence: " + sequence);
+                    mismatchingBracketError(openingBrackets[t], sequence[n], n);
                 }
                 n = opening;
             }
@@ -426,6 +435,11 @@ namespace
 
 cdsCondensedSequence::AbstractSequence cdsCondensedSequence::parseSequence(std::string inputSequence)
 {
+    if (checkSequenceSanity(inputSequence))
+    {
+        gmml::log(__LINE__, __FILE__, gmml::INF,
+                  "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
+    }
     AbstractSequence data;
     if (inputSequence.find('<') != std::string::npos)
     {
@@ -440,13 +454,7 @@ cdsCondensedSequence::AbstractSequence cdsCondensedSequence::parseSequence(std::
     else
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Parsing unlabelled input sequence:\n" + inputSequence + "\n");
-        if (checkSequenceSanity(inputSequence))
-        {
-            gmml::log(
-                __LINE__, __FILE__, gmml::INF,
-                "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
-            parseCondensedSequence(data, inputSequence);
-        }
+        parseCondensedSequence(data, inputSequence);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "parseSequence complete");
     return data;
