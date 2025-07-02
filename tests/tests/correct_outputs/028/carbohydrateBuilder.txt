@@ -753,7 +753,7 @@ Name: DGlcpa1-6DManpa, LinkageIndex: 3, Res1: 5, Res2: 4
 *********************
 Building id 00039:<
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Number of repeating units not specified correctly in repeating unit: <
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find corresponding '>' for character '<' at position 1 of sequence: <
 
 *********************
 Building id 00040:Bad<15>OH

@@ -158,7 +158,7 @@ Building 00038: DGlcpa1-4[4DGlcpa1-]<4>2DGlcpa1-4[4DGlcpa1-6[LFucpa1-2]DManpa1-]
 *********************
 Building 00039: <
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Number of repeating units not specified correctly in repeating unit: <
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find corresponding '>' for character '<' at position 1 of sequence: <
 
 *********************
 Building 00040: Bad<15>OH
