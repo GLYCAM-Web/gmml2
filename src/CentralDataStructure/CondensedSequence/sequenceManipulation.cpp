@@ -1,6 +1,5 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 

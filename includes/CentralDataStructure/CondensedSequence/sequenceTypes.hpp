@@ -1,7 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCETYPES_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCETYPES_HPP
 
-#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
@@ -10,6 +9,20 @@
 
 namespace cdsCondensedSequence
 {
+    struct ParsedResidueComponents
+    {
+        std::string fullString;
+        cds::ResidueType type;
+        std::string name;
+        std::string linkage;
+        std::string ringType;
+        std::string configuration;
+        std::string isomer;
+        std::string preIsomerModifier;
+        std::string ringShape;
+        std::string modifier;
+    };
+
     struct ResidueNode
     {
         ParsedResidueComponents components;
@@ -48,5 +61,7 @@ namespace cdsCondensedSequence
         ResidueData residues;
         EdgeData edges;
     };
+
+    std::string getLink(cds::ResidueType type, const std::string& linkage);
 } // namespace cdsCondensedSequence
 #endif

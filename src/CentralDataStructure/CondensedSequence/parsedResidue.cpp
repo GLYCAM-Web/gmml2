@@ -15,21 +15,6 @@ ParsedResidue::ParsedResidue(const ParsedResidueComponents& components_) : compo
     this->SetType(components_.type);
 }
 
-std::string cdsCondensedSequence::getLink(cds::ResidueType type, const std::string& linkage)
-{
-    switch (type)
-    {
-        case (ResidueType::Sugar):
-            return linkage.substr(linkage.size() - 1, 1);
-        case (ResidueType::Derivative):
-            return linkage.substr(linkage.size() - 1, 1);
-        case (ResidueType::Deoxy):
-            return linkage.substr(0, 1);
-        default:
-            return "0";
-    }
-}
-
 std::vector<ParsedResidue*> ParsedResidue::GetChildren() const
 {
     std::vector<ParsedResidue*> resRet;

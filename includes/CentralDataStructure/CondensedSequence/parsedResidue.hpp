@@ -2,27 +2,12 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_PARSEDRESIDUE_HPP
 
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include <string>
 
 namespace cdsCondensedSequence
 {
-    using cds::ResidueType;
-
-    struct ParsedResidueComponents
-    {
-        std::string fullString;
-        cds::ResidueType type;
-        std::string name;
-        std::string linkage;
-        std::string ringType;
-        std::string configuration;
-        std::string isomer;
-        std::string preIsomerModifier;
-        std::string ringShape;
-        std::string modifier;
-    };
-
     std::string getLink(cds::ResidueType type, const std::string& linkage);
 
     //	class ParsedResidue : public Abstract::absResidue , public glygraph::Node<ParsedResidue>

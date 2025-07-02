@@ -414,7 +414,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 }
             }
         }
-        std::vector<ResidueType> residueTypes = codeUtils::indicesToValues(sequence.residues.type, indices);
+        std::vector<cds::ResidueType> residueTypes = codeUtils::indicesToValues(sequence.residues.type, indices);
         for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy and set residue attributes
             if (residueTypes[n] == cds::ResidueType::Deoxy)
