@@ -19,6 +19,9 @@ namespace
     using cdsCondensedSequence::ParsedResidueComponents;
     using cdsCondensedSequence::ResidueNode;
 
+    const std::vector<char> openingBrackets {'(', '[', '{', '<'};
+    const std::vector<char> closingBrackets {')', ']', '}', '>'};
+
     std::pair<std::string, std::string> ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
         size_t leftParenthesisPosition  = modifier.find('(');
@@ -143,6 +146,46 @@ namespace
         return str.substr(windowStart, (windowEnd - windowStart));
     }
 
+    size_t matchingOpeningBracket(const std::string& str, size_t i)
+    {
+        std::vector<size_t> trace;
+        char firstBracket = str[i];
+        trace.reserve(64);
+        size_t t = codeUtils::indexOf(closingBrackets, firstBracket);
+        if (t > closingBrackets.size())
+        {
+            throw std::runtime_error("Not a closing bracket: '" + std::string {str[i]} + "' in: " + str);
+        }
+        trace.push_back(t);
+
+        for (size_t n = i - 1; n < i; n--)
+        {
+            char c    = str[n];
+            size_t ot = codeUtils::indexOf(openingBrackets, c);
+            size_t ct = codeUtils::indexOf(closingBrackets, c);
+            if (ct < closingBrackets.size())
+            {
+                trace.push_back(ct);
+            }
+            else if (ot < openingBrackets.size())
+            {
+                if (trace.empty())
+                {
+                    throw std::runtime_error("Could not parse brackets in: " + str);
+                }
+                else if (trace.back() == ot)
+                {
+                    if (trace.size() == 1)
+                    {
+                        return n;
+                    }
+                    trace.pop_back();
+                }
+            }
+        }
+        return str.length();
+    }
+
     bool checkSequenceSanity(const std::string& sequence)
     {
         if (sequence.empty())
@@ -166,57 +209,22 @@ namespace
                 throw std::runtime_error("Error: sequence cannot contain this:\'" + s + "\':>>>" + sequence + "<<<");
             }
         }
-        size_t a = std::count(sequence.begin(), sequence.end(), '[');
-        size_t b = std::count(sequence.begin(), sequence.end(), ']');
-        if (a != b)
+        for (size_t n = sequence.length() - 1; n < sequence.length(); n--)
         {
-            throw std::runtime_error("Error: the number of [ doesn't match the number of ]. Bad branch in :>>>" +
-                                     sequence + "<<<");
+            size_t t = codeUtils::indexOf(closingBrackets, sequence[n]);
+            if (t < closingBrackets.size())
+            {
+                size_t opening = matchingOpeningBracket(sequence, n);
+                if (opening == sequence.length())
+                {
+                    throw std::runtime_error("Did not find corresponding '" + std::string {openingBrackets[t]} +
+                                             "' for character '" + std::string {sequence[n]} + "' at position " +
+                                             std::to_string(n + 1) + " of sequence: " + sequence);
+                }
+                n = opening;
+            }
         }
         return true;
-    }
-
-    size_t seekBracketStart(const std::string& str, size_t i)
-    {
-        const std::vector<char> opening {'(', '[', '{', '<'};
-        const std::vector<char> closing {')', ']', '}', '>'};
-        std::vector<size_t> trace;
-        char firstBracket = str[i];
-        trace.reserve(64);
-        size_t t = codeUtils::indexOf(closing, firstBracket);
-        if (t > closing.size())
-        {
-            throw std::runtime_error("Not a closing bracket: '" + std::string {str[i]} + "' in: " + str);
-        }
-        trace.push_back(t);
-
-        for (size_t n = i - 1; n < i; n--)
-        {
-            char c    = str[n];
-            size_t ot = codeUtils::indexOf(opening, c);
-            size_t ct = codeUtils::indexOf(closing, c);
-            if (ct < closing.size())
-            {
-                trace.push_back(ct);
-            }
-            else if (ot < opening.size())
-            {
-                if (trace.empty())
-                {
-                    throw std::runtime_error("Could not parse brackets in: " + str);
-                }
-                else if (trace.back() == ot)
-                {
-                    if (trace.size() == 1)
-                    {
-                        return n;
-                    }
-                    trace.pop_back();
-                }
-            }
-        }
-        throw std::runtime_error("Did not find corresponding '" + std::string {opening[t]} +
-                                 "' in repeat unit of repeating sequence: " + str);
     }
 
     void parseLabelledInput(std::string inString)
@@ -278,7 +286,7 @@ namespace
             }
             else if (sequence[i] == ']')
             { // Start of branch: recurve. Maybe save if have read enough.
-                size_t bracketStart   = seekBracketStart(sequence, i);
+                size_t bracketStart   = matchingOpeningBracket(sequence, i);
                 std::string substring = substr(sequence, bracketStart + 1, i);
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
@@ -376,7 +384,7 @@ namespace
             throw std::runtime_error("Missing or incorrect usage of ']' in repeating sequence: " + inputSequence);
         }
         // Ok now go find the position of the start of the repeating unit, considering branches
-        size_t repeatStart         = seekBracketStart(inputSequence, repeatEnd);
+        size_t repeatStart         = matchingOpeningBracket(inputSequence, repeatEnd);
         std::string before         = inputSequence.substr(0, repeatStart);
         std::string repeat         = substr(inputSequence, repeatStart + 1, repeatEnd);
         std::string after          = inputSequence.substr(repeatCharacterEndLocation + 1);
