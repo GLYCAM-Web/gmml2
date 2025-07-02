@@ -367,9 +367,9 @@ namespace
     // DGlcpa1-[4DGlcpa1-3DManpa1-]<3>4DGalpa1-OH // Tails that aren't OH
     std::string parseRepeatingUnits(const std::string& inputSequence)
     {
-        size_t repeatCharacterEndLocation   = inputSequence.find_first_of('>');
-        size_t repeatCharacterStartLocation = inputSequence.find_first_of('<');
-        if (repeatCharacterStartLocation == std::string::npos)
+        size_t repeatCharacterEndLocation   = inputSequence.find_last_of('>');
+        size_t repeatCharacterStartLocation = matchingOpeningBracket(inputSequence, repeatCharacterEndLocation);
+        if (repeatCharacterStartLocation == inputSequence.length())
         {
             throw std::runtime_error("No '<' found in sequence with repeating syntax symbol '>' : " + inputSequence);
         }
@@ -420,7 +420,7 @@ namespace
 
         newInputString += after;
         // Check if there are more repeating units and deal with them recursively:
-        if (after.find('>') != std::string::npos)
+        if (before.find('>') != std::string::npos)
         {
             gmml::log(__LINE__, __FILE__, gmml::INF, "Sequence with some repeats processed: " + newInputString);
             return parseRepeatingUnits(newInputString);
