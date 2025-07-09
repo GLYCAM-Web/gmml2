@@ -61,7 +61,5 @@ namespace cdsCondensedSequence
         ResidueData residues;
         EdgeData edges;
     };
-
-    std::string getLink(cds::ResidueType type, const std::string& linkage);
 } // namespace cdsCondensedSequence
 #endif

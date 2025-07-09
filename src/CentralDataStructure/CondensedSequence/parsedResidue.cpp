@@ -47,28 +47,6 @@ ParsedResidue* ParsedResidue::GetParent() const
     return codeUtils::erratic_cast<ParsedResidue*>(parents.front());
 }
 
-std::string ParsedResidue::GetChildLinkagesForGlycamResidueNaming() const
-{
-    const std::vector<ParsedResidue*> children = this->GetChildren();
-    std::vector<std::string> nonDeoxyLinkNames;
-    nonDeoxyLinkNames.reserve(children.size());
-    for (auto child : children)
-    {
-        if (child->GetType() != ResidueType::Deoxy)
-        { // For glycam residue name, e.g. 2YB, do not want deoxy linkages to impact the residue name.
-            nonDeoxyLinkNames.push_back(child->GetLink());
-        }
-    }
-    if (nonDeoxyLinkNames.empty())
-    {
-        return "Terminal";
-    }
-    else
-    {
-        return codeUtils::join(",", nonDeoxyLinkNames);
-    }
-}
-
 std::string ParsedResidue::GetName() const
 {
     return this->GetIsomer() + this->GetResidueName() + this->GetRingType() + this->GetResidueModifier() +

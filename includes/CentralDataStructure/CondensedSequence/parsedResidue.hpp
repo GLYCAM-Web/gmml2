@@ -3,13 +3,12 @@
 
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include <string>
 
 namespace cdsCondensedSequence
 {
-    std::string getLink(cds::ResidueType type, const std::string& linkage);
-
     //	class ParsedResidue : public Abstract::absResidue , public glygraph::Node<ParsedResidue>
     class ParsedResidue : public cds::Residue
     {
@@ -75,36 +74,12 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         inline std::string GetLink() const
         {
-            return getLink(components.type, components.linkage);
+            return mainLinkage(components.type, components.linkage);
         }
 
         std::vector<ParsedResidue*> GetChildren() const;
         std::vector<ParsedResidue*> GetParents() const;
         ParsedResidue* GetParent() const;
-        std::string GetChildLinkagesForGlycamResidueNaming() const;
-
-        //////////////////////////////////////////////////////////
-        //                  OPERATOR OVERLOADING                //
-        //////////////////////////////////////////////////////////
-        bool operator==(const cds::Residue& rhs) const
-        {
-            return (this->GetLink() == codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
-        }
-
-        bool operator!=(const cds::Residue& rhs) const
-        {
-            return (this->GetLink() != codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
-        }
-
-        bool operator>(const cds::Residue& rhs) const
-        {
-            return (this->GetLink() > codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
-        }
-
-        bool operator<(const cds::Residue& rhs) const
-        {
-            return (this->GetLink() < codeUtils::erratic_cast<const ParsedResidue*>(&rhs)->GetLink());
-        }
 
       private:
         //////////////////////////////////////////////////////////

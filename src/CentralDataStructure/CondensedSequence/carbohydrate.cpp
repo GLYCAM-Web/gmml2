@@ -31,6 +31,7 @@
 #include "includes/CodeUtils/containerTypes.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <sstream>
 #include <ostream>
@@ -42,6 +43,28 @@ using cdsCondensedSequence::Carbohydrate;
 namespace
 {
     using cdsCondensedSequence::ParsedResidue;
+
+    std::string childLinkagesForGlycamResidueNaming(const ParsedResidue* residue)
+    {
+        const std::vector<ParsedResidue*> children = residue->GetChildren();
+        std::vector<std::string> nonDeoxyLinkNames;
+        nonDeoxyLinkNames.reserve(children.size());
+        for (auto child : children)
+        {
+            if (child->GetType() != cds::ResidueType::Deoxy)
+            { // For glycam residue name, e.g. 2YB, do not want deoxy linkages to impact the residue name.
+                nonDeoxyLinkNames.push_back(child->GetLink());
+            }
+        }
+        if (nonDeoxyLinkNames.empty())
+        {
+            return "Terminal";
+        }
+        else
+        {
+            return codeUtils::join(",", nonDeoxyLinkNames);
+        }
+    }
 
     std::string getGlycamResidueName(ParsedResidue* residue)
     {
@@ -56,7 +79,7 @@ namespace
         std::string linkages = "";
         if (residue->GetType() == cds::ResidueType::Sugar)
         {
-            linkages = residue->GetChildLinkagesForGlycamResidueNaming();
+            linkages = childLinkagesForGlycamResidueNaming(residue);
         }
         std::string code = GlycamMetadata::Glycam06ResidueNameGenerator(
             linkages, residue->GetPreIsomerModifier(), residue->GetIsomer(), residue->GetResidueName(),
@@ -307,16 +330,8 @@ namespace
             {
                 size_t childId  = newIndices[edge[1]];
                 size_t parentId = newIndices[edge[0]];
-                residuePtrs[childId].get()->addParent(sequence.edges.names[n], residuePtrs[parentId].get());
+                residuePtrs[parentId].get()->addChild(sequence.edges.names[n], residuePtrs[childId].get());
             }
-        }
-    }
-
-    void sortResidueEdges(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs)
-    {
-        for (auto& residue : residuePtrs)
-        {
-            residue.get()->sortOutEdgesBySourceTObjectComparator();
         }
     }
 
@@ -400,7 +415,6 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
         std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
         std::vector<size_t> indices;
         createParsedResidues(residuePtrs, indices, sequence);
-        sortResidueEdges(residuePtrs);
         size_t residueCount = residuePtrs.size();
 
         for (auto& residue : codeUtils::pointerToUniqueVector(residuePtrs))
@@ -421,7 +435,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
             {
                 ParsedResidue* deoxyResidue         = residuePtrs[n].get();
                 ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
-                makeDeoxy(residueToBeDeoxified, deoxyResidue->GetLink());
+                makeDeoxy(residueToBeDeoxified, sequence.residues.linkage[n]);
                 residuePtrs.erase(residuePtrs.begin() + n);
             }
             else

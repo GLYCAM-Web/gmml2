@@ -9,7 +9,6 @@
 ./src/CentralDataStructure/CondensedSequence/sequenceManipulation.cpp
 ./src/CentralDataStructure/CondensedSequence/sequenceParser.cpp
 ./src/CentralDataStructure/CondensedSequence/sequencePrinter.cpp
-./src/CentralDataStructure/CondensedSequence/sequenceTypes.cpp
 ./src/CentralDataStructure/Editors/amberMdPrep.cpp
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Editors/superimposition.cpp

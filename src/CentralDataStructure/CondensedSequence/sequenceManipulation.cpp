@@ -6,6 +6,26 @@
 #include <vector>
 #include <stdexcept>
 
+std::string cdsCondensedSequence::mainLinkage(cds::ResidueType type, const std::string& linkage)
+{
+    switch (type)
+    {
+        case (cds::ResidueType::Sugar):
+            return linkage.substr(linkage.size() - 1, 1);
+        case (cds::ResidueType::Derivative):
+            return linkage.substr(0, 1);
+        case (cds::ResidueType::Deoxy):
+            return linkage.substr(0, 1);
+        default:
+            return std::string("0");
+    }
+}
+
+std::string cdsCondensedSequence::mainLinkage(const SequenceData& sequence, size_t residueId)
+{
+    return mainLinkage(sequence.residues.type[residueId], sequence.residues.linkage[residueId]);
+}
+
 cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const AbstractSequence& data)
 {
     SequenceData result;
@@ -47,13 +67,17 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const Abstr
 std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& sequence,
                                                             const std::vector<size_t>& edgeIds)
 {
-    auto residueLink = [&](size_t n)
-    {
-        return cdsCondensedSequence::getLink(sequence.residues.type[n], sequence.residues.linkage[n]);
-    };
     std::function<bool(const size_t&, const size_t&)> compare = [&](const size_t& n, const size_t& k)
     {
-        return residueLink(sequence.graph.edgeNodes[n][1]) > residueLink(sequence.graph.edgeNodes[k][1]);
+        if (sequence.graph.edgeNodes[n][0] == sequence.graph.edgeNodes[k][0])
+        {
+            return mainLinkage(sequence, sequence.graph.edgeNodes[n][1]) >
+                   mainLinkage(sequence, sequence.graph.edgeNodes[k][1]);
+        }
+        else
+        {
+            return sequence.graph.edgeNodes[n][0] < sequence.graph.edgeNodes[k][0];
+        }
     };
 
     return codeUtils::sortedBy(compare, edgeIds);
@@ -115,9 +139,7 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
         graph::addNode(resultGraph);
     }
 
-    std::vector<size_t> edgeIndexOrder = codeUtils::indexVector(sequence.graph.edges);
-
-    for (size_t n : edgeIndexOrder)
+    for (size_t n : edgeOrder)
     {
         const std::array<size_t, 2>& edge = sequence.graph.edgeNodes[n];
         graph::addEdge(resultGraph, {invertedResidueOrder[edge[0]], invertedResidueOrder[edge[1]]});
@@ -136,5 +158,7 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
 
-    return SequenceData {resultGraph, residues, sequence.edges};
+    EdgeData edges = {codeUtils::indicesToValues(sequence.edges.names, edgeOrder)};
+
+    return SequenceData {resultGraph, residues, edges};
 }
