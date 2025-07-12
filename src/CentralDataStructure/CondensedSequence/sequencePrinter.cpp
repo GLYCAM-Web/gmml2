@@ -24,10 +24,10 @@ namespace
 
     auto residueNames = [](const SequenceData& sequence)
     {
-        const ResidueData& residues = sequence.residues;
-        size_t residueCount         = residues.name.size();
+        size_t residueCount = nodeCount(sequence.graph);
         std::vector<std::string> result;
         result.reserve(residueCount);
+        const ResidueData& residues = sequence.residues;
         for (size_t n = 0; n < residueCount; n++)
         {
             result.push_back(residues.preIsomerModifier[n] + residues.isomer[n] + residues.name[n] +
@@ -38,10 +38,10 @@ namespace
 
     auto iupacNames = [](const SequenceData& sequence)
     {
-        const ResidueData& residues = sequence.residues;
-        size_t residueCount         = residues.name.size();
+        size_t residueCount = nodeCount(sequence.graph);
         std::vector<std::string> result;
         result.reserve(residueCount);
+        const ResidueData& residues = sequence.residues;
         for (size_t n = 0; n < residueCount; n++)
         {
             cds::ResidueType type = residues.type[n];
@@ -65,13 +65,12 @@ namespace
 
     auto noResidueLabels = [](const SequenceData& sequence)
     {
-        return std::vector<std::string>(sequence.graph.nodes.size(), "");
+        return std::vector<std::string>(nodeCount(sequence.graph), "");
     };
 
     auto residueLabels = [](const SequenceData& sequence)
     {
-        const ResidueData& residues = sequence.residues;
-        size_t residueCount         = residues.name.size();
+        size_t residueCount = nodeCount(sequence.graph);
         std::vector<std::string> result;
         result.reserve(residueCount);
         for (size_t n = 0; n < residueCount; n++)
@@ -88,7 +87,7 @@ namespace
 
     auto noResidueConfigurations = [](const SequenceData& sequence)
     {
-        return std::vector<std::string>(sequence.graph.nodes.size(), "");
+        return std::vector<std::string>(nodeCount(sequence.graph), "");
     };
 
     auto edgeNames = [](const SequenceData& sequence, const std::vector<std::vector<size_t>>&)
@@ -98,12 +97,12 @@ namespace
 
     auto noEdgeLabels = [](const SequenceData& sequence, const std::vector<std::vector<size_t>>&)
     {
-        return std::vector<std::string>(sequence.graph.edges.size(), "");
+        return std::vector<std::string>(edgeCount(sequence.graph), "");
     };
 
     auto edgeLabels = [](const SequenceData& sequence, const std::vector<std::vector<size_t>>& nodeEdges)
     {
-        size_t edgeCount = sequence.graph.edges.size();
+        size_t edgeCount = graph::edgeCount(sequence.graph);
         size_t index     = 0;
         std::vector<size_t> edgeIndices(edgeCount, 0);
         for (size_t nodeId : sequence.graph.nodes)
@@ -136,12 +135,12 @@ namespace
 
     auto noLinkageBrackets = [](const SequenceData& sequence)
     {
-        return std::vector<codeUtils::Brackets>(sequence.graph.nodes.size(), codeUtils::noBrackets);
+        return std::vector<codeUtils::Brackets>(nodeCount(sequence.graph), codeUtils::noBrackets);
     };
 
     auto iupacLinkageBrackets = [](const SequenceData& sequence)
     {
-        std::vector<codeUtils::Brackets> result(sequence.graph.nodes.size(), {"", ""});
+        std::vector<codeUtils::Brackets> result(nodeCount(sequence.graph), {"", ""});
         for (size_t nodeId : sequence.graph.nodes)
         {
             if (sequence.residues.type[nodeId] != cds::ResidueType::Aglycone)
@@ -163,7 +162,7 @@ namespace
 
     std::vector<size_t> childEdges(const SequenceData& sequence, size_t residueId)
     {
-        size_t edgeCount = sequence.graph.edges.size();
+        size_t edgeCount = graph::edgeCount(sequence.graph);
         std::vector<size_t> result;
         result.reserve(edgeCount);
         for (size_t n = 0; n < edgeCount; n++)
@@ -178,7 +177,7 @@ namespace
 
     std::vector<size_t> parentEdges(const SequenceData& sequence, size_t residueId)
     {
-        size_t edgeCount = sequence.graph.edges.size();
+        size_t edgeCount = graph::edgeCount(sequence.graph);
         std::vector<size_t> result;
         result.reserve(edgeCount);
         for (size_t n = 0; n < edgeCount; n++)
@@ -229,7 +228,7 @@ namespace
             outputResidueString += data.derivativeBrackets.close;
         }
         outputResidueString += data.residueLinkageBrackets[residueId].open;
-        bool hasParentEdge  = parentEdgeId < graph.edges.size();
+        bool hasParentEdge  = parentEdgeId < edgeCount(graph);
         outputResidueString += (hasParentEdge ? data.edgeNames[parentEdgeId] : data.parentlessResidueLabel[residueId]);
         outputResidueString += data.residueLinkageBrackets[residueId].close;
         output.push_back(outputResidueString);

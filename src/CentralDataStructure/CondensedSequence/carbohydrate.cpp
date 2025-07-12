@@ -295,7 +295,7 @@ namespace
     void createParsedResidues(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs, std::vector<size_t>& indices,
                               const cdsCondensedSequence::SequenceData& sequence)
     {
-        size_t residueCount = sequence.residues.name.size();
+        size_t residueCount = nodeCount(sequence.graph);
         residuePtrs.reserve(residueCount);
         indices.reserve(residueCount);
         std::vector<size_t> newIndices;
@@ -322,7 +322,7 @@ namespace
                 newIndices.push_back(residueCount);
             }
         }
-        for (size_t n = 0; n < sequence.graph.edgeNodes.size(); n++)
+        for (size_t n = 0; n < edgeCount(sequence.graph); n++)
         {
             auto& edge = sequence.graph.edgeNodes[n];
             if (sequence.graph.nodeAlive[edge[1]] && !sequence.graph.edgeAlive[edge[0]])

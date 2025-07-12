@@ -89,7 +89,7 @@ std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& 
 
 cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const SequenceData& sequence)
 {
-    size_t residueCount           = sequence.residues.name.size();
+    size_t residueCount           = nodeCount(sequence.graph);
     std::vector<size_t> edgeOrder = edgesSortedByLink(sequence, codeUtils::indexVector(sequence.graph.edges));
     std::vector<std::array<size_t, 2>> reorderedEdges = codeUtils::indicesToValues(sequence.graph.edgeNodes, edgeOrder);
 

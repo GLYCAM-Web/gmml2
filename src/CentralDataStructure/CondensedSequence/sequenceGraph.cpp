@@ -10,9 +10,9 @@
 
 std::vector<std::string> cdsCondensedSequence::sequenceDerivatives(const SequenceData& sequence)
 {
-    std::vector<std::string> derivatives(sequence.residues.name.size(), "");
+    std::vector<std::string> derivatives(nodeCount(sequence.graph), "");
 
-    for (size_t n = 0; n < sequence.graph.edgeNodes.size(); n++)
+    for (size_t n = 0; n < edgeCount(sequence.graph); n++)
     {
         const std::array<size_t, 2>& adj = sequence.graph.edgeNodes[n];
         size_t parent                    = adj[0];
@@ -38,7 +38,7 @@ std::vector<std::string> cdsCondensedSequence::sequenceMonosaccharideNames(const
         return sequence.residues.isomer[n] + sequence.residues.name[n] + sequence.residues.modifier[n] +
                sequence.residues.ringShape[n];
     };
-    return codeUtils::vectorMap(monosaccharideName, codeUtils::indexVector(sequence.residues.name.size()));
+    return codeUtils::vectorMap(monosaccharideName, codeUtils::indexVector(nodeCount(sequence.graph)));
 }
 
 graph::Graph cdsCondensedSequence::condensedSequenceGraph(const SequenceData& sequence)

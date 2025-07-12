@@ -55,5 +55,5 @@ std::string cdsCondensedSequence::mainLinkage(const SequenceData& sequence, size
 {
     size_t edge = parentEdge(sequence, residueId);
     return mainLinkage(sequence.residues.type[residueId],
-                       (edge < sequence.graph.edges.size()) ? edgeLinkage(sequence, edge) : "");
+                       (edge < edgeCount(sequence.graph)) ? edgeLinkage(sequence, edge) : "");
 }

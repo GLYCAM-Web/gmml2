@@ -33,7 +33,7 @@ std::array<std::vector<bool>, 2> assembly::residueAtomsCloseToEdge(const assembl
 
 std::vector<std::array<std::vector<bool>, 2>> assembly::atomsCloseToResidueEdges(const assembly::Graph& graph)
 {
-    size_t edgeCount = graph.residues.edges.indices.size();
+    size_t edgeCount = graph::edgeCount(graph.residues);
     std::vector<std::array<std::vector<bool>, 2>> result;
     result.reserve(edgeCount);
     for (size_t n = 0; n < edgeCount; n++)
