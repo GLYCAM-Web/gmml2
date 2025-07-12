@@ -37,6 +37,16 @@ namespace graph
         Database source;
     };
 
+    inline size_t nodeCount(const Database& db)
+    {
+        return db.nodes.size();
+    }
+
+    inline size_t edgeCount(const Database& db)
+    {
+        return db.edges.size();
+    }
+
     inline size_t nodeCount(const Graph& graph)
     {
         return graph.nodes.indices.size();
