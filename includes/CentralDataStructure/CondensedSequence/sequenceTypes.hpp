@@ -5,7 +5,9 @@
 #include "includes/Graph/graphTypes.hpp"
 
 #include <string>
+#include <variant>
 #include <vector>
+#include <optional>
 
 namespace cdsCondensedSequence
 {
@@ -39,7 +41,6 @@ namespace cdsCondensedSequence
         std::vector<std::string> fullString;
         std::vector<cds::ResidueType> type;
         std::vector<std::string> name;
-        std::vector<std::string> linkage;
         std::vector<std::string> ringType;
         std::vector<std::string> configuration;
         std::vector<std::string> isomer;
@@ -50,9 +51,28 @@ namespace cdsCondensedSequence
         std::vector<bool> isDerivative;
     };
 
+    struct ChildPosition
+    {
+        uint childPosition;
+    };
+
+    struct ParentPosition
+    {
+        uint parentPosition;
+    };
+
+    struct DualPosition
+    {
+        uint childPosition;
+        uint parentPosition;
+    };
+
+    typedef std::variant<ChildPosition, ParentPosition, DualPosition> EdgePosition;
+
     struct EdgeData
     {
         std::vector<std::string> names;
+        std::vector<EdgePosition> position;
     };
 
     struct SequenceData

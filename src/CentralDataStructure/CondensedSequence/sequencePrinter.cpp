@@ -1,6 +1,8 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequencePrinter.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceGraph.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceUtil.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/Graph/graphManipulation.hpp"
@@ -363,7 +365,7 @@ std::string cdsCondensedSequence::printGraphViz(GraphVizDotConfig& configs, cons
         size_t child               = adj[1];
         size_t childIndex          = sourceNodeIndex(graph, child);
         std::string label          = (configs.show_config_labels_ ? sequence.residues.configuration[childIndex] : "") +
-                            (configs.show_position_labels_ ? sequence.residues.linkage[childIndex] : "");
+                            (configs.show_position_labels_ ? edgeLinkage(sequence, graph.edges.indices[n]) : "");
         linkages.push_back({
             {child, parent},
             label

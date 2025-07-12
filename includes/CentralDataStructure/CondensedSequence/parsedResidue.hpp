@@ -3,7 +3,7 @@
 
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceUtil.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include <string>
 

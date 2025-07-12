@@ -1,30 +1,13 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceUtil.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 
+#include <optional>
 #include <vector>
 #include <stdexcept>
-
-std::string cdsCondensedSequence::mainLinkage(cds::ResidueType type, const std::string& linkage)
-{
-    switch (type)
-    {
-        case (cds::ResidueType::Sugar):
-            return linkage.substr(linkage.size() - 1, 1);
-        case (cds::ResidueType::Derivative):
-            return linkage.substr(0, 1);
-        case (cds::ResidueType::Deoxy):
-            return linkage.substr(0, 1);
-        default:
-            return std::string("0");
-    }
-}
-
-std::string cdsCondensedSequence::mainLinkage(const SequenceData& sequence, size_t residueId)
-{
-    return mainLinkage(sequence.residues.type[residueId], sequence.residues.linkage[residueId]);
-}
 
 cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const AbstractSequence& data)
 {
@@ -37,7 +20,6 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const Abstr
         result.residues.fullString.push_back(components.fullString);
         result.residues.type.push_back(components.type);
         result.residues.name.push_back(components.name);
-        result.residues.linkage.push_back(components.linkage);
         result.residues.ringType.push_back(components.ringType);
         result.residues.configuration.push_back(components.configuration);
         result.residues.isomer.push_back(components.isomer);
@@ -50,15 +32,37 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const Abstr
     }
     for (auto& edge : data.graph.edgeNodes)
     {
-        size_t parent = edge[0];
-        size_t child  = edge[1];
+        size_t parent              = edge[0];
+        size_t child               = edge[1];
+        cds::ResidueType childType = result.residues.type[child];
+        bool isChildSugar          = childType == cds::ResidueType::Sugar;
+        bool isChildDeoxy          = childType == cds::ResidueType::Deoxy;
+        bool isChildDerivative     = childType == cds::ResidueType::Derivative;
+        bool isParentAglycone      = result.residues.type[parent] == cds::ResidueType::Aglycone;
 
-        bool isSugar         = result.residues.type[child] == cds::ResidueType::Sugar;
-        std::string edgeName = (isSugar ? result.residues.configuration[child] : "") + result.residues.linkage[child];
+        std::string linkage               = data.nodes[child].components.linkage;
+        std::optional<uint> firstPosition = codeUtils::parseUint(linkage.substr(0, 1)).value();
+        std::optional<uint> secondPosition =
+            (linkage.length() > 2) ? codeUtils::parseUint(linkage.substr(2, 1)).value() : std::optional<uint> {};
+        EdgePosition pos;
+        if (isChildDeoxy || isChildDerivative)
+        {
+            pos = ParentPosition {firstPosition.value()};
+        }
+        else if (isParentAglycone)
+        {
+            pos = ChildPosition {firstPosition.value()};
+        }
+        else
+        {
+            pos = DualPosition {firstPosition.value(), secondPosition.value()};
+        }
+
+        std::string edgeName = (isChildSugar ? result.residues.configuration[child] : "") + linkage;
         graph::addEdge(result.graph, edge);
         result.edges.names.push_back(edgeName);
+        result.edges.position.push_back(pos);
         // It remains internal if it's already been made internal, or if the child is not a deoxy.
-        bool isChildDeoxy                  = result.residues.type[child] == cds::ResidueType::Deoxy;
         result.residues.isInternal[parent] = (!isChildDeoxy || result.residues.isInternal[parent]);
     }
     return result;
@@ -148,7 +152,6 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
     ResidueData residues = {codeUtils::indicesToValues(sequence.residues.fullString, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.type, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.name, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.linkage, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.ringType, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.configuration, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
@@ -158,7 +161,8 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
 
-    EdgeData edges = {codeUtils::indicesToValues(sequence.edges.names, edgeOrder)};
+    EdgeData edges = {codeUtils::indicesToValues(sequence.edges.names, edgeOrder),
+                      codeUtils::indicesToValues(sequence.edges.position, edgeOrder)};
 
     return SequenceData {resultGraph, residues, edges};
 }

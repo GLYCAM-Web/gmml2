@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceUtil.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
@@ -304,10 +305,13 @@ namespace
         {
             if (sequence.graph.nodeAlive[n])
             {
+                size_t edge    = parentEdge(sequence, n);
+                bool hasParent = edge < edgeCount(sequence.graph);
                 residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
                     sequence.residues.fullString[n], sequence.residues.type[n], sequence.residues.name[n],
-                    sequence.residues.linkage[n], sequence.residues.ringType[n], sequence.residues.configuration[n],
-                    sequence.residues.isomer[n], sequence.residues.preIsomerModifier[n], sequence.residues.ringShape[n],
+                    (hasParent ? edgeLinkage(sequence, edge) : ""), sequence.residues.ringType[n],
+                    sequence.residues.configuration[n], sequence.residues.isomer[n],
+                    sequence.residues.preIsomerModifier[n], sequence.residues.ringShape[n],
                     sequence.residues.modifier[n]}));
                 indices.push_back(n);
                 newIndices.push_back(index);
@@ -428,22 +432,24 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 }
             }
         }
-        std::vector<cds::ResidueType> residueTypes = codeUtils::indicesToValues(sequence.residues.type, indices);
+        const ResidueData& rD                      = sequence.residues;
+        std::vector<cds::ResidueType> residueTypes = codeUtils::indicesToValues(rD.type, indices);
         for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy and set residue attributes
+            size_t k            = indices[n];
+            size_t edge         = parentEdge(sequence, k);
+            std::string linkage = (edge < edgeCount(sequence.graph)) ? edgeLinkage(sequence, edge) : "";
             if (residueTypes[n] == cds::ResidueType::Deoxy)
             {
                 ParsedResidue* deoxyResidue         = residuePtrs[n].get();
                 ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
-                makeDeoxy(residueToBeDeoxified, sequence.residues.linkage[n]);
+                makeDeoxy(residueToBeDeoxified, linkage);
                 residuePtrs.erase(residuePtrs.begin() + n);
             }
             else
             {
-                const ResidueData& rD  = sequence.residues;
-                size_t k               = indices[n];
                 std::string glycamCode = getGlycamResidueName(residuePtrs[n].get());
-                cds::ResidueAttributes ra {rD.type[k],     rD.name[k],          glycamCode,   rD.linkage[k],
+                cds::ResidueAttributes ra {rD.type[k],     rD.name[k],          glycamCode,   linkage,
                                            rD.ringType[k], rD.configuration[k], rD.isomer[k], rD.preIsomerModifier[k],
                                            rD.modifier[k], rD.isInternal[k]};
                 residuePtrs[n]->setAttributes(ra);
