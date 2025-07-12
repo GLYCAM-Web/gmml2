@@ -27,6 +27,19 @@ namespace codeUtils
         return int(0);
     }
 
+    std::optional<uint> parseUint(const std::string& str)
+    {
+        std::optional<int> parsed = parseInt(str);
+        if (parsed.has_value())
+        {
+            return uint(parsed.value());
+        }
+        else
+        {
+            return std::nullopt;
+        }
+    }
+
     std::optional<ulong> parseUlong(const std::string& str)
     {
         if (!std::all_of(str.begin(), str.end(), ::isdigit))
