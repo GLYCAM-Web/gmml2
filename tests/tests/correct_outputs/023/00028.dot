@@ -11,8 +11,8 @@ b3 [shape="plaintext" fontsize="12" height="0.3" labelloc=b label="3Me"];
 {nodesep="0.2" b3 3};
 b3--3 [style=invis];
 4 [shape=circle height="0.7" label="D"];
-2--1 [label="6" headclip=false tailclip=true];
 1--0 [label="a1-" headclip=true tailclip=false];
-4--3 [label="4" headclip=false tailclip=true];
+2--1 [label="6" headclip=false tailclip=true];
 3--1 [label="b1-2" headclip=false tailclip=false];
+4--3 [label="4" headclip=false tailclip=true];
 }

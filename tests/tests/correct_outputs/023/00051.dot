@@ -28,7 +28,7 @@ b10--10 [style=invis];
 5--4 [label="a1-3" headclip=false tailclip=false];
 6--5 [label="a1-2" headclip=false tailclip=false];
 7--6 [label="a1-3" headclip=false tailclip=false];
-9--8 [label="3" headclip=false tailclip=true];
 8--7 [label="b1-2" headclip=false tailclip=false];
+9--8 [label="3" headclip=false tailclip=true];
 10--8 [label="a2-4" headclip=false tailclip=false];
 }
