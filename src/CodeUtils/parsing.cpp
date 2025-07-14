@@ -32,7 +32,8 @@ namespace codeUtils
         std::optional<int> parsed = parseInt(str);
         if (parsed.has_value())
         {
-            return uint(parsed.value());
+            int a = parsed.value();
+            return (a < 0) ? std::nullopt : std::optional<uint> {uint(a)};
         }
         else
         {
