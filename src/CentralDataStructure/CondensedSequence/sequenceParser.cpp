@@ -16,10 +16,12 @@ namespace
     using cds::ResidueType;
     using cdsCondensedSequence::AbstractSequence;
     using cdsCondensedSequence::ParsedResidueComponents;
-    using cdsCondensedSequence::ResidueNode;
+    using cdsCondensedSequence::SequenceNode;
 
     const std::vector<char> openingBrackets {'(', '[', '{', '<'};
     const std::vector<char> closingBrackets {')', ']', '}', '>'};
+
+    const size_t noDerivatives = 0;
 
     std::pair<std::string, std::string> ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
@@ -121,16 +123,15 @@ namespace
         return result;
     }
 
-    ParsedResidueComponents parseResidueStringIntoComponents(const std::string& residueString,
-                                                             ResidueType specifiedType)
+    SequenceNode parseResidueString(const std::string& residueString, size_t derivativeList, ResidueType specifiedType)
     {
         if ((residueString.find('-') != std::string::npos) || (specifiedType == ResidueType::Sugar))
         {
-            return parseSugar(residueString);
+            return cdsCondensedSequence::MonosaccharideNode {parseSugar(residueString), derivativeList};
         }
         else if (isdigit(residueString[0]))
         {
-            return parseDerivative(residueString);
+            return cdsCondensedSequence::DerivativeNode {parseDerivative(residueString)};
         }
         else
         { // Dunno.
@@ -240,47 +241,28 @@ namespace
         throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
     }
 
-    void updateResidue(AbstractSequence& data, size_t id, const ParsedResidueComponents& components)
+    size_t addNode(AbstractSequence& data, const std::string& str, const SequenceNode& node)
     {
-        data.nodes[id] = ResidueNode {components};
+        size_t id = data.nodes.size();
+        data.nodes.emplace_back(node);
+        data.fullString.push_back(str);
+        return id;
     }
 
-    size_t addResidue(AbstractSequence& data, const ParsedResidueComponents& components)
-    {
-        data.nodes.emplace_back(ResidueNode {components});
-        return graph::addNode(data.graph);
-    }
-
-    size_t addPlaceholderResidue(AbstractSequence& data)
-    {
-        return addResidue(data, {"", cds::ResidueType::Undefined, "", "", "", "", "", "", "", ""});
-    }
-
-    std::vector<size_t> recurveParseAlt(AbstractSequence& data, size_t parent, const std::string& sequence)
+    std::vector<size_t> parseChain(AbstractSequence& data, const std::string& sequence)
     {
         std::vector<size_t> result;
         result.reserve(32);
-        std::optional<size_t> placeholder = {};
-        std::string trail                 = "";
-        auto save                         = [&](const std::string& str, size_t parent)
+        size_t derivativeList = noDerivatives;
+        std::string trail     = "";
+        auto save             = [&](const std::string& str)
         {
-            ParsedResidueComponents components =
-                parseResidueStringIntoComponents(str + trail, cds::ResidueType::Undefined);
-            size_t newRes = -1;
-            if (placeholder.has_value())
-            { // we've reserved a residue spot to update
-                newRes = placeholder.value();
-                placeholder.reset();
-                updateResidue(data, newRes, components);
-                trail = "";
-            }
-            else
-            {
-                newRes = addResidue(data, components);
-            }
+            std::string fullStr = str + trail;
+            SequenceNode node   = parseResidueString(fullStr, derivativeList, cds::ResidueType::Undefined);
+            trail               = "";
+            derivativeList      = noDerivatives;
+            size_t newRes       = addNode(data, fullStr, node);
             result.push_back(newRes);
-            graph::addEdge(data.graph, {parent, newRes});
-            return newRes;
         };
         size_t i         = sequence.length();
         size_t windowEnd = i;
@@ -289,28 +271,35 @@ namespace
             i--;
             if ((sequence[i] == '-') && ((windowEnd - i) > 5))
             { // dash and have read enough that there is a residue to save.
-                parent    = save(substr(sequence, i + 2, windowEnd), parent);
+                save(substr(sequence, i + 2, windowEnd));
                 windowEnd = i + 2; // Get to the right side of the number e.g. 1-4
             }
             else if (sequence[i] == ']')
             { // Start of branch: recurve. Maybe save if have read enough.
-                size_t bracketStart   = matchingOpeningBracket(sequence, i);
-                std::string substring = substr(sequence, bracketStart + 1, i);
+                size_t bracketStart               = matchingOpeningBracket(sequence, i);
+                std::string substringWithBrackets = substr(sequence, bracketStart, i + 1);
+                std::string substring             = substr(sequence, bracketStart + 1, i);
                 if ((windowEnd - i) > 5)
                 { // if not a derivative start and have read enough, save.
-                    parent = save(substr(sequence, i + 1, windowEnd), parent);
-                    recurveParseAlt(data, parent, substring);
+                    save(substr(sequence, i + 1, windowEnd));
+                    std::vector<size_t> constituents = parseChain(data, substring);
+                    size_t chain  = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
+                    size_t branch = addNode(data, substringWithBrackets, cdsCondensedSequence::BranchNode {chain});
+                    result.push_back(branch);
                 }
                 else if ((windowEnd - i) > 1) // and not > 5
                 {                             // Derivative, save trailing part of residue
-                    trail       = substr(sequence, i + 1, windowEnd);
-                    // reserve a residue to serve as a parent to derivatives, and update it later
-                    placeholder = addPlaceholderResidue(data);
-                    recurveParseAlt(data, placeholder.value(), substring);
+                    trail                           = substr(sequence, i + 1, windowEnd);
+                    std::vector<size_t> derivatives = parseChain(data, substring);
+                    derivativeList =
+                        addNode(data, substringWithBrackets, cdsCondensedSequence::DerivativeListNode {derivatives});
                 }
                 else
                 {
-                    recurveParseAlt(data, parent, substring);
+                    std::vector<size_t> constituents = parseChain(data, substring);
+                    size_t chain  = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
+                    size_t branch = addNode(data, substringWithBrackets, cdsCondensedSequence::BranchNode {chain});
+                    result.push_back(branch);
                 }
                 i         = bracketStart;
                 windowEnd = i;
@@ -321,12 +310,12 @@ namespace
             }
             else if (sequence[i] == ',')
             { // , in derivative list
-                save(substr(sequence, i + 1, windowEnd), parent);
+                save(substr(sequence, i + 1, windowEnd));
                 windowEnd = i;
             }
             else if (i == 0)
             { // Fin.
-                save(substr(sequence, i, windowEnd), parent);
+                save(substr(sequence, i, windowEnd));
                 return result;
             }
         }
@@ -335,8 +324,12 @@ namespace
 
     void parseCondensedSequence(AbstractSequence& data, const std::string& sequence)
     {
+        // all sugars will contain a list of derivatives,
+        // thus we let the first node be an empty list for convenience
+        addNode(data, "", cdsCondensedSequence::DerivativeListNode {{}});
+        size_t tail = size_t(-1);
         // Reading from the rightmost end of the string, get the aglycone first.
-        size_t i = (sequence.find_last_of('-') + 1);
+        size_t i    = (sequence.find_last_of('-') + 1);
         if (isdigit(sequence[i]))   // Indicates ano-ano and not e.g. Sugar-OME or -ROH etc
         {                           // e.g. DGlcpa1-2DFrufb
             ++i;                    // ano-ano
@@ -344,14 +337,17 @@ namespace
             {
                 ++i;
             }
-            addResidue(data, parseResidueStringIntoComponents(sequence.substr(i), cds::ResidueType::Sugar));
+            std::string substring = sequence.substr(i);
+            tail = addNode(data, substring, parseResidueString(substring, noDerivatives, cds::ResidueType::Sugar));
         }
         else
         { // e.g. DGlcpa1-OH
-            addResidue(data, parseAglycone(sequence.substr(i)));
+            std::string substring = sequence.substr(i);
+            tail = addNode(data, substring, cdsCondensedSequence::AglyconeNode {parseAglycone(substring)});
         }
-        size_t terminal = data.graph.nodes.size() - 1;
-        recurveParseAlt(data, terminal, substr(sequence, 0, i));
+        std::vector<size_t> additional = parseChain(data, substr(sequence, 0, i));
+        data.root =
+            addNode(data, sequence, cdsCondensedSequence::ChainNode {codeUtils::vectorAppend({tail}, additional)});
     }
 
     // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,

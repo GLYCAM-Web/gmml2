@@ -25,15 +25,45 @@ namespace cdsCondensedSequence
         std::string modifier;
     };
 
-    struct ResidueNode
+    struct MonosaccharideNode
+    {
+        ParsedResidueComponents components;
+        size_t derivativeList;
+    };
+
+    struct AglyconeNode
     {
         ParsedResidueComponents components;
     };
 
+    struct DerivativeNode
+    {
+        ParsedResidueComponents components;
+    };
+
+    struct DerivativeListNode
+    {
+        std::vector<size_t> constituents;
+    };
+
+    struct ChainNode
+    {
+        std::vector<size_t> constituents;
+    };
+
+    struct BranchNode
+    {
+        size_t chain;
+    };
+
+    typedef std::variant<MonosaccharideNode, AglyconeNode, DerivativeNode, DerivativeListNode, ChainNode, BranchNode>
+        SequenceNode;
+
     struct AbstractSequence
     {
-        graph::Database graph;
-        std::vector<ResidueNode> nodes;
+        std::vector<std::string> fullString;
+        std::vector<SequenceNode> nodes;
+        size_t root;
     };
 
     struct ResidueData
