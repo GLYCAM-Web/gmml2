@@ -8,7 +8,20 @@
 
 namespace cdsCondensedSequence
 {
-    size_t instantiateNode(SequenceData& result, size_t parent, const AbstractSequence& data, size_t id);
+    struct ChainState
+    {
+        size_t tail;
+        size_t head;
+    };
+
+    struct SequenceAndLinkageData
+    {
+        SequenceData data;
+        std::vector<std::string> linkage;
+    };
+
+    ChainState instantiateNode(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
+                               size_t id);
     SequenceData instantiate(const AbstractSequence& data);
     SequenceData rearrange(const SequenceData& sequence, const std::vector<size_t>& residueOrder,
                            const std::vector<size_t>& edgeOrder);

@@ -8,131 +8,171 @@
 #include <optional>
 #include <vector>
 #include <stdexcept>
-#include <iostream>
 
 namespace
 {
     using cdsCondensedSequence::AbstractSequence;
+    using cdsCondensedSequence::ChainState;
     using cdsCondensedSequence::ChildPosition;
     using cdsCondensedSequence::DualPosition;
     using cdsCondensedSequence::ParentPosition;
+    using cdsCondensedSequence::SequenceAndLinkageData;
     using cdsCondensedSequence::SequenceData;
 
-    size_t addNode(SequenceData& result, const cdsCondensedSequence::ParsedResidueComponents& components)
+    size_t addNode(SequenceAndLinkageData& result, const cdsCondensedSequence::ParsedResidueComponents& components)
     {
-        size_t id = graph::addNode(result.graph);
-        result.residues.fullString.push_back(components.fullString);
-        result.residues.type.push_back(components.type);
-        result.residues.name.push_back(components.name);
-        result.residues.ringType.push_back(components.ringType);
-        result.residues.configuration.push_back(components.configuration);
-        result.residues.isomer.push_back(components.isomer);
-        result.residues.preIsomerModifier.push_back(components.preIsomerModifier);
-        result.residues.ringShape.push_back(components.ringShape);
-        result.residues.modifier.push_back(components.modifier);
-        result.residues.isInternal.push_back(false);
-        result.residues.isDerivative.push_back(
+        cdsCondensedSequence::ResidueData& residues = result.data.residues;
+        size_t id                                   = graph::addNode(result.data.graph);
+        residues.fullString.push_back(components.fullString);
+        residues.type.push_back(components.type);
+        residues.name.push_back(components.name);
+        residues.ringType.push_back(components.ringType);
+        residues.configuration.push_back(components.configuration);
+        residues.isomer.push_back(components.isomer);
+        residues.preIsomerModifier.push_back(components.preIsomerModifier);
+        residues.ringShape.push_back(components.ringShape);
+        residues.modifier.push_back(components.modifier);
+        residues.defaultHeadPosition.push_back(codeUtils::parseUint(components.defaultHeadPosition));
+        residues.isInternal.push_back(false);
+        residues.isDerivative.push_back(
             codeUtils::contains({cds::ResidueType::Deoxy, cds::ResidueType::Derivative}, components.type));
+        result.linkage.push_back(components.linkage);
         return id;
     }
 
-    void addEdge(SequenceData& result, size_t parent, size_t child, const std::string& name,
+    void addEdge(SequenceAndLinkageData& result, size_t parent, size_t child, const std::string& name,
                  const cdsCondensedSequence::EdgePosition& position)
     {
-        graph::addEdge(result.graph, {parent, child});
-        result.edges.names.push_back(name);
-        result.edges.position.push_back(position);
-        result.residues.isInternal[parent] =
-            result.residues.isInternal[parent] || (result.residues.type[child] != cds::ResidueType::Deoxy);
+        cdsCondensedSequence::ResidueData& residues = result.data.residues;
+        cdsCondensedSequence::EdgeData& edges       = result.data.edges;
+        graph::addEdge(result.data.graph, {parent, child});
+        edges.names.push_back(name);
+        edges.position.push_back(position);
+        residues.isInternal[parent] = residues.isInternal[parent] || (residues.type[child] != cds::ResidueType::Deoxy);
     }
 
-    size_t instantiateAglycone(SequenceData& result, const cdsCondensedSequence::AglyconeNode& node)
+    void addMonosaccharideEdge(SequenceAndLinkageData& result, size_t parent, size_t child, const std::string& linkage,
+                               const std::string& configuration, const std::optional<uint>& defaultHeadPosition)
     {
-        return addNode(result, node.components);
-    }
-
-    size_t instantiateDerivative(SequenceData& result, size_t parent, const cdsCondensedSequence::DerivativeNode& node)
-    {
-        const std::string& linkage = node.components.linkage;
-        std::optional<uint> pos    = codeUtils::parseUint(linkage.substr(0, 1)).value();
-        size_t id                  = addNode(result, node.components);
-        addEdge(result, parent, id, linkage, ParentPosition {pos.value()});
-        return parent;
-    }
-
-    size_t instantiateDerivativeList(SequenceData& result, size_t parent, const AbstractSequence& data,
-                                     const cdsCondensedSequence::DerivativeListNode& node)
-    {
-        for (size_t n : node.constituents)
-        {
-            instantiateNode(result, parent, data, n);
-        }
-        return parent;
-    }
-
-    size_t instantiateMonosaccharide(SequenceData& result, size_t parent, const AbstractSequence& data,
-                                     const cdsCondensedSequence::MonosaccharideNode& node)
-    {
-        const std::string& linkage        = node.components.linkage;
-        const std::string linkageName     = node.components.configuration + linkage;
-        const cds::ResidueType parentType = result.residues.type[parent];
+        const cds::ResidueType parentType = result.data.residues.type[parent];
         bool noParent                     = parentType == cds::ResidueType::Undefined;
         bool isParentAglycone             = parentType == cds::ResidueType::Aglycone;
         bool isParentSugar                = parentType == cds::ResidueType::Sugar;
-        size_t id                         = addNode(result, node.components);
         if (noParent)
         {}
         else if (isParentAglycone)
         {
             std::optional<uint> position = codeUtils::parseUint(linkage.substr(0, 1)).value();
-            addEdge(result, parent, id, linkageName, ChildPosition {position.value()});
+            addEdge(result, parent, child, configuration + linkage, ChildPosition {position.value()});
         }
         else if (isParentSugar)
         {
             std::optional<uint> firstPosition = codeUtils::parseUint(linkage.substr(0, 1)).value();
             std::optional<uint> secondPosition =
                 (linkage.length() > 2) ? codeUtils::parseUint(linkage.substr(2, 1)).value() : std::optional<uint> {};
-            if (!(secondPosition.has_value()))
+            if (!(secondPosition.has_value() || defaultHeadPosition.has_value()))
             {
                 throw std::runtime_error("Either linkage or parent residue must contain parent linkage position");
             }
             uint childPosition  = firstPosition.value();
-            uint parentPosition = secondPosition.value();
-            addEdge(result, parent, id, linkageName, DualPosition {childPosition, parentPosition});
+            uint parentPosition = secondPosition.has_value() ? secondPosition.value() : defaultHeadPosition.value();
+            std::string linkageName =
+                configuration + std::to_string(childPosition) + "-" + std::to_string(parentPosition);
+            addEdge(result, parent, child, linkageName, DualPosition {childPosition, parentPosition});
         }
-        else
-        {
-            throw std::runtime_error("Parent of sugar must be aglycone or other sugar");
-        }
-        instantiateNode(result, id, data, node.derivativeList);
-        return id;
     }
 
-    size_t instantiateBranch(SequenceData& result, size_t parent, const AbstractSequence& data,
-                             const cdsCondensedSequence::BranchNode& node)
+    ChainState instantiateAglycone(SequenceAndLinkageData& result, const cdsCondensedSequence::AglyconeNode& node)
     {
-        instantiateNode(result, parent, data, node.chain);
-        return parent;
+        size_t id = addNode(result, node.components);
+        return {id, id};
     }
 
-    size_t instantiateChain(SequenceData& result, size_t parent, const AbstractSequence& data,
-                            const cdsCondensedSequence::ChainNode& node)
+    ChainState instantiateDerivative(SequenceAndLinkageData& result, const ChainState& state,
+                                     const cdsCondensedSequence::DerivativeNode& node)
+    {
+        const std::string& linkage = node.components.linkage;
+        std::optional<uint> pos    = codeUtils::parseUint(linkage.substr(0, 1)).value();
+        size_t id                  = addNode(result, node.components);
+        size_t parent              = state.head;
+        addEdge(result, parent, id, linkage, ParentPosition {pos.value()});
+        return state;
+    }
+
+    ChainState instantiateDerivativeList(SequenceAndLinkageData& result, const ChainState& state,
+                                         const AbstractSequence& data,
+                                         const cdsCondensedSequence::DerivativeListNode& node)
     {
         for (size_t n : node.constituents)
         {
-            parent = instantiateNode(result, parent, data, n);
+            instantiateNode(result, state, data, n);
         }
-        return parent;
+        return state;
+    }
+
+    ChainState instantiateMonosaccharide(SequenceAndLinkageData& result, const ChainState& state,
+                                         const AbstractSequence& data,
+                                         const cdsCondensedSequence::MonosaccharideNode& node)
+    {
+        size_t id     = addNode(result, node.components);
+        size_t parent = state.head;
+        addMonosaccharideEdge(result, parent, id, node.components.linkage, node.components.configuration,
+                              result.data.residues.defaultHeadPosition[parent]);
+        ChainState selfState {id, id};
+        instantiateNode(result, selfState, data, node.derivativeList);
+        return selfState;
+    }
+
+    ChainState instantiateChain(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
+                                const cdsCondensedSequence::ChainNode& node)
+    {
+        if (node.constituents.empty())
+        {
+            throw std::runtime_error("Chain cannot be empty");
+        }
+        ChainState first   = instantiateNode(result, state, data, node.constituents[0]);
+        ChainState current = first;
+        for (size_t n = 1; n < node.constituents.size(); n++)
+        {
+            current = instantiateNode(result, current, data, node.constituents[n]);
+        }
+        return {first.tail, current.head};
+    }
+
+    ChainState instantiateBranch(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
+                                 const cdsCondensedSequence::BranchNode& node)
+    {
+        ChainState empty {0, 0};
+        ChainState current           = instantiateNode(result, empty, data, node.chain);
+        size_t parent                = state.head;
+        size_t tail                  = current.tail;
+        std::optional<uint> position = codeUtils::parseUint(node.position);
+        addMonosaccharideEdge(result, parent, tail, result.linkage[tail], result.data.residues.configuration[tail],
+                              position);
+        return state;
+    }
+
+    ChainState instantiateRepeat(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
+                                 const cdsCondensedSequence::RepeatNode& node)
+    {
+        ChainState first   = instantiateNode(result, state, data, node.chain);
+        ChainState current = first;
+        for (size_t n = 1; n < node.repeats; n++)
+        {
+            current = instantiateNode(result, current, data, node.chain);
+        }
+        return {first.tail, current.head};
     }
 } // namespace
 
-size_t cdsCondensedSequence::instantiateNode(SequenceData& result, size_t parent, const AbstractSequence& data,
-                                             size_t id)
+cdsCondensedSequence::ChainState cdsCondensedSequence::instantiateNode(SequenceAndLinkageData& result,
+                                                                       const ChainState& state,
+                                                                       const AbstractSequence& data, size_t id)
 {
     const SequenceNode& node = data.nodes[id];
     if (std::holds_alternative<MonosaccharideNode>(node))
     {
-        return instantiateMonosaccharide(result, parent, data, std::get<MonosaccharideNode>(node));
+        return instantiateMonosaccharide(result, state, data, std::get<MonosaccharideNode>(node));
     }
     else if (std::holds_alternative<AglyconeNode>(node))
     {
@@ -140,19 +180,23 @@ size_t cdsCondensedSequence::instantiateNode(SequenceData& result, size_t parent
     }
     else if (std::holds_alternative<DerivativeNode>(node))
     {
-        return instantiateDerivative(result, parent, std::get<DerivativeNode>(node));
+        return instantiateDerivative(result, state, std::get<DerivativeNode>(node));
     }
     else if (std::holds_alternative<DerivativeListNode>(node))
     {
-        return instantiateDerivativeList(result, parent, data, std::get<DerivativeListNode>(node));
+        return instantiateDerivativeList(result, state, data, std::get<DerivativeListNode>(node));
     }
     else if (std::holds_alternative<ChainNode>(node))
     {
-        return instantiateChain(result, parent, data, std::get<ChainNode>(node));
+        return instantiateChain(result, state, data, std::get<ChainNode>(node));
     }
     else if (std::holds_alternative<BranchNode>(node))
     {
-        return instantiateBranch(result, parent, data, std::get<BranchNode>(node));
+        return instantiateBranch(result, state, data, std::get<BranchNode>(node));
+    }
+    else if (std::holds_alternative<RepeatNode>(node))
+    {
+        return instantiateRepeat(result, state, data, std::get<RepeatNode>(node));
     }
     else
     {
@@ -162,12 +206,20 @@ size_t cdsCondensedSequence::instantiateNode(SequenceData& result, size_t parent
 
 cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const AbstractSequence& data)
 {
-    SequenceData result;
+    SequenceAndLinkageData result;
+    graph::Database& resultGraph = result.data.graph;
     // use an empty node as parent when adding root residue
-    addNode(result, {"", cds::ResidueType::Undefined, "", "", "", "", "", "", "", ""});
-    result.graph.nodeAlive[0] = false;
-    instantiateNode(result, 0, data, data.root);
-    return rearrange(result, codeUtils::boolsToIndices(result.graph.nodeAlive), result.graph.edges);
+    ParsedResidueComponents components;
+    components.type = cds::ResidueType::Undefined;
+    addNode(result, components);
+    resultGraph.nodeAlive[0] = false;
+    instantiateNode(result, {0, 0}, data, data.root);
+    if (!result.linkage[1].empty())
+    {
+        throw std::runtime_error("Sequence tail should not contain linkage in: " + result.data.residues.fullString[1]);
+    }
+    SequenceData rearr = rearrange(result.data, codeUtils::boolsToIndices(resultGraph.nodeAlive), resultGraph.edges);
+    return rearr;
 }
 
 cdsCondensedSequence::SequenceData cdsCondensedSequence::rearrange(const SequenceData& sequence,
@@ -203,6 +255,7 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::rearrange(const Sequenc
                             codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
+                            codeUtils::indicesToValues(sequence.residues.defaultHeadPosition, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
                             codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
 

@@ -4,12 +4,14 @@
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
 
 #include <sstream>
 #include <string>
 #include <cctype> // isdigit()
 #include <vector>
 #include <optional>
+#include <iostream>
 
 namespace
 {
@@ -40,7 +42,7 @@ namespace
 
     ParsedResidueComponents parseAglycone(const std::string& residueString)
     {
-        return {residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", "", ""};
+        return {residueString, ResidueType::Aglycone, residueString, "", "", "", "", "", "", "", ""};
     }
 
     ParsedResidueComponents parseDerivative(const std::string& residueString)
@@ -48,15 +50,20 @@ namespace
         std::string name      = residueString.substr(1); // From position 1 to the end.
         cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
         std::string linkage   = residueString.substr(0, 1);
-        return {residueString, type, name, linkage, "", "", "", "", "", ""};
+        return {residueString, type, name, linkage, "", "", "", "", "", "", ""};
     }
 
-    ParsedResidueComponents parseSugar(const std::string& residueString)
+    ParsedResidueComponents parseSugar(std::string residueString)
     { // E.g. DManpNAca1-4 . Isomer (D or L), residueName (ManNAc), ring type (f or p), configuration (a or b), linkage
         // (1-4)
         ParsedResidueComponents result;
-        result.fullString    = residueString;
-        result.type          = ResidueType::Sugar;
+        result.fullString = residueString;
+        result.type       = ResidueType::Sugar;
+        if (std::isdigit(residueString[0]))
+        {
+            result.defaultHeadPosition = residueString.substr(0, 1);
+            residueString              = residueString.substr(1);
+        }
         // Assumptions
         size_t isomerStart   = 0; // e.g. DGal, DGlc, LIdo
         size_t residueStart  = 0; // e.g. Gal, Glc, Ido
@@ -123,21 +130,28 @@ namespace
         return result;
     }
 
-    SequenceNode parseResidueString(const std::string& residueString, size_t derivativeList, ResidueType specifiedType)
+    bool isAglycone(const std::string& str)
     {
-        if ((residueString.find('-') != std::string::npos) || (specifiedType == ResidueType::Sugar))
+        return codeUtils::contains({"OH", "OME", "OtBu"}, str);
+    }
+
+    SequenceNode parseResidueString(const std::string& residueString, size_t derivativeList)
+    {
+        if (isAglycone(residueString))
         {
-            return cdsCondensedSequence::MonosaccharideNode {parseSugar(residueString), derivativeList};
+            return cdsCondensedSequence::AglyconeNode {parseAglycone(residueString)};
         }
-        else if (isdigit(residueString[0]))
+        else if (isdigit(residueString[0]) && residueString.length() <= 3)
         {
             return cdsCondensedSequence::DerivativeNode {parseDerivative(residueString)};
         }
+        else if (residueString.length() >= 5)
+        {
+            return cdsCondensedSequence::MonosaccharideNode {parseSugar(residueString), derivativeList};
+        }
         else
-        { // Dunno.
-            std::string message = "Error: we can't parse this residue: \"" + residueString + "\"";
-            gmml::log(__LINE__, __FILE__, gmml::ERR, message);
-            throw std::runtime_error(message);
+        {
+            throw std::runtime_error("Could not parse this residue: " + residueString);
         }
     }
 
@@ -236,11 +250,6 @@ namespace
         return true;
     }
 
-    void parseLabelledInput(std::string inString)
-    {
-        throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inString + "\n");
-    }
-
     size_t addNode(AbstractSequence& data, const std::string& str, const SequenceNode& node)
     {
         size_t id = data.nodes.size();
@@ -258,7 +267,7 @@ namespace
         auto save             = [&](const std::string& str)
         {
             std::string fullStr = str + trail;
-            SequenceNode node   = parseResidueString(fullStr, derivativeList, cds::ResidueType::Undefined);
+            SequenceNode node   = parseResidueString(fullStr, derivativeList);
             trail               = "";
             derivativeList      = noDerivatives;
             size_t newRes       = addNode(data, fullStr, node);
@@ -269,37 +278,87 @@ namespace
         while (i > 0)
         {
             i--;
-            if ((sequence[i] == '-') && ((windowEnd - i) > 5))
-            { // dash and have read enough that there is a residue to save.
+            std::string after = substr(sequence, i + 1, windowEnd);
+            if ((sequence[i] == '-') && isAglycone(after))
+            {
+                save(after);
+                windowEnd = i + 1;
+            }
+            else if ((sequence[i] == '-') && (windowEnd - i > 5))
+            {
                 save(substr(sequence, i + 2, windowEnd));
                 windowEnd = i + 2; // Get to the right side of the number e.g. 1-4
             }
-            else if (sequence[i] == ']')
+            else if (codeUtils::contains({']', '>'}, sequence[i]))
             { // Start of branch: recurve. Maybe save if have read enough.
+                bool isSquare                     = sequence[i] == ']';
+                bool isAngular                    = sequence[i] == '>';
                 size_t bracketStart               = matchingOpeningBracket(sequence, i);
                 std::string substringWithBrackets = substr(sequence, bracketStart, i + 1);
                 std::string substring             = substr(sequence, bracketStart + 1, i);
-                if ((windowEnd - i) > 5)
-                { // if not a derivative start and have read enough, save.
-                    save(substr(sequence, i + 1, windowEnd));
-                    std::vector<size_t> constituents = parseChain(data, substring);
-                    size_t chain  = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
-                    size_t branch = addNode(data, substringWithBrackets, cdsCondensedSequence::BranchNode {chain});
-                    result.push_back(branch);
-                }
-                else if ((windowEnd - i) > 1) // and not > 5
-                {                             // Derivative, save trailing part of residue
-                    trail                           = substr(sequence, i + 1, windowEnd);
+                int unsaved                       = (windowEnd - i - 1);
+                if (isSquare && unsaved > 0 && unsaved <= 4 && !isAglycone(after))
+                { // Derivative, save trailing part of residue
+                    trail                           = after;
                     std::vector<size_t> derivatives = parseChain(data, substring);
                     derivativeList =
                         addNode(data, substringWithBrackets, cdsCondensedSequence::DerivativeListNode {derivatives});
                 }
                 else
                 {
-                    std::vector<size_t> constituents = parseChain(data, substring);
-                    size_t chain  = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
-                    size_t branch = addNode(data, substringWithBrackets, cdsCondensedSequence::BranchNode {chain});
-                    result.push_back(branch);
+                    if (unsaved > 0)
+                    {
+                        save(substr(sequence, i + 1, windowEnd));
+                    }
+                    if (isAngular)
+                    {
+                        // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that.
+                        // Tails didn't change, Heads yes and have become optional. Examples: DGlcpa1-2[4DGlcpa1-]<4>OH
+                        // becomes DGlcpa1-2DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH [4DGlcpa1-]<4>OH becomes
+                        // DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH DGlcpa1-3[4DGlcpa1-]<9>2DManpa1-[4DGalpNAca1-]<4>OH //
+                        // Multiple repeats DGlcpa1-2[4DGlcpa1-3DManpa1-]<9>OH // Disacc repeats
+                        // DGlcpa1-2[4DGlcpa1-3[DAllpb1-2]DManpa1-]<9>OH // Branched repeats, unavailable on legacy
+                        // Repeats within repeats?
+                        // DGlcpa1-4[4[DGalpa1-3]DGlcpa1-3[DAllpb1-2]DManpa1-]<3>OH Repeats with branches on the
+                        // leftmost Residue? DGlcpa1-[4DGlcpa1-3DManpa1-]<3>4DGalpa1-OH // Tails that aren't OH
+                        std::optional<uint> repeats = codeUtils::parseUint(substring);
+                        if (!repeats.has_value() || repeats.value() == 0)
+                        {
+                            throw std::runtime_error(
+                                "Number of repeating units not specified correctly in repeating unit: " +
+                                substringWithBrackets);
+                        }
+                        if (bracketStart == 0 || sequence[bracketStart - 1] != ']')
+                        {
+                            throw std::runtime_error("Repeat marker " + substringWithBrackets +
+                                                     " must be directly preceded by ']' in: " + sequence);
+                        }
+                        i                                 = bracketStart - 1;
+                        bracketStart                      = matchingOpeningBracket(sequence, i);
+                        std::string repeatPart            = substringWithBrackets;
+                        std::string substringWithBrackets = substr(sequence, bracketStart, i + 1);
+                        std::string substring             = substr(sequence, bracketStart + 1, i);
+                        std::vector<size_t> constituents  = parseChain(data, substring);
+                        size_t chain  = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
+                        size_t repeat = addNode(data, substringWithBrackets + repeatPart,
+                                                cdsCondensedSequence::RepeatNode {repeats.value(), chain});
+                        result.push_back(repeat);
+                    }
+                    else
+                    {
+                        char last            = substring[substring.length() - 1];
+                        std::string position = "";
+                        if (std::isdigit(last))
+                        { // branch position is explicit
+                            position  = std::string {last};
+                            substring = substring.substr(0, substring.length() - 1);
+                        }
+                        std::vector<size_t> constituents = parseChain(data, substring);
+                        size_t chain = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
+                        size_t branch =
+                            addNode(data, substringWithBrackets, cdsCondensedSequence::BranchNode {position, chain});
+                        result.push_back(branch);
+                    }
                 }
                 i         = bracketStart;
                 windowEnd = i;
@@ -327,104 +386,8 @@ namespace
         // all sugars will contain a list of derivatives,
         // thus we let the first node be an empty list for convenience
         addNode(data, "", cdsCondensedSequence::DerivativeListNode {{}});
-        size_t tail = size_t(-1);
-        // Reading from the rightmost end of the string, get the aglycone first.
-        size_t i    = (sequence.find_last_of('-') + 1);
-        if (isdigit(sequence[i]))   // Indicates ano-ano and not e.g. Sugar-OME or -ROH etc
-        {                           // e.g. DGlcpa1-2DFrufb
-            ++i;                    // ano-ano
-            if (sequence[i] == ']') // e.g. DGlcpa1-2[LFucpa1-1]DFrufb also ano-ano, but with branching
-            {
-                ++i;
-            }
-            std::string substring = sequence.substr(i);
-            tail = addNode(data, substring, parseResidueString(substring, noDerivatives, cds::ResidueType::Sugar));
-        }
-        else
-        { // e.g. DGlcpa1-OH
-            std::string substring = sequence.substr(i);
-            tail = addNode(data, substring, cdsCondensedSequence::AglyconeNode {parseAglycone(substring)});
-        }
-        std::vector<size_t> additional = parseChain(data, substr(sequence, 0, i));
-        data.root =
-            addNode(data, sequence, cdsCondensedSequence::ChainNode {codeUtils::vectorAppend({tail}, additional)});
-    }
-
-    // Note Rob waved the wand and changed the format as of 2023-05-08. Changes below reflect that. Tails didn't change,
-    // Heads yes and have become optional. Examples:
-    // DGlcpa1-2[4DGlcpa1-]<4>OH becomes DGlcpa1-2DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH
-    // [4DGlcpa1-]<4>OH becomes DGlcpa1-4DGlcpa1-4DGlcpa1-4DGlcpa1-OH
-    // DGlcpa1-3[4DGlcpa1-]<9>2DManpa1-[4DGalpNAca1-]<4>OH // Multiple repeats
-    // DGlcpa1-2[4DGlcpa1-3DManpa1-]<9>OH // Disacc repeats
-    // DGlcpa1-2[4DGlcpa1-3[DAllpb1-2]DManpa1-]<9>OH // Branched repeats, unavailable on legacy
-    // Repeats within repeats?
-    // DGlcpa1-4[4[DGalpa1-3]DGlcpa1-3[DAllpb1-2]DManpa1-]<3>OH Repeats with branches on the leftmost Residue?
-    // DGlcpa1-[4DGlcpa1-3DManpa1-]<3>4DGalpa1-OH // Tails that aren't OH
-    std::string parseRepeatingUnits(const std::string& inputSequence)
-    {
-        size_t repeatCharacterEndLocation   = inputSequence.find_last_of('>');
-        size_t repeatCharacterStartLocation = matchingOpeningBracket(inputSequence, repeatCharacterEndLocation);
-        if (repeatCharacterStartLocation == inputSequence.length())
-        {
-            throw std::runtime_error("No '<' found in sequence with repeating syntax symbol '>' : " + inputSequence);
-        }
-        // Get the number of repeats:
-        int numberRepeats = 0;
-        try
-        {
-            size_t numberStart       = repeatCharacterStartLocation + 1;
-            std::string stringNumber = substr(inputSequence, numberStart, repeatCharacterEndLocation);
-            numberRepeats            = std::stoi(stringNumber);
-        }
-        catch (...) // if e.g. stoi throws
-        {
-            throw std::runtime_error("Number of repeating units not specified correctly in repeating unit: " +
-                                     inputSequence);
-        }
-        size_t repeatEnd = repeatCharacterStartLocation - 1;
-        // Ensure next char is the ] of the repeating unit
-        if (inputSequence[repeatEnd] != ']')
-        {
-            throw std::runtime_error("Missing or incorrect usage of ']' in repeating sequence: " + inputSequence);
-        }
-        // Ok now go find the position of the start of the repeating unit, considering branches
-        size_t repeatStart         = matchingOpeningBracket(inputSequence, repeatEnd);
-        std::string before         = inputSequence.substr(0, repeatStart);
-        std::string repeat         = substr(inputSequence, repeatStart + 1, repeatEnd);
-        std::string after          = inputSequence.substr(repeatCharacterEndLocation + 1);
-        std::string newInputString = before;
-        // Check if using the old nomenclature. i.e. DGlcpa1-[4DGlcpa1-]<3>
-        bool oldNomenclature       = !before.empty() && before.back() == '-';
-        bool numberFirstEndOpen    = !repeat.empty() && std::isdigit(repeat[0]) && repeat.back() == '-';
-        if (numberFirstEndOpen && !oldNomenclature)
-        { // New nomenclature, i.e DGlcpa1-4[4DGlcpa1-]<3>
-            // firstRepeat does not have the e.g. 4 in 4DGlcpa1-
-            newInputString += repeat.substr(1, repeat.length());
-            for (int n = 0; n < numberRepeats - 1; n++)
-            {
-                newInputString += repeat;
-            }
-        }
-        else
-        { // all other cases, repeat as-is
-            for (int n = 0; n < numberRepeats; n++)
-            {
-                newInputString += repeat;
-            }
-        }
-
-        newInputString += after;
-        // Check if there are more repeating units and deal with them recursively:
-        if (before.find('>') != std::string::npos)
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF, "Sequence with some repeats processed: " + newInputString);
-            return parseRepeatingUnits(newInputString);
-        }
-        else
-        {
-            gmml::log(__LINE__, __FILE__, gmml::INF, "Sequence with all repeats processed: " + newInputString);
-            return newInputString;
-        }
+        std::vector<size_t> constituents = parseChain(data, substr(sequence, 0, sequence.length()));
+        data.root                        = addNode(data, sequence, cdsCondensedSequence::ChainNode {constituents});
     }
 } // namespace
 
@@ -436,15 +399,10 @@ cdsCondensedSequence::AbstractSequence cdsCondensedSequence::parseSequence(std::
                   "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
     }
     AbstractSequence data;
-    if (inputSequence.find('<') != std::string::npos)
-    {
-        gmml::log(__LINE__, __FILE__, gmml::INF, "Found repeating unit in input\n");
-        inputSequence = parseRepeatingUnits(inputSequence);
-    }
     if (inputSequence.find(';') != std::string::npos)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Found labels in input\n");
-        parseLabelledInput(inputSequence);
+        throw std::runtime_error("Error: SequenceParser can't read labeled sequences yet: " + inputSequence + "\n");
     }
     else
     {

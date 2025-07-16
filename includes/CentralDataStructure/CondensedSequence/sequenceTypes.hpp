@@ -17,6 +17,7 @@ namespace cdsCondensedSequence
         cds::ResidueType type;
         std::string name;
         std::string linkage;
+        std::string defaultHeadPosition;
         std::string ringType;
         std::string configuration;
         std::string isomer;
@@ -53,10 +54,18 @@ namespace cdsCondensedSequence
 
     struct BranchNode
     {
+        std::string position;
         size_t chain;
     };
 
-    typedef std::variant<MonosaccharideNode, AglyconeNode, DerivativeNode, DerivativeListNode, ChainNode, BranchNode>
+    struct RepeatNode
+    {
+        uint repeats;
+        size_t chain;
+    };
+
+    typedef std::variant<MonosaccharideNode, AglyconeNode, DerivativeNode, DerivativeListNode, ChainNode, BranchNode,
+                         RepeatNode>
         SequenceNode;
 
     struct AbstractSequence
@@ -77,6 +86,7 @@ namespace cdsCondensedSequence
         std::vector<std::string> preIsomerModifier;
         std::vector<std::string> ringShape;
         std::vector<std::string> modifier;
+        std::vector<std::optional<uint>> defaultHeadPosition;
         std::vector<bool> isInternal;
         std::vector<bool> isDerivative;
     };
