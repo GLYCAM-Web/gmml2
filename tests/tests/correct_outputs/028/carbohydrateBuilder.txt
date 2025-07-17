@@ -87,17 +87,7 @@ Number of possible shapes is 1
 *********************
 Building id 00005:DGlcpa1-R
 *********************
-Input:
-DGlcpa1-R
-Interpreted:
-DGlcpa1-R
-IndexOrdered:
-DGlcpa1-R
-IndexOrderedLabeled:
-DGlcp&Label=residue-2;a1-&Label=link-0;R&Label=residue-1;
-Parsed and labelled 00005 with no exceptions thrown.
-
-Error thrown by the carbohydrateBuilder in gmml during construction was: Cannot create 3D structure as no GLYCAM residue code was found in the GMML metadata for residue: R
+Error thrown by the carbohydrateBuilder in gmml during construction was: Sequence tail should not contain linkage in: DGlcpa1-R
 
 *********************
 Building id 00009:LRhapa1-6DGlcpb1-OH
@@ -596,7 +586,7 @@ OME_1_?_?
 *********************
 Building id 00032:dUA-OME
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: This is a non-standard residue string that gmml can't handle: dUA-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Could not parse this residue: dUA-
 
 *********************
 Building id 00033:dUA-4DGalpb1-OH
@@ -758,17 +748,17 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: Did not
 *********************
 Building id 00040:Bad<15>OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Missing or incorrect usage of ']' in repeating sequence: Bad<15>OH
+Error thrown by the carbohydrateBuilder in gmml during construction was: Repeat marker <15> must be directly preceded by ']' in: Bad<15>OH
 
 *********************
 Building id 00041:DGlcpa1-4DGlcpa1-6DManpa1-<15>OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Missing or incorrect usage of ']' in repeating sequence: DGlcpa1-4DGlcpa1-6DManpa1-<15>OH
+Error thrown by the carbohydrateBuilder in gmml during construction was: Repeat marker <15> must be directly preceded by ']' in: DGlcpa1-4DGlcpa1-6DManpa1-<15>OH
 
 *********************
 Building id 00042:DGlcpa1-4DGlcpa1-4[4DGlcpa1-]<>OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Number of repeating units not specified correctly in repeating unit: DGlcpa1-4DGlcpa1-4[4DGlcpa1-]<>OH
+Error thrown by the carbohydrateBuilder in gmml during construction was: Number of repeating units not specified correctly in repeating unit: <>
 
 *********************
 Building id 00043:DArafb1-2DArafa1-3DArafa1-5DArafa1-OME
@@ -2265,4 +2255,4 @@ IndexOrderedLabeled:
 DGlcp&Label=residue-9;a1-2&Label=link-7;DGlcp&Label=residue-8;b1-2&Label=link-6;[DGalpNAc&Label=residue-7;a1-2&Label=link-5;[DGlcp&Label=residue-6;a1-3&Label=link-4;][DBacp&Label=residue-5;b1-4&Label=link-3;]DManp&Label=residue-4;b1-4&Label=link-2;]DManp&Label=residue-3;a1-5&Label=link-1;DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00100 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1-4 with this glycam residue code: 0Bc
+Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1- with this glycam residue code: 0Bc

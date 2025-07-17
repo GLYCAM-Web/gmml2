@@ -90,7 +90,7 @@ Did not find corresponding '[' for character ']' at position 42 of sequence: DGl
 s13:
 DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalp[Boo]b1-3DGalpb1-4DXylpb1-OH
 Runtime error thrown for sequence s13 : DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalp[Boo]b1-3DGalpb1-4DXylpb1-OH
-Error: we can't parse this residue: "Boo"
+Could not parse this residue: Boo
 
 s14:
 dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4LIdopA(2SO)a1-4DGlcpNSa1-4DGlcpA[2S]b1-OH

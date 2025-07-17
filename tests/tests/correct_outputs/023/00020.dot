@@ -24,11 +24,11 @@ b6--6 [style=invis];
 7 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DMan.svg"];
 8 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGal.svg"];
 1--0 [label="a1-" headclip=true tailclip=false];
-2--1 [label="a1-4" headclip=false tailclip=false];
 3--2 [label="b1-6" headclip=false tailclip=false];
+2--1 [label="a1-4" headclip=false tailclip=false];
 4--1 [label="b1-2" headclip=false tailclip=false];
 5--4 [label="b1-2" headclip=false tailclip=false];
-6--5 [label="b1-2" headclip=false tailclip=false];
 7--6 [label="b1-2" headclip=false tailclip=false];
+6--5 [label="b1-2" headclip=false tailclip=false];
 8--5 [label="b1-6" headclip=false tailclip=false];
 }

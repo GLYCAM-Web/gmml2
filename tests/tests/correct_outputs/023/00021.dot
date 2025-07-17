@@ -21,12 +21,12 @@ b4--4 [style=invis];
 8 [shape=circle height="0.7" label="DNeuNAc"];
 9 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/LIdoA.svg"];
 1--0 [label="a1-" headclip=true tailclip=false];
-2--1 [label="b1-4" headclip=false tailclip=false];
 3--2 [label="a2-6" headclip=false tailclip=true];
+2--1 [label="b1-4" headclip=false tailclip=false];
 4--1 [label="b1-3" headclip=false tailclip=false];
 5--4 [label="a2-6" headclip=false tailclip=false];
-6--5 [label="a2-5" headclip=false tailclip=true];
 7--6 [label="a2-8" headclip=true tailclip=true];
 8--7 [label="a2-8" headclip=true tailclip=true];
+6--5 [label="a2-5" headclip=false tailclip=true];
 9--5 [label="a1-4" headclip=false tailclip=false];
 }

@@ -20,7 +20,7 @@ Building 00004: DFrufb2-1DGlcpa
 *********************
 Building 00005: DGlcpa1-R
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Cannot create 3D structure as no GLYCAM residue code was found in the GMML metadata for residue: R
+Error thrown by the carbohydrateBuilder in gmml during construction was: Sequence tail should not contain linkage in: DGlcpa1-R
 
 *********************
 Building 00009: LRhapa1-6DGlcpb1-OH
@@ -127,7 +127,7 @@ Building 00031: dUAa1-OME
 *********************
 Building 00032: dUA-OME
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: This is a non-standard residue string that gmml can't handle: dUA-
+Error thrown by the carbohydrateBuilder in gmml during construction was: Could not parse this residue: dUA-
 
 *********************
 Building 00033: dUA-4DGalpb1-OH
@@ -163,17 +163,17 @@ Error thrown by the carbohydrateBuilder in gmml during construction was: Did not
 *********************
 Building 00040: Bad<15>OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Missing or incorrect usage of ']' in repeating sequence: Bad<15>OH
+Error thrown by the carbohydrateBuilder in gmml during construction was: Repeat marker <15> must be directly preceded by ']' in: Bad<15>OH
 
 *********************
 Building 00041: DGlcpa1-4DGlcpa1-6DManpa1-<15>OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Missing or incorrect usage of ']' in repeating sequence: DGlcpa1-4DGlcpa1-6DManpa1-<15>OH
+Error thrown by the carbohydrateBuilder in gmml during construction was: Repeat marker <15> must be directly preceded by ']' in: DGlcpa1-4DGlcpa1-6DManpa1-<15>OH
 
 *********************
 Building 00042: DGlcpa1-4DGlcpa1-4[4DGlcpa1-]<>OH
 *********************
-Error thrown by the carbohydrateBuilder in gmml during construction was: Number of repeating units not specified correctly in repeating unit: DGlcpa1-4DGlcpa1-4[4DGlcpa1-]<>OH
+Error thrown by the carbohydrateBuilder in gmml during construction was: Number of repeating units not specified correctly in repeating unit: <>
 
 *********************
 Building 00043: DArafb1-2DArafa1-3DArafa1-5DArafa1-OME
