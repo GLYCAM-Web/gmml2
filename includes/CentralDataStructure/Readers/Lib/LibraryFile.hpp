@@ -4,7 +4,6 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 
-#include <istream>
 #include <string>
 #include <array>
 #include <vector>

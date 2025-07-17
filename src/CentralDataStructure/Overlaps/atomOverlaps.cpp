@@ -12,6 +12,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 
 #include <numeric>
+#include <stdexcept>
 
 namespace
 {

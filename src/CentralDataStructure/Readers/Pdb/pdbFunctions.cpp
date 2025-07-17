@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/Assembly/assemblyIndices.hpp"

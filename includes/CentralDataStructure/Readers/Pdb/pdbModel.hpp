@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBMODEL_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBMODEL_HPP
-#include "includes/CentralDataStructure/assembly.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include <vector>
 #include <sstream>
 #include <ostream>

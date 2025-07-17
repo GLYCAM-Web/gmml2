@@ -4,7 +4,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 

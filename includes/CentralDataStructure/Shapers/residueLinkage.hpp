@@ -5,8 +5,7 @@
  * Starts/ends at the CA atoms in proteins. Looks for cycles (as they aren't rotatable).
  * Stores each rotatable bond as a RotatableDihedral object.
  */
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"

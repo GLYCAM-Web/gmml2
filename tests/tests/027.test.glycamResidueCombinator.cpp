@@ -6,6 +6,7 @@
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 
 #include <vector>

@@ -1,9 +1,10 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
+#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 
 #include <array>

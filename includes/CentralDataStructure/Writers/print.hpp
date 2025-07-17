@@ -2,8 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_WRITERS_PRINT_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 
 #include <ostream>
 

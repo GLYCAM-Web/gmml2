@@ -1,7 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_EDITORS_AMBERMDPREP_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_AMBERMDPREP_HPP
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 

@@ -1,8 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_CYCLEPOINTS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_CYCLEPOINTS_HPP
 
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include <vector>
 
 namespace cdsSelections

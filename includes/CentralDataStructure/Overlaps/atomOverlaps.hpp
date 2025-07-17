@@ -3,9 +3,10 @@
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
 
 #include <vector>
 #include <utility>

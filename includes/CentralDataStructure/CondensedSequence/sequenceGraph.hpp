@@ -2,7 +2,7 @@
 #define INCLUDES_SEQUENCE_SEQUENCEGRAPH_HPP
 
 #include "includes/Graph/graphTypes.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 
 #include <vector>

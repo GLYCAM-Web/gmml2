@@ -1,8 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_PSIANGLEHYDROGEN_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_PSIANGLEHYDROGEN_HPP
 
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 

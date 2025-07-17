@@ -1,7 +1,7 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP
 
-#include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include <map>

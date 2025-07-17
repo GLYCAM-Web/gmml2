@@ -2,8 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_RESIDUESELECTIONS_HPP
 
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 
 #include <vector>
 
