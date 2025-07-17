@@ -5,13 +5,14 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/cdsTypes.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
-#include <vector>
-#include <string>
 #include <functional>
+#include <stdexcept>
+#include <string>
 #include <variant>
+#include <vector>
 
 namespace cds
 {

@@ -2,39 +2,19 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
 
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 
-#include <functional>
 #include <variant>
 #include <vector>
 #include <string>
 
 namespace cdsCondensedSequence
 {
-    constexpr auto defaultSearchAngles =
-        [](const GlycamMetadata::DihedralAngleData& metadata, double preference, double deviation)
-    {
-        double increment = 1.0;
-        std::function<std::vector<double>(const GlycamMetadata::AngleLimit&)> onLimit =
-            [&](const GlycamMetadata::AngleLimit& dev)
-        {
-            return cds::evenlySpacedAngles(preference, dev.lowerDeviationLimit, dev.upperDeviationLimit, increment);
-        };
-        std::function<std::vector<double>(const GlycamMetadata::AngleStd&)> onStd =
-            [&](const GlycamMetadata::AngleStd& dev)
-        {
-            return cds::evenlySpacedAngles(preference, deviation * dev.lowerDeviationStd,
-                                           deviation * dev.upperDeviationStd, increment);
-        };
-        return GlycamMetadata::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
-    };
-    const cds::AngleSearchSettings defaultSearchSettings = {1.0, defaultSearchAngles};
-
     class Carbohydrate : public cds::Molecule
     {
       public:

@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALSHAPETYPES_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <vector>

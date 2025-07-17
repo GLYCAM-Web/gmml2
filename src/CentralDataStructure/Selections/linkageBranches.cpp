@@ -4,7 +4,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 #include "includes/CentralDataStructure/Selections/cyclePoints.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <vector>

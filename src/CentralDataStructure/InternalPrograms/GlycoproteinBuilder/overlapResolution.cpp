@@ -84,7 +84,7 @@ namespace glycoproteinBuilder
             {
                 return std::pair<double, double> {dev.lowerDeviationStd, dev.upperDeviationStd};
             };
-            return GlycamMetadata::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
+            return cds::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
         };
         auto randomAngle = [&standardDeviation](pcg32& rng, const AngleSettings& settings,
                                                 const GlycamMetadata::DihedralAngleData& metadata)

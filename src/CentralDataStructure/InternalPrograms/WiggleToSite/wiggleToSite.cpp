@@ -10,9 +10,10 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
@@ -121,7 +122,7 @@ int WiggleToSite::minimizeDistance(const codeUtils::SparseVector<double>& elemen
         {
             return random(angleStandardDeviation, dev.lowerDeviationStd, dev.upperDeviationStd);
         };
-        return GlycamMetadata::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
+        return cds::onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
     };
 
     int cycle = 0;

@@ -2,9 +2,11 @@
 
 #include "includes/CentralDataStructure/Selections/cyclePoints.hpp"
 #include "includes/CentralDataStructure/Selections/linkageBranches.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CodeUtils/logging.hpp"
 
 #include <sstream>
 #include <vector>

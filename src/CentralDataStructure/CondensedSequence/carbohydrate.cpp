@@ -9,7 +9,7 @@
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
@@ -466,7 +466,7 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
 
     cds::serializeNumbers(this->getAtoms());
-    auto searchSettings                                         = defaultSearchSettings;
+    auto searchSettings                                         = cds::defaultSearchSettings;
     // Set 3D structure
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
     depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings, elementRadii, metadataTable,

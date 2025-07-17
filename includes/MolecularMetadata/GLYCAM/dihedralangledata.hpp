@@ -2,10 +2,8 @@
 #define INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 
 #include <string>
-#include <functional>
 #include <variant>
 #include <vector>
-#include <stdexcept>
 #include "includes/CentralDataStructure/residueTypes.hpp"
 
 namespace GlycamMetadata
@@ -49,12 +47,6 @@ namespace GlycamMetadata
         std::string atom2_;
         std::string atom3_;
         std::string atom4_;
-
-        inline std::string print() const
-        {
-            return atom1_ + "_" + atom2_ + "_" + atom3_ + "_" + atom4_ + " : " + std::to_string(index_) + " " +
-                   rotamer_name_ + " " + dihedral_angle_name_ + " " + std::to_string(default_angle);
-        }
     };
 
     struct DihedralAngleDataTable
@@ -70,24 +62,5 @@ namespace GlycamMetadata
         const cds::ResidueAttributes& residue2Attributes);
 
     std::vector<size_t> likelyMetadata(const DihedralAngleDataTable& table, const std::vector<size_t>& entries);
-
-    template<typename T>
-    T onAngleDeviation(std::function<T(const AngleLimit&)>& onLimit, std::function<T(const AngleStd&)>& onStd,
-                       const AngleDeviation& deviation)
-    {
-        if (std::holds_alternative<AngleLimit>(deviation))
-        {
-            return onLimit(std::get<AngleLimit>(deviation));
-        }
-        else if (std::holds_alternative<AngleStd>(deviation))
-        {
-            return onStd(std::get<AngleStd>(deviation));
-        }
-        else
-        {
-            throw std::runtime_error("unhandled angle deviation in GlycamMetadata::onAngleDeviation");
-        }
-    };
-
 } // namespace GlycamMetadata
 #endif

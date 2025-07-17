@@ -1,7 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
@@ -96,7 +96,7 @@ void carbohydrateBuilder::GenerateSpecific3DStructure(cdsCondensedSequence::Sing
                               standardDihedralName, rotamerInfo.selectedRotamer);
     }
     std::string fileName = "structure";
-    this->carbohydrate_.ResolveOverlaps(elementRadii, metadataTable, cdsCondensedSequence::defaultSearchSettings);
+    this->carbohydrate_.ResolveOverlaps(elementRadii, metadataTable, cds::defaultSearchSettings);
     this->Generate3DStructureFiles(fileOutputDirectory, fileName);
     return;
 }

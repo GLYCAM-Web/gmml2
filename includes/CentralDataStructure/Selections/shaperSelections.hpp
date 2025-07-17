@@ -2,21 +2,18 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_SELECTIONS_SHAPERSELECTIONS_HPP
 
 #include "includes/CentralDataStructure/cdsTypes.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include <vector>
 #include <string>
 
 namespace cdsSelections
 {
-
-    // Free functions
     bool FindPathBetweenTwoAtoms(cds::Atom* current_atom, cds::Residue* currentResidue, cds::Atom* target_atom,
                                  cds::Residue* targetResidue, std::vector<cds::Atom*>* atom_path, bool* found);
     void FindAtomsConnectingResidues(cds::Atom* current_atom, const cds::Residue* currentResidue,
                                      const cds::Residue* otherResidue, std::vector<cds::Atom*>* connecting_atoms,
                                      bool* found_neighbor);
     void ClearAtomLabels(cds::Residue* residue);
-    // ResidueLinkages
     cds::ResidueLinkage* selectLinkageWithIndex(std::vector<cds::ResidueLinkage>& inputLinkages,
                                                 const long long unsigned int indexQuery);
     std::vector<cds::ResidueLinkage> SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inputLinkages);

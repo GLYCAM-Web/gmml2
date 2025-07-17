@@ -19,16 +19,6 @@ namespace cds
         ResidueTypeCount
     };
 
-    // For dihedralangledata.cpp
-    inline std::string residueTypeToString(cds::ResidueType resType)
-    {
-        const std::array<std::string, 9> residueTypeStrings = {
-            "amino-acid", "monosaccharide",      "aglycon",   "derivative",      "solvent",
-            "deoxy",      "proteinCappingGroup", "undefined", "ResidueTypeCount"};
-        size_t index = static_cast<size_t>(resType);
-        return (index < residueTypeStrings.size()) ? residueTypeStrings[index] : "UNKNOWN";
-    };
-
     struct ResidueAttributes
     {
         ResidueType type              = ResidueType::Undefined;

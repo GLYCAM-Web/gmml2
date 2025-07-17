@@ -273,6 +273,15 @@ namespace
         }
         return true;
     }
+
+    std::string residueTypeToString(cds::ResidueType resType)
+    {
+        const std::array<std::string, 9> residueTypeStrings = {
+            "amino-acid", "monosaccharide",      "aglycon",   "derivative",      "solvent",
+            "deoxy",      "proteinCappingGroup", "undefined", "ResidueTypeCount"};
+        size_t index = static_cast<size_t>(resType);
+        return (index < residueTypeStrings.size()) ? residueTypeStrings[index] : "UNKNOWN";
+    };
 } // namespace
 
 const GlycamMetadata::DihedralAngleDataTable& GlycamMetadata::dihedralAngleDataTable()

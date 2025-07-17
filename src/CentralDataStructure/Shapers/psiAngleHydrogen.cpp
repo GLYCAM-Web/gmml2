@@ -5,7 +5,6 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <vector>

@@ -70,8 +70,8 @@
 ./src/CentralDataStructure/Shapers/dihedralAngleSearch.cpp
 ./src/CentralDataStructure/Shapers/dihedralShape.cpp
 ./src/CentralDataStructure/Shapers/psiAngleHydrogen.cpp
-./src/CentralDataStructure/Shapers/residueLinkage.cpp
 ./src/CentralDataStructure/Shapers/residueLinkageCreation.cpp
+./src/CentralDataStructure/Shapers/residueLinkageFunctions.cpp
 ./src/CentralDataStructure/Writers/offWriter.cpp
 ./src/CentralDataStructure/Writers/pdbWriter.cpp
 ./src/CentralDataStructure/Writers/print.cpp

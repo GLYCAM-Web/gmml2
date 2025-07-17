@@ -1,17 +1,19 @@
 #include <cmath>
 #include <sstream>
 #include <iostream>
+
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkage.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/Shapers/psiAngleHydrogen.hpp"
 #include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
 namespace
@@ -244,7 +246,11 @@ cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngl
         {
             for (auto& dihedralAngleData : entry)
             {
-                gmml::log(__LINE__, __FILE__, gmml::INF, metadataTable.entries[dihedralAngleData].print());
+                const GlycamMetadata::DihedralAngleData& entry = metadataTable.entries[dihedralAngleData];
+                gmml::log(__LINE__, __FILE__, gmml::INF,
+                          codeUtils::join("_", {entry.atom1_, entry.atom2_, entry.atom3_, entry.atom4_}) + " : " +
+                              codeUtils::join(" ", {std::to_string(entry.index_), entry.rotamer_name_,
+                                                    entry.dihedral_angle_name_, std::to_string(entry.default_angle)}));
             }
         }
     }

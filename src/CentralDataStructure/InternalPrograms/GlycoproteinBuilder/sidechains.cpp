@@ -5,6 +5,8 @@
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
