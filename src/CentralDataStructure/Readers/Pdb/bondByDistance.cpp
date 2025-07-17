@@ -7,6 +7,7 @@
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <string>

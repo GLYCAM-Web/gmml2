@@ -5,9 +5,7 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
 

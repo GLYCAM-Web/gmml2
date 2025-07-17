@@ -4,6 +4,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/Graph/graphManipulation.hpp"

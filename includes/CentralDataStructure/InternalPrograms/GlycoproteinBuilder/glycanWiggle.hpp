@@ -2,9 +2,9 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCANWIGGLE_HPP
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 namespace glycoproteinBuilder
 {

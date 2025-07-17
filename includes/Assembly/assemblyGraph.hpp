@@ -1,8 +1,7 @@
 #ifndef INCLUDES_ASSEMBLY_ASSEMBLYGRAPH_HPP
 #define INCLUDES_ASSEMBLY_ASSEMBLYGRAPH_HPP
 
-#include "includes/Assembly/assemblyIndices.hpp"
-#include "includes/Graph/graphTypes.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <array>
@@ -10,15 +9,6 @@
 
 namespace assembly
 {
-    struct Graph
-    {
-        Indices indices;
-        graph::Graph atoms;
-        graph::Graph residues;
-        graph::Graph molecules;
-        graph::Graph assemblies;
-    };
-
     std::array<std::vector<bool>, 2> residueAtomsCloseToEdge(const assembly::Graph& graph, size_t residueEdgeIndex);
     std::vector<std::array<std::vector<bool>, 2>> atomsCloseToResidueEdges(const assembly::Graph& graph);
 

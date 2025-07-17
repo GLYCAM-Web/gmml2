@@ -6,6 +6,8 @@
 #include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"

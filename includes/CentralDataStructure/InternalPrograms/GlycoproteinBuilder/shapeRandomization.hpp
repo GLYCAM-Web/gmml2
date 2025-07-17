@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_SHAPERANDOMIZATION_HPP
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
 #include <functional>

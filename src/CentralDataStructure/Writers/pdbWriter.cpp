@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"

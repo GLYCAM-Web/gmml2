@@ -5,49 +5,19 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <array>
 #include <vector>
-#include <functional>
 
 namespace cds
 {
-    struct AngleOverlap
-    {
-        cds::Overlap overlaps;
-        AngleWithMetadata angle;
-    };
-
-    struct OverlapState
-    {
-        Overlap overlap;
-        AngleWithMetadata angle;
-        assembly::Bounds bounds;
-    };
-
-    struct AngleSearchPreference
-    {
-        double deviation;
-        std::vector<double> angles;
-        std::vector<size_t> metadataOrder;
-    };
-
-    typedef std::function<std::vector<double>(const GlycamMetadata::DihedralAngleData&, double, double)> SearchAngles;
-    typedef std::function<cds::Overlap(const assembly::Bounds&)> SearchOverlap;
-
-    struct AngleSearchSettings
-    {
-        double deviation;
-        SearchAngles angles;
-    };
-
     size_t bestOverlapResultIndex(const std::vector<AngleOverlap>& results);
     OverlapState wiggleUsingRotamers(cds::SearchOverlap searchOverlap, SearchAngles searchAngles,
                                      const GlycamMetadata::DihedralAngleDataTable& metadataTable,

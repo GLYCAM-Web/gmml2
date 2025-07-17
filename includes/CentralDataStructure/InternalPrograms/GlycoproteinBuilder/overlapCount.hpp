@@ -2,9 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_OVERLAPCOUNT_HPP
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
-#include "includes/Assembly/assemblySelection.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <functional>
 #include <vector>

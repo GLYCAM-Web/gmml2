@@ -1,9 +1,12 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpBuilderStats.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinUtil.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/Assembly/assemblySelection.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblySelection.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/structuredFiles.hpp"
 

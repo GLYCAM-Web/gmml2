@@ -5,8 +5,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/Assembly/assemblySelection.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/structuredFiles.hpp"
 
 #include <vector>

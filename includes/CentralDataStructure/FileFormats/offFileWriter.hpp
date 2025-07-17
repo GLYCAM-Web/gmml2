@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_FILEFORMATS_OFFFILEWRITER_HPP
 
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <vector>
 #include <string>

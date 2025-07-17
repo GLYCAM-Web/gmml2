@@ -1,5 +1,6 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinUtil.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"

@@ -2,7 +2,7 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_FILEFORMATS_PDBFILEWRITER_HPP
 
 #include "includes/CentralDataStructure/FileFormats/pdbFileData.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <ostream>
 #include <string>

@@ -1,19 +1,12 @@
 #ifndef INCLUDES_ASSEMBLY_ASSEMBLYSELECTION_HPP
 #define INCLUDES_ASSEMBLY_ASSEMBLYSELECTION_HPP
 
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <vector>
 
 namespace assembly
 {
-    struct Selection
-    {
-        std::vector<bool> atoms;
-        std::vector<bool> residues;
-        std::vector<bool> molecules;
-    };
-
     Selection selectAll(const Graph& graph);
     Selection selectByAtoms(const Graph& graph, const std::vector<bool>& atoms);
     Selection selectByResidues(const Graph& graph, const std::vector<bool>& residues);

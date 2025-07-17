@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"

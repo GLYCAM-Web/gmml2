@@ -4,7 +4,10 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 
 #include <vector>

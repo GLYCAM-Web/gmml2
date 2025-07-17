@@ -6,11 +6,6 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/strings.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
@@ -18,6 +13,13 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 namespace
 {

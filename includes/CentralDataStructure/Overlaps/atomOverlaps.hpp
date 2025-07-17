@@ -5,9 +5,7 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
-#include "includes/Assembly/assemblySelection.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <vector>
 #include <utility>

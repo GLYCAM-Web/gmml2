@@ -5,6 +5,8 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"

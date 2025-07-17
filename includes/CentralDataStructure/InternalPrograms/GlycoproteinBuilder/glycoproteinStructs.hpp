@@ -2,13 +2,11 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 
 #include "includes/Graph/graphTypes.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
@@ -140,39 +138,6 @@ namespace glycoproteinBuilder
         assembly::Graph graph;
         AssemblyData data;
         MutableData mutableData;
-    };
-
-    inline std::vector<bool> glycanIncluded(const AssemblyData& data, const std::vector<bool>& includedMolecules)
-    {
-        return codeUtils::indicesToValues(includedMolecules, data.glycans.moleculeId);
-    }
-
-    inline std::vector<size_t> includedGlycanMoleculeIds(const AssemblyData& data,
-                                                         const std::vector<bool>& includedMolecules)
-    {
-        return codeUtils::indicesToValues(data.glycans.moleculeId,
-                                          codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules)));
-    }
-
-    inline std::vector<size_t> includedGlycanIndices(const AssemblyData& data,
-                                                     const std::vector<bool>& includedMolecules)
-    {
-        return codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules));
-    }
-
-    inline const std::vector<uint>& atomNumbers(bool serialized, const AssemblyData& data)
-    {
-        return serialized ? data.atoms.serializedNumbers : data.atoms.numbers;
-    }
-
-    inline const std::vector<uint>& residueNumbers(bool serialized, const AssemblyData& data)
-    {
-        return serialized ? data.residues.serializedNumbers : data.residues.numbers;
-    }
-
-    inline void deleteMolecule(MutableData& mutableData, size_t moleculeId)
-    {
-        mutableData.moleculeIncluded[moleculeId] = false;
     };
 
     typedef std::function<std::vector<size_t>(pcg32&, const GlycamMetadata::DihedralAngleDataTable&,

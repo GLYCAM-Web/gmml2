@@ -3,9 +3,9 @@
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapCount.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
 #include <functional>

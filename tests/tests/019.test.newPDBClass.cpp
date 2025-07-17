@@ -8,6 +8,8 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include <string>

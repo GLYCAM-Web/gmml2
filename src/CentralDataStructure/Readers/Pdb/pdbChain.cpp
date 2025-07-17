@@ -3,6 +3,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/biology.hpp"

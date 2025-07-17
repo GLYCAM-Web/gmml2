@@ -3,10 +3,9 @@
 
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
 
 namespace glycoproteinBuilder
