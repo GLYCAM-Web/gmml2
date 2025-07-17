@@ -19,6 +19,7 @@
 #include "includes/External_Libraries/PCG/pcg_random.h"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/metropolisCriterion.hpp"
 #include "includes/CodeUtils/random.hpp"
 

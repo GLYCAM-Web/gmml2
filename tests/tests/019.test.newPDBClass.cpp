@@ -12,6 +12,7 @@
 #include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include <string>
 #include <iostream>
 #include <fstream>

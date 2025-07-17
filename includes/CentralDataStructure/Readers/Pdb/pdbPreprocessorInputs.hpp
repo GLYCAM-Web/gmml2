@@ -5,8 +5,7 @@
 #include <vector>
 
 #include "includes/CodeUtils/constants.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp" // residueId
-#include "includes/CodeUtils/logging.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 
 // These structs are all for interacting with the website via gems.
 

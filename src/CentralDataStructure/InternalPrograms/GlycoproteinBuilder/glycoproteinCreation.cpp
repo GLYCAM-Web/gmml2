@@ -17,6 +17,7 @@
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
 #include <vector>

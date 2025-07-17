@@ -4,6 +4,7 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
+#include "includes/CodeUtils/logging.hpp"
 
 // How exactly this happens can be improved, but the information should only ever be loaded into gmml in one place.
 namespace cdsParameters
