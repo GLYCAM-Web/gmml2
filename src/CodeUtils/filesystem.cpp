@@ -5,6 +5,8 @@
 #include "includes/CodeUtils/strings.hpp"
 
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 #include <string>
 #include <vector>
 

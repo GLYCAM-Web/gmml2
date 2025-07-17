@@ -2,6 +2,7 @@
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include "includes/version.h"
 
 #include <vector>

@@ -1,8 +1,6 @@
 #ifndef INCLUDES_CODEUTILS_FILESYSTEM_HPP
 #define INCLUDES_CODEUTILS_FILESYSTEM_HPP
-#include <sys/stat.h>  // To check if file exists using stat
-#include <sys/types.h> // The s_IFDIR
-#include <unistd.h>
+
 #include <string>
 #include <vector>
 #include <filesystem>
