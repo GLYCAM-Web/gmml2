@@ -1,4 +1,4 @@
-Filename,Status,Highest atom overlap,Failed glycosites,Deleted glycosites,Moved sidechains
-default,,0.000000,,,TYR296 ARG155
-0_glycoprotein,,0.000000,,,PHE241 ARG155
-1_glycoprotein,,0.000000,,,PHE243 SER375 ASP376 PHE153 ARG155
+Filename,Status,Highest Lennard-Jones potential,Failed glycosites,Deleted glycosites,Moved sidechains
+default,,0.000000,,,TYR296 PHE153 ARG155
+0_glycoprotein,rejected,36.488547,A_297,,PHE241 PHE153 ARG155
+1_glycoprotein,rejected,0.035027,A_297,,TYR296 LEU398 ARG155

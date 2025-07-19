@@ -12,18 +12,17 @@ numberOfSamples                          2
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
-overlapRejectionThreshold                0.000000
+overlapRejectionThreshold                1.000000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                false   
 deleteUnresolvableGlycosites             false   
-atomRadiiSource                          chimera 
-atomOverlapTolerance                     0.600000
+atomOverlapTolerance                     0.260000
 ignoreHydrogen                           false   
 
 #### Structures ####
 
-Filename       | Status   | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains
-default                     0.000000                                                                        
-0_glycoprotein   rejected   0.042803               A_24                                                     
-1_glycoprotein   rejected   0.035589               A_24                                                     
+Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains
+default                     1.582444                          A_24                                                     
+0_glycoprotein   rejected   117.485423                        A_24                                                     
+1_glycoprotein   rejected   630.508968                        A_24                                                     
 

@@ -1,4 +1,4 @@
-Filename,Status,Highest atom overlap,Failed glycosites,Deleted glycosites,Moved sidechains
-default,,0.000000,,,
+Filename,Status,Highest Lennard-Jones potential,Failed glycosites,Deleted glycosites,Moved sidechains
+default,,0.027969,A_24,,
 0_glycoprotein,deletions,0.000000,,A_24,
 1_glycoprotein,deletions,0.000000,,A_24,

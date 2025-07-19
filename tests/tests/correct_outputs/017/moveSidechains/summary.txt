@@ -16,16 +16,15 @@ overlapRejectionThreshold                0.010000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                true    
 deleteUnresolvableGlycosites             false   
-atomRadiiSource                          chimera 
-atomOverlapTolerance                     0.600000
+atomOverlapTolerance                     0.260000
 ignoreHydrogen                           false   
 
 #### Structures ####
 
-Filename       | Status | Highest atom overlap | Failed glycosites | Deleted glycosites | Moved sidechains          
-default                   0.000000                                                        ILE39 THR132              
-0_glycoprotein            0.007445                                                        THR132 THR134             
-1_glycoprotein            0.001049                                                        THR132 THR134             
-2_glycoprotein            0.004045                                                        ARG76 THR132 THR134 ASP136
-3_glycoprotein            0.000611                                                        ILE39 GLU72               
+Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains                    
+default                     10.258486                         A_24 A_38                                ILE39 GLU72 ARG76 THR132            
+0_glycoprotein   rejected   1.417903                          A_24                                     LYS20 ILE39 LEU69 GLU72 ARG76 ASP136
+1_glycoprotein   rejected   11.959690                         A_24 A_38                                ILE39 LEU69 GLU72 ARG76             
+2_glycoprotein   rejected   11.901738                         A_24 A_38                                ILE39 ASP136                        
+3_glycoprotein   rejected   3.679592                          A_24                                     ILE39 ARG76                         
 

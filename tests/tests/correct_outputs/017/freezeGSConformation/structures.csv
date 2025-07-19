@@ -1,4 +1,4 @@
-Filename,Status,Highest atom overlap,Failed glycosites,Deleted glycosites,Moved sidechains
-default,,0.008039,A_24 A_38,,
-0_glycoprotein,rejected,0.070975,A_24 A_38,,
-1_glycoprotein,rejected,0.070577,A_24 A_38 A_40,,
+Filename,Status,Highest Lennard-Jones potential,Failed glycosites,Deleted glycosites,Moved sidechains
+default,,1201.743695,A_24 A_38 A_40,,
+0_glycoprotein,rejected,357.034032,A_24 A_38 A_40,,
+1_glycoprotein,rejected,3448.823459,A_24 A_38 A_40,,
