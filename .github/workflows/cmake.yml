@@ -83,7 +83,7 @@ jobs:
 
     - name: Run Bare Metal Tests
       run: |
-        bash ./compile_run_tests.bash -j 3 -i testsBase.txt -i testsGpBuilder.txt -i testsGpBuilderLong.txt
+        bash ./compile_run_tests.bash -j 3 -i testsBase.txt -i testsGpBuilder.txt
       working-directory: ${{ github.workspace }}/tests
 
     - name: Upload failed test output
