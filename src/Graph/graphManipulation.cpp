@@ -1,11 +1,12 @@
 #include "includes/Graph/graphManipulation.hpp"
-#include "includes/Graph/graphTypes.hpp"
-#include "includes/CodeUtils/containers.hpp"
 
-#include <cstddef>
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/Graph/graphTypes.hpp"
+
 #include <array>
-#include <vector>
+#include <cstddef>
 #include <stdexcept>
+#include <vector>
 
 namespace
 {
@@ -19,8 +20,8 @@ namespace
         return maxIndex;
     }
 
-    std::pair<std::vector<size_t>, std::vector<size_t>> createNodes(const std::vector<size_t>& nodeGroup,
-                                                                    const std::vector<bool>& includeNode)
+    std::pair<std::vector<size_t>, std::vector<size_t>> createNodes(
+        const std::vector<size_t>& nodeGroup, const std::vector<bool>& includeNode)
     {
         std::vector<size_t> nodes;
         size_t groupMax = groupMaxIndex(nodeGroup);
@@ -31,7 +32,7 @@ namespace
             size_t group = nodeGroup[n];
             if (includeNode[n] && !groupIndexSet[group])
             {
-                groupIndex[group]    = nodes.size();
+                groupIndex[group] = nodes.size();
                 groupIndexSet[group] = true;
                 nodes.push_back(group);
             }
@@ -39,8 +40,8 @@ namespace
         return {nodes, groupIndex};
     }
 
-    std::pair<std::vector<std::vector<size_t>>, std::vector<std::vector<size_t>>>
-    nodeAdjacencies(size_t nodeCount, const std::vector<std::array<size_t, 2>>& edgeNodes)
+    std::pair<std::vector<std::vector<size_t>>, std::vector<std::vector<size_t>>> nodeAdjacencies(
+        size_t nodeCount, const std::vector<std::array<size_t, 2>>& edgeNodes)
     {
         std::vector<std::vector<size_t>> nodes;
         nodes.resize(nodeCount);
@@ -49,8 +50,8 @@ namespace
         for (size_t n = 0; n < edgeNodes.size(); n++)
         {
             auto& nodePair = edgeNodes[n];
-            size_t a       = nodePair[0];
-            size_t b       = nodePair[1];
+            size_t a = nodePair[0];
+            size_t b = nodePair[1];
             nodes[a].push_back(b);
             nodes[b].push_back(a);
             edges[a].push_back(n);
@@ -114,19 +115,21 @@ void graph::reserveEdges(Database& graph, size_t size)
 
 graph::Database graph::asData(const Graph& graph)
 {
-    std::vector<size_t> nodes   = codeUtils::indexVector(graph.nodes.indices);
+    std::vector<size_t> nodes = codeUtils::indexVector(graph.nodes.indices);
     std::vector<bool> nodeAlive = codeUtils::indicesToValues(graph.source.nodeAlive, graph.nodes.indices);
-    std::vector<size_t> edges   = codeUtils::indexVector(graph.edges.indices);
+    std::vector<size_t> edges = codeUtils::indexVector(graph.edges.indices);
     std::vector<bool> edgeAlive = codeUtils::indicesToValues(graph.source.edgeAlive, graph.edges.indices);
     return {nodes, nodeAlive, edges, edgeAlive, graph.edges.nodeAdjacencies};
 }
 
-graph::Graph graph::selectedQuotientAliveOrNot(const Database& graph, const std::vector<size_t>& nodeGroup,
-                                               const std::vector<bool>& includeNode,
-                                               const std::vector<bool>& includeEdge)
+graph::Graph graph::selectedQuotientAliveOrNot(
+    const Database& graph,
+    const std::vector<size_t>& nodeGroup,
+    const std::vector<bool>& includeNode,
+    const std::vector<bool>& includeEdge)
 {
-    auto nodeData                  = createNodes(nodeGroup, includeNode);
-    std::vector<size_t> nodes      = nodeData.first;
+    auto nodeData = createNodes(nodeGroup, includeNode);
+    std::vector<size_t> nodes = nodeData.first;
     std::vector<size_t> groupIndex = nodeData.second;
     std::vector<std::vector<size_t>> constituents(nodes.size(), std::vector<size_t> {});
     for (size_t n = 0; n < graph.nodes.size(); n++)
@@ -140,9 +143,9 @@ graph::Graph graph::selectedQuotientAliveOrNot(const Database& graph, const std:
     std::vector<std::array<size_t, 2>> edgeNodes;
     for (size_t n = 0; n < graph.edges.size(); n++)
     {
-        auto& en  = graph.edgeNodes[n];
-        size_t a  = en[0];
-        size_t b  = en[1];
+        auto& en = graph.edgeNodes[n];
+        size_t a = en[0];
+        size_t b = en[1];
         size_t ag = nodeGroup[a];
         size_t bg = nodeGroup[b];
         if (includeEdge[n] && includeNode[a] && includeNode[b] && (ag != bg))
@@ -151,7 +154,7 @@ graph::Graph graph::selectedQuotientAliveOrNot(const Database& graph, const std:
             edgeNodes.push_back({groupIndex[ag], groupIndex[bg]});
         }
     }
-    auto adjacencies                           = nodeAdjacencies(nodes.size(), edgeNodes);
+    auto adjacencies = nodeAdjacencies(nodes.size(), edgeNodes);
     std::vector<std::vector<size_t>> nodeNodes = adjacencies.first;
     std::vector<std::vector<size_t>> nodeEdges = adjacencies.second;
     return {
@@ -161,15 +164,21 @@ graph::Graph graph::selectedQuotientAliveOrNot(const Database& graph, const std:
     };
 }
 
-graph::Graph graph::selectedQuotient(const Database& graph, const std::vector<size_t>& nodeGroup,
-                                     const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge)
+graph::Graph graph::selectedQuotient(
+    const Database& graph,
+    const std::vector<size_t>& nodeGroup,
+    const std::vector<bool>& includeNode,
+    const std::vector<bool>& includeEdge)
 {
-    return selectedQuotientAliveOrNot(graph, nodeGroup, codeUtils::vectorAnd(graph.nodeAlive, includeNode),
-                                      codeUtils::vectorAnd(graph.edgeAlive, includeEdge));
+    return selectedQuotientAliveOrNot(
+        graph,
+        nodeGroup,
+        codeUtils::vectorAnd(graph.nodeAlive, includeNode),
+        codeUtils::vectorAnd(graph.edgeAlive, includeEdge));
 }
 
-graph::Graph graph::subgraph(const Database& graph, const std::vector<bool>& includeNode,
-                             const std::vector<bool>& includeEdge)
+graph::Graph graph::subgraph(
+    const Database& graph, const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge)
 {
     return selectedQuotient(graph, graph.nodes, includeNode, includeEdge);
 }
@@ -179,7 +188,4 @@ graph::Graph graph::quotient(const Database& graph, const std::vector<size_t>& n
     return selectedQuotient(graph, nodeGroup, graph.nodeAlive, graph.edgeAlive);
 }
 
-graph::Graph graph::identity(const Database& graph)
-{
-    return quotient(graph, graph.nodes);
-}
+graph::Graph graph::identity(const Database& graph) { return quotient(graph, graph.nodes); }

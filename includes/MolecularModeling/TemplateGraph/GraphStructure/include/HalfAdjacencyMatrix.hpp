@@ -112,7 +112,7 @@ namespace glygraph
             {
                 // badBehavior(__LINE__, __func__, "WARNING NUMBER OF NODES NOT EQUAL EQUAL");
             }
-            this->bitList_m  = rhs.bitList_m;
+            this->bitList_m = rhs.bitList_m;
             this->numEdges_m = rhs.numEdges_m;
             return *this;
         }
@@ -131,8 +131,8 @@ namespace glygraph
     template<class T> HalfAdjacencyMatrix<T>::HalfAdjacencyMatrix()
     {
         // badBehavior(__LINE__, __func__, "Warning default constructor called");
-        this->numEdges_m    = 0;
-        this->numNodes_m    = 0;
+        this->numEdges_m = 0;
+        this->numNodes_m = 0;
         this->indexFactor_m = 0;
     }
 
@@ -140,24 +140,24 @@ namespace glygraph
     {
         unsigned int numNodes = nodeList_t.size();
         this->bitList_m.assign(((numNodes * (numNodes - 1)) / 2), 0);
-        this->numNodes_m    = numNodes;
-        this->numEdges_m    = 0;
+        this->numNodes_m = numNodes;
+        this->numEdges_m = 0;
         this->indexFactor_m = (1 + 2 * (numNodes - 2));
     }
 
     template<class T> HalfAdjacencyMatrix<T>::HalfAdjacencyMatrix(const HalfAdjacencyMatrix<T>& rhs)
     {
-        this->bitList_m     = rhs.bitList_m;
-        this->numEdges_m    = rhs.numEdges_m;
-        this->numNodes_m    = rhs.numNodes_m;
+        this->bitList_m = rhs.bitList_m;
+        this->numEdges_m = rhs.numEdges_m;
+        this->numNodes_m = rhs.numNodes_m;
         this->indexFactor_m = rhs.indexFactor_m;
     }
 
     template<class T> void HalfAdjacencyMatrix<T>::initializeWorkaround(const HalfAdjacencyMatrix<T>& rhs)
     {
-        this->bitList_m     = rhs.bitList_m;
-        this->numEdges_m    = rhs.numEdges_m;
-        this->numNodes_m    = rhs.numNodes_m;
+        this->bitList_m = rhs.bitList_m;
+        this->numEdges_m = rhs.numEdges_m;
+        this->numNodes_m = rhs.numNodes_m;
         this->indexFactor_m = rhs.indexFactor_m;
     }
 
@@ -165,15 +165,12 @@ namespace glygraph
     {
         unsigned int numNodes = nodeList_t.size();
         this->bitList_m.assign(((numNodes * (numNodes - 1)) / 2), 0);
-        this->numNodes_m    = numNodes;
-        this->numEdges_m    = 0;
+        this->numNodes_m = numNodes;
+        this->numEdges_m = 0;
         this->indexFactor_m = (1 + 2 * (numNodes - 2));
     }
 
-    template<class T> unsigned int HalfAdjacencyMatrix<T>::getNumEdges()
-    {
-        return this->numEdges_m;
-    }
+    template<class T> unsigned int HalfAdjacencyMatrix<T>::getNumEdges() { return this->numEdges_m; }
 
     template<class T> void HalfAdjacencyMatrix<T>::connect(unsigned int aNodeIndex_t, unsigned int bNodeIndex_t)
     {
@@ -210,17 +207,14 @@ namespace glygraph
         return this->bitList_m[index(aNodeIndex_t, bNodeIndex_t)];
     }
 
-    template<class T> unsigned int HalfAdjacencyMatrix<T>::getNumNodes()
-    {
-        return this->numNodes_m;
-    }
+    template<class T> unsigned int HalfAdjacencyMatrix<T>::getNumNodes() { return this->numNodes_m; }
 
     template<class T> void HalfAdjacencyMatrix<T>::emptyInitializeWorkaround(const HalfAdjacencyMatrix<T>& rhs)
     {
         unsigned int numNodes = rhs.numNodes_m;
         this->bitList_m.assign(((numNodes * (numNodes - 1)) / 2), 0);
-        this->numNodes_m    = numNodes;
-        this->numEdges_m    = 0;
+        this->numNodes_m = numNodes;
+        this->numEdges_m = 0;
         this->indexFactor_m = (1 + 2 * (numNodes - 2));
     }
 

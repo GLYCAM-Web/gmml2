@@ -1,7 +1,7 @@
 #include "includes/CodeUtils/containers.hpp"
 
-std::string codeUtils::FindStringInStringMap(const std::string& s,
-                                             const std::unordered_map<std::string, std::string>& sMap)
+std::string codeUtils::FindStringInStringMap(
+    const std::string& s, const std::unordered_map<std::string, std::string>& sMap)
 {
     auto found = sMap.find(s);
     return (found != sMap.end()) ? found->second : "";
@@ -75,8 +75,8 @@ std::vector<size_t> codeUtils::boolsToIndices(const std::vector<bool>& mask)
     return result;
 }
 
-std::vector<bool> codeUtils::groupContains(size_t count, const std::vector<size_t>& group,
-                                           const std::vector<size_t>& indices)
+std::vector<bool> codeUtils::groupContains(
+    size_t count, const std::vector<size_t>& group, const std::vector<size_t>& indices)
 {
     std::vector<bool> result(count, false);
     for (size_t n : indices)
@@ -86,13 +86,13 @@ std::vector<bool> codeUtils::groupContains(size_t count, const std::vector<size_
     return result;
 }
 
-std::vector<bool> codeUtils::groupContainsSelected(size_t count, const std::vector<size_t>& group,
-                                                   const std::vector<bool>& selection)
+std::vector<bool> codeUtils::groupContainsSelected(
+    size_t count, const std::vector<size_t>& group, const std::vector<bool>& selection)
 {
     std::vector<bool> result(count, false);
     for (size_t n = 0; n < selection.size(); n++)
     {
-        size_t index  = group[n];
+        size_t index = group[n];
         result[index] = result[index] || selection[n];
     }
     return result;
@@ -109,7 +109,4 @@ std::vector<size_t> codeUtils::indexVectorWithOffset(size_t offset, size_t count
     return result;
 }
 
-std::vector<size_t> codeUtils::indexVector(size_t count)
-{
-    return indexVectorWithOffset(0, count);
-}
+std::vector<size_t> codeUtils::indexVector(size_t count) { return indexVectorWithOffset(0, count); }

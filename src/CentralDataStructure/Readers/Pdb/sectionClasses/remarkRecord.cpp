@@ -1,7 +1,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/remarkRecord.hpp"
-#include "includes/CodeUtils/logging.hpp"
+
 #include "includes/CodeUtils/constants.hpp" //dNotSet
-#include "includes/CodeUtils/strings.hpp"   //trim
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp" //trim
 
 using pdb::RemarkRecord;
 
@@ -35,13 +36,16 @@ RemarkRecord::RemarkRecord(std::stringstream& stream_block)
                 }
                 catch (const std::invalid_argument& error)
                 {
-                    gmml::log(__LINE__, __FILE__, gmml::ERR,
-                              "RESOLUTION is not a valid float value. Value:\t" + tmp_resolution);
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::ERR,
+                        "RESOLUTION is not a valid float value. Value:\t" + tmp_resolution);
                 }
             }
             if (line.find("MEAN B VALUE") != std::string::npos)
             {
-                int start                = line.find(":") + 1;
+                int start = line.find(":") + 1;
                 std::string tmp_b_factor = line.substr(start, 80 - start);
                 codeUtils::Trim(tmp_b_factor);
                 try
@@ -50,8 +54,11 @@ RemarkRecord::RemarkRecord(std::stringstream& stream_block)
                 }
                 catch (const std::invalid_argument& error)
                 {
-                    gmml::log(__LINE__, __FILE__, gmml::ERR,
-                              "MEAN B VALUE is not a valid float value. Value:\t" + tmp_b_factor);
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::ERR,
+                        "MEAN B VALUE is not a valid float value. Value:\t" + tmp_b_factor);
                 }
             }
         }
@@ -63,15 +70,9 @@ RemarkRecord::RemarkRecord(std::stringstream& stream_block)
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
-void RemarkRecord::SetResolution(const float resolution)
-{
-    this->resolution_ = resolution;
-}
+void RemarkRecord::SetResolution(const float resolution) { this->resolution_ = resolution; }
 
-void RemarkRecord::SetBFactor(const float b_factor)
-{
-    this->b_factor_ = b_factor;
-}
+void RemarkRecord::SetBFactor(const float b_factor) { this->b_factor_ = b_factor; }
 
 //////////////////////////////////////////////////////////
 //                      DISPLAY FUNCTION                //

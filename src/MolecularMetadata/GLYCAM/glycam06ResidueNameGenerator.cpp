@@ -1,14 +1,18 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+
 #include <stdexcept>
 
-std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& linkages,
-                                                         const std::string& preIsomerModifier,
-                                                         const std::string& isomer, const std::string& inputResName,
-                                                         const std::string& ringType,
-                                                         const std::string& residueModifier,
-                                                         const std::string& configuration)
+std::string GlycamMetadata::Glycam06ResidueNameGenerator(
+    const std::string& linkages,
+    const std::string& preIsomerModifier,
+    const std::string& isomer,
+    const std::string& inputResName,
+    const std::string& ringType,
+    const std::string& residueModifier,
+    const std::string& configuration)
 {
     /* 	Example inputs:
                         linkages: "2,3" , "1" , "Terminal" , "4,7"
@@ -77,8 +81,8 @@ std::string GlycamMetadata::Glycam06ResidueNameGenerator(const std::string& link
     }
     if (residueCode.empty())
     { // LDmanpHepa or DDmanpHepb
-        residueCode = GlycamMetadata::GetCodeForName(preIsomerModifier + isomer + inputResName + ringType +
-                                                     residueModifier + configuration);
+        residueCode = GlycamMetadata::GetCodeForName(
+            preIsomerModifier + isomer + inputResName + ringType + residueModifier + configuration);
     }
     if (residueCode.empty())
     {

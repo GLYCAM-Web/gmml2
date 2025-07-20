@@ -1,13 +1,14 @@
 #include "includes/CodeUtils/files.hpp"
+
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 
 #include <cstdlib>
-#include <string>
-#include <istream>
 #include <fstream>
 #include <functional>
+#include <istream>
 #include <stdexcept>
+#include <string>
 
 std::istream& codeUtils::safeGetline(std::istream& in, std::string& out)
 {
@@ -47,8 +48,8 @@ std::istream& codeUtils::safeGetline(std::istream& in, std::string& out)
     return in;
 }
 
-void codeUtils::readFileLineByLine(const std::string& filename,
-                                   std::function<void(const std::string&, size_t)> processLine)
+void codeUtils::readFileLineByLine(
+    const std::string& filename, std::function<void(const std::string&, size_t)> processLine)
 {
     std::ifstream in(filename);
     if (!in)

@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/databaseReferenceRecord.hpp"
+
 #include "includes/CodeUtils/strings.hpp"
+
 #include <iomanip> //setw
 
 using pdb::DatabaseReference;
@@ -69,75 +71,33 @@ DatabaseReference::DatabaseReference(std::string& line)
 //                       ACCESSOR                       //
 //////////////////////////////////////////////////////////
 
-std::string DatabaseReference::GetRecordName() const
-{
-    return record_name_;
-}
+std::string DatabaseReference::GetRecordName() const { return record_name_; }
 
-std::string DatabaseReference::GetIDCode() const
-{
-    return id_code_;
-}
+std::string DatabaseReference::GetIDCode() const { return id_code_; }
 
-std::string DatabaseReference::GetChainID() const
-{
-    return chain_id_;
-}
+std::string DatabaseReference::GetChainID() const { return chain_id_; }
 
-int DatabaseReference::GetSeqBegin() const
-{
-    return seq_begin_;
-}
+int DatabaseReference::GetSeqBegin() const { return seq_begin_; }
 
-std::string DatabaseReference::GetInsertBegin() const
-{
-    return insert_begin_;
-}
+std::string DatabaseReference::GetInsertBegin() const { return insert_begin_; }
 
-int DatabaseReference::GetSeqEnd() const
-{
-    return seq_end_;
-}
+int DatabaseReference::GetSeqEnd() const { return seq_end_; }
 
-std::string DatabaseReference::GetInsertEnd() const
-{
-    return insert_end_;
-}
+std::string DatabaseReference::GetInsertEnd() const { return insert_end_; }
 
-std::string DatabaseReference::GetDatabase() const
-{
-    return database_;
-}
+std::string DatabaseReference::GetDatabase() const { return database_; }
 
-std::string DatabaseReference::GetDatabaseAccession() const
-{
-    return db_accession_;
-}
+std::string DatabaseReference::GetDatabaseAccession() const { return db_accession_; }
 
-std::string DatabaseReference::GetDatabaseIDCode() const
-{
-    return db_id_code_;
-}
+std::string DatabaseReference::GetDatabaseIDCode() const { return db_id_code_; }
 
-int DatabaseReference::GetDatabaseSeqBegin() const
-{
-    return db_seq_begin_;
-}
+int DatabaseReference::GetDatabaseSeqBegin() const { return db_seq_begin_; }
 
-std::string DatabaseReference::GetDatabaseInsBegin() const
-{
-    return db_ins_beg_;
-}
+std::string DatabaseReference::GetDatabaseInsBegin() const { return db_ins_beg_; }
 
-int DatabaseReference::GetDatabaseSeqEnd() const
-{
-    return db_seq_end_;
-}
+int DatabaseReference::GetDatabaseSeqEnd() const { return db_seq_end_; }
 
-std::string DatabaseReference::GetDatabaseInsEnd() const
-{
-    return db_ins_end_;
-}
+std::string DatabaseReference::GetDatabaseInsEnd() const { return db_ins_end_; }
 
 std::string DatabaseReference::GetUniprotID() const
 {
@@ -152,75 +112,33 @@ std::string DatabaseReference::GetUniprotID() const
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
 
-void DatabaseReference::SetRecordName(const std::string record_name)
-{
-    record_name_ = record_name;
-}
+void DatabaseReference::SetRecordName(const std::string record_name) { record_name_ = record_name; }
 
-void DatabaseReference::SetIDCode(const std::string id_code)
-{
-    id_code_ = id_code;
-}
+void DatabaseReference::SetIDCode(const std::string id_code) { id_code_ = id_code; }
 
-void DatabaseReference::SetChainId(const std::string chain_id)
-{
-    chain_id_ = chain_id;
-}
+void DatabaseReference::SetChainId(const std::string chain_id) { chain_id_ = chain_id; }
 
-void DatabaseReference::SetSeqBegin(const int seq_begin)
-{
-    seq_begin_ = seq_begin;
-}
+void DatabaseReference::SetSeqBegin(const int seq_begin) { seq_begin_ = seq_begin; }
 
-void DatabaseReference::SetInsertBegin(const std::string insert_begin)
-{
-    insert_begin_ = insert_begin;
-}
+void DatabaseReference::SetInsertBegin(const std::string insert_begin) { insert_begin_ = insert_begin; }
 
-void DatabaseReference::SetSeqEnd(const int seq_end)
-{
-    seq_end_ = seq_end;
-}
+void DatabaseReference::SetSeqEnd(const int seq_end) { seq_end_ = seq_end; }
 
-void DatabaseReference::SetInsertEnd(const std::string insert_end)
-{
-    insert_end_ = insert_end;
-}
+void DatabaseReference::SetInsertEnd(const std::string insert_end) { insert_end_ = insert_end; }
 
-void DatabaseReference::SetDatabase(const std::string database)
-{
-    database_ = database;
-}
+void DatabaseReference::SetDatabase(const std::string database) { database_ = database; }
 
-void DatabaseReference::SetDatabaseAccession(const std::string db_accession)
-{
-    db_accession_ = db_accession;
-}
+void DatabaseReference::SetDatabaseAccession(const std::string db_accession) { db_accession_ = db_accession; }
 
-void DatabaseReference::SetDatabaseIDCode(const std::string db_id_code)
-{
-    db_id_code_ = db_id_code;
-}
+void DatabaseReference::SetDatabaseIDCode(const std::string db_id_code) { db_id_code_ = db_id_code; }
 
-void DatabaseReference::SetDatabaseSeqBegin(const int db_seq_begin)
-{
-    db_seq_begin_ = db_seq_begin;
-}
+void DatabaseReference::SetDatabaseSeqBegin(const int db_seq_begin) { db_seq_begin_ = db_seq_begin; }
 
-void DatabaseReference::SetDatabaseInsBegin(const std::string db_ins_beg)
-{
-    db_ins_beg_ = db_ins_beg;
-}
+void DatabaseReference::SetDatabaseInsBegin(const std::string db_ins_beg) { db_ins_beg_ = db_ins_beg; }
 
-void DatabaseReference::SetDatabaseSeqEnd(const int db_seq_end)
-{
-    db_seq_end_ = db_seq_end;
-}
+void DatabaseReference::SetDatabaseSeqEnd(const int db_seq_end) { db_seq_end_ = db_seq_end; }
 
-void DatabaseReference::SetDatabaseInsEnd(const std::string db_ins_end)
-{
-    db_ins_end_ = db_ins_end;
-}
+void DatabaseReference::SetDatabaseInsEnd(const std::string db_ins_end) { db_ins_end_ = db_ins_end; }
 
 //////////////////////////////////////////////////////////
 //                       DISPLAY FUNCTION               //

@@ -6,10 +6,7 @@
 
 size_t cdsCondensedSequence::parentEdge(const SequenceData& sequence, size_t nodeId)
 {
-    auto childEquals = [&](const std::array<size_t, 2>& nodes)
-    {
-        return nodes[1] == nodeId;
-    };
+    auto childEquals = [&](const std::array<size_t, 2>& nodes) { return nodes[1] == nodeId; };
     auto it = std::find_if(sequence.graph.edgeNodes.begin(), sequence.graph.edgeNodes.end(), childEquals);
     return it - sequence.graph.edgeNodes.begin();
 }
@@ -54,6 +51,6 @@ std::string cdsCondensedSequence::mainLinkage(cds::ResidueType type, const std::
 std::string cdsCondensedSequence::mainLinkage(const SequenceData& sequence, size_t residueId)
 {
     size_t edge = parentEdge(sequence, residueId);
-    return mainLinkage(sequence.residues.type[residueId],
-                       (edge < edgeCount(sequence.graph)) ? edgeLinkage(sequence, edge) : "");
+    return mainLinkage(
+        sequence.residues.type[residueId], (edge < edgeCount(sequence.graph)) ? edgeLinkage(sequence, edge) : "");
 }

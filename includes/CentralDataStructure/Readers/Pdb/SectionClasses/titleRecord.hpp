@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_TITLERECORD_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_TITLERECORD_HPP
 
-#include <string>
-#include <sstream>
 #include <ostream>
+#include <sstream>
+#include <string>
 
 namespace pdb
 {
@@ -38,7 +38,7 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
-        std::string name_  = ""; /*!< Record name which appears in the first column of each line in a pdb file >*/
+        std::string name_ = "";  /*!< Record name which appears in the first column of each line in a pdb file >*/
         std::string title_ = ""; /*!< Title that appears in TITLE record of a pdb file >*/
     };
 } // namespace pdb

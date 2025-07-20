@@ -1,15 +1,15 @@
 #include "includes/CentralDataStructure/Selections/linkageBranches.hpp"
 
+#include "includes/CentralDataStructure/Selections/cyclePoints.hpp"
+#include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
-#include "includes/CentralDataStructure/Selections/cyclePoints.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
-#include <vector>
-#include <tuple>
 #include <sstream>
+#include <tuple>
+#include <vector>
 
 // After getting connection atoms between two residues, we have the linear path between them e.g.:
 // (Residue1 C2 - O7 - C7 - O6 - C6 Residue2), where C2 and C6 are the cycle points. In cases like 2-7 or 2-8 linkages,
@@ -24,12 +24,12 @@
 // branched linkages this will need to change to iteratively find branches from branches
 //
 
-void cdsSelections::FindEndsOfBranchesFromLinkageAtom(cds::Atom* currentAtom, cds::Atom* previousAtom,
-                                                      cds::Residue* residue, Branch* branch)
+void cdsSelections::FindEndsOfBranchesFromLinkageAtom(
+    cds::Atom* currentAtom, cds::Atom* previousAtom, cds::Residue* residue, Branch* branch)
 {
     branch->ChangeDepth(1);
     currentAtom->setLabels({"VistedByFindEndsOfBranchesFromLinkageAtom"});
-    bool deadEndAtom              = true;
+    bool deadEndAtom = true;
     bool connectsToAnotherResidue = false;
     for (auto& neighbor : currentAtom->getNeighbors())
     {
@@ -55,9 +55,9 @@ void cdsSelections::FindEndsOfBranchesFromLinkageAtom(cds::Atom* currentAtom, cd
     return;
 }
 
-std::tuple<std::vector<cds::DihedralAtoms>, std::vector<cds::Atom*>>
-cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::ResidueLink& link,
-                                                                  const std::vector<cds::Atom*>& residueCyclePoints)
+std::tuple<std::vector<cds::DihedralAtoms>, std::vector<cds::Atom*>> cdsSelections::
+    findRotatableDihedralsinBranchesConnectingResidues(
+        const cds::ResidueLink& link, const std::vector<cds::Atom*>& residueCyclePoints)
 {
     std::vector<cds::DihedralAtoms> rotatableDihedralsInBranches;
     std::vector<cds::Atom*> connectingAtoms;
@@ -68,8 +68,8 @@ cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::Res
 
         bool found = false;
         connectingAtoms.clear();
-        cdsSelections::FindPathBetweenTwoAtoms(cyclePoint1, link.residues.first, cyclePoint2, link.residues.second,
-                                               &connectingAtoms, &found);
+        cdsSelections::FindPathBetweenTwoAtoms(
+            cyclePoint1, link.residues.first, cyclePoint2, link.residues.second, &connectingAtoms, &found);
         cdsSelections::ClearAtomLabels(
             link.residues.first); // ToDo change to free function or member function that clears labels.
         cdsSelections::ClearAtomLabels(link.residues.second);
@@ -90,7 +90,8 @@ cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::Res
         if (connectingAtoms.size() > 4) // Otherwise there are no torsions
         {                               // Only viable linkages. Throw if not >4?
             for (typename std::vector<cds::Atom*>::iterator it = connectingAtoms.begin() + 1;
-                 it != connectingAtoms.end() - 1; ++it)
+                 it != connectingAtoms.end() - 1;
+                 ++it)
             { //
                 cds::Atom* connectionAtom = (*it);
                 if ((connectionAtom != cyclePoint1) && (connectionAtom != cyclePoint2))
@@ -100,18 +101,22 @@ cdsSelections::findRotatableDihedralsinBranchesConnectingResidues(const cds::Res
                         if (!codeUtils::contains(connectingAtoms, neighbor)) // if not in the vector
                         {
                             cdsSelections::Branch branch(connectionAtom);
-                            cdsSelections::FindEndsOfBranchesFromLinkageAtom(neighbor, connectionAtom,
-                                                                             link.residues.second, &branch);
+                            cdsSelections::FindEndsOfBranchesFromLinkageAtom(
+                                neighbor, connectionAtom, link.residues.second, &branch);
                             if (branch.IsBranchFound())
                             {
                                 found = false;
                                 std::vector<cds::Atom*> foundPath;
                                 // This fills in foundPath:
-                                cdsSelections::FindPathBetweenTwoAtoms(branch.GetRoot(), link.residues.first,
-                                                                       branch.GetEnd(), link.residues.second,
-                                                                       &foundPath, &found);
-                                cds::Atom* neighbor = cdsSelections::FindCyclePointNeighbor(foundPath, branch.GetRoot(),
-                                                                                            link.residues.second);
+                                cdsSelections::FindPathBetweenTwoAtoms(
+                                    branch.GetRoot(),
+                                    link.residues.first,
+                                    branch.GetEnd(),
+                                    link.residues.second,
+                                    &foundPath,
+                                    &found);
+                                cds::Atom* neighbor = cdsSelections::FindCyclePointNeighbor(
+                                    foundPath, branch.GetRoot(), link.residues.second);
                                 foundPath.push_back(neighbor);
                                 std::vector<cds::DihedralAtoms> temp = splitAtomVectorIntoRotatableDihedrals(foundPath);
                                 codeUtils::insertInto(rotatableDihedralsInBranches, temp);

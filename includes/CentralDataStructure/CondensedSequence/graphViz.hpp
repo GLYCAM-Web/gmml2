@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_GRAPHVIZ_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_GRAPHVIZ_HPP
 
+#include <array>
 #include <filesystem>
 #include <string>
-#include <array>
 #include <vector>
 
 namespace cdsCondensedSequence
@@ -14,10 +14,10 @@ namespace cdsCondensedSequence
             : file_name_(filename), base_path_(basePath), svg_directory_path_(directoryPath)
         {}
 
-        bool show_config_labels_   = true;
-        bool show_edge_labels_     = false;
+        bool show_config_labels_ = true;
+        bool show_edge_labels_ = false;
         bool show_position_labels_ = true;
-        int dpi_                   = 72;
+        int dpi_ = 72;
         std::string file_name_;
         std::string base_path_;
         std::string svg_directory_path_;
@@ -44,8 +44,8 @@ namespace cdsCondensedSequence
         std::string floatingLabel;
     };
 
-    GraphVizImage findImage(const cdsCondensedSequence::GraphVizDotConfig& configs, const std::string& name,
-                            const std::string& label);
+    GraphVizImage findImage(
+        const cdsCondensedSequence::GraphVizDotConfig& configs, const std::string& name, const std::string& label);
     std::string graphVizAglyconeNode(const GraphVizResidueNode& node);
     std::string graphVizSugarNode(const GraphVizResidueNode& node);
     std::string graphVizLinkageLine(const std::vector<GraphVizResidueNode>& nodes, const GraphVizLinkage& linkage);

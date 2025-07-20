@@ -1,7 +1,7 @@
-#include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -12,9 +12,9 @@
 #include "includes/version.h"
 
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <fstream>
 
 int main(int argc, char** argv)
 {
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
-    const std::string overwriteFlag                    = "overwrite-existing-files";
+    const std::string overwriteFlag = "overwrite-existing-files";
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed,         INPUT_FILE,            "", ' ',       "input-file"},
         {ArgReq::required, ArgType::unnamed,          DELIMITER,            "", ' ',   "list-delimiter"},
@@ -43,8 +43,8 @@ int main(int argc, char** argv)
     };
 
     std::string programName = codeUtils::programName(argv);
-    std::string baseDir     = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
-    std::string SNFGDir     = codeUtils::SNFGSymbolsDir();
+    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    std::string SNFGDir = codeUtils::SNFGSymbolsDir();
 
     codeUtils::Arguments arguments;
     try
@@ -75,12 +75,12 @@ int main(int argc, char** argv)
 
     try
     {
-        std::string inputFile        = "";
-        char delimiter               = '_';
-        std::string outputDir        = ".";
+        std::string inputFile = "";
+        char delimiter = '_';
+        std::string outputDir = ".";
         std::string headerBaseString = "Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
-        bool testMode  = false;
+        bool testMode = false;
         bool overwrite = false;
         for (const auto& arg : arguments.args)
         {
@@ -110,7 +110,7 @@ int main(int argc, char** argv)
                     }
                 case ARGUMENTS::TEST_MODE:
                     {
-                        testMode    = true;
+                        testMode = true;
                         headerLines = {headerBaseString + " in test mode"};
                         std::cout << "Running in test mode\n";
                         break;
@@ -128,16 +128,16 @@ int main(int argc, char** argv)
         {
             if (!codeUtils::directoryIsEmptyOrNonexistent(outputDir))
             {
-                throw std::runtime_error("Output directory '" + outputDir +
-                                         "' not empty. Please empty/remove it or run the program with the flag --" +
-                                         overwriteFlag);
+                throw std::runtime_error(
+                    "Output directory '" + outputDir +
+                    "' not empty. Please empty/remove it or run the program with the flag --" + overwriteFlag);
             }
         }
 
         std::string dotBaseDir = baseDir + "/";
         if (!testMode)
         {
-            SNFGDir    = dotBaseDir + SNFGDir;
+            SNFGDir = dotBaseDir + SNFGDir;
             dotBaseDir = "";
         }
 
@@ -168,7 +168,7 @@ int main(int argc, char** argv)
         };
         codeUtils::readFileLineByLine(inputFile, processLine);
         const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-        const codeUtils::SparseVector<double> elementRadii     = MolecularMetadata::vanDerWaalsRadii();
+        const codeUtils::SparseVector<double> elementRadii = MolecularMetadata::vanDerWaalsRadii();
         for (auto& line : lines)
         {
             try
@@ -189,8 +189,11 @@ int main(int argc, char** argv)
             }
             catch (...)
             {
-                gmml::log(__LINE__, __FILE__, gmml::ERR,
-                          "carbohydrateBuilder class caught a throw that was not anticipated. Curious. Death cometh?");
+                gmml::log(
+                    __LINE__,
+                    __FILE__,
+                    gmml::ERR,
+                    "carbohydrateBuilder class caught a throw that was not anticipated. Curious. Death cometh?");
                 std::cerr
                     << "ERROR carbohydrateBuilder caught a throw type that was not anticipated. Pretty please report "
                        "how you got to this to glycam@gmail.com.";

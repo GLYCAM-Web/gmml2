@@ -23,8 +23,8 @@ namespace codeUtils
     }
 
     template<class T>
-    void findPathBetweenElementsInGraph(const T current, const T target, std::vector<T>& visited, std::vector<T>& path,
-                                        bool& targetFound)
+    void findPathBetweenElementsInGraph(
+        const T current, const T target, std::vector<T>& visited, std::vector<T>& path, bool& targetFound)
     {
         if (current == target)
         {

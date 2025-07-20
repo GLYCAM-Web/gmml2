@@ -11,7 +11,10 @@
 namespace glycoproteinBuilder
 {
     cds::GlycanShapePreference randomLinkageShapePreference(
-        pcg32& rng, const AngleSettings& settings, const AssemblyData& data, const assembly::Bounds& bounds,
+        pcg32& rng,
+        const AngleSettings& settings,
+        const AssemblyData& data,
+        const assembly::Bounds& bounds,
         size_t glycanId,
         std::function<double(pcg32&, const AngleSettings&, const GlycamMetadata::DihedralAngleData& metadata)>
             randomAngle,

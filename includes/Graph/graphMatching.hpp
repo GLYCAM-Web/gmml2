@@ -3,9 +3,9 @@
 
 #include "includes/Graph/graphTypes.hpp"
 
+#include <array>
 #include <cstddef>
 #include <string>
-#include <array>
 #include <vector>
 
 namespace graph

@@ -1,11 +1,12 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceGraph.hpp"
-#include "includes/CentralDataStructure/residueTypes.hpp"
-#include "includes/Graph/graphTypes.hpp"
-#include "includes/Graph/graphManipulation.hpp"
-#include "includes/CodeUtils/containers.hpp"
 
-#include <functional>
+#include "includes/CentralDataStructure/residueTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/Graph/graphTypes.hpp"
+
 #include <array>
+#include <functional>
 #include <vector>
 
 std::vector<std::string> cdsCondensedSequence::sequenceDerivatives(const SequenceData& sequence)
@@ -15,8 +16,8 @@ std::vector<std::string> cdsCondensedSequence::sequenceDerivatives(const Sequenc
     for (size_t n = 0; n < edgeCount(sequence.graph); n++)
     {
         const std::array<size_t, 2>& adj = sequence.graph.edgeNodes[n];
-        size_t parent                    = adj[0];
-        size_t child                     = adj[1];
+        size_t parent = adj[0];
+        size_t child = adj[1];
         if (sequence.residues.type[child] == cds::ResidueType::Derivative)
         {
             std::string& str = derivatives[parent];
@@ -44,10 +45,8 @@ std::vector<std::string> cdsCondensedSequence::sequenceMonosaccharideNames(const
 graph::Graph cdsCondensedSequence::condensedSequenceGraph(const SequenceData& sequence)
 {
     std::function<bool(const cds::ResidueType&)> keepNode = [](const cds::ResidueType& type)
-    {
-        return type != cds::ResidueType::Derivative;
-    };
+    { return type != cds::ResidueType::Derivative; };
     graph::Database db = sequence.graph;
-    db.nodeAlive       = codeUtils::vectorMap(keepNode, sequence.residues.type);
+    db.nodeAlive = codeUtils::vectorMap(keepNode, sequence.residues.type);
     return graph::identity(db);
 }

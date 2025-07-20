@@ -1,8 +1,8 @@
 #ifndef INCLUDES_CODEUTILS_PARSING_HPP
 #define INCLUDES_CODEUTILS_PARSING_HPP
 
-#include <string>
 #include <optional>
+#include <string>
 
 namespace codeUtils
 {

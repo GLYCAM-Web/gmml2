@@ -1,8 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_RESIDUETYPES_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_RESIDUETYPES_HPP
 
-#include <string>
 #include <array>
+#include <string>
 
 namespace cds
 {
@@ -21,16 +21,16 @@ namespace cds
 
     struct ResidueAttributes
     {
-        ResidueType type              = ResidueType::Undefined;
-        std::string name              = ""; // Gal, Glc,
-        std::string glycamCode        = ""; // 0GA, OME,
-        std::string linkage           = ""; // 1-4
-        std::string ringType          = ""; // p/f
-        std::string configuration     = ""; // a/b
-        std::string isomer            = ""; // D/L
+        ResidueType type = ResidueType::Undefined;
+        std::string name = "";          // Gal, Glc,
+        std::string glycamCode = "";    // 0GA, OME,
+        std::string linkage = "";       // 1-4
+        std::string ringType = "";      // p/f
+        std::string configuration = ""; // a/b
+        std::string isomer = "";        // D/L
         std::string preIsomerModifier = "";
-        std::string modifier          = "";
-        bool isInternal               = false; // only care for 2-8. Whether one of the residues has no children.
+        std::string modifier = "";
+        bool isInternal = false; // only care for 2-8. Whether one of the residues has no children.
     };
 } // namespace cds
 #endif

@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_JOURNALRECORD_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_JOURNALRECORD_HPP
 
-#include <string>
-#include <sstream>
 #include <ostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 namespace pdb
@@ -20,55 +20,25 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
         //////////////////////////////////////////////////////////
-        inline const std::string& GetRecordName() const
-        {
-            return record_name_;
-        }
+        inline const std::string& GetRecordName() const { return record_name_; }
 
-        inline const std::vector<std::string>& GetAuthors() const
-        {
-            return authors_;
-        }
+        inline const std::vector<std::string>& GetAuthors() const { return authors_; }
 
-        inline const std::string& GetTitle() const
-        {
-            return title_;
-        }
+        inline const std::string& GetTitle() const { return title_; }
 
-        inline const std::vector<std::string>& GetEditors() const
-        {
-            return editors_;
-        }
+        inline const std::vector<std::string>& GetEditors() const { return editors_; }
 
-        inline const std::string& GetReference() const
-        {
-            return reference_;
-        }
+        inline const std::string& GetReference() const { return reference_; }
 
-        inline const std::string& GetPublisher() const
-        {
-            return publisher_;
-        }
+        inline const std::string& GetPublisher() const { return publisher_; }
 
-        inline const std::vector<std::string>& GetReferenceNumbers() const
-        {
-            return reference_nums_;
-        }
+        inline const std::vector<std::string>& GetReferenceNumbers() const { return reference_nums_; }
 
-        inline const std::string& GetPMID() const
-        {
-            return pmid_;
-        }
+        inline const std::string& GetPMID() const { return pmid_; }
 
-        inline const std::string& GetDOI() const
-        {
-            return doi_;
-        }
+        inline const std::string& GetDOI() const { return doi_; }
 
-        inline const std::string& GetText() const
-        {
-            return text_;
-        }
+        inline const std::string& GetText() const { return text_; }
 
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
@@ -102,7 +72,7 @@ namespace pdb
         std::vector<std::string>
             reference_nums_;    /*!< List of reference numbers that appear in Journal record of a pdb file >*/
         std::string pmid_ = ""; /*!< Pub Med ID number that appears in Journal record of a pdb file >*/
-        std::string doi_  = ""; /*!< DOI number that appears in Journal record of a pdb file >*/
+        std::string doi_ = "";  /*!< DOI number that appears in Journal record of a pdb file >*/
         std::string text_ = ""; /*!< Text in a Journal Section >*/
     };
 } // namespace pdb

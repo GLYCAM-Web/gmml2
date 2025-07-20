@@ -1,16 +1,16 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
 
-#include "includes/CentralDataStructure/residueTypes.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CodeUtils/constants.hpp" // iNotSet
+#include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 
-#include <vector>
-#include <memory>    // unique_ptr
 #include <algorithm> //swap
 #include <functional>
+#include <memory> // unique_ptr
+#include <vector>
 
 using cds::Coordinate;
 
@@ -29,17 +29,13 @@ namespace cds
         Residue(const Residue& other);     // Copy Ctor
         Residue& operator=(Residue other); // Move & Copy assignment operator.
 
-        virtual ~Residue()
-        {} // std::cout << "Residue dtor for " << this->getName() << std::endl;}// Dtor, virtual so that derived classes
-           // dtors will get triggered if possible.
+        virtual ~Residue() {} // std::cout << "Residue dtor for " << this->getName() << std::endl;}// Dtor, virtual so
+                              // that derived classes dtors will get triggered if possible.
 
         //////////////////////////////////////////////////////////
         //                    ACCESSOR                          //
         //////////////////////////////////////////////////////////
-        inline virtual const std::string& getName() const
-        {
-            return name_;
-        }
+        inline virtual const std::string& getName() const { return name_; }
 
         const std::string GetParmName() const;
         std::vector<Atom*> getAtoms() const;
@@ -48,63 +44,33 @@ namespace cds
         std::vector<Atom*> mutableAtoms();
         std::vector<std::string> getAtomNames() const;
 
-        inline ResidueType GetType() const
-        {
-            return type_;
-        }
+        inline ResidueType GetType() const { return type_; }
 
-        inline uint getNumber() const
-        {
-            return number_;
-        }
+        inline uint getNumber() const { return number_; }
 
-        inline const ResidueAttributes& getAttributes() const
-        {
-            return residueAttributes_;
-        }
+        inline const ResidueAttributes& getAttributes() const { return residueAttributes_; }
 
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
-        inline void setName(const std::string& s)
-        {
-            name_ = s;
-        }
+        inline void setName(const std::string& s) { name_ = s; }
 
         Atom* addAtom(std::unique_ptr<Atom> myAtom);
         Atom* addAtomToFront(std::unique_ptr<Atom> myAtom);
         bool moveAtomToLastPosition(const Atom* atom);
         bool deleteAtom(const Atom* atom);
 
-        inline void SetType(ResidueType type)
-        {
-            type_ = type;
-        }
+        inline void SetType(ResidueType type) { type_ = type; }
 
-        inline void setNumber(uint i)
-        {
-            number_ = i;
-        }
+        inline void setNumber(uint i) { number_ = i; }
 
-        inline size_t atomCount() const
-        {
-            return atoms_.size();
-        }
+        inline size_t atomCount() const { return atoms_.size(); }
 
-        inline void setCTerminal(bool b)
-        {
-            isCTerminal = b;
-        }
+        inline void setCTerminal(bool b) { isCTerminal = b; }
 
-        inline void setNTerminal(bool b)
-        {
-            isNTerminal = b;
-        }
+        inline void setNTerminal(bool b) { isNTerminal = b; }
 
-        inline void setAttributes(const ResidueAttributes ra)
-        {
-            residueAttributes_ = ra;
-        }
+        inline void setAttributes(const ResidueAttributes ra) { residueAttributes_ = ra; }
 
         //////////////////////////////////////////////////////////
         //                    FUNCTIONS                         //
@@ -118,25 +84,13 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                  OPERATOR OVERLOADING                //
         //////////////////////////////////////////////////////////
-        virtual bool operator==(const Residue& rhs) const
-        {
-            return (this->getIndex() == rhs.getIndex());
-        }
+        virtual bool operator==(const Residue& rhs) const { return (this->getIndex() == rhs.getIndex()); }
 
-        virtual bool operator!=(const Residue& rhs) const
-        {
-            return (this->getIndex() != rhs.getIndex());
-        }
+        virtual bool operator!=(const Residue& rhs) const { return (this->getIndex() != rhs.getIndex()); }
 
-        virtual bool operator>(const Residue& rhs) const
-        {
-            return (this->getNumber() > rhs.getNumber());
-        }
+        virtual bool operator>(const Residue& rhs) const { return (this->getNumber() > rhs.getNumber()); }
 
-        virtual bool operator<(const Residue& rhs) const
-        {
-            return (this->getNumber() < rhs.getNumber());
-        }
+        virtual bool operator<(const Residue& rhs) const { return (this->getNumber() < rhs.getNumber()); }
 
         //////////////////////////////////////////////////////////
         //               Copy-Swap                    //

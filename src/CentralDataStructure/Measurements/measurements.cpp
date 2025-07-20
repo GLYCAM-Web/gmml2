@@ -1,14 +1,15 @@
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/constants.hpp"
 
 #include <cmath>
 
 using cds::Coordinate;
 
-Coordinate cds::coordinateOppositeToNeighborAverage(const Coordinate& centralCoord,
-                                                    const std::vector<Coordinate>& neighbors, const double distance)
+Coordinate cds::coordinateOppositeToNeighborAverage(
+    const Coordinate& centralCoord, const std::vector<Coordinate>& neighbors, const double distance)
 {
     Coordinate combinedVs(0.0, 0.0, 0.0);
     for (auto& neighbor : neighbors)
@@ -19,12 +20,16 @@ Coordinate cds::coordinateOppositeToNeighborAverage(const Coordinate& centralCoo
     return centralCoord + scaleBy(distance, normal(combinedVs));
 }
 
-Coordinate cds::calculateCoordinateFromInternalCoords(const Coordinate& a, const Coordinate& b, const Coordinate& c,
-                                                      double angle_Degrees, double dihedral_Degrees,
-                                                      double distanceAngstrom)
+Coordinate cds::calculateCoordinateFromInternalCoords(
+    const Coordinate& a,
+    const Coordinate& b,
+    const Coordinate& c,
+    double angle_Degrees,
+    double dihedral_Degrees,
+    double distanceAngstrom)
 {
     double theta_Radians = constants::toRadians(angle_Degrees);
-    double phi_Radians   = constants::toRadians(dihedral_Degrees);
+    double phi_Radians = constants::toRadians(dihedral_Degrees);
 
     Coordinate lmn_y = normal(crossProduct(a - b, b - c));
     Coordinate lmn_z = normal(b - c);

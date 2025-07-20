@@ -8,10 +8,10 @@
 #include "includes/CodeUtils/structuredFiles.hpp"
 #include "includes/version.h"
 
-#include <string>
-#include <vector>
 #include <functional>
 #include <iostream>
+#include <string>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     }
 
     std::string inputFileName = "";
-    OUTPUT_FORMAT format      = LIST;
+    OUTPUT_FORMAT format = LIST;
     for (const auto& arg : arguments.args)
     {
         switch (arg.id)
@@ -86,8 +86,9 @@ int main(int argc, char* argv[])
                     size_t index = codeUtils::indexOf(knownFormats, arg.value);
                     if (index >= knownFormats.size())
                     {
-                        throw std::runtime_error("Unknown format: '" + arg.value + "', expected one of " +
-                                                 codeUtils::join(", ", knownFormats));
+                        throw std::runtime_error(
+                            "Unknown format: '" + arg.value + "', expected one of " +
+                            codeUtils::join(", ", knownFormats));
                     }
                     format = OUTPUT_FORMAT(index);
                     break;
@@ -105,8 +106,8 @@ int main(int argc, char* argv[])
 
     std::function<std::vector<std::string>(const GlycosylationSiteInfo&)> toRow = [](const GlycosylationSiteInfo& info)
     {
-        return std::vector<std::string> {info.chain, info.residueNumber, info.insertionCode, info.sequenceContext,
-                                         codeUtils::join(" ", info.tags)};
+        return std::vector<std::string> {
+            info.chain, info.residueNumber, info.insertionCode, info.sequenceContext, codeUtils::join(" ", info.tags)};
     };
     std::vector<std::vector<std::string>> rows = codeUtils::vectorMap(toRow, table);
     codeUtils::TextTable textTable {header, rows};

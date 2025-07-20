@@ -1,18 +1,18 @@
-#include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
+#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
+#include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
+#include "includes/CentralDataStructure/Writers/offWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/logging.hpp"
 
-#include <vector>
-#include <string>
 #include <iostream>
 #include <ostream>
+#include <string>
+#include <vector>
 
 // For loading select residues from glycam06.prep files
 int main(int argc, char* argv[])
@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
         std::cout << "Exmpl: " << argv[0] << " ../dat/prep/GLYCAM_06j-1_GAGS_KDN_ABE.prep tests/inputs/027.0LU.prep\n";
         std::exit(1);
     }
-    std::string glycamPrepInputFile                 = argv[1];
+    std::string glycamPrepInputFile = argv[1];
     std::vector<std::string> residuesToLoadFromPrep = {
         {"0AA"},  {"0AB"}, {"0AD"}, {"0AU"}, {"0BA"}, {"0BB"}, {"0BC"}, {"0BD"}, {"0BU"}, {"0CA"}, {"0CB"},  {"0CD"},
         {"0CU"},  {"0DA"}, {"0DB"}, {"0DD"}, {"0DU"}, {"0EA"}, {"0EB"}, {"0FA"}, {"0FB"}, {"0GA"}, {"0GB"},  {"0GL"},
@@ -64,25 +64,26 @@ int main(int argc, char* argv[])
 
     // special cases: I don't want the combos of these because they aren't glycans, or I don't have the 0 version of
     // it.
-    std::vector<std::string> theSpecialCases = {{"ROH"},
-                                                {"TBT"},
-                                                {"OME"},
-                                                {"ACX"},
-                                                {"MEX"},
-                                                {"SO3"},
-                                                {"NLN"},
-                                                {"OLS"},
-                                                {"OLT"},
-                                                {"ZOLT"},
-                                                {"ZOLS"},
-                                                // These are residues I don't have the unsubstituted "0" version of:
-                                                {"YGa"},
-                                                {"YuAP"},
-                                                {"0uA1"},
-                                                {"4uA1"},
-                                                {"4uA2"},
-                                                {"4uA3"}};
-    cds::Molecule prepMolecule               = cds::Molecule();
+    std::vector<std::string> theSpecialCases = {
+        {"ROH"},
+        {"TBT"},
+        {"OME"},
+        {"ACX"},
+        {"MEX"},
+        {"SO3"},
+        {"NLN"},
+        {"OLS"},
+        {"OLT"},
+        {"ZOLT"},
+        {"ZOLS"},
+        // These are residues I don't have the unsubstituted "0" version of:
+        {"YGa"},
+        {"YuAP"},
+        {"0uA1"},
+        {"4uA1"},
+        {"4uA2"},
+        {"4uA3"}};
+    cds::Molecule prepMolecule = cds::Molecule();
     prep::readPrepFile(&prepMolecule, glycamPrepInputFile, theSpecialCases);
     for (auto& specialResidue : prepMolecule.getResidues())
     {
@@ -91,11 +92,9 @@ int main(int argc, char* argv[])
 
     cds::serializeResiduesIndividually(allGeneratedResidues);
     cds::GraphIndexData indices = cds::toIndexData(allGeneratedResidues);
-    assembly::Graph graph       = cds::createVisibleAssemblyGraph(indices);
-    codeUtils::writeToFile("GLYCAM_06k.lib",
-                           [&](std::ostream& stream)
-                           {
-                               cds::WriteResiduesIndividuallyToOffFile(stream, graph,
-                                                                       cds::toOffFileData(allGeneratedResidues));
-                           });
+    assembly::Graph graph = cds::createVisibleAssemblyGraph(indices);
+    codeUtils::writeToFile(
+        "GLYCAM_06k.lib",
+        [&](std::ostream& stream)
+        { cds::WriteResiduesIndividuallyToOffFile(stream, graph, cds::toOffFileData(allGeneratedResidues)); });
 }

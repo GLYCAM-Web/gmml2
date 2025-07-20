@@ -1,21 +1,22 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreProcess.hpp"
+
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/Editors/amberMdPrep.hpp" //all preprocessing should move to here.
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbChain.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/Editors/amberMdPrep.hpp" //all preprocessing should move to here.
+#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyIndices.hpp"
-#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -38,19 +39,21 @@ namespace
         return name;
     }
 
-    void addResidueAtoms(pdb::PdbData& data, size_t residueId,
-                         const std::vector<std::pair<std::string, cds::Coordinate>>& atoms)
+    void addResidueAtoms(
+        pdb::PdbData& data, size_t residueId, const std::vector<std::pair<std::string, cds::Coordinate>>& atoms)
     {
         for (auto& atom : atoms)
         {
-            const std::string& name      = atom.first;
+            const std::string& name = atom.first;
             const cds::Coordinate& coord = atom.second;
             pdb::addAtom(data, residueId, name, coord);
         }
     }
 
-    void addResidueBonds(pdb::PdbData& data, size_t residueId,
-                         const std::vector<std::array<std::variant<size_t, std::string>, 2>>& bonds)
+    void addResidueBonds(
+        pdb::PdbData& data,
+        size_t residueId,
+        const std::vector<std::array<std::variant<size_t, std::string>, 2>>& bonds)
     {
         auto atomIndex = [&](const std::variant<size_t, std::string>& key)
         {
@@ -91,28 +94,27 @@ void pdb::changeResidueName(PdbData& data, size_t assemblyId, const std::string&
 //////////////////////////////////////////////////////////
 void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo)
 {
-    std::function<bool(const size_t&)> isCYS = [&](size_t n)
-    {
+    std::function<bool(const size_t&)> isCYS = [&](size_t n) {
         return codeUtils::contains({"CYS", "CYX"}, data.residues.names[n]);
     };
     gmml::log(__LINE__, __FILE__, gmml::INF, "Start CYS preprocessing for this Model\n");
     std::vector<size_t> assemblyResidues = assembly::assemblyResidues(data.indices, assemblyId);
-    std::vector<size_t> cysResidues      = codeUtils::vectorFilter(isCYS, assemblyResidues);
+    std::vector<size_t> cysResidues = codeUtils::vectorFilter(isCYS, assemblyResidues);
     if (cysResidues.empty())
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "No CYS or CYX residues detected in this structure\n");
     }
     for (size_t n = 0; n < cysResidues.size(); n++)
     { // I want to go through the list and compare from current item to end. Thus it2 = std::next it1
-        size_t cysRes1Id   = cysResidues[n];
-        size_t sgAtom1Id   = findResidueAtom(data, cysRes1Id, "SG");
+        size_t cysRes1Id = cysResidues[n];
+        size_t sgAtom1Id = findResidueAtom(data, cysRes1Id, "SG");
         cds::Atom* sgAtom1 = data.objects.atoms[sgAtom1Id];
         for (size_t k = n + 1; k < cysResidues.size(); k++)
         {
-            size_t cysRes2Id   = cysResidues[k];
-            size_t sgAtom2Id   = findResidueAtom(data, cysRes2Id, "SG");
+            size_t cysRes2Id = cysResidues[k];
+            size_t sgAtom2Id = findResidueAtom(data, cysRes2Id, "SG");
             cds::Atom* sgAtom2 = data.objects.atoms[sgAtom2Id];
-            size_t atomCount   = data.indices.atomCount;
+            size_t atomCount = data.indices.atomCount;
             if ((sgAtom1Id < atomCount) && (sgAtom2Id < atomCount))
             {
                 double distance = cds::distance(sgAtom1->coordinate(), sgAtom2->coordinate());
@@ -137,8 +139,8 @@ void pdb::preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorIn
     return;
 }
 
-void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo,
-                                const PreprocessorOptions& inputOptions)
+void pdb::preProcessHisResidues(
+    PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo, const PreprocessorOptions& inputOptions)
 {
     // HIS protonation, user specified:
     gmml::log(__LINE__, __FILE__, gmml::INF, "User His protonation");
@@ -157,9 +159,9 @@ void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorIn
         }
         else if (name == "HIS")
         {
-            size_t atomCount    = data.indices.atomCount;
-            size_t atomHE2      = findResidueAtom(data, residueId, "HE2");
-            size_t atomHD1      = findResidueAtom(data, residueId, "HD1");
+            size_t atomCount = data.indices.atomCount;
+            size_t atomHE2 = findResidueAtom(data, residueId, "HE2");
+            size_t atomHD1 = findResidueAtom(data, residueId, "HD1");
             auto newResidueName = [&]()
             {
                 if ((atomHE2 == atomCount) && (atomHD1 < atomCount))
@@ -175,7 +177,7 @@ void pdb::preProcessHisResidues(PdbData& data, size_t assemblyId, PreprocessorIn
                     return "HIE";
                 }
             };
-            std::string newName            = newResidueName();
+            std::string newName = newResidueName();
             data.residues.names[residueId] = newName;
             data.objects.residues[residueId]->setName(newName);
             gmml::log(__LINE__, __FILE__, gmml::INF, "About to emplaceBack Id");
@@ -201,41 +203,46 @@ void pdb::modifyTerminal(PdbData& data, size_t residueId, const std::string& typ
         size_t atomOXT = findResidueAtom(data, residueId, "OXT");
         if (atomOXT < atomCount)
         {
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "OXT atom already exists: " + data.atoms.names[atomOXT] + "_" +
-                          std::to_string(data.atoms.numbers[atomOXT]));
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::INF,
+                "OXT atom already exists: " + data.atoms.names[atomOXT] + "_" +
+                    std::to_string(data.atoms.numbers[atomOXT]));
             return;
         }
         // I don't like this, but at least it's somewhat contained:
         size_t atomCA = findResidueAtom(data, residueId, "CA");
-        size_t atomC  = findResidueAtom(data, residueId, "C");
-        size_t atomO  = findResidueAtom(data, residueId, "O");
+        size_t atomC = findResidueAtom(data, residueId, "C");
+        size_t atomO = findResidueAtom(data, residueId, "O");
         if (atomCA == atomCount || atomC == atomCount || atomO == atomCount)
         {
             gmml::log(
-                __LINE__, __FILE__, gmml::WAR,
+                __LINE__,
+                __FILE__,
+                gmml::WAR,
                 "Cterminal residue missing an atoms named CA, C or O, cannot create an OXT atom for this residue.");
             return;
         }
-        auto coord = [&](size_t n)
-        {
-            return data.atoms.coordinates[n];
-        };
+        auto coord = [&](size_t n) { return data.atoms.coordinates[n]; };
         cds::Coordinate oxtCoord =
             cds::calculateCoordinateFromInternalCoords(coord(atomCA), coord(atomC), coord(atomO), 120.0, 180.0, 1.25);
         size_t oxtAtom = addAtom(data, residueId, "OXT", oxtCoord);
         addBond(data, oxtAtom, atomC);
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Created new atom named OXT after " + data.atoms.names[atomO] + "_" +
-                      std::to_string(data.atoms.numbers[atomO]));
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::INF,
+            "Created new atom named OXT after " + data.atoms.names[atomO] + "_" +
+                std::to_string(data.atoms.numbers[atomO]));
         return;
     }
     gmml::log(__LINE__, __FILE__, gmml::WAR, "Cannot handle this type of terminal option: " + type);
     return;
 }
 
-void pdb::preProcessChainTerminals(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo,
-                                   const PreprocessorOptions& inputOptions)
+void pdb::preProcessChainTerminals(
+    PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo, const PreprocessorOptions& inputOptions)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Chain terminations");
     for (size_t moleculeId : assemblyMolecules(data.indices, assemblyId))
@@ -255,10 +262,12 @@ void pdb::preProcessChainTerminals(PdbData& data, size_t assemblyId, Preprocesso
             gmml::log(__LINE__, __FILE__, gmml::INF, "N term : " + pdbResidueId(data, nTerResidue).print());
             gmml::log(__LINE__, __FILE__, gmml::INF, "C term : " + pdbResidueId(data, cTerResidue).print());
             // Report the thing
-            ppInfo.chainTerminals_.emplace_back(data.residues.chainIds[nTerResidue],
-                                                getNumberAndInsertionCode(data, nTerResidue),
-                                                getNumberAndInsertionCode(data, cTerResidue),
-                                                inputOptions.chainNTermination_, inputOptions.chainCTermination_);
+            ppInfo.chainTerminals_.emplace_back(
+                data.residues.chainIds[nTerResidue],
+                getNumberAndInsertionCode(data, nTerResidue),
+                getNumberAndInsertionCode(data, cTerResidue),
+                inputOptions.chainNTermination_,
+                inputOptions.chainCTermination_);
         }
         gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocessing complete for this chain");
     }
@@ -269,16 +278,13 @@ void pdb::insertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
 {
     // This approach is bad. When parameter manager is good we can use that to remove the get_carestian stuff
     using cds::Coordinate;
-    auto coord = [&](size_t n)
-    {
-        return data.atoms.coordinates[n];
-    };
+    auto coord = [&](size_t n) { return data.atoms.coordinates[n]; };
     if (type == "NHCH3") // NME
     {
         //        NME resid numbers. Otherwise good.
-        Coordinate cCoordProtein  = coord(findResidueAtom(data, refResidueId, "C"));
+        Coordinate cCoordProtein = coord(findResidueAtom(data, refResidueId, "C"));
         Coordinate caCoordProtein = coord(findResidueAtom(data, refResidueId, "CA"));
-        Coordinate oCoordProtein  = coord(findResidueAtom(data, refResidueId, "O"));
+        Coordinate oCoordProtein = coord(findResidueAtom(data, refResidueId, "O"));
         Coordinate nCoordNME =
             cds::calculateCoordinateFromInternalCoords(oCoordProtein, caCoordProtein, cCoordProtein, 120.0, 180.0, 1.4);
         Coordinate hCoordNME =
@@ -293,35 +299,39 @@ void pdb::insertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
             cds::calculateCoordinateFromInternalCoords(hCoordNME, nCoordNME, ch3CoordNME, 109.0, -60.0, 1.09);
         size_t residueId =
             readResidue(data, moleculeId, "NME", cds::ResidueType::ProteinCappingGroup, true, refResidueId);
-        addResidueAtoms(data, residueId,
-                        {
-                            {   "N",    nCoordNME},
-                            {   "H",    hCoordNME},
-                            { "CH3",  ch3CoordNME},
-                            {"HH31", hh31CoordNME},
-                            {"HH32", hh32CoordNME},
-                            {"HH33", hh33CoordNME}
+        addResidueAtoms(
+            data,
+            residueId,
+            {
+                {   "N",    nCoordNME},
+                {   "H",    hCoordNME},
+                { "CH3",  ch3CoordNME},
+                {"HH31", hh31CoordNME},
+                {"HH32", hh32CoordNME},
+                {"HH33", hh33CoordNME}
         });
-        addResidueBonds(data, residueId,
-                        {
-                            {"N", findResidueAtom(data, refResidueId, "C")},
-                            {"N", "H"},
-                            {"N", "CH3"},
-                            {"CH3", "HH31"},
-                            {"CH3", "HH32"},
-                            {"CH3", "HH33"}
+        addResidueBonds(
+            data,
+            residueId,
+            {
+                {"N", findResidueAtom(data, refResidueId, "C")},
+                {"N", "H"},
+                {"N", "CH3"},
+                {"CH3", "HH31"},
+                {"CH3", "HH32"},
+                {"CH3", "HH33"}
         });
     }
     else if (type == "COCH3") // ACE
     {
         //        NME resid numbers. Otherwise good.
         // These are the atoms in residue that I use to build the ACE out from.
-        Coordinate cCoordProtein  = coord(findResidueAtom(data, refResidueId, "C"));
+        Coordinate cCoordProtein = coord(findResidueAtom(data, refResidueId, "C"));
         Coordinate caCoordProtein = coord(findResidueAtom(data, refResidueId, "CA"));
-        Coordinate nCoordProtein  = coord(findResidueAtom(data, refResidueId, "N"));
+        Coordinate nCoordProtein = coord(findResidueAtom(data, refResidueId, "N"));
         // This is bad, should use templates loaded from lib/prep file instead.
-        Coordinate cCoordACE = cds::calculateCoordinateFromInternalCoords(cCoordProtein, caCoordProtein, nCoordProtein,
-                                                                          120.0, -130.0, 1.4);
+        Coordinate cCoordACE = cds::calculateCoordinateFromInternalCoords(
+            cCoordProtein, caCoordProtein, nCoordProtein, 120.0, -130.0, 1.4);
         Coordinate oCoordACE =
             cds::calculateCoordinateFromInternalCoords(caCoordProtein, nCoordProtein, cCoordACE, 120.0, 0.0, 1.23);
         Coordinate ch3CoordACE =
@@ -337,33 +347,37 @@ void pdb::insertCap(PdbData& data, size_t moleculeId, size_t refResidueId, const
         // when creating the next one and so on. With ACE we want to insert before the residue, so I'm finding the
         // residue before here:
         const std::vector<size_t>& order = data.molecules.residueOrder[moleculeId];
-        size_t position                  = codeUtils::indexOf(order, refResidueId) - 1;
+        size_t position = codeUtils::indexOf(order, refResidueId) - 1;
         size_t residueId =
             readResidue(data, moleculeId, "ACE", cds::ResidueType::ProteinCappingGroup, false, order[position]);
-        addResidueAtoms(data, residueId,
-                        {
-                            {   "C",    cCoordACE},
-                            {   "O",    oCoordACE},
-                            { "CH3",  ch3CoordACE},
-                            {"HH31", hh31CoordACE},
-                            {"HH32", hh32CoordACE},
-                            {"HH33", hh33CoordACE}
+        addResidueAtoms(
+            data,
+            residueId,
+            {
+                {   "C",    cCoordACE},
+                {   "O",    oCoordACE},
+                { "CH3",  ch3CoordACE},
+                {"HH31", hh31CoordACE},
+                {"HH32", hh32CoordACE},
+                {"HH33", hh33CoordACE}
         });
-        addResidueBonds(data, residueId,
-                        {
-                            {"C", findResidueAtom(data, refResidueId, "N")},
-                            {"C", "O"},
-                            {"C", "CH3"},
-                            {"CH3", "HH31"},
-                            {"CH3", "HH32"},
-                            {"CH3", "HH33"}
+        addResidueBonds(
+            data,
+            residueId,
+            {
+                {"C", findResidueAtom(data, refResidueId, "N")},
+                {"C", "O"},
+                {"C", "CH3"},
+                {"CH3", "HH31"},
+                {"CH3", "HH32"},
+                {"CH3", "HH33"}
         });
         gmml::log(__LINE__, __FILE__, gmml::INF, "Created ACE residue: " + pdbResidueId(data, residueId).print());
     }
 }
 
-void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo,
-                                      const PreprocessorOptions& inputOptions)
+void pdb::preProcessGapsUsingDistance(
+    PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo, const PreprocessorOptions& inputOptions)
 {
     // Missing Residues (gaps); If two sequential protein residues in the same molecule aren't close enough to bond:
     // this is a gap regardless of residue number/insertion code. User will want caps(ACE/NME) or zwitterionic, we can't
@@ -371,21 +385,24 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
     gmml::log(__LINE__, __FILE__, gmml::INF, "Gaps");
     for (size_t moleculeId : assemblyMolecules(data.indices, assemblyId))
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Gap detection started for chain " + data.molecules.chainIds[moleculeId]);
-        std::vector<size_t> proteinResidues = codeUtils::boolsToIndices(
-            codeUtils::vectorAnd(codeUtils::vectorEquals(data.residues.types, cds::ResidueType::Protein),
-                                 isMoleculeResidue(data.indices, moleculeId)));
+        gmml::log(
+            __LINE__, __FILE__, gmml::INF, "Gap detection started for chain " + data.molecules.chainIds[moleculeId]);
+        std::vector<size_t> proteinResidues = codeUtils::boolsToIndices(codeUtils::vectorAnd(
+            codeUtils::vectorEquals(data.residues.types, cds::ResidueType::Protein),
+            isMoleculeResidue(data.indices, moleculeId)));
         if (proteinResidues.empty())
         {
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "No protein residues found in chain with id: " + data.molecules.chainIds[moleculeId]);
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::INF,
+                "No protein residues found in chain with id: " + data.molecules.chainIds[moleculeId]);
             break;
         }
         for (size_t n = 0; n < proteinResidues.size() - 1; n++)
         {
-            size_t res1      = proteinResidues[n];
-            size_t res2      = proteinResidues[n + 1];
+            size_t res1 = proteinResidues[n];
+            size_t res2 = proteinResidues[n + 1];
             size_t atomCount = data.indices.atomCount;
             size_t res1AtomC = findResidueAtom(data, res1, "C");
             size_t res2AtomN = findResidueAtom(data, res2, "N");
@@ -395,39 +412,52 @@ void pdb::preProcessGapsUsingDistance(PdbData& data, size_t assemblyId, Preproce
                 // Look for non-natural protein residues within bonding distance, they fall under ResidueType
                 // Undefined, this indicates it's not gap.
                 if (!amberMdPrep::checkForNonNaturalProteinResidues(
-                        data, codeUtils::indicesOfElement(data.residues.types, cds::ResidueType::Undefined), res1AtomC,
+                        data,
+                        codeUtils::indicesOfElement(data.residues.types, cds::ResidueType::Undefined),
+                        res1AtomC,
                         ppInfo))
                 {
                     // Log it
-                    gmml::log(__LINE__, __FILE__, gmml::INF,
-                              inputOptions.gapCTermination_ + " cap for : " + pdbResidueId(data, res1).print());
-                    gmml::log(__LINE__, __FILE__, gmml::INF,
-                              inputOptions.gapNTermination_ + " cap for : " + pdbResidueId(data, res2).print());
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::INF,
+                        inputOptions.gapCTermination_ + " cap for : " + pdbResidueId(data, res1).print());
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::INF,
+                        inputOptions.gapNTermination_ + " cap for : " + pdbResidueId(data, res2).print());
                     // Do it
                     insertCap(data, moleculeId, res1, inputOptions.gapCTermination_);
                     insertCap(data, moleculeId, res2, inputOptions.gapNTermination_);
                     // Record it
-                    ppInfo.missingResidues_.emplace_back(data.residues.chainIds[res1],
-                                                         getNumberAndInsertionCode(data, res1),
-                                                         getNumberAndInsertionCode(data, res2),
-                                                         inputOptions.gapCTermination_, inputOptions.gapNTermination_);
+                    ppInfo.missingResidues_.emplace_back(
+                        data.residues.chainIds[res1],
+                        getNumberAndInsertionCode(data, res1),
+                        getNumberAndInsertionCode(data, res2),
+                        inputOptions.gapCTermination_,
+                        inputOptions.gapNTermination_);
                 }
             }
         }
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Gap detection completed for chain " + data.molecules.chainIds[moleculeId]);
+        gmml::log(
+            __LINE__, __FILE__, gmml::INF, "Gap detection completed for chain " + data.molecules.chainIds[moleculeId]);
     }
     return;
 }
 
-void pdb::preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo,
-                                        const cdsParameters::ParameterManager& parmManager)
+void pdb::preProcessMissingUnrecognized(
+    PdbData& data,
+    size_t assemblyId,
+    PreprocessorInformation& ppInfo,
+    const cdsParameters::ParameterManager& parmManager)
 {
     for (size_t residueId : assemblyResidues(data.indices, assemblyId))
     {
-        std::string parmName   = residueParmName(data, residueId);
+        std::string parmName = residueParmName(data, residueId);
         ResidueId residueIdObj = pdbResidueId(data, residueId);
-        size_t index           = codeUtils::indexOf(parmManager.lib.residueNames, parmName);
+        size_t index = codeUtils::indexOf(parmManager.lib.residueNames, parmName);
         // Unrecognized residue->
         if (index == parmManager.lib.residueNames.size())
         {
@@ -437,17 +467,20 @@ void pdb::preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, Prepro
         else // Recognized residue->
         {
             const lib::ResidueData& parmResidue = parmManager.lib.residues[index];
-            std::vector<size_t> parmHeavyAtoms  = cdsSelections::FindHeavyAtoms(parmResidue.atoms.elements);
+            std::vector<size_t> parmHeavyAtoms = cdsSelections::FindHeavyAtoms(parmResidue.atoms.elements);
             std::vector<std::string> parmHeavyAtomNames =
                 codeUtils::indicesToValues(parmResidue.atoms.names, parmHeavyAtoms);
-            std::vector<size_t> atomIds           = residueAtoms(data.indices, residueId);
+            std::vector<size_t> atomIds = residueAtoms(data.indices, residueId);
             std::vector<std::string> pdbAtomNames = codeUtils::indicesToValues(data.atoms.names, atomIds);
             for (auto& parmHeavyAtomName : parmHeavyAtomNames) // What heavy atoms are missing from the pdb residue?
             {
                 if (!codeUtils::contains(pdbAtomNames, parmHeavyAtomName))
                 { // Residue missing a heavy atom.
-                    gmml::log(__LINE__, __FILE__, gmml::INF,
-                              "Atom named " + parmHeavyAtomName + " missing from " + residueIdObj.print());
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::INF,
+                        "Atom named " + parmHeavyAtomName + " missing from " + residueIdObj.print());
                     ppInfo.missingHeavyAtoms_.emplace_back(parmHeavyAtomName, residueIdObj);
                 }
             }
@@ -456,8 +489,11 @@ void pdb::preProcessMissingUnrecognized(PdbData& data, size_t assemblyId, Prepro
                 if (!codeUtils::contains(parmResidue.atoms.names, pdbAtomName))
                 {
                     // Residue contains unrecognized atom.
-                    gmml::log(__LINE__, __FILE__, gmml::INF,
-                              "Unrecognized atom named " + pdbAtomName + " in " + residueIdObj.print());
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::INF,
+                        "Unrecognized atom named " + pdbAtomName + " in " + residueIdObj.print());
                     ppInfo.unrecognizedAtoms_.emplace_back(pdbAtomName, residueIdObj);
                 }
             }

@@ -1,21 +1,22 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/authorRecord.hpp"
+
 #include "includes/CodeUtils/strings.hpp"
-#include <iostream>
-#include <iomanip> //setw
+
 #include <cmath>   //ceil
+#include <iomanip> //setw
+#include <iostream>
 
 using pdb::AuthorRecord;
 
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-AuthorRecord::AuthorRecord() : record_name_("AUTHOR"), author_("")
-{}
+AuthorRecord::AuthorRecord() : record_name_("AUTHOR"), author_("") {}
 
 AuthorRecord::AuthorRecord(std::string record_name, std::string author)
 {
     record_name_ = record_name;
-    author_      = author;
+    author_ = author;
 }
 
 AuthorRecord::AuthorRecord(std::stringstream& stream_block)
@@ -44,10 +45,7 @@ AuthorRecord::AuthorRecord(std::stringstream& stream_block)
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
-void AuthorRecord::SetRecordName(const std::string record_name)
-{
-    record_name_ = record_name;
-}
+void AuthorRecord::SetRecordName(const std::string record_name) { record_name_ = record_name; }
 
 void AuthorRecord::SetAuthor(const std::string author)
 {
@@ -86,8 +84,9 @@ void AuthorRecord::Write(std::ostream& stream) const
             {
                 stream << std::left << std::setw(6) << this->GetRecordName() << std::left << std::setw(2) << " "
                        << std::right << std::setw(2) << i << std::left << std::setw(70)
-                       << this->GetAuthor().substr(MAX_AUTHOR_LENGTH_IN_LINE * (i - 1),
-                                                   this->GetAuthor().length() - MAX_AUTHOR_LENGTH_IN_LINE * (i - 1))
+                       << this->GetAuthor().substr(
+                              MAX_AUTHOR_LENGTH_IN_LINE * (i - 1),
+                              this->GetAuthor().length() - MAX_AUTHOR_LENGTH_IN_LINE * (i - 1))
                        << std::endl;
             }
         }

@@ -1,43 +1,44 @@
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
+
+#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblySelection.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceUtil.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/parsedResidue.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
-#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
-#include "includes/Assembly/assemblySelection.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CodeUtils/casting.hpp"
+#include "includes/CodeUtils/constants.hpp"
+#include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 #include "includes/Graph/graphFunctions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 #include "includes/MolecularMetadata/GLYCAM/glycam06ResidueNameGenerator.hpp"
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
-#include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/containerTypes.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/strings.hpp"
 
-#include <sstream>
-#include <ostream>
-#include <cctype>    // isDigit
 #include <algorithm> //  std::erase, std::remove
+#include <cctype>    // isDigit
+#include <ostream>
+#include <sstream>
 
 using cdsCondensedSequence::Carbohydrate;
 
@@ -71,10 +72,13 @@ namespace
     {
         if (residue->GetType() == cds::ResidueType::Deoxy)
         {
-            gmml::log(__LINE__, __FILE__, gmml::WAR,
-                      "Bad idea: We asked for Glycam Residue Name of a deoxy type residue (e.g. the 6D of Glc[6D]) "
-                      "with name: " +
-                          residue->GetResidueName());
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::WAR,
+                "Bad idea: We asked for Glycam Residue Name of a deoxy type residue (e.g. the 6D of Glc[6D]) "
+                "with name: " +
+                    residue->GetResidueName());
             return "";
         }
         std::string linkages = "";
@@ -83,8 +87,12 @@ namespace
             linkages = childLinkagesForGlycamResidueNaming(residue);
         }
         std::string code = GlycamMetadata::Glycam06ResidueNameGenerator(
-            linkages, residue->GetPreIsomerModifier(), residue->GetIsomer(), residue->GetResidueName(),
-            residue->GetRingType(), residue->GetResidueModifier() + residue->GetRingShape(),
+            linkages,
+            residue->GetPreIsomerModifier(),
+            residue->GetIsomer(),
+            residue->GetResidueName(),
+            residue->GetRingType(),
+            residue->GetResidueModifier() + residue->GetRingShape(),
             residue->GetConfiguration());
         return code;
     }
@@ -99,16 +107,16 @@ namespace
             gmml::log(__LINE__, __FILE__, gmml::ERR, ss.str());
             throw std::runtime_error(ss.str());
         }
-        return cds::coordinateOppositeToNeighborAverage(centralAtom->coordinate(),
-                                                        cds::atomCoordinates(centralAtom->getNeighbors()), distance);
+        return cds::coordinateOppositeToNeighborAverage(
+            centralAtom->coordinate(), cds::atomCoordinates(centralAtom->getNeighbors()), distance);
     }
 
     // parentAtom (e.g. O of OME), childAtom (e.g. C1 of Gal1-, S1 of SO3)
     void moveConnectedAtomsAccordingToBondLength(cds::Atom* parentAtom, cds::Atom* childAtom)
     {
-        double distance      = MolecularMetadata::specificBondLength(parentAtom->getType(), childAtom->getType());
+        double distance = MolecularMetadata::specificBondLength(parentAtom->getType(), childAtom->getType());
         //  Create an atom c that is will superimpose onto the a atom, bringing b atom with it.
-        Coordinate c         = guessCoordinateOfMissingNeighbor(childAtom, distance);
+        Coordinate c = guessCoordinateOfMissingNeighbor(childAtom, distance);
         Coordinate cToParent = parentAtom->coordinate() - c;
         // Figure out which atoms will move
         std::vector<cds::Atom*> atomsToMove;
@@ -124,11 +132,11 @@ namespace
     void derivativeChargeAdjustment(ParsedResidue* parsedResidue)
     {
         std::string adjustAtomName = GlycamMetadata::GetAdjustmentAtom(parsedResidue->getName());
-        adjustAtomName             += parsedResidue->GetLinkageName().substr(0, 1);
+        adjustAtomName += parsedResidue->GetLinkageName().substr(0, 1);
 
         cds::Atom* atomToAdjust = parsedResidue->GetParent()->FindAtom(adjustAtomName);
-        atomToAdjust->setCharge(atomToAdjust->getCharge() +
-                                GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
+        atomToAdjust->setCharge(
+            atomToAdjust->getCharge() + GlycamMetadata::GetAdjustmentCharge(parsedResidue->getName()));
     }
 
     cds::Atom* findParentAtom(cds::Residue* parentResidue, cds::Residue* childResidue, const std::string& linkageLabel)
@@ -159,8 +167,8 @@ namespace
                 gmml::log(__LINE__, __FILE__, gmml::ERR, message);
                 throw std::runtime_error(message);
             }
-            return cdsSelections::getNonCarbonHeavyAtomNumbered(parentResidue->getAtoms(),
-                                                                linkageLabel.substr(linkPosition));
+            return cdsSelections::getNonCarbonHeavyAtomNumbered(
+                parentResidue->getAtoms(), linkageLabel.substr(linkPosition));
         }
         else
         {
@@ -203,8 +211,8 @@ namespace
     void makeDeoxy(cds::Residue* residue, const std::string oxygenNumber)
     { // if oxygenNumber is 6, then C6-O6-H6O becomes C6-Hd
         Atom* hydrogenAtom = residue->FindAtom("H" + oxygenNumber + "O");
-        Atom* oxygenAtom   = residue->FindAtom("O" + oxygenNumber);
-        Atom* carbonAtom   = residue->FindAtom("C" + oxygenNumber);
+        Atom* oxygenAtom = residue->FindAtom("O" + oxygenNumber);
+        Atom* carbonAtom = residue->FindAtom("C" + oxygenNumber);
         // Add O and H charge to the C atom.
         carbonAtom->setCharge(carbonAtom->getCharge() + oxygenAtom->getCharge() + hydrogenAtom->getCharge());
         // Delete the H of O-H
@@ -223,7 +231,7 @@ namespace
         // This is using the new Node<Residue> functionality and the old AtomNode
         // Now go figure out how which Atoms to bond to each other in the residues.
         // Rule: Can't ever have a child aglycone or a parent derivative.
-        Atom* parentAtom         = findParentAtom(parentResidue, childResidue, linkageLabel);
+        Atom* parentAtom = findParentAtom(parentResidue, childResidue, linkageLabel);
         if (parentAtom == nullptr)
         {
             std::string message = "Did not find connection atom in residue: " + residueStringId(parentResidue);
@@ -232,7 +240,7 @@ namespace
         }
         // Now get child atom
         std::string childAtomName = findChildAtomName(childResidue, linkageLabel);
-        Atom* childAtom           = childResidue->FindAtom(childAtomName);
+        Atom* childAtom = childResidue->FindAtom(childAtomName);
         if (childAtom == nullptr)
         {
             std::string message = "Did not find child atom named " + childAtomName +
@@ -248,12 +256,12 @@ namespace
         {
             if ((parentAtomNeighbor->getName().at(0) != 'H') && (parentAtomNeighbor != childAtom))
             {
-                auto matrix =
-                    cds::rotationTo(std::array<Coordinate, 3> {parentAtomNeighbor->coordinate(),
-                                                               parentAtom->coordinate(), childAtom->coordinate()},
-                                    constants::toRadians(constants::DEFAULT_ANGLE));
+                auto matrix = cds::rotationTo(
+                    std::array<Coordinate, 3> {
+                        parentAtomNeighbor->coordinate(), parentAtom->coordinate(), childAtom->coordinate()},
+                    constants::toRadians(constants::DEFAULT_ANGLE));
                 std::vector<cds::Atom*> childResidueAtoms = childResidue->mutableAtoms();
-                std::vector<cds::Coordinate> coordinates  = cds::atomCoordinates(childResidueAtoms);
+                std::vector<cds::Coordinate> coordinates = cds::atomCoordinates(childResidueAtoms);
                 matrix.rotateCoordinates(coordinates);
                 cds::setAtomCoordinates(childResidueAtoms, coordinates);
                 break;
@@ -275,7 +283,7 @@ namespace
 
     void setResidueIndices(std::vector<ParsedResidue*> residues)
     {
-        unsigned long long linkIndex    = 0; // Convention to start form 0 for linkages.
+        unsigned long long linkIndex = 0;    // Convention to start form 0 for linkages.
         unsigned long long residueIndex = 1; // Convention to start from 1 for residues.
         for (auto& residue : residues)
         {
@@ -292,8 +300,10 @@ namespace
         return;
     }
 
-    void createParsedResidues(std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs, std::vector<size_t>& indices,
-                              const cdsCondensedSequence::SequenceData& sequence)
+    void createParsedResidues(
+        std::vector<std::unique_ptr<ParsedResidue>>& residuePtrs,
+        std::vector<size_t>& indices,
+        const cdsCondensedSequence::SequenceData& sequence)
     {
         size_t residueCount = nodeCount(sequence.graph);
         residuePtrs.reserve(residueCount);
@@ -305,13 +315,19 @@ namespace
         {
             if (sequence.graph.nodeAlive[n])
             {
-                size_t edge    = parentEdge(sequence, n);
+                size_t edge = parentEdge(sequence, n);
                 bool hasParent = edge < edgeCount(sequence.graph);
                 residuePtrs.emplace_back(std::make_unique<ParsedResidue>(cdsCondensedSequence::ParsedResidueComponents {
-                    sequence.residues.fullString[n], sequence.residues.type[n], sequence.residues.name[n],
-                    (hasParent ? edgeLinkage(sequence, edge) : ""), "", sequence.residues.ringType[n],
-                    sequence.residues.configuration[n], sequence.residues.isomer[n],
-                    sequence.residues.preIsomerModifier[n], sequence.residues.ringShape[n],
+                    sequence.residues.fullString[n],
+                    sequence.residues.type[n],
+                    sequence.residues.name[n],
+                    (hasParent ? edgeLinkage(sequence, edge) : ""),
+                    "",
+                    sequence.residues.ringType[n],
+                    sequence.residues.configuration[n],
+                    sequence.residues.isomer[n],
+                    sequence.residues.preIsomerModifier[n],
+                    sequence.residues.ringShape[n],
                     sequence.residues.modifier[n]}));
                 indices.push_back(n);
                 newIndices.push_back(index);
@@ -332,27 +348,30 @@ namespace
             }
             if (graph::edgeAlive(sequence.graph, n))
             {
-                size_t childId  = newIndices[edge[1]];
+                size_t childId = newIndices[edge[1]];
                 size_t parentId = newIndices[edge[0]];
                 residuePtrs[parentId].get()->addChild(sequence.edges.names[n], residuePtrs[childId].get());
             }
         }
     }
 
-    void initialWiggleLinkage(const codeUtils::SparseVector<double>& elementRadii,
-                              const GlycamMetadata::DihedralAngleDataTable& metadataTable, cds::Molecule* molecule,
-                              cds::Residue* residue, cds::ResidueLinkage& linkage,
-                              const cds::AngleSearchSettings& searchSettings)
+    void initialWiggleLinkage(
+        const codeUtils::SparseVector<double>& elementRadii,
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+        cds::Molecule* molecule,
+        cds::Residue* residue,
+        cds::ResidueLinkage& linkage,
+        const cds::AngleSearchSettings& searchSettings)
     {
         // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated after
         // more residues are added.
         auto shapePreference = cds::firstRotamerOnly(
             linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata));
         cds::setShapeToPreference(linkage, shapePreference);
-        auto searchPreference               = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
+        auto searchPreference = cds::angleSearchPreference(searchSettings.deviation, shapePreference);
         const cds::GraphIndexData graphData = cds::toIndexData({molecule});
-        const assembly::Graph graph         = cds::createCompleteAssemblyGraph(graphData);
-        size_t residueIndex                 = codeUtils::indexOf(graphData.objects.residues, residue);
+        const assembly::Graph graph = cds::createCompleteAssemblyGraph(graphData);
+        size_t residueIndex = codeUtils::indexOf(graphData.objects.residues, residue);
         std::vector<bool> reachable =
             graph::reachableNodes(graph.residues, std::vector<bool>(graph.indices.residueCount, false), residueIndex);
         const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
@@ -364,9 +383,18 @@ namespace
         const MolecularMetadata::PotentialTable potentials =
             MolecularMetadata::potentialTable(elementRadii, foundElements);
         assembly::Bounds newBounds = cds::simpleWiggleCurrentRotamers(
-            GlycamMetadata::dihedralAngleDataTable(), potentials, constants::overlapTolerance, searchSettings.angles,
-            linkage.rotatableDihedrals, linkage.dihedralMetadata, searchPreference, graphData.objects, graph, selection,
-            bounds, residueAtomsCloseToEdge);
+            GlycamMetadata::dihedralAngleDataTable(),
+            potentials,
+            constants::overlapTolerance,
+            searchSettings.angles,
+            linkage.rotatableDihedrals,
+            linkage.dihedralMetadata,
+            searchPreference,
+            graphData.objects,
+            graph,
+            selection,
+            bounds,
+            residueAtomsCloseToEdge);
         for (size_t n = 0; n < graph.indices.atomCount; n++)
         {
             graphData.objects.atoms[n]->setCoordinate(newBounds.atoms[n].center);
@@ -374,12 +402,13 @@ namespace
     }
 
     // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
-    void depthFirstSetConnectivityAndGeometry(cds::Molecule* molecule,
-                                              std::vector<cds::ResidueLinkage>& glycosidicLinkages,
-                                              const cds::AngleSearchSettings& searchSettings,
-                                              const codeUtils::SparseVector<double>& elementRadii,
-                                              const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                                              cds::Residue* currentParent)
+    void depthFirstSetConnectivityAndGeometry(
+        cds::Molecule* molecule,
+        std::vector<cds::ResidueLinkage>& glycosidicLinkages,
+        const cds::AngleSearchSettings& searchSettings,
+        const codeUtils::SparseVector<double>& elementRadii,
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+        cds::Residue* currentParent)
     {
         // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
 
@@ -405,8 +434,8 @@ namespace
             cds::ResidueLinkage& linkage =
                 glycosidicLinkages.emplace_back(cds::createResidueLinkage(metadataTable, link));
             initialWiggleLinkage(elementRadii, metadataTable, molecule, child, linkage, searchSettings);
-            depthFirstSetConnectivityAndGeometry(molecule, glycosidicLinkages, searchSettings, elementRadii,
-                                                 metadataTable, child);
+            depthFirstSetConnectivityAndGeometry(
+                molecule, glycosidicLinkages, searchSettings, elementRadii, metadataTable, child);
         }
     }
 } // namespace
@@ -414,8 +443,10 @@ namespace
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManager,
-                           const codeUtils::SparseVector<double>& elementRadii, const SequenceData& sequence)
+Carbohydrate::Carbohydrate(
+    const cdsParameters::ParameterManager& parameterManager,
+    const codeUtils::SparseVector<double>& elementRadii,
+    const SequenceData& sequence)
     : cds::Molecule()
 {
     {
@@ -435,16 +466,16 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
                 }
             }
         }
-        const ResidueData& rD                      = sequence.residues;
+        const ResidueData& rD = sequence.residues;
         std::vector<cds::ResidueType> residueTypes = codeUtils::indicesToValues(rD.type, indices);
         for (size_t n = residueCount - 1; n < residueCount; n--)
         { // Apply any deoxy and set residue attributes
-            size_t k            = indices[n];
-            size_t edge         = parentEdge(sequence, k);
+            size_t k = indices[n];
+            size_t edge = parentEdge(sequence, k);
             std::string linkage = (edge < edgeCount(sequence.graph)) ? edgeLinkage(sequence, edge) : "";
             if (residueTypes[n] == cds::ResidueType::Deoxy)
             {
-                ParsedResidue* deoxyResidue         = residuePtrs[n].get();
+                ParsedResidue* deoxyResidue = residuePtrs[n].get();
                 ParsedResidue* residueToBeDeoxified = deoxyResidue->GetParent();
                 makeDeoxy(residueToBeDeoxified, linkage);
                 residuePtrs.erase(residuePtrs.begin() + n);
@@ -452,9 +483,17 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
             else
             {
                 std::string glycamCode = getGlycamResidueName(residuePtrs[n].get());
-                cds::ResidueAttributes ra {rD.type[k],     rD.name[k],          glycamCode,   linkage,
-                                           rD.ringType[k], rD.configuration[k], rD.isomer[k], rD.preIsomerModifier[k],
-                                           rD.modifier[k], rD.isInternal[k]};
+                cds::ResidueAttributes ra {
+                    rD.type[k],
+                    rD.name[k],
+                    glycamCode,
+                    linkage,
+                    rD.ringType[k],
+                    rD.configuration[k],
+                    rD.isomer[k],
+                    rD.preIsomerModifier[k],
+                    rD.modifier[k],
+                    rD.isInternal[k]};
                 residuePtrs[n]->setAttributes(ra);
             }
         }
@@ -469,11 +508,16 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
     // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
 
     cds::serializeNumbers(this->getAtoms());
-    auto searchSettings                                         = cds::defaultSearchSettings;
+    auto searchSettings = cds::defaultSearchSettings;
     // Set 3D structure
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
-    depthFirstSetConnectivityAndGeometry(this, glycosidicLinkages_, searchSettings, elementRadii, metadataTable,
-                                         getResidues().front()); // recurve start with terminal
+    depthFirstSetConnectivityAndGeometry(
+        this,
+        glycosidicLinkages_,
+        searchSettings,
+        elementRadii,
+        metadataTable,
+        getResidues().front()); // recurve start with terminal
     // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
     unsigned int linkageIndex = 0;
     // Linkages should be Edges to avoid this as they already get renumbered above.
@@ -484,8 +528,11 @@ Carbohydrate::Carbohydrate(const cdsParameters::ParameterManager& parameterManag
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Final carbohydrate overlap resolution starting.");
     this->ResolveOverlaps(elementRadii, metadataTable, searchSettings);
-    gmml::log(__LINE__, __FILE__, gmml::INF,
-              "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
+    gmml::log(
+        __LINE__,
+        __FILE__,
+        gmml::INF,
+        "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
     return;
 }
 
@@ -506,8 +553,10 @@ void Carbohydrate::deleteResidue(cds::Residue* byeBye)
 //////////////////////////////////////////////////////////
 // std::string fileOutputDirectory = "unspecified", std::string fileType = "PDB", std::string outputFileNaming =
 // "structure"
-void Carbohydrate::Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming,
-                                            const std::vector<std::string>& headerLines)
+void Carbohydrate::Generate3DStructureFiles(
+    const std::string& fileOutputDirectory,
+    const std::string& outputFileNaming,
+    const std::vector<std::string>& headerLines)
 { // ToDo exception handling in centralized function for writing pdb/off
     // Build the filename and path, add appropriate suffix later
     try
@@ -522,21 +571,15 @@ void Carbohydrate::Generate3DStructureFiles(const std::string& fileOutputDirecto
             PathAndFileName += fileOutputDirectory + "/" + outputFileNaming;
         }
         cds::GraphIndexData indices = cds::toIndexData({this});
-        codeUtils::writeToFile(PathAndFileName + ".pdb",
-                               [&](std::ostream& stream)
-                               {
-                                   WritePdb(stream, indices, headerLines);
-                               });
-        codeUtils::writeToFile(PathAndFileName + ".off",
-                               [&](std::ostream& stream)
-                               {
-                                   WriteOff(stream, getName(), indices);
-                               });
+        codeUtils::writeToFile(
+            PathAndFileName + ".pdb", [&](std::ostream& stream) { WritePdb(stream, indices, headerLines); });
+        codeUtils::writeToFile(
+            PathAndFileName + ".off", [&](std::ostream& stream) { WriteOff(stream, getName(), indices); });
     }
     catch (const std::string& exceptionMessage)
     {
-        gmml::log(__LINE__, __FILE__, gmml::ERR,
-                  "carbohydrate class caught this exception message: " + exceptionMessage);
+        gmml::log(
+            __LINE__, __FILE__, gmml::ERR, "carbohydrate class caught this exception message: " + exceptionMessage);
         throw exceptionMessage;
     }
     catch (const std::runtime_error& error)
@@ -565,13 +608,13 @@ std::string Carbohydrate::GetNumberOfShapes(bool likelyShapesOnly) const
 unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 {
     const GlycamMetadata::DihedralAngleDataTable& metadataTable = GlycamMetadata::dihedralAngleDataTable();
-    unsigned long long int numberOfShapes                       = 1;
+    unsigned long long int numberOfShapes = 1;
     for (auto& linkage : cds::nonDerivativeResidueLinkages(glycosidicLinkages_))
     {
         auto rotamerType = linkage.rotamerType;
-        auto& metadata   = linkage.dihedralMetadata;
-        numberOfShapes   *= likelyShapesOnly ? cds::numberOfLikelyShapes(metadataTable, rotamerType, metadata)
-                                             : cds::numberOfShapes(metadataTable, rotamerType, metadata);
+        auto& metadata = linkage.dihedralMetadata;
+        numberOfShapes *= likelyShapesOnly ? cds::numberOfLikelyShapes(metadataTable, rotamerType, metadata)
+                                           : cds::numberOfShapes(metadataTable, rotamerType, metadata);
     }
     return numberOfShapes;
 }
@@ -580,12 +623,13 @@ unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
 //                  PRIVATE FUNCTIONS                   //
 //////////////////////////////////////////////////////////
 
-void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elementRadii,
-                                   const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                                   const cds::AngleSearchSettings& searchSettings)
+void Carbohydrate::ResolveOverlaps(
+    const codeUtils::SparseVector<double>& elementRadii,
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+    const cds::AngleSearchSettings& searchSettings)
 {
     const cds::GraphIndexData graphData = cds::toIndexData({this});
-    const assembly::Graph graph         = cds::createCompleteAssemblyGraph(graphData);
+    const assembly::Graph graph = cds::createCompleteAssemblyGraph(graphData);
     const assembly::Selection selection = assembly::selectAll(graph);
     assembly::Bounds bounds =
         toAssemblyBounds(graph, cds::atomCoordinatesWithRadii(elementRadii, graphData.objects.atoms));
@@ -599,12 +643,22 @@ void Carbohydrate::ResolveOverlaps(const codeUtils::SparseVector<double>& elemen
         {
             auto preference = cds::angleSearchPreference(
                 searchSettings.deviation,
-                cds::currentRotamerOnly(linkage, cds::defaultShapePreference(metadataTable, linkage.rotamerType,
-                                                                             linkage.dihedralMetadata)));
-            bounds = cds::simpleWiggleCurrentRotamers(metadataTable, potentials, constants::overlapTolerance,
-                                                      searchSettings.angles, linkage.rotatableDihedrals,
-                                                      linkage.dihedralMetadata, preference, graphData.objects, graph,
-                                                      selection, bounds, residueAtomsCloseToEdge);
+                cds::currentRotamerOnly(
+                    linkage,
+                    cds::defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata)));
+            bounds = cds::simpleWiggleCurrentRotamers(
+                metadataTable,
+                potentials,
+                constants::overlapTolerance,
+                searchSettings.angles,
+                linkage.rotatableDihedrals,
+                linkage.dihedralMetadata,
+                preference,
+                graphData.objects,
+                graph,
+                selection,
+                bounds,
+                residueAtomsCloseToEdge);
         }
     }
     for (size_t n = 0; n < graph.indices.atomCount; n++)

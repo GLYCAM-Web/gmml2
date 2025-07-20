@@ -2,8 +2,8 @@
 
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
 
 Atom* cdsSelections::getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, const std::string& queryNumber)
@@ -12,7 +12,7 @@ Atom* cdsSelections::getNonCarbonHeavyAtomNumbered(std::vector<Atom*> atoms, con
     { // Assumes atom names like C2, O2 or N2. Nothing else should match.
         if (atom->getName().size() > 1)
         {
-            const std::string number  = atom->getName().substr(1);
+            const std::string number = atom->getName().substr(1);
             const std::string element = atom->getName().substr(0, 1); // Only the first character
             if ((number == queryNumber) && (element != "C") && (element != "H"))
             {
@@ -61,7 +61,7 @@ Atom* cdsSelections::guessAnomericAtomByInternalNeighbors(const std::vector<cds:
         throw std::runtime_error("Empty atom vector passed to guessAnomericAtomByInternalNeighbors");
     }
     std::vector<Atom*> cycleAtoms = cdsSelections::findCycleAtoms(atoms.at(0));
-    cds::Atom* cycleOxygen        = nullptr;
+    cds::Atom* cycleOxygen = nullptr;
     for (auto& cycleAtom : cycleAtoms)
     {
         if (cycleAtom->getDerivedClass()->getElement() == "O")
@@ -78,11 +78,10 @@ Atom* cdsSelections::guessAnomericAtomByInternalNeighbors(const std::vector<cds:
     // So deciding this isn't straightforward. For me use case of prep files this is fine. For reading form the PDB I
     // want a meeting first to figure out what we really need. Using a lambda to sort the candidates so that C1 appears
     // before C2 etc.
-    std::sort(anomerCandidates.begin(), anomerCandidates.end(),
-              [](Atom*& a, Atom*& b)
-              {
-                  return (a->getNumberFromName() < b->getNumberFromName());
-              });
+    std::sort(
+        anomerCandidates.begin(),
+        anomerCandidates.end(),
+        [](Atom*& a, Atom*& b) { return (a->getNumberFromName() < b->getNumberFromName()); });
     Atom* bestOne = anomerCandidates.front();
     return bestOne;
 }

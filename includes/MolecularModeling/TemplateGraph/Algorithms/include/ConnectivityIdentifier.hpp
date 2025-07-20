@@ -1,11 +1,11 @@
 #ifndef TEMPLATEGRAPH_ALGORITHMS_INCLUDE_CONNECTIVITYIDENTIFIER_HPP
 #define TEMPLATEGRAPH_ALGORITHMS_INCLUDE_CONNECTIVITYIDENTIFIER_HPP
 
-#include <memory>
-#include <vector>
-
 #include "../../GraphStructure/include/Graph.hpp"
 #include "../../GraphStructure/include/Node.hpp"
+
+#include <memory>
+#include <vector>
 
 // #include "../../LazyPrints/LazyPrinters.hpp"
 
@@ -17,13 +17,17 @@ namespace
     // 		not this one that is hidden away in an anonymous namespace.
 
     template<class T>
-    void bridgeDetectHelperDFS(glygraph::Node<T>* currNode_t, glygraph::Node<T>* nextNode_t,
-                               glygraph::Graph<T>& runningGraph_t, std::vector<int>& preTime_t,
-                               std::vector<int>& lowestTime_t, unsigned int& counter_t)
+    void bridgeDetectHelperDFS(
+        glygraph::Node<T>* currNode_t,
+        glygraph::Node<T>* nextNode_t,
+        glygraph::Graph<T>& runningGraph_t,
+        std::vector<int>& preTime_t,
+        std::vector<int>& lowestTime_t,
+        unsigned int& counter_t)
     {
         unsigned int nextIndex = runningGraph_t.getIndexFromNode(nextNode_t);
 
-        preTime_t[nextIndex]    = counter_t++;
+        preTime_t[nextIndex] = counter_t++;
         lowestTime_t[nextIndex] = preTime_t[nextIndex];
 
         // now we run our dfs recursion on our neighbors.

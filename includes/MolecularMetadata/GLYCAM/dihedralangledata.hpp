@@ -1,10 +1,11 @@
 #ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 #define INCLUDES_MOLECULARMETADATA_GLYCAM_DIHEDRALANGLEDATA_HPP
 
+#include "includes/CentralDataStructure/residueTypes.hpp"
+
 #include <string>
 #include <variant>
 #include <vector>
-#include "includes/CentralDataStructure/residueTypes.hpp"
 
 namespace GlycamMetadata
 {
@@ -58,7 +59,9 @@ namespace GlycamMetadata
     const DihedralAngleDataTable& dihedralAngleDataTable();
 
     std::vector<std::vector<size_t>> getDihedralAngleDataEntriesForLinkage(
-        const std::string& atom1Name, const cds::ResidueAttributes& residue1Attributes, const std::string& atom2Name,
+        const std::string& atom1Name,
+        const cds::ResidueAttributes& residue1Attributes,
+        const std::string& atom2Name,
         const cds::ResidueAttributes& residue2Attributes);
 
     std::vector<size_t> likelyMetadata(const DihedralAngleDataTable& table, const std::vector<size_t>& entries);

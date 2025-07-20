@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBSELECTIONS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBSELECTIONS_HPP
 
-#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 
 namespace pdb
 {

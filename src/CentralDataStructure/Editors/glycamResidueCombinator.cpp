@@ -1,29 +1,30 @@
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
 
 #include <algorithm>
-#include <functional>
 #include <cctype>
-#include <stdexcept>
 #include <fstream>
-#include <sstream>
+#include <functional>
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
 
 namespace
 {
     struct residueMetadata
     {
-        std::string isomer          = "";
-        std::string resname         = "";
-        std::string ringType        = "";
+        std::string isomer = "";
+        std::string resname = "";
+        std::string ringType = "";
         std::string residueModifier = "";
-        std::string configuration   = "";
+        std::string configuration = "";
     };
 
     residueMetadata Glycam06PrepNameToDetails(const std::string& prepName)
@@ -53,22 +54,22 @@ namespace
         // Configuration Code and ring type from last letter: A/B/U/D
         if (lastLetter == "D")
         {
-            output.ringType      = "f";
+            output.ringType = "f";
             output.configuration = "a";
         }
         else if (lastLetter == "U")
         {
-            output.ringType      = "f";
+            output.ringType = "f";
             output.configuration = "b";
         }
         else if (lastLetter == "A")
         {
-            output.ringType      = "p";
+            output.ringType = "p";
             output.configuration = "a";
         }
         else if (lastLetter == "B")
         {
-            output.ringType      = "p";
+            output.ringType = "p";
             output.configuration = "b";
         }
         else // Now need to check last 2 characters and everything is special:
@@ -85,8 +86,8 @@ namespace
         output.resname = GlycamMetadata::GetNameForCode(glycamCode);
         if (output.resname == "") // Dealing with wierdos like 4uA1 or YNP. .
         {
-            glycamCode                  = prepName.substr(prepName.length() - 3); // Try the last 3 characters
-            output.resname              = GlycamMetadata::GetNameForCode(glycamCode);
+            glycamCode = prepName.substr(prepName.length() - 3); // Try the last 3 characters
+            output.resname = GlycamMetadata::GetNameForCode(glycamCode);
             std::string thirdLastLetter = prepName.substr(prepName.length() - 3, prepName.length() - 2);
             (islower(thirdLastLetter.at(0))) ? output.isomer = "L" : output.isomer = "D";
         }
@@ -200,12 +201,14 @@ std::vector<std::vector<std::string>> residueCombinator::getCombinations(const s
     return combinations;
 }
 
-void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombinations,
-                                const std::vector<std::string> numberCombination, const cds::Residue& templateResidue)
+void generateResidueCombination(
+    std::vector<cds::Residue*>& glycamResidueCombinations,
+    const std::vector<std::string> numberCombination,
+    const cds::Residue& templateResidue)
 {
     cds::Residue* newResidue = glycamResidueCombinations.emplace_back(new cds::Residue(templateResidue));
     // cds::Residue* newResidue = glycamResidueCombinations.back();
-    std::string delimiter    = "";
+    std::string delimiter = "";
     std::stringstream numbersAsString;
     for (auto& atomNumber : numberCombination)
     {
@@ -219,9 +222,12 @@ void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombina
     std::string residueName = GlycamMetadata::GetGlycam06ResidueLinkageCode(numbersAsString.str());
     if (residueName.empty())
     { // Now we have the need for a new residue nomenclature to kick in.
-        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "No linkage code found for possible combo: " + numbersAsString.str() + " in residue " +
-                      templateResidue.getName());
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::WAR,
+            "No linkage code found for possible combo: " + numbersAsString.str() + " in residue " +
+                templateResidue.getName());
         glycamResidueCombinations.pop_back(); // This should be rare/never?
     }
     else
@@ -237,18 +243,18 @@ void generateResidueCombination(std::vector<cds::Residue*>& glycamResidueCombina
 // Combinations that include the anomeric position should include an anomeric oxygen (eg 1GA).
 // Combinations that do not include the anomeric position should not (eg 0GA).
 
-void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& glycamResidueCombinations,
-                                                    const cds::Residue* starterResidue)
+void residueCombinator::generateResidueCombinations(
+    std::vector<cds::Residue*>& glycamResidueCombinations, const cds::Residue* starterResidue)
 {
     // First generate both versions of the residue; with and without anomeric oxygen.
     // One of these gets edited, depending on what's passed in (we don't know yet, need to figure it out in the next
     // steps) Yes this should be two functions. ToDo.
     std::cout << "Copying the input residue " << std::endl;
     cds::Residue residueWithoutAnomericOxygen = *starterResidue;
-    cds::Residue residueWithAnomericOxygen    = *starterResidue;
+    cds::Residue residueWithAnomericOxygen = *starterResidue;
     std::cout << "Guessing anomeric oxygen" << std::endl;
     Atom* anomer = cdsSelections::guessAnomericAtomByInternalNeighbors(residueWithoutAnomericOxygen.getAtoms());
-    std::string anomerNumber           = std::to_string(anomer->getNumberFromName());
+    std::string anomerNumber = std::to_string(anomer->getNumberFromName());
     std::vector<Atom*> anomerNeighbors = anomer->getNeighbors();
     std::cout << "Names and types of neighbors:" << std::endl;
     for (auto& neighbor : anomerNeighbors)
@@ -256,16 +262,10 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
         std::cout << neighbor->getName() << "_" << neighbor->getType() << std::endl;
     }
     // Lamda functions for the  std::find;
-    auto isTypeHydroxy = [](Atom*& a)
-    {
-        return (a->getType() == "Oh");
-    };
-    auto isTypeOMe = [](Atom*& a)
-    {
-        return (a->getType() == "Os" && a->getName() == "O");
-    };
+    auto isTypeHydroxy = [](Atom*& a) { return (a->getType() == "Oh"); };
+    auto isTypeOMe = [](Atom*& a) { return (a->getType() == "Os" && a->getName() == "O"); };
     const auto anomericOxygen = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeHydroxy);
-    const auto OMeOxygen      = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeOMe);
+    const auto OMeOxygen = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeOMe);
     if (anomericOxygen != anomerNeighbors.end())
     {
         std::cout << "Anomeric Oxygen Found\n";
@@ -305,10 +305,8 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     // std::string fileName = "latest.pdb";
     // outFileStream.open(fileName.c_str());
     // cds::writeResidueToPdb(outFileStream, starterResidue);
-    auto residueInfoToString             = [](const residueMetadata& a)
-    {
-        return a.isomer + "_" + a.resname + "_" + a.ringType + "_" + a.residueModifier + "_" + a.configuration;
-    };
+    auto residueInfoToString = [](const residueMetadata& a)
+    { return a.isomer + "_" + a.resname + "_" + a.ringType + "_" + a.residueModifier + "_" + a.configuration; };
     residueMetadata residueInfo = Glycam06PrepNameToDetails(starterResidue->getName());
     std::cout << "Found name is: " << residueInfoToString(residueInfo) << "\n";
     std::cout << "Anomer: " << anomerNumber << "\n";
@@ -331,12 +329,12 @@ void residueCombinator::generateResidueCombinations(std::vector<cds::Residue*>& 
     // Handle the anomeric position separately. No combinations allowed with this position due to limitations with
     // residue naming system.
     cds::Residue* newResidue = glycamResidueCombinations.emplace_back(new cds::Residue(residueWithAnomericOxygen));
-    std::string residueName  = anomerNumber;
-    residueName              += starterResidue->getName().substr(1);
+    std::string residueName = anomerNumber;
+    residueName += starterResidue->getName().substr(1);
     newResidue->setName(residueName);
     std::cout << "Added " << residueName << "\n";
     // Write out the 0.. version:
-    newResidue  = glycamResidueCombinations.emplace_back(new cds::Residue(residueWithoutAnomericOxygen));
+    newResidue = glycamResidueCombinations.emplace_back(new cds::Residue(residueWithoutAnomericOxygen));
     residueName = "0";
     residueName += starterResidue->getName().substr(1);
     newResidue->setName(residueName);

@@ -3,10 +3,10 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
-#include <vector>
-#include <string>
-#include <memory>
 #include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 
 int main()
 {
@@ -27,7 +27,7 @@ int main()
         "Label=residue-14;]a1-6&Label=link-10;DManp&Label=residue-11;a1-6&Label=link-9;]DManp&Label=residue-4;b1-4&"
         "Label=link-2;DGlcpNAc&Label=residue-3;[6&Label=link-13;Me&Label=residue-15;]b1-4&Label=link-1;DGlcpNAc&Label="
         "residue-2;b1-1&Label=link-0;-OH&Label=residue-1;";
-    std::string s9  = "";
+    std::string s9 = "";
     std::string s10 = "There will be cake.";
     std::string s11 = "DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH ";
     std::string s12 = "DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3]DGalpb1-4DXylpb1-OH";
@@ -49,8 +49,8 @@ int main()
             std::cout << "Iupac:\n"
                       << cdsCondensedSequence::printSequence(cdsCondensedSequence::iupacConfig(), sequenceData) << "\n";
             std::cout << "Labeled:\n"
-                      << cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfigLabelled(),
-                                                             sequenceData)
+                      << cdsCondensedSequence::printSequence(
+                             cdsCondensedSequence::defaultConfigLabelled(), sequenceData)
                       << "\n\n";
         }
         catch (std::runtime_error& error)

@@ -3,8 +3,8 @@
 
 #include "includes/CentralDataStructure/cdsTypes.hpp"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 // Reads a prep file like 0GB and generates all possible permutations of decorated residues like 2GB, 3GB, YGB etc.
 // Going from 0GB with a charge of 0.1940 to 6GB with a charge of 0.0 requires adjusting the charge on the O6 from
@@ -15,7 +15,7 @@
 namespace residueCombinator
 {
     std::vector<std::vector<std::string>> getCombinations(const std::vector<std::string>& elements);
-    void generateResidueCombinations(std::vector<cds::Residue*>& glycamResidueCombinations,
-                                     const cds::Residue* starterResidue);
+    void generateResidueCombinations(
+        std::vector<cds::Residue*>& glycamResidueCombinations, const cds::Residue* starterResidue);
 } // namespace residueCombinator
 #endif

@@ -2,12 +2,12 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_WRITERS_OFFWRITER_HPP
 
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 
-#include <vector>
-#include <string>
 #include <ostream>
+#include <string>
+#include <vector>
 
 namespace cds
 {

@@ -1,10 +1,10 @@
 #ifndef INCLUDES_CODEUTILS_STRUCTUREDFILES_HPP
 #define INCLUDES_CODEUTILS_STRUCTUREDFILES_HPP
 
-#include <string>
-#include <vector>
-#include <variant>
 #include <ostream>
+#include <string>
+#include <variant>
+#include <vector>
 
 namespace codeUtils
 {

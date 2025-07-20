@@ -3,9 +3,10 @@
 
 #include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
+
+#include <memory> // unique_ptr
 #include <string>
 #include <vector>
-#include <memory> // unique_ptr
 
 namespace cds
 {
@@ -23,9 +24,10 @@ namespace cds
         Assembly& operator=(Assembly other); // Move and Copy assignment operator
         virtual ~Assembly() = default;
 
-        friend void swap(Assembly& lhs,
-                         Assembly& rhs) // ToDo figure out how to put this in cpp file once everything is working. Yo
-                                        // just define it without the friend keyword you bozo.
+        friend void swap(
+            Assembly& lhs,
+            Assembly& rhs) // ToDo figure out how to put this in cpp file once everything is working. Yo
+                           // just define it without the friend keyword you bozo.
         {
             using std::swap;
             swap(lhs.molecules_, rhs.molecules_);
@@ -35,10 +37,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    ACCESSOR                          //
         //////////////////////////////////////////////////////////
-        inline const int& getNumber() const
-        {
-            return number_;
-        }
+        inline const int& getNumber() const { return number_; }
 
         //    std::vector<const Atom*> getAtoms() const;
         //    std::vector<const Residue*> getResidues() const;
@@ -50,10 +49,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
-        inline void setNumber(const int& i)
-        {
-            number_ = i;
-        }
+        inline void setNumber(const int& i) { number_ = i; }
 
         //////////////////////////////////////////////////////////
         //                    FUNCTIONS                         //

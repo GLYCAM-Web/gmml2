@@ -1,15 +1,13 @@
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
 
 #include <cmath>
 #include <limits>
 
-cds::Coordinate cds::axis(const DihedralCoordinates& coords)
-{
-    return normal(coords[1] - coords[2]);
-}
+cds::Coordinate cds::axis(const DihedralCoordinates& coords) { return normal(coords[1] - coords[2]); }
 
 cds::Coordinate cds::axis(const std::array<Coordinate, 3>& coords)
 {

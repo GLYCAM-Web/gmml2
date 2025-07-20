@@ -1,21 +1,22 @@
 #include "includes/CentralDataStructure/Readers/Pdb/atomicConnectivity.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+
 #include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
-#include "includes/MolecularMetadata/aminoAcids.hpp"
-#include "includes/MolecularMetadata/atomicBonds.hpp"
-#include "includes/Graph/graphManipulation.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/MolecularMetadata/aminoAcids.hpp"
+#include "includes/MolecularMetadata/atomicBonds.hpp"
 
 #include <array>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 namespace
 {
@@ -24,7 +25,7 @@ namespace
         size_t atomCount = data.indices.atomCount;
         for (auto& bondPair : bonds)
         {
-            size_t firstAtom  = pdb::findResidueAtom(data, proteinRes, bondPair.first);
+            size_t firstAtom = pdb::findResidueAtom(data, proteinRes, bondPair.first);
             size_t secondAtom = pdb::findResidueAtom(data, proteinRes, bondPair.second);
             if (firstAtom < atomCount && secondAtom < atomCount)
             {
@@ -36,7 +37,7 @@ namespace
     void bondHydrogenAtomsToClosestNonHydrogen(pdb::PdbData& data, size_t residueId)
     {
         std::vector<bool> isResidueAtom = assembly::isResidueAtom(data.indices, residueId);
-        std::vector<bool> isHydrogen    = codeUtils::vectorEquals(data.atoms.elements, MolecularMetadata::Element::H);
+        std::vector<bool> isHydrogen = codeUtils::vectorEquals(data.atoms.elements, MolecularMetadata::Element::H);
         std::vector<size_t> hydrogenAtoms =
             indicesOfLivingAtoms(data.indices, codeUtils::vectorAnd(isResidueAtom, isHydrogen));
         std::vector<size_t> nonHydrogenAtoms =
@@ -49,8 +50,8 @@ namespace
         for (size_t hydrogen : hydrogenAtoms)
         {
             cds::Coordinate coord = data.atoms.coordinates[hydrogen];
-            size_t closest        = 0;
-            double minDistance    = cds::distance(coord, data.atoms.coordinates[nonHydrogenAtoms[0]]);
+            size_t closest = 0;
+            double minDistance = cds::distance(coord, data.atoms.coordinates[nonHydrogenAtoms[0]]);
             for (size_t n = 1; n < nonHydrogenAtoms.size(); n++)
             {
                 double distance = cds::distance(coord, data.atoms.coordinates[nonHydrogenAtoms[n]]);
@@ -58,12 +59,15 @@ namespace
                 {
                     if (minDistance < hydrogenCutoff)
                     {
-                        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                                  "Hydrogen atom within " + std::to_string(minDistance) +
-                                      " Å of multiple non-hydrogen atoms in residue");
+                        gmml::log(
+                            __LINE__,
+                            __FILE__,
+                            gmml::WAR,
+                            "Hydrogen atom within " + std::to_string(minDistance) +
+                                " Å of multiple non-hydrogen atoms in residue");
                     }
                     minDistance = distance;
-                    closest     = n;
+                    closest = n;
                 }
             }
             if (minDistance < hydrogenCutoff)
@@ -72,9 +76,12 @@ namespace
             }
             else
             {
-                gmml::log(__LINE__, __FILE__, gmml::WAR,
-                          "Hydrogen atom not within " + std::to_string(hydrogenCutoff) +
-                              " Å of any non-hydrogen atom in residue");
+                gmml::log(
+                    __LINE__,
+                    __FILE__,
+                    gmml::WAR,
+                    "Hydrogen atom not within " + std::to_string(hydrogenCutoff) +
+                        " Å of any non-hydrogen atom in residue");
             }
         }
     }
@@ -90,9 +97,9 @@ namespace
     bool autoConnectSuccessiveResidues(pdb::PdbData& data, size_t cTermRes, size_t nTermRes)
     {
         size_t atomCount = data.indices.atomCount;
-        size_t cAtom     = pdb::findResidueAtom(data, cTermRes, "C");
-        size_t oxtAtom   = pdb::findResidueAtom(data, cTermRes, "OXT");
-        size_t nAtom     = pdb::findResidueAtom(data, nTermRes, "N");
+        size_t cAtom = pdb::findResidueAtom(data, cTermRes, "C");
+        size_t oxtAtom = pdb::findResidueAtom(data, cTermRes, "OXT");
+        size_t nAtom = pdb::findResidueAtom(data, nTermRes, "N");
         if ((cAtom < atomCount) && (nAtom < atomCount) && (oxtAtom == atomCount) &&
             pdb::isWithinBondingDistance(data, cAtom, nAtom))
         {
@@ -102,8 +109,8 @@ namespace
         return false;
     }
 
-    void setProteinInterConnectivity(const MolecularMetadata::AminoAcidTable& table, pdb::PdbData& data,
-                                     const std::vector<size_t>& residueIds)
+    void setProteinInterConnectivity(
+        const MolecularMetadata::AminoAcidTable& table, pdb::PdbData& data, const std::vector<size_t>& residueIds)
     {
         if (residueIds.empty())
         {
@@ -115,9 +122,12 @@ namespace
             size_t previousRes = residueIds[n];
             if (!autoConnectSuccessiveResidues(data, previousRes, residueIds[n + 1]))
             { // Automatically bond the N and C atoms of successive residues
-                gmml::log(__LINE__, __FILE__, gmml::WAR,
-                          "Gap detected between " + pdb::residueStringId(data, previousRes) + " and " +
-                              pdb::residueStringId(data, residueIds[n + 1]));
+                gmml::log(
+                    __LINE__,
+                    __FILE__,
+                    gmml::WAR,
+                    "Gap detected between " + pdb::residueStringId(data, previousRes) + " and " +
+                        pdb::residueStringId(data, residueIds[n + 1]));
             }
         }
     }

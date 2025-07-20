@@ -1,14 +1,14 @@
 #include "includes/CentralDataStructure/Shapers/psiAngleHydrogen.hpp"
 
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 cds::Atom* cds::findHydrogenForPsiAngle(const Atom* atom)
 {
@@ -22,9 +22,11 @@ cds::Atom* cds::findHydrogenForPsiAngle(const Atom* atom)
     return nullptr;
 }
 
-void cds::createHydrogenForPsiAngles(const GlycamMetadata::DihedralAngleDataTable& metadataTable, Residue* residue,
-                                     std::vector<DihedralAtoms>& dihedralAtoms,
-                                     const std::vector<std::vector<size_t>>& metadataIndices)
+void cds::createHydrogenForPsiAngles(
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+    Residue* residue,
+    std::vector<DihedralAtoms>& dihedralAtoms,
+    const std::vector<std::vector<size_t>>& metadataIndices)
 {
     for (size_t n = 0; n < dihedralAtoms.size(); n++)
     {
@@ -33,7 +35,7 @@ void cds::createHydrogenForPsiAngles(const GlycamMetadata::DihedralAngleDataTabl
             if (metadataTable.entries[entry].dihedral_angle_name_ == "Psi" &&
                 metadataTable.entries[entry].atom4_.at(0) == 'H')
             { // If it's a psi angle and is supposed to be defined by a H...
-                Atom* atom     = dihedralAtoms[n][2];
+                Atom* atom = dihedralAtoms[n][2];
                 Atom* hydrogen = findHydrogenForPsiAngle(atom);
                 if (hydrogen != nullptr)
                 {

@@ -1,6 +1,7 @@
 #include "includes/Graph/graphFunctions.hpp"
-#include "includes/Graph/graphTypes.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <cstddef>
 #include <vector>

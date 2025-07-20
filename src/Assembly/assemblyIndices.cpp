@@ -1,24 +1,16 @@
 #include "includes/Assembly/assemblyIndices.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
 
 namespace assembly
 {
-    const std::vector<size_t>& atomResidues(const Indices& indices)
-    {
-        return indices.atomResidue;
-    }
+    const std::vector<size_t>& atomResidues(const Indices& indices) { return indices.atomResidue; }
 
-    const std::vector<size_t>& residueMolecules(const Indices& indices)
-    {
-        return indices.residueMolecule;
-    }
+    const std::vector<size_t>& residueMolecules(const Indices& indices) { return indices.residueMolecule; }
 
-    const std::vector<size_t>& moleculeAssemblies(const Indices& indices)
-    {
-        return indices.moleculeAssembly;
-    }
+    const std::vector<size_t>& moleculeAssemblies(const Indices& indices) { return indices.moleculeAssembly; }
 
     std::vector<size_t> indicesOfLivingAtoms(const Indices& indices, const std::vector<bool>& atoms)
     {

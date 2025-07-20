@@ -1,12 +1,12 @@
 #ifndef INCLUDES_SEQUENCE_SEQUENCEGRAPH_HPP
 #define INCLUDES_SEQUENCE_SEQUENCEGRAPH_HPP
 
-#include "includes/Graph/graphTypes.hpp"
-#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace cdsCondensedSequence
 {

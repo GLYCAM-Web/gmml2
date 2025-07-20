@@ -5,8 +5,8 @@
 #include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace cds
 {

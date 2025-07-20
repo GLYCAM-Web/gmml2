@@ -1,43 +1,40 @@
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 
 #include <cmath>
+#include <stdexcept>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
-std::vector<size_t> MolecularMetadata::sidechainRotationIndices(const SidechainRotamerData& data,
-                                                                const std::string& residue, double phi, double psi)
+std::vector<size_t> MolecularMetadata::sidechainRotationIndices(
+    const SidechainRotamerData& data, const std::string& residue, double phi, double psi)
 {
     size_t residueId = codeUtils::indexOf(data.residues, residue);
     if (residueId == data.residues.size())
     {
         return {};
     }
-    auto angleBinValue = [&](double angle)
-    {
-        return (int)(round(angle / data.binSize) * data.binSize);
-    };
+    auto angleBinValue = [&](double angle) { return (int)(round(angle / data.binSize) * data.binSize); };
     const std::pair<size_t, size_t>& residueBin = data.residueBins[residueId];
-    int phiBin                                  = angleBinValue(phi);
-    int psiBin                                  = angleBinValue(psi);
-    size_t firstBin                             = residueBin.first;
-    size_t lastBin                              = firstBin + residueBin.second;
-    auto binIt = std::find_if(data.bins.begin() + firstBin, data.bins.begin() + lastBin,
-                              [&](const SidechainRotamerBin& bin)
-                              {
-                                  return bin.phi == phiBin && bin.psi == psiBin;
-                              });
+    int phiBin = angleBinValue(phi);
+    int psiBin = angleBinValue(psi);
+    size_t firstBin = residueBin.first;
+    size_t lastBin = firstBin + residueBin.second;
+    auto binIt = std::find_if(
+        data.bins.begin() + firstBin,
+        data.bins.begin() + lastBin,
+        [&](const SidechainRotamerBin& bin) { return bin.phi == phiBin && bin.psi == psiBin; });
     if (binIt == data.bins.begin() + lastBin)
     {
-        throw std::runtime_error("rotamer bin not found: " + residue + " " + std::to_string(phiBin) + " " +
-                                 std::to_string(psiBin));
+        throw std::runtime_error(
+            "rotamer bin not found: " + residue + " " + std::to_string(phiBin) + " " + std::to_string(psiBin));
     }
-    size_t binId                                  = binIt - data.bins.begin();
+    size_t binId = binIt - data.bins.begin();
     const std::pair<size_t, size_t>& binRotations = data.binRotations[binId];
-    size_t firstRotation                          = binRotations.first;
-    size_t rotationCount                          = binRotations.second;
+    size_t firstRotation = binRotations.first;
+    size_t rotationCount = binRotations.second;
     return codeUtils::indexVectorWithOffset(firstRotation, rotationCount);
 }
 
@@ -51,7 +48,7 @@ MolecularMetadata::SidechainRotamerData MolecularMetadata::readSidechainRotamerD
     while (buffer[start] == '#')
     {
         auto it = std::find(buffer.begin() + start, buffer.end(), '\n');
-        start   = it - buffer.begin() + 1;
+        start = it - buffer.begin() + 1;
     }
 
     char* p = &buffer[start];
@@ -59,19 +56,19 @@ MolecularMetadata::SidechainRotamerData MolecularMetadata::readSidechainRotamerD
     auto readUlong = [&p, &strEnd]()
     {
         ulong num = std::strtoul(p, &strEnd, 10);
-        p         = strEnd;
+        p = strEnd;
         return num;
     };
     auto readInt = [&p, &strEnd]()
     {
         int num = std::strtol(p, &strEnd, 10);
-        p       = strEnd;
+        p = strEnd;
         return num;
     };
     auto readDouble = [&p, &strEnd]()
     {
         double num = std::strtod(p, &strEnd);
-        p          = strEnd;
+        p = strEnd;
         return num;
     };
     auto readString = [&p](size_t length)
@@ -97,20 +94,20 @@ MolecularMetadata::SidechainRotamerData MolecularMetadata::readSidechainRotamerD
     std::vector<std::pair<size_t, size_t>> residueBins(residueCount, {0, 0});
     {
         size_t currentResidue = 0;
-        size_t currentCount   = 0;
+        size_t currentCount = 0;
         for (size_t n = 0; n < binCount; n++)
         {
             size_t residue = readUlong();
             if (residue != currentResidue)
             {
                 residueBins[currentResidue].second = currentCount;
-                residueBins[residue].first         = n;
-                currentResidue                     = residue;
-                currentCount                       = 0;
+                residueBins[residue].first = n;
+                currentResidue = residue;
+                currentCount = 0;
             }
             currentCount += 1;
-            int phi      = readInt();
-            int psi      = readInt();
+            int phi = readInt();
+            int psi = readInt();
             bins.push_back({residue, phi, psi});
         }
         residueBins[currentResidue].second = currentCount;
@@ -120,7 +117,7 @@ MolecularMetadata::SidechainRotamerData MolecularMetadata::readSidechainRotamerD
     lines.reserve(lineCount);
     std::vector<std::pair<size_t, size_t>> binLines(binCount, {0, 0});
     {
-        size_t currentBin   = 0;
+        size_t currentBin = 0;
         size_t currentCount = 0;
         for (size_t n = 0; n < lineCount; n++)
         {
@@ -128,11 +125,11 @@ MolecularMetadata::SidechainRotamerData MolecularMetadata::readSidechainRotamerD
             if (bin != currentBin)
             {
                 binLines[currentBin].second = currentCount;
-                binLines[bin].first         = n;
-                currentBin                  = bin;
-                currentCount                = 0;
+                binLines[bin].first = n;
+                currentBin = bin;
+                currentCount = 0;
             }
-            currentCount       += 1;
+            currentCount += 1;
             double probability = readDouble();
             std::array<double, 4> dihedrals {0.0, 0.0, 0.0, 0.0};
             size_t dc = dihedralCount[bins[bin].residue];

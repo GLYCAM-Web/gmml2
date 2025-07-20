@@ -1,13 +1,13 @@
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
+
 #include "includes/CodeUtils/filesystem.hpp"
 
-#include <string>
 #include <array>
+#include <string>
 #include <vector>
 
-cdsCondensedSequence::GraphVizImage
-cdsCondensedSequence::findImage(const cdsCondensedSequence::GraphVizDotConfig& configs, const std::string& name,
-                                const std::string& label)
+cdsCondensedSequence::GraphVizImage cdsCondensedSequence::findImage(
+    const cdsCondensedSequence::GraphVizDotConfig& configs, const std::string& name, const std::string& label)
 {
     std::string imageFile = configs.svg_directory_path_ + "/" + name + ".svg";
     if (codeUtils::pathExists(configs.base_path_ + imageFile))
@@ -49,8 +49,8 @@ std::string cdsCondensedSequence::graphVizSugarNode(const GraphVizResidueNode& n
     return ss.str();
 }
 
-std::string cdsCondensedSequence::graphVizLinkageLine(const std::vector<GraphVizResidueNode>& nodes,
-                                                      const GraphVizLinkage& linkage)
+std::string cdsCondensedSequence::graphVizLinkageLine(
+    const std::vector<GraphVizResidueNode>& nodes, const GraphVizLinkage& linkage)
 {
     std::array<std::string, 2> clip;
     for (size_t n = 0; n < 2; n++)

@@ -1,12 +1,13 @@
 #include "includes/MolecularMetadata/aminoAcids.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
-#include <string>
 #include <array>
-#include <vector>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace
 {
@@ -118,8 +119,8 @@ namespace
         return result;
     }
 
-    std::vector<std::array<std::string, 4>> splitDihedralAtoms(const std::string& name,
-                                                               const std::vector<std::string>& dihedrals)
+    std::vector<std::array<std::string, 4>> splitDihedralAtoms(
+        const std::string& name, const std::vector<std::string>& dihedrals)
     {
         std::vector<std::array<std::string, 4>> result;
         result.reserve(dihedrals.size());
@@ -228,7 +229,7 @@ namespace
         table.bonds.resize(count);
         table.atomNames.resize(count);
         const std::vector<std::string> atomDefinitionNames = namesOnly(sidechainBonds);
-        const std::vector<AminoAcid> atomDefinitions       = withBackbones(sidechainBonds);
+        const std::vector<AminoAcid> atomDefinitions = withBackbones(sidechainBonds);
         for (size_t n = 0; n < atomDefinitionNames.size(); n++)
         {
             size_t index = codeUtils::indexOf(table.names, atomDefinitionNames[n]);
@@ -237,7 +238,7 @@ namespace
                 throw std::runtime_error(atomDefinitionNames[n] + " from atom definitions not found\n");
             }
             table.atomNames[index] = atomDefinitions[n].atomNames;
-            table.bonds[index]     = atomDefinitions[n].bonds;
+            table.bonds[index] = atomDefinitions[n].bonds;
         }
         table.sidechainDihedralAtoms.resize(count);
         for (auto& a : sidechainDihedralAtoms)
@@ -248,16 +249,13 @@ namespace
                 throw std::runtime_error(a.first + " from dihedrals not found\n");
             }
             std::vector<std::array<std::string, 4>> atoms = splitDihedralAtoms(a.first, a.second);
-            table.sidechainDihedralAtoms[index]           = atoms;
+            table.sidechainDihedralAtoms[index] = atoms;
         }
         return table;
     }
 } // namespace
 
-MolecularMetadata::AminoAcidTable MolecularMetadata::aminoAcidTable()
-{
-    return createTable();
-}
+MolecularMetadata::AminoAcidTable MolecularMetadata::aminoAcidTable() { return createTable(); }
 
 MolecularMetadata::ChemicalFormula MolecularMetadata::aminoAcidTerminalAtoms()
 {
@@ -279,11 +277,10 @@ size_t MolecularMetadata::aminoAcidIndex(const AminoAcidTable& table, const std:
 
 std::string MolecularMetadata::originalResidueName(const std::string& str)
 {
-    auto iter = std::find_if(originalResidueNames.begin(), originalResidueNames.end(),
-                             [&](const std::pair<std::string, std::string>& pair)
-                             {
-                                 return pair.first == str;
-                             });
+    auto iter = std::find_if(
+        originalResidueNames.begin(),
+        originalResidueNames.end(),
+        [&](const std::pair<std::string, std::string>& pair) { return pair.first == str; });
     if (iter != originalResidueNames.end())
     {
         return iter->second;
@@ -291,7 +288,4 @@ std::string MolecularMetadata::originalResidueName(const std::string& str)
     return str;
 }
 
-const MolecularMetadata::BondVector& MolecularMetadata::carboxylBonds()
-{
-    return carboxylBondVector;
-}
+const MolecularMetadata::BondVector& MolecularMetadata::carboxylBonds() { return carboxylBondVector; }

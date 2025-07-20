@@ -1,9 +1,9 @@
 #include "includes/CodeUtils/strings.hpp"
 
-#include <sstream>
 #include <algorithm>
-#include <functional>
 #include <ctype.h> // isdigit
+#include <functional>
+#include <sstream>
 
 bool codeUtils::startsWith(const std::string& bigString, const std::string& smallString)
 {
@@ -23,10 +23,7 @@ void codeUtils::RemoveSpaces(std::string& str)
     str.erase(std::remove_if(str.begin(), str.end(), ::isspace), str.end());
 }
 
-void codeUtils::RemoveQuotes(std::string& str)
-{
-    str.erase(std::remove(str.begin(), str.end(), '\"'), str.end());
-}
+void codeUtils::RemoveQuotes(std::string& str) { str.erase(std::remove(str.begin(), str.end(), '\"'), str.end()); }
 
 std::string codeUtils::withoutSpaces(std::string str)
 {
@@ -75,30 +72,20 @@ void codeUtils::removeMultipleSpaces(std::string& str)
 
 void codeUtils::trimLeft(std::function<bool(const char&)> condition, std::string& str)
 {
-    str.erase(str.begin(), std::find_if(str.begin(), str.end(),
-                                        [&condition](unsigned char ch)
-                                        {
-                                            return !condition(ch);
-                                        }));
+    str.erase(
+        str.begin(), std::find_if(str.begin(), str.end(), [&condition](unsigned char ch) { return !condition(ch); }));
 }
 
 void codeUtils::trimRight(std::function<bool(const char&)> condition, std::string& str)
 {
-    str.erase(std::find_if(str.rbegin(), str.rend(),
-                           [&condition](unsigned char ch)
-                           {
-                               return !condition(ch);
-                           })
-                  .base(),
-              str.end());
+    str.erase(
+        std::find_if(str.rbegin(), str.rend(), [&condition](unsigned char ch) { return !condition(ch); }).base(),
+        str.end());
 }
 
 void codeUtils::trimWhitespace(std::string& str)
 {
-    auto isSpace = [](const char c)
-    {
-        return std::isspace(c);
-    };
+    auto isSpace = [](const char c) { return std::isspace(c); };
     trimLeft(isSpace, str);
     trimRight(isSpace, str);
 }

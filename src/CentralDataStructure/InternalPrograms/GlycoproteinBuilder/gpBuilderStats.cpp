@@ -1,24 +1,28 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpBuilderStats.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinUtil.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblySelection.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinUtil.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/structuredFiles.hpp"
 
-#include <vector>
-#include <string>
 #include <sstream>
+#include <string>
+#include <vector>
 
 namespace glycoproteinBuilder
 {
-    Summary summarizeStats(const assembly::Graph& graph, const AssemblyData& data,
-                           const GlycoproteinBuilderInputs& input, uint64_t seed,
-                           const std::vector<StructureStats>& stats)
+    Summary summarizeStats(
+        const assembly::Graph& graph,
+        const AssemblyData& data,
+        const GlycoproteinBuilderInputs& input,
+        uint64_t seed,
+        const std::vector<StructureStats>& stats)
     {
         std::function<std::vector<std::string>(const StructureStats&)> toRow = [&](const StructureStats& stat)
         {
@@ -62,14 +66,16 @@ namespace glycoproteinBuilder
                 movedSidechainResidues << data.residues.names[residue] << data.residues.numbers[residue]
                                        << (n == movedSidechains.size() - 1 ? "" : " ");
             }
-            return std::vector<std::string> {stat.filename,   status.str(),    std::to_string(highest),
-                                             nonviable.str(), deletions.str(), movedSidechainResidues.str()};
+            return std::vector<std::string> {
+                stat.filename,
+                status.str(),
+                std::to_string(highest),
+                nonviable.str(),
+                deletions.str(),
+                movedSidechainResidues.str()};
         };
 
-        std::function<std::string(bool)> boolStr = [](bool b)
-        {
-            return (b ? "true" : "false");
-        };
+        std::function<std::string(bool)> boolStr = [](bool b) { return (b ? "true" : "false"); };
 
         codeUtils::TextTable parameterTable {
             {"Parameter", "Value"},
@@ -86,7 +92,9 @@ namespace glycoproteinBuilder
         };
 
         codeUtils::TextTable structureTable {
-            {"Filename", "Status", "Highest Lennard-Jones potential", "Failed glycosites", "Deleted glycosites",
+            {"Filename",
+             "Status", "Highest Lennard-Jones potential",
+             "Failed glycosites", "Deleted glycosites",
              "Moved sidechains"},
             codeUtils::vectorMap(toRow, stats)
         };

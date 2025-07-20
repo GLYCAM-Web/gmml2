@@ -1,9 +1,10 @@
 #include "includes/CentralDataStructure/Geometry/rotationMatrix.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 
-#include <vector>
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+
 #include <cmath>
+#include <vector>
 
 using cds::RotationMatrix;
 
@@ -21,14 +22,8 @@ RotationMatrix cds::rotationAroundPoint(const Coordinate& point, const Coordinat
     double cosA = std::cos(angle);
     double sinA = std::sin(angle);
 
-    auto diag = [&](double a)
-    {
-        return cosA + a * a * (1 - cosA);
-    };
-    auto cell = [&](double a, double b, double c)
-    {
-        return a * b * (1 - cosA) + c * sinA;
-    };
+    auto diag = [&](double a) { return cosA + a * a * (1 - cosA); };
+    auto cell = [&](double a, double b, double c) { return a * b * (1 - cosA) + c * sinA; };
 
     double x = axis.GetX();
     double y = axis.GetY();

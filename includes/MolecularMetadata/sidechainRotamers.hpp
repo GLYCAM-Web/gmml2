@@ -1,8 +1,8 @@
 #ifndef INCLUDES_MOLECULARMETADATA_SIDECHAINROTAMERS_HPP
 #define INCLUDES_MOLECULARMETADATA_SIDECHAINROTAMERS_HPP
 
-#include <string>
 #include <array>
+#include <string>
 #include <vector>
 
 namespace MolecularMetadata
@@ -32,8 +32,8 @@ namespace MolecularMetadata
         std::vector<SidechainRotation> rotations;
     };
 
-    std::vector<size_t> sidechainRotationIndices(const SidechainRotamerData& data, const std::string& residue,
-                                                 double phi, double psi);
+    std::vector<size_t> sidechainRotationIndices(
+        const SidechainRotamerData& data, const std::string& residue, double phi, double psi);
     SidechainRotamerData readSidechainRotamerData(const std::string& filename);
 } // namespace MolecularMetadata
 

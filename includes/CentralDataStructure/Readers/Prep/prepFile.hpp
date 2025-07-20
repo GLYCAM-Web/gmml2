@@ -1,13 +1,14 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPFILE_HPP
 
-#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
-#include <map>
-#include <string>
+#include "includes/CentralDataStructure/cdsTypes.hpp"
+
 #include <istream>
+#include <map>
 #include <ostream>
+#include <string>
 #include <vector>
 
 namespace prep

@@ -25,9 +25,7 @@ namespace assembly
     inline std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
     {
         std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
-        {
-            return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId;
-        };
+        { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
         std::vector<bool> selected = codeUtils::vectorMap(inMolecule, graph.atoms.nodes.indices);
         return codeUtils::boolsToIndices(selected);
     }

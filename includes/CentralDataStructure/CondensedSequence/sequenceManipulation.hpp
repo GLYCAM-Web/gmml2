@@ -20,11 +20,11 @@ namespace cdsCondensedSequence
         std::vector<std::string> linkage;
     };
 
-    ChainState instantiateNode(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
-                               size_t id);
+    ChainState instantiateNode(
+        SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data, size_t id);
     SequenceData instantiate(const AbstractSequence& data);
-    SequenceData rearrange(const SequenceData& sequence, const std::vector<size_t>& residueOrder,
-                           const std::vector<size_t>& edgeOrder);
+    SequenceData rearrange(
+        const SequenceData& sequence, const std::vector<size_t>& residueOrder, const std::vector<size_t>& edgeOrder);
     std::vector<size_t> edgesSortedByLink(const SequenceData& sequence, const std::vector<size_t>& edgeIds);
     SequenceData reordered(const SequenceData& sequence);
 } // namespace cdsCondensedSequence

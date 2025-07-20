@@ -1,9 +1,11 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/journalRecord.hpp"
+
 #include "includes/CodeUtils/strings.hpp"
+
+#include <cmath>   // ceil
 #include <iomanip> //setw
 #include <iostream>
 #include <sstream>
-#include <cmath> // ceil
 
 using pdb::JournalRecord;
 
@@ -15,8 +17,8 @@ JournalRecord::JournalRecord() {};
 JournalRecord::JournalRecord(std::stringstream& stream_block)
 {
     std::string line;
-    bool is_record_name_set   = false;
-    bool is_title_started     = false;
+    bool is_record_name_set = false;
+    bool is_title_started = false;
     bool is_reference_started = false;
     bool is_publisher_started = false;
     getline(stream_block, line);
@@ -35,13 +37,13 @@ JournalRecord::JournalRecord(std::stringstream& stream_block)
         if (subrecord == "AUTH")
         {
             std::size_t start_position = 19;
-            std::size_t end_position   = line.find(",");
+            std::size_t end_position = line.find(",");
             if (end_position != std::string::npos)
             {
                 std::string new_author = line.substr(start_position, end_position - start_position);
                 authors_.push_back(new_author);
                 start_position = end_position;
-                end_position   = line.find(",", start_position + 1);
+                end_position = line.find(",", start_position + 1);
             }
             else
             {
@@ -69,13 +71,13 @@ JournalRecord::JournalRecord(std::stringstream& stream_block)
         else if (subrecord == "EDIT")
         {
             std::size_t start_position = 19;
-            std::size_t end_position   = line.find(",");
+            std::size_t end_position = line.find(",");
             while (end_position != std::string::npos)
             {
                 std::string new_editor = line.substr(start_position, end_position - start_position);
                 editors_.push_back(new_editor);
                 start_position = end_position;
-                end_position   = line.find(",", start_position + 1);
+                end_position = line.find(",", start_position + 1);
             }
         }
         else if (subrecord == "REF")
@@ -136,45 +138,21 @@ JournalRecord::JournalRecord(std::stringstream& stream_block)
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
-void JournalRecord::SetRecordName(const std::string record_name)
-{
-    record_name_ = record_name;
-}
+void JournalRecord::SetRecordName(const std::string record_name) { record_name_ = record_name; }
 
-void JournalRecord::SetAuthors(std::vector<std::string> authors)
-{
-    authors_ = authors;
-}
+void JournalRecord::SetAuthors(std::vector<std::string> authors) { authors_ = authors; }
 
-void JournalRecord::SetTitle(const std::string title)
-{
-    title_ = title;
-}
+void JournalRecord::SetTitle(const std::string title) { title_ = title; }
 
-void JournalRecord::SetEditors(std::vector<std::string> editors)
-{
-    editors_ = editors;
-}
+void JournalRecord::SetEditors(std::vector<std::string> editors) { editors_ = editors; }
 
-void JournalRecord::SetReference(const std::string reference)
-{
-    reference_ = reference;
-}
+void JournalRecord::SetReference(const std::string reference) { reference_ = reference; }
 
-void JournalRecord::SetPublisher(const std::string publisher)
-{
-    publisher_ = publisher;
-}
+void JournalRecord::SetPublisher(const std::string publisher) { publisher_ = publisher; }
 
-void JournalRecord::SetReferenceNumbers(std::vector<std::string> reference_nums)
-{
-    reference_nums_ = reference_nums;
-}
+void JournalRecord::SetReferenceNumbers(std::vector<std::string> reference_nums) { reference_nums_ = reference_nums; }
 
-void JournalRecord::SetPMID(const std::string pmid)
-{
-    pmid_ = pmid;
-}
+void JournalRecord::SetPMID(const std::string pmid) { pmid_ = pmid; }
 
 void JournalRecord::SetDOI(const std::string doi)
 {
@@ -185,10 +163,7 @@ void JournalRecord::SetDOI(const std::string doi)
     this->doi_ += " ";
 }
 
-void JournalRecord::SetText(const std::string text)
-{
-    text_ = text;
-}
+void JournalRecord::SetText(const std::string text) { text_ = text; }
 
 //////////////////////////////////////////////////////////
 //                        FUNCTIONS                     //
@@ -247,8 +222,9 @@ void JournalRecord::Write(std::ostream& stream) const
             {
                 stream << std::left << std::setw(6) << this->GetRecordName() << std::left << std::setw(6) << " "
                        << std::left << std::setw(67)
-                       << this->GetText().substr(MAX_JOURNAL_LENGTH_IN_LINE * (i - 1),
-                                                 this->GetText().length() - MAX_JOURNAL_LENGTH_IN_LINE * (i - 1))
+                       << this->GetText().substr(
+                              MAX_JOURNAL_LENGTH_IN_LINE * (i - 1),
+                              this->GetText().length() - MAX_JOURNAL_LENGTH_IN_LINE * (i - 1))
                        << std::endl;
             }
         }

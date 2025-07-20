@@ -1,8 +1,8 @@
 #ifndef INCLUDES_ASSEMBLY_ASSEMBLYTYPES_HPP
 #define INCLUDES_ASSEMBLY_ASSEMBLYTYPES_HPP
 
-#include "includes/Graph/graphTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <array>
 #include <vector>
@@ -11,8 +11,8 @@ namespace assembly
 {
     struct Indices
     {
-        size_t atomCount     = 0;
-        size_t residueCount  = 0;
+        size_t atomCount = 0;
+        size_t residueCount = 0;
         size_t moleculeCount = 0;
         size_t assemblyCount = 0;
         std::vector<bool> atomAlive;

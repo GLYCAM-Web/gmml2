@@ -1,20 +1,17 @@
+#include "includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/SubgraphMatching.hpp"
 #include "includes/MolecularModeling/TemplateGraph/Algorithms/include/TotalCycleDecomposition.hpp"
-
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Edge.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Graph.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
-
 #include "includes/MolecularModeling/TemplateGraph/LazyPrints/LazyPrinters.hpp"
 
-#include "includes/MolecularModeling/TemplateGraph/Algorithms/include/ConnectivityIdentifier.hpp"
-
-#include <vector>
+#include <iostream>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
-#include <iostream>
-#include <memory>
+#include <vector>
 
 using namespace glygraph;
 
@@ -41,10 +38,7 @@ class Atom : public Node<Atom>
     }
 
     // move constructor
-    inline Atom(Atom&& rhs) : Node(rhs)
-    {
-        lazyInfo(__LINE__, __func__, "Calling atom move constructor");
-    }
+    inline Atom(Atom&& rhs) : Node(rhs) { lazyInfo(__LINE__, __func__, "Calling atom move constructor"); }
 
     // copy assignment
     inline Atom& operator=(const Atom& rhs)
@@ -70,10 +64,7 @@ class Atom : public Node<Atom>
         this->addNeighbor(this->getName() + " -> " + otherAtom->getName(), otherAtom);
     }
 
-    inline void removeBond(Atom* otherAtom)
-    {
-        this->removeEdgeBetween(otherAtom);
-    }
+    inline void removeBond(Atom* otherAtom) { this->removeEdgeBetween(otherAtom); }
 
     inline std::vector<Atom*> getBondedAtoms()
     {
@@ -94,16 +85,16 @@ class Atom : public Node<Atom>
 
 int main()
 {
-    std::unique_ptr<Atom> atom0  = std::unique_ptr<Atom>(new Atom("Bobie"));
-    std::unique_ptr<Atom> atom1  = std::unique_ptr<Atom>(new Atom("Steve"));
-    std::unique_ptr<Atom> atom2  = std::unique_ptr<Atom>(new Atom("Ronne"));
-    std::unique_ptr<Atom> atom3  = std::unique_ptr<Atom>(new Atom("Bingo"));
-    std::unique_ptr<Atom> atom4  = std::unique_ptr<Atom>(new Atom("Marsh"));
-    std::unique_ptr<Atom> atom5  = std::unique_ptr<Atom>(new Atom("Delux"));
-    std::unique_ptr<Atom> atom6  = std::unique_ptr<Atom>(new Atom("Frank"));
-    std::unique_ptr<Atom> atom7  = std::unique_ptr<Atom>(new Atom("Bingo1"));
-    std::unique_ptr<Atom> atom8  = std::unique_ptr<Atom>(new Atom("Marsh1"));
-    std::unique_ptr<Atom> atom9  = std::unique_ptr<Atom>(new Atom("Bridge1"));
+    std::unique_ptr<Atom> atom0 = std::unique_ptr<Atom>(new Atom("Bobie"));
+    std::unique_ptr<Atom> atom1 = std::unique_ptr<Atom>(new Atom("Steve"));
+    std::unique_ptr<Atom> atom2 = std::unique_ptr<Atom>(new Atom("Ronne"));
+    std::unique_ptr<Atom> atom3 = std::unique_ptr<Atom>(new Atom("Bingo"));
+    std::unique_ptr<Atom> atom4 = std::unique_ptr<Atom>(new Atom("Marsh"));
+    std::unique_ptr<Atom> atom5 = std::unique_ptr<Atom>(new Atom("Delux"));
+    std::unique_ptr<Atom> atom6 = std::unique_ptr<Atom>(new Atom("Frank"));
+    std::unique_ptr<Atom> atom7 = std::unique_ptr<Atom>(new Atom("Bingo1"));
+    std::unique_ptr<Atom> atom8 = std::unique_ptr<Atom>(new Atom("Marsh1"));
+    std::unique_ptr<Atom> atom9 = std::unique_ptr<Atom>(new Atom("Bridge1"));
     std::unique_ptr<Atom> atom10 = std::unique_ptr<Atom>(new Atom("cycle1"));
     std::unique_ptr<Atom> atom11 = std::unique_ptr<Atom>(new Atom("cycle2"));
     std::unique_ptr<Atom> atom12 = std::unique_ptr<Atom>(new Atom("cycle3"));
@@ -307,8 +298,9 @@ int main()
         g1Cycles = cycle_decomp::totalCycleDetect(*graph1);
 
     // Showing subgraph matching works
-    std::unordered_map<glygraph::Node<Atom>*,
-                       std::pair<std::vector<glygraph::Node<Atom>*>, std::vector<glygraph::Edge<Atom>*>>>
+    std::unordered_map<
+        glygraph::Node<Atom>*,
+        std::pair<std::vector<glygraph::Node<Atom>*>, std::vector<glygraph::Edge<Atom>*>>>
         g2MatchesIng1 = subgraph_match::findSubgraphs(*graph1, *graph2);
 
     lazyInfo(__LINE__, __func__, "Printing out all cycles of g1\n");
@@ -335,9 +327,10 @@ int main()
 
     lazyInfo(__LINE__, __func__, "Printing out our nodes in g1 that match g2");
 
-    for (std::pair<glygraph::Node<Atom>*,
-                   std::pair<std::vector<glygraph::Node<Atom>*>, std::vector<glygraph::Edge<Atom>*>>>
-             currMatchPair : g2MatchesIng1)
+    for (std::pair<
+             glygraph::Node<Atom>*,
+             std::pair<std::vector<glygraph::Node<Atom>*>, std::vector<glygraph::Edge<Atom>*>>> currMatchPair :
+         g2MatchesIng1)
     {
         std::cout << "Node Key: " + currMatchPair.first->getName() + "\n\tNodes: ";
         for (Node<Atom>* currAtom : currMatchPair.second.first)

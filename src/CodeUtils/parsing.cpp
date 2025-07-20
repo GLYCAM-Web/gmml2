@@ -1,16 +1,17 @@
 #include "includes/CodeUtils/parsing.hpp"
+
 #include "includes/CodeUtils/strings.hpp"
 
-#include <string>
 #include <algorithm>
 #include <optional>
 #include <stdexcept>
+#include <string>
 
 namespace codeUtils
 {
     std::optional<int> parseInt(const std::string& str)
     {
-        bool allDigits           = std::all_of(str.begin(), str.end(), ::isdigit);
+        bool allDigits = std::all_of(str.begin(), str.end(), ::isdigit);
         bool firstDashRestDigits = startsWith(str, "-") && std::all_of(str.begin() + 1, str.end(), ::isdigit);
         if (!(allDigits || firstDashRestDigits))
         {

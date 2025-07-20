@@ -1,8 +1,8 @@
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/strings.hpp"
@@ -10,12 +10,12 @@
 #include "includes/MolecularMetadata/sidechainRotamers.hpp"
 
 #include <cstdlib>
-#include <string>
-#include <sstream>
 #include <fstream>
 #include <iostream>
 #include <optional>
+#include <sstream>
 #include <stdexcept>
+#include <string>
 
 using MolecularMetadata::SidechainRotamerBin;
 using MolecularMetadata::SidechainRotamerData;
@@ -56,25 +56,41 @@ std::vector<RotamerInput> readInputFile(const std::string& filename)
                 throw std::runtime_error("incorrect line length: " + line);
             }
             const std::string& residue = contents[0];
-            int phi                    = std::stoi(contents[1]);
-            int psi                    = std::stoi(contents[2]);
-            uint count                 = std::stoi(contents[3]);
-            uint r1                    = std::stoi(contents[4]);
-            uint r2                    = std::stoi(contents[5]);
-            uint r3                    = std::stoi(contents[6]);
-            uint r4                    = std::stoi(contents[7]);
-            double probability         = std::stod(contents[8]);
-            double chi1Val             = std::stod(contents[9]);
-            double chi2Val             = std::stod(contents[10]);
-            double chi3Val             = std::stod(contents[11]);
-            double chi4Val             = std::stod(contents[12]);
-            double chi1Sig             = std::stod(contents[13]);
-            double chi2Sig             = std::stod(contents[14]);
-            double chi3Sig             = std::stod(contents[15]);
-            double chi4Sig             = std::stod(contents[16]);
+            int phi = std::stoi(contents[1]);
+            int psi = std::stoi(contents[2]);
+            uint count = std::stoi(contents[3]);
+            uint r1 = std::stoi(contents[4]);
+            uint r2 = std::stoi(contents[5]);
+            uint r3 = std::stoi(contents[6]);
+            uint r4 = std::stoi(contents[7]);
+            double probability = std::stod(contents[8]);
+            double chi1Val = std::stod(contents[9]);
+            double chi2Val = std::stod(contents[10]);
+            double chi3Val = std::stod(contents[11]);
+            double chi4Val = std::stod(contents[12]);
+            double chi1Sig = std::stod(contents[13]);
+            double chi2Sig = std::stod(contents[14]);
+            double chi3Sig = std::stod(contents[15]);
+            double chi4Sig = std::stod(contents[16]);
 
-            input.push_back({residue, phi, psi, count, r1, r2, r3, r4, probability, chi1Val, chi2Val, chi3Val, chi4Val,
-                             chi1Sig, chi2Sig, chi3Sig, chi4Sig});
+            input.push_back(
+                {residue,
+                 phi,
+                 psi,
+                 count,
+                 r1,
+                 r2,
+                 r3,
+                 r4,
+                 probability,
+                 chi1Val,
+                 chi2Val,
+                 chi3Val,
+                 chi4Val,
+                 chi1Sig,
+                 chi2Sig,
+                 chi3Sig,
+                 chi4Sig});
         }
         return;
     };
@@ -93,7 +109,7 @@ SidechainRotamerData formatOutput(const std::vector<RotamerInput>& input)
     auto lineDihedrals = [](const RotamerInput& line)
     {
         const std::array<double, 4>& values = {line.chi1Val, line.chi2Val, line.chi3Val, line.chi4Val};
-        size_t result                       = 0;
+        size_t result = 0;
         for (auto& val : values)
         {
             result += (val != 0.0);
@@ -109,15 +125,14 @@ SidechainRotamerData formatOutput(const std::vector<RotamerInput>& input)
     for (auto& a : input)
     {
         const SidechainRotamerBin& bin = bins[currentBin];
-        const std::string& residue     = residues[bin.residue];
+        const std::string& residue = residues[bin.residue];
         if (!(a.psi == bin.psi && a.phi == bin.phi && a.residue == residue))
         {
-            auto binIt =
-                std::find_if(bins.begin(), bins.end(),
-                             [&](const SidechainRotamerBin& bin)
-                             {
-                                 return a.psi == bin.psi && a.phi == bin.phi && a.residue == residues[bin.residue];
-                             });
+            auto binIt = std::find_if(
+                bins.begin(),
+                bins.end(),
+                [&](const SidechainRotamerBin& bin)
+                { return a.psi == bin.psi && a.phi == bin.phi && a.residue == residues[bin.residue]; });
             if (binIt != bins.end())
             {
                 throw std::runtime_error(
@@ -137,7 +152,7 @@ SidechainRotamerData formatOutput(const std::vector<RotamerInput>& input)
             bins.push_back({residues.size() - 1, a.phi, a.psi});
             currentBin = bins.size() - 1;
         }
-        size_t currentResidue         = bins[currentBin].residue;
+        size_t currentResidue = bins[currentBin].residue;
         dihedralCount[currentResidue] = std::max(dihedralCount[currentResidue], lineDihedrals(a));
         lines.push_back({
             currentBin, a.probability, {a.chi1Val, a.chi2Val, a.chi3Val, a.chi4Val}
@@ -172,7 +187,7 @@ void writeOutput(const SidechainRotamerData& output, const std::string& filename
     for (size_t n = 0; n < output.rotations.size(); n++)
     {
         const SidechainRotation& line = output.rotations[n];
-        size_t dihedralCount          = output.residueDihedralCount[output.bins[line.bin].residue];
+        size_t dihedralCount = output.residueDihedralCount[output.bins[line.bin].residue];
         os << line.bin << " " << line.probability;
         for (size_t n = 0; n < dihedralCount; n++)
         {
@@ -223,7 +238,7 @@ int main(int argc, char* argv[])
         std::exit(1);
     }
 
-    std::string inputFile  = "";
+    std::string inputFile = "";
     std::string outputFile = "";
     for (const auto& arg : arguments.args)
     {
@@ -244,7 +259,7 @@ int main(int argc, char* argv[])
         }
     }
 
-    const std::vector<RotamerInput> input      = readInputFile(inputFile);
+    const std::vector<RotamerInput> input = readInputFile(inputFile);
     const std::vector<std::string>& aminoAcids = MolecularMetadata::aminoAcidNames();
 
     std::function<bool(const RotamerInput&)> includeLine = [&aminoAcids](const RotamerInput& line)
@@ -254,7 +269,7 @@ int main(int argc, char* argv[])
                (line.probability > 0.0);
     };
 
-    const std::vector<RotamerInput> included             = codeUtils::filter(includeLine, input);
+    const std::vector<RotamerInput> included = codeUtils::filter(includeLine, input);
     const MolecularMetadata::SidechainRotamerData output = formatOutput(included);
     writeOutput(output, outputFile);
 

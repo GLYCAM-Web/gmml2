@@ -1,12 +1,13 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
+
 #include "includes/CentralDataStructure/Measurements/measurements.hpp" //get_cartesian_point_from_internal_coords()
 #include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
-#include <sstream>
 #include <iomanip>
 #include <ios>
+#include <sstream>
 
 namespace
 {
@@ -83,12 +84,12 @@ PrepAtom::PrepAtom(const std::string& line)
     this->setName(codeUtils::extractFromStream(ss, std::string()));
     this->setType(codeUtils::extractFromStream(ss, std::string()));
     properties.topologicalType = extractAtomTopologicalType(ss);
-    properties.bondIndex       = codeUtils::extractFromStream(ss, int());
-    properties.angleIndex      = codeUtils::extractFromStream(ss, int());
-    properties.dihedralIndex   = codeUtils::extractFromStream(ss, int());
-    properties.bondLength      = codeUtils::extractFromStream(ss, double());
-    properties.angle           = codeUtils::extractFromStream(ss, double());
-    properties.dihedral        = codeUtils::extractFromStream(ss, double());
+    properties.bondIndex = codeUtils::extractFromStream(ss, int());
+    properties.angleIndex = codeUtils::extractFromStream(ss, int());
+    properties.dihedralIndex = codeUtils::extractFromStream(ss, int());
+    properties.bondLength = codeUtils::extractFromStream(ss, double());
+    properties.angle = codeUtils::extractFromStream(ss, double());
+    properties.dihedral = codeUtils::extractFromStream(ss, double());
     this->setCharge(codeUtils::extractFromStream(ss, double()));
 }
 
@@ -98,8 +99,7 @@ PrepAtom::PrepAtom(PrepAtom&& other) noexcept : PrepAtom() //: cds::Atom(other)
     swap(*this, other);
 }
 
-PrepAtom::PrepAtom(const PrepAtom& other) noexcept : cds::Atom(other), properties(other.properties)
-{}
+PrepAtom::PrepAtom(const PrepAtom& other) noexcept : cds::Atom(other), properties(other.properties) {}
 
 PrepAtom& PrepAtom::operator=(PrepAtom other) noexcept
 {
@@ -112,8 +112,12 @@ void PrepAtom::Determine3dCoordinate()
     // std::cout << "Determining 3d Coordinates for " << this->getName() << "\n";
     std::vector<PrepAtom*> foundAtoms = findDihedralAtoms(this);
     this->setCoordinate(cds::calculateCoordinateFromInternalCoords(
-        foundAtoms.at(3)->coordinate(), foundAtoms.at(2)->coordinate(), foundAtoms.at(1)->coordinate(),
-        properties.angle, properties.dihedral, properties.bondLength));
+        foundAtoms.at(3)->coordinate(),
+        foundAtoms.at(2)->coordinate(),
+        foundAtoms.at(1)->coordinate(),
+        properties.angle,
+        properties.dihedral,
+        properties.bondLength));
     return;
 }
 

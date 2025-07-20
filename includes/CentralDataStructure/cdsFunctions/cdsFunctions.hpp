@@ -1,11 +1,11 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_CDSFUNCTIONS_HPP
 
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CentralDataStructure/residueTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <array>
 #include <vector>
@@ -31,8 +31,8 @@ namespace cds
     std::vector<uint> atomAtomicNumbers(const std::vector<Atom*>& atoms);
     std::vector<Coordinate> atomCoordinates(const std::vector<Atom*>& atoms);
     void setAtomCoordinates(std::vector<Atom*>& atoms, const std::vector<Coordinate>& coordinates);
-    std::vector<Sphere> atomCoordinatesWithRadii(const codeUtils::SparseVector<double>& elementRadii,
-                                                 const std::vector<Atom*>& atoms);
+    std::vector<Sphere> atomCoordinatesWithRadii(
+        const codeUtils::SparseVector<double>& elementRadii, const std::vector<Atom*>& atoms);
     std::vector<std::string> atomTypes(const std::vector<Atom*>& atoms);
     std::vector<double> atomCharges(const std::vector<Atom*>& atoms);
     std::vector<bool> atomVisibility(const std::vector<Atom*>& atoms);

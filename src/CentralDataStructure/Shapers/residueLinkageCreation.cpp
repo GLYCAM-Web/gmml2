@@ -1,20 +1,21 @@
-#include <cmath>
-#include <sstream>
-#include <iostream>
-
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
-#include "includes/CentralDataStructure/Shapers/psiAngleHydrogen.hpp"
-#include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
-#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+#include "includes/CentralDataStructure/Selections/shaperSelections.hpp"
+#include "includes/CentralDataStructure/Shapers/psiAngleHydrogen.hpp"
+#include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
+
+#include <cmath>
+#include <iostream>
+#include <sstream>
 
 namespace
 {
@@ -43,8 +44,8 @@ namespace
             GlycamMetadata::GetDescriptiveNameForGlycamResidueName(link.residues.second.glycamCode);
         std::string atom1Name = link.atoms.first;
         std::string atom2Name = link.atoms.second;
-        char link1            = *atom1Name.rbegin(); //
-        char link2            = *atom2Name.rbegin(); // Messy for Acetyl.
+        char link1 = *atom1Name.rbegin(); //
+        char link2 = *atom2Name.rbegin(); // Messy for Acetyl.
         std::stringstream linkageName;
         linkageName << residue1Name << link1 << "-" << link2 << residue2Name;
         return linkageName.str();
@@ -52,16 +53,16 @@ namespace
 
     std::vector<std::vector<size_t>> findResidueLinkageMetadata(cds::ResidueLinkAttributes link)
     {
-        std::string firstAtom                 = link.atoms.first;
-        std::string secondAtom                = link.atoms.second;
-        cds::ResidueAttributes& firstResidue  = link.residues.first;
+        std::string firstAtom = link.atoms.first;
+        std::string secondAtom = link.atoms.second;
+        cds::ResidueAttributes& firstResidue = link.residues.first;
         cds::ResidueAttributes& secondResidue = link.residues.second;
         std::vector<std::vector<size_t>> matching_entries =
             GlycamMetadata::getDihedralAngleDataEntriesForLinkage(firstAtom, firstResidue, secondAtom, secondResidue);
         if (matching_entries.empty())
         { // Trying the reverse order
-            matching_entries = GlycamMetadata::getDihedralAngleDataEntriesForLinkage(secondAtom, secondResidue,
-                                                                                     firstAtom, firstResidue);
+            matching_entries = GlycamMetadata::getDihedralAngleDataEntriesForLinkage(
+                secondAtom, secondResidue, firstAtom, firstResidue);
         }
         if (matching_entries.empty())
         {
@@ -76,9 +77,10 @@ namespace
         return matching_entries;
     }
 
-    std::vector<cds::RotatableDihedral>
-    createRotatableDihedrals(const std::string& linkageName, const std::vector<cds::DihedralAtoms>& dihedralAtoms,
-                             const std::vector<std::vector<size_t>>& metadataIndices)
+    std::vector<cds::RotatableDihedral> createRotatableDihedrals(
+        const std::string& linkageName,
+        const std::vector<cds::DihedralAtoms>& dihedralAtoms,
+        const std::vector<std::vector<size_t>>& metadataIndices)
     {
         std::vector<cds::RotatableDihedral> rotatableDihedrals;
         rotatableDihedrals.reserve(dihedralAtoms.size());
@@ -117,18 +119,18 @@ namespace
         }
     }
 
-    void validateConformerMetadata(const GlycamMetadata::DihedralAngleDataTable& table,
-                                   const cds::ResidueLinkage& linkage)
+    void validateConformerMetadata(
+        const GlycamMetadata::DihedralAngleDataTable& table, const cds::ResidueLinkage& linkage)
     {
-        auto& dihedrals       = linkage.rotatableDihedrals;
-        auto& metadata        = linkage.dihedralMetadata;
+        auto& dihedrals = linkage.rotatableDihedrals;
+        auto& metadata = linkage.dihedralMetadata;
         size_t conformerCount = metadata[0].size();
         for (size_t n = 1; n < dihedrals.size(); n++)
         {
             if (metadata[n].size() != conformerCount)
             {
-                throw std::runtime_error("error: different number of conformers in linkage: " +
-                                         cds::print(table, linkage));
+                throw std::runtime_error(
+                    "error: different number of conformers in linkage: " + cds::print(table, linkage));
             }
         }
 
@@ -139,19 +141,20 @@ namespace
             {
                 if (std::fabs(weight - table.entries[metadata[n][conformer]].weight_) >= 1e-10)
                 {
-                    throw std::runtime_error("error: conformers have different weight in linkage: " +
-                                             cds::print(table, linkage));
+                    throw std::runtime_error(
+                        "error: conformers have different weight in linkage: " + cds::print(table, linkage));
                 }
             }
         }
     }
 
-    void throwMissingMetadataError(const cds::ResidueLinkAttributes& names,
-                                   const std::vector<cds::DihedralAtoms>& dihedralAtoms,
-                                   const std::vector<std::vector<size_t>>& metadataIndices)
+    void throwMissingMetadataError(
+        const cds::ResidueLinkAttributes& names,
+        const std::vector<cds::DihedralAtoms>& dihedralAtoms,
+        const std::vector<std::vector<size_t>>& metadataIndices)
     {
         size_t dihedralCount = dihedralAtoms.size();
-        size_t missingCount  = dihedralCount - metadataIndices.size();
+        size_t missingCount = dihedralCount - metadataIndices.size();
         std::ostringstream stream;
         stream << "Insufficient metadata found for the linkage between " << names.residues.first.name << " and "
                << names.residues.second.name << ". Missing metadata for ";
@@ -189,8 +192,8 @@ cds::ResidueLink cds::findResidueLink(std::pair<cds::Residue*, cds::Residue*> re
 {
     std::vector<cds::Atom*> atoms;
     bool found = false;
-    cdsSelections::FindAtomsConnectingResidues(residues.first->getAtoms().at(0), residues.first, residues.second,
-                                               &atoms, &found);
+    cdsSelections::FindAtomsConnectingResidues(
+        residues.first->getAtoms().at(0), residues.first, residues.second, &atoms, &found);
     if (atoms.size() >= 2)
     {
         return {
@@ -216,13 +219,13 @@ void cds::determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals)
     }
 }
 
-cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                                              ResidueLink& link)
+cds::ResidueLinkage cds::createResidueLinkage(
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable, ResidueLink& link)
 {
-    std::string firstId                  = cds::residueStringId(link.residues.first);
-    std::string secondId                 = cds::residueStringId(link.residues.second);
+    std::string firstId = cds::residueStringId(link.residues.first);
+    std::string secondId = cds::residueStringId(link.residues.second);
     ResidueLinkAttributes linkAttributes = toAttributes(link);
-    int local_debug                      = 1;
+    int local_debug = 1;
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Maybe Finding connection between " + firstId + " :: " + secondId);
@@ -230,8 +233,11 @@ cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngl
     if (local_debug > 0)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "Finding connection between " + firstId + " :: " + secondId);
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Connection atoms are from: " + link.atoms.first->getId() + " to " + link.atoms.second->getId());
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::INF,
+            "Connection atoms are from: " + link.atoms.first->getId() + " to " + link.atoms.second->getId());
     }
     std::vector<DihedralAtoms> dihedralAtoms = cdsSelections::findRotatableDihedralsConnectingResidues(link);
     if (local_debug > 0)
@@ -247,10 +253,17 @@ cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngl
             for (auto& dihedralAngleData : entry)
             {
                 const GlycamMetadata::DihedralAngleData& entry = metadataTable.entries[dihedralAngleData];
-                gmml::log(__LINE__, __FILE__, gmml::INF,
-                          codeUtils::join("_", {entry.atom1_, entry.atom2_, entry.atom3_, entry.atom4_}) + " : " +
-                              codeUtils::join(" ", {std::to_string(entry.index_), entry.rotamer_name_,
-                                                    entry.dihedral_angle_name_, std::to_string(entry.default_angle)}));
+                gmml::log(
+                    __LINE__,
+                    __FILE__,
+                    gmml::INF,
+                    codeUtils::join("_", {entry.atom1_, entry.atom2_, entry.atom3_, entry.atom4_}) + " : " +
+                        codeUtils::join(
+                            " ",
+                            {std::to_string(entry.index_),
+                             entry.rotamer_name_,
+                             entry.dihedral_angle_name_,
+                             std::to_string(entry.default_angle)}));
             }
         }
     }
@@ -271,7 +284,7 @@ cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngl
 
     auto& residues = link.residues;
     createHydrogenForPsiAngles(metadataTable, residues.second, dihedralAtoms, metadata);
-    std::string linkageName                  = determineLinkageNameFromResidueNames(linkAttributes);
+    std::string linkageName = determineLinkageNameFromResidueNames(linkAttributes);
     std::vector<RotatableDihedral> dihedrals = createRotatableDihedrals(linkageName, dihedralAtoms, metadata);
     determineAtomsThatMove(dihedrals);
 
@@ -283,9 +296,9 @@ cds::ResidueLinkage cds::createResidueLinkage(const GlycamMetadata::DihedralAngl
     }
 
     const GlycamMetadata::DihedralAngleData& firstMetadata = metadataTable.entries[metadata[0][0]];
-    GlycamMetadata::RotamerType rotamerType                = firstMetadata.rotamer_type_;
-    const std::vector<std::string>& cond1                  = firstMetadata.residue1_conditions_;
-    bool isDerivative                                      = cond1.size() > 0 && cond1[0] == "derivative";
+    GlycamMetadata::RotamerType rotamerType = firstMetadata.rotamer_type_;
+    const std::vector<std::string>& cond1 = firstMetadata.residue1_conditions_;
+    bool isDerivative = cond1.size() > 0 && cond1[0] == "derivative";
     ResidueLinkage linkage {link, dihedrals, metadata, rotamerType, isDerivative, index, linkageName};
 
     validateRotamerTypes(metadataTable, linkage);

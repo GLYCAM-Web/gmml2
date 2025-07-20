@@ -1,13 +1,13 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPRINTER_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CONDENSEDSEQUENCE_SEQUENCEPRINTER_HPP
 
-#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
 #include <functional>
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace cdsCondensedSequence
 {

@@ -4,8 +4,8 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 
-#include <utility>
 #include <array>
+#include <utility>
 #include <vector>
 
 namespace pdb

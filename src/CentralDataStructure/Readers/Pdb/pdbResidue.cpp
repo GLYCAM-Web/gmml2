@@ -1,8 +1,9 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+
 #include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 #include "includes/CodeUtils/biology.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
@@ -28,8 +29,11 @@ namespace
 
 pdb::ResidueId pdb::pdbResidueId(const PdbData& data, size_t residueId)
 {
-    return ResidueId(data.residues.names[residueId], std::to_string(data.residues.numbers[residueId]),
-                     data.residues.insertionCodes[residueId], data.residues.chainIds[residueId]);
+    return ResidueId(
+        data.residues.names[residueId],
+        std::to_string(data.residues.numbers[residueId]),
+        data.residues.insertionCodes[residueId],
+        data.residues.chainIds[residueId]);
 }
 
 std::string pdb::residueStringId(const PdbData& data, size_t residueId)
@@ -40,11 +44,18 @@ std::string pdb::residueStringId(const PdbData& data, size_t residueId)
 size_t pdb::readResidue(PdbData& data, size_t moleculeId, std::stringstream& singleResidueSecion, std::string firstLine)
 {
     ResidueId resId(firstLine);
-    size_t position                                    = data.molecules.residueOrder[moleculeId].size();
-    std::string name                                   = resId.getName();
-    size_t residueId                                   = addResidue(data, moleculeId, position,
-                                                                    {name, residueType(name), uint(std::stoi(resId.getNumber())),
-                                                                     resId.getInsertionCode(), resId.getChainId(), false});
+    size_t position = data.molecules.residueOrder[moleculeId].size();
+    std::string name = resId.getName();
+    size_t residueId = addResidue(
+        data,
+        moleculeId,
+        position,
+        {name,
+         residueType(name),
+         uint(std::stoi(resId.getNumber())),
+         resId.getInsertionCode(),
+         resId.getChainId(),
+         false});
     std::string firstFoundAlternativeLocationIndicator = resId.getAlternativeLocation(); // Normally empty
     std::string line;
     while (getline(singleResidueSecion, line))
@@ -73,14 +84,25 @@ size_t pdb::readResidue(PdbData& data, size_t moleculeId, std::stringstream& sin
     return residueId;
 }
 
-size_t pdb::readResidue(PdbData& data, size_t moleculeId, const std::string& name, cds::ResidueType type,
-                        bool hasTerCard, size_t referenceResidue)
+size_t pdb::readResidue(
+    PdbData& data,
+    size_t moleculeId,
+    const std::string& name,
+    cds::ResidueType type,
+    bool hasTerCard,
+    size_t referenceResidue)
 {
     size_t position = codeUtils::indexOf(data.molecules.residueOrder[moleculeId], referenceResidue) + 1;
-    return addResidue(data, moleculeId, position,
-                      {name, type, data.residues.numbers[referenceResidue] + 1,
-                       data.residues.insertionCodes[referenceResidue], data.residues.chainIds[referenceResidue],
-                       hasTerCard});
+    return addResidue(
+        data,
+        moleculeId,
+        position,
+        {name,
+         type,
+         data.residues.numbers[referenceResidue] + 1,
+         data.residues.insertionCodes[referenceResidue],
+         data.residues.chainIds[referenceResidue],
+         hasTerCard});
 }
 
 //////////////////////////////////////////////////////////

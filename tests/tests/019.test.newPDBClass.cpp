@@ -1,21 +1,22 @@
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include <string>
-#include <iostream>
+
 #include <fstream>
+#include <iostream>
+#include <string>
 
 int main(int argc, char* argv[])
 {
@@ -25,15 +26,15 @@ int main(int argc, char* argv[])
         std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb output/4mbz.pdb\n";
         std::exit(EXIT_FAILURE);
     }
-    std::string inputFile  = argv[1];
+    std::string inputFile = argv[1];
     std::string outputFile = argv[2];
     pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
     std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
     const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-    pdb::PreprocessorInformation ppInfo                    = pdbFile.PreProcess(parameterManager, options);
-    std::vector<cds::Assembly*> assemblies                 = pdbFile.getAssemblies();
+    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
+    std::vector<cds::Assembly*> assemblies = pdbFile.getAssemblies();
     for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
     {
         std::vector<size_t> atomIds = assemblyAtoms(pdbFile.data.indices, assemblyId);
@@ -43,17 +44,17 @@ int main(int argc, char* argv[])
         try
         {
             cds::GraphIndexData graphData = cds::toIndexData(assemblies[assemblyId]->getMolecules());
-            assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
-            cds::OffFileData data         = cds::toOffFileData(graphData.objects.residues);
+            assembly::Graph graph = cds::createVisibleAssemblyGraph(graphData);
+            cds::OffFileData data = cds::toOffFileData(graphData.objects.residues);
             cds::serializeNumbers(graphData.objects.atoms);
             cds::serializeNumbers(graphData.objects.residues);
-            codeUtils::writeToFile("outputOffFile.off",
-                                   [&](std::ostream& stream)
-                                   {
-                                       cds::WriteResiduesTogetherToOffFile(
-                                           stream, graph, data, codeUtils::indexVector(graphData.objects.residues),
-                                           "Assembly");
-                                   });
+            codeUtils::writeToFile(
+                "outputOffFile.off",
+                [&](std::ostream& stream)
+                {
+                    cds::WriteResiduesTogetherToOffFile(
+                        stream, graph, data, codeUtils::indexVector(graphData.objects.residues), "Assembly");
+                });
         }
         catch (std::runtime_error& error)
         {
@@ -70,7 +71,7 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Finished bonding atoms by distance" << std::endl;
-    pdbFile.data.atoms.numbers    = cds::atomNumbers(pdbFile.data.objects.atoms);
+    pdbFile.data.atoms.numbers = cds::atomNumbers(pdbFile.data.objects.atoms);
     pdbFile.data.residues.numbers = cds::residueNumbers(pdbFile.data.objects.residues);
     pdbFile.Write(outputFile);
 

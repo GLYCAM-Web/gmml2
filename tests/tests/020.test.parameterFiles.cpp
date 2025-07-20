@@ -1,23 +1,23 @@
-#include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
+#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
+#include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
+#include "includes/CentralDataStructure/Writers/offWriter.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/logging.hpp"
 
 #include <ostream>
 #include <stdexcept>
 
 int main()
 {
-    std::string prepFilePath                        = "../dat/prep/GLYCAM_06j-1_GAGS.prep";
+    std::string prepFilePath = "../dat/prep/GLYCAM_06j-1_GAGS.prep";
     std::vector<std::string> residuesToLoadFromPrep = {"0GA", "4YB", "4uA", "Cake", "4YA"};
-    cds::Molecule molecule                          = cds::Molecule();
+    cds::Molecule molecule = cds::Molecule();
     prep::readPrepFile(&molecule, prepFilePath, residuesToLoadFromPrep);
     // PREP residues
     prep::Write(&molecule, "./prepAsPrepFile.prep");
@@ -26,11 +26,7 @@ int main()
     try
     {
         cds::GraphIndexData indices = cds::toIndexData({&molecule});
-        codeUtils::writeToFile(fileName,
-                               [&](std::ostream& stream)
-                               {
-                                   cds::WritePdb(stream, indices, {});
-                               });
+        codeUtils::writeToFile(fileName, [&](std::ostream& stream) { cds::WritePdb(stream, indices, {}); });
     }
     catch (...)
     {
@@ -42,14 +38,13 @@ int main()
     try
     {
         cds::GraphIndexData graphData = cds::toIndexData(molecule.getResidues());
-        assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
+        assembly::Graph graph = cds::createVisibleAssemblyGraph(graphData);
         cds::serializeResiduesIndividually(graphData.objects.residues);
-        codeUtils::writeToFile(fileName,
-                               [&](std::ostream& stream)
-                               {
-                                   cds::WriteResiduesIndividuallyToOffFile(
-                                       stream, graph, cds::toOffFileData(graphData.objects.residues));
-                               });
+        codeUtils::writeToFile(
+            fileName,
+            [&](std::ostream& stream) {
+                cds::WriteResiduesIndividuallyToOffFile(stream, graph, cds::toOffFileData(graphData.objects.residues));
+            });
     }
     catch (...)
     {
@@ -62,14 +57,13 @@ int main()
     try
     {
         cds::GraphIndexData graphData = cds::toIndexData(molecule.getResidues());
-        assembly::Graph graph         = cds::createVisibleAssemblyGraph(graphData);
+        assembly::Graph graph = cds::createVisibleAssemblyGraph(graphData);
         cds::serializeResiduesIndividually(graphData.objects.residues);
-        codeUtils::writeToFile(fileName,
-                               [&](std::ostream& stream)
-                               {
-                                   cds::WriteResiduesIndividuallyToOffFile(
-                                       stream, graph, cds::toOffFileData(graphData.objects.residues));
-                               });
+        codeUtils::writeToFile(
+            fileName,
+            [&](std::ostream& stream) {
+                cds::WriteResiduesIndividuallyToOffFile(stream, graph, cds::toOffFileData(graphData.objects.residues));
+            });
     }
     catch (...)
     {

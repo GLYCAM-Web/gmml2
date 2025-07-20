@@ -1,13 +1,13 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
 
-#include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/Assembly/assemblyIndices.hpp"
-#include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/assembly.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 

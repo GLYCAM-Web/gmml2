@@ -1,9 +1,11 @@
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/logging.hpp"
+
 #include <iostream>
 #include <regex>
 #include <string>
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/containers.hpp"
 
 namespace
 {
@@ -254,15 +256,13 @@ namespace
     // gauche_effect=galacto.
 
     std::function<double(const DihedralAngleData&)> metadataWeight = [](const DihedralAngleData& entry)
-    {
-        return entry.weight_;
-    };
+    { return entry.weight_; };
 
     const GlycamMetadata::DihedralAngleDataTable dihedralAngleDataTable_ {
         dihedralAngleDataVector_, codeUtils::vectorMap(metadataWeight, dihedralAngleDataVector_)};
 
-    bool checkIfResidueConditionsAreSatisfied(const std::vector<std::string>& residue_types,
-                                              const std::vector<std::string>& entry_conditions)
+    bool checkIfResidueConditionsAreSatisfied(
+        const std::vector<std::string>& residue_types, const std::vector<std::string>& entry_conditions)
     {
         for (auto& entry_condition : entry_conditions)
         {
@@ -277,8 +277,15 @@ namespace
     std::string residueTypeToString(cds::ResidueType resType)
     {
         const std::array<std::string, 9> residueTypeStrings = {
-            "amino-acid", "monosaccharide",      "aglycon",   "derivative",      "solvent",
-            "deoxy",      "proteinCappingGroup", "undefined", "ResidueTypeCount"};
+            "amino-acid",
+            "monosaccharide",
+            "aglycon",
+            "derivative",
+            "solvent",
+            "deoxy",
+            "proteinCappingGroup",
+            "undefined",
+            "ResidueTypeCount"};
         size_t index = static_cast<size_t>(resType);
         return (index < residueTypeStrings.size()) ? residueTypeStrings[index] : "UNKNOWN";
     };
@@ -297,15 +304,15 @@ std::vector<std::string> getTagsForResidue(const cds::ResidueAttributes& residue
     std::string message = "Searching for attributes for " + residueAttributes.name;
     gmml::log(__LINE__, __FILE__, gmml::INF, message);
     std::vector<std::string> foundAttributes;
-    std::vector<std::string> nCarbonSix        = {"Tal", "All", "Alt", "Fuc", "Gal", "Glc", "Gul", "Man",
-                                                  "Qui", "Rha", "Ido", "Fru", "Sor", "Tag", "Psi"};
-    std::vector<std::string> glucoGauche       = {"Glc", "All", "Alt", "Man"};
-    std::vector<std::string> aldoseResidues    = {"All", "Alt", "Ara", "Fuc", "Gal", "Glc", "Gul", "Ido",
-                                                  "Lyx", "Man", "Qui", "Rha", "Rib", "Tal", "Xyl", "Tyv",
-                                                  "dUA", "Bac", "Abe", "Oli", "AAT", "Mur", "man"}; // Note lowercase man
-                                                                                                    // as in LDmanHep :(
-    std::vector<std::string> ketoseResidues    = {"Fru", "Psi", "Sor", "Tag", "Neu", "KDN",
-                                                  "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
+    std::vector<std::string> nCarbonSix = {
+        "Tal", "All", "Alt", "Fuc", "Gal", "Glc", "Gul", "Man", "Qui", "Rha", "Ido", "Fru", "Sor", "Tag", "Psi"};
+    std::vector<std::string> glucoGauche = {"Glc", "All", "Alt", "Man"};
+    std::vector<std::string> aldoseResidues = {"All", "Alt", "Ara", "Fuc", "Gal", "Glc", "Gul", "Ido",
+                                               "Lyx", "Man", "Qui", "Rha", "Rib", "Tal", "Xyl", "Tyv",
+                                               "dUA", "Bac", "Abe", "Oli", "AAT", "Mur", "man"}; // Note lowercase man
+                                                                                                 // as in LDmanHep :(
+    std::vector<std::string> ketoseResidues = {
+        "Fru", "Psi", "Sor", "Tag", "Neu", "KDN", "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
     std::vector<std::string> ulosonateResidues = {"Neu", "KDN", "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
     if (codeUtils::contains(glucoGauche, residueAttributes.name))
     {
@@ -350,7 +357,9 @@ std::vector<std::string> getTagsForResidue(const cds::ResidueAttributes& residue
 
 // Pass in the two atoms on either side the residue-residue linkage
 std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForLinkage(
-    const std::string& atom1Name, const cds::ResidueAttributes& residue1Attributes, const std::string& atom2Name,
+    const std::string& atom1Name,
+    const cds::ResidueAttributes& residue1Attributes,
+    const std::string& atom2Name,
     const cds::ResidueAttributes& residue2Attributes)
 {
     const DihedralAngleDataTable& table = dihedralAngleDataTable();
@@ -383,8 +392,9 @@ std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForL
                     return a.index_ == b.index_ &&
                            a.number_of_bonds_from_anomeric_carbon_ == b.number_of_bonds_from_anomeric_carbon_;
                 };
-                matching_entries.erase(std::remove_if(matching_entries.begin(), matching_entries.end(), areEquivalent),
-                                       matching_entries.end());
+                matching_entries.erase(
+                    std::remove_if(matching_entries.begin(), matching_entries.end(), areEquivalent),
+                    matching_entries.end());
                 matching_entries.push_back(n);
             }
         }
@@ -398,17 +408,17 @@ std::vector<std::vector<size_t>> GlycamMetadata::getDihedralAngleDataEntriesForL
     orderedEntries.resize(maxMetadataDihedral);
     for (size_t n = 0; n < maxMetadataDihedral; n++)
     {
-        std::copy_if(matching_entries.begin(), matching_entries.end(), std::back_inserter(orderedEntries[n]),
-                     [&](size_t entry)
-                     {
-                         return table.entries[entry].number_of_bonds_from_anomeric_carbon_ - 1 == n;
-                     });
+        std::copy_if(
+            matching_entries.begin(),
+            matching_entries.end(),
+            std::back_inserter(orderedEntries[n]),
+            [&](size_t entry) { return table.entries[entry].number_of_bonds_from_anomeric_carbon_ - 1 == n; });
     }
     return orderedEntries;
 }
 
-std::vector<size_t> GlycamMetadata::likelyMetadata(const DihedralAngleDataTable& table,
-                                                   const std::vector<size_t>& entries)
+std::vector<size_t> GlycamMetadata::likelyMetadata(
+    const DihedralAngleDataTable& table, const std::vector<size_t>& entries)
 {
     std::vector<size_t> returningMetadata;
     returningMetadata.reserve(entries.size());

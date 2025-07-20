@@ -1,7 +1,7 @@
 #ifndef INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP
 #define INCLUDES_MOLECULARMETADATA_GLYCAM_GLYCAM06FUNCTIONS_HPP
-#include <string>
 #include <map>
+#include <string>
 #include <vector>
 
 namespace GlycamMetadata

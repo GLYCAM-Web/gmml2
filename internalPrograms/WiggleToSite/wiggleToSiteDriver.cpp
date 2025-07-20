@@ -1,7 +1,8 @@
-#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
+
 #include <iostream>
 
 int main(int argc, char* argv[])

@@ -1,18 +1,18 @@
 #include "includes/MolecularMetadata/atomicBonds.hpp"
 
 #include <array>
-#include <vector>
 #include <map>
 #include <string>
 #include <utility>
+#include <vector>
 
 namespace
 {
     using MolecularMetadata::Element;
     typedef std::map<std::array<Element, 2>, std::pair<double, double>> BondLengthMap;
 
-    const double maxCutOff         = 1.65;
-    const double minCutOff         = 0.7;
+    const double maxCutOff = 1.65;
+    const double minCutOff = 0.7;
     const double defaultBondLength = 1.4;
     const double hydrogenMaxCutoff = 1.15;
 
@@ -124,10 +124,7 @@ namespace
     // clang-format on
 } // namespace
 
-double MolecularMetadata::hydrogenCovalentBondMaxLength()
-{
-    return hydrogenMaxCutoff;
-}
+double MolecularMetadata::hydrogenCovalentBondMaxLength() { return hydrogenMaxCutoff; }
 
 double MolecularMetadata::maxBondLengthByAtomType(Element atom1Element, Element atom2Element)
 { // Using PDB bond length statistics provided by Chenghua on 2/5/19

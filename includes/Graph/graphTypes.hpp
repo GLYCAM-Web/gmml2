@@ -1,8 +1,8 @@
 #ifndef INCLUDES_GRAPH_GRAPHTYPES_HPP
 #define INCLUDES_GRAPH_GRAPHTYPES_HPP
 
-#include <cstddef>
 #include <array>
+#include <cstddef>
 #include <vector>
 
 namespace graph
@@ -37,30 +37,15 @@ namespace graph
         Database source;
     };
 
-    inline size_t nodeCount(const Database& db)
-    {
-        return db.nodes.size();
-    }
+    inline size_t nodeCount(const Database& db) { return db.nodes.size(); }
 
-    inline size_t edgeCount(const Database& db)
-    {
-        return db.edges.size();
-    }
+    inline size_t edgeCount(const Database& db) { return db.edges.size(); }
 
-    inline size_t nodeCount(const Graph& graph)
-    {
-        return graph.nodes.indices.size();
-    }
+    inline size_t nodeCount(const Graph& graph) { return graph.nodes.indices.size(); }
 
-    inline size_t edgeCount(const Graph& graph)
-    {
-        return graph.edges.indices.size();
-    }
+    inline size_t edgeCount(const Graph& graph) { return graph.edges.indices.size(); }
 
-    inline size_t sourceNodeIndex(const Graph& graph, size_t n)
-    {
-        return graph.nodes.indices[n];
-    }
+    inline size_t sourceNodeIndex(const Graph& graph, size_t n) { return graph.nodes.indices[n]; }
 } // namespace graph
 
 #endif

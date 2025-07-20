@@ -1,13 +1,13 @@
-#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/version.h"
 
-#include <vector>
-#include <string>
 #include <iostream>
+#include <string>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
@@ -57,8 +57,8 @@ int main(int argc, char* argv[])
         std::exit(1);
     }
 
-    std::string baseDir  = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
-    std::string SNFGDir  = codeUtils::SNFGSymbolsDir();
+    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    std::string SNFGDir = codeUtils::SNFGSymbolsDir();
     std::string filename = "";
     std::string sequence;
     bool relative = false;

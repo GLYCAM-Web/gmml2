@@ -1,10 +1,10 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_GRAPHINTERFACE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_CDSFUNCTIONS_GRAPHINTERFACE_HPP
 
-#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
-#include "includes/Graph/graphTypes.hpp"
+#include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <vector>
 

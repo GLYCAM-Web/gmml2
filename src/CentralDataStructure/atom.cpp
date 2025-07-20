@@ -1,7 +1,8 @@
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
-#include "includes/CodeUtils/logging.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <ctype.h> // isalpha
 #include <sstream>
@@ -18,10 +19,7 @@ Atom::Atom(const std::string name, const Coordinate& coord) : Node<Atom>(name, {
 }
 
 // Move Ctor
-Atom::Atom(Atom&& other) noexcept : Node<Atom>(other)
-{
-    swap(*this, other);
-}
+Atom::Atom(Atom&& other) noexcept : Node<Atom>(other) { swap(*this, other); }
 
 // Copy Ctor
 Atom::Atom(const Atom& other) noexcept
@@ -43,7 +41,7 @@ Atom& Atom::operator=(Atom other) noexcept
 
 unsigned int Atom::getNumberFromName() const
 {
-    const std::string name        = this->getName();
+    const std::string name = this->getName();
     std::string convertableNumber = "";
     for (size_t i = 1; i < name.size(); i++)
     {
@@ -64,7 +62,7 @@ unsigned int Atom::getNumberFromName() const
 //////////////////////////////////////////////////////////
 void Atom::setElement(MolecularMetadata::Element element)
 {
-    element_    = element;
+    element_ = element;
     gotElement_ = true;
 }
 
@@ -90,31 +88,19 @@ MolecularMetadata::Element Atom::cachedElement()
 {
     if (!gotElement_)
     {
-        element_    = MolecularMetadata::toElement(getElement());
+        element_ = MolecularMetadata::toElement(getElement());
         gotElement_ = true;
     }
     return element_;
 }
 
-int Atom::getAtomicNumber() const
-{
-    return MolecularMetadata::findElementAtomicNumber(this->getElement());
-}
+int Atom::getAtomicNumber() const { return MolecularMetadata::findElementAtomicNumber(this->getElement()); }
 
-std::string Atom::getId() const
-{
-    return this->getName() + "_" + std::to_string(this->getIndex());
-}
+std::string Atom::getId() const { return this->getName() + "_" + std::to_string(this->getIndex()); }
 
 //////////////////////////////////////////////////////////
 //                   OVERLOADED OPERATORS               //
 //////////////////////////////////////////////////////////
-bool Atom::operator==(const Atom& otherAtom)
-{
-    return (this->getIndex() == otherAtom.getIndex());
-}
+bool Atom::operator==(const Atom& otherAtom) { return (this->getIndex() == otherAtom.getIndex()); }
 
-bool Atom::operator!=(const Atom& otherAtom)
-{
-    return !(operator==(otherAtom));
-}
+bool Atom::operator!=(const Atom& otherAtom) { return !(operator==(otherAtom)); }

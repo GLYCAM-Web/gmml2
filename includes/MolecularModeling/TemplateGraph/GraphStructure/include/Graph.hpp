@@ -87,15 +87,21 @@ namespace glygraph
         void lazyExpiredFixer();
 
         // Used to assist in recursion when running bfs or dfs
-        void dfsHelper(Node<T>* const& currentNode_t, std::unordered_set<Node<T>*>& visitedNodeSet_t,
-                       std::vector<Node<T>*>& reachableNodes_t);
-        void bfsHelper(Node<T>* const& currentNode_t, std::unordered_set<Node<T>*>& visitedNodeSet_t,
-                       std::vector<Node<T>*>& reachableNodes_t);
+        void dfsHelper(
+            Node<T>* const& currentNode_t,
+            std::unordered_set<Node<T>*>& visitedNodeSet_t,
+            std::vector<Node<T>*>& reachableNodes_t);
+        void bfsHelper(
+            Node<T>* const& currentNode_t,
+            std::unordered_set<Node<T>*>& visitedNodeSet_t,
+            std::vector<Node<T>*>& reachableNodes_t);
 
         std::vector<Node<T>*> getReachableNodes(Node<T>* const& startingNode_t);
         // NOTE: To be used when we are passed solely a root node.
-        void getReachableHelper(Node<T>* const& currentNode_t, std::unordered_set<Node<T>*>& visistedNodeSet_t,
-                                std::vector<Node<T>*>& reachableNodes_t);
+        void getReachableHelper(
+            Node<T>* const& currentNode_t,
+            std::unordered_set<Node<T>*>& visistedNodeSet_t,
+            std::vector<Node<T>*>& reachableNodes_t);
     }; // end graph class
 
     template<class T> inline Graph<T>::Graph()
@@ -159,15 +165,9 @@ namespace glygraph
         // lazyInfo(__LINE__, __func__, "Graph deleted");
     }
 
-    template<class T> inline std::vector<Node<T>*> Graph<T>::getNodes()
-    {
-        return this->allNodes_m;
-    }
+    template<class T> inline std::vector<Node<T>*> Graph<T>::getNodes() { return this->allNodes_m; }
 
-    template<class T> inline HalfAdjacencyMatrix<T> Graph<T>::getAdjMatrix() const
-    {
-        return this->adjMatrix_m;
-    }
+    template<class T> inline HalfAdjacencyMatrix<T> Graph<T>::getAdjMatrix() const { return this->adjMatrix_m; }
 
     template<class T> inline void Graph<T>::populateAdjacencyMatrix()
     {
@@ -178,8 +178,8 @@ namespace glygraph
             {
                 for (Node<T>* currNodeNeighbor : currNode->getNeighbors())
                 {
-                    if (!(this->adjMatrix_m.isConnected(this->indexLookup_m[currNode],
-                                                        this->indexLookup_m[currNodeNeighbor])))
+                    if (!(this->adjMatrix_m.isConnected(
+                            this->indexLookup_m[currNode], this->indexLookup_m[currNodeNeighbor])))
                     {
                         this->adjMatrix_m.connect(this->indexLookup_m[currNode], this->indexLookup_m[currNodeNeighbor]);
                     }
@@ -282,9 +282,9 @@ namespace glygraph
     template<class T> inline std::string Graph<T>::getGraphvizLink()
     {
         std::string connectionArrow = "%20-%3E%20";
-        std::string newLine         = "%0A%09";
-        std::string baseURL         = "https://dreampuf.github.io/GraphvizOnline/#digraph%20G%20%7B%0A%09";
-        std::string endBracket      = "%0A%7D";
+        std::string newLine = "%0A%09";
+        std::string baseURL = "https://dreampuf.github.io/GraphvizOnline/#digraph%20G%20%7B%0A%09";
+        std::string endBracket = "%0A%7D";
 
         // first make a collection of all of our node connections, just use set cause less chars lazy
         std::map<Node<T>*, std::set<Node<T>*>> nodeNeighs;
@@ -321,7 +321,7 @@ namespace glygraph
                 endURL += currPair.first->getName() + "->" + currNeigh->getName() + newLine;
             }
         }
-        endURL  += endBracket;
+        endURL += endBracket;
         baseURL += endURL;
         return baseURL;
     }
@@ -351,20 +351,20 @@ namespace glygraph
     // copy assignment
     template<class T> inline Graph<T>& Graph<T>::operator=(const Graph<T>& rhs)
     {
-        this->adjMatrix_m   = rhs.adjMatrix_m;
-        this->allNodes_m    = rhs.allNodes_m;
+        this->adjMatrix_m = rhs.adjMatrix_m;
+        this->allNodes_m = rhs.allNodes_m;
         this->indexLookup_m = rhs.indexLookup_m;
-        this->nodeLookup_m  = rhs.nodeLookup_m;
+        this->nodeLookup_m = rhs.nodeLookup_m;
         return *this;
     }
 
     // move assignment
     template<class T> inline Graph<T>& Graph<T>::operator=(Graph<T>&& rhs)
     {
-        this->adjMatrix_m   = rhs.adjMatrix_m;
-        this->allNodes_m    = rhs.allNodes_m;
+        this->adjMatrix_m = rhs.adjMatrix_m;
+        this->allNodes_m = rhs.allNodes_m;
         this->indexLookup_m = rhs.indexLookup_m;
-        this->nodeLookup_m  = rhs.nodeLookup_m;
+        this->nodeLookup_m = rhs.nodeLookup_m;
         return *this;
     }
 
@@ -388,8 +388,10 @@ namespace glygraph
     }
 
     template<class T>
-    inline void Graph<T>::dfsHelper(Node<T>* const& currentNode_t, std::unordered_set<Node<T>*>& visitedNodeSet_t,
-                                    std::vector<Node<T>*>& reachableNodes_t)
+    inline void Graph<T>::dfsHelper(
+        Node<T>* const& currentNode_t,
+        std::unordered_set<Node<T>*>& visitedNodeSet_t,
+        std::vector<Node<T>*>& reachableNodes_t)
     {
         reachableNodes_t.push_back(currentNode_t);
 
@@ -403,17 +405,17 @@ namespace glygraph
         }
     }
 
-    template<class T> inline void Graph<T>::bfsWalk(Node<T>* const&)
-    {}
+    template<class T> inline void Graph<T>::bfsWalk(Node<T>* const&) {}
 
     template<class T>
     inline void Graph<T>::bfsHelper(Node<T>* const&, std::unordered_set<Node<T>*>&, std::vector<Node<T>*>&)
     {}
 
     template<class T>
-    inline void Graph<T>::getReachableHelper(Node<T>* const& currentNode_t,
-                                             std::unordered_set<Node<T>*>& visitedNodeSet_t,
-                                             std::vector<Node<T>*>& reachableNodes_t)
+    inline void Graph<T>::getReachableHelper(
+        Node<T>* const& currentNode_t,
+        std::unordered_set<Node<T>*>& visitedNodeSet_t,
+        std::vector<Node<T>*>& reachableNodes_t)
     {
 
         reachableNodes_t.push_back(currentNode_t);

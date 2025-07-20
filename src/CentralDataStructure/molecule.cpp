@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/molecule.hpp"
+
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -22,7 +23,7 @@ Molecule::Molecule(std::vector<Residue*>& residues) : Node<Molecule>(glygraph::i
 Molecule::Molecule(Molecule&& other) noexcept : glygraph::Node<cds::Molecule>(other)
 {
     residues_ = std::move(other.residues_);
-    number_   = std::move(other.number_);
+    number_ = std::move(other.number_);
 }
 
 // Copy Ctor
@@ -112,8 +113,11 @@ Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, size_t p
     }
     else
     {
-        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Could not create residue named " + myResidue->getName() + " as referenceResidue was not found\n");
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::WAR,
+            "Could not create residue named " + myResidue->getName() + " as referenceResidue was not found\n");
     }
     return nullptr;
 }
@@ -126,37 +130,32 @@ Residue* Molecule::insertNewResidue(std::unique_ptr<Residue> myResidue, const Re
 
 std::vector<std::unique_ptr<Residue>>::iterator Molecule::findPositionOfResidue(const Residue* queryResidue)
 {
-    auto it = std::find_if(residues_.begin(), residues_.end(),
-                           [&](auto& i)
-                           {
-                               return queryResidue == i.get();
-                           });
+    auto it = std::find_if(residues_.begin(), residues_.end(), [&](auto& i) { return queryResidue == i.get(); });
     if (it == residues_.end())
     {
-        gmml::log(__LINE__, __FILE__, gmml::ERR,
-                  "Did not find position of " + queryResidue->getName() +
-                      " in vector\n"); // every class should have a print?
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::ERR,
+            "Did not find position of " + queryResidue->getName() + " in vector\n"); // every class should have a print?
     }
     return it;
 }
 
 std::vector<Residue*> Molecule::getResidues(const std::vector<std::string>& queryNames)
 {
-    std::vector<Residue*> residues             = getResidues();
-    std::vector<std::string> names             = residueNames(residues);
-    std::function<bool(const size_t&)> hasName = [&](size_t n)
-    {
-        return codeUtils::contains(queryNames, names[n]);
-    };
-    return codeUtils::indicesToValues(residues,
-                                      codeUtils::vectorFilter(hasName, codeUtils::indexVector(residues.size())));
+    std::vector<Residue*> residues = getResidues();
+    std::vector<std::string> names = residueNames(residues);
+    std::function<bool(const size_t&)> hasName = [&](size_t n) { return codeUtils::contains(queryNames, names[n]); };
+    return codeUtils::indicesToValues(
+        residues, codeUtils::vectorFilter(hasName, codeUtils::indexVector(residues.size())));
 }
 
 Residue* Molecule::getResidue(const std::string& queryName)
 {
     std::vector<Residue*> residues = getResidues();
     std::vector<std::string> names = residueNames(residues);
-    size_t index                   = codeUtils::indexOf(names, queryName);
+    size_t index = codeUtils::indexOf(names, queryName);
     return index < residues.size() ? residues[index] : nullptr;
 }
 

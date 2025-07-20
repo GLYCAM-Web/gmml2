@@ -1,9 +1,11 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/titleRecord.hpp"
+
 #include "includes/CodeUtils/strings.hpp" //Trim removeMultipleSpaces
+
+#include <cmath>   //ceil
+#include <iomanip> //setw
 #include <iostream>
 #include <sstream>
-#include <iomanip> //setw
-#include <cmath>   //ceil
 
 using pdb::TitleRecord;
 
@@ -12,7 +14,7 @@ using pdb::TitleRecord;
 //////////////////////////////////////////////////////////
 TitleRecord::TitleRecord(std::string record_name, std::string title)
 {
-    name_  = record_name;
+    name_ = record_name;
     title_ = title;
 }
 
@@ -42,23 +44,14 @@ TitleRecord::TitleRecord(std::stringstream& stream_block)
 //////////////////////////////////////////////////////////
 //                       ACCESSOR                       //
 //////////////////////////////////////////////////////////
-const std::string& TitleRecord::GetRecordName() const
-{
-    return name_;
-}
+const std::string& TitleRecord::GetRecordName() const { return name_; }
 
-const std::string& TitleRecord::GetTitle() const
-{
-    return title_;
-}
+const std::string& TitleRecord::GetTitle() const { return title_; }
 
 //////////////////////////////////////////////////////////
 //                       MUTATOR                        //
 //////////////////////////////////////////////////////////
-void TitleRecord::SetName(std::string record_name)
-{
-    name_ = record_name;
-}
+void TitleRecord::SetName(std::string record_name) { name_ = record_name; }
 
 void TitleRecord::SetTitle(const std::string title)
 {
@@ -102,8 +95,9 @@ void TitleRecord::Write(std::ostream& stream) const
             {
                 stream << std::left << std::setw(6) << this->GetRecordName() << std::left << std::setw(2) << " "
                        << std::right << std::setw(2) << i << std::left << std::setw(70)
-                       << this->GetTitle().substr(MAX_TITLE_LENGTH_IN_LINE * (i - 1),
-                                                  this->GetTitle().length() - MAX_TITLE_LENGTH_IN_LINE * (i - 1))
+                       << this->GetTitle().substr(
+                              MAX_TITLE_LENGTH_IN_LINE * (i - 1),
+                              this->GetTitle().length() - MAX_TITLE_LENGTH_IN_LINE * (i - 1))
                        << std::endl;
             }
         }

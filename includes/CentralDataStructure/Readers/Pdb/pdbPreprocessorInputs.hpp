@@ -1,11 +1,11 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBPREPROCESSORINPUTS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBPREPROCESSORINPUTS_HPP
 
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
+#include "includes/CodeUtils/constants.hpp"
+
 #include <string>
 #include <vector>
-
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
 
 // These structs are all for interacting with the website via gems.
 
@@ -15,21 +15,23 @@ namespace pdb
                                // options instead/aswell.
     {
         // Constructors
-        PreprocessorOptions()
-        {}
+        PreprocessorOptions() {}
 
-        PreprocessorOptions(std::vector<std::pair<std::string, std::string>> hisSelections,
-                            std::string chainNTermination = "NH3+", std::string chainCTermination = "CO2-",
-                            std::string gapNTermination = "COCH3", std::string gapCTermination = "NHCH3")
+        PreprocessorOptions(
+            std::vector<std::pair<std::string, std::string>> hisSelections,
+            std::string chainNTermination = "NH3+",
+            std::string chainCTermination = "CO2-",
+            std::string gapNTermination = "COCH3",
+            std::string gapCTermination = "NHCH3")
             : chainNTermination_(chainNTermination), chainCTermination_(chainCTermination),
               gapNTermination_(gapNTermination), gapCTermination_(gapCTermination), hisSelections_(hisSelections)
         {}
 
         // Members
-        std::string chainNTermination_ = "NH3+";  // aka zwitterionic
-        std::string chainCTermination_ = "CO2-";  // aka zwitterionic
-        std::string gapNTermination_   = "COCH3"; // aka ACE
-        std::string gapCTermination_   = "NHCH3"; // aka NME
+        std::string chainNTermination_ = "NH3+"; // aka zwitterionic
+        std::string chainCTermination_ = "CO2-"; // aka zwitterionic
+        std::string gapNTermination_ = "COCH3";  // aka ACE
+        std::string gapCTermination_ = "NHCH3";  // aka NME
         std::vector<std::pair<std::string, std::string>>
             hisSelections_; // e.g. pair: residue id like this <"HIS_20_?_A_1", "HID">
     };
@@ -37,8 +39,7 @@ namespace pdb
     struct DisulphideBond // The original spelling is phabulous.
     {
         // Constructor
-        DisulphideBond()
-        {} // SWIG needs this
+        DisulphideBond() {} // SWIG needs this
 
         DisulphideBond(const pdb::ResidueId& res1Id, const pdb::ResidueId& res2Id, const double& distance)
             : residue1_(res1Id), residue2_(res2Id), distance_(distance)
@@ -53,11 +54,14 @@ namespace pdb
     struct GapInAminoAcidChain
     {
         // Constructor
-        GapInAminoAcidChain()
-        {} // SWIG needs this
+        GapInAminoAcidChain() {} // SWIG needs this
 
-        GapInAminoAcidChain(const std::string& chain, const std::string& resBefore, const std::string& resAfter,
-                            const std::string& cTerm, const std::string& nterm)
+        GapInAminoAcidChain(
+            const std::string& chain,
+            const std::string& resBefore,
+            const std::string& resAfter,
+            const std::string& cTerm,
+            const std::string& nterm)
             : chainId_(chain), residueBeforeGap_(resBefore), residueAfterGap_(resAfter), terminationBeforeGap_(cTerm),
               terminationAfterGap_(nterm)
         {}
@@ -73,11 +77,9 @@ namespace pdb
     struct AtomInfo
     {
         // Constructor
-        AtomInfo()
-        {} // required for SWIG? Really SWIG?
+        AtomInfo() {} // required for SWIG? Really SWIG?
 
-        AtomInfo(const std::string& atomName, const pdb::ResidueId& residue) : name_(atomName), residue_(residue)
-        {}
+        AtomInfo(const std::string& atomName, const pdb::ResidueId& residue) : name_(atomName), residue_(residue) {}
 
         // Members
         std::string name_;
@@ -87,11 +89,14 @@ namespace pdb
     struct ChainTerminal
     {
         // Constructor
-        ChainTerminal()
-        {} // SWIG needs this
+        ChainTerminal() {} // SWIG needs this
 
-        ChainTerminal(const std::string& chainId, const std::string& startIndex, const std::string& endIndex,
-                      const std::string& nTerm, const std::string& cTerm)
+        ChainTerminal(
+            const std::string& chainId,
+            const std::string& startIndex,
+            const std::string& endIndex,
+            const std::string& nTerm,
+            const std::string& cTerm)
             : chainId_(chainId), startIndex_(startIndex), endIndex_(endIndex), nTermination_(nTerm),
               cTermination_(cTerm)
         {}
@@ -107,11 +112,9 @@ namespace pdb
     struct NonNaturalProteinResidue
     {
         // Constructor
-        NonNaturalProteinResidue()
-        {}
+        NonNaturalProteinResidue() {}
 
-        NonNaturalProteinResidue(const pdb::ResidueId& residueId) : residue_(residueId)
-        {}
+        NonNaturalProteinResidue(const pdb::ResidueId& residueId) : residue_(residueId) {}
 
         // Members
         pdb::ResidueId residue_;

@@ -4,8 +4,8 @@
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 
-#include <string>
 #include <array>
+#include <string>
 #include <vector>
 
 namespace lib

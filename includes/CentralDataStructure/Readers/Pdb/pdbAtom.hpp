@@ -3,8 +3,9 @@
 // See http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM for an explanation of atom
 // formats in PDB files
 
-#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+
 #include <string>
 
 namespace pdb

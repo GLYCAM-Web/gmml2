@@ -1,9 +1,10 @@
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 
-#include <cmath>
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+
 #include <array>
+#include <cmath>
 #include <vector>
 
 namespace
@@ -11,23 +12,17 @@ namespace
     using cds::Coordinate;
     using cds::Sphere;
 
-    double radius(const Sphere& sphere)
-    {
-        return sphere.radius;
-    }
+    double radius(const Sphere& sphere) { return sphere.radius; }
 
-    Coordinate center(const Sphere& sphere)
-    {
-        return sphere.center;
-    }
+    Coordinate center(const Sphere& sphere) { return sphere.center; }
 
     Sphere boundingSphereInitialEstimate(const std::vector<Sphere>& spheres)
     {
         const Coordinate init = center(spheres[0]);
-        double d              = radius(spheres[0]);
-        double x              = init.nth(0);
-        double y              = init.nth(1);
-        double z              = init.nth(2);
+        double d = radius(spheres[0]);
+        double x = init.nth(0);
+        double y = init.nth(1);
+        double z = init.nth(2);
         std::array<double, 3> minValue {x - d, y - d, z - d};
         std::array<double, 3> maxValue {x + d, y + d, z + d};
         std::array<size_t, 3> minId {0, 0, 0};
@@ -36,33 +31,33 @@ namespace
         for (size_t k = 1; k < spheres.size(); k++)
         {
             const Sphere& a = spheres[k];
-            Coordinate pt   = center(a);
-            double r        = radius(a);
+            Coordinate pt = center(a);
+            double r = radius(a);
             for (size_t n = 0; n < 3; n++)
             {
                 double nth = pt.nth(n);
                 if (nth - r < minValue[n])
                 {
                     minValue[n] = nth - r;
-                    minId[n]    = k;
+                    minId[n] = k;
                 }
                 if (nth + r > maxValue[n])
                 {
                     maxValue[n] = nth + r;
-                    maxId[n]    = k;
+                    maxId[n] = k;
                 }
             }
         }
         size_t maxSpanN = 0;
-        double maxSpan  = 0.0;
+        double maxSpan = 0.0;
         for (size_t n = 0; n < 3; n++)
         {
             const Sphere& minp = spheres[minId[n]];
             const Sphere& maxp = spheres[maxId[n]];
-            double span        = cds::distance(center(minp), center(maxp)) + radius(minp) + radius(maxp);
+            double span = cds::distance(center(minp), center(maxp)) + radius(minp) + radius(maxp);
             if (span > maxSpan)
             {
-                maxSpan  = span;
+                maxSpan = span;
                 maxSpanN = n;
             }
         }
@@ -82,23 +77,23 @@ namespace
 
 cds::Sphere cds::boundingSphereIncluding(Sphere sphere, const Sphere& include)
 {
-    Coordinate diff   = center(include) - sphere.center;
+    Coordinate diff = center(include) - sphere.center;
     double diffLength = length(diff);
-    double dist       = diffLength + radius(include);
+    double dist = diffLength + radius(include);
     if (dist > sphere.radius)
     {
-        double newRadius     = 0.5 * (sphere.radius + dist);
+        double newRadius = 0.5 * (sphere.radius + dist);
         Coordinate newCenter = sphere.center + cds::scaleBy((dist - sphere.radius) / (2.0 * diffLength), diff);
-        sphere               = Sphere {newRadius, newCenter};
+        sphere = Sphere {newRadius, newCenter};
     }
     return sphere;
 }
 
 cds::Sphere cds::boundingSphereCenteredOnLine(const Sphere& sphere, const Coordinate& point1, const Coordinate& point2)
 {
-    Coordinate direction          = point2 - point1;
+    Coordinate direction = point2 - point1;
     Coordinate closestPointOnAxis = point1 + projection(sphere.center - point1, direction);
-    double distanceToAxis         = length(closestPointOnAxis - sphere.center);
+    double distanceToAxis = length(closestPointOnAxis - sphere.center);
     return {sphere.radius + distanceToAxis, closestPointOnAxis};
 }
 

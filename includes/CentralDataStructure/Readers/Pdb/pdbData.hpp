@@ -1,12 +1,12 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBDATA_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_PDBDATA_HPP
 
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <string>
 #include <vector>

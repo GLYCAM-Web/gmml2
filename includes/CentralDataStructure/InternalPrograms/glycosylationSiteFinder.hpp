@@ -17,8 +17,8 @@ namespace glycoproteinBuilder
         std::vector<std::string> tags; // e.g. oLink, nLink, sequon, cysteineSequon, all, etc
     };
 
-    std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(const pdb::PdbData& pdbData,
-                                                                    const std::vector<size_t>& residues);
+    std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(
+        const pdb::PdbData& pdbData, const std::vector<size_t>& residues);
 } // namespace glycoproteinBuilder
 
 #endif

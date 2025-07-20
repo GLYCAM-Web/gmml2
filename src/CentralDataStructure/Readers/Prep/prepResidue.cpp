@@ -1,15 +1,17 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
+
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
-#include <sstream>
+
 #include <fstream>
-#include <iostream>
 #include <iomanip>
 #include <ios>
+#include <iostream>
+#include <sstream>
 
 using prep::PrepResidue;
 
@@ -59,21 +61,24 @@ PrepResidue::PrepResidue(std::istream& in_file, std::string& line)
             case prep::kSectionBlank:
                 break;
             case prep::kSectionOther:
-                gmml::log(__LINE__, __FILE__, gmml::WAR,
-                          "Unrecognized section in prep file inside these brackets >>>" + line + "<<<");
+                gmml::log(
+                    __LINE__,
+                    __FILE__,
+                    gmml::WAR,
+                    "Unrecognized section in prep file inside these brackets >>>" + line + "<<<");
                 break;
             default:
-                gmml::log(__LINE__, __FILE__, gmml::WAR,
-                          "Did not figure out a prep section type for line inside these brackets >>>" + line + "<<<");
+                gmml::log(
+                    __LINE__,
+                    __FILE__,
+                    gmml::WAR,
+                    "Did not figure out a prep section type for line inside these brackets >>>" + line + "<<<");
         }
     }
 }
 
 // Move Ctor
-PrepResidue::PrepResidue(PrepResidue&& other) noexcept : PrepResidue()
-{
-    swap(*this, other);
-}
+PrepResidue::PrepResidue(PrepResidue&& other) noexcept : PrepResidue() { swap(*this, other); }
 
 // Copy Ctor
 PrepResidue::PrepResidue(const PrepResidue& other) : cds::Residue(other), properties(other.properties)
@@ -198,11 +203,11 @@ void PrepResidue::SetConnectivities()
         ++currentAtom;
     }
     // Now bond any atoms defined in loops.
-    std::vector<cds::Atom*> atoms      = this->getAtoms();
+    std::vector<cds::Atom*> atoms = this->getAtoms();
     std::vector<std::string> atomNames = cds::atomNames(atoms);
     for (auto& loop : this->properties.loops)
     {
-        size_t firstAtom  = codeUtils::indexOf(atomNames, loop.first);
+        size_t firstAtom = codeUtils::indexOf(atomNames, loop.first);
         size_t secondAtom = codeUtils::indexOf(atomNames, loop.second);
         if (firstAtom < atoms.size() && secondAtom < atoms.size())
         {
@@ -222,7 +227,7 @@ void PrepResidue::Generate3dStructure()
         this->getAtoms().at(2)->setCoordinate(cds::Coordinate(-0.75, 0.35, 0));
         // Use dummies as start for creating the other atoms.
         std::vector<cds::Atom*> atomsInResidue = this->getAtoms();
-        std::vector<cds::Atom*>::iterator it1  = atomsInResidue.begin();
+        std::vector<cds::Atom*>::iterator it1 = atomsInResidue.begin();
         std::advance(it1, 3);
         //		std::cout << "it1 is now pointing at atom: " << (*it1)->getName() << "\n";
         while (it1 != atomsInResidue.end())
@@ -243,7 +248,7 @@ void PrepResidue::Generate3dStructure()
 
 void PrepResidue::DeleteDummyAtoms()
 {
-    std::vector<cds::Atom*> atoms  = this->getAtoms();
+    std::vector<cds::Atom*> atoms = this->getAtoms();
     std::vector<std::string> names = cds::atomNames(atoms);
     for (size_t n : codeUtils::reverse(codeUtils::indicesOfElement(names, std::string("DUMM"))))
     {

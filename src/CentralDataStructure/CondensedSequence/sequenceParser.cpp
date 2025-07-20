@@ -1,17 +1,18 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
+
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
-#include "includes/Graph/graphTypes.hpp"
-#include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
+#include <cctype> // isdigit()
+#include <iostream>
+#include <optional>
 #include <sstream>
 #include <string>
-#include <cctype> // isdigit()
 #include <vector>
-#include <optional>
-#include <iostream>
 
 namespace
 {
@@ -27,7 +28,7 @@ namespace
 
     std::pair<std::string, std::string> ringShapeAndModifier(const std::string& modifier)
     { // E.g. LIdopA(4C1)a1-4 with modifier "A(4C1)", which here gets broken into ring shape "4C1" and modifier "A".
-        size_t leftParenthesisPosition  = modifier.find('(');
+        size_t leftParenthesisPosition = modifier.find('(');
         size_t rightParenthesisPosition = modifier.find(')');
 
         if ((leftParenthesisPosition == std::string::npos) || (rightParenthesisPosition == std::string::npos))
@@ -47,9 +48,9 @@ namespace
 
     ParsedResidueComponents parseDerivative(const std::string& residueString)
     { // A derivative e.g. 3S, 6Me. Linkage followed by residue name. No configuration.
-        std::string name      = residueString.substr(1); // From position 1 to the end.
+        std::string name = residueString.substr(1); // From position 1 to the end.
         cds::ResidueType type = (name == "D") || (name == "H") ? ResidueType::Deoxy : ResidueType::Derivative;
-        std::string linkage   = residueString.substr(0, 1);
+        std::string linkage = residueString.substr(0, 1);
         return {residueString, type, name, linkage, "", "", "", "", "", "", ""};
     }
 
@@ -58,15 +59,15 @@ namespace
         // (1-4)
         ParsedResidueComponents result;
         result.fullString = residueString;
-        result.type       = ResidueType::Sugar;
+        result.type = ResidueType::Sugar;
         if (std::isdigit(residueString[0]))
         {
             result.defaultHeadPosition = residueString.substr(0, 1);
-            residueString              = residueString.substr(1);
+            residueString = residueString.substr(1);
         }
         // Assumptions
-        size_t isomerStart   = 0; // e.g. DGal, DGlc, LIdo
-        size_t residueStart  = 0; // e.g. Gal, Glc, Ido
+        size_t isomerStart = 0;   // e.g. DGal, DGlc, LIdo
+        size_t residueStart = 0;  // e.g. Gal, Glc, Ido
         size_t modifierStart = 3; // e.g. NAc, A, A(1C4)
         // Checks
         if ((residueString.find("LDmanpHep") != std::string::npos) ||
@@ -84,8 +85,8 @@ namespace
             ++residueStart;  // 1 if normal e.g. DGlc..
             ++modifierStart; // 4 if normal.
         }
-        result.name          = residueString.substr(residueStart, 3);
-        size_t ringPosition  = (residueStart + 3);
+        result.name = residueString.substr(residueStart, 3);
+        size_t ringPosition = (residueStart + 3);
         std::string ringType = residueString.substr(ringPosition, 1);
         if ((ringType == "p") || (ringType == "f"))
         {
@@ -122,18 +123,15 @@ namespace
         }
         if (modifierLength > 0 && modifierLength < 100)
         {
-            std::string modifier                           = residueString.substr(modifierStart, modifierLength);
+            std::string modifier = residueString.substr(modifierStart, modifierLength);
             std::pair<std::string, std::string> ringAndMod = ringShapeAndModifier(modifier);
-            result.ringShape                               = ringAndMod.first;
-            result.modifier                                = ringAndMod.second;
+            result.ringShape = ringAndMod.first;
+            result.modifier = ringAndMod.second;
         }
         return result;
     }
 
-    bool isAglycone(const std::string& str)
-    {
-        return codeUtils::contains({"OH", "OME", "OtBu"}, str);
-    }
+    bool isAglycone(const std::string& str) { return codeUtils::contains({"OH", "OME", "OtBu"}, str); }
 
     SequenceNode parseResidueString(const std::string& residueString, size_t derivativeList)
     {
@@ -174,7 +172,7 @@ namespace
 
         for (size_t n = i - 1; n < i; n--)
         {
-            char c    = str[n];
+            char c = str[n];
             size_t ot = codeUtils::indexOf(openingBrackets, c);
             size_t ct = codeUtils::indexOf(closingBrackets, c);
             if (ct < closingBrackets.size())
@@ -225,9 +223,9 @@ namespace
         }
         auto mismatchingBracketError = [&](char first, char second, size_t position)
         {
-            throw std::runtime_error("Did not find corresponding '" + std::string {first} + "' for character '" +
-                                     std::string {second} + "' at position " + std::to_string(position + 1) +
-                                     " of sequence: " + sequence);
+            throw std::runtime_error(
+                "Did not find corresponding '" + std::string {first} + "' for character '" + std::string {second} +
+                "' at position " + std::to_string(position + 1) + " of sequence: " + sequence);
         };
         for (size_t n = sequence.length() - 1; n < sequence.length(); n--)
         {
@@ -263,17 +261,17 @@ namespace
         std::vector<size_t> result;
         result.reserve(32);
         size_t derivativeList = noDerivatives;
-        std::string trail     = "";
-        auto save             = [&](const std::string& str)
+        std::string trail = "";
+        auto save = [&](const std::string& str)
         {
             std::string fullStr = str + trail;
-            SequenceNode node   = parseResidueString(fullStr, derivativeList);
-            trail               = "";
-            derivativeList      = noDerivatives;
-            size_t newRes       = addNode(data, fullStr, node);
+            SequenceNode node = parseResidueString(fullStr, derivativeList);
+            trail = "";
+            derivativeList = noDerivatives;
+            size_t newRes = addNode(data, fullStr, node);
             result.push_back(newRes);
         };
-        size_t i         = sequence.length();
+        size_t i = sequence.length();
         size_t windowEnd = i;
         while (i > 0)
         {
@@ -291,15 +289,15 @@ namespace
             }
             else if (codeUtils::contains({']', '>'}, sequence[i]))
             { // Start of branch: recurve. Maybe save if have read enough.
-                bool isSquare                     = sequence[i] == ']';
-                bool isAngular                    = sequence[i] == '>';
-                size_t bracketStart               = matchingOpeningBracket(sequence, i);
+                bool isSquare = sequence[i] == ']';
+                bool isAngular = sequence[i] == '>';
+                size_t bracketStart = matchingOpeningBracket(sequence, i);
                 std::string substringWithBrackets = substr(sequence, bracketStart, i + 1);
-                std::string substring             = substr(sequence, bracketStart + 1, i);
-                int unsaved                       = (windowEnd - i - 1);
+                std::string substring = substr(sequence, bracketStart + 1, i);
+                int unsaved = (windowEnd - i - 1);
                 if (isSquare && unsaved > 0 && unsaved <= 4 && !isAglycone(after))
                 { // Derivative, save trailing part of residue
-                    trail                           = after;
+                    trail = after;
                     std::vector<size_t> derivatives = parseChain(data, substring);
                     derivativeList =
                         addNode(data, substringWithBrackets, cdsCondensedSequence::DerivativeListNode {derivatives});
@@ -330,27 +328,30 @@ namespace
                         }
                         if (bracketStart == 0 || sequence[bracketStart - 1] != ']')
                         {
-                            throw std::runtime_error("Repeat marker " + substringWithBrackets +
-                                                     " must be directly preceded by ']' in: " + sequence);
+                            throw std::runtime_error(
+                                "Repeat marker " + substringWithBrackets +
+                                " must be directly preceded by ']' in: " + sequence);
                         }
-                        i                                 = bracketStart - 1;
-                        bracketStart                      = matchingOpeningBracket(sequence, i);
-                        std::string repeatPart            = substringWithBrackets;
+                        i = bracketStart - 1;
+                        bracketStart = matchingOpeningBracket(sequence, i);
+                        std::string repeatPart = substringWithBrackets;
                         std::string substringWithBrackets = substr(sequence, bracketStart, i + 1);
-                        std::string substring             = substr(sequence, bracketStart + 1, i);
-                        std::vector<size_t> constituents  = parseChain(data, substring);
-                        size_t chain  = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
-                        size_t repeat = addNode(data, substringWithBrackets + repeatPart,
-                                                cdsCondensedSequence::RepeatNode {repeats.value(), chain});
+                        std::string substring = substr(sequence, bracketStart + 1, i);
+                        std::vector<size_t> constituents = parseChain(data, substring);
+                        size_t chain = addNode(data, substring, cdsCondensedSequence::ChainNode {constituents});
+                        size_t repeat = addNode(
+                            data,
+                            substringWithBrackets + repeatPart,
+                            cdsCondensedSequence::RepeatNode {repeats.value(), chain});
                         result.push_back(repeat);
                     }
                     else
                     {
-                        char last            = substring[substring.length() - 1];
+                        char last = substring[substring.length() - 1];
                         std::string position = "";
                         if (std::isdigit(last))
                         { // branch position is explicit
-                            position  = std::string {last};
+                            position = std::string {last};
                             substring = substring.substr(0, substring.length() - 1);
                         }
                         std::vector<size_t> constituents = parseChain(data, substring);
@@ -360,7 +361,7 @@ namespace
                         result.push_back(branch);
                     }
                 }
-                i         = bracketStart;
+                i = bracketStart;
                 windowEnd = i;
             }
             else if (sequence[i] == '[')
@@ -387,7 +388,7 @@ namespace
         // thus we let the first node be an empty list for convenience
         addNode(data, "", cdsCondensedSequence::DerivativeListNode {{}});
         std::vector<size_t> constituents = parseChain(data, substr(sequence, 0, sequence.length()));
-        data.root                        = addNode(data, sequence, cdsCondensedSequence::ChainNode {constituents});
+        data.root = addNode(data, sequence, cdsCondensedSequence::ChainNode {constituents});
     }
 } // namespace
 
@@ -395,8 +396,11 @@ cdsCondensedSequence::AbstractSequence cdsCondensedSequence::parseSequence(std::
 {
     if (checkSequenceSanity(inputSequence))
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::INF,
+            "Sequence passed initial sanity checks for things like special characters or incorrect branching.\n");
     }
     AbstractSequence data;
     if (inputSequence.find(';') != std::string::npos)

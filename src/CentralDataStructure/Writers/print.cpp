@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/Writers/print.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
+
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 
 #include <iomanip>
 #include <ostream>
@@ -11,10 +12,7 @@ void cds::print(std::ostream& out, const cds::Coordinate& coord)
         << coord.GetZ();
 }
 
-void cds::print(std::ostream& out, const cds::Atom& atom)
-{
-    out << atom.getName() << ", ";
-}
+void cds::print(std::ostream& out, const cds::Atom& atom) { out << atom.getName() << ", "; }
 
 void cds::print(std::ostream& out, const cds::Residue& residue)
 {

@@ -4,6 +4,7 @@
 // This is becoming an interface to the carbohydrate class in gmml for Gems.
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+
 #include <string>
 #include <vector>
 
@@ -25,8 +26,7 @@ namespace cdsCondensedSequence
     struct DihedralOptions
     { // CONSTRUCTOR
 
-        DihedralOptions()
-        {}
+        DihedralOptions() {}
 
         DihedralOptions(const std::string name, const std::vector<std::string> rotamers)
             : dihedralName_(name), rotamers_(rotamers)
@@ -42,11 +42,15 @@ namespace cdsCondensedSequence
     struct LinkageOptions
     { // CONSTRUCTOR
 
-        LinkageOptions()
-        {}
+        LinkageOptions() {}
 
-        LinkageOptions(std::string name, std::string index, std::string res1, std::string res2,
-                       DihedralOptionsVector likely, DihedralOptionsVector possible)
+        LinkageOptions(
+            std::string name,
+            std::string index,
+            std::string res1,
+            std::string res2,
+            DihedralOptionsVector likely,
+            DihedralOptionsVector possible)
             : linkageName_(name), indexOrderedLabel_(index), firstResidueNumber_(res1), secondResidueNumber_(res2),
               likelyRotamers_(likely), possibleRotamers_(possible)
         {}
@@ -68,17 +72,14 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
-        carbohydrateBuilder(std::string condensedSequence =
-                                "DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]"
-                                "b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH");
+        carbohydrateBuilder(
+            std::string condensedSequence = "DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]"
+                                            "b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH");
 
         //////////////////////////////////////////////////////////
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
-        cdsCondensedSequence::Carbohydrate& GetCarbohydrate()
-        {
-            return carbohydrate_;
-        }
+        cdsCondensedSequence::Carbohydrate& GetCarbohydrate() { return carbohydrate_; }
 
         std::string GetNumberOfShapes(bool likelyShapesOnly = false) const;
         //////////////////////////////////////////////////////////
@@ -87,20 +88,22 @@ namespace cdsCondensedSequence
         //////////////////////////////////////////////////////////
         //                        FUNCTIONS                     //
         //////////////////////////////////////////////////////////
-        void GenerateSingle3DStructureDefaultFiles(std::string fileOutputDirectory = "unspecified",
-                                                   std::string outputFileNaming    = "structure");
+        void GenerateSingle3DStructureDefaultFiles(
+            std::string fileOutputDirectory = "unspecified", std::string outputFileNaming = "structure");
         void Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming);
         LinkageOptionsVector GenerateUserOptionsDataStruct();
-        void GenerateSpecific3DStructure(SingleRotamerInfoVector conformerInfo,
-                                         std::string fileOutputDirectory = "unspecified");
+        void GenerateSpecific3DStructure(
+            SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory = "unspecified");
         void GenerateUpToNRotamers(
             int maxRotamers = 32); // Will not be used by gems, but leaving the functionality as could be useful.
                                    //  std::string GetNumberOfShapes(bool likelyShapesOnly = false);
       private:
-        void generateLinkagePermutationsRecursively(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                                                    std::vector<cds::ResidueLinkage>::iterator linkage,
-                                                    std::vector<cds::ResidueLinkage>::iterator end,
-                                                    int maxRotamers = 32, int rotamerCount = 0);
+        void generateLinkagePermutationsRecursively(
+            const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+            std::vector<cds::ResidueLinkage>::iterator linkage,
+            std::vector<cds::ResidueLinkage>::iterator end,
+            int maxRotamers = 32,
+            int rotamerCount = 0);
         //  void resetLinkageIDsToStartFromZero(ResidueLinkageVector &inputLinkages);
         std::string convertIncomingRotamerNamesToStandard(std::string incomingName);
         //////////////////////////////////////////////////////////

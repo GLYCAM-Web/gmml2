@@ -1,10 +1,11 @@
 #include "includes/Graph/graphMatching.hpp"
-#include "includes/Graph/graphTypes.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/Graph/graphTypes.hpp"
 
 #include <algorithm>
-#include <cstddef>
 #include <array>
+#include <cstddef>
 #include <vector>
 
 namespace
@@ -30,10 +31,7 @@ bool graph::graphsMatch(const LabeledGraph& reference, const LabeledGraph& other
         nodeOrder.reserve(reference.names.size());
         for (auto& name : other.names)
         {
-            auto nameEquals = [&](size_t n)
-            {
-                return reference.names[n] == name;
-            };
+            auto nameEquals = [&](size_t n) { return reference.names[n] == name; };
             auto it = std::find_if(nodeIndices.begin(), nodeIndices.end(), nameEquals);
             if (it == nodeIndices.end())
             {
@@ -50,10 +48,8 @@ bool graph::graphsMatch(const LabeledGraph& reference, const LabeledGraph& other
             auto edgeEquals = [&](size_t n)
             {
                 const std::array<size_t, 2>& nodes = reference.db.edgeNodes[n];
-                auto dirEqual                      = [&](int dir)
-                {
-                    return nodeOrder[adj[0]] == nodes[0 != dir] && nodeOrder[adj[1]] == nodes[1 != dir];
-                };
+                auto dirEqual = [&](int dir)
+                { return nodeOrder[adj[0]] == nodes[0 != dir] && nodeOrder[adj[1]] == nodes[1 != dir]; };
                 return dirEqual(0) || dirEqual(1);
             };
             auto it = std::find_if(edgeIndices.begin(), edgeIndices.end(), edgeEquals);

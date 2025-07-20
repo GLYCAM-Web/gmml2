@@ -1,13 +1,14 @@
 #include "includes/CentralDataStructure/Readers/Lib/LibraryFile.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
+#include <array>
 #include <fstream>
 #include <istream>
 #include <string>
-#include <array>
 #include <vector>
 
 namespace
@@ -174,7 +175,7 @@ namespace lib
         { // Process the atom section of the file for the corresponding residue
             const std::string& residueName = residueNames[residueIndex];
             std::stringstream residueStream;
-            residueStream       = extractUnitSection(fileStream, residueName);
+            residueStream = extractUnitSection(fileStream, residueName);
             ResidueData residue = readResidue(residueStream);
             result.push_back(residue);
         }

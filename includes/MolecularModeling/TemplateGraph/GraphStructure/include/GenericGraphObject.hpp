@@ -1,8 +1,8 @@
 #ifndef TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 #define TEMPLATEGRAPH_GRAPHSTRUCTURE_INCLUDE_GENERICGRAPHOBJECT_HPP
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace glygraph
 {
@@ -61,60 +61,30 @@ namespace glygraph
 
       public:
         // constructor
-        inline GenericGraphObject(const std::string name_t, const std::vector<std::string> labels_t,
-                                  ConnectivityType connType_t)
+        inline GenericGraphObject(
+            const std::string name_t, const std::vector<std::string> labels_t, ConnectivityType connType_t)
             : index_m(generateIndex()), name_m(name_t), labels_m(labels_t), connTypeIdentifier_m(connType_t)
         {}
 
-        inline unsigned int getIndex() const
-        {
-            return index_m;
-        }
+        inline unsigned int getIndex() const { return index_m; }
 
-        inline void setIndex(unsigned int index)
-        {
-            index_m = index;
-        }
+        inline void setIndex(unsigned int index) { index_m = index; }
 
-        inline std::string getName() const
-        {
-            return name_m;
-        }
+        inline std::string getName() const { return name_m; }
 
-        inline std::string getLabel() const
-        {
-            return labels_m.empty() ? "" : labels_m.back();
-        }
+        inline std::string getLabel() const { return labels_m.empty() ? "" : labels_m.back(); }
 
-        inline std::vector<std::string> getLabels() const
-        {
-            return labels_m;
-        }
+        inline std::vector<std::string> getLabels() const { return labels_m; }
 
-        inline void setName(std::string name_t)
-        {
-            name_m = name_t;
-        }
+        inline void setName(std::string name_t) { name_m = name_t; }
 
-        inline void clearLabels()
-        {
-            labels_m.clear();
-        }
+        inline void clearLabels() { labels_m.clear(); }
 
-        inline void setLabels(std::vector<std::string> labels_t)
-        {
-            labels_m = labels_t;
-        }
+        inline void setLabels(std::vector<std::string> labels_t) { labels_m = labels_t; }
 
-        inline void addLabel(std::string label_t)
-        {
-            labels_m.push_back(label_t);
-        }
+        inline void addLabel(std::string label_t) { labels_m.push_back(label_t); }
 
-        inline enum ConnectivityType getConnectivityTypeIdentifier() const
-        {
-            return this->connTypeIdentifier_m;
-        }
+        inline enum ConnectivityType getConnectivityTypeIdentifier() const { return this->connTypeIdentifier_m; }
 
         inline void setConnectivityTypeIdentifier(ConnectivityType structuralIdentifier_t)
         {

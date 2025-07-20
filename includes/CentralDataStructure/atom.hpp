@@ -1,14 +1,14 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
 
-#include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/constants.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
+#include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 
+#include <memory> // unique_ptr
 #include <string>
 #include <vector>
-#include <memory> // unique_ptr
 
 namespace cds
 {
@@ -36,62 +36,32 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ACCESSORS                      //
         //////////////////////////////////////////////////////////
-        inline Coordinate coordinate() const
-        {
-            return coordinate_;
-        }
+        inline Coordinate coordinate() const { return coordinate_; }
 
-        inline double getCharge() const
-        {
-            return charge_;
-        }
+        inline double getCharge() const { return charge_; }
 
-        inline std::string getType() const
-        {
-            return atomType_;
-        }
+        inline std::string getType() const { return atomType_; }
 
-        inline uint getNumber() const
-        {
-            return number_;
-        }
+        inline uint getNumber() const { return number_; }
 
-        inline bool isVisible() const
-        {
-            return isVisible_;
-        }
+        inline bool isVisible() const { return isVisible_; }
 
         unsigned int getNumberFromName() const;
 
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
-        inline void setCharge(const double c)
-        {
-            charge_ = c;
-        }
+        inline void setCharge(const double c) { charge_ = c; }
 
-        inline void setType(const std::string s)
-        {
-            atomType_ = s;
-        }
+        inline void setType(const std::string s) { atomType_ = s; }
 
-        inline void setNumber(uint i)
-        {
-            number_ = i;
-        }
+        inline void setNumber(uint i) { number_ = i; }
 
-        inline void makeInvisible()
-        {
-            isVisible_ = false;
-        }
+        inline void makeInvisible() { isVisible_ = false; }
 
         void setElement(MolecularMetadata::Element element);
 
-        inline void setCoordinate(const Coordinate& c)
-        {
-            coordinate_ = c;
-        }
+        inline void setCoordinate(const Coordinate& c) { coordinate_ = c; }
 
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
@@ -110,13 +80,13 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
-        Coordinate coordinate_              = {0.0, 0.0, 0.0};
-        double charge_                      = constants::dNotSet;
-        std::string atomType_               = " ";
-        uint number_                        = constants::iNotSet;
+        Coordinate coordinate_ = {0.0, 0.0, 0.0};
+        double charge_ = constants::dNotSet;
+        std::string atomType_ = " ";
+        uint number_ = constants::iNotSet;
         MolecularMetadata::Element element_ = MolecularMetadata::Element::Unknown;
-        bool gotElement_                    = false;
-        bool isVisible_                     = true;
+        bool gotElement_ = false;
+        bool isVisible_ = true;
     };
 } // namespace cds
 #endif

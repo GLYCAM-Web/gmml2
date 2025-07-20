@@ -1,7 +1,8 @@
+#include "includes/CodeUtils/logging.hpp"
+
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include "includes/CodeUtils/logging.hpp"
 
 void gmml::log(int line, std::string file_path, LogLevel level, std::string msg, std::string out_file_name)
 {
@@ -18,7 +19,7 @@ void gmml::log(int line, std::string file_path, LogLevel level, std::string msg,
         out_file_name = gmmlLog;
     }
     file.open(out_file_name.c_str(), std::ios_base::app);
-    time_t t             = time(0);
+    time_t t = time(0);
     std::string time_str = std::asctime(std::localtime(&t));
     file << time_str.substr(0, time_str.size() - 1) << " >>> " << file_path << ":" << line << " >>>";
     switch (level)

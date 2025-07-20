@@ -2,10 +2,10 @@
 #define INCLUDES_CODEUTILS_FILES_HPP
 
 #include <cstddef>
-#include <string>
+#include <functional>
 #include <istream>
 #include <ostream>
-#include <functional>
+#include <string>
 #include <vector>
 
 namespace codeUtils

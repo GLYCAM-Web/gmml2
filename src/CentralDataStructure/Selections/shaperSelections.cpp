@@ -5,15 +5,19 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <sstream>
 #include <vector>
 
-bool cdsSelections::FindPathBetweenTwoAtoms(cds::Atom* current_atom, cds::Residue* currentResidue,
-                                            cds::Atom* target_atom, cds::Residue* targetResidue,
-                                            std::vector<cds::Atom*>* atom_path, bool* found)
+bool cdsSelections::FindPathBetweenTwoAtoms(
+    cds::Atom* current_atom,
+    cds::Residue* currentResidue,
+    cds::Atom* target_atom,
+    cds::Residue* targetResidue,
+    std::vector<cds::Atom*>* atom_path,
+    bool* found)
 {
     current_atom->setLabels({"VistedByFindPathBetweenTwoAtoms"});
     std::vector<cds::Atom*> neighbors = current_atom->getNeighbors();
@@ -43,9 +47,12 @@ bool cdsSelections::FindPathBetweenTwoAtoms(cds::Atom* current_atom, cds::Residu
 // I want a generic recursive function, where I can pass in the condition(s). Lots of Repeating code here.
 // This one was written before the others. Could update with previous atom being passed in, though that makes the
 // initial call confusing...
-void cdsSelections::FindAtomsConnectingResidues(cds::Atom* current_atom, const cds::Residue* currentResidue,
-                                                const cds::Residue* otherResidue,
-                                                std::vector<cds::Atom*>* connecting_atoms, bool* found_neighbor)
+void cdsSelections::FindAtomsConnectingResidues(
+    cds::Atom* current_atom,
+    const cds::Residue* currentResidue,
+    const cds::Residue* otherResidue,
+    std::vector<cds::Atom*>* connecting_atoms,
+    bool* found_neighbor)
 {
     current_atom->setLabels({"VisitedByFindAtomsConnectingResidues"});
     for (auto& neighbor : current_atom->getNeighbors())
@@ -57,8 +64,8 @@ void cdsSelections::FindAtomsConnectingResidues(cds::Atom* current_atom, const c
             connecting_atoms->push_back(neighbor);
         }
         // If haven't visited this atom already AND don't move onto other residues
-        else if ((neighbor->getLabel() != "VisitedByFindAtomsConnectingResidues") &&
-                 (currentResidue->contains(neighbor)))
+        else if (
+            (neighbor->getLabel() != "VisitedByFindAtomsConnectingResidues") && (currentResidue->contains(neighbor)))
         {
             FindAtomsConnectingResidues(neighbor, currentResidue, otherResidue, connecting_atoms, found_neighbor);
         }
@@ -75,8 +82,8 @@ void cdsSelections::ClearAtomLabels(cds::Residue* residue)
     return;
 }
 
-cds::ResidueLinkage* cdsSelections::selectLinkageWithIndex(std::vector<cds::ResidueLinkage>& inputLinkages,
-                                                           const long long unsigned int indexQuery)
+cds::ResidueLinkage* cdsSelections::selectLinkageWithIndex(
+    std::vector<cds::ResidueLinkage>& inputLinkages, const long long unsigned int indexQuery)
 {
     for (auto& linkage : inputLinkages)
     {
@@ -97,8 +104,8 @@ cds::ResidueLinkage* cdsSelections::selectLinkageWithIndex(std::vector<cds::Resi
  * cds::ResidueLinkages, ring shapes etc. That way I can create X shapes of a molecule. For now this will do to figure
  * out some implementation details like file naming.
  */
-std::vector<cds::ResidueLinkage>
-cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inputLinkages)
+std::vector<cds::ResidueLinkage> cdsSelections::SplitLinkagesIntoPermutants(
+    std::vector<cds::ResidueLinkage>& inputLinkages)
 {
     std::vector<cds::ResidueLinkage> sortedLinkages;
     for (auto& linkage : inputLinkages)
@@ -115,8 +122,8 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
             for (size_t index : rotatableDihedralIndices)
             {
                 cds::ResidueLinkage splitLinkage = linkage; // Copy it to get correct info into class
-                splitLinkage.rotatableDihedrals  = {linkage.rotatableDihedrals[index]};
-                splitLinkage.dihedralMetadata    = {linkage.dihedralMetadata[index]};
+                splitLinkage.rotatableDihedrals = {linkage.rotatableDihedrals[index]};
+                splitLinkage.dihedralMetadata = {linkage.dihedralMetadata[index]};
                 sortedLinkages.push_back(splitLinkage);
             }
         }
@@ -125,8 +132,8 @@ cdsSelections::SplitLinkagesIntoPermutants(std::vector<cds::ResidueLinkage>& inp
 }
 
 //  This function splits that list into groups of 4 and creates RotatableDihedral object
-std::vector<cds::DihedralAtoms>
-cdsSelections::splitAtomVectorIntoRotatableDihedrals(const std::vector<cds::Atom*>& atoms)
+std::vector<cds::DihedralAtoms> cdsSelections::splitAtomVectorIntoRotatableDihedrals(
+    const std::vector<cds::Atom*>& atoms)
 {
     // Ok looking for sets of four atoms, but shifting along vector by one atom for each dihedral.
     //  So four atoms will make one rotatable bond, five will make two bonds, six will make three etc.
@@ -165,22 +172,22 @@ std::vector<cds::DihedralAtoms> cdsSelections::findRotatableDihedralsConnectingR
     // Will fail for non-protein residues without cycles. As don't have a non-rotatable bond to anchor from. Can
     // code that later (and deal with branches from these residues).
 
-    std::vector<cds::Atom*> firstResidueCyclePoints  = FindCyclePoints(link.atoms.first, link.residues.first);
+    std::vector<cds::Atom*> firstResidueCyclePoints = FindCyclePoints(link.atoms.first, link.residues.first);
     //    std::cout << "Moving onto second residue.\n";
     std::vector<cds::Atom*> secondResidueCyclePoints = FindCyclePoints(link.atoms.second, link.residues.second);
     // Need to reverse one of these, so when concatenated, they are ordered ok. This might not be ok.
     // std::reverse(to_this_residue2_cycle_points.begin(), to_this_residue2_cycle_points.end());
     std::reverse(firstResidueCyclePoints.begin(), firstResidueCyclePoints.end());
     // Now concatenate:
-    firstResidueCyclePoints.insert(firstResidueCyclePoints.end(), secondResidueCyclePoints.begin(),
-                                   secondResidueCyclePoints.end());
+    firstResidueCyclePoints.insert(
+        firstResidueCyclePoints.end(), secondResidueCyclePoints.begin(), secondResidueCyclePoints.end());
     // Now that have a list of rotation points. Split into pairs and find rotatable bonds between them
     auto branchResult = findRotatableDihedralsinBranchesConnectingResidues(link, firstResidueCyclePoints);
     std::vector<cds::DihedralAtoms>& rotatableDihedralsInBranches = std::get<0>(branchResult);
-    std::vector<cds::Atom*>& connectingAtoms                      = std::get<1>(branchResult);
+    std::vector<cds::Atom*>& connectingAtoms = std::get<1>(branchResult);
     std::vector<cds::DihedralAtoms> RotatableDihedrals = splitAtomVectorIntoRotatableDihedrals(connectingAtoms);
     // Add any linkage branches (in 2-7 and 2-8) to the rest.
-    RotatableDihedrals.insert(RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(),
-                              rotatableDihedralsInBranches.end());
+    RotatableDihedrals.insert(
+        RotatableDihedrals.end(), rotatableDihedralsInBranches.begin(), rotatableDihedralsInBranches.end());
     return RotatableDihedrals;
 }

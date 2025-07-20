@@ -2,10 +2,10 @@
 
 #include "includes/CodeUtils/containers.hpp"
 
-#include <vector>
-#include <utility>
 #include <numeric>
 #include <random>
+#include <utility>
+#include <vector>
 
 std::vector<size_t> codeUtils::weightedRandomOrder(pcg32& rng, std::vector<double> weights)
 {
@@ -15,7 +15,7 @@ std::vector<size_t> codeUtils::weightedRandomOrder(pcg32& rng, std::vector<doubl
 
     while (!indices.empty())
     {
-        double sum       = std::accumulate(weights.begin(), weights.end(), 0.0);
+        double sum = std::accumulate(weights.begin(), weights.end(), 0.0);
         double threshold = uniformRandomDoubleWithinRange(rng, 0.0, sum);
         for (size_t n = 0; n < indices.size(); n++)
         {

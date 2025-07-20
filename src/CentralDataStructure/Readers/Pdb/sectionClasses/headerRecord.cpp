@@ -1,5 +1,7 @@
 #include "includes/CentralDataStructure/Readers/Pdb/SectionClasses/headerRecord.hpp"
+
 #include "includes/CodeUtils/strings.hpp"
+
 #include <iomanip> //setw
 
 using pdb::HeaderRecord;
@@ -11,19 +13,22 @@ HeaderRecord::HeaderRecord()
     : record_name_("HEADER"), classification_(" "), deposition_date_(" "), identifier_code_(" ")
 {}
 
-HeaderRecord::HeaderRecord(const std::string& record_name, const std::string& classification,
-                           const std::string& deposition_date, const std::string& identifier_code)
+HeaderRecord::HeaderRecord(
+    const std::string& record_name,
+    const std::string& classification,
+    const std::string& deposition_date,
+    const std::string& identifier_code)
 {
-    record_name_     = record_name;
-    classification_  = classification;
+    record_name_ = record_name;
+    classification_ = classification;
     deposition_date_ = deposition_date;
     identifier_code_ = identifier_code;
 }
 
 HeaderRecord::HeaderRecord(std::stringstream& stream_block)
 {
-    record_name_     = "";
-    classification_  = "";
+    record_name_ = "";
+    classification_ = "";
     deposition_date_ = "";
     identifier_code_ = "";
     std::string line;
@@ -51,48 +56,24 @@ HeaderRecord::HeaderRecord(std::stringstream& stream_block)
 //////////////////////////////////////////////////////////
 //                       ACCESSOR                       //
 //////////////////////////////////////////////////////////
-std::string HeaderRecord::GetRecordName() const
-{
-    return record_name_;
-}
+std::string HeaderRecord::GetRecordName() const { return record_name_; }
 
-std::string HeaderRecord::GetClassification() const
-{
-    return classification_;
-}
+std::string HeaderRecord::GetClassification() const { return classification_; }
 
-std::string HeaderRecord::GetDepositionDate() const
-{
-    return deposition_date_;
-}
+std::string HeaderRecord::GetDepositionDate() const { return deposition_date_; }
 
-std::string HeaderRecord::GetIdentifierCode() const
-{
-    return identifier_code_;
-}
+std::string HeaderRecord::GetIdentifierCode() const { return identifier_code_; }
 
 //////////////////////////////////////////////////////////
 //                       ACCESSOR                       //
 //////////////////////////////////////////////////////////
-void HeaderRecord::SetRecordName(const std::string record_name)
-{
-    record_name_ = record_name;
-}
+void HeaderRecord::SetRecordName(const std::string record_name) { record_name_ = record_name; }
 
-void HeaderRecord::SetClassification(const std::string classification)
-{
-    classification_ = classification;
-}
+void HeaderRecord::SetClassification(const std::string classification) { classification_ = classification; }
 
-void HeaderRecord::SetDepositionDate(const std::string deposition_date)
-{
-    deposition_date_ = deposition_date;
-}
+void HeaderRecord::SetDepositionDate(const std::string deposition_date) { deposition_date_ = deposition_date; }
 
-void HeaderRecord::SetIdentificationCode(const std::string identifier_code)
-{
-    identifier_code_ = identifier_code;
-}
+void HeaderRecord::SetIdentificationCode(const std::string identifier_code) { identifier_code_ = identifier_code; }
 
 //////////////////////////////////////////////////////////
 //                        FUNCTIONS                     //

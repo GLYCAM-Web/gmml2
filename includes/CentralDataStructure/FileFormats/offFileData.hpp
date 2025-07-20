@@ -5,8 +5,8 @@
 #include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/CodeUtils/formatting.hpp"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace cds
 {

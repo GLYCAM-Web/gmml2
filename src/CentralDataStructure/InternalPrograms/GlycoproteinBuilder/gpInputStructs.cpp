@@ -1,33 +1,35 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/strings.hpp"
-#include "includes/CodeUtils/parsing.hpp"
 
-#include <vector>
-#include <string>
+#include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/files.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/parsing.hpp"
+#include "includes/CodeUtils/strings.hpp"
+
 #include <optional>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace glycoproteinBuilder
 {
     GlycoproteinBuilderInputs readGPInputFile(std::string inputFileName)
     {
-        const std::string glycanSectionParameter          = "ProteinResidue, GlycanName";
+        const std::string glycanSectionParameter = "ProteinResidue, GlycanName";
         const std::vector<std::string> requiredParameters = {proteinParameter};
-        std::vector<std::string> foundParameters          = {};
+        std::vector<std::string> foundParameters = {};
 
-        bool foundGlycanSection   = false;
+        bool foundGlycanSection = false;
         bool readingGlycanSection = false;
         GlycoproteinBuilderInputs gpInputs;
         gpInputs.inputFileName = inputFileName;
-        auto processLine       = [&](const std::string& original, size_t lineNumber)
+        auto processLine = [&](const std::string& original, size_t lineNumber)
         {
             auto throwError = [&](const std::string& str)
             {
-                throw std::runtime_error("Error reading input file on line " + std::to_string(lineNumber) + ": " + str +
-                                         ":\n" + original + "\n");
+                throw std::runtime_error(
+                    "Error reading input file on line " + std::to_string(lineNumber) + ": " + str + ":\n" + original +
+                    "\n");
             };
             auto parseUlong = [&](const std::string& str)
             {
@@ -90,15 +92,15 @@ namespace glycoproteinBuilder
                     foundParameters.push_back(parameter);
                     if (parameter == glycanSectionParameter)
                     {
-                        foundGlycanSection   = true;
+                        foundGlycanSection = true;
                         readingGlycanSection = true;
                         // return early to bypass checks below
                         return;
                     }
                     if (split.size() != 2)
                     {
-                        throwError("input doesn't follow format 'parameter:value' or '" + glycanSectionParameter +
-                                   ":'");
+                        throwError(
+                            "input doesn't follow format 'parameter:value' or '" + glycanSectionParameter + ":'");
                     }
                     const std::string& value = split[1];
                     if (parameter == proteinParameter)
@@ -144,19 +146,19 @@ namespace glycoproteinBuilder
                             try
                             {
                                 gpInputs.isDeterministic = true;
-                                gpInputs.seed            = parseUlong(value);
+                                gpInputs.seed = parseUlong(value);
                             }
                             catch (...)
                             {
-                                throwError("expected '" + seedParameter + ":random' or '" + seedParameter +
-                                           ":<integer>'");
+                                throwError(
+                                    "expected '" + seedParameter + ":random' or '" + seedParameter + ":<integer>'");
                             }
                         }
                     }
                     else if (parameter == prepareForMDParameter)
                     {
-                        bool b                = parseBool(value);
-                        gpInputs.MDprep       = b;
+                        bool b = parseBool(value);
+                        gpInputs.MDprep = b;
                         gpInputs.writeOffFile = b;
                     }
                     else
@@ -173,8 +175,8 @@ namespace glycoproteinBuilder
         }
         if (readingGlycanSection)
         {
-            throw std::runtime_error("Error reading input file: 'END' expected to close '" + glycanSectionParameter +
-                                     ":' section'\n");
+            throw std::runtime_error(
+                "Error reading input file: 'END' expected to close '" + glycanSectionParameter + ":' section'\n");
         }
         for (auto& req : requiredParameters)
         {

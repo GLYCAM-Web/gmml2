@@ -5,9 +5,9 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
-#include <vector>
 #include <algorithm>
 #include <cstddef>
+#include <vector>
 
 /* Below has following flaws:
   1) fail to find inner rotatable bonds here:
@@ -76,8 +76,13 @@ std::vector<cds::Atom*> cdsSelections::FindCyclePoints(cds::Atom* atom, cds::Res
 
 // Will not ignore fused rings. Explores everything to find all cycle points. Looks for cycle point closest to start
 // atom.
-bool cdsSelections::FindCyclePoint(cds::Atom* previous_atom, cds::Residue* residue, cds::Atom* current_atom,
-                                   std::vector<cds::Atom*>* atom_path, bool* found_cycle_point, cds::Atom*& cycle_point)
+bool cdsSelections::FindCyclePoint(
+    cds::Atom* previous_atom,
+    cds::Residue* residue,
+    cds::Atom* current_atom,
+    std::vector<cds::Atom*>* atom_path,
+    bool* found_cycle_point,
+    cds::Atom*& cycle_point)
 { // I definitely don't want cycles involving hydrogens (they only every form one bond, unless
     // bond by distance has bonded them).
     if (current_atom->getElement() != "H")
@@ -110,7 +115,7 @@ bool cdsSelections::FindCyclePoint(cds::Atom* previous_atom, cds::Residue* resid
                     else
                     {
                         *found_cycle_point = true;
-                        cycle_point        = neighbor;
+                        cycle_point = neighbor;
                     }
                 }
                 if (neighbor->getLabel() != "VisitedByFindCyclePoint") // Don't look back!
@@ -128,8 +133,8 @@ bool cdsSelections::FindCyclePoint(cds::Atom* previous_atom, cds::Residue* resid
 // The logic for selecting the atom to define a dihedral is messy.
 // Comparing strings is messy when I really care about the number of e.g. C2 Vs O5, but need to factor in a C2 vs O
 // comparision
-cds::Atom* cdsSelections::FindCyclePointNeighbor(const std::vector<cds::Atom*> atom_path, cds::Atom* cycle_point,
-                                                 cds::Residue* cyclePointResidue)
+cds::Atom* cdsSelections::FindCyclePointNeighbor(
+    const std::vector<cds::Atom*> atom_path, cds::Atom* cycle_point, cds::Residue* cyclePointResidue)
 {
     cds::Atom* selected_neighbor;
     if (cycle_point->getName() == "CA") // This is a protein, and we always want the N atom.

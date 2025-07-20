@@ -7,8 +7,8 @@
 namespace cds
 {
     int compareOverlaps(double a, double b);
-    double overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
-                         const Sphere& b);
+    double overlapAmount(
+        const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a, const Sphere& b);
     double overlapVectorSum(const std::vector<double>& vec);
     std::vector<double> overlapAboveThreshold(double threshold, const std::vector<double>& vec);
     bool containsOverlapExceedingThreshold(double threshold, const std::vector<double>& vec);

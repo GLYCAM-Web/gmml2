@@ -1,19 +1,19 @@
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
-#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
 #include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
+#include "includes/CentralDataStructure/Writers/pdbWriter.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 
-#include <vector>
-#include <string>
 #include <iostream>
 #include <ostream>
+#include <string>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
@@ -36,12 +36,12 @@ int main(int argc, char* argv[])
         std::cout << "No ligand residues found in input file\n";
         return 0;
     }
-    size_t firstLigandResidue    = ligandResidues.front();
+    size_t firstLigandResidue = ligandResidues.front();
     const std::string& firstName = pdbFile.data.residues.names[firstLigandResidue];
-    uint firstNumber             = pdbFile.data.residues.numbers[firstLigandResidue];
+    uint firstNumber = pdbFile.data.residues.numbers[firstLigandResidue];
     for (size_t ligandResidue : ligandResidues) // Each MODEL in PdbFile is converted into an "Assembly"
     {                                           // Every ligand residue gets the same residue number as the first one.
-        pdbFile.data.residues.names[ligandResidue]   = firstName;
+        pdbFile.data.residues.names[ligandResidue] = firstName;
         pdbFile.data.residues.numbers[ligandResidue] = firstNumber;
     }
     pdbFile.Write("026.outputPdbFile.pdb");
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
         codeUtils::vectorMap(residueMean, codeUtils::indexVector(pdbFileTraj.data.indices.residueCount));
     // somehow you specify number in inputs. e.g. A_405 chain A, residue 405.
     size_t residueIndex = codeUtils::indexOf(pdbFileTraj.data.residues.numbers, uint(5));
-    double distance     = 12.345; // inputs
+    double distance = 12.345; // inputs
 
     std::vector<size_t> selectedResidues;
     for (size_t n = 0; n < pdbFileTraj.data.indices.residueCount; n++)
@@ -71,10 +71,8 @@ int main(int argc, char* argv[])
 
     std::cout << "Found " << selectedResidues.size() << " residues\n";
     pdbFileTraj.data.indices.residueMolecule = std::vector<size_t>(pdbFileTraj.data.indices.residueCount, 0);
-    codeUtils::writeToFile("026.outputSelection.pdb",
-                           [&](std::ostream& stream)
-                           {
-                               cds::writeTrajectoryToPdb(stream, pdbFileTraj.data, selectedResidues);
-                           });
+    codeUtils::writeToFile(
+        "026.outputSelection.pdb",
+        [&](std::ostream& stream) { cds::writeTrajectoryToPdb(stream, pdbFileTraj.data, selectedResidues); });
     return 0;
 }

@@ -1,10 +1,11 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <functional>
 #include <sstream>
@@ -17,7 +18,8 @@ namespace
     int getNumberOfShapesBase(
         std::function<std::vector<size_t>(const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>&)>
             selectedMetadata,
-        const GlycamMetadata::DihedralAngleDataTable& metadataTable, GlycamMetadata::RotamerType rotamerType,
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+        GlycamMetadata::RotamerType rotamerType,
         const std::vector<std::vector<size_t>>& metadata)
     {
         if (rotamerType == GlycamMetadata::RotamerType::permutation)
@@ -61,29 +63,27 @@ std::vector<size_t> cds::rotatableDihedralsWithMultipleRotamers(const std::vecto
 
 std::vector<cds::ResidueLinkage> cds::nonDerivativeResidueLinkages(const std::vector<cds::ResidueLinkage>& linkages)
 {
-    auto nonDerivative = [](const cds::ResidueLinkage& linkage)
-    {
-        return !linkage.isDerivative;
-    };
+    auto nonDerivative = [](const cds::ResidueLinkage& linkage) { return !linkage.isDerivative; };
     std::vector<cds::ResidueLinkage> result;
     result.reserve(linkages.size());
     std::copy_if(linkages.begin(), linkages.end(), std::back_inserter(result), nonDerivative);
     return result;
 }
 
-size_t cds::numberOfShapes(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                           GlycamMetadata::RotamerType rotamerType, const std::vector<std::vector<size_t>>& metadata)
+size_t cds::numberOfShapes(
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+    GlycamMetadata::RotamerType rotamerType,
+    const std::vector<std::vector<size_t>>& metadata)
 {
     auto selectMetadata = [](const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>& data)
-    {
-        return data;
-    };
+    { return data; };
     return getNumberOfShapesBase(selectMetadata, metadataTable, rotamerType, metadata);
 }
 
-size_t cds::numberOfLikelyShapes(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                                 GlycamMetadata::RotamerType rotamerType,
-                                 const std::vector<std::vector<size_t>>& metadata)
+size_t cds::numberOfLikelyShapes(
+    const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+    GlycamMetadata::RotamerType rotamerType,
+    const std::vector<std::vector<size_t>>& metadata)
 {
     return getNumberOfShapesBase(GlycamMetadata::likelyMetadata, metadataTable, rotamerType, metadata);
 }

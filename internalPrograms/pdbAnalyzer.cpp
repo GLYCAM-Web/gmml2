@@ -1,26 +1,26 @@
-#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/Assembly/assemblyBounds.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CodeUtils/arguments.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/structuredFiles.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 #include "includes/version.h"
 
 #include <cmath>
-#include <string>
-#include <vector>
 #include <functional>
 #include <iostream>
+#include <string>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
@@ -102,10 +102,10 @@ int main(int argc, char* argv[])
     }
 
     std::string inputFileName = "";
-    OUTPUT_FORMAT format      = TXT;
-    OUTPUT_MODE mode          = CONTACTS;
-    OUTPUT_ORDER order        = INDEX;
-    double overlapTolerance   = 0.0;
+    OUTPUT_FORMAT format = TXT;
+    OUTPUT_MODE mode = CONTACTS;
+    OUTPUT_ORDER order = INDEX;
+    double overlapTolerance = 0.0;
     for (const auto& arg : arguments.args)
     {
         switch (arg.id)
@@ -120,8 +120,9 @@ int main(int argc, char* argv[])
                     size_t index = codeUtils::indexOf(knownFormats, arg.value);
                     if (index >= knownFormats.size())
                     {
-                        throw std::runtime_error("Unknown format: '" + arg.value + "', expected one of " +
-                                                 codeUtils::join(", ", knownFormats));
+                        throw std::runtime_error(
+                            "Unknown format: '" + arg.value + "', expected one of " +
+                            codeUtils::join(", ", knownFormats));
                     }
                     format = OUTPUT_FORMAT(index);
                     break;
@@ -131,8 +132,8 @@ int main(int argc, char* argv[])
                     size_t index = codeUtils::indexOf(modes, arg.value);
                     if (index >= modes.size())
                     {
-                        throw std::runtime_error("Unknown mode: '" + arg.value + "', expected one of " +
-                                                 codeUtils::join(", ", modes));
+                        throw std::runtime_error(
+                            "Unknown mode: '" + arg.value + "', expected one of " + codeUtils::join(", ", modes));
                     }
                     mode = OUTPUT_MODE(index);
                     break;
@@ -142,8 +143,8 @@ int main(int argc, char* argv[])
                     size_t index = codeUtils::indexOf(orders, arg.value);
                     if (index >= orders.size())
                     {
-                        throw std::runtime_error("Unknown order: '" + arg.value + "', expected one of " +
-                                                 codeUtils::join(", ", orders));
+                        throw std::runtime_error(
+                            "Unknown order: '" + arg.value + "', expected one of " + codeUtils::join(", ", orders));
                     }
                     order = OUTPUT_ORDER(index);
                     break;
@@ -169,13 +170,12 @@ int main(int argc, char* argv[])
     pdb::PdbFile inputFile(inputFileName);
     pdb::PdbData& data = inputFile.data;
     pdb::bondAtomsAndResiduesByDistance(data);
-    assembly::Graph graph                           = cds::createAssemblyGraph(data.indices, data.atomGraph);
-    auto residueAtomsCloseToEdge                    = assembly::atomsCloseToResidueEdges(graph);
+    assembly::Graph graph = cds::createAssemblyGraph(data.indices, data.atomGraph);
+    auto residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
     const codeUtils::SparseVector<double> atomRadii = MolecularMetadata::vanDerWaalsRadii();
     const MolecularMetadata::PotentialTable potential =
         MolecularMetadata::potentialTable(atomRadii, MolecularMetadata::foundElements(data.atoms.elements));
-    std::function<cds::Sphere(const size_t&)> toAtomBounds = [&](size_t atomId)
-    {
+    std::function<cds::Sphere(const size_t&)> toAtomBounds = [&](size_t atomId) {
         return cds::Sphere {atomRadii.values[data.atoms.elements[atomId]], data.atoms.coordinates[atomId]};
     };
 
@@ -184,14 +184,14 @@ int main(int argc, char* argv[])
     const assembly::Bounds bounds = cds::toAssemblyBounds(graph, atomBounds);
 
     std::vector<std::string> residueTypeNames(cds::ResidueTypeCount, "");
-    residueTypeNames[cds::ResidueType::Aglycone]            = "aglycone";
-    residueTypeNames[cds::ResidueType::Deoxy]               = "deoxy";
-    residueTypeNames[cds::ResidueType::Derivative]          = "derivative";
-    residueTypeNames[cds::ResidueType::Protein]             = "protein";
+    residueTypeNames[cds::ResidueType::Aglycone] = "aglycone";
+    residueTypeNames[cds::ResidueType::Deoxy] = "deoxy";
+    residueTypeNames[cds::ResidueType::Derivative] = "derivative";
+    residueTypeNames[cds::ResidueType::Protein] = "protein";
     residueTypeNames[cds::ResidueType::ProteinCappingGroup] = "protein cap";
-    residueTypeNames[cds::ResidueType::Solvent]             = "solvent";
-    residueTypeNames[cds::ResidueType::Sugar]               = "sugar";
-    residueTypeNames[cds::ResidueType::Undefined]           = "unknown";
+    residueTypeNames[cds::ResidueType::Solvent] = "solvent";
+    residueTypeNames[cds::ResidueType::Sugar] = "sugar";
+    residueTypeNames[cds::ResidueType::Undefined] = "unknown";
 
     std::function<std::vector<std::string>(const size_t&)> moleculeRow = [&](size_t moleculeId)
     {
@@ -202,19 +202,19 @@ int main(int argc, char* argv[])
         {
             includedTypes[type] = true;
         }
-        std::string types        = codeUtils::join(", ", codeUtils::boolsToValues(residueTypeNames, includedTypes));
+        std::string types = codeUtils::join(", ", codeUtils::boolsToValues(residueTypeNames, includedTypes));
         std::string residueCount = std::to_string(assembly::moleculeResidues(data.indices, moleculeId).size());
-        std::string atomCount    = std::to_string(assembly::moleculeAtoms(data.indices, moleculeId).size());
+        std::string atomCount = std::to_string(assembly::moleculeAtoms(data.indices, moleculeId).size());
         return std::vector<std::string> {chain, residueCount, atomCount, types};
     };
     std::vector<std::string> moleculeHeader {"chain", "residues", "atoms", "residue types"};
 
     std::function<std::vector<std::string>(const size_t&)> residueRow = [&](size_t residueId)
     {
-        std::string chain     = data.residues.chainIds[residueId];
-        std::string name      = data.residues.names[residueId];
-        std::string number    = std::to_string(data.residues.numbers[residueId]);
-        std::string type      = residueTypeNames[data.residues.types[residueId]];
+        std::string chain = data.residues.chainIds[residueId];
+        std::string name = data.residues.names[residueId];
+        std::string number = std::to_string(data.residues.numbers[residueId]);
+        std::string type = residueTypeNames[data.residues.types[residueId]];
         std::string atomCount = std::to_string(assembly::residueAtoms(data.indices, residueId).size());
         return std::vector<std::string> {chain, name, number, type, atomCount};
     };
@@ -222,13 +222,13 @@ int main(int argc, char* argv[])
 
     std::function<std::vector<std::string>(const size_t&)> atomRow = [&](size_t atomId)
     {
-        size_t residueId          = data.indices.atomResidue[atomId];
-        std::string chain         = data.residues.chainIds[residueId];
-        std::string residueName   = data.residues.names[residueId];
+        size_t residueId = data.indices.atomResidue[atomId];
+        std::string chain = data.residues.chainIds[residueId];
+        std::string residueName = data.residues.names[residueId];
         std::string residueNumber = std::to_string(data.residues.numbers[residueId]);
-        std::string name          = data.atoms.names[atomId];
-        std::string number        = std::to_string(data.atoms.numbers[atomId]);
-        std::string element       = MolecularMetadata::elementName(data.atoms.elements[atomId]);
+        std::string name = data.atoms.names[atomId];
+        std::string number = std::to_string(data.atoms.numbers[atomId]);
+        std::string element = MolecularMetadata::elementName(data.atoms.elements[atomId]);
         return std::vector<std::string> {chain, residueName, residueNumber, name, number, element};
     };
     std::vector<std::string> atomHeader {"chain", "residue name", "residue number", "name", "number", "element"};
@@ -259,9 +259,9 @@ int main(int argc, char* argv[])
             const std::vector<size_t>& edges = graph.residues.nodes.edgeAdjacencies[residueA];
             if (adjacency < edges.size())
             {
-                size_t edgeIndex                                     = edges[adjacency];
+                size_t edgeIndex = edges[adjacency];
                 const std::array<std::vector<bool>, 2>& ignoredAtoms = residueAtomsCloseToEdge[edgeIndex];
-                bool order  = !(graph.residues.edges.nodeAdjacencies[edgeIndex][0] == residueA);
+                bool order = !(graph.residues.edges.nodeAdjacencies[edgeIndex][0] == residueA);
                 nonIgnoredA = codeUtils::vectorNot(ignoredAtoms[order]);
                 nonIgnoredB = codeUtils::vectorNot(ignoredAtoms[!order]);
             }
@@ -293,20 +293,21 @@ int main(int argc, char* argv[])
     };
     std::function<std::vector<std::string>(const AtomContact&)> contactToRow = [&](const AtomContact& contact)
     {
-        size_t atomA    = contact.atomA;
-        size_t atomB    = contact.atomB;
+        size_t atomA = contact.atomA;
+        size_t atomB = contact.atomB;
         size_t residueA = data.indices.atomResidue[atomA];
         size_t residueB = data.indices.atomResidue[atomB];
-        return std::vector<std::string> {data.residues.chainIds[residueA],
-                                         data.residues.names[residueA],
-                                         std::to_string(data.residues.numbers[residueA]),
-                                         data.atoms.names[atomA],
-                                         data.residues.chainIds[residueB],
-                                         data.residues.names[residueB],
-                                         std::to_string(data.residues.numbers[residueB]),
-                                         data.atoms.names[atomB],
-                                         std::to_string(contact.overlap),
-                                         std::to_string(contact.potential)};
+        return std::vector<std::string> {
+            data.residues.chainIds[residueA],
+            data.residues.names[residueA],
+            std::to_string(data.residues.numbers[residueA]),
+            data.atoms.names[atomA],
+            data.residues.chainIds[residueB],
+            data.residues.names[residueB],
+            std::to_string(data.residues.numbers[residueB]),
+            data.atoms.names[atomB],
+            std::to_string(contact.overlap),
+            std::to_string(contact.potential)};
     };
     std::vector<std::string> contactHeader {"", "", "", "", "", "", "", "", "overlap", "lennard-jones potential"};
 
@@ -316,21 +317,24 @@ int main(int argc, char* argv[])
     {
         case MOLECULES:
             {
-                textTable = {moleculeHeader,
-                             codeUtils::vectorMap(moleculeRow, codeUtils::indexVector(data.indices.moleculeCount))};
+                textTable = {
+                    moleculeHeader,
+                    codeUtils::vectorMap(moleculeRow, codeUtils::indexVector(data.indices.moleculeCount))};
                 break;
             }
         case RESIDUES:
             {
-                textTable = {residueHeader,
-                             codeUtils::vectorMap(residueRow, codeUtils::indexVector(data.indices.residueCount))};
+                textTable = {
+                    residueHeader, codeUtils::vectorMap(residueRow, codeUtils::indexVector(data.indices.residueCount))};
                 break;
             }
         case ATOMS:
             {
-                textTable = {atomHeader, codeUtils::vectorMap(
-                                             atomRow, codeUtils::indicesOfElement(
-                                                          data.atoms.elements, MolecularMetadata::Element::Unknown))};
+                textTable = {
+                    atomHeader,
+                    codeUtils::vectorMap(
+                        atomRow,
+                        codeUtils::indicesOfElement(data.atoms.elements, MolecularMetadata::Element::Unknown))};
                 break;
             }
         case CONTACTS:
@@ -345,15 +349,9 @@ int main(int argc, char* argv[])
                     }
                 }
                 std::function<bool(const AtomContact&, const AtomContact&)> highestOverlap =
-                    [](const AtomContact& a, const AtomContact& b)
-                {
-                    return a.overlap > b.overlap;
-                };
+                    [](const AtomContact& a, const AtomContact& b) { return a.overlap > b.overlap; };
                 std::function<bool(const AtomContact&, const AtomContact&)> highestPotential =
-                    [](const AtomContact& a, const AtomContact& b)
-                {
-                    return a.potential > b.potential;
-                };
+                    [](const AtomContact& a, const AtomContact& b) { return a.potential > b.potential; };
                 if (order == OVERLAP)
                 {
                     contacts = codeUtils::sortedBy(highestOverlap, contacts);

@@ -1,17 +1,18 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbChain.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
+#include "includes/CodeUtils/biology.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/biology.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
 #include <string>
-#include <vector>
 #include <variant>
+#include <vector>
 
 void pdb::readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_block)
 {
@@ -26,8 +27,8 @@ void pdb::readChain(PdbData& data, size_t moleculeId, std::stringstream& stream_
         }
         else
         {
-            gmml::log(__LINE__, __FILE__, gmml::WAR,
-                      "In PdbChain Constructor with record that isn't cool: " + recordName);
+            gmml::log(
+                __LINE__, __FILE__, gmml::WAR, "In PdbChain Constructor with record that isn't cool: " + recordName);
             break;
         }
     }
@@ -76,9 +77,7 @@ std::stringstream pdb::extractSingleResidueFromRecordSection(std::stringstream& 
 size_t pdb::getNTerminal(const PdbData& data, size_t moleculeId)
 {
     std::function<bool(const size_t&)> isProtein = [&](size_t id)
-    {
-        return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]);
-    };
+    { return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]); };
     std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.molecules.residueOrder[moleculeId]);
     if (proteinResidues.empty())
     {
@@ -91,9 +90,7 @@ size_t pdb::getNTerminal(const PdbData& data, size_t moleculeId)
 size_t pdb::getCTerminal(const PdbData& data, size_t moleculeId)
 {
     std::function<bool(const size_t&)> isProtein = [&](size_t id)
-    {
-        return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]);
-    };
+    { return codeUtils::contains(biology::proteinResidueNames, data.residues.names[id]); };
     std::vector<size_t> proteinResidues = codeUtils::vectorFilter(isProtein, data.molecules.residueOrder[moleculeId]);
     if (proteinResidues.empty())
     {

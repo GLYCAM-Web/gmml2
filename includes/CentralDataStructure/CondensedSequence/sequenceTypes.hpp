@@ -4,10 +4,10 @@
 #include "includes/CentralDataStructure/residueTypes.hpp"
 #include "includes/Graph/graphTypes.hpp"
 
+#include <optional>
 #include <string>
 #include <variant>
 #include <vector>
-#include <optional>
 
 namespace cdsCondensedSequence
 {
@@ -64,9 +64,9 @@ namespace cdsCondensedSequence
         size_t chain;
     };
 
-    typedef std::variant<MonosaccharideNode, AglyconeNode, DerivativeNode, DerivativeListNode, ChainNode, BranchNode,
-                         RepeatNode>
-        SequenceNode;
+    typedef std::
+        variant<MonosaccharideNode, AglyconeNode, DerivativeNode, DerivativeListNode, ChainNode, BranchNode, RepeatNode>
+            SequenceNode;
 
     struct AbstractSequence
     {

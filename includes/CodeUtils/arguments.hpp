@@ -24,10 +24,10 @@ namespace codeUtils
         ArgReq requirement;
         ArgType type;
         int id;
-        std::string longName    = "";
-        char shortName          = ' ';
+        std::string longName = "";
+        char shortName = ' ';
         std::string nameOfValue = "";
-        std::string help        = "";
+        std::string help = "";
     };
 
     struct Argument

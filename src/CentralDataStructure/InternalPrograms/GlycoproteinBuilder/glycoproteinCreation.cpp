@@ -1,31 +1,32 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
+
+#include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
+#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
 #include "includes/CentralDataStructure/Editors/superimposition.hpp"
 #include "includes/CentralDataStructure/Measurements/measurements.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Selections/atomSelections.hpp"
 #include "includes/CentralDataStructure/Selections/residueSelections.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
-#include "includes/MolecularMetadata/glycoprotein.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/MolecularMetadata/glycoprotein.hpp"
 
-#include <vector>
-#include <string>
+#include <fstream>
 #include <functional>
 #include <sstream>
-#include <fstream>
 #include <stdexcept>
+#include <string>
+#include <vector>
 
 using cds::Atom;
 using cds::Residue;
@@ -49,7 +50,7 @@ namespace
     ChainAndResidue selectionChainAndResidue(const std::string userSelection)
     { // Chain_residueNumber_insertionCode* *optional.
         std::vector<std::string> split = codeUtils::split(userSelection, '_');
-        size_t splitCount              = split.size();
+        size_t splitCount = split.size();
         if (splitCount == 2)
         {
             return {split[0], split[1]};
@@ -69,9 +70,11 @@ namespace
         }
     }
 
-    size_t selectResidueFromInput(const std::vector<std::string>& residueIds, const std::vector<std::string>& chainIds,
-                                  const std::vector<std::string>& numberAndInsertionCode,
-                                  const ChainAndResidue& selection)
+    size_t selectResidueFromInput(
+        const std::vector<std::string>& residueIds,
+        const std::vector<std::string>& chainIds,
+        const std::vector<std::string>& numberAndInsertionCode,
+        const ChainAndResidue& selection)
     {
         gmml::log(__LINE__, __FILE__, gmml::INF, "We working with " + selection.chain + "_" + selection.residue);
         for (size_t n = 0; n < residueIds.size(); n++)
@@ -90,8 +93,8 @@ namespace
     // Step 3. Panic.
     Atom* guessAnomericAtomByForeignNeighbor(cds::Residue* queryResidue)
     {
-        std::vector<Atom*> atoms               = queryResidue->getAtoms();
-        std::vector<std::string> atomNames     = cds::atomNames(atoms);
+        std::vector<Atom*> atoms = queryResidue->getAtoms();
+        std::vector<std::string> atomNames = cds::atomNames(atoms);
         std::vector<std::string> usualSuspects = {"C1", "C2"};
         for (auto& suspectName : usualSuspects)
         {
@@ -114,10 +117,10 @@ namespace
     { // Tagging during construction would be better. Ano-ano linkages won't work,
         std::vector<cds::Residue*> residues = glycan->getResidues();
         std::vector<cds::ResidueType> types = cds::residueTypes(residues);
-        size_t foundAglycone                = codeUtils::indexOf(types, cds::ResidueType::Aglycone);
-        size_t aglycone                     = foundAglycone == residues.size() ? 0 : foundAglycone;
-        size_t foundSugar                   = codeUtils::indexOf(types, cds::ResidueType::Sugar);
-        size_t reducing                     = foundSugar == residues.size() ? 1 : foundSugar;
+        size_t foundAglycone = codeUtils::indexOf(types, cds::ResidueType::Aglycone);
+        size_t aglycone = foundAglycone == residues.size() ? 0 : foundAglycone;
+        size_t foundSugar = codeUtils::indexOf(types, cds::ResidueType::Sugar);
+        size_t reducing = foundSugar == residues.size() ? 1 : foundSugar;
         if (residues.size() >= 2)
         {
             return {glycan, residues[aglycone], residues[reducing]};
@@ -131,8 +134,10 @@ namespace
         }
     }
 
-    size_t glycosylationTableIndex(const glycoproteinMetadata::GlycosylationTable& table, const std::string& aminoAcid,
-                                   const std::string& proteinResidueId)
+    size_t glycosylationTableIndex(
+        const glycoproteinMetadata::GlycosylationTable& table,
+        const std::string& aminoAcid,
+        const std::string& proteinResidueId)
     {
         size_t index = codeUtils::indexOf(table.residueNames, aminoAcid);
         if (index == table.residueNames.size())
@@ -151,8 +156,8 @@ namespace
     // This function prepares the glycan molecule in the glycan_ assembly for superimpostion onto an amino acid in the
     // protein It does this by "growing" the atoms of the amino acid side chain (e.g. Asn, Thr or Ser) out from the
     // glycan reducing terminal Another function will use these additional atoms to superimpose the glycan onto residue
-    void prepareGlycansForSuperimpositionToParticularResidue(const glycoproteinMetadata::GlycosylationTable& table,
-                                                             size_t index, Attachment& attachment)
+    void prepareGlycansForSuperimpositionToParticularResidue(
+        const glycoproteinMetadata::GlycosylationTable& table, size_t index, Attachment& attachment)
     {
         // Want: residue.FindAtomByTag("anomeric-carbon"); The below is risky as it uses atoms names, i.e. would break
         // for Sialic acid. ToDo Ok so I reckon the below is just assuming alpha or beta depending on the concext. Need
@@ -169,13 +174,13 @@ namespace
         }
         aglycone->setName("SUP");
 
-        const std::vector<std::string>& names                                  = table.atomNames[index];
+        const std::vector<std::string>& names = table.atomNames[index];
         const std::vector<glycoproteinMetadata::SuperimpositionValues>& values = table.values[index];
-        Residue* reducing                                                      = attachment.reducing;
-        Atom* anomericAtom                                                     = reducing->FindAtom("C1");
-        Coordinate coordC5                                                     = reducing->FindAtom("C5")->coordinate();
-        Coordinate coordO5                                                     = reducing->FindAtom("O5")->coordinate();
-        Coordinate coordC1                                                     = anomericAtom->coordinate();
+        Residue* reducing = attachment.reducing;
+        Atom* anomericAtom = reducing->FindAtom("C1");
+        Coordinate coordC5 = reducing->FindAtom("C5")->coordinate();
+        Coordinate coordO5 = reducing->FindAtom("O5")->coordinate();
+        Coordinate coordC1 = anomericAtom->coordinate();
         std::vector<Coordinate> coords {coordC5, coordO5, coordC1};
         for (size_t n = 0; n < values.size(); n++)
         {
@@ -196,18 +201,19 @@ namespace
         // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g. CG,
         // ND2, we will superimpose them onto the correspoinding "target" atoms in the protein residue
         // (glycosite_residue).
-        size_t glycositeId                         = codeUtils::indexOf(pdbData.objects.residues, glycosite);
-        std::string residueId                      = pdb::residueStringId(pdbData, glycositeId);
-        std::vector<cds::Atom*> proteinAtoms       = glycosite->getAtoms();
-        std::vector<std::string> proteinAtomNames  = cds::atomNames(proteinAtoms);
-        std::vector<cds::Atom*> aglyconeAtoms      = attachment.aglycone->mutableAtoms();
+        size_t glycositeId = codeUtils::indexOf(pdbData.objects.residues, glycosite);
+        std::string residueId = pdb::residueStringId(pdbData, glycositeId);
+        std::vector<cds::Atom*> proteinAtoms = glycosite->getAtoms();
+        std::vector<std::string> proteinAtomNames = cds::atomNames(proteinAtoms);
+        std::vector<cds::Atom*> aglyconeAtoms = attachment.aglycone->mutableAtoms();
         std::vector<std::string> aglyconeAtomNames = cds::atomNames(aglyconeAtoms);
         // Sanity check
         if (aglyconeAtoms.size() < 3)
         {
-            throw std::runtime_error("The aglycone does not contain enough atoms to perform the requested "
-                                     "superimposition to " +
-                                     residueId + ".\nCheck your input structure!\n");
+            throw std::runtime_error(
+                "The aglycone does not contain enough atoms to perform the requested "
+                "superimposition to " +
+                residueId + ".\nCheck your input structure!\n");
         }
         // Get the 3 target atoms from protein residue.
         std::vector<cds::Coordinate> targetCoords;
@@ -216,15 +222,16 @@ namespace
             size_t index = codeUtils::indexOf(proteinAtomNames, name);
             if (index == proteinAtoms.size())
             {
-                throw std::runtime_error("Error: atom '" + name + "' not found in residue " + residueId +
-                                         " with atoms: " + codeUtils::join(", ", proteinAtomNames));
+                throw std::runtime_error(
+                    "Error: atom '" + name + "' not found in residue " + residueId +
+                    " with atoms: " + codeUtils::join(", ", proteinAtomNames));
             }
             targetCoords.push_back(proteinAtoms[index]->coordinate());
         }
-        std::vector<cds::Atom*> glycanAtoms          = attachment.glycan->mutableAtoms();
-        std::vector<cds::Coordinate> aglyconeCoords  = cds::atomCoordinates(aglyconeAtoms);
-        std::vector<cds::Coordinate> glycanCoords    = cds::atomCoordinates(glycanAtoms);
-        cds::AffineTransform transform               = cds::affineTransform(targetCoords, aglyconeCoords);
+        std::vector<cds::Atom*> glycanAtoms = attachment.glycan->mutableAtoms();
+        std::vector<cds::Coordinate> aglyconeCoords = cds::atomCoordinates(aglyconeAtoms);
+        std::vector<cds::Coordinate> glycanCoords = cds::atomCoordinates(glycanAtoms);
+        cds::AffineTransform transform = cds::affineTransform(targetCoords, aglyconeCoords);
         std::vector<cds::Coordinate> updatedAglycone = cds::matrixCoordinates(transform.affine * transform.moving);
         std::vector<cds::Coordinate> updatedGlycan =
             cds::matrixCoordinates(transform.affine * cds::generateMatrix(glycanCoords));
@@ -232,8 +239,8 @@ namespace
         cds::setAtomCoordinates(glycanAtoms, updatedGlycan);
     }
 
-    std::vector<size_t> linkagesContainingResidue(const std::vector<cds::ResidueLinkage>& glycosidicLinkages,
-                                                  cds::Residue* residue)
+    std::vector<size_t> linkagesContainingResidue(
+        const std::vector<cds::ResidueLinkage>& glycosidicLinkages, cds::Residue* residue)
     {
         std::function<bool(const size_t&)> contains = [&](const size_t& n)
         {
@@ -243,8 +250,10 @@ namespace
         return codeUtils::vectorFilter(contains, codeUtils::indexVector(glycosidicLinkages));
     }
 
-    cds::ResidueLinkage replaceAglycone(const GlycamMetadata::DihedralAngleDataTable& metadataTable,
-                                        cds::Residue* reducingResidue, cds::Residue* newAglycone)
+    cds::ResidueLinkage replaceAglycone(
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+        cds::Residue* reducingResidue,
+        cds::Residue* newAglycone)
     {
         // Old aglycone atoms are connected to reducing residue, are found during creation of rotatable dihedrals.
         newAglycone->addNeighbor(newAglycone->getName() + "-" + reducingResidue->getName(), reducingResidue);
@@ -256,8 +265,10 @@ namespace
 namespace glycoproteinBuilder
 {
 
-    std::vector<GlycosylationSite> createGlycosites(const pdb::PdbData& pdbData, cds::Assembly* glycoprotein,
-                                                    const std::vector<GlycositeInput>& glycositesInputVector)
+    std::vector<GlycosylationSite> createGlycosites(
+        const pdb::PdbData& pdbData,
+        cds::Assembly* glycoprotein,
+        const std::vector<GlycositeInput>& glycositesInputVector)
     {
         std::vector<GlycosylationSite> result;
         std::vector<cds::Residue*> residues = glycoprotein->getResidues();
@@ -273,30 +284,38 @@ namespace glycoproteinBuilder
         }
         for (auto& glycositeInput : glycositesInputVector)
         {
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
-                          glycositeInput.glycanInput);
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::INF,
+                "Creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
+                    glycositeInput.glycanInput);
             ChainAndResidue selection = selectionChainAndResidue(glycositeInput.proteinResidueId);
             size_t residueIndex = selectResidueFromInput(residueIds, chainIds, numberAndInsertionCodes, selection);
             if (residueIndex == residues.size())
             {
-                throw std::runtime_error("Error: Did not find a residue with id matching " +
-                                         glycositeInput.proteinResidueId + "\n");
+                throw std::runtime_error(
+                    "Error: Did not find a residue with id matching " + glycositeInput.proteinResidueId + "\n");
             }
             cds::Residue* glycositeResidue = residues[residueIndex];
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "About to push to glycosites with: " + glycositeInput.proteinResidueId + " and glycan " +
-                          glycositeInput.glycanInput);
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::INF,
+                "About to push to glycosites with: " + glycositeInput.proteinResidueId + " and glycan " +
+                    glycositeInput.glycanInput);
             result.push_back({glycositeResidue, glycositeInput});
         }
         return result;
     }
 
-    std::vector<cdsCondensedSequence::Carbohydrate*>
-    addGlycansToProtein(const cdsParameters::ParameterManager& parameterManager,
-                        const codeUtils::SparseVector<double>& elementRadii,
-                        const GlycamMetadata::DihedralAngleDataTable& metadataTable, const pdb::PdbData& pdbData,
-                        cds::Assembly* glycoprotein, const std::vector<GlycosylationSite>& glycosites)
+    std::vector<cdsCondensedSequence::Carbohydrate*> addGlycansToProtein(
+        const cdsParameters::ParameterManager& parameterManager,
+        const codeUtils::SparseVector<double>& elementRadii,
+        const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+        const pdb::PdbData& pdbData,
+        cds::Assembly* glycoprotein,
+        const std::vector<GlycosylationSite>& glycosites)
     {
         const glycoproteinMetadata::GlycosylationTable glycosylationTable =
             glycoproteinMetadata::defaultGlycosylationTable();
@@ -308,33 +327,37 @@ namespace glycoproteinBuilder
             Carbohydrate* glycan = codeUtils::erratic_cast<Carbohydrate*>(
                 glycoprotein->addMolecule(std::make_unique<Carbohydrate>(parameterManager, elementRadii, sequence)));
             result.push_back(glycan);
-            Attachment attachment                = toAttachment(glycan);
-            cds::Residue* aglycone               = attachment.aglycone;
-            cds::Residue* reducingResidue        = attachment.reducing;
-            cds::Residue* glycositeResidue       = glycosite.residue;
-            std::string glycositeResidueName     = glycositeResidue->getName();
+            Attachment attachment = toAttachment(glycan);
+            cds::Residue* aglycone = attachment.aglycone;
+            cds::Residue* reducingResidue = attachment.reducing;
+            cds::Residue* glycositeResidue = glycosite.residue;
+            std::string glycositeResidueName = glycositeResidue->getName();
             const GlycositeInput& glycositeInput = glycosite.input;
             size_t tableIndex =
                 glycosylationTableIndex(glycosylationTable, glycositeResidueName, glycositeInput.proteinResidueId);
             prepareGlycansForSuperimpositionToParticularResidue(glycosylationTable, tableIndex, attachment);
             superimposeGlycanToGlycosite(pdbData, glycositeResidue, attachment);
-            cds::addBond(glycositeResidue->FindAtom(glycosylationTable.connectingAtomNames[tableIndex]),
-                         guessAnomericAtomByForeignNeighbor(attachment.reducing));
+            cds::addBond(
+                glycositeResidue->FindAtom(glycosylationTable.connectingAtomNames[tableIndex]),
+                guessAnomericAtomByForeignNeighbor(attachment.reducing));
             glycositeResidue->setName(glycosylationTable.renamedResidues[tableIndex]);
             std::vector<cds::ResidueLinkage>& linkages = glycan->GetGlycosidicLinkages();
-            std::vector<size_t> aglyconeLinkages       = linkagesContainingResidue(linkages, aglycone);
+            std::vector<size_t> aglyconeLinkages = linkagesContainingResidue(linkages, aglycone);
             if (aglyconeLinkages.size() != 1)
             {
-                throw std::runtime_error("Error: found more than 1 linkage to aglycone in " +
-                                         glycositeInput.glycanInput);
+                throw std::runtime_error(
+                    "Error: found more than 1 linkage to aglycone in " + glycositeInput.glycanInput);
             }
             glycan->cds::Molecule::deleteResidue(aglycone);
             cds::ResidueLinkage newLinkage = replaceAglycone(metadataTable, reducingResidue, glycositeResidue);
-            size_t aglyconeLinkage         = aglyconeLinkages[0];
-            linkages[aglyconeLinkage]      = newLinkage;
-            gmml::log(__LINE__, __FILE__, gmml::INF,
-                      "Completed creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
-                          glycositeInput.glycanInput);
+            size_t aglyconeLinkage = aglyconeLinkages[0];
+            linkages[aglyconeLinkage] = newLinkage;
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::INF,
+                "Completed creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
+                    glycositeInput.glycanInput);
         }
         return result;
     }

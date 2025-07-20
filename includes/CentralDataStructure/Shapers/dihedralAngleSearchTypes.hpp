@@ -1,15 +1,15 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCHTYPES_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCHTYPES_HPP
 
+#include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
-#include "includes/Assembly/assemblyTypes.hpp"
 
 #include <array>
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace cds
 {

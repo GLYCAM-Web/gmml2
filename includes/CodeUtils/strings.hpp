@@ -1,10 +1,10 @@
 #ifndef INCLUDES_CODEUTILS_STRINGS_HPP
 #define INCLUDES_CODEUTILS_STRINGS_HPP
 
+#include <functional>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <functional>
 
 namespace codeUtils
 {
@@ -14,10 +14,10 @@ namespace codeUtils
         std::string close;
     };
 
-    static const Brackets noBrackets     = {"", ""};
+    static const Brackets noBrackets = {"", ""};
     static const Brackets squareBrackets = {"[", "]"};
-    static const Brackets roundBrackets  = {"(", ")"};
-    static const Brackets curlyBrackets  = {"{", "}"};
+    static const Brackets roundBrackets = {"(", ")"};
+    static const Brackets curlyBrackets = {"{", "}"};
 
     bool startsWith(const std::string& bigString, const std::string& smallString);
     std::string RemoveWhiteSpace(std::string str);

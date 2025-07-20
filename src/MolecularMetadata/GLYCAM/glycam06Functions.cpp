@@ -1,7 +1,9 @@
 #include "includes/MolecularMetadata/GLYCAM/glycam06Functions.hpp"
-#include "includes/CodeUtils/strings.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
+
 #include <algorithm> // sort
 #include <unordered_map>
 
@@ -292,7 +294,7 @@ std::string GlycamMetadata::GetDescriptiveNameForGlycamResidueName(const std::st
     }
     // For glycam we made it harder:
     char secondLetter = residueNameInGLYCAMFormat.at(1);
-    char thirdLetter  = residueNameInGLYCAMFormat.at(2);
+    char thirdLetter = residueNameInGLYCAMFormat.at(2);
     // char secondLetter = residueNameInGLYCAMFormat[residueNameInGLYCAMFormat.size() - 2]; // sush.
     //    std::cout << "Letters are : " << secondLetter << " and " << thirdLetter << std::endl;
 
@@ -303,8 +305,8 @@ std::string GlycamMetadata::GetDescriptiveNameForGlycamResidueName(const std::st
     }
     secondLetter = toupper(secondLetter); // Make it upper for matching to resname below.
 
-    bool addRingformAndAnomer  = true;
-    char ringform              = 'p';                  // Default, may change below if furanose
+    bool addRingformAndAnomer = true;
+    char ringform = 'p';                               // Default, may change below if furanose
     char anomericConfiguration = tolower(thirdLetter); // Default, may change below if furanose
     std::string query(1, secondLetter);                // Default, may change below
     if (thirdLetter == 'U' || thirdLetter == 'D' || thirdLetter == 'A' || thirdLetter == 'B' || thirdLetter == 'X')
@@ -326,7 +328,7 @@ std::string GlycamMetadata::GetDescriptiveNameForGlycamResidueName(const std::st
     {
         std::stringstream ss;
         ss << secondLetter << thirdLetter;
-        query                = ss.str(); // Weirdos like BC for Bac
+        query = ss.str(); // Weirdos like BC for Bac
         addRingformAndAnomer = false;
     }
     // std::cout << "Query is " << query << std::endl;

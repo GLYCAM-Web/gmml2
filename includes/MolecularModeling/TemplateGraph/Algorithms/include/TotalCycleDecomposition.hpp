@@ -62,7 +62,7 @@ namespace
         for (unsigned int currIndex = 0; currIndex < interestingGraph_t.getNodes().size(); ++currIndex)
         {
             aTree[currIndex].parent = &aTree[currIndex];
-            aTree[currIndex].index  = currIndex;
+            aTree[currIndex].index = currIndex;
         }
 
         while (nodeStack.size() > 0)
@@ -143,9 +143,12 @@ namespace
     } // end compute fundamental cycles
 
     template<class T>
-    void validateCycleMatrixRecursive(glygraph::HalfAdjacencyMatrix<T>& matrixToValidate_t,
-                                      unsigned int& currPathLength_t, const int interestingNodeIndex_t,
-                                      unsigned int prevNodeIndex_t, std::set<unsigned int>& visitedTracker_t)
+    void validateCycleMatrixRecursive(
+        glygraph::HalfAdjacencyMatrix<T>& matrixToValidate_t,
+        unsigned int& currPathLength_t,
+        const int interestingNodeIndex_t,
+        unsigned int prevNodeIndex_t,
+        std::set<unsigned int>& visitedTracker_t)
     {
         // just makes sure our call stack isnt stupid large, we can mutate this to our needs
         if (currPathLength_t > 750)
@@ -167,8 +170,8 @@ namespace
                     }
                     ++currPathLength_t;
                     visitedTracker_t.insert(interestingNodeIndex_t);
-                    validateCycleMatrixRecursive(matrixToValidate_t, currPathLength_t, curiousIndex,
-                                                 interestingNodeIndex_t, visitedTracker_t);
+                    validateCycleMatrixRecursive(
+                        matrixToValidate_t, currPathLength_t, curiousIndex, interestingNodeIndex_t, visitedTracker_t);
                     return;
                 }
             }
@@ -259,7 +262,7 @@ namespace cycle_decomp
                     if (combinitoricsVector[anotherFunAdj])
                     {
                         mutatingMatrix = mutatingMatrix ^ funCycleAdj[anotherFunAdj];
-                        edgeCount      += funCycleAdj[anotherFunAdj].getNumEdges();
+                        edgeCount += funCycleAdj[anotherFunAdj].getNumEdges();
                     }
                 }
                 // our base case

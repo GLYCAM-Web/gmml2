@@ -22,7 +22,7 @@ Assembly::Assembly(std::vector<Residue*>& residues) : Node<Assembly>(glygraph::i
 Assembly::Assembly(Assembly&& other) noexcept : glygraph::Node<cds::Assembly>(other)
 {
     molecules_ = std::move(other.molecules_);
-    number_    = std::move(other.number_);
+    number_ = std::move(other.number_);
 }
 
 // Copy Ctor
@@ -62,8 +62,10 @@ std::vector<Residue*> Assembly::getResidues() const
     for (auto& molPtr : this->getMolecules())
     {
         std::vector<Residue*> currentMoleculeResidues = molPtr->getResidues();
-        residues.insert(residues.end(), std::make_move_iterator(currentMoleculeResidues.begin()),
-                        std::make_move_iterator(currentMoleculeResidues.end()));
+        residues.insert(
+            residues.end(),
+            std::make_move_iterator(currentMoleculeResidues.begin()),
+            std::make_move_iterator(currentMoleculeResidues.end()));
     }
     return residues;
 }
@@ -74,10 +76,11 @@ std::vector<Atom*> Assembly::getAtoms() const
     for (auto& residue : this->getResidues())
     {
         std::vector<Atom*> currentResidueAtoms = residue->getAtoms();
-        atoms.insert(atoms.end(), // Concatenates the vectors. currentResidueAtoms isn't left in a defined state but
-                                  // that's ok here.
-                     std::make_move_iterator(currentResidueAtoms.begin()),
-                     std::make_move_iterator(currentResidueAtoms.end()));
+        atoms.insert(
+            atoms.end(), // Concatenates the vectors. currentResidueAtoms isn't left in a defined state but
+                         // that's ok here.
+            std::make_move_iterator(currentResidueAtoms.begin()),
+            std::make_move_iterator(currentResidueAtoms.end()));
     }
     return atoms;
 }
@@ -94,7 +97,7 @@ Molecule* Assembly::addMolecule(std::unique_ptr<Molecule> myMolecule)
 const Atom* Assembly::findAtom(uint serialNumber) const
 {
     std::vector<cds::Atom*> atoms = getAtoms();
-    std::vector<uint> numbers     = atomNumbers(atoms);
-    size_t index                  = codeUtils::indexOf(numbers, serialNumber);
+    std::vector<uint> numbers = atomNumbers(atoms);
+    size_t index = codeUtils::indexOf(numbers, serialNumber);
     return index < atoms.size() ? atoms[index] : nullptr;
 }

@@ -1,9 +1,9 @@
 #include "includes/CodeUtils/structuredFiles.hpp"
 
-#include <string>
-#include <vector>
-#include <variant>
 #include <ostream>
+#include <string>
+#include <variant>
+#include <vector>
 
 namespace codeUtils
 {

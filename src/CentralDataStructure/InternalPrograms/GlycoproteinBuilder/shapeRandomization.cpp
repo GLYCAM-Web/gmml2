@@ -1,6 +1,7 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/shapeRandomization.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycanShape.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "includes/CodeUtils/constants.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
@@ -10,29 +11,29 @@
 
 namespace
 {
-    bool isChiAngle(const std::string& str)
-    {
-        return (str == "Chi1") || (str == "Chi2");
-    }
+    bool isChiAngle(const std::string& str) { return (str == "Chi1") || (str == "Chi2"); }
 } // namespace
 
 namespace glycoproteinBuilder
 {
     cds::GlycanShapePreference randomLinkageShapePreference(
-        pcg32& rng, const AngleSettings& settings, const AssemblyData& data, const assembly::Bounds& bounds,
+        pcg32& rng,
+        const AngleSettings& settings,
+        const AssemblyData& data,
+        const assembly::Bounds& bounds,
         size_t glycanId,
         std::function<double(pcg32&, const AngleSettings&, const GlycamMetadata::DihedralAngleData& metadata)>
             randomAngle,
         bool freezeGlycositeResidueConformation)
     {
-        const std::vector<size_t>& linkages                      = data.glycans.linkages[glycanId];
+        const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
         const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
         cds::GlycanShapePreference result;
         for (size_t n = 0; n < linkages.size(); n++)
         {
-            size_t linkageId                              = linkages[n];
+            size_t linkageId = linkages[n];
             const std::vector<size_t>& rotatableDihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
-            bool isGlycositeLinkage                       = data.residueLinkageData.isGlycositeLinkage[linkageId];
+            bool isGlycositeLinkage = data.residueLinkageData.isGlycositeLinkage[linkageId];
             std::vector<std::vector<double>> angles;
             angles.resize(rotatableDihedrals.size());
             for (size_t k = 0; k < rotatableDihedrals.size(); k++)
@@ -59,7 +60,7 @@ namespace glycoproteinBuilder
                                 data.dihedralAngleTable.entries[dihedralMetadata[dihedralId][0]].dihedral_angle_name_))
                         {
                             pref.isFrozen[n] = true;
-                            size_t metadata  = data.rotatableDihedralData.initialShape[dihedralId].metadataIndex;
+                            size_t metadata = data.rotatableDihedralData.initialShape[dihedralId].metadataIndex;
                             pref.angles[n][metadata] =
                                 constants::toDegrees(cds::angle(dihedralCoordinates(data, bounds, dihedralId)));
                             pref.metadataOrder = {metadata};

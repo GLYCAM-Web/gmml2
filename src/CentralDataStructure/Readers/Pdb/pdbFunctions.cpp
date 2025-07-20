@@ -1,20 +1,21 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/MolecularMetadata/atomicBonds.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
+
 #include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
-#include "includes/Graph/graphManipulation.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+#include "includes/Graph/graphManipulation.hpp"
+#include "includes/MolecularMetadata/atomicBonds.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
-#include <string>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <string>
 
 namespace
 {
@@ -52,16 +53,17 @@ int pdb::checkSecondShiftFromResidueNumberOverrun(const std::string& line, const
 
 cds::Coordinate pdb::checkShiftsAndExtractCoordinate(const std::string& line)
 {
-    int shift       = pdb::checkShiftFromSerialNumberOverrun(line);
+    int shift = pdb::checkShiftFromSerialNumberOverrun(line);
     int secondShift = pdb::checkSecondShiftFromResidueNumberOverrun(line, shift);
     // Coordinates etc don't get shifted by first overrun in residue number, but do by the rest.
     if (secondShift > 1)
     { // Combine the shifts, but ignore the first shift in residue sequence number.
         shift += (secondShift - 1);
     }
-    return pdb::coordinateFromStrings(codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
-                                      codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
-                                      codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8)));
+    return pdb::coordinateFromStrings(
+        codeUtils::RemoveWhiteSpace(line.substr(30 + shift, 8)),
+        codeUtils::RemoveWhiteSpace(line.substr(38 + shift, 8)),
+        codeUtils::RemoveWhiteSpace(line.substr(46 + shift, 8)));
 }
 
 cds::Coordinate pdb::coordinateFromStrings(const std::string& x, const std::string& y, const std::string& z)
@@ -72,8 +74,11 @@ cds::Coordinate pdb::coordinateFromStrings(const std::string& x, const std::stri
     }
     catch (...)
     {
-        gmml::log(__LINE__, __FILE__, gmml::ERR,
-                  "Could not convert these strings to doubles: " + x + ", " + y + ", " + z + ", ");
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::ERR,
+            "Could not convert these strings to doubles: " + x + ", " + y + ", " + z + ", ");
         throw;
     }
 }
@@ -93,7 +98,7 @@ void pdb::expandLine(std::string& line, int length)
 size_t pdb::addAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
 {
     cds::Atom* atom = data.objects.residues[residueId]->addAtom(std::make_unique<cds::Atom>());
-    size_t atomId   = data.indices.atomCount;
+    size_t atomId = data.indices.atomCount;
     data.objects.atoms.push_back(atom);
     data.indices.atomResidue.push_back(residueId);
     data.indices.atomAlive.push_back(true);
@@ -119,7 +124,7 @@ size_t pdb::addAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
 
 size_t pdb::addAtom(PdbData& data, size_t residueId, const std::string& name, const cds::Coordinate& coordinate)
 {
-    double occupancy         = 1.0;
+    double occupancy = 1.0;
     double temperatureFactor = 0.0;
     return addAtom(data, residueId, {"ATOM", name, 1, coordinate, occupancy, temperatureFactor});
 }
@@ -128,12 +133,14 @@ void pdb::deleteAtom(PdbData& data, size_t residueId, size_t atomId)
 {
     if (atomId < data.indices.atomCount)
     {
-        gmml::log(__LINE__, __FILE__, gmml::INF,
-                  "Deleting atom with id: " + data.atoms.names[atomId] + "_" +
-                      std::to_string(data.atoms.numbers[atomId]));
-        data.indices.atomAlive[atomId]   = false;
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::INF,
+            "Deleting atom with id: " + data.atoms.names[atomId] + "_" + std::to_string(data.atoms.numbers[atomId]));
+        data.indices.atomAlive[atomId] = false;
         data.atomGraph.nodeAlive[atomId] = false;
-        cds::Atom* atom                  = data.objects.atoms[atomId];
+        cds::Atom* atom = data.objects.atoms[atomId];
         data.objects.residues[residueId]->deleteAtom(atom);
     }
 }

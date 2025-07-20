@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CODEUTILS_FILESYSTEM_HPP
 #define INCLUDES_CODEUTILS_FILESYSTEM_HPP
 
+#include <filesystem>
 #include <string>
 #include <vector>
-#include <filesystem>
 
 namespace codeUtils
 {

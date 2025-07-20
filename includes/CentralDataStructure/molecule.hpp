@@ -4,8 +4,8 @@
 #include "includes/CentralDataStructure/residue.hpp"
 #include "includes/MolecularModeling/TemplateGraph/GraphStructure/include/Node.hpp"
 
-#include <vector>
 #include <memory> // unique_ptr
+#include <vector>
 
 namespace cds
 {
@@ -22,11 +22,11 @@ namespace cds
         Molecule(const Molecule& other);     // Copy Ctor
         Molecule& operator=(Molecule other); // Move and Copy assignment operator
 
-        virtual ~Molecule()
-        {} // std::cout << "Molecule default dtor for " << this->getName() << "\n";}
+        virtual ~Molecule() {} // std::cout << "Molecule default dtor for " << this->getName() << "\n";}
 
-        friend void swap(Molecule& lhs,
-                         Molecule& rhs) // ToDo figure out how to put this in cpp file once everything is working.
+        friend void swap(
+            Molecule& lhs,
+            Molecule& rhs) // ToDo figure out how to put this in cpp file once everything is working.
         {
             using std::swap;
             swap(lhs.residues_, rhs.residues_);
@@ -36,10 +36,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    ACCESSOR                          //
         //////////////////////////////////////////////////////////
-        inline const int& getNumber()
-        {
-            return number_;
-        }
+        inline const int& getNumber() { return number_; }
 
         std::vector<Atom*> getAtoms() const;
         std::vector<Atom*> mutableAtoms();
@@ -48,10 +45,7 @@ namespace cds
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
-        inline void setNumber(const int i)
-        {
-            number_ = i;
-        }
+        inline void setNumber(const int i) { number_ = i; }
 
         void swapResiduePosition(Residue* queryResidue, size_t newPosition);
         //////////////////////////////////////////////////////////

@@ -1,13 +1,14 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PREP_PREPRESIDUE_HPP
 
-#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
-#include <string>
-#include <map>
-#include <vector>
+#include "includes/CentralDataStructure/residue.hpp"
+
 #include <istream>
+#include <map>
 #include <ostream>
+#include <string>
+#include <vector>
 
 namespace prep
 {
@@ -20,7 +21,7 @@ namespace prep
     enum OutputFormat
     {
         kFormatted = 0,
-        kBinary    = 1
+        kBinary = 1
     };
 
     enum GeometryType
@@ -57,20 +58,20 @@ namespace prep
     {
 
         std::string title = ""; //!< Residue title; fill by the first line of each residue section of the file
-        CoordinateType coordinateType = prep::kINT;       //!< Coordinate type(INT, XYZ); fill by the 2nd column of the
-                                                          //!< third line of each residue section of the file
-        OutputFormat outputFormat     = prep::kFormatted; //!< Output format(Binary=1,Formatted=1); fill by the third
+        CoordinateType coordinateType = prep::kINT;   //!< Coordinate type(INT, XYZ); fill by the 2nd column of the
+                                                      //!< third line of each residue section of the file
+        OutputFormat outputFormat = prep::kFormatted; //!< Output format(Binary=1,Formatted=1); fill by the third
                                                       //!< column of the 3rd line of each residue section of the file
         GeometryType geometryType =
-            prep::kGeometryCorrect; //!< Geometry type(CORRECT, CHANGE); fill by the first column of the 4th line of
-                                    //!< each residue section of the file
+            prep::kGeometryCorrect; //!< Geometry type(CORRECT, CHANGE); fill by the first column of
+                                    //!< the 4th line of each residue section of the file
         DummyAtomOmission dummyAtomOmission = prep::kOmit; //!< Dummy atom omission(OMIT, NOMIT); fill by the 3rd column
                                                            //!< of the 4th line of each residue section of the file
         std::string dummyAtomType =
             "DU"; //!< Dummy atom type; fill by the 4th column of the 4th line of each residue section of the file
         DummyAtomPosition dummyAtomPosition =
-            prep::kPositionBeg; //!< Dummy atom position(ALL, BEG); fill by the 5th column of the 4th line of each
-                                //!< residue section of the file
+            prep::kPositionBeg; //!< Dummy atom position(ALL, BEG); fill by the 5th column
+                                //!< of the 4th line of each residue section of the file
         double charge = 0.0; //!< Total charge of the residue; fill by the 5th line of each residue section of the file
         DihedralVector improperDihedrals; //!< Improper dihedrals; fill by all lines between IMPROPER title in each
                                           //!< residue section of the file and a blank line in that section
@@ -99,7 +100,7 @@ namespace prep
     {
       public:
         PrepResidue(std::istream& in_file, std::string& line);
-        PrepResidue()  = default;
+        PrepResidue() = default;
         ~PrepResidue() = default;
         PrepResidue(PrepResidue&& other) noexcept; // Move Ctor
         PrepResidue(const PrepResidue& other);     // Copy Ctor

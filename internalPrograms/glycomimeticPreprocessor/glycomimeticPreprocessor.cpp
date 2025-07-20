@@ -1,18 +1,19 @@
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
-#include <string>
+
 #include <fstream>
 #include <iostream>
+#include <string>
 
 // Adapted the preprocessor to prepare files for Yao's glycomimetic program.
 // In addition to regular preprocessing it:
@@ -34,7 +35,7 @@ int main(int argc, char* argv[])
         for (size_t n = 0; n < pdbFile.data.indices.residueCount; n++)
         {
             auto atomIds = residueAtoms(pdbFile.data.indices, n);
-            auto atoms   = pdbFile.data.objects.residues[n]->getAtoms();
+            auto atoms = pdbFile.data.objects.residues[n]->getAtoms();
             if (atomIds.size() != atoms.size())
             {
                 std::cout << "residue " << n << "\n";
@@ -47,13 +48,13 @@ int main(int argc, char* argv[])
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
     cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-    parameterManager.lib.residueNames                = codeUtils::reverse(parameterManager.lib.residueNames);
-    parameterManager.lib.residues                    = codeUtils::reverse(parameterManager.lib.residues);
-    pdb::PreprocessorInformation ppInfo              = pdbFile.PreProcess(parameterManager, options);
-    std::vector<cds::Assembly*> assemblies           = pdbFile.getAssemblies();
-    assembly::Indices& graphIndices                  = pdbFile.data.indices;
+    parameterManager.lib.residueNames = codeUtils::reverse(parameterManager.lib.residueNames);
+    parameterManager.lib.residues = codeUtils::reverse(parameterManager.lib.residues);
+    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
+    std::vector<cds::Assembly*> assemblies = pdbFile.getAssemblies();
+    assembly::Indices& graphIndices = pdbFile.data.indices;
     std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
-    size_t residueCount             = pdbFile.data.indices.residueCount;
+    size_t residueCount = pdbFile.data.indices.residueCount;
     std::vector<bool> residueAlive(residueCount, true);
     for (size_t residueId = 0; residueId < residueCount; residueId++)
     {
@@ -79,10 +80,7 @@ int main(int argc, char* argv[])
     std::function<std::vector<size_t>(const std::vector<size_t>&)> onlyAliveResidues =
         [&](const std::vector<size_t>& residueIds)
     {
-        std::function<bool(const size_t&)> isAlive = [&](size_t id)
-        {
-            return residueAlive[id];
-        };
+        std::function<bool(const size_t&)> isAlive = [&](size_t id) { return residueAlive[id]; };
         return codeUtils::vectorFilter(isAlive, residueIds);
     };
     std::vector<std::vector<size_t>> residueOrder = codeUtils::vectorMap(

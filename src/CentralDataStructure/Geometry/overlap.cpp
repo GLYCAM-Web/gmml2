@@ -1,19 +1,17 @@
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <cmath>
 #include <vector>
 
-int cds::compareOverlaps(double a, double b)
-{
-    return (std::fabs(a - b) <= 1e-10) ? 0 : ((a > b) ? 1 : -1);
-}
+int cds::compareOverlaps(double a, double b) { return (std::fabs(a - b) <= 1e-10) ? 0 : ((a > b) ? 1 : -1); }
 
-double cds::overlapAmount(const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a,
-                          const Sphere& b)
+double cds::overlapAmount(
+    const MolecularMetadata::PotentialFactor& factor, double tolerance, const Sphere& a, const Sphere& b)
 {
     double cutoff = std::max(0.0, a.radius + b.radius - tolerance);
     double sqDist = squaredDistance(a.center, b.center);
@@ -27,10 +25,7 @@ double cds::overlapAmount(const MolecularMetadata::PotentialFactor& factor, doub
     }
 }
 
-double cds::overlapVectorSum(const std::vector<double>& vec)
-{
-    return 0.5 * codeUtils::vectorSum(0.0, vec);
-}
+double cds::overlapVectorSum(const std::vector<double>& vec) { return 0.5 * codeUtils::vectorSum(0.0, vec); }
 
 std::vector<double> cds::overlapAboveThreshold(double threshold, const std::vector<double>& vec)
 {

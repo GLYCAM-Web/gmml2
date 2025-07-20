@@ -5,8 +5,8 @@
 #include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 
-#include <vector>
 #include <string>
+#include <vector>
 
 using cds::Atom;
 using cds::Residue;

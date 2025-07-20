@@ -1,44 +1,49 @@
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+
+#include "includes/Assembly/assemblyBounds.hpp"
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 #include "includes/CentralDataStructure/Geometry/orientation.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "includes/CentralDataStructure/atom.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/Graph/graphTypes.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyBounds.hpp"
-#include "includes/Assembly/assemblyIndices.hpp"
 #include "includes/MolecularMetadata/aminoAcids.hpp"
 #include "includes/MolecularMetadata/elements.hpp"
 
-#include <cmath>
 #include <array>
+#include <cmath>
 #include <vector>
 
 namespace glycoproteinBuilder
 {
-    GlycoproteinAssembly
-    toGlycoproteinAssemblyStructs(const MolecularMetadata::AminoAcidTable& aminoAcidTable,
-                                  const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
-                                  const codeUtils::SparseVector<double>& elementRadii, const pdb::PdbData& pdbData,
-                                  std::vector<cds::Molecule*>& molecules, std::vector<GlycosylationSite>& glycosites,
-                                  std::vector<cdsCondensedSequence::Carbohydrate*>& glycans, double overlapTolerance,
-                                  double overlapRejectionThreshold, bool excludeHydrogen)
+    GlycoproteinAssembly toGlycoproteinAssemblyStructs(
+        const MolecularMetadata::AminoAcidTable& aminoAcidTable,
+        const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable,
+        const codeUtils::SparseVector<double>& elementRadii,
+        const pdb::PdbData& pdbData,
+        std::vector<cds::Molecule*>& molecules,
+        std::vector<GlycosylationSite>& glycosites,
+        std::vector<cdsCondensedSequence::Carbohydrate*>& glycans,
+        double overlapTolerance,
+        double overlapRejectionThreshold,
+        bool excludeHydrogen)
     {
         using MolecularMetadata::Element;
 
-        cds::GraphIndexData graphData        = cds::toIndexData(molecules);
-        assembly::Graph graph                = cds::createCompleteAssemblyGraph(graphData);
-        std::vector<cds::Atom*>& atoms       = graphData.objects.atoms;
+        cds::GraphIndexData graphData = cds::toIndexData(molecules);
+        assembly::Graph graph = cds::createCompleteAssemblyGraph(graphData);
+        std::vector<cds::Atom*>& atoms = graphData.objects.atoms;
         std::vector<cds::Residue*>& residues = graphData.objects.residues;
 
         auto boundingSpheresOf =
@@ -83,14 +88,14 @@ namespace glycoproteinBuilder
         std::vector<std::vector<size_t>> glycanLinkages;
         for (size_t n = 0; n < glycosites.size(); n++)
         {
-            size_t site          = codeUtils::indexOf(residues, glycosites[n].residue);
+            size_t site = codeUtils::indexOf(residues, glycosites[n].residue);
             size_t moleculeIndex = codeUtils::indexOf(molecules, codeUtils::erratic_cast<cds::Molecule*>(glycans[n]));
             const std::vector<cds::ResidueLinkage>& linkages = glycosidicLinkages[n];
             std::vector<size_t> linkageIds = codeUtils::indexVectorWithOffset(residueLinkages.size(), linkages);
             for (size_t k = 0; k < linkages.size(); k++)
             {
                 isGlycositeLinkage.push_back(k == 0);
-                const cds::ResidueLinkage& linkage                          = linkages[k];
+                const cds::ResidueLinkage& linkage = linkages[k];
                 const std::vector<cds::RotatableDihedral>& linkageDihedrals = linkage.rotatableDihedrals;
                 std::vector<size_t> dihedralIndices =
                     codeUtils::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
@@ -109,10 +114,10 @@ namespace glycoproteinBuilder
                     rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
                     dihedralCurrentMetadata.push_back(dihedral.currentMetadataIndex);
                 }
-                size_t firstResidue                    = codeUtils::indexOf(residues, linkage.link.residues.first);
-                size_t secondResidue                   = codeUtils::indexOf(residues, linkage.link.residues.second);
+                size_t firstResidue = codeUtils::indexOf(residues, linkage.link.residues.first);
+                size_t secondResidue = codeUtils::indexOf(residues, linkage.link.residues.second);
                 const std::vector<size_t>& adjacencies = graph.residues.nodes.nodeAdjacencies[firstResidue];
-                size_t edgeN                           = codeUtils::indexOf(adjacencies, secondResidue);
+                size_t edgeN = codeUtils::indexOf(adjacencies, secondResidue);
                 if (edgeN >= adjacencies.size())
                 {
                     throw std::runtime_error("no residue adjacency");
@@ -127,19 +132,16 @@ namespace glycoproteinBuilder
             glycanLinkages.push_back(linkageIds);
         }
 
-        std::vector<std::string> atomNames           = cds::atomNames(atoms);
+        std::vector<std::string> atomNames = cds::atomNames(atoms);
         std::vector<cds::Sphere> atomBoundingSpheres = cds::atomCoordinatesWithRadii(elementRadii, atoms);
         std::vector<bool> partOfMovableSidechain(atoms.size(), false);
-        std::vector<Element> atomElements              = cds::atomElements(atoms);
-        std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
-        {
-            return atomElements[n] != Element::H;
-        };
+        std::vector<Element> atomElements = cds::atomElements(atoms);
+        std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n) { return atomElements[n] != Element::H; };
         std::vector<bool> allAtoms(atoms.size(), true);
         std::vector<bool> nonHydrogenAtoms = codeUtils::vectorMap(nonHydrogen, codeUtils::indexVector(atomElements));
         std::vector<bool> includeInOverlapCheck = excludeHydrogen ? nonHydrogenAtoms : allAtoms;
 
-        std::vector<std::string> residueNames      = cds::residueNames(residues);
+        std::vector<std::string> residueNames = cds::residueNames(residues);
         std::vector<cds::ResidueType> residueTypes = cds::residueTypes(residues);
         std::vector<cds::Sphere> residueBoundingSpheres =
             boundingSpheresOf(atomBoundingSpheres, graph.residues.nodes.constituents);
@@ -149,10 +151,7 @@ namespace glycoproteinBuilder
 
         auto dihedralCoordinates = [&](const std::array<size_t, 4>& arr)
         {
-            auto coord = [&](size_t n)
-            {
-                return atomBoundingSpheres[arr[n]].center;
-            };
+            auto coord = [&](size_t n) { return atomBoundingSpheres[arr[n]].center; };
             return std::array<cds::Coordinate, 4> {coord(0), coord(1), coord(2), coord(3)};
         };
 
@@ -163,33 +162,31 @@ namespace glycoproteinBuilder
                 size_t aminoAcidIndex = MolecularMetadata::aminoAcidIndex(aminoAcidTable, residueNames[n]);
                 std::vector<size_t> nonHydrogenAtoms = codeUtils::vectorFilter(nonHydrogen, residueAtoms(graph, n));
                 std::vector<std::string> nonHydrogenNames = codeUtils::indicesToValues(atomNames, nonHydrogenAtoms);
-                auto atomIndex                            = [&](const std::string& str)
-                {
-                    return nonHydrogenAtoms[codeUtils::indexOf(nonHydrogenNames, str)];
-                };
-                size_t atomN  = atomIndex("N");
+                auto atomIndex = [&](const std::string& str)
+                { return nonHydrogenAtoms[codeUtils::indexOf(nonHydrogenNames, str)]; };
+                size_t atomN = atomIndex("N");
                 size_t atomCA = atomIndex("CA");
-                size_t atomC  = atomIndex("C");
+                size_t atomC = atomIndex("C");
                 bool hasExpectedAtoms =
                     (codeUtils::sorted(nonHydrogenNames) == aminoAcidTable.atomNames[aminoAcidIndex]);
                 bool isNTerminal = true;
                 bool isCTerminal = true;
                 for (size_t residueBondId : graph.residues.nodes.edgeAdjacencies[n])
                 {
-                    bool direction    = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);
+                    bool direction = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);
                     size_t atomBondId = residueEdgeToAtomEdgeIndex(graph, residueBondId);
                     const std::array<size_t, 2>& atomBond = graph.atoms.edges.nodeAdjacencies[atomBondId];
-                    size_t thisAtom                       = atomBond[0 == direction];
-                    size_t otherAtom                      = atomBond[1 == direction];
-                    std::string otherName                 = atomNames[otherAtom];
+                    size_t thisAtom = atomBond[0 == direction];
+                    size_t otherAtom = atomBond[1 == direction];
+                    std::string otherName = atomNames[otherAtom];
                     if ((thisAtom == atomC) && (otherName == "N"))
                     {
-                        isCTerminal  = false;
+                        isCTerminal = false;
                         psiAngles[n] = cds::angle(dihedralCoordinates({atomN, atomCA, atomC, otherAtom}));
                     }
                     else if ((thisAtom == atomN) && (otherName == "C"))
                     {
-                        isNTerminal  = false;
+                        isNTerminal = false;
                         phiAngles[n] = cds::angle(dihedralCoordinates({otherAtom, atomN, atomCA, atomC}));
                     }
                 }
@@ -200,14 +197,16 @@ namespace glycoproteinBuilder
         std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(residues.size());
         std::vector<std::vector<size_t>> sidechainRotations(residues.size());
         std::vector<std::vector<double>> sidechainWeights(residues.size());
-        std::vector<cds::Sphere> sidechainPotentialBounds(residues.size(), cds::Sphere {
-                                                                               0.0, cds::Coordinate {0.0, 0.0, 0.0}
+        std::vector<cds::Sphere> sidechainPotentialBounds(
+            residues.size(),
+            cds::Sphere {
+                0.0, cds::Coordinate {0.0, 0.0, 0.0}
         });
 
         auto serializeNonProtein = [](const std::vector<uint>& numbers, const std::vector<bool>& isProtein)
         {
             std::vector<uint> result = numbers;
-            int maxNumber            = codeUtils::vectorMax(uint(0), codeUtils::boolsToValues(numbers, isProtein));
+            int maxNumber = codeUtils::vectorMax(uint(0), codeUtils::boolsToValues(numbers, isProtein));
             for (size_t n : codeUtils::boolsToIndices(codeUtils::vectorNot(isProtein)))
             {
                 maxNumber++;
@@ -217,9 +216,7 @@ namespace glycoproteinBuilder
         };
 
         std::function<bool(const MoleculeType&)> isProtein = [](const MoleculeType& type)
-        {
-            return type == MoleculeType::protein;
-        };
+        { return type == MoleculeType::protein; };
         std::vector<MoleculeType> residueMoleculeTypes =
             codeUtils::indicesToValues(moleculeTypes, residueMolecules(graph.indices));
         std::vector<MoleculeType> atomMoleculeTypes =
@@ -227,47 +224,49 @@ namespace glycoproteinBuilder
 
         std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
         {
-            size_t residueId    = (residueMoleculeTypes[n] == MoleculeType::protein)
-                                      ? n
-                                      : glycanAttachmentResidue[codeUtils::indexOf(glycanMoleculeId,
-                                                                                   graphData.indices.residueMolecule[n])];
+            size_t residueId = (residueMoleculeTypes[n] == MoleculeType::protein)
+                                   ? n
+                                   : glycanAttachmentResidue[codeUtils::indexOf(
+                                         glycanMoleculeId, graphData.indices.residueMolecule[n])];
             size_t pdbResidueId = codeUtils::indexOf(pdbData.objects.residues, residues[residueId]);
             return pdbData.residues.chainIds[pdbResidueId];
         };
 
         std::vector<std::string> chainIds = codeUtils::vectorMap(chainId, codeUtils::indexVector(residues));
-        std::vector<bool> proteinResidue  = codeUtils::vectorMap(isProtein, residueMoleculeTypes);
-        std::vector<bool> proteinAtom     = codeUtils::vectorMap(isProtein, atomMoleculeTypes);
-        std::vector<uint> residueNumbers  = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
-        std::vector<uint> atomNumbers     = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
+        std::vector<bool> proteinResidue = codeUtils::vectorMap(isProtein, residueMoleculeTypes);
+        std::vector<bool> proteinAtom = codeUtils::vectorMap(isProtein, atomMoleculeTypes);
+        std::vector<uint> residueNumbers = serializeNonProtein(cds::residueNumbers(residues), proteinResidue);
+        std::vector<uint> atomNumbers = serializeNonProtein(cds::atomNumbers(atoms), proteinAtom);
 
-        AtomData atomData {atomNames,
-                           cds::atomTypes(atoms),
-                           atomNumbers,
-                           cds::serializedNumberVector(atoms.size()),
-                           cds::atomAtomicNumbers(atoms),
-                           cds::atomElementStrings(atoms),
-                           atomElements,
-                           cds::atomCharges(atoms),
-                           atomBoundingSpheres,
-                           allAtoms,
-                           includeInOverlapCheck,
-                           includeInOverlapCheck,
-                           partOfMovableSidechain};
+        AtomData atomData {
+            atomNames,
+            cds::atomTypes(atoms),
+            atomNumbers,
+            cds::serializedNumberVector(atoms.size()),
+            cds::atomAtomicNumbers(atoms),
+            cds::atomElementStrings(atoms),
+            atomElements,
+            cds::atomCharges(atoms),
+            atomBoundingSpheres,
+            allAtoms,
+            includeInOverlapCheck,
+            includeInOverlapCheck,
+            partOfMovableSidechain};
 
-        ResidueData residueData {residueNames,
-                                 residueTypes,
-                                 residuesHaveAllExpectedAtoms,
-                                 phiAngles,
-                                 psiAngles,
-                                 cds::residueStringIds(residues),
-                                 residueNumbers,
-                                 cds::serializedNumberVector(residues.size()),
-                                 chainIds,
-                                 sidechainDihedrals,
-                                 sidechainRotations,
-                                 sidechainWeights,
-                                 sidechainPotentialBounds};
+        ResidueData residueData {
+            residueNames,
+            residueTypes,
+            residuesHaveAllExpectedAtoms,
+            phiAngles,
+            psiAngles,
+            cds::residueStringIds(residues),
+            residueNumbers,
+            cds::serializedNumberVector(residues.size()),
+            chainIds,
+            sidechainDihedrals,
+            sidechainRotations,
+            sidechainWeights,
+            sidechainPotentialBounds};
         std::vector<cds::Sphere> moleculeBounds =
             boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.constituents);
 
@@ -289,23 +288,24 @@ namespace glycoproteinBuilder
 
         std::vector<bool> foundElements = MolecularMetadata::foundElements(atomElements);
 
-        AssemblyData data {atomData,
-                           residueData,
-                           moleculeData,
-                           ResidueEdgeData {assembly::atomsCloseToResidueEdges(graph)},
-                           GlycanData,
-                           rotatableDihedralData,
-                           residueLinkageData,
-                           indices,
-                           dihedralAngleDataTable,
-                           MolecularMetadata::potentialTable(elementRadii, foundElements),
-                           overlapTolerance,
-                           overlapRejectionThreshold};
+        AssemblyData data {
+            atomData,
+            residueData,
+            moleculeData,
+            ResidueEdgeData {assembly::atomsCloseToResidueEdges(graph)},
+            GlycanData,
+            rotatableDihedralData,
+            residueLinkageData,
+            indices,
+            dihedralAngleDataTable,
+            MolecularMetadata::potentialTable(elementRadii, foundElements),
+            overlapTolerance,
+            overlapRejectionThreshold};
 
         std::vector<bool> moleculeIncluded(graph.indices.moleculeCount, true);
         assembly::Bounds bounds {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds};
-        MutableData mutableData {bounds, dihedralCurrentMetadata, moleculeIncluded,
-                                 std::vector<bool>(residues.size(), false)};
+        MutableData mutableData {
+            bounds, dihedralCurrentMetadata, moleculeIncluded, std::vector<bool>(residues.size(), false)};
 
         return GlycoproteinAssembly {graph, data, mutableData};
     }

@@ -1,8 +1,8 @@
 #include "includes/Assembly/assemblyBounds.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
 
+#include "includes/Assembly/assemblyGraph.hpp"
+#include "includes/CentralDataStructure/Geometry/boundingSphere.hpp"
+#include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 namespace assembly

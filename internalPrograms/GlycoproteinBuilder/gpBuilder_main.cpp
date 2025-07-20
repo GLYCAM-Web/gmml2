@@ -1,33 +1,33 @@
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/cdsInterface.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/overlapResolution.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/sidechains.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/atomicConnectivity.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreProcess.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/MolecularMetadata/sidechainRotamers.hpp"
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CentralDataStructure/molecule.hpp"
 #include "includes/CodeUtils/arguments.hpp"
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/random.hpp"
 #include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/threads.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/MolecularMetadata/sidechainRotamers.hpp"
 #include "includes/version.h"
 
-#include <string>
-#include <vector>
 #include <iostream>
+#include <libgen.h>
 #include <optional>
 #include <stdexcept>
-#include <libgen.h>
+#include <string>
+#include <vector>
 
 int main(int argc, char* argv[])
 {
@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
     using codeUtils::ArgReq;
     using codeUtils::ArgType;
-    const std::string overwriteFlag                    = "overwrite-existing-files";
+    const std::string overwriteFlag = "overwrite-existing-files";
     std::vector<codeUtils::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed,         INPUT_FILE,            "", ' ',       "input-file"},
         {ArgReq::optional, ArgType::unnamed,         OUTPUT_DIR,            "", ' ', "output-directory"},
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
         {ArgReq::optional,    ArgType::flag, OVERWRITE_EXISTING, overwriteFlag, ' ',                 ""}
     };
     std::string programName = codeUtils::programName(argv);
-    std::string baseDir     = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
 
     codeUtils::Arguments arguments;
     try
@@ -86,12 +86,12 @@ int main(int argc, char* argv[])
 
     try
     {
-        std::string inputFile        = "";
-        std::string outputDir        = ".";
+        std::string inputFile = "";
+        std::string outputDir = ".";
         std::string headerBaseString = "Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2)";
         std::vector<std::string> headerLines {headerBaseString + " version " + std::string(GMML_VERSION)};
         int numThreads = 1;
-        bool testMode  = false;
+        bool testMode = false;
         bool overwrite = false;
         for (const auto& arg : arguments.args)
         {
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
                     }
                 case ARGUMENTS::TEST_MODE:
                     {
-                        testMode    = true;
+                        testMode = true;
                         headerLines = {headerBaseString + " in test mode"};
                         std::cout << "Running in test mode\n";
                         break;
@@ -120,8 +120,8 @@ int main(int argc, char* argv[])
                         std::optional<int> opt = codeUtils::parseInt(arg.value);
                         if (!opt.has_value() || opt.value() <= 0)
                         {
-                            throw std::runtime_error(arg.value + " is not a valid value for " + arg.name +
-                                                     ", must be a positive integer\n");
+                            throw std::runtime_error(
+                                arg.value + " is not a valid value for " + arg.name + ", must be a positive integer\n");
                         }
                         if (codeUtils::isOpenMpDefined())
                         {
@@ -146,16 +146,16 @@ int main(int argc, char* argv[])
         {
             if (!codeUtils::directoryIsEmptyOrNonexistent(outputDir))
             {
-                throw std::runtime_error("Output directory '" + outputDir +
-                                         "' not empty. Please empty/remove it or run the program with the flag --" +
-                                         overwriteFlag);
+                throw std::runtime_error(
+                    "Output directory '" + outputDir +
+                    "' not empty. Please empty/remove it or run the program with the flag --" + overwriteFlag);
             }
         }
 
         MolecularMetadata::SidechainRotamerData sidechainRotamers;
         {
             std::string dunbrackLib = baseDir + "/dat/dunbrack/sidechainRotamers.txt";
-            sidechainRotamers       = MolecularMetadata::readSidechainRotamerData(dunbrackLib);
+            sidechainRotamers = MolecularMetadata::readSidechainRotamerData(dunbrackLib);
         }
         std::cout << "Input file is " << inputFile << "\n";
         glycoproteinBuilder::GlycoproteinBuilderInputs settings = glycoproteinBuilder::readGPInputFile(inputFile);
@@ -169,10 +169,10 @@ int main(int argc, char* argv[])
             pdbFile.PreProcess(parameterManager, pdb::PreprocessorOptions());
         }
 
-        codeUtils::SparseVector<double> elementRadii                         = MolecularMetadata::vanDerWaalsRadii();
-        const MolecularMetadata::AminoAcidTable& aminoAcidTable              = MolecularMetadata::aminoAcidTable();
+        codeUtils::SparseVector<double> elementRadii = MolecularMetadata::vanDerWaalsRadii();
+        const MolecularMetadata::AminoAcidTable& aminoAcidTable = MolecularMetadata::aminoAcidTable();
         const GlycamMetadata::DihedralAngleDataTable& dihedralAngleDataTable = GlycamMetadata::dihedralAngleDataTable();
-        cds::Assembly* glycoprotein                                          = pdbFile.getAssemblies().front();
+        cds::Assembly* glycoprotein = pdbFile.getAssemblies().front();
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
         pdb::setInterConnectivity(aminoAcidTable, pdbFile.data);
         gmml::log(__LINE__, __FILE__, gmml::INF, "Attaching Glycans To Glycosites.");
@@ -185,21 +185,30 @@ int main(int argc, char* argv[])
         std::vector<cds::Molecule*> molecules = glycoprotein->getMolecules();
 
         glycoproteinBuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
-            aminoAcidTable, sidechainRotamers,
+            aminoAcidTable,
+            sidechainRotamers,
             glycoproteinBuilder::toGlycoproteinAssemblyStructs(
-                aminoAcidTable, dihedralAngleDataTable, elementRadii, pdbFile.data, molecules, glycosites, glycans,
-                settings.overlapTolerance, settings.overlapRejectionThreshold, settings.ignoreHydrogen));
+                aminoAcidTable,
+                dihedralAngleDataTable,
+                elementRadii,
+                pdbFile.data,
+                molecules,
+                glycosites,
+                glycans,
+                settings.overlapTolerance,
+                settings.overlapRejectionThreshold,
+                settings.ignoreHydrogen));
         if (settings.moveOverlappingSidechains)
         {
-            assembly.data.atoms.includeInMainOverlapCheck =
-                codeUtils::vectorAnd(assembly.data.atoms.includeInMainOverlapCheck,
-                                     codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain));
+            assembly.data.atoms.includeInMainOverlapCheck = codeUtils::vectorAnd(
+                assembly.data.atoms.includeInMainOverlapCheck,
+                codeUtils::vectorNot(assembly.data.atoms.partOfMovableSidechain));
         }
 
         std::cout << "Resolving overlaps" << std::endl;
         uint64_t rngSeed = settings.isDeterministic ? settings.seed : codeUtils::generateRandomSeed();
-        glycoproteinBuilder::resolveOverlaps(sidechainRotamers, assembly, settings, rngSeed, outputDir, headerLines,
-                                             numThreads);
+        glycoproteinBuilder::resolveOverlaps(
+            sidechainRotamers, assembly, settings, rngSeed, outputDir, headerLines, numThreads);
     }
     catch (const std::runtime_error& error)
     {

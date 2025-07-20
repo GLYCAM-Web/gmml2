@@ -213,10 +213,7 @@ namespace glygraph
     }
 
     // copy assignment
-    template<class T> inline Node<T>& Node<T>::operator=(const Node<T>& rhs)
-    {
-        return *this = Node<T>(rhs);
-    }
+    template<class T> inline Node<T>& Node<T>::operator=(const Node<T>& rhs) { return *this = Node<T>(rhs); }
 
     // move assignment
     template<class T> inline Node<T>& Node<T>::operator=(Node<T>&& rhs)
@@ -226,7 +223,7 @@ namespace glygraph
         this->setLabels(rhs.getLabels());
         this->setConnectivityTypeIdentifier(rhs.getConnectivityTypeIdentifier());
 
-        this->inEdges_m  = std::move(rhs.inEdges_m);
+        this->inEdges_m = std::move(rhs.inEdges_m);
         this->outEdges_m = std::move(rhs.outEdges_m);
         this->edgeConnectionUpdate();
 
@@ -236,7 +233,7 @@ namespace glygraph
     template<class T> inline std::vector<T*> Node<T>::getNeighbors() const
     {
         std::vector<T*> childrenVec = this->getChildren();
-        std::vector<T*> parentsVec  = this->getParents();
+        std::vector<T*> parentsVec = this->getParents();
         parentsVec.insert(parentsVec.end(), childrenVec.begin(), childrenVec.end());
 
         return parentsVec;
@@ -254,7 +251,7 @@ namespace glygraph
     template<class T> inline std::vector<Edge<T>*> Node<T>::getEdges() const
     {
         std::vector<Edge<T>*> outEdgesVec = this->getOutEdges();
-        std::vector<Edge<T>*> inEdgesVec  = this->getInEdges();
+        std::vector<Edge<T>*> inEdgesVec = this->getInEdges();
         outEdgesVec.insert(outEdgesVec.end(), inEdgesVec.begin(), inEdgesVec.end());
         return outEdgesVec;
     }
@@ -269,10 +266,7 @@ namespace glygraph
         return outEdgeVecToReturn;
     }
 
-    template<class T> inline std::vector<Edge<T>*> Node<T>::getInEdges() const
-    {
-        return this->inEdges_m;
-    }
+    template<class T> inline std::vector<Edge<T>*> Node<T>::getInEdges() const { return this->inEdges_m; }
 
     template<class T> inline void Node<T>::addNeighbor(std::string edgeName_t, T* const& newNeighbor_t)
     {
@@ -423,8 +417,8 @@ namespace glygraph
         // lazyInfo(__LINE__, __func__,
         //		"removing in edge <" + edgeToRemove->getName()
         //				+ "> from node named <" + this->getName() + ">");
-        this->inEdges_m.erase(std::remove(this->inEdges_m.begin(), this->inEdges_m.end(), edgeToRemove_t),
-                              this->inEdges_m.end());
+        this->inEdges_m.erase(
+            std::remove(this->inEdges_m.begin(), this->inEdges_m.end(), edgeToRemove_t), this->inEdges_m.end());
     }
 
     template<class T> inline void Node<T>::removeOutEdge(Edge<T>* edgeToRemove_t)

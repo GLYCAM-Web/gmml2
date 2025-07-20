@@ -1,21 +1,23 @@
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
+
+#include "includes/Assembly/assemblyIndices.hpp"
+#include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
+#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFunctions.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbModel.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbPreProcess.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CentralDataStructure/assembly.hpp"
-#include "includes/Assembly/assemblyIndices.hpp"
-#include "includes/Assembly/assemblyTypes.hpp"
-#include "includes/CodeUtils/files.hpp"
+#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
 #include "includes/CodeUtils/containers.hpp"
+#include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
 #include "includes/CodeUtils/strings.hpp"
+
 #include <fstream>
-#include <ostream>
 #include <iomanip> // setprecision setw
+#include <ostream>
 
 using pdb::PdbFile;
 
@@ -33,7 +35,7 @@ namespace
             {
                 throw std::runtime_error("Error: could not parse conect id: " + str);
             }
-            uint number  = parsed.value();
+            uint number = parsed.value();
             size_t index = codeUtils::indexOf(data.atoms.numbers, number);
             if (index == data.atoms.names.size())
             {
@@ -42,7 +44,7 @@ namespace
             return index;
         };
         std::vector<std::string> split = codeUtils::split(line, ' ');
-        size_t first                   = indexOfAtom(split[1]);
+        size_t first = indexOfAtom(split[1]);
         for (size_t n = 2; n < split.size(); n++)
         {
             addBond(data, first, indexOfAtom(split[n]));
@@ -52,14 +54,14 @@ namespace
     // Goes through a section of the PDB file that contains the same header section. E.g. HEADER.
     // If the header changes, it goes back to the previous line. I wanted the out while loop to trigger the new line.
     // This means I don't have to check recordName between if statement and can have else if.
-    std::stringstream extractHomogenousRecordSection(std::istream& pdbFileStream, std::string& line,
-                                                     std::string recordName)
+    std::stringstream extractHomogenousRecordSection(
+        std::istream& pdbFileStream, std::string& line, std::string recordName)
     {
         std::stringstream recordSection;
         pdb::expandLine(line, pdb::iPdbLineLength);
         recordSection << line << std::endl;
         std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
-        std::string previousName            = recordName;
+        std::string previousName = recordName;
         while ((std::getline(pdbFileStream, line)))
         {
             pdb::expandLine(line, pdb::iPdbLineLength);
@@ -69,7 +71,7 @@ namespace
                 if (recordName == previousName)
                 {
                     recordSection << line << std::endl;
-                    previousName         = recordName;
+                    previousName = recordName;
                     previousLinePosition = pdbFileStream.tellg(); // Save current line position.
                 }
                 else
@@ -87,8 +89,8 @@ namespace
     // Initializers used by constructors
     // Should extract all lines that start with the strings in recordNames.
     // Returns when it hits a line that does not start with one of those records.
-    std::stringstream extractHeterogenousRecordSection(std::istream& pdbFileStream, std::string& line,
-                                                       const std::vector<std::string> recordNames)
+    std::stringstream extractHeterogenousRecordSection(
+        std::istream& pdbFileStream, std::string& line, const std::vector<std::string> recordNames)
     {
         std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
         std::stringstream recordSection;
@@ -117,7 +119,7 @@ namespace
 
     void parseInFileStream(PdbFile& file, std::istream& pdbFileStream, const ReaderOptions& options)
     {
-        PdbData& data     = file.data;
+        PdbData& data = file.data;
         size_t assemblyId = 0;
         for (std::string line; std::getline(pdbFileStream, line);)
         {
@@ -142,27 +144,27 @@ namespace
             else if (recordName == "HEADER")
             {
                 std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                file.headerRecord_              = pdb::HeaderRecord(recordSection);
+                file.headerRecord_ = pdb::HeaderRecord(recordSection);
             }
             else if (recordName == "TITLE")
             {
                 std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                file.titleRecord_               = pdb::TitleRecord(recordSection);
+                file.titleRecord_ = pdb::TitleRecord(recordSection);
             }
             else if (recordName == "AUTHOR")
             {
                 std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                file.authorRecord_              = pdb::AuthorRecord(recordSection);
+                file.authorRecord_ = pdb::AuthorRecord(recordSection);
             }
             else if (recordName == "JRNL")
             {
                 std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                file.journalRecord_             = pdb::JournalRecord(recordSection);
+                file.journalRecord_ = pdb::JournalRecord(recordSection);
             }
             else if (recordName == "REMARK")
             {
                 std::stringstream recordSection = extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                file.remarkRecord_              = pdb::RemarkRecord(recordSection);
+                file.remarkRecord_ = pdb::RemarkRecord(recordSection);
             }
             else if (codeUtils::contains(databaseCards, recordName))
             {
@@ -181,9 +183,12 @@ namespace
                 }
                 else
                 {
-                    gmml::log(__LINE__, __FILE__, gmml::WAR,
-                              "Reading pdbfile that contains CONECT records. We ignore these due to the potential for "
-                              "overruns.");
+                    gmml::log(
+                        __LINE__,
+                        __FILE__,
+                        gmml::WAR,
+                        "Reading pdbfile that contains CONECT records. We ignore these due to the potential for "
+                        "overruns.");
                 }
             }
         }
@@ -195,10 +200,7 @@ namespace
 //////////////////////////////////////////////////////////
 //                       CONSTRUCTOR                    //
 //////////////////////////////////////////////////////////
-PdbFile::PdbFile()
-{
-    inFilePath_ = "GMML-Generated";
-}
+PdbFile::PdbFile() { inFilePath_ = "GMML-Generated"; }
 
 PdbFile::PdbFile(const std::string& pdbFilePath, const InputType pdbFileType)
     : PdbFile(pdbFilePath, {pdbFileType, false})
@@ -230,18 +232,12 @@ std::string PdbFile::GetUniprotIDs() const
     return UniprotIDs;
 }
 
-const float& PdbFile::GetResolution() const
-{
-    return this->GetRemarkRecord().GetResolution();
-}
+const float& PdbFile::GetResolution() const { return this->GetRemarkRecord().GetResolution(); }
 
-const float& PdbFile::GetBFactor() const
-{
-    return this->GetRemarkRecord().GetBFactor();
-}
+const float& PdbFile::GetBFactor() const { return this->GetRemarkRecord().GetBFactor(); }
 
-pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterManager& parameterManager,
-                                                 PreprocessorOptions inputOptions)
+pdb::PreprocessorInformation PdbFile::PreProcess(
+    const cdsParameters::ParameterManager& parameterManager, PreprocessorOptions inputOptions)
 {
     gmml::log(__LINE__, __FILE__, gmml::INF, "Preprocesssing has begun");
     pdb::PreprocessorInformation ppInfo;
@@ -262,11 +258,7 @@ pdb::PreprocessorInformation PdbFile::PreProcess(const cdsParameters::ParameterM
 
 void PdbFile::Write(const std::string outName)
 {
-    codeUtils::writeToFile(outName,
-                           [&](std::ostream& stream)
-                           {
-                               this->Write(stream);
-                           });
+    codeUtils::writeToFile(outName, [&](std::ostream& stream) { this->Write(stream); });
 }
 
 void PdbFile::Write(std::ostream& out)

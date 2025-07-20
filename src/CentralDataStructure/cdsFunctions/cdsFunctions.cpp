@@ -1,11 +1,12 @@
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/atom.hpp"
 #include "includes/CentralDataStructure/residue.hpp"
-#include "includes/MolecularMetadata/elements.hpp"
-#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/MolecularMetadata/elements.hpp"
 
 #include <array>
 #include <vector>
@@ -117,8 +118,8 @@ void cds::setAtomCoordinates(std::vector<Atom*>& atoms, const std::vector<Coordi
     }
 }
 
-std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(const codeUtils::SparseVector<double>& elementRadii,
-                                                       const std::vector<Atom*>& atoms)
+std::vector<cds::Sphere> cds::atomCoordinatesWithRadii(
+    const codeUtils::SparseVector<double>& elementRadii, const std::vector<Atom*>& atoms)
 {
     std::vector<Sphere> spheres;
     spheres.reserve(atoms.size());
@@ -202,10 +203,7 @@ std::vector<std::string> cds::residueStringIds(const std::vector<Residue*>& resi
     return result;
 }
 
-std::string cds::truncatedResidueName(const Residue* residue)
-{
-    return residue->getName().substr(0, 3);
-}
+std::string cds::truncatedResidueName(const Residue* residue) { return residue->getName().substr(0, 3); }
 
 std::vector<std::string> cds::truncatedResidueNames(const std::vector<Residue*>& residues)
 {
@@ -229,7 +227,4 @@ std::vector<cds::ResidueType> cds::residueTypes(const std::vector<Residue*>& res
     return result;
 }
 
-void cds::addBond(Atom* atom, Atom* otherAtom)
-{
-    atom->addNeighbor("atomicBond", otherAtom);
-}
+void cds::addBond(Atom* atom, Atom* otherAtom) { atom->addNeighbor("atomicBond", otherAtom); }

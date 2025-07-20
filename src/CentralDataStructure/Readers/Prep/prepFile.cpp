@@ -1,4 +1,5 @@
 #include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
+
 #include "includes/CentralDataStructure/Readers/Prep/prepAtom.hpp"
 #include "includes/CentralDataStructure/Readers/Prep/prepResidue.hpp"
 #include "includes/CentralDataStructure/molecule.hpp"
@@ -6,13 +7,14 @@
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
-#include "includes/CodeUtils/strings.hpp"
 #include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
+
+#include <algorithm>
 #include <fstream>
-#include <iostream>
 #include <iomanip>
 #include <ios>
-#include <algorithm>
+#include <iostream>
 
 void prep::readPrepFile(cds::Molecule* molecule, const std::string& prep_file)
 {
@@ -32,8 +34,8 @@ void prep::readPrepFile(cds::Molecule* molecule, const std::string& prep_file)
     Generate3dStructures(molecule);
 }
 
-void prep::readPrepFile(cds::Molecule* molecule, const std::string& prep_file,
-                        const std::vector<std::string> queryNames)
+void prep::readPrepFile(
+    cds::Molecule* molecule, const std::string& prep_file, const std::vector<std::string> queryNames)
 {
     molecule->setName("prepFile");
     codeUtils::ensureFileExists(prep_file);
@@ -103,7 +105,7 @@ void prep::ReadQueryResidues(cds::Molecule* molecule, std::istream& in_file, con
     while (codeUtils::Trim(line).find("STOP") == std::string::npos) // While not at end of file
     {
         std::streampos firstResidueLinePosition = in_file.tellg(); // save correct position to start reading residue
-        std::string savedTitle                  = line;
+        std::string savedTitle = line;
         // Need to move to line with residue name on it.
         getline(in_file, line);                                                 // blank line
         getline(in_file, line);                                                 // residue name appears here
@@ -135,11 +137,7 @@ void prep::Write(cds::Molecule* molecule, const std::string& prep_file)
 {
     try
     {
-        codeUtils::writeToFile(prep_file,
-                               [&](std::ostream& stream)
-                               {
-                                   Write(molecule, stream);
-                               });
+        codeUtils::writeToFile(prep_file, [&](std::ostream& stream) { Write(molecule, stream); });
     }
     catch (...)
     {

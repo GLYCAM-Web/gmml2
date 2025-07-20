@@ -3,8 +3,8 @@
 
 #include "includes/MolecularMetadata/elements.hpp"
 
-#include <string>
 #include <array>
+#include <string>
 #include <vector>
 
 namespace MolecularMetadata

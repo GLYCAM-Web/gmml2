@@ -1,8 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_EDITORS_AMBERMDPREP_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_AMBERMDPREP_HPP
 
-#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
+#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
 
 #include <vector>
 
@@ -11,8 +11,11 @@
 // of ~May 2023
 namespace amberMdPrep
 {
-    bool checkForNonNaturalProteinResidues(const pdb::PdbData& data, const std::vector<size_t>& unknownResidues,
-                                           size_t cAtom, pdb::PreprocessorInformation& ppInfo);
+    bool checkForNonNaturalProteinResidues(
+        const pdb::PdbData& data,
+        const std::vector<size_t>& unknownResidues,
+        size_t cAtom,
+        pdb::PreprocessorInformation& ppInfo);
 }
 
 #endif

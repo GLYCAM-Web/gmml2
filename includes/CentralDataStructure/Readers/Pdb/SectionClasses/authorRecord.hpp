@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_AUTHORRECORD_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_AUTHORRECORD_HPP
 
-#include <string>
-#include <sstream>
 #include <ostream>
+#include <sstream>
+#include <string>
 
 namespace pdb
 {
@@ -20,15 +20,9 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
         //////////////////////////////////////////////////////////
-        inline const std::string& GetRecordName() const
-        {
-            return record_name_;
-        }
+        inline const std::string& GetRecordName() const { return record_name_; }
 
-        inline const std::string& GetAuthor() const
-        {
-            return author_;
-        }
+        inline const std::string& GetAuthor() const { return author_; }
 
         //////////////////////////////////////////////////////////
         //                       DISPLAY FUNCTION               //
@@ -46,7 +40,7 @@ namespace pdb
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
         std::string record_name_ = ""; /*!< Record name which appears in the first column of each line in a pdb file >*/
-        std::string author_      = ""; /*!< Author that appears in KEYWORD record of a pdb file >*/
+        std::string author_ = "";      /*!< Author that appears in KEYWORD record of a pdb file >*/
     };
 } // namespace pdb
 

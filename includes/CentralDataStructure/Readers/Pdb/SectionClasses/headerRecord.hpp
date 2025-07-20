@@ -1,9 +1,9 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_HEADERRECORD_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_READERS_PDB_SECTIONCLASSES_HEADERRECORD_HPP
 
-#include <string>
-#include <sstream>
 #include <ostream>
+#include <sstream>
+#include <string>
 
 namespace pdb
 {
@@ -14,8 +14,11 @@ namespace pdb
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
         HeaderRecord();
-        HeaderRecord(const std::string& record_name, const std::string& classification,
-                     const std::string& deposition_date, const std::string& identifier_code);
+        HeaderRecord(
+            const std::string& record_name,
+            const std::string& classification,
+            const std::string& deposition_date,
+            const std::string& identifier_code);
         HeaderRecord(std::stringstream& stream_block);
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
@@ -44,8 +47,8 @@ namespace pdb
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////
-        std::string record_name_     = ""; /*!< Record name of headr card in a pdb file >*/
-        std::string classification_  = ""; /*!< Classification of the pdb file >*/
+        std::string record_name_ = "";     /*!< Record name of headr card in a pdb file >*/
+        std::string classification_ = "";  /*!< Classification of the pdb file >*/
         std::string deposition_date_ = ""; /*!< Date of deposition >*/
         std::string identifier_code_ = ""; /*!< Identifier code of the pdb file >*/
     };

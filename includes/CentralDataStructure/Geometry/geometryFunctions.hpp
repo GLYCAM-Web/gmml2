@@ -18,17 +18,11 @@ namespace cds
         return sq(0) + sq(1) + sq(2);
     }
 
-    inline double squaredDistance(const Coordinate& a, const Coordinate& b)
-    {
-        return squaredLength(a - b);
-    }
+    inline double squaredDistance(const Coordinate& a, const Coordinate& b) { return squaredLength(a - b); }
 
     inline double dotProduct(const Coordinate& a, const Coordinate& b)
     {
-        auto dot = [&](int n)
-        {
-            return a.nth(n) * b.nth(n);
-        };
+        auto dot = [&](int n) { return a.nth(n) * b.nth(n); };
         return dot(0) + dot(1) + dot(2);
     }
 

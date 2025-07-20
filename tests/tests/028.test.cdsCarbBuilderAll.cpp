@@ -1,14 +1,14 @@
-#include "includes/CodeUtils/strings.hpp"
-#include "includes/CodeUtils/logging.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
+#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/strings.hpp"
 
-#include <vector>
-#include <string>
-#include <iostream>
 #include <fstream>
-#include <sys/stat.h> // stat
+#include <iostream>
 #include <stdexcept>
+#include <string>
+#include <sys/stat.h> // stat
+#include <vector>
 
 int main(int argc, char** argv)
 {
@@ -95,8 +95,11 @@ int main(int argc, char** argv)
         }
         catch (...)
         {
-            gmml::log(__LINE__, __FILE__, gmml::ERR,
-                      "carbohydrateBuilder class caught a throw that was not anticipated. Curious. Death cometh?");
+            gmml::log(
+                __LINE__,
+                __FILE__,
+                gmml::ERR,
+                "carbohydrateBuilder class caught a throw that was not anticipated. Curious. Death cometh?");
             std::cerr << "ERROR carbohydrateBuilder caught a throw type that was not anticipated. Pretty please report "
                          "how you got to this to glycam@gmail.com.";
         }

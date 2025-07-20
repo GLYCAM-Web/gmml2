@@ -2,8 +2,8 @@
 #define INCLUDES_CENTRALDATASTRUCTURE_EDITORS_SUPERIMPOSITION_HPP
 
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
-#include <eigen3/Eigen/Geometry>
 
+#include <eigen3/Eigen/Geometry>
 #include <vector>
 
 namespace cds
@@ -19,8 +19,8 @@ namespace cds
     std::vector<Coordinate> matrixCoordinates(const Eigen::Matrix3Xd& matrix);
     AffineTransform affineTransform(const std::vector<Coordinate>& target, const std::vector<Coordinate>& moving);
     void Superimpose(std::vector<Coordinate>& moving, const std::vector<Coordinate>& target);
-    void Superimpose(std::vector<Coordinate>& moving, const std::vector<Coordinate>& target,
-                     std::vector<Coordinate>& alsoMoving);
+    void Superimpose(
+        std::vector<Coordinate>& moving, const std::vector<Coordinate>& target, std::vector<Coordinate>& alsoMoving);
 } // namespace cds
 
 #endif

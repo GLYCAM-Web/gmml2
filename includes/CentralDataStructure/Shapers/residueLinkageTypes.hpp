@@ -4,10 +4,10 @@
 #include "includes/CentralDataStructure/cdsTypes.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
-#include <string>
 #include <array>
-#include <vector>
+#include <string>
 #include <utility>
+#include <vector>
 
 namespace cds
 {
@@ -43,7 +43,7 @@ namespace cds
         GlycamMetadata::RotamerType rotamerType;
         bool isDerivative;
         unsigned long long index = 0;
-        std::string name         = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
+        std::string name = ""; // e.g. "DGalpb1-6DGlcpNAc". It being empty works with GetName();
     };
 } // namespace cds
 #endif

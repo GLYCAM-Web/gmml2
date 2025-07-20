@@ -30,15 +30,9 @@ namespace glygraph
 
         virtual ~Edge();
 
-        inline T* getTargetNode() const
-        {
-            return targetNode_m;
-        }
+        inline T* getTargetNode() const { return targetNode_m; }
 
-        inline T* getSourceNode() const
-        {
-            return sourceNode_m;
-        }
+        inline T* getSourceNode() const { return sourceNode_m; }
 
         //    inline const T& getTargetNode() const { return *targetNode_m;}
         //    inline const T& getSourceNode() const { return *sourceNode_m;}
@@ -61,8 +55,8 @@ namespace glygraph
     };
 
     template<class T>
-    inline Edge<T>::Edge(std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t,
-                         T* const& targetNode_t)
+    inline Edge<T>::Edge(
+        std::string name_t, std::vector<std::string> labels_t, T* const& sourceNode_t, T* const& targetNode_t)
         : GenericGraphObject(name_t, labels_t, ConnectivityType::UNKNOWN)
     {
         this->targetNode_m = targetNode_t;
@@ -104,10 +98,7 @@ namespace glygraph
     }
 
     // copy assignment
-    template<class T> inline Edge<T>& Edge<T>::operator=(const Edge<T>& rhs)
-    {
-        return *this = Edge<T>(rhs);
-    }
+    template<class T> inline Edge<T>& Edge<T>::operator=(const Edge<T>& rhs) { return *this = Edge<T>(rhs); }
 
     // move assignment
     template<class T> inline Edge<T>& Edge<T>::operator=(Edge<T>&& rhs)
@@ -128,15 +119,9 @@ namespace glygraph
         return *this;
     }
 
-    template<class T> inline void Edge<T>::setSourceNode(T* source_t)
-    {
-        this->sourceNode_m = source_t;
-    }
+    template<class T> inline void Edge<T>::setSourceNode(T* source_t) { this->sourceNode_m = source_t; }
 
-    template<class T> inline void Edge<T>::setTargetNode(T* target_t)
-    {
-        this->targetNode_m = target_t;
-    }
+    template<class T> inline void Edge<T>::setTargetNode(T* target_t) { this->targetNode_m = target_t; }
 
     //  template<class T>
     //  inline const T* Edge<T>::getTargetNode() const

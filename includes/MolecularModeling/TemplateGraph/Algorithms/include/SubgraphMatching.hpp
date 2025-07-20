@@ -1,14 +1,14 @@
 #ifndef TEMPLATEGRAPH_ALGORITHMS_INCLUDE_SUBGRAPHMATCHING_HPP
 #define TEMPLATEGRAPH_ALGORITHMS_INCLUDE_SUBGRAPHMATCHING_HPP
 
+#include "../../GraphStructure/include/Graph.hpp"
+#include "../../GraphStructure/include/HalfAdjacencyMatrix.hpp"
+#include "../../GraphStructure/include/Node.hpp"
+
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
-
-#include "../../GraphStructure/include/Graph.hpp"
-#include "../../GraphStructure/include/HalfAdjacencyMatrix.hpp"
-#include "../../GraphStructure/include/Node.hpp"
 
 // #include "../../LazyPrints/LazyPrinters.hpp"
 
@@ -50,17 +50,22 @@ namespace
 
     // forward declare because dumb
     template<class T>
-    void searchMatches(std::vector<glygraph::Node<T>*> matches_t,
-                       std::map<std::string, std::vector<std::string>> patterns_t,
-                       std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>& resultsPair_t,
-                       std::unordered_set<glygraph::Node<T>*>& visitedKeys_t, glygraph::Node<T>* previousNode_t,
-                       glygraph::Graph<T>& graphSearch_t);
+    void searchMatches(
+        std::vector<glygraph::Node<T>*> matches_t,
+        std::map<std::string, std::vector<std::string>> patterns_t,
+        std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>& resultsPair_t,
+        std::unordered_set<glygraph::Node<T>*>& visitedKeys_t,
+        glygraph::Node<T>* previousNode_t,
+        glygraph::Graph<T>& graphSearch_t);
 
     template<class T>
-    int searchForPatterns(unsigned int currNodeIndex_t, std::map<std::string, std::vector<std::string>> patterns_t,
-                          std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>& resultsPair_t,
-                          std::unordered_set<glygraph::Node<T>*>& visitedKeys_t, glygraph::Node<T>* previousNode_t,
-                          glygraph::Graph<T>& graphSearch_t)
+    int searchForPatterns(
+        unsigned int currNodeIndex_t,
+        std::map<std::string, std::vector<std::string>> patterns_t,
+        std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>& resultsPair_t,
+        std::unordered_set<glygraph::Node<T>*>& visitedKeys_t,
+        glygraph::Node<T>* previousNode_t,
+        glygraph::Graph<T>& graphSearch_t)
     {
         glygraph::Node<T>* currNode = graphSearch_t.getNodeFromIndex(currNodeIndex_t);
 
@@ -77,8 +82,9 @@ namespace
             {
                 // for now we just want to check if we have our current node
                 // we are checking out in our results vector.
-                bool isInterestingInResults = (std::find(resultsPair_t.first.begin(), resultsPair_t.first.end(),
-                                                         interestingNode) != resultsPair_t.first.end());
+                bool isInterestingInResults =
+                    (std::find(resultsPair_t.first.begin(), resultsPair_t.first.end(), interestingNode) !=
+                     resultsPair_t.first.end());
                 // if we dont have current node in our results we want to check it out
                 if (!(visitedKeys_t.count(interestingNode) && !isInterestingInResults))
                 {
@@ -92,8 +98,9 @@ namespace
                         // recall our keys for our pattern matching is the name of the node
                         std::vector<std::string> tempPatternReqs = patterns_t[currNode->getName()];
 
-                        bool isInterestingInReqs = (std::find(tempPatternReqs.begin(), tempPatternReqs.end(),
-                                                              interestingNode->getName()) != tempPatternReqs.end());
+                        bool isInterestingInReqs =
+                            (std::find(tempPatternReqs.begin(), tempPatternReqs.end(), interestingNode->getName()) !=
+                             tempPatternReqs.end());
 
                         if (isInterestingInReqs)
                         {
@@ -182,26 +189,34 @@ namespace
     // 	then hit this function again.
     //
     template<class T>
-    void searchMatches(std::vector<glygraph::Node<T>*> matches_t,
-                       std::map<std::string, std::vector<std::string>> patterns_t,
-                       std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>& resultsPair_t,
-                       std::unordered_set<glygraph::Node<T>*>& visitedKeys_t, glygraph::Node<T>* previousNode_t,
-                       glygraph::Graph<T>& graphSearch_t)
+    void searchMatches(
+        std::vector<glygraph::Node<T>*> matches_t,
+        std::map<std::string, std::vector<std::string>> patterns_t,
+        std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>& resultsPair_t,
+        std::unordered_set<glygraph::Node<T>*>& visitedKeys_t,
+        glygraph::Node<T>* previousNode_t,
+        glygraph::Graph<T>& graphSearch_t)
     {
         for (glygraph::Node<T>* currMatch : matches_t)
         {
             // as before we need to check if our node we are checking out is
             // already in our results i.e. already been run through
-            bool isMatchInResults = (std::find(resultsPair_t.first.begin(), resultsPair_t.first.end(), currMatch) !=
-                                     resultsPair_t.first.end());
+            bool isMatchInResults =
+                (std::find(resultsPair_t.first.begin(), resultsPair_t.first.end(), currMatch) !=
+                 resultsPair_t.first.end());
             // We want to make sure we havent used the current node as an "entry point"
             // 		for our search pattern function AND we want to make sure she doesnt
             // 		exist in our results yet.
             //
             if (!isMatchInResults && !(visitedKeys_t.count(currMatch)))
             {
-                int searchState = searchForPatterns(graphSearch_t.getIndexFromNode(currMatch), patterns_t,
-                                                    resultsPair_t, visitedKeys_t, previousNode_t, graphSearch_t);
+                int searchState = searchForPatterns(
+                    graphSearch_t.getIndexFromNode(currMatch),
+                    patterns_t,
+                    resultsPair_t,
+                    visitedKeys_t,
+                    previousNode_t,
+                    graphSearch_t);
                 // if we hit a leaf we get out
                 if (searchState == 1)
                 {
@@ -232,8 +247,9 @@ namespace subgraph_match
     findSubgraphs(glygraph::Graph<T>& mainGraph_t, glygraph::Graph<T>& queryGraph_t)
     {
         // This will be what is returned, we be slowly built using what is right below it.
-        std::unordered_map<glygraph::Node<T>*,
-                           std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>>
+        std::unordered_map<
+            glygraph::Node<T>*,
+            std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>>>
             subgraphEdgeNodeResults;
 
         std::pair<std::vector<glygraph::Node<T>*>, std::vector<glygraph::Edge<T>*>> pairedResult;
@@ -252,8 +268,8 @@ namespace subgraph_match
              searchStartNodeIndex++)
         {
             glygraph::Node<T>* firstNode = mainGraph_t.getNodeFromIndex(searchStartNodeIndex);
-            searchForPatterns(searchStartNodeIndex, patternsToMatch, pairedResult, keyVisitTracker, firstNode,
-                              mainGraph_t);
+            searchForPatterns(
+                searchStartNodeIndex, patternsToMatch, pairedResult, keyVisitTracker, firstNode, mainGraph_t);
 
             if (pairedResult.first.size() != 0)
             {

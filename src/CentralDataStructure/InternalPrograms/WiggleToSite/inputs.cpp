@@ -1,8 +1,10 @@
 #include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
-#include "includes/CodeUtils/logging.hpp"
+
 #include "includes/CodeUtils/files.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
+
 #include <fstream>
 #include <iostream>
 
@@ -32,7 +34,7 @@ WiggleToSiteInputs::WiggleToSiteInputs(std::string inputFileName)
         }
         if (codeUtils::startsWith(strInput, "SuperimpositionTargetResidue:"))
         {
-            std::string inputPortion      = codeUtils::split(strInput, ':').at(1);
+            std::string inputPortion = codeUtils::split(strInput, ':').at(1);
             superimpositionTargetResidue_ = pdb::ResidueId(codeUtils::split(inputPortion, '_'));
             //            std::cout << "superimpositionTargetResidue_ in input file is: " <<
             //            superimpositionTargetResidue_ << std::endl;
@@ -40,7 +42,7 @@ WiggleToSiteInputs::WiggleToSiteInputs(std::string inputFileName)
         if (codeUtils::startsWith(strInput, "WiggleTargetResidue:"))
         {
             std::string inputPortion = codeUtils::split(strInput, ':').at(1);
-            wigglingTargetResidue_   = pdb::ResidueId(codeUtils::split(inputPortion, '_'));
+            wigglingTargetResidue_ = pdb::ResidueId(codeUtils::split(inputPortion, '_'));
             //            std::cout << "wigglingTargetResidue_ in input file is: " << wigglingTargetResidue_ <<
             //            std::endl;
         }

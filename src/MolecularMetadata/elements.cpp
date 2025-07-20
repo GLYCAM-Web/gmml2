@@ -1,4 +1,5 @@
 #include "includes/MolecularMetadata/elements.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/parsing.hpp"
@@ -6,11 +7,11 @@
 
 #include <cmath>
 #include <functional>
-#include <vector>
 #include <map>
-#include <utility>
 #include <optional>
 #include <sstream>
+#include <utility>
+#include <vector>
 
 namespace
 {
@@ -107,7 +108,7 @@ namespace
         return result;
     };
 
-    codeUtils::SparseVector<double> atomicMass   = {values(mass), bools(mass)};
+    codeUtils::SparseVector<double> atomicMass = {values(mass), bools(mass)};
     codeUtils::SparseVector<double> atomVdwRadii = {values(vdwRadii), bools(vdwRadii)};
 } // namespace
 
@@ -136,21 +137,15 @@ MolecularMetadata::ChemicalFormula MolecularMetadata::toFormula(const std::vecto
 // e.g "C3 H5 N1 O1 Se1"
 MolecularMetadata::ChemicalFormula MolecularMetadata::parseFormula(const std::string& formula)
 {
-    auto isUpper = [](char c)
-    {
-        return std::isupper(c);
-    };
-    auto isDigit = [](char c)
-    {
-        return std::isdigit(c);
-    };
+    auto isUpper = [](char c) { return std::isupper(c); };
+    auto isDigit = [](char c) { return std::isdigit(c); };
     ChemicalFormula result;
     result.reserve(std::count_if(formula.begin(), formula.end(), isUpper));
     auto begin = formula.begin();
-    auto from  = begin;
+    auto from = begin;
     while (from != formula.end())
     {
-        auto until      = std::find(from, formula.end(), ' ');
+        auto until = std::find(from, formula.end(), ' ');
         auto firstDigit = std::find_if(from, until, isDigit);
         MolecularMetadata::Element element =
             MolecularMetadata::toElement(formula.substr(from - begin, firstDigit - from));
@@ -200,10 +195,7 @@ MolecularMetadata::Element MolecularMetadata::toElement(const std::string& str)
 
 std::vector<bool> MolecularMetadata::foundElements(const std::vector<Element>& elements)
 {
-    std::function<size_t(const Element&)> toIndex = [](Element e)
-    {
-        return size_t(e);
-    };
+    std::function<size_t(const Element&)> toIndex = [](Element e) { return size_t(e); };
     return codeUtils::indicesToBools(ElementCount, codeUtils::vectorMap(toIndex, elements));
 }
 
@@ -216,20 +208,11 @@ const std::string& MolecularMetadata::elementName(Element element)
     return elementNames[element];
 }
 
-codeUtils::SparseVector<double> MolecularMetadata::vanDerWaalsRadii()
-{
-    return atomVdwRadii;
-}
+codeUtils::SparseVector<double> MolecularMetadata::vanDerWaalsRadii() { return atomVdwRadii; }
 
-bool MolecularMetadata::isHeavyElement(Element element)
-{
-    return isHeavy[element];
-}
+bool MolecularMetadata::isHeavyElement(Element element) { return isHeavy[element]; }
 
-const codeUtils::SparseVector<double>& MolecularMetadata::elementMass()
-{
-    return atomicMass;
-}
+const codeUtils::SparseVector<double>& MolecularMetadata::elementMass() { return atomicMass; }
 
 double MolecularMetadata::totalMass(const codeUtils::SparseVector<double>& mass, const ChemicalFormula& formula)
 {
@@ -246,11 +229,11 @@ double MolecularMetadata::totalMass(const codeUtils::SparseVector<double>& mass,
     return result;
 }
 
-MolecularMetadata::PotentialTable MolecularMetadata::potentialTable(const codeUtils::SparseVector<double>& radii,
-                                                                    const std::vector<bool>& usedElements)
+MolecularMetadata::PotentialTable MolecularMetadata::potentialTable(
+    const codeUtils::SparseVector<double>& radii, const std::vector<bool>& usedElements)
 {
     std::vector<size_t> usedElementIndices = codeUtils::boolsToIndices(usedElements);
-    size_t usedElementCount                = usedElementIndices.size();
+    size_t usedElementCount = usedElementIndices.size();
     std::vector<size_t> indices(ElementCount, 0);
     size_t index = 0;
     for (size_t n : usedElementIndices)
@@ -259,8 +242,8 @@ MolecularMetadata::PotentialTable MolecularMetadata::potentialTable(const codeUt
         index++;
     }
     const codeUtils::SparseVector<double>& epsilons = {values(lennardJonesEpsilons), bools(lennardJonesEpsilons)};
-    std::vector<std::vector<PotentialFactor>> factors(usedElementCount,
-                                                      std::vector<PotentialFactor>(usedElementCount, {0.0, 0.0}));
+    std::vector<std::vector<PotentialFactor>> factors(
+        usedElementCount, std::vector<PotentialFactor>(usedElementCount, {0.0, 0.0}));
     for (size_t n = 0; n < usedElementCount; n++)
     {
         size_t indexN = usedElementIndices[n];
@@ -276,7 +259,7 @@ MolecularMetadata::PotentialTable MolecularMetadata::potentialTable(const codeUt
                 throw std::runtime_error("No lennard-jones epsilon found for element: " + elementName(Element(indexK)));
             }
             double epsilon = std::sqrt(epsilons.values[indexN] * epsilons.values[indexK]);
-            double sigma   = radii.values[indexN] + radii.values[indexK];
+            double sigma = radii.values[indexN] + radii.values[indexK];
             PotentialFactor factor {epsilon, sigma};
             factors[n][k] = factor;
             factors[k][n] = factor;
@@ -292,10 +275,10 @@ MolecularMetadata::PotentialFactor MolecularMetadata::potentialFactor(const Pote
 
 double MolecularMetadata::lennardJonesPotential(const PotentialFactor& factor, double squaredDistance)
 {
-    double rmin  = factor.rmin;
-    double pow2  = (rmin * rmin) / (std::numeric_limits<double>::epsilon() + squaredDistance);
-    double pow4  = pow2 * pow2;
-    double pow6  = pow4 * pow4;
+    double rmin = factor.rmin;
+    double pow2 = (rmin * rmin) / (std::numeric_limits<double>::epsilon() + squaredDistance);
+    double pow4 = pow2 * pow2;
+    double pow6 = pow4 * pow4;
     double pow12 = pow6 * pow6;
     return factor.epsilon * (pow12 - 2.0 * pow6);
 }

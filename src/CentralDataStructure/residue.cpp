@@ -2,16 +2,16 @@
 
 #include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CodeUtils/logging.hpp"
+#include "includes/CodeUtils/biology.hpp"
 #include "includes/CodeUtils/casting.hpp"
 #include "includes/CodeUtils/constants.hpp" // sNotSet
 #include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/biology.hpp"
+#include "includes/CodeUtils/logging.hpp"
 #include "includes/CodeUtils/strings.hpp"
 
+#include <functional>
 #include <string>
 #include <vector>
-#include <functional>
 
 using cds::Atom;
 using cds::Residue;
@@ -27,10 +27,7 @@ Residue::Residue(const std::string& residueName, const Residue* referenceResidue
 }
 
 // Move Ctor.
-Residue::Residue(Residue&& other) noexcept : Node<Residue>(other)
-{
-    swap(*this, other);
-}
+Residue::Residue(Residue&& other) noexcept : Node<Residue>(other) { swap(*this, other); }
 
 // Copy Ctor. Using copy-swap idiom. Call the base class copy ctor.
 Residue::Residue(const Residue& other)
@@ -50,8 +47,8 @@ Residue::Residue(const Residue& other)
             auto neighborPosition = std::find(otherAtoms.begin(), otherAtoms.end(), neighbor);
             if (neighborPosition != std::end(otherAtoms))
             { // neighbor could be in other residue, ignore here.
-                auto difference      = std::distance(ito, neighborPosition);
-                int j                = i + difference;
+                auto difference = std::distance(ito, neighborPosition);
+                int j = i + difference;
                 std::string edgeName = atoms_.at(i)->getName() + "-" + atoms_.at(j)->getName();
                 atoms_.at(i)->addNeighbor(edgeName, atoms_.at(j).get());
             }
@@ -88,28 +85,19 @@ std::vector<Atom*> Residue::getAtomsConditional(std::function<bool(Atom*)> condi
 
 std::vector<Atom*> Residue::getAtoms() const
 {
-    auto all = [](Atom*)
-    {
-        return true;
-    };
+    auto all = [](Atom*) { return true; };
     return getAtomsConditional(all);
 }
 
 std::vector<Atom*> Residue::getHydrogenAtoms() const
 {
-    auto hydrogen = [](Atom* atom)
-    {
-        return atom->cachedElement() == MolecularMetadata::Element::H;
-    };
+    auto hydrogen = [](Atom* atom) { return atom->cachedElement() == MolecularMetadata::Element::H; };
     return getAtomsConditional(hydrogen);
 }
 
 std::vector<Atom*> Residue::getNonHydrogenAtoms() const
 {
-    auto nonHydrogen = [](Atom* atom)
-    {
-        return atom->cachedElement() != MolecularMetadata::Element::H;
-    };
+    auto nonHydrogen = [](Atom* atom) { return atom->cachedElement() != MolecularMetadata::Element::H; };
     return getAtomsConditional(nonHydrogen);
 }
 
@@ -215,17 +203,17 @@ typename std::vector<std::unique_ptr<Atom>>::iterator Residue::FindPositionOfAto
 
 Atom* Residue::FindAtom(const std::string queryName) const
 {
-    std::vector<Atom*> atoms       = getAtoms();
+    std::vector<Atom*> atoms = getAtoms();
     std::vector<std::string> names = atomNames(atoms);
-    size_t index                   = codeUtils::indexOf(names, queryName);
+    size_t index = codeUtils::indexOf(names, queryName);
     return index < atoms.size() ? atoms[index] : nullptr;
 }
 
 Atom* Residue::FindAtom(uint queryNumber) const
 {
-    std::vector<Atom*> atoms  = getAtoms();
+    std::vector<Atom*> atoms = getAtoms();
     std::vector<uint> numbers = atomNumbers(atoms);
-    size_t index              = codeUtils::indexOf(numbers, queryNumber);
+    size_t index = codeUtils::indexOf(numbers, queryNumber);
     return index < atoms.size() ? atoms[index] : nullptr;
 }
 
@@ -249,10 +237,8 @@ cds::ResidueType Residue::determineType(const std::string& residueName)
 std::string cds::residueStringId(cds::Residue* residue)
 {
     std::function<std::string(const std::string&)> strOrNotSet = [](const std::string& str)
-    {
-        return str.empty() ? constants::sNotSet : str;
-    };
-    std::string name   = residue->getName();
+    { return str.empty() ? constants::sNotSet : str; };
+    std::string name = residue->getName();
     std::string number = std::to_string(residue->getNumber());
     return codeUtils::join("_", codeUtils::vectorMap(strOrNotSet, {name, number, "", ""}));
 }

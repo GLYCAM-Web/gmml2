@@ -1,14 +1,14 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 
-#include "includes/Graph/graphTypes.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/geometryTypes.hpp"
 #include "includes/CentralDataStructure/Geometry/overlap.hpp"
-#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "includes/CentralDataStructure/Overlaps/atomOverlaps.hpp"
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
+#include "includes/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "includes/External_Libraries/PCG/pcg_random.h"
+#include "includes/Graph/graphTypes.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 #include <functional>
 #include <vector>
@@ -140,8 +140,8 @@ namespace glycoproteinBuilder
         MutableData mutableData;
     };
 
-    typedef std::function<std::vector<size_t>(pcg32&, const GlycamMetadata::DihedralAngleDataTable&,
-                                              const std::vector<size_t>&)>
+    typedef std::function<std::vector<size_t>(
+        pcg32&, const GlycamMetadata::DihedralAngleDataTable&, const std::vector<size_t>&)>
         MetadataOrder;
 
     struct AngleSettings
@@ -152,13 +152,25 @@ namespace glycoproteinBuilder
         MetadataOrder randomMetadata;
     };
 
-    typedef std::function<void(const assembly::Graph&, const AssemblyData&, const assembly::Selection&,
-                               const AngleSettings&, const cds::GlycanShapePreference&, MutableData&, size_t)>
+    typedef std::function<void(
+        const assembly::Graph&,
+        const AssemblyData&,
+        const assembly::Selection&,
+        const AngleSettings&,
+        const cds::GlycanShapePreference&,
+        MutableData&,
+        size_t)>
         WiggleGlycan;
 
-    typedef std::function<void(pcg32&, const AngleSettings& settings, WiggleGlycan, const assembly::Graph&,
-                               const AssemblyData&, MutableData&, const std::vector<cds::GlycanShapePreference>&,
-                               const std::vector<size_t>&)>
+    typedef std::function<void(
+        pcg32&,
+        const AngleSettings& settings,
+        WiggleGlycan,
+        const assembly::Graph&,
+        const AssemblyData&,
+        MutableData&,
+        const std::vector<cds::GlycanShapePreference>&,
+        const std::vector<size_t>&)>
         SidechainAdjustment;
 
 } // namespace glycoproteinBuilder

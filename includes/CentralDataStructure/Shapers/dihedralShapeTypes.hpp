@@ -5,10 +5,10 @@
 #include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
-#include <vector>
-#include <string>
 #include <functional>
+#include <string>
 #include <variant>
+#include <vector>
 
 namespace cds
 {

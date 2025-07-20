@@ -1,13 +1,14 @@
 #include "includes/CentralDataStructure/CondensedSequence/sequenceManipulation.hpp"
+
 #include "includes/CentralDataStructure/CondensedSequence/sequenceTypes.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/sequenceUtil.hpp"
-#include "includes/Graph/graphManipulation.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/parsing.hpp"
+#include "includes/Graph/graphManipulation.hpp"
 
 #include <optional>
-#include <vector>
 #include <stdexcept>
+#include <vector>
 
 namespace
 {
@@ -22,7 +23,7 @@ namespace
     size_t addNode(SequenceAndLinkageData& result, const cdsCondensedSequence::ParsedResidueComponents& components)
     {
         cdsCondensedSequence::ResidueData& residues = result.data.residues;
-        size_t id                                   = graph::addNode(result.data.graph);
+        size_t id = graph::addNode(result.data.graph);
         residues.fullString.push_back(components.fullString);
         residues.type.push_back(components.type);
         residues.name.push_back(components.name);
@@ -40,24 +41,33 @@ namespace
         return id;
     }
 
-    void addEdge(SequenceAndLinkageData& result, size_t parent, size_t child, const std::string& name,
-                 const cdsCondensedSequence::EdgePosition& position)
+    void addEdge(
+        SequenceAndLinkageData& result,
+        size_t parent,
+        size_t child,
+        const std::string& name,
+        const cdsCondensedSequence::EdgePosition& position)
     {
         cdsCondensedSequence::ResidueData& residues = result.data.residues;
-        cdsCondensedSequence::EdgeData& edges       = result.data.edges;
+        cdsCondensedSequence::EdgeData& edges = result.data.edges;
         graph::addEdge(result.data.graph, {parent, child});
         edges.names.push_back(name);
         edges.position.push_back(position);
         residues.isInternal[parent] = residues.isInternal[parent] || (residues.type[child] != cds::ResidueType::Deoxy);
     }
 
-    void addMonosaccharideEdge(SequenceAndLinkageData& result, size_t parent, size_t child, const std::string& linkage,
-                               const std::string& configuration, const std::optional<uint>& defaultHeadPosition)
+    void addMonosaccharideEdge(
+        SequenceAndLinkageData& result,
+        size_t parent,
+        size_t child,
+        const std::string& linkage,
+        const std::string& configuration,
+        const std::optional<uint>& defaultHeadPosition)
     {
         const cds::ResidueType parentType = result.data.residues.type[parent];
-        bool noParent                     = parentType == cds::ResidueType::Undefined;
-        bool isParentAglycone             = parentType == cds::ResidueType::Aglycone;
-        bool isParentSugar                = parentType == cds::ResidueType::Sugar;
+        bool noParent = parentType == cds::ResidueType::Undefined;
+        bool isParentAglycone = parentType == cds::ResidueType::Aglycone;
+        bool isParentSugar = parentType == cds::ResidueType::Sugar;
         if (noParent)
         {}
         else if (isParentAglycone)
@@ -74,7 +84,7 @@ namespace
             {
                 throw std::runtime_error("Either linkage or parent residue must contain parent linkage position");
             }
-            uint childPosition  = firstPosition.value();
+            uint childPosition = firstPosition.value();
             uint parentPosition = secondPosition.has_value() ? secondPosition.value() : defaultHeadPosition.value();
             std::string linkageName =
                 configuration + std::to_string(childPosition) + "-" + std::to_string(parentPosition);
@@ -88,20 +98,22 @@ namespace
         return {id, id};
     }
 
-    ChainState instantiateDerivative(SequenceAndLinkageData& result, const ChainState& state,
-                                     const cdsCondensedSequence::DerivativeNode& node)
+    ChainState instantiateDerivative(
+        SequenceAndLinkageData& result, const ChainState& state, const cdsCondensedSequence::DerivativeNode& node)
     {
         const std::string& linkage = node.components.linkage;
-        std::optional<uint> pos    = codeUtils::parseUint(linkage.substr(0, 1)).value();
-        size_t id                  = addNode(result, node.components);
-        size_t parent              = state.head;
+        std::optional<uint> pos = codeUtils::parseUint(linkage.substr(0, 1)).value();
+        size_t id = addNode(result, node.components);
+        size_t parent = state.head;
         addEdge(result, parent, id, linkage, ParentPosition {pos.value()});
         return state;
     }
 
-    ChainState instantiateDerivativeList(SequenceAndLinkageData& result, const ChainState& state,
-                                         const AbstractSequence& data,
-                                         const cdsCondensedSequence::DerivativeListNode& node)
+    ChainState instantiateDerivativeList(
+        SequenceAndLinkageData& result,
+        const ChainState& state,
+        const AbstractSequence& data,
+        const cdsCondensedSequence::DerivativeListNode& node)
     {
         for (size_t n : node.constituents)
         {
@@ -110,27 +122,37 @@ namespace
         return state;
     }
 
-    ChainState instantiateMonosaccharide(SequenceAndLinkageData& result, const ChainState& state,
-                                         const AbstractSequence& data,
-                                         const cdsCondensedSequence::MonosaccharideNode& node)
+    ChainState instantiateMonosaccharide(
+        SequenceAndLinkageData& result,
+        const ChainState& state,
+        const AbstractSequence& data,
+        const cdsCondensedSequence::MonosaccharideNode& node)
     {
-        size_t id     = addNode(result, node.components);
+        size_t id = addNode(result, node.components);
         size_t parent = state.head;
-        addMonosaccharideEdge(result, parent, id, node.components.linkage, node.components.configuration,
-                              result.data.residues.defaultHeadPosition[parent]);
+        addMonosaccharideEdge(
+            result,
+            parent,
+            id,
+            node.components.linkage,
+            node.components.configuration,
+            result.data.residues.defaultHeadPosition[parent]);
         ChainState selfState {id, id};
         instantiateNode(result, selfState, data, node.derivativeList);
         return selfState;
     }
 
-    ChainState instantiateChain(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
-                                const cdsCondensedSequence::ChainNode& node)
+    ChainState instantiateChain(
+        SequenceAndLinkageData& result,
+        const ChainState& state,
+        const AbstractSequence& data,
+        const cdsCondensedSequence::ChainNode& node)
     {
         if (node.constituents.empty())
         {
             throw std::runtime_error("Chain cannot be empty");
         }
-        ChainState first   = instantiateNode(result, state, data, node.constituents[0]);
+        ChainState first = instantiateNode(result, state, data, node.constituents[0]);
         ChainState current = first;
         for (size_t n = 1; n < node.constituents.size(); n++)
         {
@@ -139,23 +161,29 @@ namespace
         return {first.tail, current.head};
     }
 
-    ChainState instantiateBranch(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
-                                 const cdsCondensedSequence::BranchNode& node)
+    ChainState instantiateBranch(
+        SequenceAndLinkageData& result,
+        const ChainState& state,
+        const AbstractSequence& data,
+        const cdsCondensedSequence::BranchNode& node)
     {
         ChainState empty {0, 0};
-        ChainState current           = instantiateNode(result, empty, data, node.chain);
-        size_t parent                = state.head;
-        size_t tail                  = current.tail;
+        ChainState current = instantiateNode(result, empty, data, node.chain);
+        size_t parent = state.head;
+        size_t tail = current.tail;
         std::optional<uint> position = codeUtils::parseUint(node.position);
-        addMonosaccharideEdge(result, parent, tail, result.linkage[tail], result.data.residues.configuration[tail],
-                              position);
+        addMonosaccharideEdge(
+            result, parent, tail, result.linkage[tail], result.data.residues.configuration[tail], position);
         return state;
     }
 
-    ChainState instantiateRepeat(SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data,
-                                 const cdsCondensedSequence::RepeatNode& node)
+    ChainState instantiateRepeat(
+        SequenceAndLinkageData& result,
+        const ChainState& state,
+        const AbstractSequence& data,
+        const cdsCondensedSequence::RepeatNode& node)
     {
-        ChainState first   = instantiateNode(result, state, data, node.chain);
+        ChainState first = instantiateNode(result, state, data, node.chain);
         ChainState current = first;
         for (size_t n = 1; n < node.repeats; n++)
         {
@@ -165,9 +193,8 @@ namespace
     }
 } // namespace
 
-cdsCondensedSequence::ChainState cdsCondensedSequence::instantiateNode(SequenceAndLinkageData& result,
-                                                                       const ChainState& state,
-                                                                       const AbstractSequence& data, size_t id)
+cdsCondensedSequence::ChainState cdsCondensedSequence::instantiateNode(
+    SequenceAndLinkageData& result, const ChainState& state, const AbstractSequence& data, size_t id)
 {
     const SequenceNode& node = data.nodes[id];
     if (std::holds_alternative<MonosaccharideNode>(node))
@@ -222,9 +249,8 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::instantiate(const Abstr
     return rearr;
 }
 
-cdsCondensedSequence::SequenceData cdsCondensedSequence::rearrange(const SequenceData& sequence,
-                                                                   const std::vector<size_t>& residueOrder,
-                                                                   const std::vector<size_t>& edgeOrder)
+cdsCondensedSequence::SequenceData cdsCondensedSequence::rearrange(
+    const SequenceData& sequence, const std::vector<size_t>& residueOrder, const std::vector<size_t>& edgeOrder)
 {
     size_t residueCount = nodeCount(sequence.graph);
     std::vector<size_t> invertedResidueOrder(residueCount, -1);
@@ -246,27 +272,29 @@ cdsCondensedSequence::SequenceData cdsCondensedSequence::rearrange(const Sequenc
         graph::addEdge(resultGraph, {invertedResidueOrder[edge[0]], invertedResidueOrder[edge[1]]});
     }
 
-    ResidueData residues = {codeUtils::indicesToValues(sequence.residues.fullString, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.type, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.name, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.ringType, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.configuration, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.defaultHeadPosition, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
-                            codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
+    ResidueData residues = {
+        codeUtils::indicesToValues(sequence.residues.fullString, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.type, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.name, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.ringType, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.configuration, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.isomer, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.preIsomerModifier, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.ringShape, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.modifier, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.defaultHeadPosition, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.isInternal, residueOrder),
+        codeUtils::indicesToValues(sequence.residues.isDerivative, residueOrder)};
 
-    EdgeData edges = {codeUtils::indicesToValues(sequence.edges.names, edgeOrder),
-                      codeUtils::indicesToValues(sequence.edges.position, edgeOrder)};
+    EdgeData edges = {
+        codeUtils::indicesToValues(sequence.edges.names, edgeOrder),
+        codeUtils::indicesToValues(sequence.edges.position, edgeOrder)};
 
     return SequenceData {resultGraph, residues, edges};
 }
 
-std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& sequence,
-                                                            const std::vector<size_t>& edgeIds)
+std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(
+    const SequenceData& sequence, const std::vector<size_t>& edgeIds)
 {
     std::function<bool(const size_t&, const size_t&)> compare = [&](const size_t& n, const size_t& k)
     {
@@ -286,15 +314,15 @@ std::vector<size_t> cdsCondensedSequence::edgesSortedByLink(const SequenceData& 
 
 cdsCondensedSequence::SequenceData cdsCondensedSequence::reordered(const SequenceData& sequence)
 {
-    size_t residueCount           = nodeCount(sequence.graph);
+    size_t residueCount = nodeCount(sequence.graph);
     std::vector<size_t> edgeOrder = edgesSortedByLink(sequence, codeUtils::indexVector(sequence.graph.edges));
     std::vector<std::array<size_t, 2>> reorderedEdges = codeUtils::indicesToValues(sequence.graph.edgeNodes, edgeOrder);
 
-    size_t current                   = 0;
+    size_t current = 0;
     std::vector<size_t> residueOrder = {current};
     residueOrder.reserve(residueCount);
     std::vector<bool> traversed = codeUtils::indicesToBools(residueCount, residueOrder);
-    auto fromNode               = [&](size_t node)
+    auto fromNode = [&](size_t node)
     {
         std::vector<size_t> result;
         result.reserve(reorderedEdges.size());

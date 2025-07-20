@@ -1,13 +1,14 @@
 #include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
+
+#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "includes/CentralDataStructure/residueTypes.hpp"
-#include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/formatting.hpp"
 
-#include <vector>
-#include <string>
 #include <iomanip>
+#include <string>
+#include <vector>
 
 namespace
 {
@@ -25,9 +26,14 @@ namespace
     }
 } // namespace
 
-void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, const assembly::Graph& graph,
-                           const OffFileResidueData& residues, const OffFileAtomData& atoms,
-                           const std::vector<size_t>& residueIndices, const std::string& unitName)
+void cds::WriteOffFileUnit(
+    std::ostream& stream,
+    const OffFileFormat& format,
+    const assembly::Graph& graph,
+    const OffFileResidueData& residues,
+    const OffFileAtomData& atoms,
+    const std::vector<size_t>& residueIndices,
+    const std::string& unitName)
 {
     // WriteAtomSection
     const std::string FLAG = "131072";
@@ -95,14 +101,14 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     std::vector<bool> residueIncluded = codeUtils::indicesToBools(residues.names.size(), residueIndices);
     for (auto& bond : graph.atoms.edges.nodeAdjacencies)
     {
-        size_t first  = sourceNodeIndex(graph.atoms, bond[0]);
+        size_t first = sourceNodeIndex(graph.atoms, bond[0]);
         size_t second = sourceNodeIndex(graph.atoms, bond[1]);
         if (residueIncluded[graph.indices.atomResidue[first]])
         {
-            int number         = atoms.numbers[first];
+            int number = atoms.numbers[first];
             int neighborNumber = atoms.numbers[second];
-            int min            = std::min(number, neighborNumber);
-            int max            = std::max(number, neighborNumber);
+            int min = std::min(number, neighborNumber);
+            int max = std::max(number, neighborNumber);
             // According to docs: (the *second* atom is the one with the larger index). So ordering
             stream << " " << min << " " << max << " 1"
                    << "\n";
@@ -175,10 +181,10 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     for (size_t residueIndex : residueIndices)
     {
         const std::vector<size_t>& atomIndices = assembly::residueAtoms(graph, residueIndex);
-        unsigned int childseq                  = atomIndices.size() + 1;
-        unsigned int startatomx                = atoms.numbers[graph.residues.source.nodes[atomIndices.front()]];
-        std::string restype                    = residueOffType(residues.types[residueIndex]);
-        unsigned int imagingx                  = 0;
+        unsigned int childseq = atomIndices.size() + 1;
+        unsigned int startatomx = atoms.numbers[graph.residues.source.nodes[atomIndices.front()]];
+        std::string restype = residueOffType(residues.types[residueIndex]);
+        unsigned int imagingx = 0;
         stream << " \"" << residues.names[residueIndex] << "\""
                << " " << residues.numbers[residueIndex] << " " << childseq << " " << startatomx << " "
                << "\"" << restype << "\""
@@ -211,8 +217,8 @@ void cds::WriteOffFileUnit(std::ostream& stream, const OffFileFormat& format, co
     return;
 }
 
-void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const assembly::Graph& graph,
-                                             const OffFileData& data)
+void cds::WriteResiduesIndividuallyToOffFile(
+    std::ostream& stream, const assembly::Graph& graph, const OffFileData& data)
 { // For writing each residue separately
     size_t residueCount = data.residues.names.size();
     stream << "!!index array str"
@@ -228,8 +234,12 @@ void cds::WriteResiduesIndividuallyToOffFile(std::ostream& stream, const assembl
     }
 }
 
-void cds::WriteResiduesTogetherToOffFile(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data,
-                                         const std::vector<size_t>& residueIndices, const std::string& unitName)
+void cds::WriteResiduesTogetherToOffFile(
+    std::ostream& stream,
+    const assembly::Graph& graph,
+    const OffFileData& data,
+    const std::vector<size_t>& residueIndices,
+    const std::string& unitName)
 { // For writing residues together as a molecule
     stream << "!!index array str"
            << "\n";

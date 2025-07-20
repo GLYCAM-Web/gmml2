@@ -1,4 +1,5 @@
 #include "includes/Assembly/assemblySelection.hpp"
+
 #include "includes/Assembly/assemblyGraph.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
@@ -16,34 +17,34 @@ namespace assembly
 
     Selection selectByAtoms(const Graph& graph, const std::vector<bool>& atoms)
     {
-        Selection all  = selectAll(graph);
+        Selection all = selectAll(graph);
         Selection some = all;
-        some.atoms     = atoms;
+        some.atoms = atoms;
         return intersection(graph, some, all);
     }
 
     Selection selectByResidues(const Graph& graph, const std::vector<bool>& residues)
     {
-        Selection all  = selectAll(graph);
+        Selection all = selectAll(graph);
         Selection some = all;
-        some.residues  = residues;
+        some.residues = residues;
         return intersection(graph, some, all);
     }
 
     Selection selectByMolecules(const Graph& graph, const std::vector<bool>& molecules)
     {
-        Selection all  = selectAll(graph);
+        Selection all = selectAll(graph);
         Selection some = all;
         some.molecules = molecules;
         return intersection(graph, some, all);
     }
 
-    Selection selectByAtomsAndMolecules(const Graph& graph, const std::vector<bool>& atoms,
-                                        const std::vector<bool>& molecules)
+    Selection selectByAtomsAndMolecules(
+        const Graph& graph, const std::vector<bool>& atoms, const std::vector<bool>& molecules)
     {
-        Selection all  = selectAll(graph);
+        Selection all = selectAll(graph);
         Selection some = all;
-        some.atoms     = atoms;
+        some.atoms = atoms;
         some.molecules = molecules;
         return intersection(graph, some, all);
     }
@@ -55,7 +56,7 @@ namespace assembly
             std::fill(result.begin(), result.end(), false);
             for (size_t n = 0; n < value.size(); n++)
             {
-                size_t index  = group[n];
+                size_t index = group[n];
                 result[index] = result[index] || value[n];
             }
         };
@@ -101,8 +102,8 @@ namespace assembly
         return selectedResidues;
     }
 
-    std::vector<std::vector<size_t>> moleculeSelectedResidues(const Graph& graph, const Selection& selection,
-                                                              const std::vector<size_t>& molecules)
+    std::vector<std::vector<size_t>> moleculeSelectedResidues(
+        const Graph& graph, const Selection& selection, const std::vector<size_t>& molecules)
     {
         std::vector<std::vector<size_t>> result;
         result.reserve(molecules.size());

@@ -3,10 +3,10 @@
 
 #include <algorithm>
 #include <functional>
-#include <string>
-#include <vector>
-#include <unordered_map>
 #include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace codeUtils
 {
@@ -18,8 +18,8 @@ namespace codeUtils
     std::vector<bool> indicesToBools(size_t size, const std::vector<size_t>& indices);
     std::vector<size_t> boolsToIndices(const std::vector<bool>& mask);
     std::vector<bool> groupContains(size_t count, const std::vector<size_t>& group, const std::vector<size_t>& indices);
-    std::vector<bool> groupContainsSelected(size_t count, const std::vector<size_t>& group,
-                                            const std::vector<bool>& selection);
+    std::vector<bool> groupContainsSelected(
+        size_t count, const std::vector<size_t>& group, const std::vector<bool>& selection);
 
     template<class T> size_t indexOf(const std::vector<T>& vector, const T& element)
     {
@@ -68,10 +68,7 @@ namespace codeUtils
         return result;
     }
 
-    template<class T> void eraseNth(size_t n, std::vector<T>& vec)
-    {
-        vec.erase(vec.begin() + n);
-    }
+    template<class T> void eraseNth(size_t n, std::vector<T>& vec) { vec.erase(vec.begin() + n); }
 
     template<class T> std::vector<T> withoutNth(size_t n, std::vector<T> vec)
     {
@@ -106,10 +103,7 @@ namespace codeUtils
 
     template<class T> std::vector<bool> vectorEquals(const std::vector<T>& vec, const T& value)
     {
-        std::function<bool(const T&)> equals = [&value](const T& a)
-        {
-            return a == value;
-        };
+        std::function<bool(const T&)> equals = [&value](const T& a) { return a == value; };
         return vectorMap(equals, vec);
     }
 
@@ -138,10 +132,7 @@ namespace codeUtils
         into.insert(into.end(), other.begin(), other.end());
     }
 
-    template<class T> void fill(std::vector<T>& into, const T& value)
-    {
-        std::fill(into.begin(), into.end(), value);
-    }
+    template<class T> void fill(std::vector<T>& into, const T& value) { std::fill(into.begin(), into.end(), value); }
 
     template<class T> std::vector<T> vectorAppend(const std::vector<T>& vecA, const std::vector<T>& vecB)
     {

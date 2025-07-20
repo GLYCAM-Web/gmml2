@@ -1,4 +1,5 @@
 #include "includes/MolecularMetadata/glycoprotein.hpp"
+
 #include "includes/CodeUtils/containers.hpp"
 
 #include <unordered_map>
@@ -33,29 +34,15 @@ namespace
     };
 
     std::function<std::string(const GlycosylationEntry&)> getGlycosylationResidue = [](const GlycosylationEntry& a)
-    {
-        return a.residue;
-    };
+    { return a.residue; };
     std::function<std::string(const GlycosylationEntry&)> getGlycosylationRenamedResidue =
-        [](const GlycosylationEntry& a)
-    {
-        return a.renamed;
-    };
+        [](const GlycosylationEntry& a) { return a.renamed; };
     std::function<std::string(const GlycosylationEntry&)> getGlycosylationConnectingAtom =
-        [](const GlycosylationEntry& a)
-    {
-        return a.connectingAtom;
-    };
+        [](const GlycosylationEntry& a) { return a.connectingAtom; };
     std::function<std::vector<std::string>(const GlycosylationEntry&)> getGlycosylationAtoms =
-        [](const GlycosylationEntry& a)
-    {
-        return a.atoms;
-    };
+        [](const GlycosylationEntry& a) { return a.atoms; };
     std::function<std::vector<SuperimpositionValues>(const GlycosylationEntry&)> getGlycosylationValues =
-        [](const GlycosylationEntry& a)
-    {
-        return a.values;
-    };
+        [](const GlycosylationEntry& a) { return a.values; };
 
     const GlycosylationTable glycosylationTable {
         codeUtils::vectorMap(getGlycosylationResidue, glycosylationTableData),
@@ -96,30 +83,17 @@ namespace
         {"CLW", "W", cLink}
     };
 
-    std::function<std::string(const AminoAcidEntry&)> getAminoAcidName = [](const AminoAcidEntry& a)
-    {
-        return a.name;
-    };
-    std::function<std::string(const AminoAcidEntry&)> getAminoAcidCode = [](const AminoAcidEntry& a)
-    {
-        return a.code;
-    };
+    std::function<std::string(const AminoAcidEntry&)> getAminoAcidName = [](const AminoAcidEntry& a) { return a.name; };
+    std::function<std::string(const AminoAcidEntry&)> getAminoAcidCode = [](const AminoAcidEntry& a) { return a.code; };
     std::function<std::string(const AminoAcidEntry&)> getAminoAcidLinkType = [](const AminoAcidEntry& a)
-    {
-        return a.linkType;
-    };
+    { return a.linkType; };
 
-    const AminoAcidLinkTable aminoAcidLinkTable {codeUtils::vectorMap(getAminoAcidName, aminoAcidLinkTableData),
-                                                 codeUtils::vectorMap(getAminoAcidCode, aminoAcidLinkTableData),
-                                                 codeUtils::vectorMap(getAminoAcidLinkType, aminoAcidLinkTableData)};
+    const AminoAcidLinkTable aminoAcidLinkTable {
+        codeUtils::vectorMap(getAminoAcidName, aminoAcidLinkTableData),
+        codeUtils::vectorMap(getAminoAcidCode, aminoAcidLinkTableData),
+        codeUtils::vectorMap(getAminoAcidLinkType, aminoAcidLinkTableData)};
 } // namespace
 
-const GlycosylationTable& glycoproteinMetadata::defaultGlycosylationTable()
-{
-    return glycosylationTable;
-}
+const GlycosylationTable& glycoproteinMetadata::defaultGlycosylationTable() { return glycosylationTable; }
 
-const AminoAcidLinkTable& glycoproteinMetadata::defaultAminoAcidLinkTable()
-{
-    return aminoAcidLinkTable;
-}
+const AminoAcidLinkTable& glycoproteinMetadata::defaultAminoAcidLinkTable() { return aminoAcidLinkTable; }

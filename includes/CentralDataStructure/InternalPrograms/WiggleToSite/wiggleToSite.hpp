@@ -1,15 +1,15 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP
 
-#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
 #include "includes/CentralDataStructure/CondensedSequence/carbohydrate.hpp"
+#include "includes/CentralDataStructure/Geometry/overlap.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
 #include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
 #include "includes/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
-#include "includes/CentralDataStructure/Geometry/overlap.hpp"
 #include "includes/CentralDataStructure/cdsTypes.hpp"
-#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 #include "includes/CodeUtils/containerTypes.hpp"
+#include "includes/MolecularMetadata/GLYCAM/dihedralangledata.hpp"
 
 namespace gmmlPrograms
 {
@@ -25,62 +25,42 @@ namespace gmmlPrograms
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////
-        int minimizeDistance(const codeUtils::SparseVector<double>& elementRadii,
-                             const GlycamMetadata::DihedralAngleDataTable& metadataTable, int persistCycles = 25,
-                             bool useMonteCarlo = true, int structureCount = 0);
+        int minimizeDistance(
+            const codeUtils::SparseVector<double>& elementRadii,
+            const GlycamMetadata::DihedralAngleDataTable& metadataTable,
+            int persistCycles = 25,
+            bool useMonteCarlo = true,
+            int structureCount = 0);
 
       private:
         //////////////////////////////////////////////////////////
         //                       ACCESSOR                       //
         //////////////////////////////////////////////////////////
-        cdsCondensedSequence::Carbohydrate& getCarbohydrate()
-        {
-            return carbohydrate_;
-        }
+        cdsCondensedSequence::Carbohydrate& getCarbohydrate() { return carbohydrate_; }
 
-        std::vector<cds::ResidueLinkage>& getWiggleLinkages()
-        {
-            return wiggleLinkages_;
-        }
+        std::vector<cds::ResidueLinkage>& getWiggleLinkages() { return wiggleLinkages_; }
 
-        pdb::PdbFile& getSubstrate()
-        {
-            return substrate_;
-        }
+        pdb::PdbFile& getSubstrate() { return substrate_; }
 
-        std::vector<cds::Atom*> getAtomsToAvoid()
-        {
-            return atomsToAvoid_;
-        }
+        std::vector<cds::Atom*> getAtomsToAvoid() { return atomsToAvoid_; }
 
-        double getCurrentOverlap()
-        {
-            return currentOverlap_;
-        }
+        double getCurrentOverlap() { return currentOverlap_; }
 
-        double getCurrentDistance()
-        {
-            return currentDistance_;
-        }
+        double getCurrentDistance() { return currentDistance_; }
 
         //////////////////////////////////////////////////////////
         //                  PRIVATE FUNCTIONS                   //
         //////////////////////////////////////////////////////////
-        void setCurrentOverlap(double a)
-        {
-            currentOverlap_ = a;
-        }
+        void setCurrentOverlap(double a) { currentOverlap_ = a; }
 
-        void setCurrentDistance(double d)
-        {
-            currentDistance_ = d;
-        }
+        void setCurrentDistance(double d) { currentDistance_ = d; }
 
-        void superimpose(std::vector<cds::Coordinate>& carbohydrateCoordinates, const Residue* superimpositionTarget,
-                         Residue* superimposeMe);
-        std::vector<cds::ResidueLinkage>&
-        determineWiggleLinkages(const GlycamMetadata::DihedralAngleDataTable& metadataTable, Residue* startResidue,
-                                Residue* endResidue);
+        void superimpose(
+            std::vector<cds::Coordinate>& carbohydrateCoordinates,
+            const Residue* superimpositionTarget,
+            Residue* superimposeMe);
+        std::vector<cds::ResidueLinkage>& determineWiggleLinkages(
+            const GlycamMetadata::DihedralAngleDataTable& metadataTable, Residue* startResidue, Residue* endResidue);
 
         double calculateDistance();
         bool acceptOverlaps(const codeUtils::SparseVector<double>& elementRadii);

@@ -1,8 +1,8 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINUTIL_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINUTIL_HPP
 
-#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/Assembly/assemblyTypes.hpp"
+#include "includes/CentralDataStructure/InternalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "includes/CodeUtils/containers.hpp"
 
 #include <vector>
@@ -14,15 +14,15 @@ namespace glycoproteinBuilder
         return codeUtils::indicesToValues(includedMolecules, data.glycans.moleculeId);
     }
 
-    inline std::vector<size_t> includedGlycanMoleculeIds(const AssemblyData& data,
-                                                         const std::vector<bool>& includedMolecules)
+    inline std::vector<size_t> includedGlycanMoleculeIds(
+        const AssemblyData& data, const std::vector<bool>& includedMolecules)
     {
-        return codeUtils::indicesToValues(data.glycans.moleculeId,
-                                          codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules)));
+        return codeUtils::indicesToValues(
+            data.glycans.moleculeId, codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules)));
     }
 
-    inline std::vector<size_t> includedGlycanIndices(const AssemblyData& data,
-                                                     const std::vector<bool>& includedMolecules)
+    inline std::vector<size_t> includedGlycanIndices(
+        const AssemblyData& data, const std::vector<bool>& includedMolecules)
     {
         return codeUtils::boolsToIndices(glycanIncluded(data, includedMolecules));
     }

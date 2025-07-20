@@ -1,7 +1,8 @@
 #include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
+
 #include "includes/CentralDataStructure/atom.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
+#include "includes/CentralDataStructure/residue.hpp"
 #include "includes/CodeUtils/containers.hpp"
 #include "includes/CodeUtils/filesystem.hpp"
 #include "includes/CodeUtils/logging.hpp"
@@ -32,15 +33,15 @@ ParameterManager cdsParameters::loadParameters(const std::string& baseDir)
     for (auto& libFilePath : cdsParameters::libFilesToLoad)
     {
         lib::LibraryData libData = lib::loadLibraryData(baseDir + "/" + libFilePath);
-        result.lib.residueNames  = codeUtils::vectorAppend(result.lib.residueNames, libData.residueNames);
-        result.lib.residues      = codeUtils::vectorAppend(result.lib.residues, libData.residues);
+        result.lib.residueNames = codeUtils::vectorAppend(result.lib.residueNames, libData.residueNames);
+        result.lib.residues = codeUtils::vectorAppend(result.lib.residues, libData.residues);
     }
     gmml::log(__LINE__, __FILE__, gmml::INF, "Finished construction of ParameterManager.");
     return result;
 }
 
-void cdsParameters::setAtomChargesForResidues(const ParameterManager& parameters,
-                                              std::vector<cds::Residue*> queryResidues)
+void cdsParameters::setAtomChargesForResidues(
+    const ParameterManager& parameters, std::vector<cds::Residue*> queryResidues)
 {
     for (auto& residue : queryResidues)
     {
@@ -48,8 +49,8 @@ void cdsParameters::setAtomChargesForResidues(const ParameterManager& parameters
     }
 }
 
-void cdsParameters::createAtomsForResidue(const ParameterManager& parameters, cds::Residue* queryResidue,
-                                          const std::string glycamNameForResidue)
+void cdsParameters::createAtomsForResidue(
+    const ParameterManager& parameters, cds::Residue* queryResidue, const std::string glycamNameForResidue)
 {
     size_t index = codeUtils::indexOf(parameters.lib.residueNames, glycamNameForResidue);
     if (index == parameters.lib.residueNames.size())
@@ -62,7 +63,7 @@ void cdsParameters::createAtomsForResidue(const ParameterManager& parameters, cd
     queryResidue->setName(glycamCode);
     queryResidue->determineType(glycamCode);
     const lib::ResidueData& residue = parameters.lib.residues[index];
-    const lib::AtomData& atoms      = residue.atoms;
+    const lib::AtomData& atoms = residue.atoms;
     std::vector<cds::Atom*> atomVec;
     atomVec.reserve(atoms.names.size());
     for (size_t n = 0; n < atoms.names.size(); n++)
@@ -87,12 +88,14 @@ void cdsParameters::createAtomsForResidue(const ParameterManager& parameters, cd
 bool cdsParameters::setAtomChargesForResidue(const ParameterManager& parameters, cds::Residue* queryResidue)
 {
     bool allAtomsPresent = true;
-    size_t index         = codeUtils::indexOf(parameters.lib.residueNames, queryResidue->GetParmName());
+    size_t index = codeUtils::indexOf(parameters.lib.residueNames, queryResidue->GetParmName());
     if (index == parameters.lib.residueNames.size())
     {
-        gmml::log(__LINE__, __FILE__, gmml::WAR,
-                  "Did not find parameters and so cannot set charges for residue named: " +
-                      queryResidue->GetParmName());
+        gmml::log(
+            __LINE__,
+            __FILE__,
+            gmml::WAR,
+            "Did not find parameters and so cannot set charges for residue named: " + queryResidue->GetParmName());
         return false;
     }
 
@@ -100,7 +103,7 @@ bool cdsParameters::setAtomChargesForResidue(const ParameterManager& parameters,
     for (auto& queryAtom : queryResidue->getAtoms())
     {
         const std::string& atomName = queryAtom->getName();
-        size_t atomIndex            = codeUtils::indexOf(atoms.names, atomName);
+        size_t atomIndex = codeUtils::indexOf(atoms.names, atomName);
         if (atomIndex < atoms.names.size())
         {
             queryAtom->setCharge(atoms.charges[atomIndex]);
