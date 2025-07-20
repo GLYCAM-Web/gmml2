@@ -1,42 +1,33 @@
 ---
 BasedOnStyle: LLVM
+AlignAfterOpenBracket: AlwaysBreak
 AlignArrayOfStructures: Right
-AlignConsecutiveAssignments:
-  Enabled: true
-  AcrossComments: true
-  AlignCompound: true
-AlignConsecutiveBitFields:
-  Enabled: true
-  AcrossComments: true
-  AlignCompound: true
-  PadOperators: true
-AlignConsecutiveMacros:
-  Enabled: true
-  AcrossComments: true
-  AlignCompound: true
-  PadOperators: true
 AlignEscapedNewlines: Left
-AllowShortFunctionsOnASingleLine: None
-AllowShortLambdasOnASingleLine: None
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortLambdasOnASingleLine: All
 BreakBeforeBraces: Custom
 BraceWrapping:
-  AfterCaseLabel: true
-  AfterClass: true
-  AfterControlStatement: Always
-  AfterFunction: true
-  AfterNamespace: true
-  AfterEnum: true
-  AfterStruct: true
-  AfterUnion: true
-  BeforeCatch: true
-  BeforeElse: true
-  BeforeLambdaBody: true
-  IndentBraces: false
-  SplitEmptyFunction: false
-  SplitEmptyRecord: false
+ AfterCaseLabel: true
+ AfterClass: true
+ AfterControlStatement: Always
+ AfterFunction: true
+ AfterNamespace: true
+ AfterEnum: true
+ AfterStruct: true
+ AfterUnion: true
+ BeforeCatch: true
+ BeforeElse: true
+ BeforeLambdaBody: true
+ IndentBraces: false
+ SplitEmptyFunction: false
+ SplitEmptyRecord: false
+BinPackArguments: false
+BinPackParameters: false
 #BreakBeforeBraces: GNU
 ColumnLimit: 120
-#Wanna change to regroup, but includes are still wonky so 
+#Wanna change to regroup, but includes are still wonky so
 #ends up borking stuff
 IncludeBlocks: Regroup
 IndentCaseBlocks: true
@@ -46,15 +37,14 @@ IndentWidth: 4
 InsertBraces: true
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All
+PenaltyReturnTypeOnItsOwnLine: 1000
 PointerAlignment: Left
 QualifierAlignment: Left
 SeparateDefinitionBlocks: Always
-#We will want to eventually sort our includes so things arent as buggy, this will let us catch wonkyness
-SortIncludes: Never
+SortIncludes: true
 #SortJavaStaticImport: After
 SpaceAfterTemplateKeyword: false
 SpaceBeforeCpp11BracedList: true
 SpaceBeforeParensOptions:
-  AfterOverloadedOperator: true
+ AfterOverloadedOperator: true
 Standard: c++17
-
