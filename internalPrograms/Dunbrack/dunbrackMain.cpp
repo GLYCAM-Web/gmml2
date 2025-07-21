@@ -1,13 +1,13 @@
-#include "includes/CodeUtils/arguments.hpp"
-#include "includes/CodeUtils/constants.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/parsing.hpp"
-#include "includes/CodeUtils/strings.hpp"
-#include "includes/MolecularMetadata/aminoAcids.hpp"
-#include "includes/MolecularMetadata/sidechainRotamers.hpp"
+#include "include/metadata/aminoAcids.hpp"
+#include "include/metadata/sidechainRotamers.hpp"
+#include "include/util/arguments.hpp"
+#include "include/util/constants.hpp"
+#include "include/util/containers.hpp"
+#include "include/util/files.hpp"
+#include "include/util/filesystem.hpp"
+#include "include/util/logging.hpp"
+#include "include/util/parsing.hpp"
+#include "include/util/strings.hpp"
 
 #include <cstdlib>
 #include <fstream>
@@ -17,9 +17,9 @@
 #include <stdexcept>
 #include <string>
 
-using MolecularMetadata::SidechainRotamerBin;
-using MolecularMetadata::SidechainRotamerData;
-using MolecularMetadata::SidechainRotation;
+using SidechainRotamerBin;
+using SidechainRotamerData;
+using SidechainRotation;
 
 struct RotamerInput
 {
@@ -50,7 +50,7 @@ std::vector<RotamerInput> readInputFile(const std::string& filename)
     {
         if (!(line.empty() || line[0] == '#'))
         {
-            std::vector<std::string> contents = codeUtils::split(line, ' ');
+            std::vector<std::string> contents = util::split(line, ' ');
             if (contents.size() != 17)
             {
                 throw std::runtime_error("incorrect line length: " + line);
@@ -95,7 +95,7 @@ std::vector<RotamerInput> readInputFile(const std::string& filename)
         return;
     };
 
-    codeUtils::readFileLineByLine(filename, processLine);
+    util::readFileLineByLine(filename, processLine);
     return input;
 }
 
@@ -141,7 +141,7 @@ SidechainRotamerData formatOutput(const std::vector<RotamerInput>& input)
             }
             if (a.residue != residue)
             {
-                size_t residueIndex = codeUtils::indexOf(residues, a.residue);
+                size_t residueIndex = util::indexOf(residues, a.residue);
                 if (residueIndex != residues.size())
                 {
                     throw std::runtime_error("input line residues out of order. Offender: " + a.residue);
@@ -210,31 +210,31 @@ int main(int argc, char* argv[])
         HELP
     };
 
-    using codeUtils::ArgReq;
-    using codeUtils::ArgType;
-    std::vector<codeUtils::ArgDef> argumentDefinitions = {
+    using util::ArgReq;
+    using util::ArgType;
+    std::vector<util::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed,  INPUT_FILE,     "", ' ',  "input-file"},
         {ArgReq::required, ArgType::unnamed, OUTPUT_FILE,     "", ' ', "output-file"},
         {ArgReq::optional,    ArgType::flag,        HELP, "help", 'h',            ""}
     };
-    std::string programName = codeUtils::programName(argv);
-    codeUtils::Arguments arguments;
+    std::string programName = util::programName(argv);
+    util::Arguments arguments;
     try
     {
-        arguments = codeUtils::readArguments(argc, argv, argumentDefinitions);
-        if (codeUtils::contains<int>(arguments.ids, HELP))
+        arguments = util::readArguments(argc, argv, argumentDefinitions);
+        if (util::contains<int>(arguments.ids, HELP))
         {
-            std::cout << codeUtils::helpString(programName, argumentDefinitions);
+            std::cout << util::helpString(programName, argumentDefinitions);
             std::exit(0);
         }
-        codeUtils::validateArguments(arguments, argumentDefinitions);
+        util::validateArguments(arguments, argumentDefinitions);
     }
     catch (const std::runtime_error& error)
     {
         std::cout << "error in program arguments\n";
         std::cout << error.what() << "\n";
         std::cout << "\n";
-        std::cout << codeUtils::helpString(programName, argumentDefinitions);
+        std::cout << util::helpString(programName, argumentDefinitions);
         std::exit(1);
     }
 
@@ -260,17 +260,16 @@ int main(int argc, char* argv[])
     }
 
     const std::vector<RotamerInput> input = readInputFile(inputFile);
-    const std::vector<std::string>& aminoAcids = MolecularMetadata::aminoAcidNames();
+    const std::vector<std::string>& aminoAcids = aminoAcidNames();
 
     std::function<bool(const RotamerInput&)> includeLine = [&aminoAcids](const RotamerInput& line)
     {
-        size_t index = codeUtils::indexOf(aminoAcids, line.residue);
-        return (index < aminoAcids.size()) && (MolecularMetadata::aminoAcidDihedrals(index).size() > 0) &&
-               (line.probability > 0.0);
+        size_t index = util::indexOf(aminoAcids, line.residue);
+        return (index < aminoAcids.size()) && (aminoAcidDihedrals(index).size() > 0) && (line.probability > 0.0);
     };
 
-    const std::vector<RotamerInput> included = codeUtils::filter(includeLine, input);
-    const MolecularMetadata::SidechainRotamerData output = formatOutput(included);
+    const std::vector<RotamerInput> included = util::filter(includeLine, input);
+    const SidechainRotamerData output = formatOutput(included);
     writeOutput(output, outputFile);
 
     return 0;

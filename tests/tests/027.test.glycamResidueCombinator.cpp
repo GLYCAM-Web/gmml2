@@ -1,13 +1,13 @@
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
-#include "includes/CentralDataStructure/FileFormats/offFileWriter.hpp"
-#include "includes/CentralDataStructure/Readers/Prep/prepFile.hpp"
-#include "includes/CentralDataStructure/Writers/offWriter.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/CentralDataStructure/molecule.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/logging.hpp"
+#include "include/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
+#include "include/CentralDataStructure/FileFormats/offFileWriter.hpp"
+#include "include/CentralDataStructure/cdsFunctions.hpp"
+#include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/CentralDataStructure/molecule.hpp"
+#include "include/assembly/assemblyGraph.hpp"
+#include "include/readers/Prep/prepFile.hpp"
+#include "include/util/files.hpp"
+#include "include/util/logging.hpp"
+#include "include/writers/offWriter.hpp"
 
 #include <iostream>
 #include <ostream>
@@ -17,6 +17,7 @@
 // For loading select residues from glycam06.prep files
 int main(int argc, char* argv[])
 {
+    using namespace gmml;
     if (argc < 2)
     {
         std::cout << "Usage: " << argv[0] << " inputPrepFile <inputPrepFile2> <inputPrepFile3>\n";
@@ -43,18 +44,18 @@ int main(int argc, char* argv[])
         {"0Kx"},  {"0LD"}, {"0LG"}, {"0Lg"}, {"0LH"}, {"0Lh"}, {"0LU"}, {"0mP"}, {"0mp"}, {"0MR"}, {"0Mr"},  {"0QF"},
         {"0Qf"},  {"0ZF"}, {"0Zf"}};
 
-    std::vector<cds::Residue*> allGeneratedResidues;
+    std::vector<Residue*> allGeneratedResidues;
 
     for (int n = 1; n < argc; n++)
     {
         char* inputFileName = argv[n];
         std::cout << "Loading " << inputFileName << std::endl;
-        cds::Molecule prepMolecule = cds::Molecule();
+        Molecule prepMolecule = Molecule();
         prep::readPrepFile(&prepMolecule, inputFileName, residuesToLoadFromPrep);
         for (auto& residue : prepMolecule.getResidues())
         {
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
-            residueCombinator::generateResidueCombinations(allGeneratedResidues, residue);
+            generateResidueCombinations(allGeneratedResidues, residue);
         }
     }
 
@@ -83,18 +84,18 @@ int main(int argc, char* argv[])
         {"4uA1"},
         {"4uA2"},
         {"4uA3"}};
-    cds::Molecule prepMolecule = cds::Molecule();
+    Molecule prepMolecule = Molecule();
     prep::readPrepFile(&prepMolecule, glycamPrepInputFile, theSpecialCases);
     for (auto& specialResidue : prepMolecule.getResidues())
     {
         allGeneratedResidues.push_back(specialResidue);
     }
 
-    cds::serializeResiduesIndividually(allGeneratedResidues);
-    cds::GraphIndexData indices = cds::toIndexData(allGeneratedResidues);
-    assembly::Graph graph = cds::createVisibleAssemblyGraph(indices);
-    codeUtils::writeToFile(
+    serializeResiduesIndividually(allGeneratedResidues);
+    GraphIndexData indices = toIndexData(allGeneratedResidues);
+    assembly::Graph graph = createVisibleAssemblyGraph(indices);
+    util::writeToFile(
         "GLYCAM_06k.lib",
         [&](std::ostream& stream)
-        { cds::WriteResiduesIndividuallyToOffFile(stream, graph, cds::toOffFileData(allGeneratedResidues)); });
+        { WriteResiduesIndividuallyToOffFile(stream, graph, toOffFileData(allGeneratedResidues)); });
 }

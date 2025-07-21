@@ -2,8 +2,8 @@
 %module gmml2
 %include <std_string.i>
 %include <std_iostream.i>
-%include<std_map.i>
-%include<std_vector.i>
+%include <std_map.i>
+%include <std_vector.i>
 
 // #https://www.swig.org/Doc1.3/Customization.html#exception
 %include exception.i
@@ -25,38 +25,31 @@ try	{
 %{
 #define SWIG_FILE_WITH_INIT
 
-#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "include/sequence/graphViz.hpp"
+#include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
+#include "include/sequence/sequence.hpp"
+#include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "include/readers/Pdb/pdbFile.hpp"
+#include "include/readers/Pdb/pdbResidueId.hpp"
+#include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 using namespace pdb;
+using namespace gmml;
 %}
 
 %inline %{
 std::ostream & get_cout() { return std::cout; }
 %}
 
-///Naming conflicts///
-//%rename(cds_PdbFile) pdb::PdbFile;
-//%rename(cds_iPdbLineLength) pdb::iPdbLineLength;
-//%rename(B_foo) B::foo;
-
-//%include "includes/CodeUtils/constants.hpp"
-
 // DrawGlycan
-%include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
-%include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
-%include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
+%include "include/sequence/graphViz.hpp"
+%include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
+%include "include/sequence/sequence.hpp"
 // MDPrep
-%include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-%include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-%include "includes/CentralDataStructure/Readers/Pdb/pdbResidueId.hpp"
+%include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
+%include "include/readers/Pdb/pdbFile.hpp"
+%include "include/readers/Pdb/pdbResidueId.hpp"
 // CarbohydrateBuilder
-%include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-
+%include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 
 ///MD Prep///
 %template (AtomInfoVector) std::vector<pdb::AtomInfo>;
@@ -69,16 +62,6 @@ std::ostream & get_cout() { return std::cout; }
 
 ///Carbohydrate Builder///
 %template(string_vector) std::vector<std::string>;
-//%template(dihedral_vector) std::vector<std::vector<std::string> >;
-
-//typedef std::vector<DihedralOptions> DihedralOptionsVector;
-%template(dihedral_options_vector) std::vector<cdsCondensedSequence::DihedralOptions>;
-
-//typedef std::vector<LinkageOptions> LinkageOptionsVector;
-%template(linkage_options_vector) std::vector<cdsCondensedSequence::LinkageOptions>;
-
-//typedef std::vector<SingleRotamerInfo> SingleRotamerInfoVector;
-%template(single_rotamer_info_vector) std::vector<cdsCondensedSequence::SingleRotamerInfo>;
-
-//typedef std::vector<MolecularModeling::Residue*> ResidueVector;
-//%template(residue_vector) std::vector<MolecularModeling::Residue* >;
+%template(dihedral_options_vector) std::vector<gmml::DihedralOptions>;
+%template(linkage_options_vector) std::vector<gmml::LinkageOptions>;
+%template(single_rotamer_info_vector) std::vector<gmml::SingleRotamerInfo>;

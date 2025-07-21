@@ -1,46 +1,47 @@
-#include "includes/CentralDataStructure/Selections/residueSelections.hpp"
+#include "include/CentralDataStructure/Selections/residueSelections.hpp"
 
-#include "includes/CentralDataStructure/Geometry/geometryFunctions.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbData.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/Selections/atomSelections.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/cdsFunctions.hpp"
-#include "includes/CentralDataStructure/residue.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/logging.hpp"
+#include "include/CentralDataStructure/Selections/atomSelections.hpp"
+#include "include/CentralDataStructure/cdsFunctions.hpp"
+#include "include/CentralDataStructure/residue.hpp"
+#include "include/geometry/geometryFunctions.hpp"
+#include "include/readers/Pdb/pdbData.hpp"
+#include "include/readers/Pdb/pdbResidue.hpp"
+#include "include/util/containers.hpp"
+#include "include/util/logging.hpp"
 
-using cds::Residue;
-
-std::vector<Residue*> cdsSelections::selectResiduesByType(
-    std::vector<Residue*> inputResidues, cds::ResidueType queryType, const bool invert)
-{ // Quality of life wrapper: calls the below function with one queryType.
-    return selectResiduesByType(inputResidues, std::vector<cds::ResidueType> {queryType}, invert);
-}
-
-std::vector<Residue*> cdsSelections::selectResiduesByType(
-    std::vector<Residue*> inputResidues, std::vector<cds::ResidueType> queryTypes, const bool invert)
+namespace gmml
 {
-    std::vector<Residue*> selectedResidues;
-    for (auto& residue : inputResidues)
+    std::vector<Residue*> selectResiduesByType(
+        std::vector<Residue*> inputResidues, ResidueType queryType, const bool invert)
+    { // Quality of life wrapper: calls the below function with one queryType.
+        return selectResiduesByType(inputResidues, std::vector<ResidueType> {queryType}, invert);
+    }
+
+    std::vector<Residue*> selectResiduesByType(
+        std::vector<Residue*> inputResidues, std::vector<ResidueType> queryTypes, const bool invert)
     {
-        bool contains = codeUtils::contains(queryTypes, residue->GetType());
-        if ((contains && !invert) || (!contains && invert))
+        std::vector<Residue*> selectedResidues;
+        for (auto& residue : inputResidues)
         {
-            selectedResidues.push_back(residue);
+            bool contains = util::contains(queryTypes, residue->GetType());
+            if ((contains && !invert) || (!contains && invert))
+            {
+                selectedResidues.push_back(residue);
+            }
         }
+        return selectedResidues;
     }
-    return selectedResidues;
-}
 
-void cdsSelections::FindConnectedResidues(std::vector<Residue*>& visitedList, Residue* current)
-{
-    visitedList.push_back(current);
-    for (auto& neighbor : current->getNeighbors())
+    void FindConnectedResidues(std::vector<Residue*>& visitedList, Residue* current)
     {
-        if (!codeUtils::contains(visitedList, neighbor))
-        {                                                                // Keep looking if neighbor wasn't yet visited.
-            cdsSelections::FindConnectedResidues(visitedList, neighbor); // recursive function call
+        visitedList.push_back(current);
+        for (auto& neighbor : current->getNeighbors())
+        {
+            if (!util::contains(visitedList, neighbor))
+            {                                                 // Keep looking if neighbor wasn't yet visited.
+                FindConnectedResidues(visitedList, neighbor); // recursive function call
+            }
         }
+        return;
     }
-    return;
-}
+} // namespace gmml

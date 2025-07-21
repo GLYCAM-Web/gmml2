@@ -24,7 +24,7 @@ Once compiled, a call to the program can look as follows
 Or using a test input file
 ```
 cd gmml2/tests
-../bin/gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt outputDir
+../bin/gpBuilder inputs/017.GlycoproteinBuilderInput.txt outputDir
 ```
 
 You can run `./bin/gpBuilder --help` for a list of options
@@ -57,7 +57,7 @@ Or save it as a csv
 ./bin/gpBuilderTable protein.pdb --format csv > glycosites.csv
 ```
 
-Then, edit or create an input.txt file. See [example.txt](../../tests/tests/inputs/017.GlycoproteinBuilder/example.txt) for an example.
+Then, edit or create an input.txt file. See [example.txt](../../tests/inputs/017.GlycoproteinBuilder/example.txt) for an example.
 
 Required input:
 ```

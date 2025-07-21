@@ -3,6 +3,6 @@ node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fix
 edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
 rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OME"]
-1 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DKDN.svg"];
-1--0 [label="b2-" headclip=true tailclip=false];
+1 [shape=circle height="0.7" label="DKDN"];
+1--0 [label="b2-" headclip=true tailclip=true];
 }

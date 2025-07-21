@@ -8,7 +8,7 @@ Top-level directories:
     CurrentParams       Default (?) parameters for modeling
     frcmod              A collection of AMBER frcmod files
     lib                 GLYCAM06's amino lib files
-    MolecularMetadata   Files used to produc the MolecularMetadata in gmml/includes
+    MolecularMetadata   Files used to produc the MolecularMetadata in gmml/include
     parameter           Just a copy of parm99.dat
     prep                Two GLYCAM06 prep files
 

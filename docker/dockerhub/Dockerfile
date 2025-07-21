@@ -25,7 +25,7 @@ WORKDIR /app/gmml2/
 #COPY ./make.sh ./compilePrograms.sh ./CMakeLists.txt ./version.txt ./versionHeader.cmake /app/gmml2 
 #COPY ./cmakeFileLists /app/gmml2/cmakeFileLists
 #COPY ./src /app/gmml2/src 
-#COPY ./includes /app/gmml2/includes 
+#COPY ./include /app/gmml2/include 
 #COPY ./internalPrograms /app/gmml2/internalPrograms
 #COPY ./bin/ /app/gmml2/bin
 #COPY ./tests/ /app/gmml2/tests

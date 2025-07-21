@@ -1,0 +1,22 @@
+#ifndef INCLUDES_CODEUTILS_FILES_HPP
+#define INCLUDES_CODEUTILS_FILES_HPP
+
+#include <cstddef>
+#include <functional>
+#include <istream>
+#include <ostream>
+#include <string>
+#include <vector>
+
+namespace gmml
+{
+    namespace util
+    {
+        std::istream& safeGetline(std::istream& in, std::string& out);
+        void readFileLineByLine(
+            const std::string& filename, std::function<void(const std::string&, size_t)> processLine);
+        std::vector<char> readEntireFile(const std::string& filename);
+        void writeToFile(const std::string& filename, std::function<void(std::ostream&)> write);
+    } // namespace util
+} // namespace gmml
+#endif

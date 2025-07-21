@@ -1,15 +1,15 @@
-#include "includes/CentralDataStructure/CondensedSequence/graphViz.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/DrawGlycan/drawGlycan.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CodeUtils/arguments.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/files.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/strings.hpp"
-#include "includes/version.h"
+#include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
+#include "include/readers/parameterManager.hpp"
+#include "include/sequence/graphViz.hpp"
+#include "include/sequence/sequenceParser.hpp"
+#include "include/util/arguments.hpp"
+#include "include/util/containers.hpp"
+#include "include/util/files.hpp"
+#include "include/util/filesystem.hpp"
+#include "include/util/logging.hpp"
+#include "include/util/strings.hpp"
+#include "include/version.h"
 
 #include <filesystem>
 #include <fstream>
@@ -29,10 +29,12 @@ int main(int argc, char** argv)
         OVERWRITE_EXISTING
     };
 
-    using codeUtils::ArgReq;
-    using codeUtils::ArgType;
+    using namespace gmml;
+    using namespace sequence;
+    using util::ArgReq;
+    using util::ArgType;
     const std::string overwriteFlag = "overwrite-existing-files";
-    std::vector<codeUtils::ArgDef> argumentDefinitions = {
+    std::vector<util::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed,         INPUT_FILE,            "", ' ',       "input-file"},
         {ArgReq::required, ArgType::unnamed,          DELIMITER,            "", ' ',   "list-delimiter"},
         {ArgReq::required, ArgType::unnamed,         OUTPUT_DIR,            "", ' ', "output-directory"},
@@ -42,34 +44,34 @@ int main(int argc, char** argv)
         {ArgReq::optional,    ArgType::flag, OVERWRITE_EXISTING, overwriteFlag, ' ',                 ""}
     };
 
-    std::string programName = codeUtils::programName(argv);
-    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
-    std::string SNFGDir = codeUtils::SNFGSymbolsDir();
+    std::string programName = util::programName(argv);
+    std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
+    std::string SNFGDir = util::SNFGSymbolsDir();
 
-    codeUtils::Arguments arguments;
+    util::Arguments arguments;
     try
     {
-        arguments = codeUtils::readArguments(argc, argv, argumentDefinitions);
-        if (codeUtils::contains<int>(arguments.ids, HELP))
+        arguments = util::readArguments(argc, argv, argumentDefinitions);
+        if (util::contains<int>(arguments.ids, HELP))
         {
-            std::cout << codeUtils::helpString(programName, argumentDefinitions);
+            std::cout << util::helpString(programName, argumentDefinitions);
             std::cout << "\n"
                       << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
             std::exit(0);
         }
-        if (codeUtils::contains<int>(arguments.ids, VERSION))
+        if (util::contains<int>(arguments.ids, VERSION))
         {
             std::cout << "Carbohydrate Builder & GMML2 version " << GMML_VERSION << "\n";
             std::exit(0);
         }
-        codeUtils::validateArguments(arguments, argumentDefinitions);
+        util::validateArguments(arguments, argumentDefinitions);
     }
     catch (const std::runtime_error& error)
     {
         std::cout << "error in program arguments\n";
         std::cout << error.what() << "\n";
         std::cout << "\n";
-        std::cout << codeUtils::helpString(programName, argumentDefinitions);
+        std::cout << util::helpString(programName, argumentDefinitions);
         std::exit(1);
     }
 
@@ -96,7 +98,7 @@ int main(int argc, char** argv)
                         if (arg.value.size() != 1)
                         {
                             std::cout << "list delimiter must be a single character\n";
-                            std::cout << codeUtils::helpString(programName, argumentDefinitions);
+                            std::cout << util::helpString(programName, argumentDefinitions);
                             std::exit(1);
                         }
                         delimiter = arg.value[0];
@@ -105,7 +107,7 @@ int main(int argc, char** argv)
                 case ARGUMENTS::OUTPUT_DIR:
                     {
                         outputDir = arg.value;
-                        codeUtils::createDirectories(outputDir);
+                        util::createDirectories(outputDir);
                         break;
                     }
                 case ARGUMENTS::TEST_MODE:
@@ -126,7 +128,7 @@ int main(int argc, char** argv)
         }
         if (!(testMode || overwrite || outputDir == "."))
         {
-            if (!codeUtils::directoryIsEmptyOrNonexistent(outputDir))
+            if (!util::directoryIsEmptyOrNonexistent(outputDir))
             {
                 throw std::runtime_error(
                     "Output directory '" + outputDir +
@@ -152,7 +154,7 @@ int main(int argc, char** argv)
         {
             if (!line.empty())
             {
-                std::vector<std::string> splitLine = codeUtils::split(line, delimiter);
+                std::vector<std::string> splitLine = util::split(line, delimiter);
                 if (splitLine.size() == 2)
                 {
                     lines.push_back({splitLine[0], splitLine[1]});
@@ -166,33 +168,33 @@ int main(int argc, char** argv)
                 }
             }
         };
-        codeUtils::readFileLineByLine(inputFile, processLine);
-        const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-        const codeUtils::SparseVector<double> elementRadii = MolecularMetadata::vanDerWaalsRadii();
+        util::readFileLineByLine(inputFile, processLine);
+        const ParameterManager parameterManager = loadParameters(baseDir);
+        const util::SparseVector<double> elementRadii = vanDerWaalsRadii();
         for (auto& line : lines)
         {
             try
             {
                 std::cout << "\n*********************\nBuilding " << line.id << ": " << line.sequence
                           << "\n*********************\n";
-                cdsCondensedSequence::SequenceData sequenceData = cdsCondensedSequence::parseAndReorder(line.sequence);
-                cdsCondensedSequence::Carbohydrate carbohydrate(parameterManager, elementRadii, sequenceData);
+                SequenceData sequenceData = parseAndReorder(line.sequence);
+                Carbohydrate carbohydrate(parameterManager, elementRadii, sequenceData);
                 carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
-                cdsCondensedSequence::GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
-                CondensedSequence::drawGlycan(config, line.sequence);
+                GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
+                drawGlycan(config, line.sequence);
             }
             catch (const std::runtime_error& error)
             {
-                gmml::log(__LINE__, __FILE__, gmml::ERR, error.what());
+                util::log(__LINE__, __FILE__, util::ERR, error.what());
                 std::cerr << "Error thrown by the carbohydrateBuilder in gmml during construction was: " << error.what()
                           << std::endl;
             }
             catch (...)
             {
-                gmml::log(
+                util::log(
                     __LINE__,
                     __FILE__,
-                    gmml::ERR,
+                    util::ERR,
                     "carbohydrateBuilder class caught a throw that was not anticipated. Curious. Death cometh?");
                 std::cerr
                     << "ERROR carbohydrateBuilder caught a throw type that was not anticipated. Pretty please report "
@@ -204,7 +206,7 @@ int main(int argc, char** argv)
     {
         std::string errorMessage(error.what());
         std::string message = "carbohydrateBuilder: " + errorMessage;
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+        util::log(__LINE__, __FILE__, util::ERR, message);
         std::cout << message << "\n";
         std::exit(1);
     }
@@ -212,7 +214,7 @@ int main(int argc, char** argv)
     {
         std::string message =
             "carbohydrateBuilder: unexpected error. Please report how you got this to glycam@gmail.com";
-        gmml::log(__LINE__, __FILE__, gmml::ERR, message);
+        util::log(__LINE__, __FILE__, util::ERR, message);
         std::cout << message << "\n";
         std::exit(1);
     }

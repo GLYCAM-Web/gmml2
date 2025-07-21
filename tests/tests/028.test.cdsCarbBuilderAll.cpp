@@ -1,7 +1,7 @@
-#include "includes/CentralDataStructure/InternalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/Sequence/sequence.hpp"
-#include "includes/CodeUtils/logging.hpp"
-#include "includes/CodeUtils/strings.hpp"
+#include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "include/sequence/sequence.hpp"
+#include "include/util/logging.hpp"
+#include "include/util/strings.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -12,6 +12,7 @@
 
 int main(int argc, char** argv)
 {
+    using namespace gmml;
     if (argc != 4)
     {
         std::cerr << "Usage:  " << argv[0]
@@ -38,7 +39,7 @@ int main(int argc, char** argv)
         {
             continue;
         }
-        std::vector<std::string> splitLine = codeUtils::split(line, delimiter);
+        std::vector<std::string> splitLine = util::split(line, delimiter);
         if (splitLine.size() != 2)
         {
             std::cerr << "Encountered problem when splitting this line >>>" << line << "<<< from file >>>" << argv[1]
@@ -52,13 +53,13 @@ int main(int argc, char** argv)
                   << "\n*********************\n";
         try
         { // I want to first build and reorder the sequence like gems does, and pass that to the carbohydrateBuilder
-            CondensedSequence::Sequence sequence(inputSequence);
+            sequence::Sequence sequence(inputSequence);
             std::cout << "Input:\n" << sequence.getInputSequence() << "\n";
             std::cout << "Interpreted:\n" << sequence.getInterpretedSequence() << "\n";
             std::cout << "IndexOrdered:\n" << sequence.getIndexOrdered() << "\n";
             std::cout << "IndexOrderedLabeled:\n" << sequence.getIndexLabeled() << "\n";
             std::cout << "Parsed and labelled " << inputGlycanID << " with no exceptions thrown.\n\n";
-            cdsCondensedSequence::carbohydrateBuilder carbBuilder(sequence.getIndexOrdered());
+            carbohydrateBuilder carbBuilder(sequence.getIndexOrdered());
             bool likelyShapesOnly = true; // Not sure I like this. Two functions probably more readable.
             std::cout << "Number of residues for this sequence is " << carbBuilder.GetCarbohydrate().GetResidueCount()
                       << "\n";
@@ -66,7 +67,7 @@ int main(int argc, char** argv)
             std::cout << "Number of possible shapes is " << carbBuilder.GetNumberOfShapes() << "\n";
             for (auto& residue : carbBuilder.GetCarbohydrate().getResidues())
             {
-                std::cout << cds::residueStringId(residue) << "\n";
+                std::cout << residueStringId(residue) << "\n";
             }
             for (auto& linkageInfo : carbBuilder.GenerateUserOptionsDataStruct())
             {
@@ -89,16 +90,16 @@ int main(int argc, char** argv)
         }
         catch (const std::runtime_error& error)
         {
-            gmml::log(__LINE__, __FILE__, gmml::ERR, error.what());
+            util::log(__LINE__, __FILE__, util::ERR, error.what());
             std::cerr << "Error thrown by the carbohydrateBuilder in gmml during construction was: " << error.what()
                       << std::endl;
         }
         catch (...)
         {
-            gmml::log(
+            util::log(
                 __LINE__,
                 __FILE__,
-                gmml::ERR,
+                util::ERR,
                 "carbohydrateBuilder class caught a throw that was not anticipated. Curious. Death cometh?");
             std::cerr << "ERROR carbohydrateBuilder caught a throw type that was not anticipated. Pretty please report "
                          "how you got to this to glycam@gmail.com.";

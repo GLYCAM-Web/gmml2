@@ -20,7 +20,7 @@ Some commands defined in the Makefile are:
     So you can just type "make" to compile the program.
     
 #### Comand line (skip the Makefile):
-g++ -std=c++17 -I $GEMSHOME/gmml/includes/ -I includes/ -L$GEMSHOME/gmml/bin/ -Wl,-rpath,$GEMSHOME/gmml/bin/ src/*.cpp -lgmml -o bin/carbBuilder
+g++ -std=c++17 -I $GEMSHOME/gmml/include/ -I include/ -L$GEMSHOME/gmml/bin/ -Wl,-rpath,$GEMSHOME/gmml/bin/ src/*.cpp -lgmml -o bin/carbBuilder
 
 ### Testing
 Once compiled, you can run:

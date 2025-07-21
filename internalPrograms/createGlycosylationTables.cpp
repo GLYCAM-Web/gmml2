@@ -1,12 +1,12 @@
-#include "includes/CentralDataStructure/InternalPrograms/glycosylationSiteFinder.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/bondByDistance.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbSelections.hpp"
-#include "includes/CodeUtils/arguments.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/strings.hpp"
-#include "includes/CodeUtils/structuredFiles.hpp"
-#include "includes/version.h"
+#include "include/internalPrograms/glycosylationSiteFinder.hpp"
+#include "include/readers/Pdb/bondByDistance.hpp"
+#include "include/readers/Pdb/pdbFile.hpp"
+#include "include/readers/Pdb/pdbSelections.hpp"
+#include "include/util/arguments.hpp"
+#include "include/util/containers.hpp"
+#include "include/util/strings.hpp"
+#include "include/util/structuredFiles.hpp"
+#include "include/version.h"
 
 #include <functional>
 #include <iostream>
@@ -31,42 +31,43 @@ int main(int argc, char* argv[])
         HTML
     };
 
-    using codeUtils::ArgReq;
-    using codeUtils::ArgType;
+    using namespace gmml;
+    using util::ArgReq;
+    using util::ArgType;
     // keeping the same order between the enum and strings lets us assign format by index in the vector
     std::vector<std::string> knownFormats {"list", "csv", "txt", "html"};
-    std::vector<codeUtils::ArgDef> argumentDefinitions = {
+    std::vector<util::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed, FILENAME, "", ' ', "filename"},
         {ArgReq::optional, ArgType::flag, HELP, "help", 'h', ""},
         {ArgReq::optional, ArgType::flag, VERSION, "version", 'v', ""},
-        {ArgReq::optional, ArgType::option, FORMAT, "format", 'f', codeUtils::join("|", knownFormats)},
+        {ArgReq::optional, ArgType::option, FORMAT, "format", 'f', util::join("|", knownFormats)},
     };
-    std::string programName = codeUtils::programName(argv);
+    std::string programName = util::programName(argv);
 
-    codeUtils::Arguments arguments;
+    util::Arguments arguments;
     try
     {
-        arguments = codeUtils::readArguments(argc, argv, argumentDefinitions);
-        if (codeUtils::contains<int>(arguments.ids, HELP))
+        arguments = util::readArguments(argc, argv, argumentDefinitions);
+        if (util::contains<int>(arguments.ids, HELP))
         {
-            std::cout << codeUtils::helpString(programName, argumentDefinitions);
+            std::cout << util::helpString(programName, argumentDefinitions);
             std::cout << "\n"
                       << "For more information, see https://github.com/GLYCAM-Web/gmml2\n";
             std::exit(0);
         }
-        if (codeUtils::contains<int>(arguments.ids, VERSION))
+        if (util::contains<int>(arguments.ids, VERSION))
         {
             std::cout << "Glycoprotein Builder Table & GMML2 version " << GMML_VERSION << "\n";
             std::exit(0);
         }
-        codeUtils::validateArguments(arguments, argumentDefinitions);
+        util::validateArguments(arguments, argumentDefinitions);
     }
     catch (const std::runtime_error& error)
     {
         std::cout << "error in program arguments\n";
         std::cout << error.what() << "\n";
         std::cout << "\n";
-        std::cout << codeUtils::helpString(programName, argumentDefinitions);
+        std::cout << util::helpString(programName, argumentDefinitions);
         std::exit(1);
     }
 
@@ -83,12 +84,11 @@ int main(int argc, char* argv[])
                 }
             case ARGUMENTS::FORMAT:
                 {
-                    size_t index = codeUtils::indexOf(knownFormats, arg.value);
+                    size_t index = util::indexOf(knownFormats, arg.value);
                     if (index >= knownFormats.size())
                     {
                         throw std::runtime_error(
-                            "Unknown format: '" + arg.value + "', expected one of " +
-                            codeUtils::join(", ", knownFormats));
+                            "Unknown format: '" + arg.value + "', expected one of " + util::join(", ", knownFormats));
                     }
                     format = OUTPUT_FORMAT(index);
                     break;
@@ -97,20 +97,20 @@ int main(int argc, char* argv[])
                 break;
         }
     }
-    using glycoproteinBuilder::GlycosylationSiteInfo;
     pdb::PdbFile inputFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
     pdb::bondAtomsAndResiduesByDistance(inputFile.data);
-    std::vector<GlycosylationSiteInfo> table = glycoproteinBuilder::createGlycosylationSiteTable(
-        inputFile.data, codeUtils::indexVector(inputFile.data.indices.residueCount));
+    std::vector<gpbuilder::GlycosylationSiteInfo> table =
+        gpbuilder::createGlycosylationSiteTable(inputFile.data, util::indexVector(inputFile.data.indices.residueCount));
     std::vector<std::string> header {"Chain", "ResidueNumber", "InsertionCode", "SequenceContext", "Tags"};
 
-    std::function<std::vector<std::string>(const GlycosylationSiteInfo&)> toRow = [](const GlycosylationSiteInfo& info)
+    std::function<std::vector<std::string>(const gpbuilder::GlycosylationSiteInfo&)> toRow =
+        [](const gpbuilder::GlycosylationSiteInfo& info)
     {
         return std::vector<std::string> {
-            info.chain, info.residueNumber, info.insertionCode, info.sequenceContext, codeUtils::join(" ", info.tags)};
+            info.chain, info.residueNumber, info.insertionCode, info.sequenceContext, util::join(" ", info.tags)};
     };
-    std::vector<std::vector<std::string>> rows = codeUtils::vectorMap(toRow, table);
-    codeUtils::TextTable textTable {header, rows};
+    std::vector<std::vector<std::string>> rows = util::vectorMap(toRow, table);
+    util::TextTable textTable {header, rows};
     switch (format)
     {
         case LIST:
@@ -119,17 +119,17 @@ int main(int argc, char* argv[])
                 std::cout << "Chain: " << a.chain << "\nResidueNumber: " << a.residueNumber
                           << "\nInsertionCode: " + a.insertionCode << "\nSequenceContext: " << a.sequenceContext
                           << "\nTags:\n"
-                          << codeUtils::join("\n", a.tags) << "\n\n";
+                          << util::join("\n", a.tags) << "\n\n";
             }
             break;
         case CSV:
-            codeUtils::toCsv(std::cout, ",", textTable);
+            util::toCsv(std::cout, ",", textTable);
             break;
         case TXT:
-            codeUtils::toTxt(std::cout, {textTable});
+            util::toTxt(std::cout, {textTable});
             break;
         case HTML:
-            codeUtils::toHtml(std::cout, {textTable});
+            util::toHtml(std::cout, {textTable});
             break;
     }
     return 0;

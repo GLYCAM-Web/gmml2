@@ -48,14 +48,14 @@ echo""
 #Get all OUR header files, none of the external libraries. This is important because when cmake uses these file lists
 #it will have all these files use the normal -I flag for gcc in the compile commands
 echo "Hitting the list that contains all our paths to our directories that have our headers"
-if ! diff cmakeFileLists/hDirectoryList.txt <( find "./includes" -type d ! -path "*External_Libraries*" |  LC_ALL=C.UTF-8 sort ) ; then
+if ! diff cmakeFileLists/hDirectoryList.txt <( find "./include" -type d ! -path "*External_Libraries*" |  LC_ALL=C.UTF-8 sort ) ; then
     if [ -f "./cmakeFileLists/hDirectoryList.txt" ]; then
         echo "Previous data found, Removing old header file directory path list..."
         rm ./cmakeFileLists/hDirectoryList.txt
     fi
     echo "Grabbing all dir paths to our h/hpp files and throwing into ./cmakeFileLists/hDirectoryList.txt"
     #Grabs all our header code dirs
-    find "./includes" -type d ! -path "*External_Libraries*" |  LC_ALL=C.UTF-8 sort   &> ./cmakeFileLists/hDirectoryList.txt
+    find "./include" -type d ! -path "*External_Libraries*" |  LC_ALL=C.UTF-8 sort   &> ./cmakeFileLists/hDirectoryList.txt
     FILES_UPDATED=1
     echo "Finished fixing up the list that has all our include dirs"
 else
@@ -67,7 +67,7 @@ echo ""
 #list to have all the files use the -isystem flag on the files which prevents linting on em and should help clean up
 #our build outputs.
 echo "Hitting the list that contains all our paths to the directories that have all our 3rd party libraries"
-if ! diff cmakeFileLists/externalHDirectoryList.txt <(find "./includes" -type d -path "*External_Libraries*" |  LC_ALL=C.UTF-8 sort) ; then
+if ! diff cmakeFileLists/externalHDirectoryList.txt <(find "./include" -type d -path "*External_Libraries*" |  LC_ALL=C.UTF-8 sort) ; then
     if [ -f "./cmakeFileLists/externalHDirectoryList.txt" ]; then
         echo "Previous data found, Removing old header file directory path list..."
         rm ./cmakeFileLists/externalHDirectoryList.txt

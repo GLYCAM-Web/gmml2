@@ -1,15 +1,15 @@
-#include "includes/Assembly/assemblyGraph.hpp"
-#include "includes/Assembly/assemblyIndices.hpp"
-#include "includes/Assembly/assemblyTypes.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbAtom.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbFile.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "includes/CentralDataStructure/Readers/Pdb/pdbResidue.hpp"
-#include "includes/CentralDataStructure/cdsFunctions/graphInterface.hpp"
-#include "includes/CodeUtils/casting.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
+#include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
+#include "include/assembly/assemblyTypes.hpp"
+#include "include/readers/Pdb/pdbAtom.hpp"
+#include "include/readers/Pdb/pdbFile.hpp"
+#include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "include/readers/Pdb/pdbResidue.hpp"
+#include "include/readers/parameterManager.hpp"
+#include "include/util/casting.hpp"
+#include "include/util/containers.hpp"
+#include "include/util/filesystem.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -23,10 +23,11 @@
 
 int main(int argc, char* argv[])
 {
+    using namespace gmml;
     if (argc != 3)
     {
         std::cout << "Usage: " << argv[0] << " inputFile.pdb outfileName\n";
-        std::cout << "Example: " << argv[0] << " tests/inputs/4mbz.pdb 030.outputPdbFile.pdb\n";
+        std::cout << "Example: " << argv[0] << " inputs/4mbz.pdb 030.outputPdbFile.pdb\n";
         std::exit(EXIT_FAILURE);
     }
     pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
@@ -44,22 +45,22 @@ int main(int argc, char* argv[])
             }
         }
     };
-    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
+    std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options; // Default values are good.
     std::cout << "Preprocessing\n";
-    cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-    parameterManager.lib.residueNames = codeUtils::reverse(parameterManager.lib.residueNames);
-    parameterManager.lib.residues = codeUtils::reverse(parameterManager.lib.residues);
+    ParameterManager parameterManager = loadParameters(baseDir);
+    parameterManager.lib.residueNames = util::reverse(parameterManager.lib.residueNames);
+    parameterManager.lib.residues = util::reverse(parameterManager.lib.residues);
     pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
-    std::vector<cds::Assembly*> assemblies = pdbFile.getAssemblies();
+    std::vector<Assembly*> assemblies = pdbFile.getAssemblies();
     assembly::Indices& graphIndices = pdbFile.data.indices;
-    std::vector<size_t> moleculeIds = codeUtils::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
+    std::vector<size_t> moleculeIds = util::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
     size_t residueCount = pdbFile.data.indices.residueCount;
     std::vector<bool> residueAlive(residueCount, true);
     for (size_t residueId = 0; residueId < residueCount; residueId++)
     {
-        cds::Residue* residue = pdbFile.data.objects.residues[residueId];
-        if (residue->GetType() != cds::ResidueType::Protein)
+        Residue* residue = pdbFile.data.objects.residues[residueId];
+        if (residue->GetType() != ResidueType::Protein)
         {
             std::vector<size_t> atomIds = residueAtoms(graphIndices, residueId);
             for (size_t atomId : atomIds)
@@ -76,15 +77,15 @@ int main(int argc, char* argv[])
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
     std::vector<size_t> firstAssemblyMoleculeIds =
-        codeUtils::indicesOfElement(pdbFile.data.indices.moleculeAssembly, size_t(0));
+        util::indicesOfElement(pdbFile.data.indices.moleculeAssembly, size_t(0));
     std::function<std::vector<size_t>(const std::vector<size_t>&)> onlyAliveResidues =
         [&](const std::vector<size_t>& residueIds)
     {
         std::function<bool(const size_t&)> isAlive = [&](size_t id) { return residueAlive[id]; };
-        return codeUtils::vectorFilter(isAlive, residueIds);
+        return util::vectorFilter(isAlive, residueIds);
     };
-    std::vector<std::vector<size_t>> residueOrder = codeUtils::vectorMap(
-        onlyAliveResidues, codeUtils::indicesToValues(pdbFile.data.molecules.residueOrder, firstAssemblyMoleculeIds));
+    std::vector<std::vector<size_t>> residueOrder = util::vectorMap(
+        onlyAliveResidues, util::indicesToValues(pdbFile.data.molecules.residueOrder, firstAssemblyMoleculeIds));
     pdb::Write(pdbFile.data, residueOrder, outFileStream);
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();

@@ -1,12 +1,13 @@
-#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/inputs.hpp"
-#include "includes/CentralDataStructure/InternalPrograms/WiggleToSite/wiggleToSite.hpp"
-#include "includes/CentralDataStructure/Parameters/parameterManager.hpp"
-#include "includes/CodeUtils/filesystem.hpp"
+#include "include/internalPrograms/WiggleToSite/inputs.hpp"
+#include "include/internalPrograms/WiggleToSite/wiggleToSite.hpp"
+#include "include/readers/parameterManager.hpp"
+#include "include/util/filesystem.hpp"
 
 #include <iostream>
 
 int main(int argc, char* argv[])
 {
+    using namespace gmml;
     if (argc != 2)
     {
         std::cout << "Usage: " << argv[0] << " inputFile\n";
@@ -15,12 +16,12 @@ int main(int argc, char* argv[])
     }
     std::string inputFile = argv[1];
     std::cout << "Input file is " << inputFile << "\n";
-    gmmlPrograms::WiggleToSiteInputs inputStruct(inputFile);
+    WiggleToSiteInputs inputStruct(inputFile);
     std::cout << "Reading input file complete\n" << std::flush;
     std::cout << inputStruct.Print();
-    std::string baseDir = codeUtils::toString(codeUtils::pathAboveCurrentExecutableDir());
-    const cdsParameters::ParameterManager parameterManager = cdsParameters::loadParameters(baseDir);
-    gmmlPrograms::WiggleToSite wiggler(parameterManager, inputStruct);
+    std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
+    const ParameterManager parameterManager = loadParameters(baseDir);
+    WiggleToSite wiggler(parameterManager, inputStruct);
     std::cout << "Program got to end ok" << std::endl;
     return 0;
 }

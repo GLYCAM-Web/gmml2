@@ -1,7 +1,7 @@
-#include "includes/CentralDataStructure/CondensedSequence/sequenceParser.hpp"
-#include "includes/CentralDataStructure/CondensedSequence/sequencePrinter.hpp"
-#include "includes/CodeUtils/containers.hpp"
-#include "includes/CodeUtils/strings.hpp"
+#include "include/sequence/sequenceParser.hpp"
+#include "include/sequence/sequencePrinter.hpp"
+#include "include/util/containers.hpp"
+#include "include/util/strings.hpp"
 
 #include <iostream>
 #include <memory>
@@ -10,6 +10,8 @@
 
 int main()
 {
+    using namespace gmml::sequence;
+
     std::string s1 = "DTalp[2S,3Me]a1-6DManpa1-6[DAllpb1-3][DNeup5Aca2-6DGalpb1-4DGlcp[3S]b1-2DAltpa1-4]DManpb1-4DGulp["
                      "6Me]b1-4DGlcpNAcb1-OH";
     std::string s2 = "DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]b1-2DManpa1-3]DManpb1-"
@@ -42,16 +44,10 @@ int main()
         std::cout << "s" << count << ":\n" << sequence << "\n";
         try
         {
-            cdsCondensedSequence::SequenceData sequenceData = cdsCondensedSequence::parseAndReorder(sequence);
-            std::cout << "Index Ordered:\n"
-                      << cdsCondensedSequence::printSequence(cdsCondensedSequence::defaultConfig(), sequenceData)
-                      << "\n";
-            std::cout << "Iupac:\n"
-                      << cdsCondensedSequence::printSequence(cdsCondensedSequence::iupacConfig(), sequenceData) << "\n";
-            std::cout << "Labeled:\n"
-                      << cdsCondensedSequence::printSequence(
-                             cdsCondensedSequence::defaultConfigLabelled(), sequenceData)
-                      << "\n\n";
+            SequenceData sequenceData = parseAndReorder(sequence);
+            std::cout << "Index Ordered:\n" << printSequence(defaultConfig(), sequenceData) << "\n";
+            std::cout << "Iupac:\n" << printSequence(iupacConfig(), sequenceData) << "\n";
+            std::cout << "Labeled:\n" << printSequence(defaultConfigLabelled(), sequenceData) << "\n\n";
         }
         catch (std::runtime_error& error)
         {

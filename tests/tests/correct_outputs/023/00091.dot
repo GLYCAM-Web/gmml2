@@ -5,14 +5,14 @@ rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OH"]
 1 [shape=circle height="0.7" label="DAAT"];
 2 [shape=circle height="0.7" label="DGlcNAc3NAcA"];
-3 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGlcA.svg"];
+3 [shape=circle height="0.7" label="DGlcA"];
 4 [shape=circle height="0.7" label="DAAT"];
 5 [shape=circle height="0.7" label="DGlcNAc3NAcA"];
-6 [label="" height="0.7" image="includes/MolecularMetadata/Sugars/SNFG_Symbol_Images/DGlcA.svg"];
+6 [shape=circle height="0.7" label="DGlcA"];
 1--0 [label="a1-" headclip=true tailclip=true];
 2--1 [label="b1-3" headclip=true tailclip=true];
-3--2 [label="b1-4" headclip=true tailclip=false];
-4--3 [label="a1-4" headclip=false tailclip=true];
+3--2 [label="b1-4" headclip=true tailclip=true];
+4--3 [label="a1-4" headclip=true tailclip=true];
 5--4 [label="b1-3" headclip=true tailclip=true];
-6--5 [label="b1-4" headclip=true tailclip=false];
+6--5 [label="b1-4" headclip=true tailclip=true];
 }
