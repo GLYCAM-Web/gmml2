@@ -1,11 +1,11 @@
-./018.test.GlycoproteinBuilderTable.sh
-./019.test.newPDBClass.sh
-./020.test.parameterFiles.sh
-./022.test.libraryFileReader.sh
-./023.test.carbohydrateBuilder.sh tests/inputs/023.smallLibrary.txt 023
-./024.test.wiggleToSite.sh
-./026.test.editPdbFile.sh
-./027.test.glycamResidueCombinator.sh
-./028.test.cdsCarbBuilderAll.sh tests/inputs/023.smallLibrary.txt 028
-./030.test.gmPreProcessor.sh
-./031.test.iupac.sh
+scripts/018.test.GlycoproteinBuilderTable.sh
+scripts/019.test.newPDBClass.sh
+scripts/020.test.parameterFiles.sh
+scripts/022.test.libraryFileReader.sh
+scripts/023.test.carbohydrateBuilder.sh inputs/023.smallLibrary.txt 023
+scripts/024.test.wiggleToSite.sh
+scripts/026.test.editPdbFile.sh
+scripts/027.test.glycamResidueCombinator.sh
+scripts/028.test.cdsCarbBuilderAll.sh inputs/023.smallLibrary.txt 028
+scripts/030.test.gmPreProcessor.sh
+scripts/031.test.iupac.sh

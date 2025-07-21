@@ -1,7 +1,7 @@
-./016.test.DrawGlycan.sh 01.dot DTalp[2S,3Me]a1-6DManpa1-6[DAllpb1-3][DNeup5Aca2-6DGalpb1-4DGlcp[3S]b1-2DAltpa1-4]DManpb1-4DGulp[6Me]b1-4DGlcpNAcb1-OH
-./016.test.DrawGlycan.sh 02.dot DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH
-./016.test.DrawGlycan.sh 03.dot DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
-./016.test.DrawGlycan.sh 04.dot dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4DGlcpNSa1-4DGlcpA[2S]b1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
-./016.test.DrawGlycan.sh 05.dot dUA[2S]a1-4DGlcpNSa1-4LIdopA[2S]a1-4DGlcpNSa1-4LIdopA(4C1)a1-4DGlcpNS[6S]a1-OH
-./016.test.DrawGlycan.sh 06.dot DGlcpa1-2DFrufb
-./016.test.DrawGlycan.sh 07.dot DFrufb2-1DGlcpa
+scripts/016.test.DrawGlycan.sh 01.dot DTalp[2S,3Me]a1-6DManpa1-6[DAllpb1-3][DNeup5Aca2-6DGalpb1-4DGlcp[3S]b1-2DAltpa1-4]DManpb1-4DGulp[6Me]b1-4DGlcpNAcb1-OH
+scripts/016.test.DrawGlycan.sh 02.dot DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH
+scripts/016.test.DrawGlycan.sh 03.dot DGlcpNAcb1-4DGlcpAb1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
+scripts/016.test.DrawGlycan.sh 04.dot dUA[2S]1-4DGlcpNAc[3S,6S]a1-4LIdopA(2SO)[2S]a1-4DGlcpNSa1-4DGlcpA[2S]b1-4DGlcpAb1-3DGalpb1-3DGalpb1-4DXylpb1-OH
+scripts/016.test.DrawGlycan.sh 05.dot dUA[2S]a1-4DGlcpNSa1-4LIdopA[2S]a1-4DGlcpNSa1-4LIdopA(4C1)a1-4DGlcpNS[6S]a1-OH
+scripts/016.test.DrawGlycan.sh 06.dot DGlcpa1-2DFrufb
+scripts/016.test.DrawGlycan.sh 07.dot DFrufb2-1DGlcpa

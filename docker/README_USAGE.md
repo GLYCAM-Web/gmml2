@@ -13,10 +13,10 @@ docker run -it -v ./ioData:/app/data gmml2 bash
 
 # Run the test: For now we are unfortunately very picky about where you run this from.
 cd tests/
-./../bin/gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt ../../data/
+./../bin/gpBuilder inputs/017.GlycoproteinBuilderInput.txt ../../data/
 # It should finish in less than 1 second. Here is what a success looks like:
-root@c30afa15eafa:/app/gmml2/tests# ./../bin/gpBuilder tests/inputs/017.GlycoproteinBuilderInput.txt ../../data/
-Input file is tests/inputs/017.GlycoproteinBuilderInput.txt
+root@c30afa15eafa:/app/gmml2/tests# ./../bin/gpBuilder inputs/017.GlycoproteinBuilderInput.txt ../../data/
+Input file is inputs/017.GlycoproteinBuilderInput.txt
 Reading input file complete, on to construction
 Resolving overlaps
 Program got to end ok

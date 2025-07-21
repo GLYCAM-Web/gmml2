@@ -1,0 +1,12 @@
+Protein:inputs/017.GlycoproteinBuilder/createError.pdb
+
+numberOfSamples:2
+
+persistCycles:5
+
+rngSeed:0
+
+ProteinResidue, GlycanName:
+A_124|DGalpb1-OH
+A_537|DGalpb1-OH
+END

@@ -1,0 +1,28 @@
+##### Glycoprotein Builder #####
+
+Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2) in test mode
+
+#### Input ####
+
+Filename: inputs/017.GlycoproteinBuilder/3SGK.txt
+Protein: inputs/017.GlycoproteinBuilder/3SGK.pdb
+
+Parameter                              | Value   
+numberOfSamples                          2       
+rngSeed                                  0       
+prepareForMD                             false   
+persistCycles                            20      
+overlapRejectionThreshold                0.000000
+useInitialGlycositeResidueConformation   false   
+moveOverlappingSidechains                true    
+deleteUnresolvableGlycosites             false   
+atomOverlapTolerance                     0.260000
+ignoreHydrogen                           false   
+
+#### Structures ####
+
+Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains    
+default                     0.000000                                                                   TYR296 PHE153 ARG155
+0_glycoprotein   rejected   36.488547                         A_297                                    PHE241 PHE153 ARG155
+1_glycoprotein   rejected   0.035027                          A_297                                    TYR296 LEU398 ARG155
+

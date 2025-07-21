@@ -270,7 +270,7 @@ for ((CURR_FILE_INDEX = 0; CURR_FILE_INDEX < ${#GMML_TEST_FILE_LIST[@]}; CURR_FI
     #finally the final / just means we are done with the pattern dealio
     # shellcheck disable=SC2001
     CURRENT_TEST_OUTPUT_FILENAME="./tempTestOutputs/"$(echo "${CURRENT_TEST[0]}" | sed -e "s/\.sh$/.output${CURR_FILE_INDEX}.txt/")
-
+    mkdir -p "$(dirname "$CURRENT_TEST_OUTPUT_FILENAME")"
     #actually run the script we currently want to run, the &> redirects the stderr output and the stdout
     #output from our script to the file we define. Finally the & at the end runs the command in a subshell
     #that will not block this script. This means that instead of waiting for the command to complete, we just

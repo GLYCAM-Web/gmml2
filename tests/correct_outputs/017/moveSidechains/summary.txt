@@ -1,0 +1,30 @@
+##### Glycoprotein Builder #####
+
+Produced by GMML2 (https://github.com/GLYCAM-Web/gmml2) in test mode
+
+#### Input ####
+
+Filename: inputs/017.GlycoproteinBuilder/moveSidechains.txt
+Protein: inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
+
+Parameter                              | Value   
+numberOfSamples                          4       
+rngSeed                                  0       
+prepareForMD                             true    
+persistCycles                            5       
+overlapRejectionThreshold                0.010000
+useInitialGlycositeResidueConformation   false   
+moveOverlappingSidechains                true    
+deleteUnresolvableGlycosites             false   
+atomOverlapTolerance                     0.260000
+ignoreHydrogen                           false   
+
+#### Structures ####
+
+Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains                    
+default                     10.258486                         A_24 A_38                                ILE39 GLU72 ARG76 THR132            
+0_glycoprotein   rejected   1.417903                          A_24                                     LYS20 ILE39 LEU69 GLU72 ARG76 ASP136
+1_glycoprotein   rejected   11.959690                         A_24 A_38                                ILE39 LEU69 GLU72 ARG76             
+2_glycoprotein   rejected   11.901738                         A_24 A_38                                ILE39 ASP136                        
+3_glycoprotein   rejected   3.679592                          A_24                                     ILE39 ARG76                         
+

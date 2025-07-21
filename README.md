@@ -145,8 +145,8 @@ Exit Code: 0
 
 Beginning test: ./020.test.parameterFiles.sh
 
-Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
-Test FAILED! Output file 0.svg different to tests/correct_outputs/016.output_SVGs/0.svg
+Testing 016.test.DrawGlycan.cc...0.svg correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
+Test FAILED! Output file 0.svg different to correct_outputs/016.output_SVGs/0.svg
 Exit Code: 1
 
 Beginning test: ./022.test.libraryFileReader.sh
@@ -207,8 +207,8 @@ Time taken:	11 seconds
 
 !!! OUTPUT OF THE 1 GMML TEST(S) THAT FAILED !!!
 
-Testing 016.test.DrawGlycan.cc...0.svg tests/correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
-Test FAILED! Output file 0.svg different to tests/correct_outputs/016.output_SVGs/0.svg
+Testing 016.test.DrawGlycan.cc...0.svg correct_outputs/016.output_SVGs/0.svg differ: byte 15325, line 70
+Test FAILED! Output file 0.svg different to correct_outputs/016.output_SVGs/0.svg
 Exit Code: 1
 
 !!! FINISHED PRINTING FAILED TESTS !!!

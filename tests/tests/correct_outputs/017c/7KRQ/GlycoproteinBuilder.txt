@@ -1,5 +1,0 @@
-Running in test mode
-Input file is tests/inputs/017.GlycoproteinBuilder/7KRQ.txt
-Reading input file complete, on to construction
-Resolving overlaps
-Program got to end ok
