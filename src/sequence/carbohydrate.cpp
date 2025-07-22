@@ -353,6 +353,23 @@ namespace gmml
             }
         }
 
+        std::vector<DihedralIndices> linkageDihedralIndices(
+            const GraphIndexData& graphData, const ResidueLinkage& linkage)
+        {
+            std::vector<DihedralIndices> result;
+            result.reserve(linkage.rotatableDihedrals.size());
+            for (auto& dihedral : linkage.rotatableDihedrals)
+            {
+                auto index = [&](size_t n) { return util::indexOf(graphData.objects.atoms, dihedral.atoms[n]); };
+                result.push_back({
+                    {index(0), index(1), index(2), index(3)},
+                    util::indicesOf(graphData.objects.atoms, dihedral.movingAtoms),
+                    dihedral.currentMetadataIndex
+                });
+            }
+            return result;
+        }
+
         void initialWiggleLinkage(
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& metadataTable,
@@ -384,10 +401,10 @@ namespace gmml
                 potentials,
                 constants::overlapTolerance,
                 searchSettings.angles,
-                linkage.rotatableDihedrals,
+                linkageDihedralIndices(graphData, linkage),
                 linkage.dihedralMetadata,
                 searchPreference,
-                graphData.objects,
+                atomElements(graphData.objects.atoms),
                 graph,
                 selection,
                 bounds,
@@ -631,7 +648,8 @@ namespace gmml
         const assembly::Selection selection = selectAll(graph);
         assembly::Bounds bounds =
             toAssemblyBounds(graph, atomCoordinatesWithRadii(elementRadii, graphData.objects.atoms));
-        std::vector<bool> foundElements = gmml::foundElements(atomElements(graphData.objects.atoms));
+        std::vector<Element> atomElements = gmml::atomElements(graphData.objects.atoms);
+        std::vector<bool> foundElements = gmml::foundElements(atomElements);
         const PotentialTable potentials = potentialTable(elementRadii, foundElements);
         std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
             assembly::atomsCloseToResidueEdges(graph);
@@ -649,10 +667,10 @@ namespace gmml
                     potentials,
                     constants::overlapTolerance,
                     searchSettings.angles,
-                    linkage.rotatableDihedrals,
+                    linkageDihedralIndices(graphData, linkage),
                     linkage.dihedralMetadata,
                     preference,
-                    graphData.objects,
+                    atomElements,
                     graph,
                     selection,
                     bounds,

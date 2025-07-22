@@ -33,6 +33,13 @@ namespace gmml
         std::vector<size_t> metadataOrder;
     };
 
+    struct DihedralIndices
+    {
+        std::array<size_t, 4> atoms;
+        std::vector<size_t> movingAtoms;
+        size_t currentMetadataIndex;
+    };
+
     typedef std::function<std::vector<double>(const DihedralAngleData&, double, double)> SearchAngles;
     typedef std::function<double(const assembly::Bounds&)> SearchOverlap;
 

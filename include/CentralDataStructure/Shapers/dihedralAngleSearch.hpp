@@ -3,8 +3,6 @@
 
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
-#include "include/CentralDataStructure/cdsTypes.hpp"
-#include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/orientation.hpp"
@@ -59,13 +57,13 @@ namespace gmml
         const PotentialTable& potential,
         double overlapTolerance,
         SearchAngles searchAngles,
-        std::vector<RotatableDihedral>& dihedrals,
+        const std::vector<DihedralIndices>& dihedrals,
         const std::vector<std::vector<size_t>>& metadata,
         const std::vector<AngleSearchPreference>& preference,
-        const GraphObjects& objects,
+        const std::vector<Element>& atomElements,
         const assembly::Graph& graph,
         const assembly::Selection& selection,
-        const assembly::Bounds& bounds,
+        const assembly::Bounds& initialBounds,
         const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge);
 
     std::vector<double> evenlySpacedAngles(
