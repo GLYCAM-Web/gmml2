@@ -2,7 +2,6 @@
 ./include/CentralDataStructure
 ./include/CentralDataStructure/Editors
 ./include/CentralDataStructure/FileFormats
-./include/CentralDataStructure/Overlaps
 ./include/CentralDataStructure/Selections
 ./include/CentralDataStructure/Shapers
 ./include/assembly
@@ -20,6 +19,7 @@
 ./include/readers/Pdb/SectionClasses
 ./include/readers/Prep
 ./include/sequence
+./include/structure
 ./include/templateGraph
 ./include/util
 ./include/writers

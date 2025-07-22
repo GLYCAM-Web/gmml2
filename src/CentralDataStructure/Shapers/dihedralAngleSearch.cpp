@@ -1,6 +1,5 @@
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 
-#include "include/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
@@ -16,6 +15,7 @@
 #include "include/geometry/rotationMatrix.hpp"
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/structure/atomOverlaps.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"

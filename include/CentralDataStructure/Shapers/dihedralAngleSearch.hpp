@@ -1,7 +1,6 @@
 #ifndef INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCH_HPP
 #define INCLUDES_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCH_HPP
 
-#include "include/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
@@ -12,6 +11,7 @@
 #include "include/geometry/overlap.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/structure/atomOverlaps.hpp"
 
 #include <array>
 #include <functional>

@@ -1,7 +1,6 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_ATOMOVERLAPS_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_OVERLAPS_ATOMOVERLAPS_HPP
+#ifndef INCLUDES_STRUCTURE_ATOMOVERLAPS_HPP
+#define INCLUDES_STRUCTURE_ATOMOVERLAPS_HPP
 
-#include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/overlap.hpp"
@@ -25,12 +24,6 @@ namespace gmml
         const Sphere& sphere,
         const std::vector<Sphere>& coords,
         const std::vector<size_t>& indices);
-
-    double CountOverlappingAtoms(
-        const util::SparseVector<double>& elementRadii,
-        double overlapTolerance,
-        const std::vector<Atom*>& atomsA,
-        const std::vector<Atom*>& atomsB);
 
     void addResidueOverlaps(
         std::vector<double>& result,

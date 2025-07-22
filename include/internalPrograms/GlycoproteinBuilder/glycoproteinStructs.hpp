@@ -1,7 +1,6 @@
 #ifndef INCLUDES_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 #define INCLUDES_INTERNALPROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 
-#include "include/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "include/External_Libraries/PCG/pcg_random.h"
 #include "include/assembly/assemblyTypes.hpp"
@@ -9,6 +8,7 @@
 #include "include/geometry/overlap.hpp"
 #include "include/graph/graphTypes.hpp"
 #include "include/metadata/dihedralangledata.hpp"
+#include "include/structure/atomOverlaps.hpp"
 
 #include <functional>
 #include <vector>

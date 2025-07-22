@@ -1,6 +1,5 @@
-#include "include/CentralDataStructure/Overlaps/atomOverlaps.hpp"
+#include "include/structure/atomOverlaps.hpp"
 
-#include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblySelection.hpp"
@@ -120,31 +119,6 @@ namespace gmml
         std::vector<size_t> result;
         insertIndicesOfIntersection(result, overlapTolerance, sphere, coords, indices);
         return result;
-    }
-
-    double CountOverlappingAtoms(
-        const util::SparseVector<double>& elementRadii,
-        double overlapTolerance,
-        const std::vector<Atom*>& atomsA,
-        const std::vector<Atom*>& atomsB)
-    {
-        std::vector<Sphere> coordsA = atomCoordinatesWithRadii(elementRadii, atomsA);
-        std::vector<Sphere> coordsB = atomCoordinatesWithRadii(elementRadii, atomsB);
-        std::vector<Element> elementsA = atomElements(atomsA);
-        std::vector<Element> elementsB = atomElements(atomsB);
-        const PotentialTable potentialTable =
-            gmml::potentialTable(elementRadii, util::vectorOr(foundElements(elementsA), foundElements(elementsB)));
-
-        double overlap = 0.0;
-        for (size_t n = 0; n < atomsA.size(); n++)
-        {
-            for (size_t k = 0; k < atomsB.size(); k++)
-            {
-                PotentialFactor factor = potentialFactor(potentialTable, elementsA[n], elementsB[k]);
-                overlap += overlapAmount(factor, overlapTolerance, coordsA[n], coordsB[k]);
-            }
-        }
-        return overlap;
     }
 
     void addResidueOverlaps(

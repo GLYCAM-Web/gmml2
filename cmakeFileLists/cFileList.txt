@@ -1,7 +1,6 @@
 ./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/FileFormats/offFileWriter.cpp
 ./src/CentralDataStructure/FileFormats/pdbFileWriter.cpp
-./src/CentralDataStructure/Overlaps/atomOverlaps.cpp
 ./src/CentralDataStructure/Selections/atomSelections.cpp
 ./src/CentralDataStructure/Selections/cyclePoints.cpp
 ./src/CentralDataStructure/Selections/linkageBranches.cpp
@@ -89,6 +88,7 @@
 ./src/sequence/sequenceParser.cpp
 ./src/sequence/sequencePrinter.cpp
 ./src/sequence/sequenceUtil.cpp
+./src/structure/atomOverlaps.cpp
 ./src/util/arguments.cpp
 ./src/util/containers.cpp
 ./src/util/files.cpp

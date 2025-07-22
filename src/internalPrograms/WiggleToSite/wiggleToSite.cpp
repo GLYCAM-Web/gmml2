@@ -1,6 +1,5 @@
 #include "include/internalPrograms/WiggleToSite/wiggleToSite.hpp"
 
-#include "include/CentralDataStructure/Overlaps/atomOverlaps.hpp"
 #include "include/CentralDataStructure/Selections/templatedSelections.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
@@ -17,6 +16,7 @@
 #include "include/readers/Pdb/pdbSelections.hpp" //select
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/sequenceParser.hpp"
+#include "include/structure/atomOverlaps.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containerTypes.hpp"
 #include "include/util/logging.hpp"
@@ -26,6 +26,34 @@
 namespace gmml
 {
     // Prototype: Working and producing useful data in 1.5 days. Included fixing some things in the CDS.
+
+    namespace
+    {
+        double CountOverlappingAtoms(
+            const util::SparseVector<double>& elementRadii,
+            double overlapTolerance,
+            const std::vector<Atom*>& atomsA,
+            const std::vector<Atom*>& atomsB)
+        {
+            std::vector<Sphere> coordsA = atomCoordinatesWithRadii(elementRadii, atomsA);
+            std::vector<Sphere> coordsB = atomCoordinatesWithRadii(elementRadii, atomsB);
+            std::vector<Element> elementsA = atomElements(atomsA);
+            std::vector<Element> elementsB = atomElements(atomsB);
+            const PotentialTable potentialTable =
+                gmml::potentialTable(elementRadii, util::vectorOr(foundElements(elementsA), foundElements(elementsB)));
+
+            double overlap = 0.0;
+            for (size_t n = 0; n < atomsA.size(); n++)
+            {
+                for (size_t k = 0; k < atomsB.size(); k++)
+                {
+                    PotentialFactor factor = potentialFactor(potentialTable, elementsA[n], elementsB[k]);
+                    overlap += overlapAmount(factor, overlapTolerance, coordsA[n], coordsB[k]);
+                }
+            }
+            return overlap;
+        }
+    } // namespace
 
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
