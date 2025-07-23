@@ -16,7 +16,7 @@ g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalProgram
 echo -e "Glycoprotein builder table"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/createGlycosylationTables.cpp -lgmml2 -pthread -o bin/gpBuilderTable
 echo -e "Carbohydrate builder"
-g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/CarbohydrateBuilder/main.cpp -lgmml2 -pthread -o bin/carbohydrateBuilder
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/CarbohydrateBuilder/carbBuilderMain.cpp -lgmml2 -pthread -o bin/carbohydrateBuilder
 echo -e "Wiggle to site"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" internalPrograms/WiggleToSite/wiggleToSiteDriver.cpp -lgmml2 -pthread -o bin/wiggleToSite
 echo -e "Draw glycan"

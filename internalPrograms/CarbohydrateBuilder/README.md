@@ -6,28 +6,29 @@ Project is under development, contact olivercgrant "at" gmail.com with queries.
 The underlying code is used by the builder currently available on glycam.org/cb.
 
 ### Prerequisites
-You'll need GMML. See here for installation instructions: http://glycam.org/docs/gems/download-and-install/.
+You'll need GMML2: [Click here for installation instructions](https://github.com/GLYCAM-Web/gmml2#readme)
 
 ### Installation
-export GEMSHOME=<Your Path To Gems > # eg: export GEMSHOME=/home/oliver/Programs/gems
-
-#### Makefile:
-Some commands defined in the Makefile are:
-* $ make
-* $ make all
-* $ make clean
-
-    So you can just type "make" to compile the program.
-    
-#### Comand line (skip the Makefile):
-g++ -std=c++17 -I $GEMSHOME/gmml/include/ -I include/ -L$GEMSHOME/gmml/bin/ -Wl,-rpath,$GEMSHOME/gmml/bin/ src/*.cpp -lgmml -o bin/carbBuilder
+The Carbohydrate Builder will be compiled to gmml2/bin/carbohydrateBuilder after running the gmml2 make.sh script
 
 ### Testing
-Once compiled, you can run:
-./bin/carbBuilder
-to get a usage statement and example inputs. 
-You must create an output folder e.g:
-mkdir outputs/
+Once compiled, a call to the program can look as follows
+```
+./bin/carbohydrateBuilder inputFile.txt separator outputDir
+```
+Or using a test input file
+```
+cd gmml2/tests
+../bin/carbohydrateBuilder inputs/023.smallLibrary.txt _ outputDir
+```
 
-### Known issues
-Very large (40-ish residues), branched oligosaccharides will take seemingly forever to resolve clashes. This will be fixed in upcoming releases.
+You can run `./bin/carbohydrateBuilder --help` for a list of options
+
+```
+usage: ./bin/carbohydrateBuilder [-h | --help]
+                                 [-v | --version]
+                                 [--overwrite-existing-files]
+                                 input-file
+                                 list-delimiter
+                                 output-directory
+```
