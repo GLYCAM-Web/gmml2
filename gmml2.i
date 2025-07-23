@@ -32,7 +32,7 @@ try	{
 #include "include/readers/Pdb/pdbFile.hpp"
 #include "include/readers/Pdb/pdbResidueId.hpp"
 #include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-using namespace pdb;
+using namespace gmml::pdb;
 using namespace gmml;
 %}
 
