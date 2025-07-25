@@ -3,17 +3,12 @@
 
 #include <algorithm>
 #include <functional>
-#include <memory>
-#include <string>
-#include <unordered_map>
 #include <vector>
 
 namespace gmml
 {
     namespace util
     {
-        std::string FindStringInStringMap(
-            const std::string& s, const std::unordered_map<std::string, std::string>& sMap);
         std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
         std::vector<bool> vectorOr(const std::vector<bool>& vecA, const std::vector<bool>& vecB);
         std::vector<bool> vectorNot(const std::vector<bool>& vec);
@@ -148,28 +143,6 @@ namespace gmml
             result.reserve(vecA.size() + vecB.size());
             insertInto(result, vecA);
             insertInto(result, vecB);
-            return result;
-        }
-
-        template<class T> std::vector<T*> pointerVector(std::vector<T>& vec)
-        {
-            std::vector<T*> result;
-            result.reserve(vec.size());
-            for (auto& a : vec)
-            {
-                result.push_back(&a);
-            }
-            return result;
-        }
-
-        template<class T> std::vector<T*> pointerToUniqueVector(std::vector<std::unique_ptr<T>>& vec)
-        {
-            std::vector<T*> result;
-            result.reserve(vec.size());
-            for (auto& a : vec)
-            {
-                result.push_back(a.get());
-            }
             return result;
         }
 

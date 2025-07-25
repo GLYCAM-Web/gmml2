@@ -13,6 +13,14 @@ namespace gmml
     {
         namespace
         {
+
+            std::string findStringInStringMap(
+                const std::string& s, const std::unordered_map<std::string, std::string>& sMap)
+            {
+                auto found = sMap.find(s);
+                return (found != sMap.end()) ? found->second : "";
+            }
+
             struct ChargeAdjustmentInfo
             {
                 std::string glycamResidueCode_;
@@ -244,7 +252,7 @@ namespace gmml
                 sortedQuery += (deliminator + element);
                 deliminator = ",";
             }
-            return util::FindStringInStringMap(sortedQuery, Glycam06LinkageCodeLookup);
+            return findStringInStringMap(sortedQuery, Glycam06LinkageCodeLookup);
         }
 
         std::string GetNameForCode(const std::string& query)
@@ -374,7 +382,7 @@ namespace gmml
 
         std::string GetConnectionAtomForResidue(const std::string& query)
         {
-            std::string result = util::FindStringInStringMap(query, glycam06DerivativeAglyconeConnectionAtomLookup_);
+            std::string result = findStringInStringMap(query, glycam06DerivativeAglyconeConnectionAtomLookup_);
             if (result.empty())
             {
                 std::string message = "This derivative or aglycone residue is not supported: " + query;

@@ -37,6 +37,7 @@
 
 #include <algorithm> //  std::erase, std::remove
 #include <cctype>    // isDigit
+#include <memory>
 #include <ostream>
 #include <sstream>
 
@@ -44,6 +45,17 @@ namespace gmml
 {
     namespace
     {
+        template<class T> std::vector<T*> pointerToUniqueVector(std::vector<std::unique_ptr<T>>& vec)
+        {
+            std::vector<T*> result;
+            result.reserve(vec.size());
+            for (auto& a : vec)
+            {
+                result.push_back(a.get());
+            }
+            return result;
+        }
+
         std::string childLinkagesForGlycamResidueNaming(const ParsedResidue* residue)
         {
             const std::vector<ParsedResidue*> children = residue->GetChildren();
@@ -468,7 +480,7 @@ namespace gmml
             createParsedResidues(residuePtrs, indices, sequence);
             size_t residueCount = residuePtrs.size();
 
-            for (auto& residue : util::pointerToUniqueVector(residuePtrs))
+            for (auto& residue : pointerToUniqueVector(residuePtrs))
             { // Move atoms from prep file into parsedResidues.
                 if (residue->GetType() != ResidueType::Deoxy)
                 {

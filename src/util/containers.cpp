@@ -1,16 +1,11 @@
 #include "include/util/containers.hpp"
 
+#include <vector>
+
 namespace gmml
 {
     namespace util
     {
-        std::string FindStringInStringMap(
-            const std::string& s, const std::unordered_map<std::string, std::string>& sMap)
-        {
-            auto found = sMap.find(s);
-            return (found != sMap.end()) ? found->second : "";
-        }
-
         std::vector<bool> vectorAnd(const std::vector<bool>& vecA, const std::vector<bool>& vecB)
         {
             std::vector<bool> result(vecA.size(), false);
