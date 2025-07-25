@@ -1,8 +1,8 @@
 #include "include/sequence/sequenceGraph.hpp"
 
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/graph/graphManipulation.hpp"
 #include "include/graph/graphTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/util/containers.hpp"
 
 #include <array>

@@ -1,7 +1,7 @@
 #ifndef INCLUDE_METADATA_DIHEDRALANGLEDATA_HPP
 #define INCLUDE_METADATA_DIHEDRALANGLEDATA_HPP
 
-#include "include/CentralDataStructure/residueTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 
 #include <string>
 #include <variant>

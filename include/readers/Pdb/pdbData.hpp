@@ -2,11 +2,11 @@
 #define INCLUDE_READERS_PDB_PDBDATA_HPP
 
 #include "include/CentralDataStructure/graphInterface.hpp"
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/graph/graphTypes.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/metadata/residueTypes.hpp"
 
 #include <string>
 #include <vector>

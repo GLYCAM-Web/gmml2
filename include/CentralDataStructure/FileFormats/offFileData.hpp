@@ -1,8 +1,8 @@
 #ifndef INCLUDE_CENTRALDATASTRUCTURE_FILEFORMATS_OFFFILEDATA_HPP
 #define INCLUDE_CENTRALDATASTRUCTURE_FILEFORMATS_OFFFILEDATA_HPP
 
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/util/formatting.hpp"
 
 #include <string>

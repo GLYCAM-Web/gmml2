@@ -1,7 +1,7 @@
 #ifndef INCLUDE_SEQUENCE_SEQUENCEUTIL_HPP
 #define INCLUDE_SEQUENCE_SEQUENCEUTIL_HPP
 
-#include "include/CentralDataStructure/residueTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/sequence/sequenceTypes.hpp"
 
 #include <string>

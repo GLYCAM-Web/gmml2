@@ -1,11 +1,11 @@
 #include "include/readers/Pdb/bondByDistance.hpp"
 
 #include "include/CentralDataStructure/residue.hpp"
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/geometry/geometryFunctions.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/readers/Pdb/pdbData.hpp"
 #include "include/readers/Pdb/pdbFunctions.hpp"
 #include "include/readers/Pdb/pdbResidue.hpp"

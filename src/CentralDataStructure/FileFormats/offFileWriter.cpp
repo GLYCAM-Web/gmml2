@@ -1,8 +1,8 @@
 #include "include/CentralDataStructure/FileFormats/offFileWriter.hpp"
 
 #include "include/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/formatting.hpp"
 

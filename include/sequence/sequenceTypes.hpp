@@ -1,8 +1,8 @@
 #ifndef INCLUDE_SEQUENCE_SEQUENCETYPES_HPP
 #define INCLUDE_SEQUENCE_SEQUENCETYPES_HPP
 
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/graph/graphTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 
 #include <optional>
 #include <string>

@@ -2,8 +2,8 @@
 #define INCLUDE_CENTRALDATASTRUCTURE_RESIDUE_HPP
 
 #include "include/CentralDataStructure/atom.hpp"
-#include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/templateGraph/Node.hpp"
 #include "include/util/constants.hpp" // iNotSet
 
