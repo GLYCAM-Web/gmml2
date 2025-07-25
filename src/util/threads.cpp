@@ -1,11 +1,14 @@
 #include "include/util/threads.hpp"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 namespace gmml
 {
     namespace util
     {
 #ifdef _OPENMP
-#include <omp.h>
 
         bool isOpenMpDefined() { return true; }
 
