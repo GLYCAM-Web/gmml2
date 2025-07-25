@@ -1,5 +1,7 @@
 #include "include/assembly/assemblyGraph.hpp"
 
+#include "include/util/containers.hpp"
+
 #include <array>
 #include <vector>
 
@@ -44,6 +46,14 @@ namespace gmml
                 result.push_back(residueAtomsCloseToEdge(graph, n));
             }
             return result;
+        }
+
+        std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
+        {
+            std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
+            { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
+            std::vector<bool> selected = util::vectorMap(inMolecule, graph.atoms.nodes.indices);
+            return util::boolsToIndices(selected);
         }
     } // namespace assembly
 } // namespace gmml

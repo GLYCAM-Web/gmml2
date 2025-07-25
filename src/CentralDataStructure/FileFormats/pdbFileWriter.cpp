@@ -2,9 +2,11 @@
 
 #include "include/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/util/containers.hpp"
 #include "include/util/formatting.hpp"
 
 #include <array>
+#include <functional>
 #include <iomanip>
 #include <ostream>
 #include <string>

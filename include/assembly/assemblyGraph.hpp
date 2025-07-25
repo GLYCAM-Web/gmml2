@@ -2,7 +2,6 @@
 #define INCLUDE_ASSEMBLY_ASSEMBLYGRAPH_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/util/containers.hpp"
 
 #include <array>
 #include <vector>
@@ -24,13 +23,7 @@ namespace gmml
             return graph.molecules.nodes.constituents[moleculeId];
         };
 
-        inline std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
-        {
-            std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
-            { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
-            std::vector<bool> selected = util::vectorMap(inMolecule, graph.atoms.nodes.indices);
-            return util::boolsToIndices(selected);
-        }
+        std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId);
 
         inline const std::vector<size_t>& assemblyMolecules(const Graph& graph, size_t assemblyId)
         {

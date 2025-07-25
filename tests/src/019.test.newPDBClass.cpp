@@ -9,6 +9,7 @@
 #include "include/readers/Pdb/pdbFunctions.hpp"
 #include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
 #include "include/readers/parameterManager.hpp"
+#include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/filesystem.hpp"
 #include "include/util/logging.hpp"
