@@ -1,5 +1,5 @@
-#ifndef INCLUDES_WRITERS_PRINT_HPP
-#define INCLUDES_WRITERS_PRINT_HPP
+#ifndef INCLUDE_WRITERS_PRINT_HPP
+#define INCLUDE_WRITERS_PRINT_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"

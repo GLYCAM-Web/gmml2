@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CODEUTILS_CASTING_HPP
-#define INCLUDES_CODEUTILS_CASTING_HPP
+#ifndef INCLUDE_UTIL_CASTING_HPP
+#define INCLUDE_UTIL_CASTING_HPP
 
 #include <stdexcept>
 #include <string>

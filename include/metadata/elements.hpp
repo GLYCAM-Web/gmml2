@@ -1,5 +1,5 @@
-#ifndef INCLUDES_METADATA_ELEMENTS_HPP
-#define INCLUDES_METADATA_ELEMENTS_HPP
+#ifndef INCLUDE_METADATA_ELEMENTS_HPP
+#define INCLUDE_METADATA_ELEMENTS_HPP
 
 #include "include/util/containerTypes.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_AMBERMDPREP_HPP
-#define INCLUDES_READERS_PDB_AMBERMDPREP_HPP
+#ifndef INCLUDE_READERS_PDB_AMBERMDPREP_HPP
+#define INCLUDE_READERS_PDB_AMBERMDPREP_HPP
 
 #include "include/readers/Pdb/pdbData.hpp"
 #include "include/readers/Pdb/pdbPreprocessorInputs.hpp"

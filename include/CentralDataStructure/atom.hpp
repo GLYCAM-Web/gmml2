@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_ATOM_HPP
+#ifndef INCLUDE_CENTRALDATASTRUCTURE_ATOM_HPP
+#define INCLUDE_CENTRALDATASTRUCTURE_ATOM_HPP
 
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/elements.hpp"

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_PDBATOM_HPP
-#define INCLUDES_READERS_PDB_PDBATOM_HPP
+#ifndef INCLUDE_READERS_PDB_PDBATOM_HPP
+#define INCLUDE_READERS_PDB_PDBATOM_HPP
 // See http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM for an explanation of atom
 // formats in PDB files
 

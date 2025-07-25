@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_PDBDATA_HPP
-#define INCLUDES_READERS_PDB_PDBDATA_HPP
+#ifndef INCLUDE_READERS_PDB_PDBDATA_HPP
+#define INCLUDE_READERS_PDB_PDBDATA_HPP
 
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/residueTypes.hpp"

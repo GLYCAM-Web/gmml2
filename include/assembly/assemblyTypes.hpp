@@ -1,5 +1,5 @@
-#ifndef INCLUDES_ASSEMBLY_ASSEMBLYTYPES_HPP
-#define INCLUDES_ASSEMBLY_ASSEMBLYTYPES_HPP
+#ifndef INCLUDE_ASSEMBLY_ASSEMBLYTYPES_HPP
+#define INCLUDE_ASSEMBLY_ASSEMBLYTYPES_HPP
 
 #include "include/geometry/geometryTypes.hpp"
 #include "include/graph/graphTypes.hpp"

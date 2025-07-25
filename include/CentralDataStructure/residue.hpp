@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
-#define INCLUDES_CENTRALDATASTRUCTURE_RESIDUE_HPP
+#ifndef INCLUDE_CENTRALDATASTRUCTURE_RESIDUE_HPP
+#define INCLUDE_CENTRALDATASTRUCTURE_RESIDUE_HPP
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/residueTypes.hpp"

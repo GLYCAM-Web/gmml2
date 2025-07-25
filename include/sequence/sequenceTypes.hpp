@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CONDENSEDSEQUENCE_SEQUENCETYPES_HPP
-#define INCLUDES_CONDENSEDSEQUENCE_SEQUENCETYPES_HPP
+#ifndef INCLUDE_SEQUENCE_SEQUENCETYPES_HPP
+#define INCLUDE_SEQUENCE_SEQUENCETYPES_HPP
 
 #include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/graph/graphTypes.hpp"

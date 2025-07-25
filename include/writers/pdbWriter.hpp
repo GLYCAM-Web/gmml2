@@ -1,5 +1,5 @@
-#ifndef INCLUDES_WRITERS_PDBWRITER_HPP
-#define INCLUDES_WRITERS_PDBWRITER_HPP
+#ifndef INCLUDE_WRITERS_PDBWRITER_HPP
+#define INCLUDE_WRITERS_PDBWRITER_HPP
 
 #include "include/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"

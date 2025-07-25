@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CONDENSEDSEQUENCE_SEQUENCEPARSER_HPP
-#define INCLUDES_CONDENSEDSEQUENCE_SEQUENCEPARSER_HPP
+#ifndef INCLUDE_SEQUENCE_SEQUENCEPARSER_HPP
+#define INCLUDE_SEQUENCE_SEQUENCEPARSER_HPP
 
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceTypes.hpp"

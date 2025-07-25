@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_PDBRESIDUE_HPP
-#define INCLUDES_READERS_PDB_PDBRESIDUE_HPP
+#ifndef INCLUDE_READERS_PDB_PDBRESIDUE_HPP
+#define INCLUDE_READERS_PDB_PDBRESIDUE_HPP
 
 #include "include/readers/Pdb/pdbAtom.hpp"
 #include "include/readers/Pdb/pdbData.hpp"

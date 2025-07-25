@@ -1,5 +1,5 @@
-#ifndef INCLUDES_GEOMETRY_OVERLAP_HPP
-#define INCLUDES_GEOMETRY_OVERLAP_HPP
+#ifndef INCLUDE_GEOMETRY_OVERLAP_HPP
+#define INCLUDE_GEOMETRY_OVERLAP_HPP
 
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/elements.hpp"

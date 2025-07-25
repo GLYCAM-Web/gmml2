@@ -1,5 +1,5 @@
-#ifndef INCLUDES_STRUCTURE_ATOMOVERLAPS_HPP
-#define INCLUDES_STRUCTURE_ATOMOVERLAPS_HPP
+#ifndef INCLUDE_STRUCTURE_ATOMOVERLAPS_HPP
+#define INCLUDE_STRUCTURE_ATOMOVERLAPS_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"

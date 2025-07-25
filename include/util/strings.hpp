@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CODEUTILS_STRINGS_HPP
-#define INCLUDES_CODEUTILS_STRINGS_HPP
+#ifndef INCLUDE_UTIL_STRINGS_HPP
+#define INCLUDE_UTIL_STRINGS_HPP
 
 #include <functional>
 #include <sstream>

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
-#define INCLUDES_CONDENSEDSEQUENCE_CARBOHYDRATE_HPP
+#ifndef INCLUDE_SEQUENCE_CARBOHYDRATE_HPP
+#define INCLUDE_SEQUENCE_CARBOHYDRATE_HPP
 
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"

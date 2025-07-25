@@ -1,5 +1,5 @@
-#ifndef INCLUDES_SEQUENCE_SEQUENCEGRAPH_HPP
-#define INCLUDES_SEQUENCE_SEQUENCEGRAPH_HPP
+#ifndef INCLUDE_SEQUENCE_SEQUENCEGRAPH_HPP
+#define INCLUDE_SEQUENCE_SEQUENCEGRAPH_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/graph/graphTypes.hpp"

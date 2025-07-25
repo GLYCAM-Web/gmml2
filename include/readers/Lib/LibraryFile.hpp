@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_LIB_LIBRARYFILE_HPP
-#define INCLUDES_READERS_LIB_LIBRARYFILE_HPP
+#ifndef INCLUDE_READERS_LIB_LIBRARYFILE_HPP
+#define INCLUDE_READERS_LIB_LIBRARYFILE_HPP
 
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/elements.hpp"

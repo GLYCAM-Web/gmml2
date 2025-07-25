@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CONDENSEDSEQUENCE_SEQUENCEUTIL_HPP
-#define INCLUDES_CONDENSEDSEQUENCE_SEQUENCEUTIL_HPP
+#ifndef INCLUDE_SEQUENCE_SEQUENCEUTIL_HPP
+#define INCLUDE_SEQUENCE_SEQUENCEUTIL_HPP
 
 #include "include/CentralDataStructure/residueTypes.hpp"
 #include "include/sequence/sequenceTypes.hpp"

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_PDBFUNCTIONS_HPP
-#define INCLUDES_READERS_PDB_PDBFUNCTIONS_HPP
+#ifndef INCLUDE_READERS_PDB_PDBFUNCTIONS_HPP
+#define INCLUDE_READERS_PDB_PDBFUNCTIONS_HPP
 
 #include "include/geometry/geometryTypes.hpp"
 #include "include/readers/Pdb/pdbData.hpp"

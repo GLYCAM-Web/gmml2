@@ -1,5 +1,5 @@
-#ifndef INCLUDES_ASSEMBLY_ASSEMBLYGRAPH_HPP
-#define INCLUDES_ASSEMBLY_ASSEMBLYGRAPH_HPP
+#ifndef INCLUDE_ASSEMBLY_ASSEMBLYGRAPH_HPP
+#define INCLUDE_ASSEMBLY_ASSEMBLYGRAPH_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/util/containers.hpp"

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_GEOMETRY_ROTATIONMATRIX_HPP
-#define INCLUDES_GEOMETRY_ROTATIONMATRIX_HPP
+#ifndef INCLUDE_GEOMETRY_ROTATIONMATRIX_HPP
+#define INCLUDE_GEOMETRY_ROTATIONMATRIX_HPP
 
 #include "include/geometry/geometryFunctions.hpp"
 #include "include/geometry/geometryTypes.hpp"

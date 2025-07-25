@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PREP_PREPFILE_HPP
-#define INCLUDES_READERS_PREP_PREPFILE_HPP
+#ifndef INCLUDE_READERS_PREP_PREPFILE_HPP
+#define INCLUDE_READERS_PREP_PREPFILE_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/readers/Prep/prepAtom.hpp"

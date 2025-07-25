@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_PDBSELECTIONS_HPP
-#define INCLUDES_READERS_PDB_PDBSELECTIONS_HPP
+#ifndef INCLUDE_READERS_PDB_PDBSELECTIONS_HPP
+#define INCLUDE_READERS_PDB_PDBSELECTIONS_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/readers/Pdb/pdbData.hpp"

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PARAMETERMANAGER_HPP
-#define INCLUDES_READERS_PARAMETERMANAGER_HPP
+#ifndef INCLUDE_READERS_PARAMETERMANAGER_HPP
+#define INCLUDE_READERS_PARAMETERMANAGER_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/readers/Lib/LibraryFile.hpp"

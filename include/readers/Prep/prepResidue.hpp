@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PREP_PREPRESIDUE_HPP
-#define INCLUDES_READERS_PREP_PREPRESIDUE_HPP
+#ifndef INCLUDE_READERS_PREP_PREPRESIDUE_HPP
+#define INCLUDE_READERS_PREP_PREPRESIDUE_HPP
 
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/readers/Prep/prepAtom.hpp"

@@ -1,5 +1,5 @@
-#ifndef INCLUDES_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP
-#define INCLUDES_INTERNALPROGRAMS_SEQUENCE_SEQUENCE_HPP
+#ifndef INCLUDE_SEQUENCE_SEQUENCE_HPP
+#define INCLUDE_SEQUENCE_SEQUENCE_HPP
 
 // OG Feb 2022
 // This class only exists so I can wrap it into gems without swig having to know about SequenceManipulator and the

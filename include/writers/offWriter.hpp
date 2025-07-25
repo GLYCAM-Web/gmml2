@@ -1,5 +1,5 @@
-#ifndef INCLUDES_WRITERS_OFFWRITER_HPP
-#define INCLUDES_WRITERS_OFFWRITER_HPP
+#ifndef INCLUDE_WRITERS_OFFWRITER_HPP
+#define INCLUDE_WRITERS_OFFWRITER_HPP
 
 #include "include/CentralDataStructure/FileFormats/offFileData.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"

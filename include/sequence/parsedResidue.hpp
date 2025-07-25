@@ -1,5 +1,5 @@
-#ifndef INCLUDES_CONDENSEDSEQUENCE_PARSEDRESIDUE_HPP
-#define INCLUDES_CONDENSEDSEQUENCE_PARSEDRESIDUE_HPP
+#ifndef INCLUDE_SEQUENCE_PARSEDRESIDUE_HPP
+#define INCLUDE_SEQUENCE_PARSEDRESIDUE_HPP
 
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/sequence/sequenceTypes.hpp"

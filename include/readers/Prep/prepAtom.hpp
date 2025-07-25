@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PREP_PREPATOM_HPP
-#define INCLUDES_READERS_PREP_PREPATOM_HPP
+#ifndef INCLUDE_READERS_PREP_PREPATOM_HPP
+#define INCLUDE_READERS_PREP_PREPATOM_HPP
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/util/constants.hpp"

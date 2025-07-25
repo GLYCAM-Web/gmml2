@@ -1,5 +1,5 @@
-#ifndef INCLUDES_READERS_PDB_PDBFILE_HPP
-#define INCLUDES_READERS_PDB_PDBFILE_HPP
+#ifndef INCLUDE_READERS_PDB_PDBFILE_HPP
+#define INCLUDE_READERS_PDB_PDBFILE_HPP
 // ToDo split preprocessor into separate function.
 // ToDo Warning about gaps being 1 residue.
 // ToDo make more direct queries here instead of giving out HeaderRecord etc.
