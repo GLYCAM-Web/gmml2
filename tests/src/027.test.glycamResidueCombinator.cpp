@@ -1,13 +1,13 @@
 #include "include/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
-#include "include/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
+#include "include/CentralDataStructure/offWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/off/offFileWriter.hpp"
 #include "include/readers/Prep/prepFile.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
-#include "include/writers/offWriter.hpp"
 
 #include <iostream>
 #include <ostream>

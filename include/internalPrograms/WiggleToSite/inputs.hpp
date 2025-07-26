@@ -1,6 +1,6 @@
 #ifndef INCLUDE_INTERNALPROGRAMS_WIGGLETOSITE_INPUTS_HPP
 #define INCLUDE_INTERNALPROGRAMS_WIGGLETOSITE_INPUTS_HPP
-#include "include/readers/Pdb/pdbResidueId.hpp"
+#include "include/pdb/pdbResidueId.hpp"
 
 #include <string>
 

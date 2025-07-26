@@ -1,12 +1,9 @@
 #include "include/internalPrograms/GlycoproteinBuilder/overlapResolution.hpp"
 
-#include "include/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "include/CentralDataStructure/FileFormats/offFileWriter.hpp"
-#include "include/CentralDataStructure/FileFormats/pdbFileData.hpp"
-#include "include/CentralDataStructure/FileFormats/pdbFileWriter.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/External_Libraries/PCG/pcg_random.h"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
@@ -28,8 +25,12 @@
 #include "include/internalPrograms/GlycoproteinBuilder/sidechains.hpp"
 #include "include/internalPrograms/GlycoproteinBuilder/writerInterface.hpp"
 #include "include/metadata/dihedralangledata.hpp"
-#include "include/readers/Pdb/pdbFile.hpp"
-#include "include/readers/Pdb/pdbResidue.hpp"
+#include "include/off/offFileData.hpp"
+#include "include/off/offFileWriter.hpp"
+#include "include/pdb/pdbFile.hpp"
+#include "include/pdb/pdbFileData.hpp"
+#include "include/pdb/pdbFileWriter.hpp"
+#include "include/pdb/pdbResidue.hpp"
 #include "include/structure/atomOverlaps.hpp"
 #include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
@@ -40,7 +41,6 @@
 #include "include/util/strings.hpp"
 #include "include/util/structuredFiles.hpp"
 #include "include/util/threads.hpp"
-#include "include/writers/pdbWriter.hpp"
 
 #include <ostream>
 #include <sstream>
@@ -244,13 +244,13 @@ namespace gmml
                 {
                     residueIncluded[n] = includedMolecules[graph.indices.residueMolecule[n]];
                 }
-                OffFileData offData = toOffFileData(graph, data, coordinates);
+                off::OffFileData offData = toOffFileData(graph, data, coordinates);
                 std::string fileName = outputDir + "/" + prefix + ".off";
                 util::writeToFile(
                     fileName,
                     [&](std::ostream& stream)
                     {
-                        WriteResiduesTogetherToOffFile(
+                        off::WriteResiduesTogetherToOffFile(
                             stream, graph, offData, util::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
                     });
             };
@@ -276,7 +276,7 @@ namespace gmml
                                     const std::string& outputDir,
                                     const std::string& prefix)
             {
-                PdbFileData pdbData = toPdbFileData(
+                pdb::PdbFileData pdbData = toPdbFileData(
                     graph.indices, data, coordinates, atomNumbers, residueNumbers, data.residues.chainIds, headerLines);
                 std::vector<std::vector<size_t>> residueIndices =
                     util::boolsToValues(graph.molecules.nodes.constituents, includedMolecules);
@@ -287,8 +287,8 @@ namespace gmml
                     filename,
                     [&](std::ostream& stream)
                     {
-                        writeAssemblyToPdb(stream, graph, residueIndices, TER, connectionIndices, pdbData);
-                        theEnd(stream);
+                        pdb::writeAssemblyToPdb(stream, graph, residueIndices, TER, connectionIndices, pdbData);
+                        pdb::theEnd(stream);
                     });
             };
 

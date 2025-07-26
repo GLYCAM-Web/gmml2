@@ -1,7 +1,6 @@
 ./include
 ./include/CentralDataStructure
 ./include/CentralDataStructure/Editors
-./include/CentralDataStructure/FileFormats
 ./include/CentralDataStructure/Selections
 ./include/CentralDataStructure/Shapers
 ./include/assembly
@@ -13,13 +12,13 @@
 ./include/internalPrograms/GlycoproteinBuilder
 ./include/internalPrograms/WiggleToSite
 ./include/metadata
+./include/off
+./include/pdb
+./include/pdb/SectionClasses
 ./include/readers
 ./include/readers/Lib
-./include/readers/Pdb
-./include/readers/Pdb/SectionClasses
 ./include/readers/Prep
 ./include/sequence
 ./include/structure
 ./include/templateGraph
 ./include/util
-./include/writers

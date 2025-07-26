@@ -11,9 +11,9 @@
 #include "include/geometry/superimposition.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
-#include "include/readers/Pdb/pdbFile.hpp"
-#include "include/readers/Pdb/pdbModel.hpp"
-#include "include/readers/Pdb/pdbSelections.hpp" //select
+#include "include/pdb/pdbFile.hpp"
+#include "include/pdb/pdbModel.hpp"
+#include "include/pdb/pdbSelections.hpp" //select
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/structure/atomOverlaps.hpp"

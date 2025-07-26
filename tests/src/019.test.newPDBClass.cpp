@@ -1,19 +1,19 @@
-#include "include/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/CentralDataStructure/offWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/readers/Pdb/bondByDistance.hpp"
-#include "include/readers/Pdb/pdbFile.hpp"
-#include "include/readers/Pdb/pdbFunctions.hpp"
-#include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
+#include "include/off/offFileWriter.hpp"
+#include "include/pdb/bondByDistance.hpp"
+#include "include/pdb/pdbFile.hpp"
+#include "include/pdb/pdbFunctions.hpp"
+#include "include/pdb/pdbPreprocessorInputs.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/filesystem.hpp"
 #include "include/util/logging.hpp"
-#include "include/writers/offWriter.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -48,13 +48,14 @@ int main(int argc, char* argv[])
         {
             GraphIndexData graphData = toIndexData(assemblies[assemblyId]->getMolecules());
             assembly::Graph graph = createVisibleAssemblyGraph(graphData);
-            OffFileData data = toOffFileData(graphData.objects.residues);
+            off::OffFileData data = toOffFileData(graphData.objects.residues);
             serializeNumbers(graphData.objects.atoms);
             serializeNumbers(graphData.objects.residues);
             util::writeToFile(
                 baseDir + "/outputOffFile.off",
-                [&](std::ostream& stream) {
-                    WriteResiduesTogetherToOffFile(
+                [&](std::ostream& stream)
+                {
+                    off::WriteResiduesTogetherToOffFile(
                         stream, graph, data, util::indexVector(graphData.objects.residues), "Assembly");
                 });
         }

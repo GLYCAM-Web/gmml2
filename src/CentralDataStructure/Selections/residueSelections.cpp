@@ -4,8 +4,8 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/geometry/geometryFunctions.hpp"
-#include "include/readers/Pdb/pdbData.hpp"
-#include "include/readers/Pdb/pdbResidue.hpp"
+#include "include/pdb/pdbData.hpp"
+#include "include/pdb/pdbResidue.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 

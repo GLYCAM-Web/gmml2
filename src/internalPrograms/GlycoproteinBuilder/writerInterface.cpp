@@ -1,10 +1,10 @@
 #include "include/internalPrograms/GlycoproteinBuilder/writerInterface.hpp"
 
-#include "include/CentralDataStructure/FileFormats/offFileData.hpp"
-#include "include/CentralDataStructure/FileFormats/pdbFileData.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/internalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/off/offFileData.hpp"
+#include "include/pdb/pdbFileData.hpp"
 #include "include/util/containers.hpp"
 #include "include/version.h"
 
@@ -14,10 +14,10 @@ namespace gmml
 {
     namespace gpbuilder
     {
-        OffFileData toOffFileData(
+        off::OffFileData toOffFileData(
             const assembly::Graph& graph, const AssemblyData& data, const std::vector<Coordinate>& atomCoordinates)
         {
-            OffFileAtomData atomData {
+            off::OffFileAtomData atomData {
                 data.atoms.serializedNumbers,
                 data.atoms.names,
                 data.atoms.types,
@@ -43,17 +43,17 @@ namespace gmml
             {
                 std::sort(vec.begin(), vec.end());
             }
-            OffFileResidueData residueData {
+            off::OffFileResidueData residueData {
                 data.residues.serializedNumbers,
                 data.residues.names,
                 data.residues.types,
                 atomsConnectedToOtherResidues};
-            OffFileFormat format;
+            off::OffFileFormat format;
             format.coordinate.decimals.precision = 5;
-            return OffFileData {format, residueData, atomData};
+            return off::OffFileData {format, residueData, atomData};
         }
 
-        PdbFileData toPdbFileData(
+        pdb::PdbFileData toPdbFileData(
             const assembly::Indices& indices,
             const AssemblyData& data,
             const std::vector<Coordinate>& atomCoordinates,
@@ -67,8 +67,8 @@ namespace gmml
             std::vector<std::string> recordNames(atomCount, "ATOM");
             std::vector<std::string> insertionCodes(residueCount, "");
 
-            PdbFileResidueData residuePdbData {residueNumbers, data.residues.names, chainIds, insertionCodes};
-            PdbFileAtomData atomPdbData {
+            pdb::PdbFileResidueData residuePdbData {residueNumbers, data.residues.names, chainIds, insertionCodes};
+            pdb::PdbFileAtomData atomPdbData {
                 atomCoordinates,
                 atomNumbers,
                 data.atoms.names,
@@ -76,8 +76,8 @@ namespace gmml
                 recordNames,
                 std::vector<double>(atomCount, 1.0),
                 std::vector<double>(atomCount, 0.0)};
-            PdbFileFormat format;
-            return PdbFileData {format, headerLines, residuePdbData, atomPdbData};
+            pdb::PdbFileFormat format;
+            return pdb::PdbFileData {format, headerLines, residuePdbData, atomPdbData};
         }
     } // namespace gpbuilder
 } // namespace gmml

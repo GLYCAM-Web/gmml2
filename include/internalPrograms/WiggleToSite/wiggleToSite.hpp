@@ -6,7 +6,7 @@
 #include "include/geometry/overlap.hpp"
 #include "include/internalPrograms/WiggleToSite/inputs.hpp"
 #include "include/metadata/dihedralangledata.hpp"
-#include "include/readers/Pdb/pdbFile.hpp"
+#include "include/pdb/pdbFile.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/carbohydrate.hpp"
 #include "include/util/containerTypes.hpp"

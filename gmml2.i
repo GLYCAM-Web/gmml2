@@ -28,9 +28,9 @@ try	{
 #include "include/sequence/graphViz.hpp"
 #include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
 #include "include/sequence/sequence.hpp"
-#include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
-#include "include/readers/Pdb/pdbFile.hpp"
-#include "include/readers/Pdb/pdbResidueId.hpp"
+#include "include/pdb/pdbPreprocessorInputs.hpp"
+#include "include/pdb/pdbFile.hpp"
+#include "include/pdb/pdbResidueId.hpp"
 #include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 using namespace gmml::pdb;
 using namespace gmml;
@@ -45,9 +45,9 @@ std::ostream & get_cout() { return std::cout; }
 %include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
 %include "include/sequence/sequence.hpp"
 // MDPrep
-%include "include/readers/Pdb/pdbPreprocessorInputs.hpp"
-%include "include/readers/Pdb/pdbFile.hpp"
-%include "include/readers/Pdb/pdbResidueId.hpp"
+%include "include/pdb/pdbPreprocessorInputs.hpp"
+%include "include/pdb/pdbFile.hpp"
+%include "include/pdb/pdbResidueId.hpp"
 // CarbohydrateBuilder
 %include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 

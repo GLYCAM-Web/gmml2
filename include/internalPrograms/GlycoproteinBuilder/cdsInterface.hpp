@@ -5,7 +5,7 @@
 #include "include/internalPrograms/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "include/internalPrograms/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "include/metadata/aminoAcids.hpp"
-#include "include/readers/Pdb/pdbData.hpp"
+#include "include/pdb/pdbData.hpp"
 #include "include/util/containerTypes.hpp"
 
 #include <vector>

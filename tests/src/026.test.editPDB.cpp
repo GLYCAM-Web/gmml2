@@ -1,14 +1,14 @@
+#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryFunctions.hpp"
-#include "include/readers/Pdb/pdbFile.hpp"
-#include "include/readers/Pdb/pdbFunctions.hpp"
-#include "include/readers/Pdb/pdbResidue.hpp"
-#include "include/readers/Pdb/pdbSelections.hpp"
+#include "include/pdb/pdbFile.hpp"
+#include "include/pdb/pdbFunctions.hpp"
+#include "include/pdb/pdbResidue.hpp"
+#include "include/pdb/pdbSelections.hpp"
 #include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
-#include "include/writers/pdbWriter.hpp"
 
 #include <iostream>
 #include <ostream>

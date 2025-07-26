@@ -1,14 +1,14 @@
-#include "include/CentralDataStructure/FileFormats/offFileWriter.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
+#include "include/CentralDataStructure/offWriter.hpp"
+#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/off/offFileWriter.hpp"
 #include "include/readers/Lib/LibraryFile.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
-#include "include/writers/offWriter.hpp"
-#include "include/writers/pdbWriter.hpp"
 
 #include <iostream>
 #include <ostream>

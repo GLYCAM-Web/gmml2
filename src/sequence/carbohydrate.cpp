@@ -8,6 +8,8 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
+#include "include/CentralDataStructure/offWriter.hpp"
+#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
@@ -19,7 +21,7 @@
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/glycam06Functions.hpp"
 #include "include/metadata/glycam06ResidueNameGenerator.hpp"
-#include "include/readers/Pdb/pdbResidue.hpp"
+#include "include/pdb/pdbResidue.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/parsedResidue.hpp"
 #include "include/sequence/sequenceTypes.hpp"
@@ -32,8 +34,6 @@
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"
-#include "include/writers/offWriter.hpp"
-#include "include/writers/pdbWriter.hpp"
 
 #include <algorithm> //  std::erase, std::remove
 #include <cctype>    // isDigit
