@@ -248,9 +248,8 @@ namespace gmml
                 std::string fileName = outputDir + "/" + prefix + ".off";
                 util::writeToFile(
                     fileName,
-                    [&](std::ostream& stream)
-                    {
-                        off::WriteResiduesTogetherToOffFile(
+                    [&](std::ostream& stream) {
+                        off::writeResiduesTogether(
                             stream, graph, offData, util::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
                     });
             };

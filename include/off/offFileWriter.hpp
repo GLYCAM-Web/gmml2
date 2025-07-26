@@ -12,19 +12,9 @@ namespace gmml
 {
     namespace off
     {
-        void WriteOffFileUnit(
-            std::ostream& stream,
-            const OffFileFormat& format,
-            const assembly::Graph& graph,
-            const OffFileResidueData& residues,
-            const OffFileAtomData& atoms,
-            const std::vector<size_t>& residueIndices,
-            const std::string& unitName);
+        void writeResiduesIndividually(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data);
 
-        void WriteResiduesIndividuallyToOffFile(
-            std::ostream& stream, const assembly::Graph& graph, const OffFileData& data);
-
-        void WriteResiduesTogetherToOffFile(
+        void writeResiduesTogether(
             std::ostream& stream,
             const assembly::Graph& graph,
             const OffFileData& data,

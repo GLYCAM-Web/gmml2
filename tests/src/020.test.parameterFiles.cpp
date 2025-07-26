@@ -44,7 +44,7 @@ int main()
         util::writeToFile(
             fileName,
             [&](std::ostream& stream)
-            { WriteResiduesIndividuallyToOffFile(stream, graph, toOffFileData(graphData.objects.residues)); });
+            { off::writeResiduesIndividually(stream, graph, toOffFileData(graphData.objects.residues)); });
     }
     catch (...)
     {
@@ -62,7 +62,7 @@ int main()
         util::writeToFile(
             fileName,
             [&](std::ostream& stream)
-            { WriteResiduesIndividuallyToOffFile(stream, graph, toOffFileData(graphData.objects.residues)); });
+            { off::writeResiduesIndividually(stream, graph, toOffFileData(graphData.objects.residues)); });
     }
     catch (...)
     {

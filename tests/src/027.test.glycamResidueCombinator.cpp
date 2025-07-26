@@ -97,5 +97,5 @@ int main(int argc, char* argv[])
     util::writeToFile(
         "GLYCAM_06k.lib",
         [&](std::ostream& stream)
-        { WriteResiduesIndividuallyToOffFile(stream, graph, toOffFileData(allGeneratedResidues)); });
+        { off::writeResiduesIndividually(stream, graph, toOffFileData(allGeneratedResidues)); });
 }

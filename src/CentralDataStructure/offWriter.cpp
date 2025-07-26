@@ -85,6 +85,6 @@ namespace gmml
         off::OffFileData offData = toOffFileData(data.objects.residues);
         offData.atoms.numbers = serializedNumberVector(graph.atoms.source.nodeAlive);
         offData.residues.numbers = serializedNumberVector(data.indices.residueCount);
-        off::WriteResiduesTogetherToOffFile(stream, graph, offData, util::indexVector(data.objects.residues), name);
+        off::writeResiduesTogether(stream, graph, offData, util::indexVector(data.objects.residues), name);
     }
 } // namespace gmml

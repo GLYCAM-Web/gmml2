@@ -53,9 +53,8 @@ int main(int argc, char* argv[])
             serializeNumbers(graphData.objects.residues);
             util::writeToFile(
                 baseDir + "/outputOffFile.off",
-                [&](std::ostream& stream)
-                {
-                    off::WriteResiduesTogetherToOffFile(
+                [&](std::ostream& stream) {
+                    off::writeResiduesTogether(
                         stream, graph, data, util::indexVector(graphData.objects.residues), "Assembly");
                 });
         }
