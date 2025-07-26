@@ -11,11 +11,14 @@
 // of ~May 2023
 namespace gmml
 {
-    bool checkForNonNaturalProteinResidues(
-        const pdb::PdbData& data,
-        const std::vector<size_t>& unknownResidues,
-        size_t cAtom,
-        pdb::PreprocessorInformation& ppInfo);
-}
+    namespace pdb
+    {
+        bool checkForNonNaturalProteinResidues(
+            const PdbData& data,
+            const std::vector<size_t>& unknownResidues,
+            size_t cAtom,
+            PreprocessorInformation& ppInfo);
+    }
+} // namespace gmml
 
 #endif

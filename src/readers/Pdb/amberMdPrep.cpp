@@ -1,7 +1,5 @@
 #include "include/readers/Pdb/amberMdPrep.hpp"
 
-#include "include/CentralDataStructure/atom.hpp"
-#include "include/CentralDataStructure/residue.hpp"
 #include "include/readers/Pdb/bondByDistance.hpp"
 #include "include/readers/Pdb/pdbData.hpp"
 #include "include/readers/Pdb/pdbFunctions.hpp"
@@ -9,22 +7,25 @@
 
 namespace gmml
 {
-    bool checkForNonNaturalProteinResidues(
-        const pdb::PdbData& data,
-        const std::vector<size_t>& unknownResidues,
-        size_t cAtom,
-        pdb::PreprocessorInformation& ppInfo)
+    namespace pdb
     {
-        size_t atomCount = data.indices.atomCount;
-        for (size_t residueId : unknownResidues)
+        bool checkForNonNaturalProteinResidues(
+            const PdbData& data,
+            const std::vector<size_t>& unknownResidues,
+            size_t cAtom,
+            PreprocessorInformation& ppInfo)
         {
-            size_t nAtom = pdb::findResidueAtom(data, residueId, "N");
-            if (nAtom < atomCount && pdb::isWithinBondingDistance(data, nAtom, cAtom))
+            size_t atomCount = data.indices.atomCount;
+            for (size_t residueId : unknownResidues)
             {
-                ppInfo.nonNaturalProteinResidues_.emplace_back(pdb::pdbResidueId(data, residueId));
-                return true;
+                size_t nAtom = findResidueAtom(data, residueId, "N");
+                if (nAtom < atomCount && isWithinBondingDistance(data, nAtom, cAtom))
+                {
+                    ppInfo.nonNaturalProteinResidues_.emplace_back(pdbResidueId(data, residueId));
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
+    } // namespace pdb
 } // namespace gmml
