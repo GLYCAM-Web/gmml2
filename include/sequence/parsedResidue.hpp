@@ -4,7 +4,6 @@
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/sequence/sequenceTypes.hpp"
 #include "include/sequence/sequenceUtil.hpp"
-#include "include/util/casting.hpp"
 
 #include <string>
 
