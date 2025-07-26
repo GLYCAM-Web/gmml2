@@ -16,7 +16,6 @@
 ./src/CentralDataStructure/molecule.cpp
 ./src/CentralDataStructure/offWriter.cpp
 ./src/CentralDataStructure/pdbWriter.cpp
-./src/CentralDataStructure/print.cpp
 ./src/CentralDataStructure/residue.cpp
 ./src/assembly/assemblyBounds.cpp
 ./src/assembly/assemblyGraph.cpp
