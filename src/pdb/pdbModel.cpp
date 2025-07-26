@@ -17,7 +17,6 @@
 #include "include/pdb/pdbFileWriter.hpp"
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbResidue.hpp"
-#include "include/util/casting.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"

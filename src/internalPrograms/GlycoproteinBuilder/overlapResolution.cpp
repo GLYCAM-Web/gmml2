@@ -32,7 +32,6 @@
 #include "include/pdb/pdbFileWriter.hpp"
 #include "include/pdb/pdbResidue.hpp"
 #include "include/structure/atomOverlaps.hpp"
-#include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/filesystem.hpp"

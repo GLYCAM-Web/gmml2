@@ -5,7 +5,6 @@
 #include "include/pdb/pdbData.hpp"
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbResidueId.hpp"
-#include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp" //RemoveWhiteSpace

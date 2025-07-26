@@ -5,7 +5,6 @@
 #include "include/metadata/aminoAcids.hpp"
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbResidue.hpp"
-#include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"

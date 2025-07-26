@@ -8,7 +8,6 @@
 #include "include/pdb/pdbData.hpp"
 #include "include/pdb/pdbModel.hpp"
 #include "include/pdb/pdbResidue.hpp"
-#include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 
 namespace gmml

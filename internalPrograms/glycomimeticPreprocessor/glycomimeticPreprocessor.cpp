@@ -7,7 +7,6 @@
 #include "include/pdb/pdbPreprocessorInputs.hpp"
 #include "include/pdb/pdbResidue.hpp"
 #include "include/readers/parameterManager.hpp"
-#include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/filesystem.hpp"
 
