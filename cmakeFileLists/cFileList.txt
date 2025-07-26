@@ -93,6 +93,7 @@
 ./src/util/containers.cpp
 ./src/util/files.cpp
 ./src/util/filesystem.cpp
+./src/util/formatting.cpp
 ./src/util/logging.cpp
 ./src/util/parsing.cpp
 ./src/util/random.cpp

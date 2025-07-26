@@ -1,7 +1,6 @@
 #ifndef INCLUDE_UTIL_FORMATTING_HPP
 #define INCLUDE_UTIL_FORMATTING_HPP
 
-#include <iomanip>
 #include <ostream>
 
 namespace gmml
@@ -27,17 +26,7 @@ namespace gmml
             decimalFormat decimals;
         };
 
-        inline void writeFloat(std::ostream& stream, const floatFormat& format, double value)
-        {
-            const decimalFormat& decimals = format.decimals;
-            stream << (format.alignment == textAlignment::left ? std::left : std::right);
-            stream << std::setw(format.width) << std::fixed;
-            stream << std::setprecision(decimals.precision) << value;
-            for (size_t n = 0; n < decimals.digits - decimals.precision; n++)
-            {
-                stream << "0";
-            }
-        }
+        void writeFloat(std::ostream& stream, const floatFormat& format, double value);
 
     } // namespace util
 } // namespace gmml
