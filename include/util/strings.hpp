@@ -48,19 +48,6 @@ namespace gmml
             return value;
         }
 
-        template<typename Out> inline void split(const std::string& s, char delim, Out result)
-        {
-            std::stringstream ss(s);
-            std::string item;
-            while (std::getline(ss, item, delim))
-            {
-                if (item.size() >= 1 && !(item.size() == 1 && item[0] == delim))
-                {
-                    *(result++) = item;
-                }
-            }
-        }
-
         template<class T> inline T extractFromStream(std::istream& ss, T temp)
         {
             ss >> temp;
