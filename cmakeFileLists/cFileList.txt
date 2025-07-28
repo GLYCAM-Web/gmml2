@@ -69,7 +69,6 @@
 ./src/pdb/pdbPreProcess.cpp
 ./src/pdb/pdbResidue.cpp
 ./src/pdb/pdbResidueId.cpp
-./src/pdb/pdbSelections.cpp
 ./src/pdb/sectionClasses/authorRecord.cpp
 ./src/pdb/sectionClasses/databaseReferenceRecord.cpp
 ./src/pdb/sectionClasses/headerRecord.cpp

@@ -8,7 +8,6 @@
 #include "include/metadata/elements.hpp"
 #include "include/pdb/bondByDistance.hpp"
 #include "include/pdb/pdbFile.hpp"
-#include "include/pdb/pdbSelections.hpp"
 #include "include/util/arguments.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/parsing.hpp"

@@ -5,6 +5,8 @@
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/elements.hpp"
 #include "include/metadata/residueTypes.hpp"
+#include "include/pdb/pdbData.hpp"
+#include "include/pdb/pdbResidueId.hpp"
 #include "include/util/containerTypes.hpp"
 
 #include <array>
@@ -21,6 +23,10 @@ namespace gmml
         return;
     }
 
+    std::vector<Atom*> getAtoms(const std::vector<Assembly*>& assemblies);
+    std::vector<Residue*> getResidues(const std::vector<Assembly*>& assemblies);
+    size_t residueSelector(const pdb::PdbData& data, const pdb::ResidueId& residueId, const int modelNumber = 0);
+    size_t residueSelector(const pdb::PdbData& data, std::vector<size_t> residueIds, const pdb::ResidueId& queryId);
     std::vector<uint> serializedNumberVector(const std::vector<bool>& included);
     std::vector<uint> serializedNumberVector(size_t count);
     size_t atomVectorIndex(const std::vector<Atom*>& atoms, Atom* find);

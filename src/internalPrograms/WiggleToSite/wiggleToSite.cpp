@@ -13,7 +13,6 @@
 #include "include/metadata/elements.hpp"
 #include "include/pdb/pdbFile.hpp"
 #include "include/pdb/pdbModel.hpp"
-#include "include/pdb/pdbSelections.hpp" //select
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/structure/atomOverlaps.hpp"
@@ -66,10 +65,10 @@ namespace gmml
         this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
         pdb::PdbData& pdbData = this->getSubstrate().data;
         size_t superimpositionTargetId =
-            pdb::residueSelector(pdbData, inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
+            residueSelector(pdbData, inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
         Residue* superimpositionTarget = pdbData.objects.residues[superimpositionTargetId];
         size_t wigglingTargetId =
-            pdb::residueSelector(pdbData, inputStruct.wigglingTargetResidue_, inputStruct.substrateModelNumber_);
+            residueSelector(pdbData, inputStruct.wigglingTargetResidue_, inputStruct.substrateModelNumber_);
         Residue* wigglingTarget = pdbData.objects.residues[wigglingTargetId];
         if (superimpositionTarget == nullptr || wigglingTarget == nullptr)
         {
@@ -103,8 +102,8 @@ namespace gmml
         setAtomCoordinates(atoms, carbohydrateCoordinates);
         this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed", {});
         this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
-        std::vector<Atom*> substrateWithoutSuperimpositionAtoms = findElementsNotInVector(
-            pdb::getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
+        std::vector<Atom*> substrateWithoutSuperimpositionAtoms =
+            findElementsNotInVector(getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
         std::vector<Atom*> substrateAtomsToAvoidOverlappingWith =
             findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
         this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;

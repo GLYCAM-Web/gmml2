@@ -1,7 +1,6 @@
 #include "include/internalPrograms/glycosylationSiteFinder.hpp"
 #include "include/pdb/bondByDistance.hpp"
 #include "include/pdb/pdbFile.hpp"
-#include "include/pdb/pdbSelections.hpp"
 #include "include/util/arguments.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/strings.hpp"

@@ -5,7 +5,6 @@
 #include "include/pdb/pdbFile.hpp"
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbResidue.hpp"
-#include "include/pdb/pdbSelections.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 
