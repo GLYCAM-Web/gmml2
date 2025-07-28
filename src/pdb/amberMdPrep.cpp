@@ -5,6 +5,8 @@
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbResidue.hpp"
 
+#include <vector>
+
 namespace gmml
 {
     namespace pdb

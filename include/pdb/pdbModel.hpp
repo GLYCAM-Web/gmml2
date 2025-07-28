@@ -1,11 +1,8 @@
 #ifndef INCLUDE_PDB_PDBMODEL_HPP
 #define INCLUDE_PDB_PDBMODEL_HPP
-#include "include/CentralDataStructure/cdsTypes.hpp"
-#include "include/pdb/pdbData.hpp"
-#include "include/pdb/pdbPreprocessorInputs.hpp"
-#include "include/readers/parameterManager.hpp"
 
-#include <ostream>
+#include "include/pdb/pdbData.hpp"
+
 #include <sstream>
 #include <vector>
 

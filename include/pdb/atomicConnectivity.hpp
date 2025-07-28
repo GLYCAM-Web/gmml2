@@ -4,10 +4,6 @@
 #include "include/metadata/aminoAcids.hpp"
 #include "include/pdb/pdbData.hpp"
 
-#include <array>
-#include <utility>
-#include <vector>
-
 namespace gmml
 {
     namespace pdb

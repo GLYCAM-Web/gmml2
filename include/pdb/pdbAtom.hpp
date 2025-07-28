@@ -3,7 +3,6 @@
 // See http://www.wwpdb.org/documentation/file-format-content/format33/sect9.html#ATOM for an explanation of atom
 // formats in PDB files
 
-#include "include/geometry/geometryTypes.hpp"
 #include "include/pdb/pdbData.hpp"
 
 #include <string>

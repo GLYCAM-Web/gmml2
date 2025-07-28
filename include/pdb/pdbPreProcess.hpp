@@ -7,7 +7,6 @@
 
 #include <ostream>
 #include <sstream>
-#include <vector>
 
 namespace gmml
 {

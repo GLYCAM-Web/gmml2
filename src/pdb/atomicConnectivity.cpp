@@ -14,7 +14,6 @@
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"
 
-#include <array>
 #include <stdexcept>
 #include <vector>
 

@@ -10,7 +10,6 @@
 #include "include/util/strings.hpp"
 
 #include <string>
-#include <variant>
 #include <vector>
 
 namespace gmml

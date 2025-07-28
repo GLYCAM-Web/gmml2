@@ -1,11 +1,6 @@
 #include "include/pdb/pdbModel.hpp"
 
-#include "include/CentralDataStructure/Selections/atomSelections.hpp"
-#include "include/CentralDataStructure/Selections/residueSelections.hpp"
 #include "include/CentralDataStructure/assembly.hpp"
-#include "include/CentralDataStructure/cdsFunctions.hpp"
-#include "include/CentralDataStructure/graphInterface.hpp"
-#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/geometry/geometryFunctions.hpp"
 #include "include/pdb/amberMdPrep.hpp" //all preprocessing should move to here.

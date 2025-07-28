@@ -22,6 +22,10 @@
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"
 
+#include <string>
+#include <variant>
+#include <vector>
+
 namespace gmml
 {
     namespace pdb
