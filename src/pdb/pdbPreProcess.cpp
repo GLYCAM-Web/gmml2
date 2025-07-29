@@ -85,7 +85,7 @@ namespace gmml
         {
             for (size_t residueId : assemblyResidues(data.indices, assemblyId))
             {
-                std::size_t found = pdbResidueId(data, residueId).print().find(selector);
+                std::size_t found = toString(pdbResidueId(data, residueId)).find(selector);
                 if (found != std::string::npos)
                 {
                     data.residues.names[residueId] = newName;
@@ -137,8 +137,8 @@ namespace gmml
                             addBond(data, sgAtom1Id, sgAtom2Id); // I think I want this here. Not 100%.
                             ppInfo.cysBondResidues_.emplace_back(Res1Id, Res2Id, dist);
                             std::stringstream message;
-                            message << "Bonding " << Res1Id.print() << " and " << Res2Id.print() << " with distance "
-                                    << dist;
+                            message << "Bonding " << toString(Res1Id) << " and " << toString(Res2Id)
+                                    << " with distance " << dist;
                             util::log(__LINE__, __FILE__, util::INF, message.str());
                         }
                     }
@@ -189,7 +189,7 @@ namespace gmml
                     data.residues.names[residueId] = newName;
                     data.objects.residues[residueId]->setName(newName);
                     util::log(__LINE__, __FILE__, util::INF, "About to emplaceBack Id");
-                    util::log(__LINE__, __FILE__, util::INF, pdbResidueId(data, residueId).print());
+                    util::log(__LINE__, __FILE__, util::INF, toString(pdbResidueId(data, residueId)));
                     ppInfo.hisResidues_.emplace_back(pdbResidueId(data, residueId));
                 }
             }
@@ -204,7 +204,7 @@ namespace gmml
                     __LINE__,
                     __FILE__,
                     util::INF,
-                    "Modifying N Terminal of : " + pdbResidueId(data, residueId).print());
+                    "Modifying N Terminal of : " + toString(pdbResidueId(data, residueId)));
                 size_t atomId = findResidueAtom(data, residueId, "H");
                 deleteAtom(data, residueId, atomId);
             }
@@ -215,7 +215,7 @@ namespace gmml
                     __LINE__,
                     __FILE__,
                     util::INF,
-                    "Modifying C Terminal of : " + pdbResidueId(data, residueId).print());
+                    "Modifying C Terminal of : " + toString(pdbResidueId(data, residueId)));
                 size_t atomOXT = findResidueAtom(data, residueId, "OXT");
                 if (atomOXT < atomCount)
                 {
@@ -276,8 +276,8 @@ namespace gmml
                     modifyTerminal(data, nTerResidue, inputOptions.chainNTermination_);
                     size_t cTerResidue = getCTerminal(data, moleculeId);
                     modifyTerminal(data, cTerResidue, inputOptions.chainCTermination_);
-                    util::log(__LINE__, __FILE__, util::INF, "N term : " + pdbResidueId(data, nTerResidue).print());
-                    util::log(__LINE__, __FILE__, util::INF, "C term : " + pdbResidueId(data, cTerResidue).print());
+                    util::log(__LINE__, __FILE__, util::INF, "N term : " + toString(pdbResidueId(data, nTerResidue)));
+                    util::log(__LINE__, __FILE__, util::INF, "C term : " + toString(pdbResidueId(data, cTerResidue)));
                     // Report the thing
                     ppInfo.chainTerminals_.emplace_back(
                         data.residues.chainIds[nTerResidue],
@@ -389,7 +389,7 @@ namespace gmml
                         {"CH3", "HH33"}
                 });
                 util::log(
-                    __LINE__, __FILE__, util::INF, "Created ACE residue: " + pdbResidueId(data, residueId).print());
+                    __LINE__, __FILE__, util::INF, "Created ACE residue: " + toString(pdbResidueId(data, residueId)));
             }
         }
 
@@ -442,12 +442,12 @@ namespace gmml
                                 __LINE__,
                                 __FILE__,
                                 util::INF,
-                                inputOptions.gapCTermination_ + " cap for : " + pdbResidueId(data, res1).print());
+                                inputOptions.gapCTermination_ + " cap for : " + toString(pdbResidueId(data, res1)));
                             util::log(
                                 __LINE__,
                                 __FILE__,
                                 util::INF,
-                                inputOptions.gapNTermination_ + " cap for : " + pdbResidueId(data, res2).print());
+                                inputOptions.gapNTermination_ + " cap for : " + toString(pdbResidueId(data, res2)));
                             // Do it
                             insertCap(data, moleculeId, res1, inputOptions.gapCTermination_);
                             insertCap(data, moleculeId, res2, inputOptions.gapNTermination_);
@@ -501,7 +501,7 @@ namespace gmml
                                 __LINE__,
                                 __FILE__,
                                 util::INF,
-                                "Atom named " + parmHeavyAtomName + " missing from " + residueIdObj.print());
+                                "Atom named " + parmHeavyAtomName + " missing from " + toString(residueIdObj));
                             ppInfo.missingHeavyAtoms_.emplace_back(parmHeavyAtomName, residueIdObj);
                         }
                     }
@@ -514,7 +514,7 @@ namespace gmml
                                 __LINE__,
                                 __FILE__,
                                 util::INF,
-                                "Unrecognized atom named " + pdbAtomName + " in " + residueIdObj.print());
+                                "Unrecognized atom named " + pdbAtomName + " in " + toString(residueIdObj));
                             ppInfo.unrecognizedAtoms_.emplace_back(pdbAtomName, residueIdObj);
                         }
                     }

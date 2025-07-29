@@ -35,14 +35,14 @@ namespace gmml
             if (util::startsWith(strInput, "SuperimpositionTargetResidue:"))
             {
                 std::string inputPortion = util::split(strInput, ':').at(1);
-                superimpositionTargetResidue_ = pdb::ResidueId(util::split(inputPortion, '_'));
+                superimpositionTargetResidue_ = pdb::readResidueId(util::split(inputPortion, '_'));
                 //            std::cout << "superimpositionTargetResidue_ in input file is: " <<
                 //            superimpositionTargetResidue_ << std::endl;
             }
             if (util::startsWith(strInput, "WiggleTargetResidue:"))
             {
                 std::string inputPortion = util::split(strInput, ':').at(1);
-                wigglingTargetResidue_ = pdb::ResidueId(util::split(inputPortion, '_'));
+                wigglingTargetResidue_ = pdb::readResidueId(util::split(inputPortion, '_'));
                 //            std::cout << "wigglingTargetResidue_ in input file is: " << wigglingTargetResidue_ <<
                 //            std::endl;
             }
@@ -78,9 +78,9 @@ namespace gmml
         std::stringstream ss;
         ss << "substrateFile_ : " << substrateFile_ << "\n";
         ss << "carbohydrateFile_ : " << carbohydrateSequence_ << "\n";
-        ss << "superimpositionTargetResidue_ : " << superimpositionTargetResidue_ << "\n";
+        ss << "superimpositionTargetResidue_ : " << toString(superimpositionTargetResidue_) << "\n";
         ss << "carbohydrateSuperimpositionResidue_ : " << carbohydrateSuperimpositionResidue_ << "\n";
-        ss << "wigglingTargetResidue_ : " << wigglingTargetResidue_ << "\n";
+        ss << "wigglingTargetResidue_ : " << toString(wigglingTargetResidue_) << "\n";
         ss << "carbohydrateWigglingResidue_ : " << carbohydrateWigglingResidue_ << "\n";
         ss << "persistCycles_ : " << persistCycles_ << "\n";
         ss << "isDeterministic_ : " << isDeterministic_ << "\n";

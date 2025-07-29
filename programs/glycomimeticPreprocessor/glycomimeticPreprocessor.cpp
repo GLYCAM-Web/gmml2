@@ -89,25 +89,30 @@ int main(int argc, char* argv[])
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();
 
+    auto residueIdString = [](const pdb::ResidueId& id)
+    { return id.residueName + " | " + id.chainId + " | " + id.sequenceNumber + id.insertionCode; };
+
+    auto residueIdStringChainFirst = [](const pdb::ResidueId& id)
+    { return id.chainId + " | " + id.residueName + " | " + id.sequenceNumber + id.insertionCode; };
+
+    auto atomInfoString = [&](const pdb::AtomInfo& atom)
+    { return atom.name_ + " | " + residueIdString(atom.residue_); };
+
     // Just showing what's in the ppInfo and how to access it
     std::cout << "Unrecognized atoms:\n";
     for (auto& unrecognized : ppInfo.unrecognizedAtoms_)
     {
-        std::cout << unrecognized.name_ << " | " << unrecognized.residue_.getName() << " | "
-                  << unrecognized.residue_.getChainId() << " | " << unrecognized.residue_.getNumberAndInsertionCode()
-                  << "\n";
+        std::cout << atomInfoString(unrecognized) << "\n";
     }
     std::cout << "Missing heavy atoms:\n";
     for (auto& missing : ppInfo.missingHeavyAtoms_)
     {
-        std::cout << missing.name_ << " | " << missing.residue_.getName() << " | " << missing.residue_.getChainId()
-                  << " | " << missing.residue_.getNumberAndInsertionCode() << "\n";
+        std::cout << atomInfoString(missing) << "\n";
     }
     std::cout << "Unrecognized residues:\n";
     for (auto& unrecognized : ppInfo.unrecognizedResidues_)
     {
-        std::cout << unrecognized.getName() << " | " << unrecognized.getChainId() << " | "
-                  << unrecognized.getNumberAndInsertionCode() << "\n";
+        std::cout << residueIdString(unrecognized) << "\n";
     }
     std::cout << "Gaps in amino acid chain:\n";
     for (auto& gap : ppInfo.missingResidues_)
@@ -118,15 +123,13 @@ int main(int argc, char* argv[])
     std::cout << "Histidine Protonation:\n";
     for (auto& his : ppInfo.hisResidues_)
     {
-        std::cout << his.getName() << " | " << his.getChainId() << " | " << his.getNumberAndInsertionCode() << "\n";
+        std::cout << residueIdString(his) << "\n";
     }
     std::cout << "Disulphide bonds:\n";
     for (auto& cysBond : ppInfo.cysBondResidues_)
     {
-        std::cout << cysBond.residue1_.getChainId() << " | " << cysBond.residue1_.getName() << " | "
-                  << cysBond.residue1_.getNumberAndInsertionCode() << " | " << cysBond.distance_ << " | "
-                  << cysBond.residue2_.getChainId() << " | " << cysBond.residue2_.getName() << " | "
-                  << cysBond.residue2_.getNumberAndInsertionCode() << "\n";
+        std::cout << residueIdStringChainFirst(cysBond.residue1_) << " | " << cysBond.distance_ << " | "
+                  << residueIdStringChainFirst(cysBond.residue2_) << "\n";
     }
     std::cout << "Chain terminations:\n";
     for (auto& chainT : ppInfo.chainTerminals_)
@@ -137,8 +140,7 @@ int main(int argc, char* argv[])
     std::cout << "NonNatural Protein Residues:\n";
     for (auto& nonNaturalResidue : ppInfo.nonNaturalProteinResidues_)
     {
-        std::cout << nonNaturalResidue.residue_.getChainId() << " | " << nonNaturalResidue.residue_.getName() << " | "
-                  << nonNaturalResidue.residue_.getNumberAndInsertionCode() << "\n";
+        std::cout << residueIdStringChainFirst(nonNaturalResidue.residue_) << "\n";
     }
     return 0;
 }

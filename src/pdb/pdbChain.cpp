@@ -60,7 +60,7 @@ namespace gmml
         {
             std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
             std::stringstream singleResidueSection;
-            ResidueId residueId(line);
+            ResidueId residueId = readResidueId(line);
             ResidueId initialResidueId = residueId;
             while (residueId == initialResidueId)
             {
@@ -70,7 +70,7 @@ namespace gmml
                 {
                     break; // // If we hit the end, time to leave.
                 }
-                residueId = ResidueId(line);
+                residueId = readResidueId(line);
             }
             // Go back to previous line position. E.g. was reading HEADER and found TITLE:
             pdbFileStream.seekg(previousLinePosition);

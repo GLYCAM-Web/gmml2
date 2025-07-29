@@ -30,52 +30,53 @@ namespace gmml
 
         ResidueId pdbResidueId(const PdbData& data, size_t residueId)
         {
-            return ResidueId(
+            return {
                 data.residues.names[residueId],
                 std::to_string(data.residues.numbers[residueId]),
                 data.residues.insertionCodes[residueId],
-                data.residues.chainIds[residueId]);
+                data.residues.chainIds[residueId],
+                ""};
         }
 
         std::string residueStringId(const PdbData& data, size_t residueId)
         {
-            return pdbResidueId(data, residueId).print();
+            return toString(pdbResidueId(data, residueId));
         }
 
         size_t readResidue(
             PdbData& data, size_t moleculeId, std::stringstream& singleResidueSecion, std::string firstLine)
         {
-            ResidueId resId(firstLine);
+            ResidueId resId = readResidueId(firstLine);
             size_t position = data.molecules.residueOrder[moleculeId].size();
-            std::string name = resId.getName();
+            std::string name = resId.residueName;
             size_t residueId = addResidue(
                 data,
                 moleculeId,
                 position,
                 {name,
                  residueType(name),
-                 uint(std::stoi(resId.getNumber())),
-                 resId.getInsertionCode(),
-                 resId.getChainId(),
+                 uint(std::stoi(resId.sequenceNumber)),
+                 resId.insertionCode,
+                 resId.chainId,
                  false});
-            std::string firstFoundAlternativeLocationIndicator = resId.getAlternativeLocation(); // Normally empty
+            std::string firstFoundAlternativeLocationIndicator = resId.alternativeLocation; // Normally empty
             std::string line;
             while (getline(singleResidueSecion, line))
             {
                 std::string recordName = util::RemoveWhiteSpace(line.substr(0, 6));
                 if ((recordName == "ATOM") || (recordName == "HETATM"))
                 {
-                    ResidueId id(
+                    ResidueId id = readResidueId(
                         line); // Check alternativeLocation and ignore any that aren't the same as the first one.
-                    if (id.getAlternativeLocation().empty() ||
-                        id.getAlternativeLocation() == firstFoundAlternativeLocationIndicator)
+                    if (id.alternativeLocation.empty() ||
+                        id.alternativeLocation == firstFoundAlternativeLocationIndicator)
                     { // If no alternative location (normal case) or alternateLocation is the first one (normally "A").
                         addAtom(data, residueId, readAtom(line));
                     }
                     else if (firstFoundAlternativeLocationIndicator.empty())
                     { // Sometimes first atom has one location, but later atoms have alternatives. Just set and use the
                       // first one (normally "A")
-                        firstFoundAlternativeLocationIndicator = id.getAlternativeLocation();
+                        firstFoundAlternativeLocationIndicator = id.alternativeLocation;
                         addAtom(data, residueId, readAtom(line));
                     }
                     else

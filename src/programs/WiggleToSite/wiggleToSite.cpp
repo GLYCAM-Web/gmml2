@@ -73,8 +73,9 @@ namespace gmml
         if (superimpositionTarget == nullptr || wigglingTarget == nullptr)
         {
             std::stringstream ss;
-            ss << "Selection for superimposition target: " << inputStruct.superimpositionTargetResidue_
-               << "\nOr selection for wiggling target: " << inputStruct.wigglingTargetResidue_ << " was not found\n";
+            ss << "Selection for superimposition target: " << toString(inputStruct.superimpositionTargetResidue_)
+               << "\nOr selection for wiggling target: " << toString(inputStruct.wigglingTargetResidue_)
+               << " was not found\n";
             throw std::runtime_error(ss.str());
         }
         auto atoms = getCarbohydrate().mutableAtoms();

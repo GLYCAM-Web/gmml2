@@ -52,21 +52,15 @@ namespace gmml
 
     size_t residueSelector(const pdb::PdbData& data, std::vector<size_t> residueIds, const pdb::ResidueId& queryId)
     { // I'm using empty() to mean that it could be anything.
+        auto eq = [](const std::string& str, const std::string& comp) { return str.empty() || str == comp; };
+
         for (size_t residueId : residueIds)
         {
             pdb::ResidueId id = pdb::pdbResidueId(data, residueId);
-            if (queryId.getName().empty() || queryId.getName() == id.getName())
+            if (eq(queryId.residueName, id.residueName) && eq(queryId.sequenceNumber, id.sequenceNumber) &&
+                eq(queryId.insertionCode, id.insertionCode) && eq(queryId.chainId, id.chainId))
             {
-                if (queryId.getNumber().empty() || queryId.getNumber() == id.getNumber())
-                {
-                    if (queryId.getInsertionCode().empty() || queryId.getInsertionCode() == id.getInsertionCode())
-                    {
-                        if ((queryId.getChainId().empty() || queryId.getChainId() == id.getChainId()))
-                        {
-                            return residueId;
-                        }
-                    }
-                }
+                return residueId;
             }
         }
         return data.indices.residueCount;
