@@ -16,13 +16,13 @@ overlapRejectionThreshold                0.000000
 useInitialGlycositeResidueConformation   false   
 moveOverlappingSidechains                true    
 deleteUnresolvableGlycosites             false   
-atomOverlapTolerance                     0.260000
+atomOverlapTolerance                     0.000000
 ignoreHydrogen                           false   
 
 #### Structures ####
 
-Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains    
-default                     0.000000                                                                   TYR296 PHE153 ARG155
-0_glycoprotein   rejected   36.488547                         A_297                                    PHE241 PHE153 ARG155
-1_glycoprotein   rejected   0.035027                          A_297                                    TYR296 LEU398 ARG155
+Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains                         
+default                     0.000000                                                                   TYR296 GLU318 LYS340 ARG155              
+0_glycoprotein   rejected   36.488547                         A_297 B_297                              PHE241 LEU124 ARG155                     
+1_glycoprotein   rejected   5.169960                          A_297 B_297 C_162                        PHE241 ARG301 GLN295 LEU124 ARG155 LEU157
 
