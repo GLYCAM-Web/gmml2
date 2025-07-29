@@ -6,7 +6,7 @@
 #include "include/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "include/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
-#include "include/External_Libraries/PCG/pcg_random.h"
+#include "include/external/pcg/pcg_random.h"
 #include "include/geometry/overlap.hpp"
 #include "include/geometry/superimposition.hpp"
 #include "include/metadata/dihedralangledata.hpp"

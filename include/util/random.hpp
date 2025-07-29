@@ -1,7 +1,7 @@
 #ifndef INCLUDE_UTIL_RANDOM_HPP
 #define INCLUDE_UTIL_RANDOM_HPP
 
-#include "include/External_Libraries/PCG/pcg_random.h"
+#include "include/external/pcg/pcg_random.h"
 
 #include <algorithm>
 #include <random>

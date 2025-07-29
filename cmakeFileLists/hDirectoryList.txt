@@ -4,6 +4,8 @@
 ./include/CentralDataStructure/Selections
 ./include/CentralDataStructure/Shapers
 ./include/assembly
+./include/external
+./include/external/pcg
 ./include/geometry
 ./include/graph
 ./include/metadata

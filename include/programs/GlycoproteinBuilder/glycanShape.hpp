@@ -3,8 +3,8 @@
 
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
 #include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
-#include "include/External_Libraries/PCG/pcg_random.h"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/external/pcg/pcg_random.h"
 #include "include/geometry/overlap.hpp"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 

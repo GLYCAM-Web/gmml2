@@ -1,7 +1,7 @@
 #include "include/programs/GlycoproteinBuilder/shapeRandomization.hpp"
 
 #include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "include/External_Libraries/PCG/pcg_random.h"
+#include "include/external/pcg/pcg_random.h"
 #include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "include/util/constants.hpp"

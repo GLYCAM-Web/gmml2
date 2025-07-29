@@ -2,8 +2,8 @@
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINSTRUCTS_HPP
 
 #include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
-#include "include/External_Libraries/PCG/pcg_random.h"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/external/pcg/pcg_random.h"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/graph/graphTypes.hpp"
