@@ -58,8 +58,6 @@
 ./src/pdb/sectionClasses/journalRecord.cpp
 ./src/pdb/sectionClasses/remarkRecord.cpp
 ./src/pdb/sectionClasses/titleRecord.cpp
-./src/programs/CarbohydrateBuilder/carbohydrateBuilder.cpp
-./src/programs/DrawGlycan/drawGlycan.cpp
 ./src/programs/GlycoproteinBuilder/cdsInterface.cpp
 ./src/programs/GlycoproteinBuilder/glycanShape.cpp
 ./src/programs/GlycoproteinBuilder/glycanWiggle.cpp
@@ -75,6 +73,8 @@
 ./src/programs/WiggleToSite/inputs.cpp
 ./src/programs/WiggleToSite/wiggleToSite.cpp
 ./src/programs/glycosylationSiteFinder.cpp
+./src/programs/swig/carbohydrateBuilder.cpp
+./src/programs/swig/sequence.cpp
 ./src/readers/Lib/LibraryFile.cpp
 ./src/readers/Prep/prepAtom.cpp
 ./src/readers/Prep/prepFile.cpp
@@ -83,7 +83,6 @@
 ./src/sequence/carbohydrate.cpp
 ./src/sequence/graphViz.cpp
 ./src/sequence/parsedResidue.cpp
-./src/sequence/sequence.cpp
 ./src/sequence/sequenceGraph.cpp
 ./src/sequence/sequenceManipulation.cpp
 ./src/sequence/sequenceParser.cpp

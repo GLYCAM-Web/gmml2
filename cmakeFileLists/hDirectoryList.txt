@@ -13,10 +13,9 @@
 ./include/pdb
 ./include/pdb/SectionClasses
 ./include/programs
-./include/programs/CarbohydrateBuilder
-./include/programs/DrawGlycan
 ./include/programs/GlycoproteinBuilder
 ./include/programs/WiggleToSite
+./include/programs/swig
 ./include/readers
 ./include/readers/Lib
 ./include/readers/Prep

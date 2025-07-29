@@ -72,40 +72,14 @@ namespace gmml
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
-        carbohydrateBuilder(
-            std::string condensedSequence = "DManp[2S,3Me]a1-6DManpa1-6[DGlcpNAcb1-4][DNeup5Aca2-6DGalpb1-4DGlcpNAc[3S]"
-                                            "b1-2DManpa1-3]DManpb1-4DGlcpNAc[6Me]b1-4DGlcpNAcb1-OH");
+        carbohydrateBuilder(std::string condensedSequence);
+        std::string GetNumberOfShapes(bool likelyShapesOnly = false) const;
+        LinkageOptionsVector GenerateUserOptionsDataStruct();
+        void GenerateSpecific3DStructure(SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory);
 
-        //////////////////////////////////////////////////////////
-        //                       ACCESSORS                      //
-        //////////////////////////////////////////////////////////
         Carbohydrate& GetCarbohydrate() { return carbohydrate_; }
 
-        std::string GetNumberOfShapes(bool likelyShapesOnly = false) const;
-        //////////////////////////////////////////////////////////
-        //                       MUTATOR                        //
-        //////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////
-        //                        FUNCTIONS                     //
-        //////////////////////////////////////////////////////////
-        void GenerateSingle3DStructureDefaultFiles(
-            std::string fileOutputDirectory = "unspecified", std::string outputFileNaming = "structure");
-        void Generate3DStructureFiles(const std::string& fileOutputDirectory, const std::string& outputFileNaming);
-        LinkageOptionsVector GenerateUserOptionsDataStruct();
-        void GenerateSpecific3DStructure(
-            SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory = "unspecified");
-        void GenerateUpToNRotamers(
-            int maxRotamers = 32); // Will not be used by gems, but leaving the functionality as could be useful.
-                                   //  std::string GetNumberOfShapes(bool likelyShapesOnly = false);
       private:
-        void generateLinkagePermutationsRecursively(
-            const DihedralAngleDataTable& metadataTable,
-            std::vector<ResidueLinkage>::iterator linkage,
-            std::vector<ResidueLinkage>::iterator end,
-            int maxRotamers = 32,
-            int rotamerCount = 0);
-        //  void resetLinkageIDsToStartFromZero(ResidueLinkageVector &inputLinkages);
-        std::string convertIncomingRotamerNamesToStandard(std::string incomingName);
         //////////////////////////////////////////////////////////
         //                       ATTRIBUTES                     //
         //////////////////////////////////////////////////////////

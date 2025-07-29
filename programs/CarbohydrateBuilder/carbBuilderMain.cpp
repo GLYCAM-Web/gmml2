@@ -1,8 +1,9 @@
-#include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-#include "include/programs/DrawGlycan/drawGlycan.hpp"
 #include "include/readers/parameterManager.hpp"
+#include "include/sequence/carbohydrate.hpp"
 #include "include/sequence/graphViz.hpp"
+#include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"
+#include "include/sequence/sequencePrinter.hpp"
 #include "include/util/arguments.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
@@ -181,7 +182,7 @@ int main(int argc, char** argv)
                 Carbohydrate carbohydrate(parameterManager, elementRadii, sequenceData);
                 carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
                 GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
-                drawGlycan(config, line.sequence);
+                printGraphViz(config, instantiate(parseSequence(line.sequence)));
             }
             catch (const std::runtime_error& error)
             {

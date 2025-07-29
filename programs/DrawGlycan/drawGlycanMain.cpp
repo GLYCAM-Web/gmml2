@@ -1,5 +1,7 @@
-#include "include/programs/DrawGlycan/drawGlycan.hpp"
 #include "include/sequence/graphViz.hpp"
+#include "include/sequence/sequenceManipulation.hpp"
+#include "include/sequence/sequenceParser.hpp"
+#include "include/sequence/sequencePrinter.hpp"
 #include "include/util/arguments.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/filesystem.hpp"
@@ -21,6 +23,7 @@ int main(int argc, char* argv[])
     };
 
     using namespace gmml;
+    using namespace gmml::sequence;
     using util::ArgReq;
     using util::ArgType;
     std::vector<util::ArgDef> argumentDefinitions = {
@@ -97,6 +100,6 @@ int main(int argc, char* argv[])
 
     sequence::GraphVizDotConfig config(baseDir, SNFGDir, filename);
 
-    drawGlycan(config, sequence);
+    printGraphViz(config, instantiate(parseSequence(sequence)));
     return 0;
 }

@@ -1,5 +1,5 @@
-#include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-#include "include/sequence/sequence.hpp"
+#include "include/programs/swig/carbohydrateBuilder.hpp"
+#include "include/programs/swig/sequence.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"
 
@@ -53,8 +53,8 @@ int main(int argc, char** argv)
                   << "\n*********************\n";
         try
         { // I want to first build and reorder the sequence like gems does, and pass that to the carbohydrateBuilder
-            sequence::Sequence sequence(inputSequence);
-            std::cout << "Input:\n" << sequence.getInputSequence() << "\n";
+            Sequence sequence(inputSequence);
+            std::cout << "Input:\n" << inputSequence << "\n";
             std::cout << "Interpreted:\n" << sequence.getInterpretedSequence() << "\n";
             std::cout << "IndexOrdered:\n" << sequence.getIndexOrdered() << "\n";
             std::cout << "IndexOrderedLabeled:\n" << sequence.getIndexLabeled() << "\n";

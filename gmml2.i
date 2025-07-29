@@ -25,14 +25,8 @@ try	{
 %{
 #define SWIG_FILE_WITH_INIT
 
-#include "include/sequence/graphViz.hpp"
-#include "include/programs/DrawGlycan/drawGlycan.hpp"
-#include "include/sequence/sequence.hpp"
-#include "include/pdb/pdbPreprocessorInputs.hpp"
-#include "include/pdb/pdbFile.hpp"
-#include "include/pdb/pdbResidueId.hpp"
-#include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
-using namespace gmml::pdb;
+#include "include/programs/swig/sequence.hpp"
+#include "include/programs/swig/carbohydrateBuilder.hpp"
 using namespace gmml;
 %}
 
@@ -40,27 +34,9 @@ using namespace gmml;
 std::ostream & get_cout() { return std::cout; }
 %}
 
-// DrawGlycan
-%include "include/sequence/graphViz.hpp"
-%include "include/programs/DrawGlycan/drawGlycan.hpp"
-%include "include/sequence/sequence.hpp"
-// MDPrep
-%include "include/pdb/pdbPreprocessorInputs.hpp"
-%include "include/pdb/pdbFile.hpp"
-%include "include/pdb/pdbResidueId.hpp"
-// CarbohydrateBuilder
-%include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+%include "include/programs/swig/sequence.hpp"
+%include "include/programs/swig/carbohydrateBuilder.hpp"
 
-///MD Prep///
-%template (AtomInfoVector) std::vector<pdb::AtomInfo>;
-%template (GapInAminoAcidChainVector) std::vector<pdb::GapInAminoAcidChain>;
-%template (ResidueIdVector) std::vector<pdb::ResidueId>;
-%template (ChainTerminalVector) std::vector<pdb::ChainTerminal>;
-%template (DisulphideBondVector) std::vector<pdb::DisulphideBond>;
-%template (hisSelectionPairVector) std::vector<std::pair<std::string,std::string>>;
-
-
-///Carbohydrate Builder///
 %template(string_vector) std::vector<std::string>;
 %template(dihedral_options_vector) std::vector<gmml::DihedralOptions>;
 %template(linkage_options_vector) std::vector<gmml::LinkageOptions>;
