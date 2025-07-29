@@ -26,12 +26,12 @@ try	{
 #define SWIG_FILE_WITH_INIT
 
 #include "include/sequence/graphViz.hpp"
-#include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
+#include "include/programs/DrawGlycan/drawGlycan.hpp"
 #include "include/sequence/sequence.hpp"
 #include "include/pdb/pdbPreprocessorInputs.hpp"
 #include "include/pdb/pdbFile.hpp"
 #include "include/pdb/pdbResidueId.hpp"
-#include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 using namespace gmml::pdb;
 using namespace gmml;
 %}
@@ -42,14 +42,14 @@ std::ostream & get_cout() { return std::cout; }
 
 // DrawGlycan
 %include "include/sequence/graphViz.hpp"
-%include "include/internalPrograms/DrawGlycan/drawGlycan.hpp"
+%include "include/programs/DrawGlycan/drawGlycan.hpp"
 %include "include/sequence/sequence.hpp"
 // MDPrep
 %include "include/pdb/pdbPreprocessorInputs.hpp"
 %include "include/pdb/pdbFile.hpp"
 %include "include/pdb/pdbResidueId.hpp"
 // CarbohydrateBuilder
-%include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+%include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 
 ///MD Prep///
 %template (AtomInfoVector) std::vector<pdb::AtomInfo>;

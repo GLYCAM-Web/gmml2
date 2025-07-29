@@ -22,7 +22,7 @@ COPY ./make.sh ./compilePrograms.sh ./CMakeLists.txt ./version.txt ./versionHead
 COPY ./cmakeFileLists /app/gmml2/cmakeFileLists
 COPY ./src /app/gmml2/src 
 COPY ./include /app/gmml2/include 
-COPY ./internalPrograms /app/gmml2/internalPrograms
+COPY ./programs /app/gmml2/programs
 COPY ./bin/ /app/gmml2/bin
 COPY ./tests/ /app/gmml2/tests
 # Compile

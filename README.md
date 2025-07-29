@@ -103,9 +103,9 @@ The GMML2 internal programs will be available in gmml2/bin/ after running the ma
 
 It is recommended that you test them (see next section) before use
 
-[Glycoprotein Builder Instructions](internalPrograms/GlycoproteinBuilder/README.md)
+[Glycoprotein Builder Instructions](programs/GlycoproteinBuilder/README.md)
 
-[Carbohydrate Builder Instructions](internalPrograms/CarbohydrateBuilder/README.md)
+[Carbohydrate Builder Instructions](programs/CarbohydrateBuilder/README.md)
 
 ---
 ## Testing the Library

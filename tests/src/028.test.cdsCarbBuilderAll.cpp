@@ -1,4 +1,4 @@
-#include "include/internalPrograms/CarbohydrateBuilder/carbohydrateBuilder.hpp"
+#include "include/programs/CarbohydrateBuilder/carbohydrateBuilder.hpp"
 #include "include/sequence/sequence.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"
