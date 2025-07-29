@@ -283,11 +283,6 @@ namespace gmml
         return factor.epsilon * (pow12 - 2.0 * pow6);
     }
 
-    double distanceAtZerolennardJonesPotential(const PotentialFactor& factor)
-    {
-        return std::pow(2.0, -1.0 / 6.0) * factor.rmin;
-    }
-
     Element findElementAtomicNumber(const std::string& queryElement)
     {
         Element result = toElement(queryElement);

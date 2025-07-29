@@ -55,7 +55,6 @@ namespace gmml
     assembly::Bounds simpleWiggleCurrentRotamers(
         const DihedralAngleDataTable& metadataTable,
         const PotentialTable& potential,
-        double overlapTolerance,
         SearchAngles searchAngles,
         const std::vector<DihedralIndices>& dihedrals,
         const std::vector<std::vector<size_t>>& metadata,

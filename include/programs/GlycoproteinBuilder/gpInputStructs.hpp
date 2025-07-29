@@ -36,7 +36,7 @@ namespace gmml
             std::string substrateFileName = "Undefined"; // Program should throw if left as "Undefined".
             ulong numberOfSamples = 1;
             ulong persistCycles = 5;
-            double overlapTolerance = constants::overlapTolerance;
+            double overlapTolerance = 0.0;
             bool ignoreHydrogen = false;
             bool useInitialGlycositeResidueConformation = false;
             bool moveOverlappingSidechains = false;

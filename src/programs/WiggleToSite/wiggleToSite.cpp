@@ -30,7 +30,6 @@ namespace gmml
     {
         double CountOverlappingAtoms(
             const util::SparseVector<double>& elementRadii,
-            double overlapTolerance,
             const std::vector<Atom*>& atomsA,
             const std::vector<Atom*>& atomsB)
         {
@@ -41,6 +40,7 @@ namespace gmml
             const PotentialTable potentialTable =
                 gmml::potentialTable(elementRadii, util::vectorOr(foundElements(elementsA), foundElements(elementsB)));
 
+            double overlapTolerance = 0.0;
             double overlap = 0.0;
             for (size_t n = 0; n < atomsA.size(); n++)
             {
@@ -108,8 +108,7 @@ namespace gmml
             findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
         this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
         const util::SparseVector<double>& elementRadii = vanDerWaalsRadii();
-        this->setCurrentOverlap(CountOverlappingAtoms(
-            elementRadii, constants::overlapTolerance, atomsToAvoid_, this->getCarbohydrate().getAtoms()));
+        this->setCurrentOverlap(CountOverlappingAtoms(elementRadii, atomsToAvoid_, this->getCarbohydrate().getAtoms()));
         this->wiggleMeAtoms_ = {wiggleMe->FindAtom("C1"), wiggleMe->FindAtom("C3"), wiggleMe->FindAtom("C5")};
         this->wiggleTargetAtoms_ = {
             wigglingTarget->FindAtom("C1"), wigglingTarget->FindAtom("C3"), wigglingTarget->FindAtom("C5")};
@@ -238,8 +237,7 @@ namespace gmml
 
     bool WiggleToSite::acceptOverlaps(const util::SparseVector<double>& elementRadii)
     {
-        double overlapCount = CountOverlappingAtoms(
-            elementRadii, constants::overlapTolerance, atomsToAvoid_, getCarbohydrate().getAtoms());
+        double overlapCount = CountOverlappingAtoms(elementRadii, atomsToAvoid_, getCarbohydrate().getAtoms());
         if (compareOverlaps(overlapCount, this->getCurrentOverlap()) > 0)
         {
             return false;

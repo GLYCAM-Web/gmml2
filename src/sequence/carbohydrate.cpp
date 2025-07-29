@@ -411,7 +411,6 @@ namespace gmml
             assembly::Bounds newBounds = simpleWiggleCurrentRotamers(
                 gmml::dihedralAngleDataTable(),
                 potentials,
-                constants::overlapTolerance,
                 searchSettings.angles,
                 linkageDihedralIndices(graphData, linkage),
                 linkage.dihedralMetadata,
@@ -677,7 +676,6 @@ namespace gmml
                 bounds = simpleWiggleCurrentRotamers(
                     metadataTable,
                     potentials,
-                    constants::overlapTolerance,
                     searchSettings.angles,
                     linkageDihedralIndices(graphData, linkage),
                     linkage.dihedralMetadata,

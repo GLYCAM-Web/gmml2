@@ -9,7 +9,6 @@ namespace gmml
     {
         const double maxAtomDistanceFromResidueCenter = 5.4; // based on observations of test data as of june 2024
         const double residueDistanceOverlapCutoff = 2.0 * maxAtomDistanceFromResidueCenter;
-        const double overlapTolerance = 0.26; // enough to capture 0 vdw force for H-H
         const double DEFAULT_ANGLE =
             116.8; // Glycam06 J Comput Chem. 2008 Mar; 29(4): 622–655. Used for C-O-C in glycosidic linkages.
         const double PI_RADIAN = 3.141592653589793;

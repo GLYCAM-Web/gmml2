@@ -164,7 +164,6 @@ namespace gmml
     assembly::Bounds simpleWiggleCurrentRotamers(
         const DihedralAngleDataTable& metadataTable,
         const PotentialTable& potential,
-        double overlapTolerance,
         SearchAngles searchAngles,
         const std::vector<DihedralIndices>& dihedrals,
         const std::vector<std::vector<size_t>>& metadata,
@@ -197,14 +196,7 @@ namespace gmml
             auto searchOverlap = [&](const assembly::Bounds& bounds)
             {
                 return overlapVectorSum(overlapsBetweenSelections(
-                    potential,
-                    overlapTolerance,
-                    graph,
-                    bounds,
-                    selectionA,
-                    selectionB,
-                    atomElements,
-                    residueAtomsCloseToEdge));
+                    potential, 0.0, graph, bounds, selectionA, selectionB, atomElements, residueAtomsCloseToEdge));
             };
             OverlapState best = wiggleUsingRotamers(
                 searchOverlap,

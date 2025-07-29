@@ -160,7 +160,6 @@ namespace gmml
     PotentialTable potentialTable(const util::SparseVector<double>& radii, const std::vector<bool>& usedElements);
     PotentialFactor potentialFactor(const PotentialTable& table, Element a, Element b);
     double lennardJonesPotential(const PotentialFactor& factor, double squaredDistance);
-    double distanceAtZerolennardJonesPotential(const PotentialFactor& factor);
     Element findElementAtomicNumber(const std::string& queryElement);
 } // namespace gmml
 
