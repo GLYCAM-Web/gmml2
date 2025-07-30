@@ -15,6 +15,15 @@ namespace gmml
 {
     namespace pdb
     {
+        enum ResidueTerminality
+        {
+            NonTerminal = 0,
+            NTerminal = 1,
+            CTerminal = 2
+        };
+
+        static const std::vector<std::string> terminalPrefix {"", "N", "C"};
+
         struct AtomEntry
         {
             std::string recordName;
@@ -53,8 +62,7 @@ namespace gmml
             std::vector<uint> numbers;
             std::vector<std::string> insertionCodes;
             std::vector<std::string> chainIds;
-            std::vector<bool> isCTerminal;
-            std::vector<bool> isNTerminal;
+            std::vector<ResidueTerminality> terminality;
             std::vector<bool> hasTerCard;
         };
 

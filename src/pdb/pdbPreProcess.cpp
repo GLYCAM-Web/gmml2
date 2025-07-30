@@ -34,16 +34,7 @@ namespace gmml
         {
             std::string residueParmName(const PdbData& data, size_t residueId)
             {
-                const std::string& name = data.residues.names[residueId];
-                if (data.residues.isNTerminal[residueId])
-                {
-                    return "N" + name;
-                }
-                else if (data.residues.isCTerminal[residueId])
-                {
-                    return "C" + name;
-                }
-                return name;
+                return terminalPrefix[data.residues.terminality[residueId]] + data.residues.names[residueId];
             }
 
             void addResidueAtoms(

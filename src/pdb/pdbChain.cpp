@@ -45,13 +45,13 @@ namespace gmml
             size_t nTer = getNTerminal(data, moleculeId);
             if (nTer < data.indices.residueCount)
             {
-                data.residues.isNTerminal[nTer] = true;
+                data.residues.terminality[nTer] = NTerminal;
                 data.objects.residues[nTer]->setNTerminal(true);
             }
             size_t cTer = getCTerminal(data, moleculeId);
             if (cTer < data.indices.residueCount)
             {
-                data.residues.isCTerminal[cTer] = true;
+                data.residues.terminality[cTer] = CTerminal;
                 data.objects.residues[cTer]->setCTerminal(true);
             }
         }
