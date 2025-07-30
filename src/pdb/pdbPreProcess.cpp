@@ -135,7 +135,7 @@ namespace gmml
                             ResidueId Res1Id = pdbResidueId(data, cysRes1Id);
                             ResidueId Res2Id = pdbResidueId(data, cysRes2Id);
                             addBond(data, sgAtom1Id, sgAtom2Id); // I think I want this here. Not 100%.
-                            ppInfo.cysBondResidues_.emplace_back(Res1Id, Res2Id, dist);
+                            ppInfo.cysBondResidues.push_back({Res1Id, Res2Id, dist});
                             std::stringstream message;
                             message << "Bonding " << toString(Res1Id) << " and " << toString(Res2Id)
                                     << " with distance " << dist;
@@ -152,7 +152,7 @@ namespace gmml
         {
             // HIS protonation, user specified:
             util::log(__LINE__, __FILE__, util::INF, "User His protonation");
-            for (auto& userSelectionPair : inputOptions.hisSelections_)
+            for (auto& userSelectionPair : inputOptions.hisSelections)
             {
                 changeResidueName(data, assemblyId, userSelectionPair.first, userSelectionPair.second);
             }
@@ -163,7 +163,7 @@ namespace gmml
                 const std::string& name = data.residues.names[residueId];
                 if (util::contains({"HIE", "HID", "HIP"}, name))
                 {
-                    ppInfo.hisResidues_.emplace_back(pdbResidueId(data, residueId));
+                    ppInfo.hisResidues.emplace_back(pdbResidueId(data, residueId));
                 }
                 else if (name == "HIS")
                 {
@@ -190,7 +190,7 @@ namespace gmml
                     data.objects.residues[residueId]->setName(newName);
                     util::log(__LINE__, __FILE__, util::INF, "About to emplaceBack Id");
                     util::log(__LINE__, __FILE__, util::INF, toString(pdbResidueId(data, residueId)));
-                    ppInfo.hisResidues_.emplace_back(pdbResidueId(data, residueId));
+                    ppInfo.hisResidues.emplace_back(pdbResidueId(data, residueId));
                 }
             }
             return;
@@ -273,18 +273,18 @@ namespace gmml
                 }
                 else
                 {
-                    modifyTerminal(data, nTerResidue, inputOptions.chainNTermination_);
+                    modifyTerminal(data, nTerResidue, inputOptions.chainNTermination);
                     size_t cTerResidue = getCTerminal(data, moleculeId);
-                    modifyTerminal(data, cTerResidue, inputOptions.chainCTermination_);
+                    modifyTerminal(data, cTerResidue, inputOptions.chainCTermination);
                     util::log(__LINE__, __FILE__, util::INF, "N term : " + toString(pdbResidueId(data, nTerResidue)));
                     util::log(__LINE__, __FILE__, util::INF, "C term : " + toString(pdbResidueId(data, cTerResidue)));
                     // Report the thing
-                    ppInfo.chainTerminals_.emplace_back(
-                        data.residues.chainIds[nTerResidue],
-                        getNumberAndInsertionCode(data, nTerResidue),
-                        getNumberAndInsertionCode(data, cTerResidue),
-                        inputOptions.chainNTermination_,
-                        inputOptions.chainCTermination_);
+                    ppInfo.chainTerminals.push_back(
+                        {data.residues.chainIds[nTerResidue],
+                         getNumberAndInsertionCode(data, nTerResidue),
+                         getNumberAndInsertionCode(data, cTerResidue),
+                         inputOptions.chainNTermination,
+                         inputOptions.chainCTermination});
                 }
                 util::log(__LINE__, __FILE__, util::INF, "Preprocessing complete for this chain");
             }
@@ -442,22 +442,22 @@ namespace gmml
                                 __LINE__,
                                 __FILE__,
                                 util::INF,
-                                inputOptions.gapCTermination_ + " cap for : " + toString(pdbResidueId(data, res1)));
+                                inputOptions.gapCTermination + " cap for : " + toString(pdbResidueId(data, res1)));
                             util::log(
                                 __LINE__,
                                 __FILE__,
                                 util::INF,
-                                inputOptions.gapNTermination_ + " cap for : " + toString(pdbResidueId(data, res2)));
+                                inputOptions.gapNTermination + " cap for : " + toString(pdbResidueId(data, res2)));
                             // Do it
-                            insertCap(data, moleculeId, res1, inputOptions.gapCTermination_);
-                            insertCap(data, moleculeId, res2, inputOptions.gapNTermination_);
+                            insertCap(data, moleculeId, res1, inputOptions.gapCTermination);
+                            insertCap(data, moleculeId, res2, inputOptions.gapNTermination);
                             // Record it
-                            ppInfo.missingResidues_.emplace_back(
-                                data.residues.chainIds[res1],
-                                getNumberAndInsertionCode(data, res1),
-                                getNumberAndInsertionCode(data, res2),
-                                inputOptions.gapCTermination_,
-                                inputOptions.gapNTermination_);
+                            ppInfo.missingResidues.push_back(
+                                {data.residues.chainIds[res1],
+                                 getNumberAndInsertionCode(data, res1),
+                                 getNumberAndInsertionCode(data, res2),
+                                 inputOptions.gapCTermination,
+                                 inputOptions.gapNTermination});
                         }
                     }
                 }
@@ -482,7 +482,7 @@ namespace gmml
                 if (index == parmManager.lib.residueNames.size())
                 {
                     util::log(__LINE__, __FILE__, util::INF, "ParmManager did not recognize residue: " + parmName);
-                    ppInfo.unrecognizedResidues_.emplace_back(residueIdObj);
+                    ppInfo.unrecognizedResidues.emplace_back(residueIdObj);
                 }
                 else // Recognized residue->
                 {
@@ -502,7 +502,7 @@ namespace gmml
                                 __FILE__,
                                 util::INF,
                                 "Atom named " + parmHeavyAtomName + " missing from " + toString(residueIdObj));
-                            ppInfo.missingHeavyAtoms_.emplace_back(parmHeavyAtomName, residueIdObj);
+                            ppInfo.missingHeavyAtoms.push_back({parmHeavyAtomName, residueIdObj});
                         }
                     }
                     for (auto& pdbAtomName : pdbAtomNames) // What atoms in the pdb residue are unrecognized?
@@ -515,7 +515,7 @@ namespace gmml
                                 __FILE__,
                                 util::INF,
                                 "Unrecognized atom named " + pdbAtomName + " in " + toString(residueIdObj));
-                            ppInfo.unrecognizedAtoms_.emplace_back(pdbAtomName, residueIdObj);
+                            ppInfo.unrecognizedAtoms.push_back({pdbAtomName, residueIdObj});
                         }
                     }
                 }

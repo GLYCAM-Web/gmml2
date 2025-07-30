@@ -25,6 +25,7 @@ int main(int argc, char* argv[])
 
     if (argc != 3)
     {
+
         std::cout << "Usage: " << argv[0] << " inputFile.pdb outputFile.pdb\n";
         std::cout << "Example: " << argv[0] << " inputs/4mbz.pdb output/4mbz.pdb\n";
         std::exit(EXIT_FAILURE);
@@ -33,7 +34,7 @@ int main(int argc, char* argv[])
     std::string outputFile = argv[2];
     pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
     std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
-    pdb::PreprocessorOptions options; // Default values are good.
+    pdb::PreprocessorOptions options = pdb::defaultPreprocessorOptions; // Default values are good.
     std::cout << "Preprocessing\n";
     const ParameterManager parameterManager = loadParameters(baseDir);
     pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
@@ -83,52 +84,51 @@ int main(int argc, char* argv[])
     auto residueIdStringChainFirst = [](const pdb::ResidueId& id)
     { return id.chainId + " | " + id.residueName + " | " + id.sequenceNumber + id.insertionCode; };
 
-    auto atomInfoString = [&](const pdb::AtomInfo& atom)
-    { return atom.name_ + " | " + residueIdString(atom.residue_); };
+    auto atomInfoString = [&](const pdb::AtomInfo& atom) { return atom.name + " | " + residueIdString(atom.residue); };
 
     // Just showing what's in the ppInfo and how to access it
     std::cout << "Unrecognized atoms:\n";
-    for (auto& unrecognized : ppInfo.unrecognizedAtoms_)
+    for (auto& unrecognized : ppInfo.unrecognizedAtoms)
     {
         std::cout << atomInfoString(unrecognized) << "\n";
     }
     std::cout << "Missing heavy atoms:\n";
-    for (auto& missing : ppInfo.missingHeavyAtoms_)
+    for (auto& missing : ppInfo.missingHeavyAtoms)
     {
         std::cout << atomInfoString(missing) << "\n";
     }
     std::cout << "Unrecognized residues:\n";
-    for (auto& unrecognized : ppInfo.unrecognizedResidues_)
+    for (auto& unrecognized : ppInfo.unrecognizedResidues)
     {
         std::cout << residueIdString(unrecognized) << "\n";
     }
     std::cout << "Gaps in amino acid chain:\n";
-    for (auto& gap : ppInfo.missingResidues_)
+    for (auto& gap : ppInfo.missingResidues)
     {
-        std::cout << gap.chainId_ << " | " << gap.residueBeforeGap_ << " | " << gap.residueAfterGap_ << " | "
-                  << gap.terminationBeforeGap_ << " | " << gap.terminationAfterGap_ << "\n";
+        std::cout << gap.chainId << " | " << gap.residueBeforeGap << " | " << gap.residueAfterGap << " | "
+                  << gap.terminationBeforeGap << " | " << gap.terminationAfterGap << "\n";
     }
     std::cout << "Histidine Protonation:\n";
-    for (auto& his : ppInfo.hisResidues_)
+    for (auto& his : ppInfo.hisResidues)
     {
         std::cout << residueIdString(his) << "\n";
     }
     std::cout << "Disulphide bonds:\n";
-    for (auto& cysBond : ppInfo.cysBondResidues_)
+    for (auto& cysBond : ppInfo.cysBondResidues)
     {
-        std::cout << residueIdStringChainFirst(cysBond.residue1_) << " | " << cysBond.distance_ << " | "
-                  << residueIdStringChainFirst(cysBond.residue2_) << "\n";
+        std::cout << residueIdStringChainFirst(cysBond.residue1) << " | " << cysBond.distance << " | "
+                  << residueIdStringChainFirst(cysBond.residue2) << "\n";
     }
     std::cout << "Chain terminations:\n";
-    for (auto& chainT : ppInfo.chainTerminals_)
+    for (auto& chainT : ppInfo.chainTerminals)
     {
-        std::cout << chainT.chainId_ << " | " << chainT.startIndex_ << " | " << chainT.nTermination_ << " | "
-                  << chainT.endIndex_ << " | " << chainT.cTermination_ << "\n";
+        std::cout << chainT.chainId << " | " << chainT.startIndex << " | " << chainT.nTermination << " | "
+                  << chainT.endIndex << " | " << chainT.cTermination << "\n";
     }
     std::cout << "NonNatural Protein Residues:\n";
-    for (auto& nonNaturalResidue : ppInfo.nonNaturalProteinResidues_)
+    for (auto& nonNaturalResidue : ppInfo.nonNaturalProteinResidues)
     {
-        std::cout << residueIdStringChainFirst(nonNaturalResidue.residue_) << "\n";
+        std::cout << residueIdStringChainFirst(nonNaturalResidue) << "\n";
     }
     return 0;
 }

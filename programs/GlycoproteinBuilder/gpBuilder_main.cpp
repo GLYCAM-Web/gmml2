@@ -167,7 +167,7 @@ int main(int argc, char* argv[])
         if (settings.MDprep)
         {
             util::log(__LINE__, __FILE__, util::INF, "Performing MDPrep aka preprocessing.");
-            pdbFile.PreProcess(parameterManager, pdb::PreprocessorOptions());
+            pdbFile.PreProcess(parameterManager, pdb::defaultPreprocessorOptions);
         }
 
         util::SparseVector<double> elementRadii = vanDerWaalsRadii();

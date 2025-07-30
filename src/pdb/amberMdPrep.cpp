@@ -23,7 +23,7 @@ namespace gmml
                 size_t nAtom = findResidueAtom(data, residueId, "N");
                 if (nAtom < atomCount && isWithinBondingDistance(data, nAtom, cAtom))
                 {
-                    ppInfo.nonNaturalProteinResidues_.emplace_back(pdbResidueId(data, residueId));
+                    ppInfo.nonNaturalProteinResidues.emplace_back(pdbResidueId(data, residueId));
                     return true;
                 }
             }
