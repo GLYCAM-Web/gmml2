@@ -1,5 +1,6 @@
 #include "include/assembly/assemblyGraph.hpp"
 
+#include "include/graph/graphManipulation.hpp"
 #include "include/util/containers.hpp"
 
 #include <array>
@@ -54,6 +55,32 @@ namespace gmml
             { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
             std::vector<bool> selected = util::vectorMap(inMolecule, graph.atoms.nodes.indices);
             return util::boolsToIndices(selected);
+        }
+
+        Graph createAssemblyGraph(const Indices& indices, const graph::Database& atomGraphData)
+        {
+            graph::Graph atomGraph = graph::identity(atomGraphData);
+            graph::Graph residueGraph = graph::quotient(atomGraphData, indices.atomResidue);
+            graph::Database residueData = graph::asData(residueGraph);
+            graph::Graph moleculeGraph =
+                graph::quotient(residueData, util::indicesToValues(indices.residueMolecule, residueData.nodes));
+            graph::Database moleculeData = graph::asData(moleculeGraph);
+            graph::Graph assemblyGraph =
+                graph::quotient(moleculeData, util::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
+            return assembly::Graph {
+                {indices.atomCount,
+                 indices.residueCount,
+                 indices.moleculeCount,
+                 indices.assemblyCount,
+                 atomGraphData.nodeAlive,
+                 indices.atomResidue,
+                 indices.residueMolecule,
+                 indices.moleculeAssembly},
+                atomGraph,
+                residueGraph,
+                moleculeGraph,
+                assemblyGraph
+            };
         }
     } // namespace assembly
 } // namespace gmml

@@ -2,6 +2,7 @@
 #define INCLUDE_ASSEMBLY_ASSEMBLYGRAPH_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/graph/graphTypes.hpp"
 
 #include <array>
 #include <vector>
@@ -44,6 +45,8 @@ namespace gmml
         {
             return residueEdgeToAtomEdgeIndex(graph, moleculeEdgeToResidueEdgeIndex(graph, edgeId));
         }
+
+        Graph createAssemblyGraph(const Indices& indices, const graph::Database& atomGraphData);
     } // namespace assembly
 } // namespace gmml
 

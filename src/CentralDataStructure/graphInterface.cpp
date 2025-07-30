@@ -176,32 +176,6 @@ namespace gmml
         return graph;
     }
 
-    assembly::Graph createAssemblyGraph(const assembly::Indices& indices, const graph::Database& atomGraphData)
-    {
-        graph::Graph atomGraph = graph::identity(atomGraphData);
-        graph::Graph residueGraph = graph::quotient(atomGraphData, indices.atomResidue);
-        graph::Database residueData = graph::asData(residueGraph);
-        graph::Graph moleculeGraph =
-            graph::quotient(residueData, util::indicesToValues(indices.residueMolecule, residueData.nodes));
-        graph::Database moleculeData = graph::asData(moleculeGraph);
-        graph::Graph assemblyGraph =
-            graph::quotient(moleculeData, util::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
-        return assembly::Graph {
-            {indices.atomCount,
-             indices.residueCount,
-             indices.moleculeCount,
-             indices.assemblyCount,
-             atomGraphData.nodeAlive,
-             indices.atomResidue,
-             indices.residueMolecule,
-             indices.moleculeAssembly},
-            atomGraph,
-            residueGraph,
-            moleculeGraph,
-            assemblyGraph
-        };
-    }
-
     assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& data)
     {
         return createAssemblyGraph(data.indices, createGraphData(data.objects));
@@ -212,24 +186,5 @@ namespace gmml
         graph::Database atomGraphData = createGraphData(data.objects);
         atomGraphData.nodeAlive = atomVisibility(data.objects.atoms);
         return createAssemblyGraph(data.indices, atomGraphData);
-    }
-
-    assembly::Bounds toAssemblyBounds(const assembly::Graph& graph, const std::vector<Sphere>& atomBounds)
-    {
-        size_t residueCount = graph.indices.residueCount;
-        std::vector<Sphere> residueBounds;
-        residueBounds.reserve(residueCount);
-        for (size_t n = 0; n < residueCount; n++)
-        {
-            residueBounds.push_back(boundingSphere(util::indicesToValues(atomBounds, residueAtoms(graph, n))));
-        }
-        size_t moleculeCount = graph.indices.moleculeCount;
-        std::vector<Sphere> moleculeBounds;
-        moleculeBounds.reserve(moleculeCount);
-        for (size_t n = 0; n < moleculeCount; n++)
-        {
-            moleculeBounds.push_back(boundingSphere(util::indicesToValues(residueBounds, moleculeResidues(graph, n))));
-        }
-        return {atomBounds, residueBounds, moleculeBounds};
     }
 } // namespace gmml

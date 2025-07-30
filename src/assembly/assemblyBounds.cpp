@@ -52,5 +52,25 @@ namespace gmml
                 }
             }
         }
+
+        Bounds toAssemblyBounds(const Graph& graph, const std::vector<Sphere>& atomBounds)
+        {
+            size_t residueCount = graph.indices.residueCount;
+            std::vector<Sphere> residueBounds;
+            residueBounds.reserve(residueCount);
+            for (size_t n = 0; n < residueCount; n++)
+            {
+                residueBounds.push_back(boundingSphere(util::indicesToValues(atomBounds, residueAtoms(graph, n))));
+            }
+            size_t moleculeCount = graph.indices.moleculeCount;
+            std::vector<Sphere> moleculeBounds;
+            moleculeBounds.reserve(moleculeCount);
+            for (size_t n = 0; n < moleculeCount; n++)
+            {
+                moleculeBounds.push_back(
+                    boundingSphere(util::indicesToValues(residueBounds, moleculeResidues(graph, n))));
+            }
+            return {atomBounds, residueBounds, moleculeBounds};
+        }
     } // namespace assembly
 } // namespace gmml
