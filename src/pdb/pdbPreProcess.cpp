@@ -32,11 +32,6 @@ namespace gmml
     {
         namespace
         {
-            std::string residueParmName(const PdbData& data, size_t residueId)
-            {
-                return terminalPrefix[data.residues.terminality[residueId]] + data.residues.names[residueId];
-            }
-
             void addResidueAtoms(
                 PdbData& data, size_t residueId, const std::vector<std::pair<std::string, Coordinate>>& atoms)
             {
@@ -80,13 +75,12 @@ namespace gmml
             for (size_t assemblyId = 0; assemblyId < file.assemblies.size();
                  assemblyId++) // Now we do all, but maybe user can select at some point.
             {
-                Assembly* assembly = &file.assemblies[assemblyId];
                 preProcessCysResidues(data, assemblyId, ppInfo);
                 preProcessHisResidues(data, assemblyId, ppInfo, inputOptions);
                 preProcessChainTerminals(data, assemblyId, ppInfo, inputOptions);
                 preProcessGapsUsingDistance(data, assemblyId, ppInfo, inputOptions);
                 preProcessMissingUnrecognized(data, assemblyId, ppInfo, parameterManager);
-                setAtomChargesForResidues(parameterManager, assembly->getResidues());
+                setAtomChargesForResidues(parameterManager, data, assembly::assemblyResidues(data.indices, assemblyId));
             }
             util::log(__LINE__, __FILE__, util::INF, "Preprocessing completed");
             return ppInfo;
@@ -487,7 +481,7 @@ namespace gmml
         {
             for (size_t residueId : assemblyResidues(data.indices, assemblyId))
             {
-                std::string parmName = residueParmName(data, residueId);
+                std::string parmName = residueParameterName(data, residueId);
                 ResidueId residueIdObj = pdbResidueId(data, residueId);
                 size_t index = util::indexOf(parmManager.lib.residueNames, parmName);
                 // Unrecognized residue->

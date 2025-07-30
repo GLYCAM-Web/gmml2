@@ -10,6 +10,7 @@ namespace gmml
 {
     namespace pdb
     {
+        std::string residueParameterName(const PdbData& data, size_t residueId);
         int checkShiftFromSerialNumberOverrun(const std::string& line);
         int checkSecondShiftFromResidueNumberOverrun(const std::string& line, const int shift = 0);
         Coordinate checkShiftsAndExtractCoordinate(const std::string& line);

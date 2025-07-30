@@ -35,7 +35,6 @@ namespace gmml
         //////////////////////////////////////////////////////////
         inline virtual const std::string& getName() const { return name_; }
 
-        const std::string GetParmName() const;
         std::vector<Atom*> getAtoms() const;
         std::vector<Atom*> getHydrogenAtoms() const;
         std::vector<Atom*> getNonHydrogenAtoms() const;

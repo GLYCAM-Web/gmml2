@@ -3,6 +3,8 @@
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/residue.hpp"
+#include "include/assembly/assemblyIndices.hpp"
+#include "include/pdb/pdbFunctions.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/filesystem.hpp"
 #include "include/util/logging.hpp"
@@ -35,14 +37,6 @@ namespace gmml
         }
         util::log(__LINE__, __FILE__, util::INF, "Finished construction of ParameterManager.");
         return result;
-    }
-
-    void setAtomChargesForResidues(const ParameterManager& parameters, std::vector<Residue*> queryResidues)
-    {
-        for (auto& residue : queryResidues)
-        {
-            setAtomChargesForResidue(parameters, residue);
-        }
     }
 
     void createAtomsForResidue(
@@ -81,29 +75,36 @@ namespace gmml
         }
     }
 
-    bool setAtomChargesForResidue(const ParameterManager& parameters, Residue* queryResidue)
+    bool setAtomChargesForResidue(const ParameterManager& parameters, pdb::PdbData& data, size_t residueId)
     {
         bool allAtomsPresent = true;
-        size_t index = util::indexOf(parameters.lib.residueNames, queryResidue->GetParmName());
+        std::string paramName = pdb::residueParameterName(data, residueId);
+        size_t index = util::indexOf(parameters.lib.residueNames, paramName);
         if (index == parameters.lib.residueNames.size())
         {
             util::log(
                 __LINE__,
                 __FILE__,
                 util::WAR,
-                "Did not find parameters and so cannot set charges for residue named: " + queryResidue->GetParmName());
+                "Did not find parameters and so cannot set charges for residue named: " + paramName);
             return false;
         }
 
-        const lib::AtomData& atoms = parameters.lib.residues[index].atoms;
-        for (auto& queryAtom : queryResidue->getAtoms())
+        const lib::AtomData& parameterAtoms = parameters.lib.residues[index].atoms;
+        size_t parameterAtomCount = parameterAtoms.names.size();
+        for (size_t n : assembly::residueAtoms(data.indices, residueId))
         {
-            const std::string& atomName = queryAtom->getName();
-            size_t atomIndex = util::indexOf(atoms.names, atomName);
-            if (atomIndex < atoms.names.size())
+            const std::string& atomName = data.atoms.names[n];
+            size_t atomIndex = util::indexOf(parameterAtoms.names, atomName);
+            if (atomIndex < parameterAtomCount)
             {
-                queryAtom->setCharge(atoms.charges[atomIndex]);
-                queryAtom->setType(atoms.types[atomIndex]);
+                double charge = parameterAtoms.charges[atomIndex];
+                const std::string& type = parameterAtoms.types[atomIndex];
+                data.atoms.charges[n] = charge;
+                data.atoms.types[n] = type;
+                Atom* queryAtom = data.objects.atoms[n];
+                queryAtom->setCharge(charge);
+                queryAtom->setType(type);
             }
             else
             {
@@ -112,5 +113,14 @@ namespace gmml
             }
         }
         return allAtomsPresent;
+    }
+
+    void setAtomChargesForResidues(
+        const ParameterManager& parameters, pdb::PdbData& data, const std::vector<size_t>& residueIds)
+    {
+        for (size_t id : residueIds)
+        {
+            setAtomChargesForResidue(parameters, data, id);
+        }
     }
 } // namespace gmml

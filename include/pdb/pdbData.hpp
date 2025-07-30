@@ -43,6 +43,8 @@ namespace gmml
             std::vector<Coordinate> coordinates;
             std::vector<double> occupancies;
             std::vector<double> temperatureFactors;
+            std::vector<double> charges;
+            std::vector<std::string> types;
         };
 
         struct ResidueEntry

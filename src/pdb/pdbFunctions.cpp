@@ -34,6 +34,11 @@ namespace gmml
             }
         } // namespace
 
+        std::string residueParameterName(const PdbData& data, size_t residueId)
+        {
+            return terminalPrefix[data.residues.terminality[residueId]] + data.residues.names[residueId];
+        }
+
         int checkShiftFromSerialNumberOverrun(const std::string& line)
         {
             int shift = 0;
@@ -115,6 +120,8 @@ namespace gmml
             data.atoms.coordinates.push_back(entry.coordinate);
             data.atoms.occupancies.push_back(entry.occupancy);
             data.atoms.temperatureFactors.push_back(entry.temperatureFactor);
+            data.atoms.charges.push_back(0.0);
+            data.atoms.types.push_back("");
             atom->setNumber(entry.number);
             atom->setName(entry.name);
             atom->setCoordinate(entry.coordinate);

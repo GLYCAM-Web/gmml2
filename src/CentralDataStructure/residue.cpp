@@ -111,19 +111,6 @@ namespace gmml
         return atoms;
     }
 
-    const std::string Residue::GetParmName() const // If terminal, need to look up e.g. NPRO or CPRO instead of PRO.
-    {
-        if (isNTerminal)
-        {
-            return "N" + this->getName();
-        }
-        else if (isCTerminal)
-        {
-            return "C" + this->getName();
-        }
-        return this->getName();
-    }
-
     std::vector<std::string> Residue::getAtomNames() const
     {
         std::vector<std::string> foundAtomNames;

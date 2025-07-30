@@ -2,6 +2,7 @@
 #define INCLUDE_READERS_PARAMETERMANAGER_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/pdb/pdbData.hpp"
 #include "include/readers/Lib/LibraryFile.hpp"
 
 #include <string>
@@ -15,12 +16,12 @@ namespace gmml
     };
 
     ParameterManager loadParameters(const std::string& baseDir);
-    // Functions
-    bool setAtomChargesForResidue(const ParameterManager& parameters, Residue* queryResidue);
-    void setAtomChargesForResidues(const ParameterManager& parameters, std::vector<Residue*> queryResidues);
+
     void createAtomsForResidue(
         const ParameterManager& parameters, Residue* queryResidue, const std::string glycamNameForResidue);
-    // Attributes
+    void setAtomChargesForResidues(
+        const ParameterManager& parameters, pdb::PdbData& data, const std::vector<size_t>& residueIds);
+    bool setAtomChargesForResidue(const ParameterManager& parameters, pdb::PdbData& data, size_t residueId);
 } // namespace gmml
 
 #endif
