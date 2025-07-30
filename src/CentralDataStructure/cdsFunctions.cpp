@@ -38,16 +38,17 @@ namespace gmml
         return result;
     }
 
-    size_t residueSelector(const pdb::PdbData& data, const pdb::ResidueId& residueId, const int modelNumber)
+    size_t residueSelector(const pdb::PdbData& data, const pdb::ResidueId& residueId, uint modelNumber)
     {
-        for (size_t n = 0; n < data.indices.assemblyCount; n++)
+        size_t n = util::indexOf(data.assemblies.numbers, modelNumber);
+        if (n < data.assemblies.numbers.size())
         {
-            if (data.objects.assemblies[n]->getNumber() == modelNumber)
-            {
-                return residueSelector(data, assemblyResidues(data.indices, n), residueId);
-            }
+            return residueSelector(data, assemblyResidues(data.indices, n), residueId);
         }
-        return data.indices.residueCount;
+        else
+        {
+            return data.indices.residueCount;
+        }
     }
 
     size_t residueSelector(const pdb::PdbData& data, std::vector<size_t> residueIds, const pdb::ResidueId& queryId)
