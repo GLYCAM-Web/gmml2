@@ -68,14 +68,14 @@ checkCMakeFileLists()
     fi
     #check our hdirectory stuff
     echo -e "\n${RESET_STYLE}\tEnsuring the list of all header directories, hDirectoryList.txt,\n\tmatches our current source code${INFO_STYLE}"
-    if ! diff cmakeFileLists/hDirectoryList.txt <(find "./include" -type d ! -path "*External_Libraries*" | LC_ALL=C.UTF-8 sort); then
+    if ! diff cmakeFileLists/hDirectoryList.txt <(find "./include" -type d ! -path "*external*" | LC_ALL=C.UTF-8 sort); then
         echo -e "\n\tWarning: you want to build but the hdirectory list file"
         echo -e "\tisnt updated with the needed files. Read the readme. Script will exit."
         BAD_FILE_LISTS=1
     fi
     #check our external lib stuff
     echo -e "${RESET_STYLE}\n\tEnsuring the list of all external lib header directories, \n\texternalHDirectoryList.txt, matches our current source code${INFO_STYLE}"
-    if ! diff cmakeFileLists/externalHDirectoryList.txt <(find "./include" -type d -path "*External_Libraries*" | LC_ALL=C.UTF-8 sort); then
+    if ! diff cmakeFileLists/externalHDirectoryList.txt <(find "./include" -type d -path "*external*" | LC_ALL=C.UTF-8 sort); then
         echo -e "\n\tWarning: you want to build for but the list of directories"
         echo -e "\tfor our external libs isnt updated with the needed files. Read"
         echo -e "\tthe readme. Script will exit."
