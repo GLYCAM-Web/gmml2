@@ -81,8 +81,10 @@ namespace gmml
 		  { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
 		  { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
 		  { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"furanose"}                  , "O6" , "C6" , "C5" , "C4"  },
-		  { "C.*"  , "O6"     , "Omg4" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 4 , 1 , {}             , {"aldose", "furanose"}                  , "C6" , "C5" , "C4", "O4"  },
-		  { "C.*"  , "O6"     , "Omg5" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 5 , 1 , {}             , {"aldose", "furanose"}                  , "O6" , "C6" , "C5" , "O5"  },
+		  { "C.*"  , "O6"     , "Omg4" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 4 , 1 , {}             , {"aldose", "furanose"}        , "C6" , "C5" , "C4", "O4"  },
+		  { "C.*"  , "O6"     , "Omg5" ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 5 , 1 , {}             , {"aldose", "furanose"}        , "O6" , "C6" , "C5" , "O5"  },
+		  { "C.*"  , "O6"     , "Omg5" ,  69.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 4 , 1 , {}             , {"heptose"}                   , "O7" , "C7" , "C6" , "O6"  },
+
 		  // 2-7 linkages copied from GlycamWeb Jan 2021. Branching in the linkage causes oddities with the bond number and which atoms are chosen for the torsion.
           { "C2"   , "O7"     , "Phi"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate"}  , {"ulosonate"}    , "C3" , "C2" , "O." , "C."  },
           { "C2"   , "O7"     , "Psi"  ,   0.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "c"  , 2 , 1 , {"ulosonate"}  , {"ulosonate"}    , "C." , "O." , "C." , "H."  },
@@ -306,6 +308,7 @@ namespace gmml
         std::vector<std::string> ketoseResidues = {
             "Fru", "Psi", "Sor", "Tag", "Neu", "KDN", "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
         std::vector<std::string> ulosonateResidues = {"Neu", "KDN", "KDO", "K3O", "Aci", "Fus", "Leg", "Pse"};
+        std::vector<std::string> heptoses = {"man"}; // Note lowercase man as in DDmanHep or LDmanHep :(
         if (util::contains(glucoGauche, residueAttributes.name))
         {
             foundAttributes.push_back("gauche-effect=gluco");
@@ -313,6 +316,10 @@ namespace gmml
         if (util::contains(nCarbonSix, residueAttributes.name))
         {
             foundAttributes.push_back("n-carbon=6");
+        }
+        if (util::contains(heptoses, residueAttributes.name))
+        {
+            foundAttributes.push_back("heptose");
         }
         if (util::contains(aldoseResidues, residueAttributes.name))
         {

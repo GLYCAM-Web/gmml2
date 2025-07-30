@@ -1963,7 +1963,44 @@ IndexOrderedLabeled:
 DGlcp&Label=residue-23;a1-7&Label=link-21;LDmanpHep&Label=residue-22;a1-2&Label=link-20;LDmanpHep&Label=residue-21;a1-3&Label=link-19;[DGalp&Label=residue-20;b1-3&Label=link-18;DAATp&Label=residue-19;a1-4&Label=link-17;DNeup5Ac&Label=residue-18;a2-4&Label=link-16;DGalp&Label=residue-17;b1-3&Label=link-15;DAATp&Label=residue-16;a1-4&Label=link-14;DNeup5Ac&Label=residue-15;a2-4&Label=link-13;DGalp&Label=residue-14;b1-3&Label=link-12;DAATp&Label=residue-13;a1-4&Label=link-11;DNeup5Ac&Label=residue-12;a2-4&Label=link-10;DGalp&Label=residue-11;b1-3&Label=link-9;DAATp&Label=residue-10;a1-4&Label=link-8;DGlcp&Label=residue-9;a1-4&Label=link-7;DGalp&Label=residue-8;b1-4&Label=link-6;[DGlcp&Label=residue-7;a1-6&Label=link-5;LDmanpHep&Label=residue-6;a1-6&Label=link-4;]DGlcp&Label=residue-5;b1-4&Label=link-3;][LDmanpHep&Label=residue-4;a1-6&Label=link-2;]LDmanpHep&Label=residue-3;a1-5&Label=link-1;DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00089 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between man and man. Missing metadata for dihedral 4: [O7, C7, C6, O6]
+Number of residues for this sequence is 23
+Number of likely shapes is 144
+Number of possible shapes is 216
+ROH_1_?_?
+5KO_2_?_?
+QLH_3_?_?
+0LH_4_?_?
+UGB_5_?_?
+6LH_6_?_?
+0GA_7_?_?
+4LB_8_?_?
+4GA_9_?_?
+3FC_10_?_?
+4LB_11_?_?
+4SA_12_?_?
+3FC_13_?_?
+4LB_14_?_?
+4SA_15_?_?
+3FC_16_?_?
+4LB_17_?_?
+4SA_18_?_?
+3FC_19_?_?
+0LB_20_?_?
+2LH_21_?_?
+7LH_22_?_?
+0GA_23_?_?
+Name: DLDmanpHepa1-6DLDmanpHepa, LinkageIndex: 2, Res1: 4, Res2: 3
+    LikelyRotamers: Omg, gg, gt, tg
+Name: DLDmanpHepa1-6DGlcpb, LinkageIndex: 4, Res1: 6, Res2: 5
+    LikelyRotamers: Omg, gg, gt
+Name: DGlcpa1-6DLDmanpHepa, LinkageIndex: 5, Res1: 7, Res2: 6
+    LikelyRotamers: Omg, gg, gt, tg
+Name: DNeu5Acpa2-4DGalpb, LinkageIndex: 10, Res1: 12, Res2: 11
+    LikelyRotamers: Phi, t, -g
+Name: DNeu5Acpa2-4DGalpb, LinkageIndex: 13, Res1: 15, Res2: 14
+    LikelyRotamers: Phi, t, -g
+Name: DNeu5Acpa2-4DGalpb, LinkageIndex: 16, Res1: 18, Res2: 17
+    LikelyRotamers: Phi, t, -g
 
 *********************
 Building id 00090:DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-4DGalpb1-3DAATpa1-4DNeup5Aca2-OH
@@ -2240,7 +2277,22 @@ IndexOrderedLabeled:
 DGlcp&Label=residue-11;a1-6&Label=link-9;DDmanpHep&Label=residue-10;a1-2&Label=link-8;LFucp&Label=residue-9;a1-3&Label=link-7;DGlcpNAc&Label=residue-8;a1-2&Label=link-6;[DGlcp&Label=residue-7;a1-4&Label=link-5;DGalp&Label=residue-6;b1-7&Label=link-4;]DDmanpHep&Label=residue-5;a1-2&Label=link-3;LDmanpHep&Label=residue-4;a1-3&Label=link-2;LDmanpHep&Label=residue-3;a1-5&Label=link-1;DKDOp&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
 Parsed and labelled 00099 with no exceptions thrown.
 
-Error thrown by the carbohydrateBuilder in gmml during construction was: Insufficient metadata found for the linkage between Glc and man. Missing metadata for dihedral 4: [O7, C7, C6, O6]
+Number of residues for this sequence is 11
+Number of likely shapes is 3
+Number of possible shapes is 3
+ROH_1_?_?
+5KO_2_?_?
+3LH_3_?_?
+2LH_4_?_?
+LDH_5_?_?
+4LB_6_?_?
+0GA_7_?_?
+3YA_8_?_?
+2fA_9_?_?
+6DH_10_?_?
+0GA_11_?_?
+Name: DGlcpa1-6DDDmanpHepa, LinkageIndex: 9, Res1: 11, Res2: 10
+    LikelyRotamers: Omg, gg, gt, tg
 
 *********************
 Building id 00100:DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
@@ -2256,3 +2308,72 @@ DGlcp&Label=residue-9;a1-2&Label=link-7;DGlcp&Label=residue-8;b1-2&Label=link-6;
 Parsed and labelled 00100 with no exceptions thrown.
 
 Error thrown by the carbohydrateBuilder in gmml during construction was: Did not find a parameter residue for DBacpb1- with this glycam residue code: 0Bc
+
+*********************
+Building id 00101:DAATpb1-6DDmanpHepb1-3DBacpa1-OH
+*********************
+Input:
+DAATpb1-6DDmanpHepb1-3DBacpa1-OH
+Interpreted:
+DAATpb1-6DDmanpHepb1-3DBacpa1-OH
+IndexOrdered:
+DAATpb1-6DDmanpHepb1-3DBacpa1-OH
+IndexOrderedLabeled:
+DAATp&Label=residue-4;b1-6&Label=link-2;DDmanpHep&Label=residue-3;b1-3&Label=link-1;DBacp&Label=residue-2;a1-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00101 with no exceptions thrown.
+
+Number of residues for this sequence is 4
+Number of likely shapes is 3
+Number of possible shapes is 3
+ROH_1_?_?
+3BC_2_?_?
+6Dh_3_?_?
+0Fc_4_?_?
+Name: DAATpb1-6DDDmanpHepb, LinkageIndex: 2, Res1: 4, Res2: 3
+    LikelyRotamers: Omg, gg, gt, tg
+
+*********************
+Building id 00102:DManpa1-6LDmanpHepa1-4LPsepa2-OH
+*********************
+Input:
+DManpa1-6LDmanpHepa1-4LPsepa2-OH
+Interpreted:
+DManpa1-6LDmanpHepa1-4LPsepa2-OH
+IndexOrdered:
+DManpa1-6LDmanpHepa1-4LPsepa2-OH
+IndexOrderedLabeled:
+DManp&Label=residue-4;a1-6&Label=link-2;LDmanpHep&Label=residue-3;a1-4&Label=link-1;LPsep&Label=residue-2;a2-&Label=link-0;OH&Label=residue-1;
+Parsed and labelled 00102 with no exceptions thrown.
+
+Number of residues for this sequence is 4
+Number of likely shapes is 3
+Number of possible shapes is 3
+ROH_1_?_?
+4mP_2_?_?
+6LH_3_?_?
+0MA_4_?_?
+Name: DManpa1-6DLDmanpHepa, LinkageIndex: 2, Res1: 4, Res2: 3
+    LikelyRotamers: Omg, gg, gt, tg
+
+*********************
+Building id 00103:[3DAATpa1-]<5>OME
+*********************
+Input:
+[3DAATpa1-]<5>OME
+Interpreted:
+DAATpa1-3DAATpa1-3DAATpa1-3DAATpa1-3DAATpa1-OME
+IndexOrdered:
+DAATpa1-3DAATpa1-3DAATpa1-3DAATpa1-3DAATpa1-OME
+IndexOrderedLabeled:
+DAATp&Label=residue-6;a1-3&Label=link-4;DAATp&Label=residue-5;a1-3&Label=link-3;DAATp&Label=residue-4;a1-3&Label=link-2;DAATp&Label=residue-3;a1-3&Label=link-1;DAATp&Label=residue-2;a1-&Label=link-0;OME&Label=residue-1;
+Parsed and labelled 00103 with no exceptions thrown.
+
+Number of residues for this sequence is 6
+Number of likely shapes is 1
+Number of possible shapes is 1
+OME_1_?_?
+3FC_2_?_?
+3FC_3_?_?
+3FC_4_?_?
+3FC_5_?_?
+0FC_6_?_?

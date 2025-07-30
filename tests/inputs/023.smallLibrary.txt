@@ -96,4 +96,4 @@
 00100_DBacpb1-4[DGlcpa1-3][DGalpNAca1-2]DManpb1-4[DGlcpa1-2DGlcpb1-2]DManpa1-5DKDOpa2-OH
 00101_DAATpb1-6DDmanpHepb1-3DBacpa1-OH
 00102_DManpa1-6LDmanpHepa1-4LPsepa2-OH
-00103_[4DAATpa1-]<5>OME
+00103_[3DAATpa1-]<5>OME
