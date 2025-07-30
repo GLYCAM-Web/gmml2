@@ -58,7 +58,7 @@ namespace gmml
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
     WiggleToSite::WiggleToSite(const ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
-        : substrate_(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}),
+        : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false})),
           carbohydrate_(
               parameterManager, vanDerWaalsRadii(), sequence::parseAndReorder(inputStruct.carbohydrateSequence_))
     {
@@ -104,7 +104,7 @@ namespace gmml
         this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed", {});
         this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
         std::vector<Atom*> substrateWithoutSuperimpositionAtoms =
-            findElementsNotInVector(getAtoms(this->getSubstrate().getAssemblies()), superimpositionTarget->getAtoms());
+            findElementsNotInVector(getAtoms(getAssemblies(getSubstrate())), superimpositionTarget->getAtoms());
         std::vector<Atom*> substrateAtomsToAvoidOverlappingWith =
             findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
         this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;

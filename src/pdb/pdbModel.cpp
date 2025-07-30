@@ -141,7 +141,7 @@ namespace gmml
             return;
         }
 
-        void Write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
+        void write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
         {
             std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.indices.atomAlive[n]; };
             std::function<std::string(const size_t&)> elementString = [&](size_t n)

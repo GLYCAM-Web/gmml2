@@ -4,6 +4,8 @@
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/pdb/pdbAtom.hpp"
 #include "include/pdb/pdbFile.hpp"
+#include "include/pdb/pdbModel.hpp"
+#include "include/pdb/pdbPreProcess.hpp"
 #include "include/pdb/pdbPreprocessorInputs.hpp"
 #include "include/pdb/pdbResidue.hpp"
 #include "include/readers/parameterManager.hpp"
@@ -29,7 +31,7 @@ int main(int argc, char* argv[])
         std::cout << "Example: " << argv[0] << " inputs/4mbz.pdb 030.outputPdbFile.pdb\n";
         std::exit(EXIT_FAILURE);
     }
-    pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
+    pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
     auto panic = [&]()
     {
         for (size_t n = 0; n < pdbFile.data.indices.residueCount; n++)
@@ -50,8 +52,8 @@ int main(int argc, char* argv[])
     ParameterManager parameterManager = loadParameters(baseDir);
     parameterManager.lib.residueNames = util::reverse(parameterManager.lib.residueNames);
     parameterManager.lib.residues = util::reverse(parameterManager.lib.residues);
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
-    std::vector<Assembly*> assemblies = pdbFile.getAssemblies();
+    pdb::PreprocessorInformation ppInfo = preProcess(pdbFile, parameterManager, options);
+    std::vector<Assembly*> assemblies = getAssemblies(pdbFile);
     assembly::Indices& graphIndices = pdbFile.data.indices;
     std::vector<size_t> moleculeIds = util::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
     size_t residueCount = pdbFile.data.indices.residueCount;
@@ -85,7 +87,7 @@ int main(int argc, char* argv[])
     };
     std::vector<std::vector<size_t>> residueOrder = util::vectorMap(
         onlyAliveResidues, util::indicesToValues(pdbFile.data.molecules.residueOrder, firstAssemblyMoleculeIds));
-    pdb::Write(pdbFile.data, residueOrder, outFileStream);
+    pdb::write(pdbFile.data, residueOrder, outFileStream);
     outFileStream << "END\n"; // Original GMML needs this.
     outFileStream.close();
 

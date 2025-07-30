@@ -50,14 +50,9 @@
 ./src/pdb/pdbFunctions.cpp
 ./src/pdb/pdbModel.cpp
 ./src/pdb/pdbPreProcess.cpp
+./src/pdb/pdbRecords.cpp
 ./src/pdb/pdbResidue.cpp
 ./src/pdb/pdbResidueId.cpp
-./src/pdb/sectionClasses/authorRecord.cpp
-./src/pdb/sectionClasses/databaseReferenceRecord.cpp
-./src/pdb/sectionClasses/headerRecord.cpp
-./src/pdb/sectionClasses/journalRecord.cpp
-./src/pdb/sectionClasses/remarkRecord.cpp
-./src/pdb/sectionClasses/titleRecord.cpp
 ./src/programs/GlycoproteinBuilder/cdsInterface.cpp
 ./src/programs/GlycoproteinBuilder/glycanShape.cpp
 ./src/programs/GlycoproteinBuilder/glycanWiggle.cpp

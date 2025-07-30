@@ -2,6 +2,7 @@
 #define INCLUDE_PDB_PDBPREPROCESS_HPP
 
 #include "include/pdb/pdbData.hpp"
+#include "include/pdb/pdbFile.hpp"
 #include "include/pdb/pdbPreprocessorInputs.hpp"
 #include "include/readers/parameterManager.hpp"
 
@@ -12,6 +13,8 @@ namespace gmml
 {
     namespace pdb
     {
+        PreprocessorInformation preProcess(
+            PdbFile& file, const ParameterManager& parameterManager, PreprocessorOptions options);
         void changeResidueName(
             PdbData& data, size_t assemblyId, const std::string& selector, const std::string& newName);
         void preProcessCysResidues(PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo);

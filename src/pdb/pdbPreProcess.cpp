@@ -80,6 +80,27 @@ namespace gmml
             }
         } // namespace
 
+        PreprocessorInformation preProcess(
+            PdbFile& file, const ParameterManager& parameterManager, PreprocessorOptions inputOptions)
+        {
+            util::log(__LINE__, __FILE__, util::INF, "Preprocesssing has begun");
+            PreprocessorInformation ppInfo;
+            PdbData& data = file.data;
+            for (size_t assemblyId = 0; assemblyId < file.assemblies.size();
+                 assemblyId++) // Now we do all, but maybe user can select at some point.
+            {
+                Assembly* assembly = &file.assemblies[assemblyId];
+                preProcessCysResidues(data, assemblyId, ppInfo);
+                preProcessHisResidues(data, assemblyId, ppInfo, inputOptions);
+                preProcessChainTerminals(data, assemblyId, ppInfo, inputOptions);
+                preProcessGapsUsingDistance(data, assemblyId, ppInfo, inputOptions);
+                preProcessMissingUnrecognized(data, assemblyId, ppInfo, parameterManager);
+                setAtomChargesForResidues(parameterManager, assembly->getResidues());
+            }
+            util::log(__LINE__, __FILE__, util::INF, "Preprocessing completed");
+            return ppInfo;
+        }
+
         void changeResidueName(
             PdbData& data, size_t assemblyId, const std::string& selector, const std::string& newName)
         {

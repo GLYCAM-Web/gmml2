@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
                 break;
         }
     }
-    pdb::PdbFile inputFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
+    pdb::PdbFile inputFile = pdb::toPdbFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
     pdb::bondAtomsAndResiduesByDistance(inputFile.data);
     std::vector<gpbuilder::GlycosylationSiteInfo> table =
         gpbuilder::createGlycosylationSiteTable(inputFile.data, util::indexVector(inputFile.data.indices.residueCount));

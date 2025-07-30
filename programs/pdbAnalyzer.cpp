@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
                 break;
         }
     }
-    pdb::PdbFile inputFile(inputFileName);
+    pdb::PdbFile inputFile = pdb::toPdbFile(inputFileName, pdb::modelsAsMolecules);
     pdb::PdbData& data = inputFile.data;
     pdb::bondAtomsAndResiduesByDistance(data);
     assembly::Graph graph = createAssemblyGraph(data.indices, data.atomGraph);

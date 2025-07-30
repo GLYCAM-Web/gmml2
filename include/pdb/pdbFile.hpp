@@ -5,16 +5,8 @@
 // ToDo make more direct queries here instead of giving out HeaderRecord etc.
 // ToDo ACE/NME between residues with same number but an insertion code.
 #include "include/CentralDataStructure/assembly.hpp"
-#include "include/pdb/SectionClasses/authorRecord.hpp"
-#include "include/pdb/SectionClasses/databaseReferenceRecord.hpp"
-#include "include/pdb/SectionClasses/headerRecord.hpp"
-#include "include/pdb/SectionClasses/journalRecord.hpp"
-#include "include/pdb/SectionClasses/remarkRecord.hpp"
-#include "include/pdb/SectionClasses/titleRecord.hpp"
 #include "include/pdb/pdbData.hpp"
-#include "include/pdb/pdbModel.hpp"
-#include "include/pdb/pdbPreprocessorInputs.hpp"
-#include "include/readers/parameterManager.hpp"
+#include "include/pdb/pdbRecordTypes.hpp"
 
 #include <istream>
 #include <ostream>
@@ -39,76 +31,29 @@ namespace gmml
             bool readConectRows;
         };
 
-        class PdbFile
+        struct PdbFile
         {
-          public:
-            //////////////////////////////////////////////////////////
-            //                       CONSTRUCTOR                    //
-            //////////////////////////////////////////////////////////
-            PdbFile();
-            PdbFile(const std::string& pdbFilePath, const InputType pdbFileType = modelsAsMolecules);
-            PdbFile(const std::string& pdbFilePath, const ReaderOptions& options);
-
-            //////////////////////////////////////////////////////////
-            //                       ACCESSOR                       //
-            //////////////////////////////////////////////////////////
-            inline std::string GetInputFilePath() const { return inFilePath_; }
-
-            // ToDo These should be private and whatever info they give out should be directly queryable here.
-            inline const HeaderRecord& GetHeaderRecord() const { return headerRecord_; }
-
-            inline const TitleRecord& GetTitleRecord() const { return titleRecord_; }
-
-            inline const AuthorRecord& GetAuthorRecord() const { return authorRecord_; }
-
-            inline const JournalRecord& GetJournalRecord() const { return journalRecord_; }
-
-            inline const RemarkRecord& GetRemarkRecord() const { return remarkRecord_; }
-
-            inline std::vector<Assembly*> getAssemblies()
-            {
-                std::vector<Assembly*> result;
-                result.reserve(assemblies_.size());
-                for (auto& a : assemblies_)
-                {
-                    result.push_back(&a);
-                }
-                return result;
-            }
-
-            //////////////////////////////////////////////////////////
-            //                       FUNCTIONS                      //
-            //////////////////////////////////////////////////////////
-            std::string GetUniprotIDs() const;
-            const float& GetResolution() const;
-            const float& GetBFactor() const;
-            PreprocessorInformation PreProcess(const ParameterManager& parameterManager, PreprocessorOptions options);
-            //////////////////////////////////////////////////////////
-            //                        DISPLAY                       //
-            //////////////////////////////////////////////////////////
-            void Write(const std::string outName);
-            void Write(std::ostream& stream);
-
-          private:
-            //////////////////////////////////////////////////////////
-            //                       ACCESSOR                       //
-            //////////////////////////////////////////////////////////
-            inline const std::vector<DatabaseReference>& GetDatabaseReferences() const { return databaseReferences_; }
-
-            //////////////////////////////////////////////////////////
-            //                        ATTRIBUTES                    //
-            //////////////////////////////////////////////////////////
-          public:
-            std::string inFilePath_ = "";
-            HeaderRecord headerRecord_; // SWIG wants the
-            TitleRecord titleRecord_;
-            AuthorRecord authorRecord_;
-            JournalRecord journalRecord_;
-            RemarkRecord remarkRecord_;
-            std::vector<DatabaseReference> databaseReferences_;
-            std::vector<Assembly> assemblies_;
+            std::string inFilePath = "";
+            HeaderRecord headerRecord;
+            TitleRecord titleRecord;
+            AuthorRecord authorRecord;
+            JournalRecord journalRecord;
+            RemarkRecord remarkRecord;
+            std::vector<DatabaseReference> databaseReferences;
+            std::vector<Assembly> assemblies;
             PdbData data;
         };
+
+        PdbFile toPdbFile(const std::string& pdbFilePath, const ReaderOptions& options);
+
+        inline PdbFile toPdbFile(const std::string& pdbFilePath, const InputType pdbFileType)
+        {
+            return toPdbFile(pdbFilePath, {pdbFileType, false});
+        }
+
+        std::vector<Assembly*> getAssemblies(PdbFile& file);
+        void write(PdbFile& file, const std::string outName);
+        void write(PdbFile& file, std::ostream& stream);
     } // namespace pdb
 } // namespace gmml
 

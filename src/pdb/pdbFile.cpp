@@ -7,8 +7,7 @@
 #include "include/pdb/pdbFileWriter.hpp"
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbModel.hpp"
-#include "include/pdb/pdbPreProcess.hpp"
-#include "include/readers/parameterManager.hpp"
+#include "include/pdb/pdbRecords.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
@@ -61,7 +60,7 @@ namespace gmml
                 recordSection << line << std::endl;
                 std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
                 std::string previousName = recordName;
-                while ((std::getline(pdbFileStream, line)))
+                while (std::getline(pdbFileStream, line))
                 {
                     expandLine(line, iPdbLineLength);
                     recordName = util::RemoveWhiteSpace(line.substr(0, 6));
@@ -81,8 +80,6 @@ namespace gmml
                 }
                 pdbFileStream.seekg(previousLinePosition); // Go back to previous line position. E.g. was reading HEADER
                                                            // and found TITLE.
-                // std::cout << "At end. Returning this record section:\n" << recordSection.str() << "\nEND RECORD
-                // SECTION\n";
                 return recordSection;
             }
 
@@ -112,8 +109,6 @@ namespace gmml
                 }
                 pdbFileStream.seekg(previousLinePosition); // Go back to previous line position. E.g. was reading HEADER
                                                            // and found TITLE.
-                //    std::cout << "Returning this hetero section:\n" << heteroRecordSection.str() << "\nThe End of
-                //    Hetero Section.\n";
                 return recordSection;
             }
 
@@ -135,7 +130,7 @@ namespace gmml
                     {
                         std::stringstream recordSection =
                             extractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
-                        Assembly& assembly = file.assemblies_.emplace_back(Assembly());
+                        Assembly& assembly = file.assemblies.emplace_back(Assembly());
                         data.indices.assemblyCount++;
                         data.assemblies.numbers.push_back(assemblyId + 1);
                         readAssembly(data, assemblyId, assembly, recordSection);
@@ -145,31 +140,31 @@ namespace gmml
                     {
                         std::stringstream recordSection =
                             extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                        file.headerRecord_ = HeaderRecord(recordSection);
+                        file.headerRecord = readHeaderRecord(recordSection);
                     }
                     else if (recordName == "TITLE")
                     {
                         std::stringstream recordSection =
                             extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                        file.titleRecord_ = TitleRecord(recordSection);
+                        file.titleRecord = readTitleRecord(recordSection);
                     }
                     else if (recordName == "AUTHOR")
                     {
                         std::stringstream recordSection =
                             extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                        file.authorRecord_ = AuthorRecord(recordSection);
+                        file.authorRecord = readAuthorRecord(recordSection);
                     }
                     else if (recordName == "JRNL")
                     {
                         std::stringstream recordSection =
                             extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                        file.journalRecord_ = JournalRecord(recordSection);
+                        file.journalRecord = readJournalRecord(recordSection);
                     }
                     else if (recordName == "REMARK")
                     {
                         std::stringstream recordSection =
                             extractHomogenousRecordSection(pdbFileStream, line, recordName);
-                        file.remarkRecord_ = RemarkRecord(recordSection);
+                        file.remarkRecord = readRemarkRecord(recordSection);
                     }
                     else if (util::contains(databaseCards, recordName))
                     {
@@ -177,7 +172,7 @@ namespace gmml
                             extractHeterogenousRecordSection(pdbFileStream, line, databaseCards);
                         while (getline(databaseSection, line))
                         {
-                            file.databaseReferences_.emplace_back(line);
+                            file.databaseReferences.push_back(readDatabaseReference(line));
                         }
                     }
                     else if (recordName == "CONECT")
@@ -199,21 +194,14 @@ namespace gmml
                     }
                 }
                 util::log(__LINE__, __FILE__, util::INF, "PdbFile Constructor Complete Captain");
-                data.objects.assemblies = file.getAssemblies();
+                data.objects.assemblies = getAssemblies(file);
             }
         } // namespace
 
-        //////////////////////////////////////////////////////////
-        //                       CONSTRUCTOR                    //
-        //////////////////////////////////////////////////////////
-        PdbFile::PdbFile() { inFilePath_ = "GMML-Generated"; }
-
-        PdbFile::PdbFile(const std::string& pdbFilePath, const InputType pdbFileType)
-            : PdbFile(pdbFilePath, {pdbFileType, false})
-        {}
-
-        PdbFile::PdbFile(const std::string& pdbFilePath, const ReaderOptions& options) : inFilePath_(pdbFilePath)
+        PdbFile toPdbFile(const std::string& pdbFilePath, const ReaderOptions& options)
         {
+            PdbFile result;
+            result.inFilePath = pdbFilePath;
             std::ifstream pdbFileStream(pdbFilePath);
             if (pdbFileStream.fail())
             {
@@ -221,62 +209,38 @@ namespace gmml
                 throw std::runtime_error("PdbFile constructor could not open this file: " + pdbFilePath);
             }
             util::log(__LINE__, __FILE__, util::INF, "File opened: " + pdbFilePath + ". Ready to parse!");
-            parseInFileStream(*this, pdbFileStream, options);
+            parseInFileStream(result, pdbFileStream, options);
             util::log(__LINE__, __FILE__, util::INF, "Finished parsing " + pdbFilePath);
+            return result;
         }
 
-        //////////////////////////////////////////////////////////
-        //                       FUNCTIONS                      //
-        //////////////////////////////////////////////////////////
-        std::string PdbFile::GetUniprotIDs() const
+        std::vector<Assembly*> getAssemblies(PdbFile& file)
         {
-            std::string UniprotIDs = "";
-            for (auto& databaseReference : this->GetDatabaseReferences())
+            std::vector<Assembly*> result;
+            result.reserve(file.assemblies.size());
+            for (auto& a : file.assemblies)
             {
-                UniprotIDs += databaseReference.GetUniprotID();
+                result.push_back(&a);
             }
-            return UniprotIDs;
+            return result;
         }
 
-        const float& PdbFile::GetResolution() const { return this->GetRemarkRecord().GetResolution(); }
-
-        const float& PdbFile::GetBFactor() const { return this->GetRemarkRecord().GetBFactor(); }
-
-        PreprocessorInformation PdbFile::PreProcess(
-            const ParameterManager& parameterManager, PreprocessorOptions inputOptions)
+        void write(PdbFile& file, const std::string outName)
         {
-            util::log(__LINE__, __FILE__, util::INF, "Preprocesssing has begun");
-            PreprocessorInformation ppInfo;
-            for (size_t assemblyId = 0; assemblyId < assemblies_.size();
-                 assemblyId++) // Now we do all, but maybe user can select at some point.
+            util::writeToFile(outName, [&](std::ostream& stream) { write(file, stream); });
+        }
+
+        void write(PdbFile& file, std::ostream& out)
+        {
+            PdbData& data = file.data;
+            write(file.headerRecord, out);
+            write(file.titleRecord, out);
+            write(file.authorRecord, out);
+            write(file.journalRecord, out);
+            write(file.remarkRecord, out);
+            for (auto& dbref : file.databaseReferences)
             {
-                Assembly* assembly = &assemblies_[assemblyId];
-                preProcessCysResidues(data, assemblyId, ppInfo);
-                preProcessHisResidues(data, assemblyId, ppInfo, inputOptions);
-                preProcessChainTerminals(data, assemblyId, ppInfo, inputOptions);
-                preProcessGapsUsingDistance(data, assemblyId, ppInfo, inputOptions);
-                preProcessMissingUnrecognized(data, assemblyId, ppInfo, parameterManager);
-                setAtomChargesForResidues(parameterManager, assembly->getResidues());
-            }
-            util::log(__LINE__, __FILE__, util::INF, "Preprocessing completed");
-            return ppInfo;
-        }
-
-        void PdbFile::Write(const std::string outName)
-        {
-            util::writeToFile(outName, [&](std::ostream& stream) { this->Write(stream); });
-        }
-
-        void PdbFile::Write(std::ostream& out)
-        {
-            this->GetHeaderRecord().Write(out);
-            this->GetTitleRecord().Write(out);
-            this->GetAuthorRecord().Write(out);
-            this->GetJournalRecord().Write(out);
-            this->GetRemarkRecord().Write(out);
-            for (auto& dbref : this->GetDatabaseReferences())
-            {
-                dbref.Write(out);
+                write(dbref, out);
             }
             for (size_t n = 0; n < data.indices.assemblyCount; n++)
             {
@@ -285,7 +249,7 @@ namespace gmml
                     out << "MODEL " << std::right << std::setw(4) << data.assemblies.numbers[n] << "\n";
                 }
                 std::vector<size_t> moleculeIds = assemblyMolecules(data.indices, n);
-                pdb::Write(data, util::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
+                pdb::write(data, util::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
                 if (data.indices.assemblyCount > 1)
                 {
                     out << "ENDMDL\n";

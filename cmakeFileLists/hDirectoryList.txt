@@ -9,7 +9,6 @@
 ./include/metadata
 ./include/off
 ./include/pdb
-./include/pdb/SectionClasses
 ./include/programs
 ./include/programs/GlycoproteinBuilder
 ./include/programs/WiggleToSite

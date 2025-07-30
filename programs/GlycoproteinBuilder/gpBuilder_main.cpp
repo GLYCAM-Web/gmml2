@@ -163,17 +163,17 @@ int main(int argc, char* argv[])
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
         const ParameterManager parameterManager = loadParameters(baseDir);
-        pdb::PdbFile pdbFile(settings.substrateFileName, {pdb::InputType::modelsAsMolecules, false});
+        pdb::PdbFile pdbFile = pdb::toPdbFile(settings.substrateFileName, pdb::modelsAsMolecules);
         if (settings.MDprep)
         {
             util::log(__LINE__, __FILE__, util::INF, "Performing MDPrep aka preprocessing.");
-            pdbFile.PreProcess(parameterManager, pdb::defaultPreprocessorOptions);
+            preProcess(pdbFile, parameterManager, pdb::defaultPreprocessorOptions);
         }
 
         util::SparseVector<double> elementRadii = vanDerWaalsRadii();
         const AminoAcidTable& aminoAcidTable = gmml::aminoAcidTable();
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
-        Assembly* glycoprotein = pdbFile.getAssemblies().front();
+        Assembly* glycoprotein = getAssemblies(pdbFile).front();
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
         pdb::setInterConnectivity(aminoAcidTable, pdbFile.data);
         util::log(__LINE__, __FILE__, util::INF, "Attaching Glycans To Glycosites.");

@@ -8,6 +8,7 @@
 #include "include/pdb/bondByDistance.hpp"
 #include "include/pdb/pdbFile.hpp"
 #include "include/pdb/pdbFunctions.hpp"
+#include "include/pdb/pdbPreProcess.hpp"
 #include "include/pdb/pdbPreprocessorInputs.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/util/containers.hpp"
@@ -32,13 +33,13 @@ int main(int argc, char* argv[])
     }
     std::string inputFile = argv[1];
     std::string outputFile = argv[2];
-    pdb::PdbFile pdbFile(argv[1], {pdb::InputType::modelsAsMolecules, false});
+    pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
     std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
     pdb::PreprocessorOptions options = pdb::defaultPreprocessorOptions; // Default values are good.
     std::cout << "Preprocessing\n";
     const ParameterManager parameterManager = loadParameters(baseDir);
-    pdb::PreprocessorInformation ppInfo = pdbFile.PreProcess(parameterManager, options);
-    std::vector<Assembly*> assemblies = pdbFile.getAssemblies();
+    pdb::PreprocessorInformation ppInfo = preProcess(pdbFile, parameterManager, options);
+    std::vector<Assembly*> assemblies = getAssemblies(pdbFile);
     for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
     {
         std::vector<size_t> atomIds = assemblyAtoms(pdbFile.data.indices, assemblyId);
@@ -76,7 +77,7 @@ int main(int argc, char* argv[])
     std::cout << "Finished bonding atoms by distance" << std::endl;
     pdbFile.data.atoms.numbers = atomNumbers(pdbFile.data.objects.atoms);
     pdbFile.data.residues.numbers = residueNumbers(pdbFile.data.objects.residues);
-    pdbFile.Write(outputFile);
+    write(pdbFile, outputFile);
 
     auto residueIdString = [](const pdb::ResidueId& id)
     { return id.residueName + " | " + id.chainId + " | " + id.sequenceNumber + id.insertionCode; };
