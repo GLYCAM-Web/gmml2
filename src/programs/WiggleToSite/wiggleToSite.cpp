@@ -6,6 +6,7 @@
 #include "include/CentralDataStructure/Shapers/residueLinkageCreation.hpp"
 #include "include/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
+#include "include/assembly/assemblyBounds.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/geometry/overlap.hpp"
 #include "include/geometry/superimposition.hpp"
@@ -33,8 +34,10 @@ namespace gmml
             const std::vector<Atom*>& atomsA,
             const std::vector<Atom*>& atomsB)
         {
-            std::vector<Sphere> coordsA = atomCoordinatesWithRadii(elementRadii, atomsA);
-            std::vector<Sphere> coordsB = atomCoordinatesWithRadii(elementRadii, atomsB);
+            std::vector<Sphere> coordsA =
+                assembly::toAtomBounds(elementRadii, atomElements(atomsA), atomCoordinates(atomsA));
+            std::vector<Sphere> coordsB =
+                assembly::toAtomBounds(elementRadii, atomElements(atomsB), atomCoordinates(atomsB));
             std::vector<Element> elementsA = atomElements(atomsA);
             std::vector<Element> elementsB = atomElements(atomsB);
             const PotentialTable potentialTable =

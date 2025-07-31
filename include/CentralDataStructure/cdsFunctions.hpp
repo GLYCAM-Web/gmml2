@@ -37,8 +37,6 @@ namespace gmml
     std::vector<uint> atomAtomicNumbers(const std::vector<Atom*>& atoms);
     std::vector<Coordinate> atomCoordinates(const std::vector<Atom*>& atoms);
     void setAtomCoordinates(std::vector<Atom*>& atoms, const std::vector<Coordinate>& coordinates);
-    std::vector<Sphere> atomCoordinatesWithRadii(
-        const util::SparseVector<double>& elementRadii, const std::vector<Atom*>& atoms);
     std::vector<std::string> atomTypes(const std::vector<Atom*>& atoms);
     std::vector<double> atomCharges(const std::vector<Atom*>& atoms);
     std::vector<bool> atomVisibility(const std::vector<Atom*>& atoms);

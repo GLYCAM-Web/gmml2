@@ -1,9 +1,17 @@
 #include "include/assembly/assemblyBounds.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/metadata/elements.hpp"
+#include "include/util/containerTypes.hpp"
 #include "include/util/containers.hpp"
+#include "include/util/logging.hpp"
+
+#include <stdexcept>
+#include <string>
+#include <vector>
 
 namespace gmml
 {
@@ -51,6 +59,27 @@ namespace gmml
                     updateMoleculeBounds(graph, bounds, n);
                 }
             }
+        }
+
+        std::vector<Sphere> toAtomBounds(
+            const util::SparseVector<double>& elementRadii,
+            const std::vector<Element>& elements,
+            const std::vector<Coordinate>& coordinates)
+        {
+            std::vector<Sphere> spheres;
+            spheres.reserve(elements.size());
+            for (size_t n = 0; n < elements.size(); n++)
+            {
+                Element element = elements[n];
+                if (!elementRadii.hasValue[element])
+                {
+                    std::string message = "No valid radius for element: " + elementName(element);
+                    util::log(__LINE__, __FILE__, util::ERR, message);
+                    throw std::runtime_error(message);
+                }
+                spheres.push_back({elementRadii.values[element], coordinates[n]});
+            }
+            return spheres;
         }
 
         Bounds toAssemblyBounds(const Graph& graph, const std::vector<Sphere>& atomBounds)

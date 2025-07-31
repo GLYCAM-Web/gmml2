@@ -46,18 +46,6 @@ namespace gmml
             std::vector<Atom*>& atoms = graphData.objects.atoms;
             std::vector<Residue*>& residues = graphData.objects.residues;
 
-            auto boundingSpheresOf =
-                [](const std::vector<Sphere>& spheres, const std::vector<std::vector<size_t>>& indexVector)
-            {
-                std::vector<Sphere> result;
-                result.reserve(indexVector.size());
-                for (auto& indices : indexVector)
-                {
-                    result.push_back(boundingSphere(util::indicesToValues(spheres, indices)));
-                }
-                return result;
-            };
-
             auto indexOfAtoms = [&atoms](const std::vector<Atom*>& toFind)
             {
                 std::vector<size_t> result;
@@ -133,7 +121,9 @@ namespace gmml
             }
 
             std::vector<std::string> atomNames = gmml::atomNames(atoms);
-            std::vector<Sphere> atomBoundingSpheres = atomCoordinatesWithRadii(elementRadii, atoms);
+            std::vector<Sphere> atomBoundingSpheres =
+                assembly::toAtomBounds(elementRadii, atomElements(atoms), atomCoordinates(atoms));
+            assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBoundingSpheres);
             std::vector<bool> partOfMovableSidechain(atoms.size(), false);
             std::vector<Element> atomElements = gmml::atomElements(atoms);
             std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)
@@ -144,8 +134,6 @@ namespace gmml
 
             std::vector<std::string> residueNames = gmml::residueNames(residues);
             std::vector<ResidueType> residueTypes = gmml::residueTypes(residues);
-            std::vector<Sphere> residueBoundingSpheres =
-                boundingSpheresOf(atomBoundingSpheres, graph.residues.nodes.constituents);
             std::vector<bool> residuesHaveAllExpectedAtoms(residues.size(), true);
             std::vector<double> phiAngles(residues.size(), 0.0);
             std::vector<double> psiAngles(residues.size(), 0.0);
@@ -267,8 +255,6 @@ namespace gmml
                 sidechainRotations,
                 sidechainWeights,
                 sidechainPotentialBounds};
-            std::vector<Sphere> moleculeBounds =
-                boundingSpheresOf(residueBoundingSpheres, graph.molecules.nodes.constituents);
 
             MoleculeData moleculeData {moleculeTypes};
             GlycanData GlycanData {glycanAttachmentResidue, glycanMoleculeId, glycanLinkages};
@@ -303,7 +289,6 @@ namespace gmml
                 overlapRejectionThreshold};
 
             std::vector<bool> moleculeIncluded(graph.indices.moleculeCount, true);
-            assembly::Bounds bounds {atomBoundingSpheres, residueBoundingSpheres, moleculeBounds};
             MutableData mutableData {
                 bounds, dihedralCurrentMetadata, moleculeIncluded, std::vector<bool>(residues.size(), false)};
 

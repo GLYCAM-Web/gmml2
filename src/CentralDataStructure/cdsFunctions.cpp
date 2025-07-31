@@ -174,25 +174,6 @@ namespace gmml
         }
     }
 
-    std::vector<Sphere> atomCoordinatesWithRadii(
-        const util::SparseVector<double>& elementRadii, const std::vector<Atom*>& atoms)
-    {
-        std::vector<Sphere> spheres;
-        spheres.reserve(atoms.size());
-        for (auto& atom : atoms)
-        {
-            Element element = atom->cachedElement();
-            if (!elementRadii.hasValue[element])
-            {
-                std::string message = "No valid radius for element: " + std::to_string(element);
-                util::log(__LINE__, __FILE__, util::ERR, message);
-                throw std::runtime_error(message);
-            }
-            spheres.push_back({elementRadii.values[element], atom->coordinate()});
-        }
-        return spheres;
-    }
-
     std::vector<std::string> atomTypes(const std::vector<Atom*>& atoms)
     {
         std::vector<std::string> result;
