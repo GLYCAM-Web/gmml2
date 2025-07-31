@@ -1,4 +1,4 @@
-scripts/018.test.GlycoproteinBuilderTable.sh
+scripts/018.test.GlycosylationSiteFinder.sh
 scripts/019.test.newPDBClass.sh
 scripts/020.test.parameterFiles.sh
 scripts/022.test.libraryFileReader.sh

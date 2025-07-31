@@ -12,9 +12,9 @@ mkdir -p "${GMML_ROOT_DIR}/bin/"
 
 echo -e "\n${INFO_STYLE}###### Compiling internal programs ######${RESET_STYLE}"
 echo -e "Glycoprotein builder"
-g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o bin/gpBuilder
-echo -e "Glycoprotein builder table"
-g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/createGlycosylationTables.cpp -lgmml2 -pthread -o bin/gpBuilderTable
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o bin/glycoproteinBuilder
+echo -e "Glycosylation site finder"
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/createGlycosylationTables.cpp -lgmml2 -pthread -o bin/glycosylationSiteFinder
 echo -e "Carbohydrate builder"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/CarbohydrateBuilder/carbBuilderMain.cpp -lgmml2 -pthread -o bin/carbohydrateBuilder
 echo -e "Wiggle to site"

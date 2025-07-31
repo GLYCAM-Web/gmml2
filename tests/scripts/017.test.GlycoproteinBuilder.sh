@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
-BIN_PATH="${GMML_ROOT_DIR}/bin/gpBuilder"
+BIN_PATH="${GMML_ROOT_DIR}/bin/glycoproteinBuilder"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 017 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"

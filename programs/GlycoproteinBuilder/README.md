@@ -14,28 +14,28 @@ Only tested on Linux.
 You'll need GMML2: [Click here for installation instructions](https://github.com/GLYCAM-Web/gmml2#readme)
 
 ### Installation
-The Glycoprotein Builder will be compiled to gmml2/bin/gpBuilder after running the gmml2 make.sh script
+The Glycoprotein Builder will be compiled to gmml2/bin/glycoproteinBuilder after running the gmml2 make.sh script
 
 ### Testing
 Once compiled, a call to the program can look as follows
 ```
-./bin/gpBuilder inputFile.txt outputDir
+./bin/glycoproteinBuilder inputFile.txt outputDir
 ```
 Or using a test input file
 ```
 cd gmml2/tests
-../bin/gpBuilder inputs/017.GlycoproteinBuilderInput.txt outputDir
+../bin/glycoproteinBuilder inputs/017.GlycoproteinBuilderInput.txt outputDir
 ```
 
-You can run `./bin/gpBuilder --help` for a list of options
+You can run `./bin/glycoproteinBuilder --help` for a list of options
 
 ```
-usage: ./bin/gpBuilder [-h | --help]
-                       [-v | --version]
-                       [-t <value> | --num-threads <value>]
-                       [--overwrite-existing-files]
-                       input-file
-                       [output-directory]
+usage: ./bin/glycoproteinBuilder [-h | --help]
+                                 [-v | --version]
+                                 [-t <value> | --num-threads <value>]
+                                 [--overwrite-existing-files]
+                                 input-file
+                                 [output-directory]
 ```
 
 ### Output
@@ -50,11 +50,11 @@ In addition to a summary detailing the settings used and output structures, as w
 
 First, you may want to get an overview of all potential glycosylation sites
 ```
-./bin/gpBuilderTable protein.pdb --format txt
+./bin/glycosylationSiteFinder protein.pdb --format txt
 ```
 Or save it as a csv
 ```
-./bin/gpBuilderTable protein.pdb --format csv > glycosites.csv
+./bin/glycosylationSiteFinder protein.pdb --format csv > glycosites.csv
 ```
 
 Then, edit or create an input.txt file. See [example.txt](../../tests/inputs/017.GlycoproteinBuilder/example.txt) for an example.

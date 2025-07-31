@@ -13,9 +13,9 @@ docker run -it -v ./ioData:/app/data gmml2 bash
 
 # Run the test: For now we are unfortunately very picky about where you run this from.
 cd tests/
-./../bin/gpBuilder inputs/017.GlycoproteinBuilderInput.txt ../../data/
+./../bin/glycoproteinBuilder inputs/017.GlycoproteinBuilderInput.txt ../../data/
 # It should finish in less than 1 second. Here is what a success looks like:
-root@c30afa15eafa:/app/gmml2/tests# ./../bin/gpBuilder inputs/017.GlycoproteinBuilderInput.txt ../../data/
+root@c30afa15eafa:/app/gmml2/tests# ./../bin/glycoproteinBuilder inputs/017.GlycoproteinBuilderInput.txt ../../data/
 Input file is inputs/017.GlycoproteinBuilderInput.txt
 Reading input file complete, on to construction
 Resolving overlaps
@@ -48,6 +48,6 @@ Step 3. Connect to the container and run the gp builder:
 
 docker run -it -v ./inputs:/app/data gmml2 bash
 cd /app/data/
-/app/gmml2/bin/gpBuilder exampleInput.txt
+/app/gmml2/bin/glycoproteinBuilder exampleInput.txt
 
 Step 4. Your results should be in a file called glycoprotein.pdb.

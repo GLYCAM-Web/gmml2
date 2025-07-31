@@ -1,7 +1,7 @@
 #!/bin/bash
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
-BIN_PATH="${GMML_ROOT_DIR}/bin/gpBuilderTable"
+BIN_PATH="${GMML_ROOT_DIR}/bin/glycosylationSiteFinder"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 018 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
@@ -14,11 +14,11 @@ expected="correct_outputs/${directory}"
 rm -r "${output}" >/dev/null 2>&1
 mkdir -p "${output}"
 
-printf "Testing 018.test.createGlycosylationTables.cpp... "
-eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format list > ${output}/GlycoproteinBuilderTableList.txt 2>&1"
-eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format csv > ${output}/GlycoproteinBuilderTable.csv 2>&1"
-eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format txt > ${output}/GlycoproteinBuilderTable.txt 2>&1"
-eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format html > ${output}/GlycoproteinBuilderTable.html 2>&1"
+printf "Testing 018.test.createGlycosylationSiteFinder.cpp... "
+eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format list > ${output}/GlycosylationSiteFinderList.txt 2>&1"
+eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format csv > ${output}/GlycosylationSiteFinder.csv 2>&1"
+eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format txt > ${output}/GlycosylationSiteFinder.txt 2>&1"
+eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format html > ${output}/GlycosylationSiteFinder.html 2>&1"
 
 if [ ! -d "${expected}" ]; then
     echo "Test FAILED"
