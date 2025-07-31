@@ -3,6 +3,7 @@
 printf "Testing 030.test.gmPreProcessor.cpp... ~3 seconds. "
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
+BIN_PATH="${GMML_ROOT_DIR}/bin/glycomimeticPreprocessor"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 030 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
@@ -15,12 +16,11 @@ output="output/${directory}"
 rm -r "${output}" >/dev/null 2>&1
 mkdir -p "${output}"
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}" -L"${GMML_ROOT_DIR}"/lib/ -Wl,-rpath,"${GMML_ROOT_DIR}"/lib/ ../programs/glycomimeticPreprocessor/glycomimeticPreprocessor.cpp -lgmml2 -pthread -o gmPreProcessor.exe
 shopt -s nullglob
 for filepath in inputs/"${directory}"/*.pdb; do
     file=$(basename "${filepath}")
     filename="${file%.*}"
-    ./gmPreProcessor.exe "inputs/${directory}/${file}" "${output}/${file}" > "${output}/${filename}.txt"
+    "${BIN_PATH}" "inputs/${directory}/${file}" "${output}/${file}" > "${output}/${filename}.txt"
 done
 
 expected="correct_outputs/${directory}"
@@ -42,7 +42,6 @@ then
 fi
 
 rm -r "${output}" >/dev/null 2>&1
-rm ./gmPreProcessor.exe
 printf "Test passed.\n"
 echo "Exit Code: 0"
 return 0

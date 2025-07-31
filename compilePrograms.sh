@@ -23,3 +23,5 @@ echo -e "Draw glycan"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/DrawGlycan/drawGlycanMain.cpp -lgmml2 -pthread -o bin/drawGlycan
 echo -e "PDB Analyzer"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/pdbAnalyzer.cpp -lgmml2 -pthread -o bin/pdbAnalyzer
+echo -e "Glycomimetic preprocessor"
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/glycomimeticPreprocessor.cpp -lgmml2 -pthread -o bin/glycomimeticPreprocessor
