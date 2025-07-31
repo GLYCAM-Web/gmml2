@@ -1,5 +1,8 @@
 #include "include/CentralDataStructure/assembly.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
+#include "include/assembly/assemblyBounds.hpp"
+#include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyTypes.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/sidechainRotamers.hpp"
 #include "include/pdb/atomicConnectivity.hpp"
@@ -173,10 +176,14 @@ int main(int argc, char* argv[])
         util::SparseVector<double> elementRadii = vanDerWaalsRadii();
         const AminoAcidTable& aminoAcidTable = gmml::aminoAcidTable();
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
+        const std::vector<Sphere> atomBounds =
+            assembly::toAtomBounds(elementRadii, pdbFile.data.atoms.elements, pdbFile.data.atoms.coordinates);
+        const assembly::Graph graph = assembly::createAssemblyGraph(pdbFile.data.indices, pdbFile.data.atomGraph);
+        const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
         size_t glycoproteinAssemblyId = 0;
         Assembly* glycoprotein = getAssemblies(pdbFile)[glycoproteinAssemblyId];
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
-        pdb::setInterConnectivity(aminoAcidTable, pdbFile.data);
+        pdb::setInterConnectivity(aminoAcidTable, pdbFile.data, bounds);
         util::log(__LINE__, __FILE__, util::INF, "Attaching Glycans To Glycosites.");
         std::vector<gpbuilder::GlycosylationSite> glycosites =
             createGlycosites(pdbFile.data, glycoproteinAssemblyId, settings.glycositesInputVector);

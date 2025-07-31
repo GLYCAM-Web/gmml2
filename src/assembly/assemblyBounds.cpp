@@ -9,8 +9,6 @@
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 
-#include <stdexcept>
-#include <string>
 #include <vector>
 
 namespace gmml
@@ -70,14 +68,7 @@ namespace gmml
             spheres.reserve(elements.size());
             for (size_t n = 0; n < elements.size(); n++)
             {
-                Element element = elements[n];
-                if (!elementRadii.hasValue[element])
-                {
-                    std::string message = "No valid radius for element: " + elementName(element);
-                    util::log(__LINE__, __FILE__, util::ERR, message);
-                    throw std::runtime_error(message);
-                }
-                spheres.push_back({elementRadii.values[element], coordinates[n]});
+                spheres.push_back({elementRadii.values[elements[n]], coordinates[n]});
             }
             return spheres;
         }

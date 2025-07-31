@@ -199,6 +199,19 @@ namespace gmml
         return util::indicesToBools(ElementCount, util::vectorMap(toIndex, elements));
     }
 
+    void validateElements(const util::SparseVector<double>& radii, const std::vector<Element>& elements)
+    {
+        for (Element element : elements)
+        {
+            if (!radii.hasValue[element])
+            {
+                std::string message = "No valid radius for element: " + elementName(element);
+                util::log(__LINE__, __FILE__, util::ERR, message);
+                throw std::runtime_error(message);
+            }
+        }
+    }
+
     const std::string& elementName(Element element)
     {
         if (element >= elementNames.size())

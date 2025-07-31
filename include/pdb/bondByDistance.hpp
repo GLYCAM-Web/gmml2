@@ -11,9 +11,9 @@ namespace gmml
     {
         bool isWithinBondingDistance(const PdbData& data, size_t atomA, size_t atomB);
         void bondAtomsByDistance(PdbData& data, const std::vector<size_t>& atoms);
-        void bondAtomsAndResiduesByDistance(PdbData& data);
+        void bondAtomsAndResiduesByDistance(PdbData& data, const assembly::Bounds& bounds);
         void distanceBondIntra(PdbData& data, const std::vector<size_t>& residues);
-        void distanceBondInter(PdbData& data, const std::vector<size_t>& residues);
+        void distanceBondInter(PdbData& data, const assembly::Bounds& bounds, const std::vector<size_t>& residues);
     } // namespace pdb
 } // namespace gmml
 

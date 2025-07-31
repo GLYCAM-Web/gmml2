@@ -165,19 +165,17 @@ int main(int argc, char* argv[])
                 break;
         }
     }
-    pdb::PdbFile inputFile = pdb::toPdbFile(inputFileName, pdb::modelsAsMolecules);
-    pdb::PdbData& data = inputFile.data;
-    pdb::bondAtomsAndResiduesByDistance(data);
-    assembly::Graph graph = createAssemblyGraph(data.indices, data.atomGraph);
-    auto residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
-    const util::SparseVector<double> atomRadii = vanDerWaalsRadii();
-    const PotentialTable potential = potentialTable(atomRadii, foundElements(data.atoms.elements));
-    std::function<Sphere(const size_t&)> toAtomBounds = [&](size_t atomId) {
-        return Sphere {atomRadii.values[data.atoms.elements[atomId]], data.atoms.coordinates[atomId]};
-    };
+    pdb::PdbFile pdbFile = pdb::toPdbFile(inputFileName, pdb::modelsAsMolecules);
+    pdb::PdbData& data = pdbFile.data;
+    util::SparseVector<double> elementRadii = vanDerWaalsRadii();
+    const PotentialTable potential = potentialTable(elementRadii, foundElements(data.atoms.elements));
+    const std::vector<Sphere> atomBounds =
+        assembly::toAtomBounds(elementRadii, data.atoms.elements, data.atoms.coordinates);
+    const assembly::Graph graph = assembly::createAssemblyGraph(data.indices, data.atomGraph);
+    const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
 
-    std::vector<Sphere> atomBounds = util::vectorMap(toAtomBounds, util::indexVector(data.indices.atomCount));
-    const assembly::Bounds bounds = toAssemblyBounds(graph, atomBounds);
+    pdb::bondAtomsAndResiduesByDistance(data, bounds);
+    auto residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
 
     std::vector<std::string> residueTypeNames(ResidueTypeCount, "");
     residueTypeNames[ResidueType::Aglycone] = "aglycone";
@@ -266,7 +264,7 @@ int main(int argc, char* argv[])
                 {
                     Element elementA = data.atoms.elements[n];
                     Element elementB = data.atoms.elements[k];
-                    if (atomRadii.hasValue[elementA] && atomRadii.hasValue[elementB])
+                    if (elementRadii.hasValue[elementA] && elementRadii.hasValue[elementB])
                     {
                         Sphere a = bounds.atoms[n];
                         Sphere b = bounds.atoms[k];

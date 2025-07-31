@@ -1,3 +1,7 @@
+#include "include/assembly/assemblyBounds.hpp"
+#include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyTypes.hpp"
+#include "include/metadata/elements.hpp"
 #include "include/pdb/bondByDistance.hpp"
 #include "include/pdb/pdbFile.hpp"
 #include "include/programs/glycosylationSiteFinder.hpp"
@@ -96,10 +100,16 @@ int main(int argc, char* argv[])
                 break;
         }
     }
-    pdb::PdbFile inputFile = pdb::toPdbFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
-    pdb::bondAtomsAndResiduesByDistance(inputFile.data);
+    pdb::PdbFile pdbFile = pdb::toPdbFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
+    pdb::PdbData& pdbData = pdbFile.data;
+    util::SparseVector<double> elementRadii = vanDerWaalsRadii();
+    const std::vector<Sphere> atomBounds =
+        assembly::toAtomBounds(elementRadii, pdbData.atoms.elements, pdbData.atoms.coordinates);
+    const assembly::Graph graph = assembly::createAssemblyGraph(pdbData.indices, pdbData.atomGraph);
+    const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
+    pdb::bondAtomsAndResiduesByDistance(pdbData, bounds);
     std::vector<gpbuilder::GlycosylationSiteInfo> table =
-        gpbuilder::createGlycosylationSiteTable(inputFile.data, util::indexVector(inputFile.data.indices.residueCount));
+        gpbuilder::createGlycosylationSiteTable(pdbData, util::indexVector(pdbData.indices.residueCount));
     std::vector<std::string> header {"Chain", "ResidueNumber", "InsertionCode", "SequenceContext", "Tags"};
 
     std::function<std::vector<std::string>(const gpbuilder::GlycosylationSiteInfo&)> toRow =

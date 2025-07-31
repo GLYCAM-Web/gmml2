@@ -9,7 +9,6 @@
 #include "include/pdb/pdbData.hpp"
 #include "include/pdb/pdbFunctions.hpp"
 #include "include/pdb/pdbResidue.hpp"
-#include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 
@@ -52,20 +51,16 @@ namespace gmml
 
             void bondResidueAtoms(
                 PdbData& data,
+                const assembly::Bounds& bounds,
                 const std::vector<size_t>& residueIds,
                 const std::vector<std::vector<size_t>>& residueAtoms,
                 size_t n)
             {
                 size_t residue1 = residueIds[n];
-                const std::vector<size_t>& res1Atoms = residueAtoms[residue1];
                 for (size_t k = n + 1; k < residueIds.size(); k++)
                 {
                     size_t residue2 = residueIds[k];
-                    const std::vector<size_t>& res2Atoms = residueAtoms[residue2];
-                    if (withinDistance(
-                            constants::residueDistanceOverlapCutoff,
-                            data.atoms.coordinates[res1Atoms[0]],
-                            data.atoms.coordinates[res2Atoms[0]]))
+                    if (spheresOverlap(0.0, bounds.residues[residue1], bounds.residues[residue2]))
                     {
                         bondCloseAtomsAndResidues(data, residueAtoms, residue1, residue2);
                     }
@@ -108,7 +103,7 @@ namespace gmml
             }
         }
 
-        void bondAtomsAndResiduesByDistance(PdbData& data)
+        void bondAtomsAndResiduesByDistance(PdbData& data, const assembly::Bounds& bounds)
         {
             std::vector<std::vector<size_t>> residueAtoms = residueAtomVectors(data);
             std::vector<size_t> residueIds = util::indexVector(residueAtoms);
@@ -116,7 +111,7 @@ namespace gmml
             { // First bond by distance for atoms within each residue
                 bondAtomsByDistance(data, residueAtoms[residueIds[n]]);
                 // Then for each residue, find other residues within reasonable residue distance.
-                bondResidueAtoms(data, residueIds, residueAtoms, n);
+                bondResidueAtoms(data, bounds, residueIds, residueAtoms, n);
             }
         }
 
@@ -129,12 +124,12 @@ namespace gmml
             }
         }
 
-        void distanceBondInter(PdbData& data, const std::vector<size_t>& residues)
+        void distanceBondInter(PdbData& data, const assembly::Bounds& bounds, const std::vector<size_t>& residues)
         {
             std::vector<std::vector<size_t>> residueAtoms = residueAtomVectors(data);
             for (size_t n = 0; n < residues.size(); n++)
             {
-                bondResidueAtoms(data, residues, residueAtoms, n);
+                bondResidueAtoms(data, bounds, residues, residueAtoms, n);
             }
         }
     } // namespace pdb

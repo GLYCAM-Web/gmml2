@@ -147,11 +147,11 @@ namespace gmml
             distanceBondIntra(data, util::boolsToIndices(util::vectorNot(isProtein)));
         }
 
-        void setInterConnectivity(const AminoAcidTable& table, PdbData& data)
+        void setInterConnectivity(const AminoAcidTable& table, PdbData& data, const assembly::Bounds& bounds)
         {
             std::vector<bool> isProtein = util::vectorEquals(data.residues.types, ResidueType::Protein);
             setProteinInterConnectivity(table, data, util::boolsToIndices(isProtein));
-            distanceBondInter(data, util::boolsToIndices(util::vectorNot(isProtein)));
+            distanceBondInter(data, bounds, util::boolsToIndices(util::vectorNot(isProtein)));
         }
     } // namespace pdb
 } // namespace gmml
