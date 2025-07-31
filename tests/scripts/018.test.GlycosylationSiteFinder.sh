@@ -15,9 +15,8 @@ rm -r "${output}" >/dev/null 2>&1
 mkdir -p "${output}"
 
 printf "Testing 018.test.createGlycosylationSiteFinder.cpp... "
-eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format list > ${output}/GlycosylationSiteFinderList.txt 2>&1"
-eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format csv > ${output}/GlycosylationSiteFinder.csv 2>&1"
 eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format txt > ${output}/GlycosylationSiteFinder.txt 2>&1"
+eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format csv > ${output}/GlycosylationSiteFinder.csv 2>&1"
 eval "${BIN_PATH} inputs/018.4mbzEdit.pdb --format html > ${output}/GlycosylationSiteFinder.html 2>&1"
 
 if [ ! -d "${expected}" ]; then

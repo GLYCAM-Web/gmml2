@@ -28,9 +28,8 @@ int main(int argc, char* argv[])
 
     enum OUTPUT_FORMAT
     {
-        LIST,
-        CSV,
         TXT,
+        CSV,
         HTML
     };
 
@@ -38,7 +37,7 @@ int main(int argc, char* argv[])
     using util::ArgReq;
     using util::ArgType;
     // keeping the same order between the enum and strings lets us assign format by index in the vector
-    std::vector<std::string> knownFormats {"list", "csv", "txt", "html"};
+    std::vector<std::string> knownFormats {"txt", "csv", "html"};
     std::vector<util::ArgDef> argumentDefinitions = {
         {ArgReq::required, ArgType::unnamed, FILENAME, "", ' ', "filename"},
         {ArgReq::optional, ArgType::flag, HELP, "help", 'h', ""},
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
     }
 
     std::string inputFileName = "";
-    OUTPUT_FORMAT format = LIST;
+    OUTPUT_FORMAT format = TXT;
     for (const auto& arg : arguments.args)
     {
         switch (arg.id)
@@ -122,20 +121,11 @@ int main(int argc, char* argv[])
     util::TextTable textTable {header, rows};
     switch (format)
     {
-        case LIST:
-            for (auto& a : table)
-            {
-                std::cout << "Chain: " << a.chain << "\nResidueNumber: " << a.residueNumber
-                          << "\nInsertionCode: " + a.insertionCode << "\nSequenceContext: " << a.sequenceContext
-                          << "\nTags:\n"
-                          << util::join("\n", a.tags) << "\n\n";
-            }
+        case TXT:
+            util::toTxt(std::cout, {textTable});
             break;
         case CSV:
             util::toCsv(std::cout, ",", textTable);
-            break;
-        case TXT:
-            util::toTxt(std::cout, {textTable});
             break;
         case HTML:
             util::toHtml(std::cout, {textTable});
