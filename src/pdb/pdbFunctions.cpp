@@ -141,7 +141,7 @@ namespace gmml
             return addAtom(data, residueId, {"ATOM", name, 1, coordinate, occupancy, temperatureFactor});
         }
 
-        void deleteAtom(PdbData& data, size_t residueId, size_t atomId)
+        void deleteAtom(PdbData& data, size_t atomId)
         {
             if (atomId < data.indices.atomCount)
             {
@@ -153,6 +153,7 @@ namespace gmml
                         std::to_string(data.atoms.numbers[atomId]));
                 data.indices.atomAlive[atomId] = false;
                 data.atomGraph.nodeAlive[atomId] = false;
+                size_t residueId = data.indices.atomResidue[atomId];
                 Atom* atom = data.objects.atoms[atomId];
                 data.objects.residues[residueId]->deleteAtom(atom);
             }

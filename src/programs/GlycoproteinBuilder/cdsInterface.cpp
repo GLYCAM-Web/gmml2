@@ -229,8 +229,7 @@ namespace gmml
                                        ? n
                                        : glycanAttachmentResidue[util::indexOf(
                                              glycanMoleculeId, graphData.indices.residueMolecule[n])];
-                size_t pdbResidueId = util::indexOf(pdbData.objects.residues, residues[residueId]);
-                return pdbData.residues.chainIds[pdbResidueId];
+                return pdbData.residues.chainIds[residueId];
             };
 
             std::vector<std::string> chainIds = util::vectorMap(chainId, util::indexVector(residues));

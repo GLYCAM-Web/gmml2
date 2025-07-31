@@ -1,9 +1,5 @@
 #include "include/pdb/pdbPreProcess.hpp"
 
-#include "include/CentralDataStructure/Selections/atomSelections.hpp"
-#include "include/CentralDataStructure/Selections/residueSelections.hpp"
-#include "include/CentralDataStructure/cdsFunctions.hpp"
-#include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
@@ -64,6 +60,21 @@ namespace gmml
                     addBond(data, atomIndex(bond[0]), atomIndex(bond[1]));
                 }
             }
+
+            std::vector<size_t> findHeavyAtoms(const std::vector<Element>& elements)
+            {
+                std::vector<size_t> foundAtoms;
+                foundAtoms.reserve(elements.size());
+                std::vector<std::string> heavyList = {"C", "O", "N", "S", "P"};
+                for (size_t n = 0; n < elements.size(); n++)
+                {
+                    if (isHeavyElement(elements[n]))
+                    {
+                        foundAtoms.push_back(n);
+                    }
+                }
+                return foundAtoms;
+            }
         } // namespace
 
         PreprocessorInformation preProcess(
@@ -72,7 +83,7 @@ namespace gmml
             util::log(__LINE__, __FILE__, util::INF, "Preprocesssing has begun");
             PreprocessorInformation ppInfo;
             PdbData& data = file.data;
-            for (size_t assemblyId = 0; assemblyId < file.assemblies.size();
+            for (size_t assemblyId = 0; assemblyId < file.data.indices.assemblyCount;
                  assemblyId++) // Now we do all, but maybe user can select at some point.
             {
                 preProcessCysResidues(data, assemblyId, ppInfo);
@@ -122,16 +133,14 @@ namespace gmml
             { // I want to go through the list and compare from current item to end. Thus it2 = std::next it1
                 size_t cysRes1Id = cysResidues[n];
                 size_t sgAtom1Id = findResidueAtom(data, cysRes1Id, "SG");
-                Atom* sgAtom1 = data.objects.atoms[sgAtom1Id];
                 for (size_t k = n + 1; k < cysResidues.size(); k++)
                 {
                     size_t cysRes2Id = cysResidues[k];
                     size_t sgAtom2Id = findResidueAtom(data, cysRes2Id, "SG");
-                    Atom* sgAtom2 = data.objects.atoms[sgAtom2Id];
                     size_t atomCount = data.indices.atomCount;
                     if ((sgAtom1Id < atomCount) && (sgAtom2Id < atomCount))
                     {
-                        double dist = distance(sgAtom1->coordinate(), sgAtom2->coordinate());
+                        double dist = distance(data.atoms.coordinates[sgAtom1Id], data.atoms.coordinates[sgAtom2Id]);
                         if (dist < constants::dSulfurCutoff && dist > 0.001)
                         {
                             data.residues.names[cysRes1Id] = "CYX";
@@ -212,7 +221,7 @@ namespace gmml
                     util::INF,
                     "Modifying N Terminal of : " + toString(pdbResidueId(data, residueId)));
                 size_t atomId = findResidueAtom(data, residueId, "H");
-                deleteAtom(data, residueId, atomId);
+                deleteAtom(data, atomId);
             }
             else if (type == "CO2-")
             {
@@ -493,7 +502,7 @@ namespace gmml
                 else // Recognized residue->
                 {
                     const lib::ResidueData& parmResidue = parmManager.lib.residues[index];
-                    std::vector<size_t> parmHeavyAtoms = FindHeavyAtoms(parmResidue.atoms.elements);
+                    std::vector<size_t> parmHeavyAtoms = findHeavyAtoms(parmResidue.atoms.elements);
                     std::vector<std::string> parmHeavyAtomNames =
                         util::indicesToValues(parmResidue.atoms.names, parmHeavyAtoms);
                     std::vector<size_t> atomIds = residueAtoms(data.indices, residueId);

@@ -100,19 +100,4 @@ namespace gmml
         }
         return nullptr;
     }
-
-    std::vector<size_t> FindHeavyAtoms(const std::vector<Element>& elements)
-    {
-        std::vector<size_t> foundAtoms;
-        foundAtoms.reserve(elements.size());
-        std::vector<std::string> heavyList = {"C", "O", "N", "S", "P"};
-        for (size_t n = 0; n < elements.size(); n++)
-        {
-            if (isHeavyElement(elements[n]))
-            {
-                foundAtoms.push_back(n);
-            }
-        }
-        return foundAtoms;
-    }
 } // namespace gmml
