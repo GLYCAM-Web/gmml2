@@ -88,7 +88,7 @@ namespace gmml
             std::vector<std::vector<size_t>> glycanLinkages;
             for (size_t n = 0; n < glycosites.size(); n++)
             {
-                size_t site = util::indexOf(residues, glycosites[n].residue);
+                size_t site = glycosites[n].residueId;
                 size_t moleculeIndex = util::indexOf(molecules, util::erratic_cast<Molecule*>(glycans[n]));
                 const std::vector<ResidueLinkage>& linkages = glycosidicLinkages[n];
                 std::vector<size_t> linkageIds = util::indexVectorWithOffset(residueLinkages.size(), linkages);

@@ -173,12 +173,13 @@ int main(int argc, char* argv[])
         util::SparseVector<double> elementRadii = vanDerWaalsRadii();
         const AminoAcidTable& aminoAcidTable = gmml::aminoAcidTable();
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
-        Assembly* glycoprotein = getAssemblies(pdbFile).front();
+        size_t glycoproteinAssemblyId = 0;
+        Assembly* glycoprotein = getAssemblies(pdbFile)[glycoproteinAssemblyId];
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
         pdb::setInterConnectivity(aminoAcidTable, pdbFile.data);
         util::log(__LINE__, __FILE__, util::INF, "Attaching Glycans To Glycosites.");
         std::vector<gpbuilder::GlycosylationSite> glycosites =
-            createGlycosites(pdbFile.data, glycoprotein, settings.glycositesInputVector);
+            createGlycosites(pdbFile.data, glycoproteinAssemblyId, settings.glycositesInputVector);
         std::vector<Carbohydrate*> glycans = addGlycansToProtein(
             parameterManager, elementRadii, dihedralAngleDataTable, pdbFile.data, glycoprotein, glycosites);
         util::log(__LINE__, __FILE__, util::INF, "Initialization of Glycoprotein builder complete!");

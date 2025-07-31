@@ -7,6 +7,7 @@
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/residue.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/geometry/measurements.hpp"
 #include "include/geometry/superimposition.hpp"
 #include "include/metadata/glycoprotein.hpp"
@@ -71,6 +72,8 @@ namespace gmml
             }
 
             size_t selectResidueFromInput(
+                size_t residueCount,
+                const std::vector<size_t>& assemblyResidues,
                 const std::vector<std::string>& residueIds,
                 const std::vector<std::string>& chainIds,
                 const std::vector<std::string>& numberAndInsertionCode,
@@ -78,7 +81,7 @@ namespace gmml
             {
                 util::log(
                     __LINE__, __FILE__, util::INF, "We working with " + selection.chain + "_" + selection.residue);
-                for (size_t n = 0; n < residueIds.size(); n++)
+                for (size_t n : assemblyResidues)
                 {
                     if ((chainIds[n] == selection.chain) && (numberAndInsertionCode[n] == selection.residue))
                     {
@@ -86,7 +89,7 @@ namespace gmml
                         return n;
                     }
                 }
-                return residueIds.size();
+                return residueCount;
             }
 
             // Step 1. If the C1 atom has a neighbor that isn't in the queryResidue, return C1.
@@ -269,20 +272,17 @@ namespace gmml
 
         std::vector<GlycosylationSite> createGlycosites(
             const pdb::PdbData& pdbData,
-            Assembly* glycoprotein,
+            size_t glycoproteinAssemblyId,
             const std::vector<GlycositeInput>& glycositesInputVector)
         {
             std::vector<GlycosylationSite> result;
-            std::vector<Residue*> residues = glycoprotein->getResidues();
+            std::vector<size_t> assemblyResidues = assembly::assemblyResidues(pdbData.indices, glycoproteinAssemblyId);
             std::vector<std::string> numberAndInsertionCodes;
-            std::vector<std::string> chainIds;
             std::vector<std::string> residueIds;
-            for (auto residue : residues)
+            for (size_t n = 0; n < pdbData.indices.residueCount; n++)
             {
-                size_t residueId = util::indexOf(pdbData.objects.residues, residue);
-                numberAndInsertionCodes.push_back(pdb::getNumberAndInsertionCode(pdbData, residueId));
-                chainIds.push_back(pdbData.residues.chainIds[residueId]);
-                residueIds.push_back(pdb::residueStringId(pdbData, residueId));
+                numberAndInsertionCodes.push_back(pdb::getNumberAndInsertionCode(pdbData, n));
+                residueIds.push_back(pdb::residueStringId(pdbData, n));
             }
             for (auto& glycositeInput : glycositesInputVector)
             {
@@ -293,20 +293,25 @@ namespace gmml
                     "Creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                         glycositeInput.glycanInput);
                 ChainAndResidue selection = selectionChainAndResidue(glycositeInput.proteinResidueId);
-                size_t residueIndex = selectResidueFromInput(residueIds, chainIds, numberAndInsertionCodes, selection);
-                if (residueIndex == residues.size())
+                size_t residueIndex = selectResidueFromInput(
+                    pdbData.indices.residueCount,
+                    assemblyResidues,
+                    residueIds,
+                    pdbData.residues.chainIds,
+                    numberAndInsertionCodes,
+                    selection);
+                if (residueIndex == pdbData.indices.residueCount)
                 {
                     throw std::runtime_error(
                         "Error: Did not find a residue with id matching " + glycositeInput.proteinResidueId + "\n");
                 }
-                Residue* glycositeResidue = residues[residueIndex];
                 util::log(
                     __LINE__,
                     __FILE__,
                     util::INF,
                     "About to push to glycosites with: " + glycositeInput.proteinResidueId + " and glycan " +
                         glycositeInput.glycanInput);
-                result.push_back({glycositeResidue, glycositeInput});
+                result.push_back({residueIndex, glycositeInput});
             }
             return result;
         }
@@ -330,7 +335,7 @@ namespace gmml
                 Attachment attachment = toAttachment(glycan);
                 Residue* aglycone = attachment.aglycone;
                 Residue* reducingResidue = attachment.reducing;
-                Residue* glycositeResidue = glycosite.residue;
+                Residue* glycositeResidue = pdbData.objects.residues[glycosite.residueId];
                 std::string glycositeResidueName = glycositeResidue->getName();
                 const GlycositeInput& glycositeInput = glycosite.input;
                 size_t tableIndex =

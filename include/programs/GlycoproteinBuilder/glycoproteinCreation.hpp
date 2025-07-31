@@ -18,13 +18,13 @@ namespace gmml
     {
         struct GlycosylationSite
         {
-            Residue* residue;
+            size_t residueId;
             GlycositeInput input;
         };
 
         std::vector<GlycosylationSite> createGlycosites(
             const pdb::PdbData& pdbData,
-            Assembly* glycoprotein,
+            size_t glycoproteinAssemblyId,
             const std::vector<GlycositeInput>& glycositesInputVector);
 
         std::vector<Carbohydrate*> addGlycansToProtein(
