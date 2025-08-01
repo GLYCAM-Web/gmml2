@@ -17,9 +17,7 @@
 #include <stdexcept>
 #include <string>
 
-using SidechainRotamerBin;
-using SidechainRotamerData;
-using SidechainRotation;
+using namespace gmml;
 
 struct RotamerInput
 {
@@ -259,16 +257,17 @@ int main(int argc, char* argv[])
         }
     }
 
+    AminoAcidTable aminoAcids = aminoAcidTable();
     const std::vector<RotamerInput> input = readInputFile(inputFile);
-    const std::vector<std::string>& aminoAcids = aminoAcidNames();
 
     std::function<bool(const RotamerInput&)> includeLine = [&aminoAcids](const RotamerInput& line)
     {
-        size_t index = util::indexOf(aminoAcids, line.residue);
-        return (index < aminoAcids.size()) && (aminoAcidDihedrals(index).size() > 0) && (line.probability > 0.0);
+        size_t index = util::indexOf(aminoAcids.names, line.residue);
+        return (index < aminoAcids.names.size()) && (aminoAcids.sidechainDihedralAtoms[index].size() > 0) &&
+               (line.probability > 0.0);
     };
 
-    const std::vector<RotamerInput> included = util::filter(includeLine, input);
+    const std::vector<RotamerInput> included = util::vectorFilter(includeLine, input);
     const SidechainRotamerData output = formatOutput(included);
     writeOutput(output, outputFile);
 

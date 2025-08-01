@@ -15,6 +15,8 @@ echo -e "Carbohydrate builder"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/CarbohydrateBuilder/carbBuilderMain.cpp -lgmml2 -pthread -o bin/carbohydrateBuilder
 echo -e "Draw glycan"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/DrawGlycan/drawGlycanMain.cpp -lgmml2 -pthread -o bin/drawGlycan
+echo -e "Dunbrack formatter"
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/Dunbrack/dunbrackMain.cpp -lgmml2 -pthread -o bin/dunbrackFormatter
 echo -e "Glycomimetic preprocessor"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/glycomimeticPreprocessor.cpp -lgmml2 -pthread -o bin/glycomimeticPreprocessor
 echo -e "Glycoprotein builder"
