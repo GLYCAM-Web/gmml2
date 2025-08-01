@@ -61,7 +61,7 @@ int main(int argc, char** argv)
             std::cout << "Parsed and labelled " << inputGlycanID << " with no exceptions thrown.\n\n";
             carbohydrateBuilder carbBuilder(sequence.getIndexOrdered());
             bool likelyShapesOnly = true; // Not sure I like this. Two functions probably more readable.
-            std::cout << "Number of residues for this sequence is " << carbBuilder.carbohydrate.GetResidueCount()
+            std::cout << "Number of residues for this sequence is " << carbBuilder.carbohydrate.getResidues().size()
                       << "\n";
             std::cout << "Number of likely shapes is " << carbBuilder.GetNumberOfShapes(likelyShapesOnly) << "\n";
             std::cout << "Number of possible shapes is " << carbBuilder.GetNumberOfShapes() << "\n";
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
                 }
             }
             std::vector<std::string> headerLines {"Produced by GMML carb builder all test"};
-            carbBuilder.carbohydrate.Generate3DStructureFiles(outputFolderName, inputGlycanID, headerLines);
+            generate3DStructureFiles(carbBuilder.carbohydrate, outputFolderName, inputGlycanID, headerLines);
         }
         catch (const std::runtime_error& error)
         {

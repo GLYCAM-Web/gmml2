@@ -187,8 +187,17 @@ int main(int argc, char* argv[])
         util::log(__LINE__, __FILE__, util::INF, "Attaching Glycans To Glycosites.");
         std::vector<gpbuilder::GlycosylationSite> glycosites =
             createGlycosites(pdbFile.data, glycoproteinAssemblyId, settings.glycositesInputVector);
-        std::vector<Carbohydrate*> glycans = addGlycansToProtein(
-            parameterManager, elementRadii, dihedralAngleDataTable, pdbFile.data, glycoprotein, glycosites);
+        std::vector<Molecule*> glycans;
+        std::vector<std::vector<ResidueLinkage>> linkages;
+        addGlycansToProtein(
+            glycans,
+            linkages,
+            parameterManager,
+            elementRadii,
+            dihedralAngleDataTable,
+            pdbFile.data,
+            glycoprotein,
+            glycosites);
         util::log(__LINE__, __FILE__, util::INF, "Initialization of Glycoprotein builder complete!");
 
         std::vector<Molecule*> molecules = glycoprotein->getMolecules();
@@ -204,6 +213,7 @@ int main(int argc, char* argv[])
                 molecules,
                 glycosites,
                 glycans,
+                linkages,
                 settings.overlapTolerance,
                 settings.overlapRejectionThreshold,
                 settings.ignoreHydrogen));

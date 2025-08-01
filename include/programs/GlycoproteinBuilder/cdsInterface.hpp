@@ -21,7 +21,8 @@ namespace gmml
             const pdb::PdbData& pdbData,
             std::vector<Molecule*>& molecules,
             std::vector<GlycosylationSite>& glycosites,
-            std::vector<Carbohydrate*>& glycans,
+            std::vector<Molecule*>& glycans,
+            const std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
             double overlapTolerance,
             double overlapRejectionThreshold,
             bool excludeHydrogen);

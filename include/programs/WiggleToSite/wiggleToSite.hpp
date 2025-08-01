@@ -31,11 +31,6 @@ namespace gmml
             int structureCount = 0);
 
       private:
-        //////////////////////////////////////////////////////////
-        //                       ACCESSOR                       //
-        //////////////////////////////////////////////////////////
-        Carbohydrate& getCarbohydrate() { return carbohydrate_; }
-
         std::vector<ResidueLinkage>& getWiggleLinkages() { return wiggleLinkages_; }
 
         pdb::PdbFile& getSubstrate() { return substrate_; }
@@ -67,7 +62,8 @@ namespace gmml
         //                 PRIVATE MEMBERS                      //
         //////////////////////////////////////////////////////////
         pdb::PdbFile substrate_;
-        Carbohydrate carbohydrate_;
+        Molecule carbohydrate_;
+        std::vector<ResidueLinkage> glycosidicLinkages_;
         std::vector<ResidueLinkage> wiggleLinkages_;
         std::vector<Atom*> atomsToAvoid_;
         std::vector<Atom*> wiggleMeAtoms_;

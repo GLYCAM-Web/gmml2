@@ -78,7 +78,8 @@ namespace gmml
         void GenerateSpecific3DStructure(SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory);
 
         ParameterManager parameters;
-        Carbohydrate carbohydrate;
+        Molecule carbohydrate;
+        std::vector<ResidueLinkage> glycosidicLinkages;
     };
 } // namespace gmml
 #endif

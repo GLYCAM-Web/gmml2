@@ -385,7 +385,7 @@ namespace gmml
         void initialWiggleLinkage(
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& metadataTable,
-            Molecule* molecule,
+            Molecule& molecule,
             Residue* residue,
             ResidueLinkage& linkage,
             const AngleSearchSettings& searchSettings)
@@ -396,7 +396,7 @@ namespace gmml
                 linkage, defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata));
             setShapeToPreference(linkage, shapePreference);
             auto searchPreference = angleSearchPreference(searchSettings.deviation, shapePreference);
-            const GraphIndexData graphData = toIndexData({molecule});
+            const GraphIndexData graphData = toIndexData({&molecule});
             const assembly::Graph graph = createCompleteAssemblyGraph(graphData);
             size_t residueIndex = util::indexOf(graphData.objects.residues, residue);
             std::vector<bool> reachable = graph::reachableNodes(
@@ -429,7 +429,7 @@ namespace gmml
 
         // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
         void depthFirstSetConnectivityAndGeometry(
-            Molecule* molecule,
+            Molecule& molecule,
             std::vector<ResidueLinkage>& glycosidicLinkages,
             const AngleSearchSettings& searchSettings,
             const util::SparseVector<double>& elementRadii,
@@ -465,14 +465,12 @@ namespace gmml
         }
     } // namespace
 
-    //////////////////////////////////////////////////////////
-    //                       CONSTRUCTOR                    //
-    //////////////////////////////////////////////////////////
-    Carbohydrate::Carbohydrate(
+    void initializeCarbohydrate(
+        Molecule& molecule,
+        std::vector<ResidueLinkage>& glycosidicLinkages,
         const ParameterManager& parameterManager,
         const util::SparseVector<double>& elementRadii,
         const sequence::SequenceData& sequence)
-        : Molecule()
     {
         {
             std::vector<std::unique_ptr<ParsedResidue>> residuePtrs;
@@ -526,52 +524,39 @@ namespace gmml
                 residuesOrderedByConnectivity(residuePtrs[0].get())); // For reporting residue index numbers to the user
             for (auto& res : residuePtrs)
             {
-                this->addResidue(std::move(res));
+                molecule.addResidue(std::move(res));
             }
         }
-        this->setName("CONDENSEDSEQUENCE");
+        molecule.setName("CONDENSEDSEQUENCE");
         // Have atom numbers go from 1 to number of atoms. Note this should be after deleting atoms due to deoxy
 
-        serializeNumbers(this->getAtoms());
+        serializeNumbers(molecule.getAtoms());
         auto searchSettings = defaultSearchSettings;
         // Set 3D structure
         const DihedralAngleDataTable& metadataTable = gmml::dihedralAngleDataTable();
         depthFirstSetConnectivityAndGeometry(
-            this,
-            glycosidicLinkages_,
+            molecule,
+            glycosidicLinkages,
             searchSettings,
             elementRadii,
             metadataTable,
-            getResidues().front()); // recurve start with terminal
+            molecule.getResidues().front()); // recurve start with terminal
         // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
         unsigned int linkageIndex = 0;
         // Linkages should be Edges to avoid this as they already get renumbered above.
         for (auto& linkage :
-             glycosidicLinkages_) // These will exist on the vector in order of edge connectivity set above.
-        {                         // Greedy first means the atoms-to-move needs to be updated for every linkage:
+             glycosidicLinkages) // These will exist on the vector in order of edge connectivity set above.
+        {                        // Greedy first means the atoms-to-move needs to be updated for every linkage:
             linkage.index = linkageIndex++;
             determineAtomsThatMove(linkage.rotatableDihedrals);
         }
         util::log(__LINE__, __FILE__, util::INF, "Final carbohydrate overlap resolution starting.");
-        this->ResolveOverlaps(elementRadii, metadataTable, searchSettings);
+        resolveOverlaps(molecule, glycosidicLinkages, elementRadii, metadataTable, searchSettings);
         util::log(
             __LINE__,
             __FILE__,
             util::INF,
-            "Final carbohydrate overlap resolution finished. Returning from carbohydrate ctor");
-        return;
-    }
-
-    //////////////////////////////////////////////////////////
-    //                       MUTATOR                        //
-    //////////////////////////////////////////////////////////
-    void Carbohydrate::deleteResidue(Residue* byeBye)
-    {
-        if (!glycosidicLinkages_.empty())
-        {
-            throw std::runtime_error("linkages should not have been created at this point");
-        }
-        Molecule::deleteResidue(byeBye);
+            "Final carbohydrate overlap resolution finished. Returning from carbohydrate initializer");
     }
 
     //////////////////////////////////////////////////////////
@@ -579,7 +564,8 @@ namespace gmml
     //////////////////////////////////////////////////////////
     // std::string fileOutputDirectory = "unspecified", std::string fileType = "PDB", std::string outputFileNaming =
     // "structure"
-    void Carbohydrate::Generate3DStructureFiles(
+    void generate3DStructureFiles(
+        Molecule& molecule,
         const std::string& fileOutputDirectory,
         const std::string& outputFileNaming,
         const std::vector<std::string>& headerLines)
@@ -596,11 +582,11 @@ namespace gmml
             {
                 PathAndFileName += fileOutputDirectory + "/" + outputFileNaming;
             }
-            GraphIndexData indices = toIndexData({this});
+            GraphIndexData indices = toIndexData({&molecule});
             util::writeToFile(
                 PathAndFileName + ".pdb", [&](std::ostream& stream) { WritePdb(stream, indices, headerLines); });
             util::writeToFile(
-                PathAndFileName + ".off", [&](std::ostream& stream) { WriteOff(stream, getName(), indices); });
+                PathAndFileName + ".off", [&](std::ostream& stream) { WriteOff(stream, molecule.getName(), indices); });
         }
         catch (const std::string& exceptionMessage)
         {
@@ -623,39 +609,18 @@ namespace gmml
         }
     }
 
-    std::string Carbohydrate::GetNumberOfShapes(bool likelyShapesOnly) const
-    {
-        if (this->CountShapes(likelyShapesOnly) > 4294967296)
-        {
-            return ">2^32";
-        }
-        return std::to_string(this->CountShapes(likelyShapesOnly));
-    }
-
-    unsigned long int Carbohydrate::CountShapes(bool likelyShapesOnly) const
-    {
-        const DihedralAngleDataTable& metadataTable = gmml::dihedralAngleDataTable();
-        unsigned long long int result = 1;
-        for (auto& linkage : nonDerivativeResidueLinkages(glycosidicLinkages_))
-        {
-            auto rotamerType = linkage.rotamerType;
-            auto& metadata = linkage.dihedralMetadata;
-            result *= likelyShapesOnly ? numberOfLikelyShapes(metadataTable, rotamerType, metadata)
-                                       : numberOfShapes(metadataTable, rotamerType, metadata);
-        }
-        return result;
-    }
-
     //////////////////////////////////////////////////////////
     //                  PRIVATE FUNCTIONS                   //
     //////////////////////////////////////////////////////////
 
-    void Carbohydrate::ResolveOverlaps(
+    void resolveOverlaps(
+        Molecule& molecule,
+        std::vector<ResidueLinkage>& glycosidicLinkages,
         const util::SparseVector<double>& elementRadii,
         const DihedralAngleDataTable& metadataTable,
         const AngleSearchSettings& searchSettings)
     {
-        const GraphIndexData graphData = toIndexData({this});
+        const GraphIndexData graphData = toIndexData({&molecule});
         const assembly::Graph graph = createCompleteAssemblyGraph(graphData);
         const assembly::Selection selection = selectAll(graph);
         const std::vector<Sphere> atomBounds = assembly::toAtomBounds(
@@ -669,7 +634,7 @@ namespace gmml
         // wiggle twice for nicer structures
         for (size_t n = 0; n < 2; n++)
         {
-            for (auto& linkage : glycosidicLinkages_)
+            for (auto& linkage : glycosidicLinkages)
             {
                 auto preference = angleSearchPreference(
                     searchSettings.deviation,

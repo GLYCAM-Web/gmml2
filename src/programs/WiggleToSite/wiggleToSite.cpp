@@ -61,11 +61,15 @@ namespace gmml
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
     WiggleToSite::WiggleToSite(const ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
-        : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false})),
-          carbohydrate_(
-              parameterManager, vanDerWaalsRadii(), sequence::parseAndReorder(inputStruct.carbohydrateSequence_))
+        : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}))
     {
-        this->getCarbohydrate().Generate3DStructureFiles("./", "initial", {});
+        initializeCarbohydrate(
+            carbohydrate_,
+            glycosidicLinkages_,
+            parameterManager,
+            vanDerWaalsRadii(),
+            sequence::parseAndReorder(inputStruct.carbohydrateSequence_));
+        generate3DStructureFiles(carbohydrate_, "./", "initial", {});
         pdb::PdbData& pdbData = this->getSubstrate().data;
         size_t superimpositionTargetId =
             residueSelector(pdbData, inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
@@ -81,9 +85,9 @@ namespace gmml
                << " was not found\n";
             throw std::runtime_error(ss.str());
         }
-        auto atoms = getCarbohydrate().mutableAtoms();
+        auto atoms = carbohydrate_.mutableAtoms();
         std::vector<Coordinate> carbohydrateCoordinates = atomCoordinates(atoms);
-        std::vector<Residue*> residues = this->getCarbohydrate().getResidues();
+        std::vector<Residue*> residues = carbohydrate_.getResidues();
         std::vector<uint> residueNumbers = gmml::residueNumbers(residues);
         size_t superimposedIndex = util::indexOf(residueNumbers, inputStruct.carbohydrateSuperimpositionResidue_);
         size_t wiggleIndex = util::indexOf(residueNumbers, inputStruct.carbohydrateWigglingResidue_);
@@ -104,7 +108,7 @@ namespace gmml
         const DihedralAngleDataTable& metadataTable = dihedralAngleDataTable();
         this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
         setAtomCoordinates(atoms, carbohydrateCoordinates);
-        this->getCarbohydrate().Generate3DStructureFiles("./", "superimposed", {});
+        generate3DStructureFiles(carbohydrate_, "./", "superimposed", {});
         this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
         std::vector<Atom*> substrateWithoutSuperimpositionAtoms =
             findElementsNotInVector(getAtoms(getAssemblies(getSubstrate())), superimpositionTarget->getAtoms());
@@ -112,7 +116,7 @@ namespace gmml
             findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
         this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
         const util::SparseVector<double>& elementRadii = vanDerWaalsRadii();
-        this->setCurrentOverlap(CountOverlappingAtoms(elementRadii, atomsToAvoid_, this->getCarbohydrate().getAtoms()));
+        this->setCurrentOverlap(CountOverlappingAtoms(elementRadii, atomsToAvoid_, carbohydrate_.getAtoms()));
         this->wiggleMeAtoms_ = {wiggleMe->FindAtom("C1"), wiggleMe->FindAtom("C3"), wiggleMe->FindAtom("C5")};
         this->wiggleTargetAtoms_ = {
             wigglingTarget->FindAtom("C1"), wigglingTarget->FindAtom("C3"), wigglingTarget->FindAtom("C5")};
@@ -125,7 +129,7 @@ namespace gmml
         int structureCount = this->minimizeDistance(
             elementRadii, metadataTable, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
         this->minimizeDistance(elementRadii, metadataTable, inputStruct.persistCycles_, false, structureCount);
-        this->getCarbohydrate().Generate3DStructureFiles("./", "finished", {});
+        generate3DStructureFiles(carbohydrate_, "./", "finished", {});
     }
 
     int WiggleToSite::minimizeDistance(
@@ -241,7 +245,7 @@ namespace gmml
 
     bool WiggleToSite::acceptOverlaps(const util::SparseVector<double>& elementRadii)
     {
-        double overlapCount = CountOverlappingAtoms(elementRadii, atomsToAvoid_, getCarbohydrate().getAtoms());
+        double overlapCount = CountOverlappingAtoms(elementRadii, atomsToAvoid_, carbohydrate_.getAtoms());
         if (compareOverlaps(overlapCount, this->getCurrentOverlap()) > 0)
         {
             return false;

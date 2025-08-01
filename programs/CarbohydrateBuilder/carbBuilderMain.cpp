@@ -179,8 +179,10 @@ int main(int argc, char** argv)
                 std::cout << "\n*********************\nBuilding " << line.id << ": " << line.sequence
                           << "\n*********************\n";
                 SequenceData sequenceData = parseAndReorder(line.sequence);
-                Carbohydrate carbohydrate(parameterManager, elementRadii, sequenceData);
-                carbohydrate.Generate3DStructureFiles(outputDir, line.id, headerLines);
+                Molecule carbohydrate;
+                std::vector<ResidueLinkage> linkages;
+                initializeCarbohydrate(carbohydrate, linkages, parameterManager, elementRadii, sequenceData);
+                generate3DStructureFiles(carbohydrate, outputDir, line.id, headerLines);
                 GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
                 printGraphViz(config, instantiate(parseSequence(line.sequence)));
             }

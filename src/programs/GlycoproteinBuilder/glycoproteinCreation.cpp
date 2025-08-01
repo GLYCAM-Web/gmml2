@@ -43,7 +43,7 @@ namespace gmml
 
             struct Attachment
             {
-                Carbohydrate* glycan;
+                Molecule* glycan;
                 Residue* aglycone;
                 Residue* reducing;
             };
@@ -117,7 +117,7 @@ namespace gmml
                 return nullptr;
             }
 
-            Attachment toAttachment(Carbohydrate* glycan)
+            Attachment toAttachment(Molecule* glycan)
             { // Tagging during construction would be better. Ano-ano linkages won't work,
                 std::vector<Residue*> residues = glycan->getResidues();
                 std::vector<ResidueType> types = residueTypes(residues);
@@ -316,7 +316,9 @@ namespace gmml
             return result;
         }
 
-        std::vector<Carbohydrate*> addGlycansToProtein(
+        void addGlycansToProtein(
+            std::vector<Molecule*>& glycans,
+            std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
             const ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& metadataTable,
@@ -325,13 +327,13 @@ namespace gmml
             const std::vector<GlycosylationSite>& glycosites)
         {
             const GlycosylationTable glycosylationTable = defaultGlycosylationTable();
-            std::vector<Carbohydrate*> result;
             for (auto& glycosite : glycosites)
             {
                 sequence::SequenceData sequence = sequence::parseAndReorder(glycosite.input.glycanInput);
-                Carbohydrate* glycan = util::erratic_cast<Carbohydrate*>(glycoprotein->addMolecule(
-                    std::make_unique<Carbohydrate>(parameterManager, elementRadii, sequence)));
-                result.push_back(glycan);
+                Molecule* glycan = glycoprotein->addMolecule(std::make_unique<Molecule>());
+                glycans.push_back(glycan);
+                std::vector<ResidueLinkage> linkages;
+                initializeCarbohydrate(*glycan, linkages, parameterManager, elementRadii, sequence);
                 Attachment attachment = toAttachment(glycan);
                 Residue* aglycone = attachment.aglycone;
                 Residue* reducingResidue = attachment.reducing;
@@ -346,7 +348,6 @@ namespace gmml
                     glycositeResidue->FindAtom(glycosylationTable.connectingAtomNames[tableIndex]),
                     guessAnomericAtomByForeignNeighbor(attachment.reducing));
                 glycositeResidue->setName(glycosylationTable.renamedResidues[tableIndex]);
-                std::vector<ResidueLinkage>& linkages = glycan->GetGlycosidicLinkages();
                 std::vector<size_t> aglyconeLinkages = linkagesContainingResidue(linkages, aglycone);
                 if (aglyconeLinkages.size() != 1)
                 {
@@ -357,6 +358,7 @@ namespace gmml
                 ResidueLinkage newLinkage = replaceAglycone(metadataTable, reducingResidue, glycositeResidue);
                 size_t aglyconeLinkage = aglyconeLinkages[0];
                 linkages[aglyconeLinkage] = newLinkage;
+                glycosidicLinkages.push_back(linkages);
                 util::log(
                     __LINE__,
                     __FILE__,
@@ -364,7 +366,6 @@ namespace gmml
                     "Completed creating glycosite on residue " + glycositeInput.proteinResidueId + " with glycan " +
                         glycositeInput.glycanInput);
             }
-            return result;
         }
     } // namespace gpbuilder
 } // namespace gmml

@@ -27,7 +27,9 @@ namespace gmml
             size_t glycoproteinAssemblyId,
             const std::vector<GlycositeInput>& glycositesInputVector);
 
-        std::vector<Carbohydrate*> addGlycansToProtein(
+        void addGlycansToProtein(
+            std::vector<Molecule*>& glycans,
+            std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
             const ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& metadataTable,

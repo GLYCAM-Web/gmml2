@@ -36,7 +36,8 @@ namespace gmml
             const pdb::PdbData& pdbData,
             std::vector<Molecule*>& molecules,
             std::vector<GlycosylationSite>& glycosites,
-            std::vector<Carbohydrate*>& glycans,
+            std::vector<Molecule*>& glycans,
+            const std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
             double overlapTolerance,
             double overlapRejectionThreshold,
             bool excludeHydrogen)
@@ -57,12 +58,6 @@ namespace gmml
                 return result;
             };
 
-            std::vector<std::vector<ResidueLinkage>> glycosidicLinkages;
-            for (auto& a : glycans)
-            {
-                glycosidicLinkages.push_back(a->GetGlycosidicLinkages());
-            }
-
             std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
             std::vector<AngleWithMetadata> rotatableDihedralShape;
             std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
@@ -77,7 +72,7 @@ namespace gmml
             for (size_t n = 0; n < glycosites.size(); n++)
             {
                 size_t site = glycosites[n].residueId;
-                size_t moleculeIndex = util::indexOf(molecules, util::erratic_cast<Molecule*>(glycans[n]));
+                size_t moleculeIndex = util::indexOf(molecules, glycans[n]);
                 const std::vector<ResidueLinkage>& linkages = glycosidicLinkages[n];
                 std::vector<size_t> linkageIds = util::indexVectorWithOffset(residueLinkages.size(), linkages);
                 for (size_t k = 0; k < linkages.size(); k++)

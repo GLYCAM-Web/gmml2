@@ -72,15 +72,35 @@ namespace gmml
                << "\", is not recognized in convertIncomingRotamerNamesToStandard.";
             throw ss.str();
         }
+
+        unsigned long long countShapes(const std::vector<ResidueLinkage>& linkages, bool likelyShapesOnly = false)
+        {
+            const DihedralAngleDataTable& metadataTable = gmml::dihedralAngleDataTable();
+            ulong result = 1;
+            for (auto& linkage : nonDerivativeResidueLinkages(linkages))
+            {
+                auto rotamerType = linkage.rotamerType;
+                auto& metadata = linkage.dihedralMetadata;
+                result *= likelyShapesOnly ? numberOfLikelyShapes(metadataTable, rotamerType, metadata)
+                                           : numberOfShapes(metadataTable, rotamerType, metadata);
+            }
+            return result;
+        }
     } // namespace
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
     carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
-    try : parameters(loadParameters(util::gmmlHomeDirPath)),
-        carbohydrate(parameters, vanDerWaalsRadii(), sequence::parseAndReorder(condensedSequence))
-    {}
+    try : parameters(loadParameters(util::gmmlHomeDirPath))
+    {
+        initializeCarbohydrate(
+            carbohydrate,
+            glycosidicLinkages,
+            parameters,
+            vanDerWaalsRadii(),
+            sequence::parseAndReorder(condensedSequence));
+    }
 
     // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.
     catch (const std::string& exceptionMessage)
@@ -128,8 +148,7 @@ namespace gmml
                << rotamerInfo.selectedRotamer << std::endl;
             util::log(__LINE__, __FILE__, util::INF, ss.str());
             int currentLinkageIndex = std::stoi(rotamerInfo.linkageIndex);
-            ResidueLinkage* currentLinkage =
-                selectLinkageWithIndex(this->carbohydrate.GetGlycosidicLinkages(), currentLinkageIndex);
+            ResidueLinkage* currentLinkage = selectLinkageWithIndex(glycosidicLinkages, currentLinkageIndex);
             std::string standardDihedralName = convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
             setSpecificShape(
                 metadataTable,
@@ -139,15 +158,19 @@ namespace gmml
                 rotamerInfo.selectedRotamer);
         }
         std::string fileName = "structure";
-        this->carbohydrate.ResolveOverlaps(elementRadii, metadataTable, defaultSearchSettings);
+        resolveOverlaps(carbohydrate, glycosidicLinkages, elementRadii, metadataTable, defaultSearchSettings);
         std::vector<std::string> headerLines {
             "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)  version " + std::string(GMML_VERSION)};
-        this->carbohydrate.Generate3DStructureFiles(fileOutputDirectory, fileName, headerLines);
+        generate3DStructureFiles(this->carbohydrate, fileOutputDirectory, fileName, headerLines);
     }
 
     std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly) const
     {
-        return this->carbohydrate.GetNumberOfShapes(likelyShapesOnly);
+        if (countShapes(glycosidicLinkages, likelyShapesOnly) > 4294967296)
+        {
+            return ">2^32";
+        }
+        return std::to_string(countShapes(glycosidicLinkages, likelyShapesOnly));
     }
 
     LinkageOptionsVector carbohydrateBuilder::GenerateUserOptionsDataStruct()
@@ -155,7 +178,7 @@ namespace gmml
         const DihedralAngleDataTable metadataTable = dihedralAngleDataTable();
         LinkageOptionsVector userOptionsForSequence;
         // carbohydrate_.SetIndexByConnectivity();
-        for (auto& linkage : nonDerivativeResidueLinkages(this->carbohydrate.GetGlycosidicLinkages()))
+        for (auto& linkage : nonDerivativeResidueLinkages(glycosidicLinkages))
         {
             // std::cout << "linko nameo: " << linkage.GetName() << std::endl;
             DihedralOptionsVector possibleRotamers, likelyRotamers;
