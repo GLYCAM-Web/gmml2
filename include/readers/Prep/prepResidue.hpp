@@ -102,18 +102,6 @@ namespace gmml
         {
           public:
             PrepResidue(std::istream& in_file, std::string& line);
-            PrepResidue() = default;
-            ~PrepResidue() = default;
-            PrepResidue(PrepResidue&& other) noexcept; // Move Ctor
-            PrepResidue(const PrepResidue& other);     // Copy Ctor
-            PrepResidue& operator=(PrepResidue other); // Move and Copy assignment operator
-
-            friend void swap(PrepResidue& lhs, PrepResidue& rhs)
-            {
-                using std::swap;
-                swap(static_cast<Residue&>(lhs), static_cast<Residue&>(rhs));
-                swap(lhs.properties, rhs.properties);
-            }
 
             void Generate3dStructure();
             void DeleteDummyAtoms();

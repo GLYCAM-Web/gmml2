@@ -80,22 +80,6 @@ namespace gmml
             }
         }
 
-        // Move Ctor
-        PrepResidue::PrepResidue(PrepResidue&& other) noexcept : PrepResidue() { swap(*this, other); }
-
-        // Copy Ctor
-        PrepResidue::PrepResidue(const PrepResidue& other) : Residue(other), properties(other.properties)
-        { // Bro you gotta loop through the atoms here and copy the info over, cause the Residue(other) copies them as
-          // Atom types. Update no! you can't, they aren't castable cause they aren't PrepAtom types.
-        }
-
-        PrepResidue& PrepResidue::operator=(PrepResidue other)
-        {
-            Residue::operator=(other);
-            swap(*this, other);
-            return *this;
-        }
-
         std::string PrepResidue::GetStringFormatOfCoordinateType(CoordinateType coordinate_type) const
         {
             switch (coordinate_type)
