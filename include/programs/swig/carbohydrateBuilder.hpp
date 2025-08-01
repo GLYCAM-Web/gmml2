@@ -77,14 +77,8 @@ namespace gmml
         LinkageOptionsVector GenerateUserOptionsDataStruct();
         void GenerateSpecific3DStructure(SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory);
 
-        Carbohydrate& GetCarbohydrate() { return carbohydrate_; }
-
-      private:
-        //////////////////////////////////////////////////////////
-        //                       ATTRIBUTES                     //
-        //////////////////////////////////////////////////////////
-        ParameterManager parameters_;
-        Carbohydrate carbohydrate_;
+        ParameterManager parameters;
+        Carbohydrate carbohydrate;
     };
 } // namespace gmml
 #endif

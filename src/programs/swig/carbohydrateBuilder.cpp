@@ -78,8 +78,8 @@ namespace gmml
     //////////////////////////////////////////////////////////
     carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
 
-    try : parameters_(loadParameters(util::gmmlHomeDirPath)),
-        carbohydrate_(parameters_, vanDerWaalsRadii(), sequence::parseAndReorder(condensedSequence))
+    try : parameters(loadParameters(util::gmmlHomeDirPath)),
+        carbohydrate(parameters, vanDerWaalsRadii(), sequence::parseAndReorder(condensedSequence))
     {}
 
     // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.
@@ -129,7 +129,7 @@ namespace gmml
             util::log(__LINE__, __FILE__, util::INF, ss.str());
             int currentLinkageIndex = std::stoi(rotamerInfo.linkageIndex);
             ResidueLinkage* currentLinkage =
-                selectLinkageWithIndex(this->carbohydrate_.GetGlycosidicLinkages(), currentLinkageIndex);
+                selectLinkageWithIndex(this->carbohydrate.GetGlycosidicLinkages(), currentLinkageIndex);
             std::string standardDihedralName = convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
             setSpecificShape(
                 metadataTable,
@@ -139,15 +139,15 @@ namespace gmml
                 rotamerInfo.selectedRotamer);
         }
         std::string fileName = "structure";
-        this->carbohydrate_.ResolveOverlaps(elementRadii, metadataTable, defaultSearchSettings);
+        this->carbohydrate.ResolveOverlaps(elementRadii, metadataTable, defaultSearchSettings);
         std::vector<std::string> headerLines {
             "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)  version " + std::string(GMML_VERSION)};
-        this->carbohydrate_.Generate3DStructureFiles(fileOutputDirectory, fileName, headerLines);
+        this->carbohydrate.Generate3DStructureFiles(fileOutputDirectory, fileName, headerLines);
     }
 
     std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly) const
     {
-        return this->carbohydrate_.GetNumberOfShapes(likelyShapesOnly);
+        return this->carbohydrate.GetNumberOfShapes(likelyShapesOnly);
     }
 
     LinkageOptionsVector carbohydrateBuilder::GenerateUserOptionsDataStruct()
@@ -155,7 +155,7 @@ namespace gmml
         const DihedralAngleDataTable metadataTable = dihedralAngleDataTable();
         LinkageOptionsVector userOptionsForSequence;
         // carbohydrate_.SetIndexByConnectivity();
-        for (auto& linkage : nonDerivativeResidueLinkages(this->carbohydrate_.GetGlycosidicLinkages()))
+        for (auto& linkage : nonDerivativeResidueLinkages(this->carbohydrate.GetGlycosidicLinkages()))
         {
             // std::cout << "linko nameo: " << linkage.GetName() << std::endl;
             DihedralOptionsVector possibleRotamers, likelyRotamers;
