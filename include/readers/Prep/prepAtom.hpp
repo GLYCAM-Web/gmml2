@@ -24,6 +24,8 @@ namespace gmml
             kTopTypeM
         };
 
+        static const std::vector<std::string> topologicalTypeNames {"E", "S", "B", "3", "4", "M"};
+
         struct PrepAtomProperties
         {
             /*!< Sample line of the atom section of a prep file: 4 H1   H1  M  3  2  1  1.000    90.0     180.0     0.0
@@ -39,42 +41,12 @@ namespace gmml
             double angle = constants::dNotSet; /*!< Angle; fill by the 9th column of the residue section of the file */
             double dihedral =
                 constants::dNotSet; /*!< Dihedral; fill by the 10th column of the residue section of the file */
-            int visitCount = 0;
         };
 
-        class PrepAtom : public Atom
-        {
-          public:
-            //////////////////////////////////////////////////////////
-            //                       Constructor                    //
-            //////////////////////////////////////////////////////////
-            PrepAtom(const std::string& line);
-            PrepAtom() = default;
-            ~PrepAtom() = default;
-            PrepAtom(PrepAtom&& other) noexcept;               // Move Ctor
-            explicit PrepAtom(const PrepAtom& other) noexcept; // Copy Ctor
-            PrepAtom& operator=(PrepAtom other) noexcept;      // Move and Copy assignment operator
-
-            friend void swap(PrepAtom& lhs, PrepAtom& rhs) noexcept
-            {
-                using std::swap;
-                swap(static_cast<Atom&>(lhs), static_cast<Atom&>(rhs));
-                swap(lhs.properties, rhs.properties);
-            }
-
-            //////////////////////////////////////////////////////////
-            //                         FUNCTIONS                    //
-            //////////////////////////////////////////////////////////
-            void Determine3dCoordinate();
-
-            //////////////////////////////////////////////////////////
-            //                     DISPLAY FUNCTIONS                //
-            //////////////////////////////////////////////////////////
-            void Print(std::ostream& out) const;
-            void Write(std::ostream& stream) const;
-
-            PrepAtomProperties properties;
-        };
+        void initializePrepAtom(Atom* atom, PrepAtomProperties& properties, const std::string& line);
+        void determine3dCoordinate(Atom* atom, const PrepAtomProperties& properties);
+        void print(Atom* atom, const PrepAtomProperties& properties, std::ostream& out);
+        void write(Atom* atom, const PrepAtomProperties& properties, std::ostream& stream);
     } // namespace prep
 } // namespace gmml
 

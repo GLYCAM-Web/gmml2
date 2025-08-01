@@ -19,9 +19,10 @@ int main()
     std::string prepFilePath = "../dat/prep/GLYCAM_06j-1_GAGS.prep";
     std::vector<std::string> residuesToLoadFromPrep = {"0GA", "4YB", "4uA", "Cake", "4YA"};
     Molecule molecule = Molecule();
-    prep::readPrepFile(&molecule, prepFilePath, residuesToLoadFromPrep);
+    std::vector<prep::PrepResidueProperties> properties;
+    prep::readPrepFile(&molecule, properties, prepFilePath, residuesToLoadFromPrep);
     // PREP residues
-    prep::Write(&molecule, "./prepAsPrepFile.prep");
+    prep::write(&molecule, properties, "./prepAsPrepFile.prep");
     // PDB
     std::string fileName = "./prepAsPdbFile.pdb";
     try

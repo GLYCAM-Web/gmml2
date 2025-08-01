@@ -5,7 +5,6 @@
 #include "include/readers/Prep/prepAtom.hpp"
 
 #include <istream>
-#include <map>
 #include <ostream>
 #include <string>
 #include <vector>
@@ -20,6 +19,8 @@ namespace gmml
             kXYZ
         };
 
+        static const std::vector<std::string> coordinateTypeNames {"INT", "XYZ"};
+
         enum OutputFormat
         {
             kFormatted = 0,
@@ -32,17 +33,23 @@ namespace gmml
             kGeometryChange
         };
 
+        static const std::vector<std::string> geometryTypesNames {"CORRECT", "CHANGE"};
+
         enum DummyAtomPosition
         {
             kPositionAll,
             kPositionBeg
         };
 
+        static const std::vector<std::string> dummyAtomPositionNames {"ALL", "BEG"};
+
         enum DummyAtomOmission
         {
             kOmit,
             kNomit
         };
+
+        static const std::vector<std::string> dummyAtomOmissionNames {"OMIT", "NOMIT"};
 
         enum SectionType
         {
@@ -58,7 +65,7 @@ namespace gmml
 
         struct PrepResidueProperties
         {
-
+            std::vector<PrepAtomProperties> atomProperties;
             std::string title = ""; //!< Residue title; fill by the first line of each residue section of the file
             CoordinateType coordinateType = kINT;   //!< Coordinate type(INT, XYZ); fill by the 2nd column of the
                                                     //!< third line of each residue section of the file
@@ -98,37 +105,27 @@ namespace gmml
                        //            DONE
         };
 
-        class PrepResidue : public Residue
-        {
-          public:
-            PrepResidue(std::istream& in_file, std::string& line);
+        void initializePrepResidue(
+            Residue* residue, PrepResidueProperties& properties, std::istream& in_file, std::string& line);
 
-            void Generate3dStructure();
-            void DeleteDummyAtoms();
-            void SetConnectivities();
-            std::vector<std::string> GetAtomNames() const;
-            std::vector<std::string> GetHeavyAtomNames() const;
-            double CalculatePrepResidueCharge();
-            std::string toString() const;
-            void Write(std::ostream& stream);
+        void generate3dStructure(Residue* residue, PrepResidueProperties& properties);
+        void deleteDummyAtoms(Residue* residue, PrepResidueProperties& properties);
+        void setConnectivities(Residue* residue, const PrepResidueProperties& properties);
+        std::vector<std::string> getAtomNames(Residue* residue);
+        std::vector<std::string> getHeavyAtomNames(Residue* residue);
+        double calculatePrepResidueCharge(Residue* residue);
 
-            void ExtractResidueName(std::istream& ss);
-            void ExtractResidueCoordinateType(std::istream& ss);
-            void ExtractResidueOutputFormat(std::istream& ss);
-            void ExtractResidueGeometryType(std::istream& ss);
-            void ExtractResidueDummyAtomOmission(std::istream& ss);
-            void ExtractResidueDummyAtomPosition(std::istream& ss);
-            SectionType ExtractSectionType(std::string& line);
-            void ExtractLoops(std::istream& in_file);
-            void ExtractImproperDihedral(std::istream& in_file);
+        CoordinateType extractResidueCoordinateType(std::istream& ss);
+        OutputFormat extractResidueOutputFormat(std::istream& ss);
+        GeometryType extractResidueGeometryType(std::istream& ss);
+        DummyAtomOmission extractResidueDummyAtomOmission(std::istream& ss);
+        DummyAtomPosition extractResidueDummyAtomPosition(std::istream& ss);
+        SectionType extractSectionType(std::string& line);
+        std::vector<std::pair<std::string, std::string>> extractLoops(std::istream& in_file);
+        DihedralVector extractImproperDihedral(std::istream& in_file);
 
-            std::string GetStringFormatOfCoordinateType(CoordinateType coordinate_type) const;
-            std::string GetStringFormatOfGeometryType(GeometryType geometry_type) const;
-            std::string GetStringFormatOfDummyAtomPosition(DummyAtomPosition dummy_atom_position) const;
-            std::string GetStringFormatOfDummyAtomOmission(DummyAtomOmission dummy_atom_omission) const;
-
-            PrepResidueProperties properties;
-        };
+        std::string toString(Residue* residue, const PrepResidueProperties& properties);
+        void write(Residue* residue, const PrepResidueProperties& properties, std::ostream& stream);
     } // namespace prep
 } // namespace gmml
 

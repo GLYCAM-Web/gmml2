@@ -20,32 +20,37 @@ namespace gmml
 {
     namespace prep
     {
-        void readPrepFile(Molecule* molecule, const std::string& prep_file)
+        void readPrepFile(
+            Molecule* molecule, std::vector<PrepResidueProperties>& properties, const std::string& prep_file)
         {
             molecule->setName("prepFile");
             util::ensureFileExists(prep_file);
             std::ifstream in_file(prep_file.c_str());
             if (in_file.is_open())
             {
-                ReadAllResidues(molecule, in_file);
+                readAllResidues(molecule, properties, in_file);
                 in_file.close();
             }
             else
             {
                 throw std::runtime_error("Prep file exists but couldn't be opened.");
             }
-            SetAtomConnectivities(molecule);
-            Generate3dStructures(molecule);
+            setAtomConnectivities(molecule, properties);
+            generate3dStructures(molecule, properties);
         }
 
-        void readPrepFile(Molecule* molecule, const std::string& prep_file, const std::vector<std::string> queryNames)
+        void readPrepFile(
+            Molecule* molecule,
+            std::vector<PrepResidueProperties>& properties,
+            const std::string& prep_file,
+            const std::vector<std::string> queryNames)
         {
             molecule->setName("prepFile");
             util::ensureFileExists(prep_file);
             std::ifstream in_file(prep_file.c_str());
             if (in_file.is_open())
             {
-                ReadQueryResidues(molecule, in_file, queryNames);
+                readQueryResidues(molecule, properties, in_file, queryNames);
                 in_file.close();
             }
             else
@@ -55,38 +60,38 @@ namespace gmml
             // Note that I'm assuming that given a list of query names, the user wants
             // to use all these residues, thus this isn't wasteful:
             util::log(__LINE__, __FILE__, util::INF, "Finished reading prep file. Now setting atomic connectivities.");
-            SetAtomConnectivities(molecule);
+            setAtomConnectivities(molecule, properties);
             util::log(
                 __LINE__, __FILE__, util::INF, "Finished setting atomic connectivities. Now generating 3D structures.");
-            Generate3dStructures(molecule);
+            generate3dStructures(molecule, properties);
             util::log(__LINE__, __FILE__, util::INF, "Finished, returning from PreFile constructor..");
         }
 
         //////////////////////////////////////////////////////////
         //                         MUTATORS                     //
         //////////////////////////////////////////////////////////
-        void SetAtomConnectivities(Molecule* molecule)
+        void setAtomConnectivities(Molecule* molecule, const std::vector<PrepResidueProperties>& properties)
         {
-            for (auto& residue : molecule->getResidues())
+            std::vector<Residue*> residues = molecule->getResidues();
+            for (size_t n = 0; n < residues.size(); n++)
             {
-                util::erratic_cast<PrepResidue*>(residue)->SetConnectivities();
+                setConnectivities(residues[n], properties[n]);
             }
-            return;
         }
 
-        void Generate3dStructures(Molecule* molecule)
+        void generate3dStructures(Molecule* molecule, std::vector<PrepResidueProperties>& properties)
         {
-            for (auto& residue : molecule->getResidues())
+            std::vector<Residue*> residues = molecule->getResidues();
+            for (size_t n = 0; n < residues.size(); n++)
             {
-                util::erratic_cast<PrepResidue*>(residue)->Generate3dStructure();
+                generate3dStructure(residues[n], properties[n]);
             }
-            return;
         }
 
         //////////////////////////////////////////////////////////
         //                         FUNCTIONS                    //
         //////////////////////////////////////////////////////////
-        void ReadAllResidues(Molecule* molecule, std::istream& in_file)
+        void readAllResidues(Molecule* molecule, std::vector<PrepResidueProperties>& properties, std::istream& in_file)
         {
             std::string line = "";
             getline(in_file, line);
@@ -94,14 +99,20 @@ namespace gmml
             getline(in_file, line); // This should be first line of residue entry. Title
             while (util::Trim(line).find("STOP") == std::string::npos) /// End of file
             {
-                molecule->addResidue(std::make_unique<PrepResidue>(in_file, line));
+                Residue* residue = molecule->addResidue(std::make_unique<Residue>());
+                properties.push_back(PrepResidueProperties());
+                initializePrepResidue(residue, properties.back(), in_file, line);
                 getline(in_file, line); // This should be first line of next residue entry or STOP.
             }
         }
 
         // Reads each line of the file. If it finds one of the query residues it reads it in. Won't read in query
         // repeats twice.
-        void ReadQueryResidues(Molecule* molecule, std::istream& in_file, const std::vector<std::string>& queryNames)
+        void readQueryResidues(
+            Molecule* molecule,
+            std::vector<PrepResidueProperties>& properties,
+            std::istream& in_file,
+            const std::vector<std::string>& queryNames)
         {
             std::string line = "";
             getline(in_file, line);
@@ -124,7 +135,9 @@ namespace gmml
                     {
                         in_file.seekg(firstResidueLinePosition); // go back here so the residue constructor works
                         line = savedTitle;
-                        molecule->addResidue(std::make_unique<PrepResidue>(in_file, line));
+                        Residue* residue = molecule->addResidue(std::make_unique<Residue>());
+                        properties.push_back(PrepResidueProperties());
+                        initializePrepResidue(residue, properties.back(), in_file, line);
                         --numberOfTimesToReadInResidue;
                     }
                 }
@@ -139,11 +152,12 @@ namespace gmml
             }
         }
 
-        void Write(Molecule* molecule, const std::string& prep_file)
+        void write(
+            Molecule* molecule, const std::vector<PrepResidueProperties>& properties, const std::string& prep_file)
         {
             try
             {
-                util::writeToFile(prep_file, [&](std::ostream& stream) { Write(molecule, stream); });
+                util::writeToFile(prep_file, [&](std::ostream& stream) { write(molecule, properties, stream); });
             }
             catch (...)
             {
@@ -151,24 +165,26 @@ namespace gmml
             }
         }
 
-        void Write(Molecule* molecule, std::ostream& stream)
+        void write(Molecule* molecule, const std::vector<PrepResidueProperties>& properties, std::ostream& stream)
         {
             stream << "\n"
                    << "\n";
-            for (auto& residue : molecule->getResidues())
+            std::vector<Residue*> residues = molecule->getResidues();
+            for (size_t n = 0; n < residues.size(); n++)
             {
-                util::erratic_cast<PrepResidue*>(residue)->Write(stream);
+                write(residues[n], properties[n], stream);
             }
             stream << "STOP\n";
         }
 
-        std::string Print(Molecule* molecule)
+        std::string print(Molecule* molecule, const std::vector<PrepResidueProperties>& properties)
         {
             std::string out;
-            for (auto& residue : molecule->getResidues())
+            std::vector<Residue*> residues = molecule->getResidues();
+            for (size_t n = 0; n < residues.size(); n++)
             {
                 out += "**********************************************************************************\n";
-                out += util::erratic_cast<PrepResidue*>(residue)->toString();
+                out += toString(residues[n], properties[n]);
             }
             return out;
         }

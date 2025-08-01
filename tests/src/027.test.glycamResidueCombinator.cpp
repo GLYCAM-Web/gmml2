@@ -51,7 +51,8 @@ int main(int argc, char* argv[])
         char* inputFileName = argv[n];
         std::cout << "Loading " << inputFileName << std::endl;
         Molecule prepMolecule = Molecule();
-        prep::readPrepFile(&prepMolecule, inputFileName, residuesToLoadFromPrep);
+        std::vector<prep::PrepResidueProperties> properties;
+        prep::readPrepFile(&prepMolecule, properties, inputFileName, residuesToLoadFromPrep);
         for (auto& residue : prepMolecule.getResidues())
         {
             std::cout << "Generating those combos from " << residue->getName() << std::endl;
@@ -85,7 +86,8 @@ int main(int argc, char* argv[])
         {"4uA2"},
         {"4uA3"}};
     Molecule prepMolecule = Molecule();
-    prep::readPrepFile(&prepMolecule, glycamPrepInputFile, theSpecialCases);
+    std::vector<prep::PrepResidueProperties> properties;
+    prep::readPrepFile(&prepMolecule, properties, glycamPrepInputFile, theSpecialCases);
     for (auto& specialResidue : prepMolecule.getResidues())
     {
         allGeneratedResidues.push_back(specialResidue);
