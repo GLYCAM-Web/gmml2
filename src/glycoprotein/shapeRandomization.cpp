@@ -1,9 +1,9 @@
-#include "include/programs/GlycoproteinBuilder/shapeRandomization.hpp"
+#include "include/glycoprotein/shapeRandomization.hpp"
 
 #include "include/carbohydrate/dihedralShape.hpp"
 #include "include/external/pcg/pcg_random.h"
-#include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycanShape.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/util/constants.hpp"
 
 #include <functional>

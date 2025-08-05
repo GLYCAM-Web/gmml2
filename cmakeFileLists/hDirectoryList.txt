@@ -11,6 +11,7 @@
 ./include/fileType/pdb
 ./include/fileType/prep
 ./include/geometry
+./include/glycoprotein
 ./include/graph
 ./include/metadata
 ./include/programs

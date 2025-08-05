@@ -5,8 +5,8 @@
 #include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
 #include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/external/pcg/pcg_random.h"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "include/programs/GlycoproteinBuilder/overlapCount.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
+#include "include/glycoprotein/overlapCount.hpp"
 
 #include <functional>
 

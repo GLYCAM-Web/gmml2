@@ -1,10 +1,10 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_WRITERINTERFACE_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_WRITERINTERFACE_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_WRITERINTERFACE_HPP
+#define INCLUDE_GLYCOPROTEIN_WRITERINTERFACE_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/fileType/off/offFileData.hpp"
 #include "include/fileType/pdb/pdbFileData.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 
 namespace gmml
 {

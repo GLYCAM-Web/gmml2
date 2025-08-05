@@ -1,12 +1,12 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCANSHAPE_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCANSHAPE_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_GLYCANSHAPE_HPP
+#define INCLUDE_GLYCOPROTEIN_GLYCANSHAPE_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
 #include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/geometry/overlap.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 
 namespace gmml
 {

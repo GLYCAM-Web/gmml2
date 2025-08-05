@@ -1,11 +1,11 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_CDSINTERFACE_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_CDSINTERFACE_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_CDSINTERFACE_HPP
+#define INCLUDE_GLYCOPROTEIN_CDSINTERFACE_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
+#include "include/glycoprotein/glycoproteinCreation.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/metadata/aminoAcids.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinCreation.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "include/util/containerTypes.hpp"
 
 #include <vector>

@@ -1,4 +1,4 @@
-#include "include/programs/GlycoproteinBuilder/cdsInterface.hpp"
+#include "include/glycoprotein/cdsInterface.hpp"
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
@@ -13,10 +13,10 @@
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/orientation.hpp"
+#include "include/glycoprotein/glycoproteinCreation.hpp"
 #include "include/graph/graphTypes.hpp"
 #include "include/metadata/aminoAcids.hpp"
 #include "include/metadata/elements.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinCreation.hpp"
 #include "include/util/casting.hpp"
 #include "include/util/containerTypes.hpp"
 #include "include/util/containers.hpp"

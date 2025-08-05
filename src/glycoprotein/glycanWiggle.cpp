@@ -1,4 +1,4 @@
-#include "include/programs/GlycoproteinBuilder/glycanWiggle.hpp"
+#include "include/glycoprotein/glycanWiggle.hpp"
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
@@ -8,8 +8,8 @@
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/overlap.hpp"
-#include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycanShape.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/util/containers.hpp"
 
 #include <sstream>

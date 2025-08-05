@@ -1,4 +1,4 @@
-#include "include/programs/GlycoproteinBuilder/sidechains.hpp"
+#include "include/glycoprotein/sidechains.hpp"
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
@@ -8,11 +8,11 @@
 #include "include/geometry/orientation.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/geometry/rotationMatrix.hpp"
+#include "include/glycoprotein/glycanShape.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/graph/graphFunctions.hpp"
 #include "include/metadata/aminoAcids.hpp"
 #include "include/metadata/sidechainRotamers.hpp"
-#include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 

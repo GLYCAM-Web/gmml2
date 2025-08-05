@@ -1,8 +1,8 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINUTIL_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINUTIL_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_GLYCOPROTEINUTIL_HPP
+#define INCLUDE_GLYCOPROTEIN_GLYCOPROTEINUTIL_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/util/containers.hpp"
 
 #include <vector>

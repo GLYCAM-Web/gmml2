@@ -1,4 +1,4 @@
-#include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
+#include "include/glycoprotein/glycanShape.hpp"
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/assembly/assemblyBounds.hpp"

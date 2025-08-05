@@ -1,10 +1,10 @@
-#include "include/programs/GlycoproteinBuilder/writerInterface.hpp"
+#include "include/glycoprotein/writerInterface.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/fileType/off/offFileData.hpp"
 #include "include/fileType/pdb/pdbFileData.hpp"
 #include "include/geometry/geometryTypes.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/util/containers.hpp"
 #include "include/version.h"
 

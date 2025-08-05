@@ -1,11 +1,11 @@
-#include "include/programs/GlycoproteinBuilder/overlapCount.hpp"
+#include "include/glycoprotein/overlapCount.hpp"
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/geometry/overlap.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinUtil.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinUtil.hpp"
 #include "include/structure/atomOverlaps.hpp"
 #include "include/util/containers.hpp"
 

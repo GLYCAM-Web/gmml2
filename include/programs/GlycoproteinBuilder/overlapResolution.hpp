@@ -2,8 +2,8 @@
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_OVERLAPRESOLUTION_HPP
 
 #include "include/geometry/overlap.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/metadata/sidechainRotamers.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 
 #include <string>

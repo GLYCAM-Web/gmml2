@@ -4,7 +4,7 @@
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/overlap.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "include/util/structuredFiles.hpp"
 

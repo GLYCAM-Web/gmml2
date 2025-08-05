@@ -1,8 +1,8 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_OVERLAPCOUNT_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_OVERLAPCOUNT_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_OVERLAPCOUNT_HPP
+#define INCLUDE_GLYCOPROTEIN_OVERLAPCOUNT_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 
 #include <functional>
 #include <vector>

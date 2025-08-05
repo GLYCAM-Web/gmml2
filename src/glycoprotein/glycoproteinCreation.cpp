@@ -1,4 +1,4 @@
-#include "include/programs/GlycoproteinBuilder/glycoproteinCreation.hpp"
+#include "include/glycoprotein/glycoproteinCreation.hpp"
 
 #include "include/CentralDataStructure/Selections/atomSelections.hpp"
 #include "include/CentralDataStructure/Selections/residueSelections.hpp"

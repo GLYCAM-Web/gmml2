@@ -1,9 +1,9 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_SHAPERANDOMIZATION_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_SHAPERANDOMIZATION_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_SHAPERANDOMIZATION_HPP
+#define INCLUDE_GLYCOPROTEIN_SHAPERANDOMIZATION_HPP
 
 #include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/external/pcg/pcg_random.h"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 
 #include <functional>
 #include <vector>

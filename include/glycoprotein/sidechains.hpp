@@ -1,12 +1,12 @@
-#ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_SIDECHAINS_HPP
-#define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_SIDECHAINS_HPP
+#ifndef INCLUDE_GLYCOPROTEIN_SIDECHAINS_HPP
+#define INCLUDE_GLYCOPROTEIN_SIDECHAINS_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/overlap.hpp"
+#include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/metadata/aminoAcids.hpp"
 #include "include/metadata/sidechainRotamers.hpp"
-#include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 
 #include <vector>
 
