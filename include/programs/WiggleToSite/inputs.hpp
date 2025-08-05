@@ -1,6 +1,6 @@
 #ifndef INCLUDE_PROGRAMS_WIGGLETOSITE_INPUTS_HPP
 #define INCLUDE_PROGRAMS_WIGGLETOSITE_INPUTS_HPP
-#include "include/pdb/pdbResidueId.hpp"
+#include "include/fileType/pdb/pdbResidueId.hpp"
 
 #include <string>
 

@@ -2,7 +2,7 @@
 #define INCLUDE_CENTRALDATASTRUCTURE_SELECTIONS_RESIDUESELECTIONS_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
-#include "include/pdb/pdbData.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
 
 #include <vector>
 

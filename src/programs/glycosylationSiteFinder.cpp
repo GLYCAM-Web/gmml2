@@ -1,11 +1,11 @@
 #include "include/programs/glycosylationSiteFinder.hpp"
 
 #include "include/CentralDataStructure/Selections/residueSelections.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
+#include "include/fileType/pdb/pdbFunctions.hpp"
+#include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/graph/graphManipulation.hpp"
 #include "include/metadata/glycoprotein.hpp"
-#include "include/pdb/pdbData.hpp"
-#include "include/pdb/pdbFunctions.hpp"
-#include "include/pdb/pdbResidue.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 

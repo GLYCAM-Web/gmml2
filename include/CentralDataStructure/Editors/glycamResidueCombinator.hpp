@@ -1,7 +1,7 @@
 #ifndef INCLUDE_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP
 #define INCLUDE_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP
 
-#include "include/readers/Prep/prepDataTypes.hpp"
+#include "include/fileType/prep/prepDataTypes.hpp"
 
 #include <string>
 #include <vector>

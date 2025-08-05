@@ -3,9 +3,9 @@
 #include "include/CentralDataStructure/Selections/atomSelections.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/residue.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
+#include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/geometryFunctions.hpp"
-#include "include/pdb/pdbData.hpp"
-#include "include/pdb/pdbResidue.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 

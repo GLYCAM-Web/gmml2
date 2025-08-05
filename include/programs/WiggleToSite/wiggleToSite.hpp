@@ -3,9 +3,9 @@
 
 #include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/fileType/pdb/pdbFile.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/metadata/dihedralangledata.hpp"
-#include "include/pdb/pdbFile.hpp"
 #include "include/programs/WiggleToSite/inputs.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/carbohydrate.hpp"

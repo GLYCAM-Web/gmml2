@@ -3,8 +3,8 @@
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
-#include "include/pdb/pdbData.hpp"
-#include "include/pdb/pdbFileData.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
+#include "include/fileType/pdb/pdbFileData.hpp"
 
 #include <ostream>
 #include <string>

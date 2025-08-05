@@ -2,11 +2,11 @@
 #define INCLUDE_CENTRALDATASTRUCTURE_CDSFUNCTIONS_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
+#include "include/fileType/pdb/pdbResidueId.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/elements.hpp"
 #include "include/metadata/residueTypes.hpp"
-#include "include/pdb/pdbData.hpp"
-#include "include/pdb/pdbResidueId.hpp"
 #include "include/util/containerTypes.hpp"
 
 #include <array>

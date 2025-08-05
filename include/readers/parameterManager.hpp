@@ -2,8 +2,8 @@
 #define INCLUDE_READERS_PARAMETERMANAGER_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
-#include "include/pdb/pdbData.hpp"
-#include "include/readers/Lib/LibraryFile.hpp"
+#include "include/fileType/lib/libraryFile.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
 
 #include <string>
 #include <vector>

@@ -5,8 +5,8 @@
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/assembly/assemblyGraph.hpp"
-#include "include/off/offFileData.hpp"
-#include "include/off/offFileWriter.hpp"
+#include "include/fileType/off/offFileData.hpp"
+#include "include/fileType/off/offFileWriter.hpp"
 #include "include/util/containers.hpp"
 
 #include <string>

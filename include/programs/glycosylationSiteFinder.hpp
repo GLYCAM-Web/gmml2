@@ -1,7 +1,7 @@
 #ifndef INCLUDE_PROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 #define INCLUDE_PROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 
-#include "include/pdb/pdbData.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
 
 #include <string>
 #include <vector>

@@ -1,10 +1,10 @@
 #include "include/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 
+#include "include/fileType/prep/prepDataTypes.hpp"
+#include "include/fileType/prep/prepFunctions.hpp"
 #include "include/geometry/measurements.hpp"
 #include "include/graph/graphManipulation.hpp"
 #include "include/metadata/glycam06Functions.hpp"
-#include "include/readers/Prep/prepDataTypes.hpp"
-#include "include/readers/Prep/prepFunctions.hpp"
 #include "include/templateGraph/Node.hpp"
 #include "include/templateGraph/TotalCycleDecomposition.hpp"
 #include "include/util/containers.hpp"

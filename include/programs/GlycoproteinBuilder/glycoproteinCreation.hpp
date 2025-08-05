@@ -2,8 +2,8 @@
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCOPROTEINCREATION_HPP
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
 #include "include/metadata/dihedralangledata.hpp"
-#include "include/pdb/pdbData.hpp"
 #include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "include/readers/parameterManager.hpp"
 #include "include/sequence/carbohydrate.hpp"

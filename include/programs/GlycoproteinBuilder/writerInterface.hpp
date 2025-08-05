@@ -2,8 +2,8 @@
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_WRITERINTERFACE_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/off/offFileData.hpp"
-#include "include/pdb/pdbFileData.hpp"
+#include "include/fileType/off/offFileData.hpp"
+#include "include/fileType/pdb/pdbFileData.hpp"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 
 namespace gmml

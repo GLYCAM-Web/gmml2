@@ -1,8 +1,8 @@
 #include "include/CentralDataStructure/residue.hpp"
 
 #include "include/CentralDataStructure/cdsFunctions.hpp"
+#include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/metadata/aminoAcids.hpp"
-#include "include/pdb/pdbResidue.hpp"
 #include "include/util/constants.hpp" // sNotSet
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"

@@ -4,7 +4,7 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/assembly/assemblyIndices.hpp"
-#include "include/pdb/pdbFunctions.hpp"
+#include "include/fileType/pdb/pdbFunctions.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/filesystem.hpp"
 #include "include/util/logging.hpp"

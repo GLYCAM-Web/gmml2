@@ -1,10 +1,10 @@
 #include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/fileType/pdb/pdbFile.hpp"
+#include "include/fileType/pdb/pdbFunctions.hpp"
+#include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/geometryFunctions.hpp"
-#include "include/pdb/pdbFile.hpp"
-#include "include/pdb/pdbFunctions.hpp"
-#include "include/pdb/pdbResidue.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 
