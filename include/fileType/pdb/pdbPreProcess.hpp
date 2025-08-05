@@ -1,10 +1,10 @@
 #ifndef INCLUDE_FILETYPE_PDB_PDBPREPROCESS_HPP
 #define INCLUDE_FILETYPE_PDB_PDBPREPROCESS_HPP
 
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/fileType/pdb/pdbPreprocessorInputs.hpp"
-#include "include/readers/parameterManager.hpp"
 
 #include <ostream>
 #include <sstream>

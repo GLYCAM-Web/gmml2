@@ -1,10 +1,10 @@
-#include "include/CentralDataStructure/Selections/linkageBranches.hpp"
+#include "include/CentralDataStructure/residueLinkage/linkageBranches.hpp"
 
 #include "include/CentralDataStructure/Selections/cyclePoints.hpp"
 #include "include/CentralDataStructure/Selections/shaperSelections.hpp"
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/residue.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 #include "include/util/containers.hpp"
 
 #include <sstream>

@@ -1,6 +1,5 @@
 #include "include/programs/GlycoproteinBuilder/cdsInterface.hpp"
 
-#include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
@@ -9,6 +8,7 @@
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
+#include "include/carbohydrate/dihedralShape.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/boundingSphere.hpp"

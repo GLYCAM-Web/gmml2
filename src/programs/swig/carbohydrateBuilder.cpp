@@ -1,12 +1,12 @@
 #include "include/programs/swig/carbohydrateBuilder.hpp"
 
 #include "include/CentralDataStructure/Selections/shaperSelections.hpp" // cdsSelections
-#include "include/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
-#include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
-#include "include/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
+#include "include/carbohydrate/dihedralAngleSearch.hpp"
+#include "include/carbohydrate/dihedralShape.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
-#include "include/readers/parameterManager.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/util/containerTypes.hpp"

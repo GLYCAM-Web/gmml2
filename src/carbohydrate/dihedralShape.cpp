@@ -1,8 +1,8 @@
-#include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "include/carbohydrate/dihedralShape.hpp"
 
-#include "include/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/rotationMatrix.hpp"
 #include "include/util/constants.hpp"

@@ -1,14 +1,14 @@
 #ifndef INCLUDE_PROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP
 #define INCLUDE_PROGRAMS_WIGGLETOSITE_WIGGLETOSITE_HPP
 
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
+#include "include/carbohydrate/carbohydrate.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/programs/WiggleToSite/inputs.hpp"
-#include "include/readers/parameterManager.hpp"
-#include "include/sequence/carbohydrate.hpp"
 #include "include/util/containerTypes.hpp"
 
 namespace gmml

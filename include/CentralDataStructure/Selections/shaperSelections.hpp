@@ -1,8 +1,8 @@
 #ifndef INCLUDE_CENTRALDATASTRUCTURE_SELECTIONS_SHAPERSELECTIONS_HPP
 #define INCLUDE_CENTRALDATASTRUCTURE_SELECTIONS_SHAPERSELECTIONS_HPP
 
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 
 #include <string>
 #include <vector>

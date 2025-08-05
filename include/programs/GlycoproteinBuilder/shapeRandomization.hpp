@@ -1,7 +1,7 @@
 #ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_SHAPERANDOMIZATION_HPP
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_SHAPERANDOMIZATION_HPP
 
-#include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
+#include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 

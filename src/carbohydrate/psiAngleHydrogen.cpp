@@ -1,4 +1,4 @@
-#include "include/CentralDataStructure/Shapers/psiAngleHydrogen.hpp"
+#include "include/CentralDataStructure/residueLinkage/psiAngleHydrogen.hpp"
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"

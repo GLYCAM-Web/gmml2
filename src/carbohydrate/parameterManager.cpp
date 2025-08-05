@@ -1,4 +1,4 @@
-#include "include/readers/parameterManager.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"

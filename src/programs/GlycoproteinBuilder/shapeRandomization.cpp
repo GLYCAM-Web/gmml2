@@ -1,6 +1,6 @@
 #include "include/programs/GlycoproteinBuilder/shapeRandomization.hpp"
 
-#include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
+#include "include/carbohydrate/dihedralShape.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"

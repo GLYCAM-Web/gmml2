@@ -1,8 +1,8 @@
-#ifndef INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCHTYPES_HPP
-#define INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALANGLESEARCHTYPES_HPP
+#ifndef INCLUDE_CARBOHYDRATE_DIHEDRALANGLESEARCHTYPES_HPP
+#define INCLUDE_CARBOHYDRATE_DIHEDRALANGLESEARCHTYPES_HPP
 
-#include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/metadata/dihedralangledata.hpp"

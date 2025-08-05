@@ -1,8 +1,8 @@
-#ifndef INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_RESIDUELINKAGEFUNCTIONS_HPP
-#define INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_RESIDUELINKAGEFUNCTIONS_HPP
+#ifndef INCLUDE_CENTRALDATASTRUCTURE_RESIDUELINKAGE_RESIDUELINKAGEFUNCTIONS_HPP
+#define INCLUDE_CENTRALDATASTRUCTURE_RESIDUELINKAGE_RESIDUELINKAGEFUNCTIONS_HPP
 
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 #include "include/geometry/orientation.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 

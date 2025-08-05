@@ -1,10 +1,10 @@
 #include "include/programs/GlycoproteinBuilder/randomDescent.hpp"
 
-#include "include/CentralDataStructure/Shapers/dihedralAngleSearch.hpp"
-#include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblySelection.hpp"
+#include "include/carbohydrate/dihedralAngleSearch.hpp"
+#include "include/carbohydrate/dihedralShape.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"

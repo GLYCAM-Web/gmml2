@@ -1,8 +1,8 @@
-#ifndef INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_PSIANGLEHYDROGEN_HPP
-#define INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_PSIANGLEHYDROGEN_HPP
+#ifndef INCLUDE_CENTRALDATASTRUCTURE_RESIDUELINKAGE_PSIANGLEHYDROGEN_HPP
+#define INCLUDE_CENTRALDATASTRUCTURE_RESIDUELINKAGE_PSIANGLEHYDROGEN_HPP
 
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 
 #include <vector>

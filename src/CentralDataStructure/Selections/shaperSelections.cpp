@@ -1,10 +1,10 @@
 #include "include/CentralDataStructure/Selections/shaperSelections.hpp"
 
 #include "include/CentralDataStructure/Selections/cyclePoints.hpp"
-#include "include/CentralDataStructure/Selections/linkageBranches.hpp"
-#include "include/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/residue.hpp"
+#include "include/CentralDataStructure/residueLinkage/linkageBranches.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/util/logging.hpp"
 

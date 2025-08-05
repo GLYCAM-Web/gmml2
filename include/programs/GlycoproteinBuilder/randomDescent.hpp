@@ -1,9 +1,9 @@
 #ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_RANDOMDESCENT_HPP
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_RANDOMDESCENT_HPP
 
-#include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
-#include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
+#include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 #include "include/programs/GlycoproteinBuilder/overlapCount.hpp"

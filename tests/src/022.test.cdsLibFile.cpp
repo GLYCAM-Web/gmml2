@@ -4,9 +4,9 @@
 #include "include/CentralDataStructure/offWriter.hpp"
 #include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/lib/libraryFile.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
-#include "include/readers/parameterManager.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
 

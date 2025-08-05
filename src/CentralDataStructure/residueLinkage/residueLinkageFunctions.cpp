@@ -1,4 +1,4 @@
-#include "include/CentralDataStructure/Shapers/residueLinkageFunctions.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
 
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/residue.hpp"

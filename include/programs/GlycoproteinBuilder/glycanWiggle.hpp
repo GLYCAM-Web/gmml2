@@ -1,9 +1,9 @@
 #ifndef INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCANWIGGLE_HPP
 #define INCLUDE_PROGRAMS_GLYCOPROTEINBUILDER_GLYCANWIGGLE_HPP
 
-#include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
-#include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
+#include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/programs/GlycoproteinBuilder/glycoproteinStructs.hpp"
 
 namespace gmml

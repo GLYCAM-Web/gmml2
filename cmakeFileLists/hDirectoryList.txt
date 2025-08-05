@@ -2,8 +2,9 @@
 ./include/CentralDataStructure
 ./include/CentralDataStructure/Editors
 ./include/CentralDataStructure/Selections
-./include/CentralDataStructure/Shapers
+./include/CentralDataStructure/residueLinkage
 ./include/assembly
+./include/carbohydrate
 ./include/fileType
 ./include/fileType/lib
 ./include/fileType/off

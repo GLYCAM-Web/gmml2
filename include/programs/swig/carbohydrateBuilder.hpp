@@ -2,8 +2,8 @@
 #define INCLUDE_PROGRAMS_CARBOHYDRATEBUILDER_CARBOHYDRATEBUILDER_HPP
 
 // This is becoming an interface to the carbohydrate class in gmml for Gems.
+#include "include/carbohydrate/carbohydrate.hpp"
 #include "include/metadata/dihedralangledata.hpp"
-#include "include/sequence/carbohydrate.hpp"
 
 #include <string>
 #include <vector>

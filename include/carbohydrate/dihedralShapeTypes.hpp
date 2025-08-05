@@ -1,7 +1,7 @@
-#ifndef INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALSHAPETYPES_HPP
-#define INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALSHAPETYPES_HPP
+#ifndef INCLUDE_CARBOHYDRATE_DIHEDRALSHAPETYPES_HPP
+#define INCLUDE_CARBOHYDRATE_DIHEDRALSHAPETYPES_HPP
 
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 

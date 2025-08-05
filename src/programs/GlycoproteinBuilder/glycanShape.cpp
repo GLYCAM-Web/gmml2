@@ -1,9 +1,9 @@
 #include "include/programs/GlycoproteinBuilder/glycanShape.hpp"
 
-#include "include/CentralDataStructure/Shapers/dihedralShape.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/carbohydrate/dihedralShape.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/util/containers.hpp"

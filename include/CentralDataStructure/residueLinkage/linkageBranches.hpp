@@ -1,8 +1,8 @@
-#ifndef INCLUDE_CENTRALDATASTRUCTURE_SELECTIONS_LINKAGEBRANCHES_HPP
-#define INCLUDE_CENTRALDATASTRUCTURE_SELECTIONS_LINKAGEBRANCHES_HPP
+#ifndef INCLUDE_CENTRALDATASTRUCTURE_RESIDUELINKAGE_LINKAGEBRANCHES_HPP
+#define INCLUDE_CENTRALDATASTRUCTURE_RESIDUELINKAGE_LINKAGEBRANCHES_HPP
 
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 
 #include <vector>
 

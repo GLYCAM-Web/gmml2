@@ -1,5 +1,5 @@
-#include "include/readers/parameterManager.hpp"
-#include "include/sequence/carbohydrate.hpp"
+#include "include/carbohydrate/carbohydrate.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/sequence/graphViz.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"

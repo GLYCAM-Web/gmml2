@@ -1,9 +1,9 @@
-#ifndef INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALSHAPE_HPP
-#define INCLUDE_CENTRALDATASTRUCTURE_SHAPERS_DIHEDRALSHAPE_HPP
+#ifndef INCLUDE_CARBOHYDRATE_DIHEDRALSHAPE_HPP
+#define INCLUDE_CARBOHYDRATE_DIHEDRALSHAPE_HPP
 
-#include "include/CentralDataStructure/Shapers/dihedralShapeTypes.hpp"
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
+#include "include/carbohydrate/dihedralShapeTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/geometry/orientation.hpp"
 #include "include/metadata/dihedralangledata.hpp"

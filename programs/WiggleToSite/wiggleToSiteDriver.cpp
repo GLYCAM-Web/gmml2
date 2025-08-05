@@ -1,6 +1,6 @@
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/programs/WiggleToSite/inputs.hpp"
 #include "include/programs/WiggleToSite/wiggleToSite.hpp"
-#include "include/readers/parameterManager.hpp"
 #include "include/util/filesystem.hpp"
 
 #include <iostream>

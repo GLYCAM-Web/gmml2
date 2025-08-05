@@ -1,11 +1,11 @@
-#ifndef INCLUDE_SEQUENCE_CARBOHYDRATE_HPP
-#define INCLUDE_SEQUENCE_CARBOHYDRATE_HPP
+#ifndef INCLUDE_CARBOHYDRATE_CARBOHYDRATE_HPP
+#define INCLUDE_CARBOHYDRATE_CARBOHYDRATE_HPP
 
-#include "include/CentralDataStructure/Shapers/dihedralAngleSearchTypes.hpp"
-#include "include/CentralDataStructure/Shapers/residueLinkageTypes.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
+#include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
+#include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/metadata/dihedralangledata.hpp"
-#include "include/readers/parameterManager.hpp"
 #include "include/sequence/sequenceTypes.hpp"
 #include "include/util/containerTypes.hpp"
 
