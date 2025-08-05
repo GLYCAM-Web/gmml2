@@ -20,6 +20,11 @@ namespace gmml
         std::vector<bool> groupContainsSelected(
             size_t count, const std::vector<size_t>& group, const std::vector<bool>& selection);
 
+        template<class T> size_t findIf(const std::vector<T>& vector, std::function<bool(const T&)>& condition)
+        {
+            return std::find_if(vector.begin(), vector.end(), condition) - vector.begin();
+        }
+
         template<class T> size_t indexOf(const std::vector<T>& vector, const T& element)
         {
             return std::find(vector.begin(), vector.end(), element) - vector.begin();
@@ -175,6 +180,16 @@ namespace gmml
                 result.push_back(values[n]);
             }
             return result;
+        }
+
+        template<class T, class K>
+        void setIndicesTo(std::vector<T>& modify, const std::vector<K>& indices, const std::vector<T>& values)
+        {
+            for (size_t n = 0; n < indices.size(); n++)
+            {
+
+                modify[indices[n]] = values[n];
+            }
         }
 
         template<class T> std::vector<T> boolsToValues(const std::vector<T>& values, const std::vector<bool>& mask)
