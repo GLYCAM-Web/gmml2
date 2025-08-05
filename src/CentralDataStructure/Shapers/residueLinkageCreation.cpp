@@ -14,7 +14,6 @@
 #include "include/util/strings.hpp"
 
 #include <cmath>
-#include <iostream>
 #include <sstream>
 
 namespace gmml

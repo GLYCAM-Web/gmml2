@@ -7,8 +7,7 @@
 #include "include/util/logging.hpp"
 #include "include/util/parsing.hpp"
 
-#include <cctype> // isdigit()
-#include <iostream>
+#include <cctype>
 #include <optional>
 #include <sstream>
 #include <string>

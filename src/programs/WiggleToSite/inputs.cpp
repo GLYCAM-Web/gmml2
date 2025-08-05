@@ -6,13 +6,13 @@
 #include "include/util/strings.hpp"
 
 #include <fstream>
-#include <iostream>
+#include <sstream>
+#include <string>
 
 namespace gmml
 {
     WiggleToSiteInputs::WiggleToSiteInputs(std::string inputFileName)
     {
-        //    std::cout << "About to read " << inputFileName << std::endl << std::flush;
         std::ifstream infile(inputFileName);
         if (!infile)
         {
@@ -36,15 +36,11 @@ namespace gmml
             {
                 std::string inputPortion = util::split(strInput, ':').at(1);
                 superimpositionTargetResidue_ = pdb::readResidueId(util::split(inputPortion, '_'));
-                //            std::cout << "superimpositionTargetResidue_ in input file is: " <<
-                //            superimpositionTargetResidue_ << std::endl;
             }
             if (util::startsWith(strInput, "WiggleTargetResidue:"))
             {
                 std::string inputPortion = util::split(strInput, ':').at(1);
                 wigglingTargetResidue_ = pdb::readResidueId(util::split(inputPortion, '_'));
-                //            std::cout << "wigglingTargetResidue_ in input file is: " << wigglingTargetResidue_ <<
-                //            std::endl;
             }
             if (util::startsWith(strInput, "TargetModelNumber:"))
             {

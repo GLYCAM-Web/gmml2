@@ -3,7 +3,6 @@
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 
-#include <iostream>
 #include <regex>
 #include <string>
 

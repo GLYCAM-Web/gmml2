@@ -14,7 +14,6 @@
 #include "include/util/strings.hpp"
 
 #include <iomanip>
-#include <iostream>
 #include <string>
 
 namespace gmml
