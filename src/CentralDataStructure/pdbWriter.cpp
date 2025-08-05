@@ -20,25 +20,6 @@
 
 namespace gmml
 {
-    std::vector<bool> residueTER(const std::vector<ResidueType>& types)
-    {
-        std::vector<bool> result;
-        result.reserve(types.size());
-        for (size_t n = 0; n < types.size(); n++)
-        {
-            const ResidueType& type = types[n];
-            size_t next = n + 1;
-            bool isSugar = type == ResidueType::Undefined || type == ResidueType::Sugar ||
-                           type == ResidueType::Derivative || type == ResidueType::Aglycone;
-            bool nextIsCapping = next < types.size() && types[next] == ResidueType::ProteinCappingGroup;
-            bool betweenTwoCappingGroups = (type == ResidueType::ProteinCappingGroup) && nextIsCapping;
-            bool isLast = next == types.size();
-            bool isProtein = type == ResidueType::Protein;
-            result.push_back(isSugar || betweenTwoCappingGroups || (isLast && isProtein));
-        }
-        return result;
-    }
-
     pdb::PdbFileAtomData toPdbFileAtomData(const std::vector<Atom*>& atoms, std::vector<std::string> recordNames)
     {
         return {
@@ -103,7 +84,7 @@ namespace gmml
                 if (residueIds.size() > 0)
                 {
                     std::vector<ResidueType> types = util::indicesToValues(data.residues.types, residueIds);
-                    std::vector<bool> ter = residueTER(types);
+                    std::vector<bool> ter = pdb::residueTER(types);
                     pdb::writeMoleculeToPdb(stream, graph, residueIds, ter, writerData);
                 }
             }
@@ -120,7 +101,7 @@ namespace gmml
         assembly::Graph graph = createAssemblyGraph(graphData.indices, atomGraphData);
         const std::vector<Residue*>& residues = graphData.objects.residues;
         std::vector<ResidueType> types = residueTypes(residues);
-        std::vector<bool> ter = residueTER(types);
+        std::vector<bool> ter = pdb::residueTER(types);
         pdb::PdbFileData data = toPdbFileData(graphData.objects);
         for (auto& line : headerLines)
         {

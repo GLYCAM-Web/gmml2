@@ -2,6 +2,7 @@
 #define INCLUDE_PDB_PDBFILEWRITER_HPP
 
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/pdb/pdbFileData.hpp"
 
 #include <array>
@@ -13,6 +14,8 @@ namespace gmml
 {
     namespace pdb
     {
+        std::vector<bool> residueTER(const std::vector<ResidueType>& types);
+
         void writeAssemblyToPdb(
             std::ostream& stream,
             const assembly::Graph& graph,

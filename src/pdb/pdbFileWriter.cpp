@@ -1,6 +1,7 @@
 #include "include/pdb/pdbFileWriter.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/metadata/residueTypes.hpp"
 #include "include/pdb/pdbFileData.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/formatting.hpp"
@@ -16,6 +17,25 @@ namespace gmml
 {
     namespace pdb
     {
+        std::vector<bool> residueTER(const std::vector<ResidueType>& types)
+        {
+            std::vector<bool> result;
+            result.reserve(types.size());
+            for (size_t n = 0; n < types.size(); n++)
+            {
+                const ResidueType& type = types[n];
+                size_t next = n + 1;
+                bool isSugar = type == ResidueType::Undefined || type == ResidueType::Sugar ||
+                               type == ResidueType::Derivative || type == ResidueType::Aglycone;
+                bool nextIsCapping = next < types.size() && types[next] == ResidueType::ProteinCappingGroup;
+                bool betweenTwoCappingGroups = (type == ResidueType::ProteinCappingGroup) && nextIsCapping;
+                bool isLast = next == types.size();
+                bool isProtein = type == ResidueType::Protein;
+                result.push_back(isSugar || betweenTwoCappingGroups || (isLast && isProtein));
+            }
+            return result;
+        }
+
         void writeAssemblyToPdb(
             std::ostream& stream,
             const assembly::Graph& graph,

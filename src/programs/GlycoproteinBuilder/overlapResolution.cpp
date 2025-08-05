@@ -259,7 +259,7 @@ namespace gmml
                 result.reserve(residueIndices.size());
                 for (auto& indices : residueIndices)
                 {
-                    result.push_back(gmml::residueTER(util::indicesToValues(data.residues.types, indices)));
+                    result.push_back(pdb::residueTER(util::indicesToValues(data.residues.types, indices)));
                 }
                 return result;
             };

@@ -13,7 +13,6 @@
 // Not all the options are available now, like e.g. writing molecule chain numbers, but I will add them as I need them
 namespace gmml
 {
-    std::vector<bool> residueTER(const std::vector<ResidueType>& types);
     pdb::PdbFileAtomData toPdbFileAtomData(const std::vector<Atom*>& atoms, std::vector<std::string> recordNames);
     pdb::PdbFileData toPdbFileData(const GraphObjects& objects);
 
