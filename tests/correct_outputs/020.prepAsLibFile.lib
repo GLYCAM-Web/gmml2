@@ -65,24 +65,24 @@
  1 3 1
  3 4 1
  3 5 1
- 3 21 1
  5 6 1
  5 7 1
- 5 19 1
  7 8 1
  7 9 1
- 7 17 1
  9 10 1
  9 11 1
- 9 16 1
  11 12 1
  11 13 1
  11 14 1
  14 15 1
- 1 16 1
+ 9 16 1
+ 7 17 1
  17 18 1
+ 5 19 1
  19 20 1
+ 3 21 1
  21 22 1
+ 1 16 1
 !entry.0GA.unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx
  "U" 0 "R" 1
  "R" 1 "A" 1
@@ -237,28 +237,28 @@
  1 3 1
  3 4 1
  3 5 1
- 3 13 1
  5 6 1
  5 7 1
  7 8 1
- 7 12 1
  8 9 1
  8 10 1
  8 11 1
+ 7 12 1
+ 3 13 1
  13 14 1
  13 15 1
- 13 17 1
  15 16 1
+ 13 17 1
  17 18 1
  17 19 1
- 17 27 1
  19 20 1
  19 21 1
- 19 26 1
  21 22 1
  21 23 1
  21 24 1
  24 25 1
+ 19 26 1
+ 17 27 1
  1 26 1
 !entry.4YA.unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx
  "U" 0 "R" 1
@@ -430,21 +430,19 @@
  3 4 1
  4 5 1
  4 6 1
- 4 11 1
  6 7 1
  6 8 1
  6 9 1
  9 10 1
+ 4 11 1
  11 12 1
  11 13 1
- 11 27 1
  13 14 1
  13 15 1
- 13 17 1
  15 16 1
+ 13 17 1
  17 18 1
  17 19 1
- 1 17 1
  19 20 1
  19 21 1
  21 22 1
@@ -452,6 +450,8 @@
  23 24 1
  23 25 1
  23 26 1
+ 11 27 1
+ 1 17 1
 !entry.4YB.unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx
  "U" 0 "R" 1
  "R" 1 "A" 1
@@ -606,20 +606,20 @@
  3 4 1
  4 5 1
  4 6 1
- 4 9 1
  6 7 1
  6 8 1
+ 4 9 1
  9 10 1
  9 11 1
- 9 19 1
  11 12 1
  11 13 1
- 11 15 1
  13 14 1
+ 11 15 1
  15 16 1
  15 17 1
- 1 15 1
  17 18 1
+ 9 19 1
+ 1 15 1
 !entry.4uA.unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx
  "U" 0 "R" 1
  "R" 1 "A" 1
