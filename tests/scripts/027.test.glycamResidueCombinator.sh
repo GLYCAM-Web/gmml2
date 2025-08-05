@@ -1,17 +1,17 @@
 #!/bin/bash
 
-printf "Testing 027.test.glycamResidueCombinator.cpp... "
+printf "Testing 027 glycam residue combinator... "
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
+BIN_PATH="${GMML_ROOT_DIR}/bin/glycamResidueCombinator"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 027 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
     exit 1
 fi
 
-g++ -std=c++17 -I "${GMML_ROOT_DIR}"/ -L"${GMML_ROOT_DIR}"/lib/ -Wl,-rpath,"${GMML_ROOT_DIR}"/lib/ src/027.test.glycamResidueCombinator.cpp -lgmml2 -pthread -o 027.glycamResiduecombinator.exe
 outputFile=027.output.txt
-./027.glycamResiduecombinator.exe ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep inputs/027.BacterialPrep/0aN-alfa_final.prep inputs/027.BacterialPrep/0an-beta_final.prep inputs/027.BacterialPrep/0DH-alfa_final.prep inputs/027.BacterialPrep/0Dh-beta_final.prep inputs/027.BacterialPrep/0eC-alfa_final.prep inputs/027.BacterialPrep/0ec-beta_final.prep inputs/027.BacterialPrep/0FC-alfa_final.prep inputs/027.BacterialPrep/0Fc-beta_final.prep inputs/027.BacterialPrep/0gF-alfa_final.prep inputs/027.BacterialPrep/0gf-beta_final.prep inputs/027.BacterialPrep/0KX-alfa_final.prep inputs/027.BacterialPrep/0Kx-beta_final.prep inputs/027.BacterialPrep/0LD_final.prep inputs/027.BacterialPrep/0LG-alfa_final.prep inputs/027.BacterialPrep/0Lg-beta_final.prep inputs/027.BacterialPrep/0LH-alfa_final.prep inputs/027.BacterialPrep/0Lh-beta_final.prep inputs/027.BacterialPrep/0LU_final.prep inputs/027.BacterialPrep/0mP-alfa_final.prep inputs/027.BacterialPrep/0mp-beta_final.prep inputs/027.BacterialPrep/0MR-alfa_final.prep inputs/027.BacterialPrep/0Mr-beta_final.prep inputs/027.BacterialPrep/0QF-alfa_final.prep inputs/027.BacterialPrep/0Qf-beta_final.prep inputs/027.BacterialPrep/0ZF-alfa_final.prep inputs/027.BacterialPrep/0Zf-beta_final.prep inputs/027.BacterialPrep/0KO-alfa_final.prep inputs/027.BacterialPrep/0Ko-beta_final.prep > $outputFile
+"${BIN_PATH}" ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep inputs/027.BacterialPrep/0aN-alfa_final.prep inputs/027.BacterialPrep/0an-beta_final.prep inputs/027.BacterialPrep/0DH-alfa_final.prep inputs/027.BacterialPrep/0Dh-beta_final.prep inputs/027.BacterialPrep/0eC-alfa_final.prep inputs/027.BacterialPrep/0ec-beta_final.prep inputs/027.BacterialPrep/0FC-alfa_final.prep inputs/027.BacterialPrep/0Fc-beta_final.prep inputs/027.BacterialPrep/0gF-alfa_final.prep inputs/027.BacterialPrep/0gf-beta_final.prep inputs/027.BacterialPrep/0KX-alfa_final.prep inputs/027.BacterialPrep/0Kx-beta_final.prep inputs/027.BacterialPrep/0LD_final.prep inputs/027.BacterialPrep/0LG-alfa_final.prep inputs/027.BacterialPrep/0Lg-beta_final.prep inputs/027.BacterialPrep/0LH-alfa_final.prep inputs/027.BacterialPrep/0Lh-beta_final.prep inputs/027.BacterialPrep/0LU_final.prep inputs/027.BacterialPrep/0mP-alfa_final.prep inputs/027.BacterialPrep/0mp-beta_final.prep inputs/027.BacterialPrep/0MR-alfa_final.prep inputs/027.BacterialPrep/0Mr-beta_final.prep inputs/027.BacterialPrep/0QF-alfa_final.prep inputs/027.BacterialPrep/0Qf-beta_final.prep inputs/027.BacterialPrep/0ZF-alfa_final.prep inputs/027.BacterialPrep/0Zf-beta_final.prep inputs/027.BacterialPrep/0KO-alfa_final.prep inputs/027.BacterialPrep/0Ko-beta_final.prep > $outputFile
 
 file="GLYCAM_06k.lib"
 if [ ! -f "${file}" ]; then
@@ -51,7 +51,7 @@ if ! cmp -s $outputFile correct_outputs/$outputFile; then
 fi
     
 printf "Test passed.\n"
-rm 027.glycamResiduecombinator.exe $outputFile libEntries.txt prepEntriesList.txt $file
+rm $outputFile libEntries.txt prepEntriesList.txt $file
 echo "Exit Code: 0"
 
 return 0

@@ -17,13 +17,15 @@ echo -e "Draw glycan"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/DrawGlycan/drawGlycanMain.cpp -lgmml2 -pthread -o bin/drawGlycan
 echo -e "Dunbrack formatter"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/Dunbrack/dunbrackMain.cpp -lgmml2 -pthread -o bin/dunbrackFormatter
+echo -e "Glycam residue combinator"
+g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/glycamResidueCombinator.cpp -lgmml2 -pthread -o bin/glycamResidueCombinator
 echo -e "Glycomimetic preprocessor"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/glycomimeticPreprocessor.cpp -lgmml2 -pthread -o bin/glycomimeticPreprocessor
 echo -e "Glycoprotein builder"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/GlycoproteinBuilder/gpBuilder_main.cpp -lgmml2 -pthread -o bin/glycoproteinBuilder
 echo -e "Glycosylation site finder"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/createGlycosylationTables.cpp -lgmml2 -pthread -o bin/glycosylationSiteFinder
-echo -e "PDB Analyzer"
+echo -e "PDB analyzer"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/pdbAnalyzer.cpp -lgmml2 -pthread -o bin/pdbAnalyzer
 echo -e "Wiggle to site"
 g++ -std=c++17 -g -I ./ -L"${LIB_PATH}" -Wl,-rpath,"${LIB_PATH}" programs/WiggleToSite/wiggleToSiteDriver.cpp -lgmml2 -pthread -o bin/wiggleToSite

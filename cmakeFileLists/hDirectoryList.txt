@@ -1,6 +1,5 @@
 ./include
 ./include/CentralDataStructure
-./include/CentralDataStructure/Editors
 ./include/CentralDataStructure/Selections
 ./include/CentralDataStructure/residueLinkage
 ./include/assembly

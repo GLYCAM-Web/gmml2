@@ -1,4 +1,3 @@
-#include "include/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"

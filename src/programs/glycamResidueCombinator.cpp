@@ -1,4 +1,4 @@
-#include "include/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
+#include "include/programs/glycamResidueCombinator.hpp"
 
 #include "include/fileType/prep/prepDataTypes.hpp"
 #include "include/fileType/prep/prepFunctions.hpp"

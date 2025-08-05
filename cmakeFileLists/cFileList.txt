@@ -1,4 +1,3 @@
-./src/CentralDataStructure/Editors/glycamResidueCombinator.cpp
 ./src/CentralDataStructure/Selections/atomSelections.cpp
 ./src/CentralDataStructure/Selections/cyclePoints.cpp
 ./src/CentralDataStructure/Selections/residueSelections.cpp
@@ -74,6 +73,7 @@
 ./src/programs/GlycoproteinBuilder/randomDescent.cpp
 ./src/programs/WiggleToSite/inputs.cpp
 ./src/programs/WiggleToSite/wiggleToSite.cpp
+./src/programs/glycamResidueCombinator.cpp
 ./src/programs/glycosylationSiteFinder.cpp
 ./src/programs/swig/carbohydrateBuilder.cpp
 ./src/programs/swig/sequence.cpp
