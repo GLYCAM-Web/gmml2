@@ -90,9 +90,9 @@ namespace gmml
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
-    carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
+    carbohydrateBuilder::carbohydrateBuilder(const std::string& condensedSequence, const ParameterManager& param)
 
-    try : parameters(loadParameters(util::gmmlHomeDirPath))
+    try : parameters(param)
     {
         initializeCarbohydrate(
             carbohydrate,
@@ -126,6 +126,9 @@ namespace gmml
         util::log(__LINE__, __FILE__, util::ERR, message);
         throw std::runtime_error(message);
     }
+
+    carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
+        : carbohydrateBuilder(condensedSequence, loadParameters(util::gmmlHomeDirPath)) {};
 
     void carbohydrateBuilder::GenerateSpecific3DStructure(
         SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory)

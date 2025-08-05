@@ -3,6 +3,7 @@
 
 // This is becoming an interface to the carbohydrate class in gmml for Gems.
 #include "include/carbohydrate/carbohydrate.hpp"
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 
 #include <string>
@@ -72,6 +73,7 @@ namespace gmml
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
+        carbohydrateBuilder(const std::string& condensedSequence, const ParameterManager& param);
         carbohydrateBuilder(std::string condensedSequence);
         std::string GetNumberOfShapes(bool likelyShapesOnly = false) const;
         LinkageOptionsVector GenerateUserOptionsDataStruct();

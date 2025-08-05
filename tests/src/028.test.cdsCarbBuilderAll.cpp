@@ -1,5 +1,8 @@
+#include "include/carbohydrate/parameterManager.hpp"
 #include "include/programs/swig/carbohydrateBuilder.hpp"
 #include "include/programs/swig/sequence.hpp"
+#include "include/util/arguments.hpp"
+#include "include/util/filesystem.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/strings.hpp"
 
@@ -25,6 +28,11 @@ int main(int argc, char** argv)
     // Convert command line inputs to legible variables
     std::ifstream infile(argv[1]);
     char delimiter = argv[2][0]; // The second [0] gets me the first element of the argv which is type char**
+
+    std::string programName = util::programName(argv);
+    std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
+    const ParameterManager parameters = loadParameters(baseDir);
+
     std::string outputFolderName = argv[3];
     struct stat info;
     if (stat(argv[3], &info) != 0)
@@ -59,7 +67,7 @@ int main(int argc, char** argv)
             std::cout << "IndexOrdered:\n" << sequence.getIndexOrdered() << "\n";
             std::cout << "IndexOrderedLabeled:\n" << sequence.getIndexLabeled() << "\n";
             std::cout << "Parsed and labelled " << inputGlycanID << " with no exceptions thrown.\n\n";
-            carbohydrateBuilder carbBuilder(sequence.getIndexOrdered());
+            carbohydrateBuilder carbBuilder(sequence.getIndexOrdered(), parameters);
             bool likelyShapesOnly = true; // Not sure I like this. Two functions probably more readable.
             std::cout << "Number of residues for this sequence is " << carbBuilder.carbohydrate.getResidues().size()
                       << "\n";
