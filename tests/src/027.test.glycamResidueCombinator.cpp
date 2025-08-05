@@ -6,6 +6,8 @@
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/off/offFileWriter.hpp"
 #include "include/readers/Prep/prepFile.hpp"
+#include "include/readers/Prep/prepFunctions.hpp"
+#include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
 
@@ -44,19 +46,19 @@ int main(int argc, char* argv[])
         {"0Kx"},  {"0LD"}, {"0LG"}, {"0Lg"}, {"0LH"}, {"0Lh"}, {"0LU"}, {"0mP"}, {"0mp"}, {"0MR"}, {"0Mr"},  {"0QF"},
         {"0Qf"},  {"0ZF"}, {"0Zf"}};
 
-    std::vector<Residue*> allGeneratedResidues;
+    std::vector<gmml::Recombined> allGeneratedResidues;
+
+    prep::PrepData data;
 
     for (int n = 1; n < argc; n++)
     {
         char* inputFileName = argv[n];
         std::cout << "Loading " << inputFileName << std::endl;
-        Molecule prepMolecule = Molecule();
-        std::vector<prep::PrepResidueProperties> properties;
-        prep::readPrepFile(&prepMolecule, properties, inputFileName, residuesToLoadFromPrep);
-        for (auto& residue : prepMolecule.getResidues())
+        prep::PrepData reference = prep::readPrepFile(inputFileName, residuesToLoadFromPrep);
+        for (size_t n = 0; n < reference.residueCount; n++)
         {
-            std::cout << "Generating those combos from " << residue->getName() << std::endl;
-            generateResidueCombinations(allGeneratedResidues, residue);
+            std::cout << "Generating those combos from " << reference.residues.name[n] << std::endl;
+            util::insertInto(allGeneratedResidues, generateResidueCombinations(data, reference, n));
         }
     }
 
@@ -85,19 +87,78 @@ int main(int argc, char* argv[])
         {"4uA1"},
         {"4uA2"},
         {"4uA3"}};
-    Molecule prepMolecule = Molecule();
-    std::vector<prep::PrepResidueProperties> properties;
-    prep::readPrepFile(&prepMolecule, properties, glycamPrepInputFile, theSpecialCases);
-    for (auto& specialResidue : prepMolecule.getResidues())
+    prep::PrepData reference = prep::readPrepFile(glycamPrepInputFile, theSpecialCases);
+    for (size_t n = 0; n < reference.residueCount; n++)
     {
-        allGeneratedResidues.push_back(specialResidue);
+        size_t special = prep::copyResidue(data, reference, n);
+        allGeneratedResidues.push_back({true, special, prep::residueAtoms(data, special)});
     }
 
-    serializeResiduesIndividually(allGeneratedResidues);
-    GraphIndexData indices = toIndexData(allGeneratedResidues);
-    assembly::Graph graph = createVisibleAssemblyGraph(indices);
+    std::function<std::string(const size_t&)> toElement = [&](size_t n)
+    { return (data.atomGraph.nodeAlive[n] && !data.atoms.name[n].empty()) ? std::string {data.atoms.name[n][0]} : ""; };
+
+    std::vector<size_t> atomIndices = util::indexVector(data.atomCount);
+    std::vector<std::string> elementStrings = util::vectorMap(toElement, atomIndices);
+
+    std::function<uint(const size_t&)> atomicNumber = [&](size_t n)
+    { return data.atomGraph.nodeAlive[n] ? findElementAtomicNumber(elementStrings[n]) : Element::Unknown; };
+
+    std::vector<uint> atomicNumbers = util::vectorMap(atomicNumber, atomIndices);
+
+    off::OffFileAtomData offAtomData {
+        data.atoms.number, data.atoms.name, data.atoms.type, atomicNumbers, data.atoms.charge, data.atoms.coordinate};
+
+    std::vector<bool> residueActive(data.residueCount, false);
+    for (auto& residue : allGeneratedResidues)
+    {
+        residueActive[residue.residueId] = residue.alive;
+    }
+    for (size_t n = 0; n < data.residueCount; n++)
+    {
+        const std::vector<size_t>& atoms = prep::residueAtoms(data, n);
+        if (!residueActive[n])
+        {
+            util::setIndicesTo(data.atomGraph.nodeAlive, atoms, std::vector<bool>(atoms.size(), false));
+        }
+    }
+
+    assembly::Indices indices {
+        data.atomCount,
+        data.residueCount,
+        1,
+        1,
+        data.atomGraph.nodeAlive,
+        data.atomResidue,
+        std::vector<size_t>(data.residueCount, 0),
+        {0}};
+    assembly::Graph graph = assembly::createAssemblyGraph(indices, data.atomGraph);
+
+    for (auto& residue : allGeneratedResidues)
+    {
+        if (residueActive[residue.residueId])
+        {
+            size_t graphId = util::indexOf(graph.residues.nodes.indices, residue.residueId);
+            std::vector<size_t> atomIds = residue.atomIds;
+            // tleap requires the tail atoms to be at the end, so we rearrange them before writing
+            for (size_t k : residue.tail)
+            {
+                size_t index = util::indexOf(atomIds, k);
+                atomIds.erase(atomIds.begin() + index);
+                atomIds.push_back(k);
+            }
+            graph.residues.nodes.constituents[graphId] = atomIds;
+            util::setIndicesTo(offAtomData.numbers, atomIds, serializedNumberVector(atomIds.size()));
+        }
+    }
+
+    off::OffFileResidueData offResidueData {
+        std::vector<uint>(data.residueCount, 1),
+        data.residues.name,
+        std::vector<ResidueType>(data.residueCount, Undefined),
+        std::vector<std::vector<size_t>>(data.residueCount)};
+
+    off::OffFileData offData {off::OffFileFormat(), offResidueData, offAtomData};
+
     util::writeToFile(
-        "GLYCAM_06k.lib",
-        [&](std::ostream& stream)
-        { off::writeResiduesIndividually(stream, graph, toOffFileData(allGeneratedResidues)); });
+        "GLYCAM_06k.lib", [&](std::ostream& stream) { off::writeResiduesIndividually(stream, graph, offData); });
 }

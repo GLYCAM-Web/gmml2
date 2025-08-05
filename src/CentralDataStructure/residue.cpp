@@ -131,28 +131,6 @@ namespace gmml
         return atoms_.back().get();
     }
 
-    Atom* Residue::addAtomToFront(std::unique_ptr<Atom> myAtom)
-    { // Yes expensive, but sometimes necessary.
-        atoms_.insert(atoms_.begin(), std::move(myAtom));
-        return atoms_.front().get();
-    }
-
-    bool Residue::moveAtomToLastPosition(const Atom* atom)
-    { // Passing in a raw ptr, but the vector is unique_ptr so gotta use i->get() to compare raws.
-        auto i = this->FindPositionOfAtom(atom); // auto makes my life easier
-        if (i == atoms_.end())
-        {
-            util::log(__LINE__, __FILE__, util::WAR, "Could not find atom in Residue to move to last position");
-            return false; // atom not found maybe throw is better?
-        }
-        if (i == atoms_.end() - 1)
-        {
-            return true; // already in last position
-        }
-        std::iter_swap(i, atoms_.end() - 1);
-        return true;
-    }
-
     bool Residue::deleteAtom(const Atom* atom)
     { // Passing in a raw ptr, but the vector is unique_ptr so gotta use i->get() to compare raws.
         auto i = this->FindPositionOfAtom(atom); // auto makes my life easier

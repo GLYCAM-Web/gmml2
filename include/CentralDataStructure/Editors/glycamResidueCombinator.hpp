@@ -1,7 +1,7 @@
 #ifndef INCLUDE_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP
 #define INCLUDE_CENTRALDATASTRUCTURE_EDITORS_GLYCAMRESIDUECOMBINATOR_HPP
 
-#include "include/CentralDataStructure/cdsTypes.hpp"
+#include "include/readers/Prep/prepDataTypes.hpp"
 
 #include <string>
 #include <vector>
@@ -14,8 +14,17 @@
 // charge" + "removed Hydrogen Charge" - 0.194.
 namespace gmml
 {
+    struct Recombined
+    {
+        bool alive;
+        size_t residueId;
+        std::vector<size_t> atomIds;
+        std::vector<size_t> tail;
+    };
+
     std::vector<std::vector<std::string>> getCombinations(const std::vector<std::string>& elements);
-    void generateResidueCombinations(std::vector<Residue*>& glycamResidueCombinations, const Residue* starterResidue);
+    std::vector<Recombined> generateResidueCombinations(
+        prep::PrepData& data, const prep::PrepData& reference, size_t starterResidue);
 } // namespace gmml
 
 #endif

@@ -73,6 +73,7 @@
 ./src/readers/Lib/LibraryFile.cpp
 ./src/readers/Prep/prepAtom.cpp
 ./src/readers/Prep/prepFile.cpp
+./src/readers/Prep/prepFunctions.cpp
 ./src/readers/Prep/prepResidue.cpp
 ./src/readers/parameterManager.cpp
 ./src/sequence/carbohydrate.cpp

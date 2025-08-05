@@ -1,11 +1,13 @@
 #include "include/CentralDataStructure/Editors/glycamResidueCombinator.hpp"
 
-#include "include/CentralDataStructure/Selections/atomSelections.hpp"
-#include "include/CentralDataStructure/atom.hpp"
-#include "include/CentralDataStructure/cdsFunctions.hpp"
-#include "include/CentralDataStructure/residue.hpp"
 #include "include/geometry/measurements.hpp"
+#include "include/graph/graphManipulation.hpp"
 #include "include/metadata/glycam06Functions.hpp"
+#include "include/readers/Prep/prepDataTypes.hpp"
+#include "include/readers/Prep/prepFunctions.hpp"
+#include "include/templateGraph/Node.hpp"
+#include "include/templateGraph/TotalCycleDecomposition.hpp"
+#include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
 
 #include <algorithm>
@@ -101,42 +103,45 @@ namespace gmml
             return output;
         }
 
-        void removeOMeMethyl(Residue& queryResidue, Atom* OMeOxygen, const std::string& anomericAtomNumber)
+        void removeOMeMethyl(
+            prep::PrepData& data, size_t queryResidue, size_t OMeOxygen, const std::string& anomericAtomNumber)
         {
-            Atom* ch3 = queryResidue.FindAtom("CH3");
-            Atom* h31 = queryResidue.FindAtom("H31");
-            Atom* h32 = queryResidue.FindAtom("H32");
-            Atom* h33 = queryResidue.FindAtom("H33");
-            std::cout << "In here OMeOxygen name: " << OMeOxygen->getName() << "\n";
-            if (ch3 == nullptr || h31 == nullptr || h32 == nullptr || h33 == nullptr)
+            std::function<size_t(const std::string&)> findAtom = [&](const std::string& name)
+            { return prep::findAtom(data, queryResidue, name); };
+            std::vector<size_t> toDelete = util::vectorMap(findAtom, {"CH3", "H31", "H32", "H33"});
+            size_t atomCount = data.atomCount;
+            std::cout << "In here OMeOxygen name: " << data.atoms.name[OMeOxygen] << "\n";
+            if (util::contains(toDelete, atomCount))
             {
                 std::string message =
                     "Found methyl oxygen but not the other appropriately named atoms in residue. Glycam "
                     "combinations cannot be created. This happened for OMeOxygen " +
-                    OMeOxygen->getName() + " in residue: " + queryResidue.getName();
+                    data.atoms.name[OMeOxygen] + " in residue: " + data.residues.name[queryResidue];
                 throw std::runtime_error(message);
             }
-            double chargeBeingDeleted = ch3->getCharge() + h31->getCharge() + h32->getCharge() + h33->getCharge();
-            OMeOxygen->setCharge(OMeOxygen->getCharge() + chargeBeingDeleted - 0.194);
-            queryResidue.deleteAtom(ch3);
-            queryResidue.deleteAtom(h31);
-            queryResidue.deleteAtom(h32);
-            queryResidue.deleteAtom(h33);
-            OMeOxygen->setType("Os");
-            OMeOxygen->setName("O" + anomericAtomNumber);
+            double chargeBeingDeleted = util::vectorSum(0.0, util::indicesToValues(data.atoms.charge, toDelete));
+            data.atoms.charge[OMeOxygen] = data.atoms.charge[OMeOxygen] + chargeBeingDeleted - 0.194;
+            for (size_t id : toDelete)
+            {
+                graph::removeNode(data.atomGraph, id);
+            }
+            data.atoms.type[OMeOxygen] = "Os";
+            data.atoms.name[OMeOxygen] = "O" + anomericAtomNumber;
             std::cout << "All done here no issues" << std::endl;
-            return;
         }
 
-        void removeHydroxyHydrogen(Residue& queryResidue, const std::string hydrogenNumber)
+        void removeHydroxyHydrogen(prep::PrepData& data, size_t queryResidue, const std::string& hydrogenNumber)
         {
-            Atom* hydrogen = queryResidue.FindAtom("H" + hydrogenNumber + "O");
-            if (hydrogen == nullptr)
+            std::function<size_t(const std::string&)> findAtom = [&](const std::string& name)
+            { return prep::findAtom(data, queryResidue, name); };
+            size_t atomCount = data.atomCount;
+            size_t hydrogen = findAtom("H" + hydrogenNumber + "O");
+            if (hydrogen == atomCount)
             { // In ROH and some input prep files it's HO1. Otherwise H1O. Fun.
-                hydrogen = queryResidue.FindAtom("HO" + hydrogenNumber);
+                hydrogen = findAtom("HO" + hydrogenNumber);
             }
-            Atom* oxygen = queryResidue.FindAtom("O" + hydrogenNumber);
-            if (hydrogen == nullptr || oxygen == nullptr)
+            size_t oxygen = findAtom("O" + hydrogenNumber);
+            if (hydrogen == atomCount || oxygen == atomCount)
             {
                 std::string message =
                     "Cannot find appropriately named atoms in residue. Glycam combinations cannot be created. Oxygen "
@@ -144,33 +149,126 @@ namespace gmml
                     "named e.g. O2 and not 2O. Hydrogen to be substituted should be H2O and not HO2. Both must be "
                     "present. "
                     "This may turn into a fatal issue for the atom numbered: " +
-                    hydrogenNumber + " in residue: " + queryResidue.getName();
+                    hydrogenNumber + " in residue: " + data.residues.name[queryResidue];
                 util::log(__LINE__, __FILE__, util::ERR, message);
                 throw std::runtime_error(message);
                 return;
             }
-            oxygen->setCharge(oxygen->getCharge() + hydrogen->getCharge() - 0.194);
-            queryResidue.deleteAtom(hydrogen);
-            oxygen->setType("Os");
-            return;
+            data.atoms.charge[oxygen] = data.atoms.charge[oxygen] + data.atoms.charge[hydrogen] - 0.194;
+            data.atoms.type[oxygen] = "Os";
+            graph::removeNode(data.atomGraph, hydrogen);
         }
 
-        std::vector<std::string> selectAllAtomsThatCanBeSubstituted(const Residue& queryResidue)
+        uint getAtomNumberFromName(const std::string& name)
+        {
+            std::string convertableNumber = "";
+            for (size_t i = 1; i < name.size(); i++)
+            {
+                if (isdigit(name[i]))
+                {
+                    convertableNumber += name[i];
+                }
+            }
+            if (convertableNumber.empty())
+            {
+                return 0;
+            }
+            return std::stoi(convertableNumber);
+        }
+
+        std::vector<std::string> selectAllAtomsThatCanBeSubstituted(const prep::PrepData& data, size_t queryResidue)
         {
             std::vector<std::string> foundNames;
             std::string delimiter = "";
-            for (auto& atom : queryResidue.getAtoms())
+            for (size_t atom : prep::residueAtoms(data, queryResidue))
             { // if a hydroxyl with a digit in the second position of atom name. e.g. O2, not OHG, and not O1A.
-                if (atom->getType() == "Oh" && atom->getNumberFromName() != 0 &&
-                    isdigit(atom->getName().back())) // If a hydroxyl like O2
+                const std::string& name = data.atoms.name[atom];
+                uint number = getAtomNumberFromName(name);
+                if (data.atoms.type[atom] == "Oh" && number != 0 && !name.empty() &&
+                    isdigit(name.back())) // If a hydroxyl like O2
                 {
-                    foundNames.push_back(std::to_string(atom->getNumberFromName()));
-                    std::cout << delimiter << atom->getName();
+                    foundNames.push_back(std::to_string(number));
+                    std::cout << delimiter << name;
                     delimiter = ",";
                 }
             }
             std::cout << "\n";
             return foundNames;
+        }
+
+        struct AtomIndex : glygraph::Node<AtomIndex>
+        {
+            AtomIndex() : Node<AtomIndex>("", {}) {};
+            size_t atomIndex = 0;
+        };
+
+        std::vector<size_t> findCycleAtoms(const prep::PrepData& data, size_t residue)
+        {
+            std::vector<size_t> atoms = prep::residueAtoms(data, residue);
+            std::vector<AtomIndex> graphAtoms(atoms.size());
+            for (size_t n = 0; n < atoms.size(); n++)
+            {
+                graphAtoms[n].atomIndex = atoms[n];
+            }
+            std::vector<size_t> localIndex = util::indexVector(data.atomCount);
+            util::setIndicesTo(localIndex, atoms, util::indexVector(atoms.size()));
+
+            for (size_t edgeId : prep::residueEdges(data, residue))
+            {
+                const std::array<size_t, 2>& nodes = data.atomGraph.edgeNodes[edgeId];
+                graphAtoms[localIndex[nodes[0]]].addChild("", &graphAtoms[localIndex[nodes[1]]]);
+            }
+            glygraph::Graph<AtomIndex> atomGraph(&graphAtoms[0]);
+            std::vector<std::pair<
+                std::unordered_set<glygraph::Node<AtomIndex>*>,
+                std::unordered_set<glygraph::Edge<AtomIndex>*>>>
+                g1Cycles = cycle_decomp::totalCycleDetect(atomGraph);
+            std::vector<size_t> cycleAtoms;
+            for (std::pair<
+                     std::unordered_set<glygraph::Node<AtomIndex>*>,
+                     std::unordered_set<glygraph::Edge<AtomIndex>*>> currCyclePair : g1Cycles)
+            {
+                for (glygraph::Node<AtomIndex>* currAtom : currCyclePair.first)
+                {
+                    cycleAtoms.push_back(currAtom->getDerivedClass()->atomIndex);
+                }
+            }
+            return cycleAtoms;
+        }
+
+        // For now it's the lowest numbered (e.g. C1 lower than C6) ring atom connected to the ring oxygen.
+        size_t guessAnomericAtomByInternalNeighbors(const prep::PrepData& data, size_t residue)
+        {
+            auto isOxygen = [&](size_t n)
+            {
+                const std::string& name = data.atoms.name[n];
+                return !name.empty() && name[0] == 'O';
+            };
+            std::vector<size_t> cycleAtoms = findCycleAtoms(data, residue);
+            size_t cycleOxygen = data.atomCount;
+            for (size_t cycleAtom : cycleAtoms)
+            {
+                if (isOxygen(cycleAtom))
+                {
+                    cycleOxygen = cycleAtom;
+                }
+            }
+            if (cycleOxygen == data.atomCount)
+            {
+                throw std::runtime_error(
+                    "Did not find a ring oxygen when trying to guess what the anomeric carbon is. Your "
+                    "atom names, are likely, strange.");
+            }
+            std::vector<size_t> anomerCandidates = prep::atomNeighbors(data, cycleOxygen);
+            // So deciding this isn't straightforward. For me use case of prep files this is fine. For reading form the
+            // PDB I want a meeting first to figure out what we really need. Using a lambda to sort the candidates so
+            // that C1 appears before C2 etc.
+            std::sort(
+                anomerCandidates.begin(),
+                anomerCandidates.end(),
+                [&](size_t a, size_t b)
+                { return (getAtomNumberFromName(data.atoms.name[a]) < getAtomNumberFromName(data.atoms.name[b])); });
+            return anomerCandidates[0];
         }
     } // namespace
 
@@ -205,12 +303,13 @@ namespace gmml
         return combinations;
     }
 
-    void generateResidueCombination(
-        std::vector<Residue*>& glycamResidueCombinations,
+    Recombined generateResidueCombination(
+        prep::PrepData& data,
+        const prep::PrepData& reference,
         const std::vector<std::string> numberCombination,
-        const Residue& templateResidue)
+        const size_t templateResidue)
     {
-        Residue* newResidue = glycamResidueCombinations.emplace_back(new Residue(templateResidue));
+        size_t newResidue = prep::copyResidue(data, reference, templateResidue);
         // Residue* newResidue = glycamResidueCombinations.back();
         std::string delimiter = "";
         std::stringstream numbersAsString;
@@ -218,10 +317,15 @@ namespace gmml
         {
             numbersAsString << delimiter << atomNumber;
             delimiter = ",";
-            removeHydroxyHydrogen(*newResidue, atomNumber);
+            removeHydroxyHydrogen(data, newResidue, atomNumber);
+        }
+        std::vector<size_t> residueAtoms = prep::residueAtoms(data, newResidue);
+        std::vector<size_t> tail;
+        for (auto& atomNumber : numberCombination)
+        {
             // Set the tail. All can go to the end of the residue. Don't think order matters.
-            Atom* atom = newResidue->FindAtom("O" + atomNumber);
-            newResidue->moveAtomToLastPosition(atom);
+            size_t atom = prep::findAtom(data, newResidue, "O" + atomNumber);
+            tail.push_back(atom);
         }
         std::string residueName = metadata::GetGlycam06ResidueLinkageCode(numbersAsString.str());
         if (residueName.empty())
@@ -231,14 +335,14 @@ namespace gmml
                 __FILE__,
                 util::WAR,
                 "No linkage code found for possible combo: " + numbersAsString.str() + " in residue " +
-                    templateResidue.getName());
-            glycamResidueCombinations.pop_back(); // This should be rare/never?
+                    reference.residues.name[templateResidue]); // This should be rare/never?
+            return {false, newResidue, residueAtoms, tail};
         }
         else
         {
-            residueName += templateResidue.getName().substr(1);
-            newResidue->setName(residueName);
-            std::cout << numbersAsString.str() << ": " << newResidue->getName() << "\n";
+            data.residues.name[newResidue] = residueName + reference.residues.name[templateResidue].substr(1);
+            std::cout << "Added " << newResidue << ": " << data.residues.name[newResidue] << "\n";
+            return {true, newResidue, residueAtoms, tail};
         }
     }
 
@@ -247,62 +351,67 @@ namespace gmml
     // Combinations that include the anomeric position should include an anomeric oxygen (eg 1GA).
     // Combinations that do not include the anomeric position should not (eg 0GA).
 
-    void generateResidueCombinations(std::vector<Residue*>& glycamResidueCombinations, const Residue* starterResidue)
+    std::vector<Recombined> generateResidueCombinations(
+        prep::PrepData& data, const prep::PrepData& reference, size_t starterResidue)
     {
+        std::vector<Recombined> result;
         // First generate both versions of the residue; with and without anomeric oxygen.
         // One of these gets edited, depending on what's passed in (we don't know yet, need to figure it out in the next
         // steps) Yes this should be two functions. ToDo.
         std::cout << "Copying the input residue " << std::endl;
-        Residue residueWithoutAnomericOxygen = *starterResidue;
-        Residue residueWithAnomericOxygen = *starterResidue;
+        size_t residueWithoutAnomericOxygen = copyResidue(data, reference, starterResidue);
+        size_t residueWithAnomericOxygen = copyResidue(data, reference, starterResidue);
         std::cout << "Guessing anomeric oxygen" << std::endl;
-        Atom* anomer = guessAnomericAtomByInternalNeighbors(residueWithoutAnomericOxygen.getAtoms());
-        std::string anomerNumber = std::to_string(anomer->getNumberFromName());
-        std::vector<Atom*> anomerNeighbors = anomer->getNeighbors();
+        size_t anomer = guessAnomericAtomByInternalNeighbors(data, residueWithoutAnomericOxygen);
+        std::string anomerNumber = std::to_string(getAtomNumberFromName(data.atoms.name[anomer]));
+        std::vector<size_t> anomerNeighbors = prep::atomNeighbors(data, anomer);
         std::cout << "Names and types of neighbors:" << std::endl;
-        for (auto& neighbor : anomerNeighbors)
+        for (size_t neighbor : anomerNeighbors)
         {
-            std::cout << neighbor->getName() << "_" << neighbor->getType() << std::endl;
+            std::cout << data.atoms.name[neighbor] << "_" << data.atoms.type[neighbor] << std::endl;
         }
-        // Lamda functions for the  std::find;
-        auto isTypeHydroxy = [](Atom*& a) { return (a->getType() == "Oh"); };
-        auto isTypeOMe = [](Atom*& a) { return (a->getType() == "Os" && a->getName() == "O"); };
+        auto isTypeHydroxy = [&](size_t n) { return (data.atoms.type[n] == "Oh"); };
+        auto isTypeOMe = [&](size_t n) { return (data.atoms.type[n] == "Os" && data.atoms.name[n] == "O"); };
         const auto anomericOxygen = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeHydroxy);
         const auto OMeOxygen = std::find_if(anomerNeighbors.begin(), anomerNeighbors.end(), isTypeOMe);
         if (anomericOxygen != anomerNeighbors.end())
         {
             std::cout << "Anomeric Oxygen Found\n";
-            removeHydroxyHydrogen(residueWithoutAnomericOxygen, anomerNumber);
+            removeHydroxyHydrogen(data, residueWithoutAnomericOxygen, anomerNumber);
             std::cout << "Copying" << std::endl;
             residueWithAnomericOxygen = residueWithoutAnomericOxygen;
             std::cout << "Deleting" << std::endl;
-            residueWithoutAnomericOxygen.deleteAtom(*anomericOxygen);
+            graph::removeNode(data.atomGraph, *anomericOxygen);
             std::cout << "Continuing" << std::endl;
         }
         else if (OMeOxygen != anomerNeighbors.end())
         {
             std::cout << "OMe Oxygen Found\n";
-            removeOMeMethyl(residueWithoutAnomericOxygen, (*OMeOxygen), anomerNumber);
+            removeOMeMethyl(data, residueWithoutAnomericOxygen, *OMeOxygen, anomerNumber);
             std::cout << "Copying" << std::endl;
             residueWithAnomericOxygen = residueWithoutAnomericOxygen;
-            std::cout << "Deleting " << (*OMeOxygen)->getName() << std::endl;
-            residueWithoutAnomericOxygen.deleteAtom(*OMeOxygen);
+            std::cout << "Deleting " << data.atoms.name[*OMeOxygen] << std::endl;
+            graph::removeNode(data.atomGraph, *OMeOxygen);
             std::cout << "Continuing" << std::endl;
         }
         else
         { // Ok then grow the anomeric oxygen for the residueWithAnomericOxygen
             std::cout << "No Anomeric Oxygen Found in Template\n";
-            anomer = guessAnomericAtomByInternalNeighbors(residueWithAnomericOxygen.getAtoms());
-            Coordinate newOxygenCoordinate =
-                coordinateOppositeToNeighborAverage(anomer->coordinate(), atomCoordinates(anomer->getNeighbors()), 1.4);
-            Atom* newAnomericOxygen = residueWithAnomericOxygen.addAtomToFront(
-                std::make_unique<Atom>("O" + anomerNumber, newOxygenCoordinate));
-            newAnomericOxygen->setCharge(-0.388);
-            newAnomericOxygen->setType("Os");
-            addBond(newAnomericOxygen, anomer);
+            anomer = guessAnomericAtomByInternalNeighbors(data, residueWithAnomericOxygen);
+            Coordinate newOxygenCoordinate = coordinateOppositeToNeighborAverage(
+                data.atoms.coordinate[anomer],
+                util::indicesToValues(data.atoms.coordinate, prep::atomNeighbors(data, anomer)),
+                1.4);
+
+            size_t newAnomericOxygen = prep::addAtom(data, residueWithAnomericOxygen);
+            data.atoms.name[newAnomericOxygen] = "O" + anomerNumber;
+            data.atoms.type[newAnomericOxygen] = "Os";
+            data.atoms.charge[newAnomericOxygen] = -0.388;
+            data.atoms.coordinate[newAnomericOxygen] = newOxygenCoordinate;
+            graph::addEdge(data.atomGraph, {newAnomericOxygen, anomer});
         }
         // Find all positions that can be substituted, ignore the anomer.
-        std::vector<std::string> atomNumbers = selectAllAtomsThatCanBeSubstituted(residueWithoutAnomericOxygen);
+        std::vector<std::string> atomNumbers = selectAllAtomsThatCanBeSubstituted(data, residueWithoutAnomericOxygen);
         // Extra stuff for getting Residue metadata for website that can be turned off:
         // std::ofstream outFileStream;
         // std::string fileName = "latest.pdb";
@@ -310,38 +419,32 @@ namespace gmml
         // writeResidueToPdb(outFileStream, starterResidue);
         auto residueInfoToString = [](const residueMetadata& a)
         { return a.isomer + "_" + a.resname + "_" + a.ringType + "_" + a.residueModifier + "_" + a.configuration; };
-        residueMetadata residueInfo = Glycam06PrepNameToDetails(starterResidue->getName());
+        residueMetadata residueInfo = Glycam06PrepNameToDetails(reference.residues.name[starterResidue]);
         std::cout << "Found name is: " << residueInfoToString(residueInfo) << "\n";
         std::cout << "Anomer: " << anomerNumber << "\n";
-        for (auto& atomNumber : atomNumbers)
-        {
-            std::cout << atomNumber << ",";
-        }
-        std::cout << "\n";
         // End Extra Stuff.
         // Create the combinations of the numbers
         std::vector<std::vector<std::string>> numberCombinations = getCombinations(atomNumbers);
         // Create a residue for each of the combinations, copying and modifying the original.
         for (auto& combination : numberCombinations)
         {
-            generateResidueCombination(glycamResidueCombinations, combination, residueWithoutAnomericOxygen);
+            result.push_back(generateResidueCombination(data, data, combination, residueWithoutAnomericOxygen));
             // ToDo Activate the below when we can handle combinations with anomeric positions.
             // combination.push_back(anomerNumber);
-            // generateResidueCombination(glycamResidueCombinations, combination, residueWithAnomericOxygen);
+            // generateResidueCombination(data, combination, residueWithAnomericOxygen);
         }
         // Handle the anomeric position separately. No combinations allowed with this position due to limitations with
         // residue naming system.
-        Residue* newResidue = glycamResidueCombinations.emplace_back(new Residue(residueWithAnomericOxygen));
-        std::string residueName = anomerNumber;
-        residueName += starterResidue->getName().substr(1);
-        newResidue->setName(residueName);
-        std::cout << "Added " << residueName << "\n";
-        // Write out the 0.. version:
-        newResidue = glycamResidueCombinations.emplace_back(new Residue(residueWithoutAnomericOxygen));
-        residueName = "0";
-        residueName += starterResidue->getName().substr(1);
-        newResidue->setName(residueName);
-        std::cout << "Added " << residueName << "\n";
-        return;
+        auto addSpecialCase = [&](size_t templateResidue, const std::string& prefix, const std::string& displayStr)
+        {
+            size_t newResidue = copyResidue(data, data, templateResidue);
+            std::string name = prefix + reference.residues.name[starterResidue].substr(1);
+            data.residues.name[newResidue] = name;
+            result.push_back({true, newResidue, prep::residueAtoms(data, newResidue), {}});
+            std::cout << "Added " << displayStr << " " << newResidue << ": " << name << "\n";
+        };
+        addSpecialCase(residueWithAnomericOxygen, anomerNumber, "with anomeric");
+        addSpecialCase(residueWithoutAnomericOxygen, "0", "without anomeric");
+        return result;
     }
 } // namespace gmml

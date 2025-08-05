@@ -38,57 +38,6 @@ namespace gmml
         return;
     }
 
-    std::vector<Atom*> findCycleAtoms(Atom* const starterAtom)
-    {
-        glygraph::Graph<Atom> atomGraph(starterAtom);
-        std::vector<std::pair<std::unordered_set<glygraph::Node<Atom>*>, std::unordered_set<glygraph::Edge<Atom>*>>>
-            g1Cycles = cycle_decomp::totalCycleDetect(atomGraph);
-        std::vector<Atom*> cycleAtoms;
-        for (std::pair<std::unordered_set<glygraph::Node<Atom>*>, std::unordered_set<glygraph::Edge<Atom>*>>
-                 currCyclePair : g1Cycles)
-        {
-            for (glygraph::Node<Atom>* currAtom : currCyclePair.first)
-            {
-                cycleAtoms.push_back(currAtom->getDerivedClass());
-            }
-        }
-        return cycleAtoms;
-    }
-
-    // For now it's the lowest numbered (e.g. C1 lower than C6) ring atom connected to the ring oxygen.
-    Atom* guessAnomericAtomByInternalNeighbors(const std::vector<Atom*> atoms)
-    {
-        if (atoms.empty())
-        {
-            throw std::runtime_error("Empty atom vector passed to guessAnomericAtomByInternalNeighbors");
-        }
-        std::vector<Atom*> cycleAtoms = findCycleAtoms(atoms.at(0));
-        Atom* cycleOxygen = nullptr;
-        for (auto& cycleAtom : cycleAtoms)
-        {
-            if (cycleAtom->getDerivedClass()->getElement() == "O")
-            {
-                cycleOxygen = cycleAtom->getDerivedClass();
-            }
-        }
-        if (cycleOxygen == nullptr)
-        {
-            throw std::runtime_error(
-                "Did not find a ring oxygen when trying to guess what the anomeric carbon is. Your "
-                "atom names, are likely, strange.");
-        }
-        std::vector<Atom*> anomerCandidates = cycleOxygen->getNeighbors();
-        // So deciding this isn't straightforward. For me use case of prep files this is fine. For reading form the PDB
-        // I want a meeting first to figure out what we really need. Using a lambda to sort the candidates so that C1
-        // appears before C2 etc.
-        std::sort(
-            anomerCandidates.begin(),
-            anomerCandidates.end(),
-            [](Atom*& a, Atom*& b) { return (a->getNumberFromName() < b->getNumberFromName()); });
-        Atom* bestOne = anomerCandidates.front();
-        return bestOne;
-    }
-
     Atom* selectNeighborNotInAtomVector(const Atom* atomWithNeighbors, std::vector<Atom*> queryAtoms)
     {
         for (auto& neighbor : atomWithNeighbors->getNeighbors())

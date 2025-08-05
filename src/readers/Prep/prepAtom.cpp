@@ -1,6 +1,8 @@
 #include "include/readers/Prep/prepAtom.hpp"
 
 #include "include/geometry/measurements.hpp" //get_cartesian_point_from_internal_coords()
+#include "include/graph/graphManipulation.hpp"
+#include "include/readers/Prep/prepFunctions.hpp"
 #include "include/util/casting.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
@@ -29,68 +31,81 @@ namespace gmml
                 return TopologicalType(index);
             }
 
-            std::vector<Atom*> findDihedralAtoms(Atom* initial)
+            std::vector<size_t> findDihedralAtoms(const PrepData& data, size_t index)
             {
-                std::vector<Atom*> result = {initial};
+                const std::vector<bool>& nodeAlive = data.atomGraph.nodeAlive;
+                std::vector<size_t> result = {index};
+                size_t lastId = index;
+                auto isParent = [&](const std::array<size_t, 2>& nodes)
+                { return (nodes[1] == lastId) && nodeAlive[nodes[0]] && nodeAlive[nodes[1]]; };
                 for (int currentDepth = 0; currentDepth < 3; currentDepth++)
                 {
-                    Atom* parent = result.back()->getParents().front(); // Go up the first parent only. Loops may create
-                                                                        // another parent, but they should be ignored.
+                    auto it = std::find_if(data.atomGraph.edgeNodes.begin(), data.atomGraph.edgeNodes.end(), isParent);
+                    size_t edgeId =
+                        it - data.atomGraph.edgeNodes.begin(); // Go up the first parent only. Loops may create
+                                                               // another parent, but they should be ignored.
+                    size_t parent = data.atomGraph.edgeNodes[edgeId][0];
                     result.push_back(parent);
+                    lastId = parent;
                 }
                 return result;
             }
         } // namespace
 
-        void initializePrepAtom(Atom* atom, PrepAtomProperties& properties, const std::string& line)
+        void initializePrepAtom(PrepData& data, size_t residueId, const std::string& line)
         {
+            AtomData& atoms = data.atoms;
+            size_t atomId = addAtom(data, residueId);
             std::stringstream ss(line);
-            atom->setNumber(util::extractFromStream(ss, int()));
-            atom->setName(util::extractFromStream(ss, std::string()));
-            atom->setType(util::extractFromStream(ss, std::string()));
-            properties.topologicalType = extractAtomTopologicalType(ss);
-            properties.bondIndex = util::extractFromStream(ss, int());
-            properties.angleIndex = util::extractFromStream(ss, int());
-            properties.dihedralIndex = util::extractFromStream(ss, int());
-            properties.bondLength = util::extractFromStream(ss, double());
-            properties.angle = util::extractFromStream(ss, double());
-            properties.dihedral = util::extractFromStream(ss, double());
-            atom->setCharge(util::extractFromStream(ss, double()));
+
+            atoms.number[atomId] = util::extractFromStream(ss, uint());
+            atoms.name[atomId] = util::extractFromStream(ss, std::string());
+            atoms.type[atomId] = util::extractFromStream(ss, std::string());
+            atoms.topologicalType[atomId] = extractAtomTopologicalType(ss);
+            atoms.bondIndex[atomId] = util::extractFromStream(ss, uint());
+            atoms.angleIndex[atomId] = util::extractFromStream(ss, uint());
+            atoms.dihedralIndex[atomId] = util::extractFromStream(ss, uint());
+            atoms.bondLength[atomId] = util::extractFromStream(ss, double());
+            atoms.angle[atomId] = util::extractFromStream(ss, double());
+            atoms.dihedral[atomId] = util::extractFromStream(ss, double());
+            atoms.charge[atomId] = util::extractFromStream(ss, double());
+            atoms.coordinate[atomId] = {0, 0, 0};
         }
 
-        void determine3dCoordinate(Atom* atom, const PrepAtomProperties& properties)
+        Coordinate determine3dCoordinate(PrepData& data, size_t index)
         {
-            std::vector<Atom*> foundAtoms = findDihedralAtoms(atom);
-            atom->setCoordinate(calculateCoordinateFromInternalCoords(
-                foundAtoms.at(3)->coordinate(),
-                foundAtoms.at(2)->coordinate(),
-                foundAtoms.at(1)->coordinate(),
-                properties.angle,
-                properties.dihedral,
-                properties.bondLength));
+            std::vector<size_t> foundAtoms = findDihedralAtoms(data, index);
+            return calculateCoordinateFromInternalCoords(
+                data.atoms.coordinate[foundAtoms[3]],
+                data.atoms.coordinate[foundAtoms[2]],
+                data.atoms.coordinate[foundAtoms[1]],
+                data.atoms.angle[index],
+                data.atoms.dihedral[index],
+                data.atoms.bondLength[index]);
         }
 
-        void print(Atom* atom, const PrepAtomProperties& properties, std::ostream& out)
+        void printAtom(const PrepData& data, size_t index, std::ostream& out)
         {
-            out << std::setw(3) << atom->getNumber() << std::setw(6) << atom->getName() << std::setw(6)
-                << atom->getType() << std::setw(3) << topologicalTypeNames[properties.topologicalType] << std::setw(4)
-                << properties.bondIndex << std::setw(4) << properties.angleIndex << std::setw(4)
-                << properties.dihedralIndex << std::setw(10) << properties.bondLength << std::setw(10)
-                << properties.angle << std::setw(10) << properties.dihedral << std::setw(10) << atom->getCharge();
+            const AtomData& atoms = data.atoms;
+            out << std::setw(3) << atoms.number[index] << std::setw(6) << atoms.name[index] << std::setw(6)
+                << atoms.type[index] << std::setw(3) << topologicalTypeNames[atoms.topologicalType[index]]
+                << std::setw(4) << atoms.bondIndex[index] << std::setw(4) << atoms.angleIndex[index] << std::setw(4)
+                << atoms.dihedralIndex[index] << std::setw(10) << atoms.bondLength[index] << std::setw(10)
+                << atoms.angle[index] << std::setw(10) << atoms.dihedral[index] << std::setw(10) << atoms.charge[index];
         }
 
-        void write(Atom* atom, const PrepAtomProperties& properties, std::ostream& stream)
+        void writeAtom(const PrepData& data, size_t index, std::ostream& stream)
         {
-            stream << std::right << std::setw(2) << atom->getNumber() << " " << std::left << std::setw(4)
-                   << atom->getName() << " " << std::left << std::setw(3) << atom->getType() << " " << std::setw(1)
-                   << topologicalTypeNames[properties.topologicalType] << " " << std::right << std::setw(2)
-                   << properties.bondIndex << " " << std::right << std::setw(2) << properties.angleIndex << " "
-                   << std::right << std::setw(2) << properties.dihedralIndex << " ";
-            stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << properties.bondLength << " ";
-            stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << properties.angle << " ";
-            stream << std::right << std::setw(8) << std::fixed << std::setprecision(3) << properties.dihedral;
-            stream << "    " << std::right << std::setw(8) << std::fixed << std::setprecision(4) << atom->getCharge()
-                   << std::endl;
+            const AtomData& atoms = data.atoms;
+            stream << std::right << std::setw(2) << atoms.number[index] << " " << std::left << std::setw(4)
+                   << atoms.name[index] << " " << std::left << std::setw(3) << atoms.type[index] << " " << std::setw(1)
+                   << topologicalTypeNames[atoms.topologicalType[index]] << " " << std::right << std::setw(2)
+                   << atoms.bondIndex[index] << " " << std::right << std::setw(2) << atoms.angleIndex[index] << " "
+                   << std::right << std::setw(2) << atoms.dihedralIndex[index] << " " << std::right << std::setw(8)
+                   << std::fixed << std::setprecision(3) << atoms.bondLength[index] << " " << std::right << std::setw(8)
+                   << std::fixed << std::setprecision(3) << atoms.angle[index] << " " << std::right << std::setw(8)
+                   << std::fixed << std::setprecision(3) << atoms.dihedral[index] << "    " << std::right
+                   << std::setw(8) << std::fixed << std::setprecision(4) << atoms.charge[index] << std::endl;
         }
     } // namespace prep
 } // namespace gmml

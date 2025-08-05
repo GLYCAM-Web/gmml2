@@ -1,8 +1,8 @@
 #ifndef INCLUDE_READERS_PREP_PREPRESIDUE_HPP
 #define INCLUDE_READERS_PREP_PREPRESIDUE_HPP
 
-#include "include/CentralDataStructure/residue.hpp"
 #include "include/readers/Prep/prepAtom.hpp"
+#include "include/readers/Prep/prepDataTypes.hpp"
 
 #include <istream>
 #include <ostream>
@@ -13,119 +13,17 @@ namespace gmml
 {
     namespace prep
     {
-        enum CoordinateType
-        {
-            kINT,
-            kXYZ
-        };
+        void initializePrepResidue(PrepData& data, std::istream& in_file, std::string& line);
 
-        static const std::vector<std::string> coordinateTypeNames {"INT", "XYZ"};
+        void generate3dStructure(PrepData& data, size_t index);
+        void deleteDummyAtoms(PrepData& data, size_t index);
+        void setConnectivities(PrepData& data, size_t index);
+        std::vector<std::string> getAtomNames(PrepData& data, size_t residueId);
+        std::vector<std::string> getHeavyAtomNames(PrepData& data, size_t residueId);
+        double calculatePrepResidueCharge(PrepData& data, size_t residueId);
 
-        enum OutputFormat
-        {
-            kFormatted = 0,
-            kBinary = 1
-        };
-
-        enum GeometryType
-        {
-            kGeometryCorrect,
-            kGeometryChange
-        };
-
-        static const std::vector<std::string> geometryTypesNames {"CORRECT", "CHANGE"};
-
-        enum DummyAtomPosition
-        {
-            kPositionAll,
-            kPositionBeg
-        };
-
-        static const std::vector<std::string> dummyAtomPositionNames {"ALL", "BEG"};
-
-        enum DummyAtomOmission
-        {
-            kOmit,
-            kNomit
-        };
-
-        static const std::vector<std::string> dummyAtomOmissionNames {"OMIT", "NOMIT"};
-
-        enum SectionType
-        {
-            kSectionLoop,
-            kSectionImproper,
-            kSectionDone,
-            kSectionBlank,
-            kSectionOther
-        };
-
-        typedef std::vector<std::string> Dihedral; // This looks poorly named
-        typedef std::vector<Dihedral> DihedralVector;
-
-        struct PrepResidueProperties
-        {
-            std::vector<PrepAtomProperties> atomProperties;
-            std::string title = ""; //!< Residue title; fill by the first line of each residue section of the file
-            CoordinateType coordinateType = kINT;   //!< Coordinate type(INT, XYZ); fill by the 2nd column of the
-                                                    //!< third line of each residue section of the file
-            OutputFormat outputFormat = kFormatted; //!< Output format(Binary=1,Formatted=1); fill by the third
-                                                    //!< column of the 3rd line of each residue section of the file
-            GeometryType geometryType = kGeometryCorrect; //!< Geometry type(CORRECT, CHANGE); fill by the first column
-                                                          //!< of the 4th line of each residue section of the file
-            DummyAtomOmission dummyAtomOmission = kOmit;  //!< Dummy atom omission(OMIT, NOMIT); fill by the 3rd column
-                                                          //!< of the 4th line of each residue section of the file
-            std::string dummyAtomType =
-                "DU"; //!< Dummy atom type; fill by the 4th column of the 4th line of each residue section of the file
-            DummyAtomPosition dummyAtomPosition =
-                kPositionBeg; //!< Dummy atom position(ALL, BEG); fill by the 5th column
-                              //!< of the 4th line of each residue section of the file
-            double charge =
-                0.0; //!< Total charge of the residue; fill by the 5th line of each residue section of the file
-            DihedralVector improperDihedrals; //!< Improper dihedrals; fill by all lines between IMPROPER title in each
-                                              //!< residue section of the file and a blank line in that section
-            std::vector<std::pair<std::string, std::string>>
-                loops; //!< Loops; fill by all lines between LOOP title in each residue section of the file and a blank
-                       //!< line in that section
-                       //	!< End of each residue section gets marked by DONE
-                       //	! \example
-                       //	 * A Sample of residue section in a prep file:
-                       //
-                       //            ROH for aglycon
-                       //
-                       //            ROH    INT 0
-                       //            CORRECT OMIT DU BEG
-                       //            -0.194
-                       //             1 DUMM DU  M  0 -1 -2  0.000     0.0       0.0     0.0
-                       //             2 DUMM DU  M  1  0 -1  1.000     0.0       0.0     0.0
-                       //             3 DUMM DU  M  2  1  0  1.000    90.0       0.0     0.0
-                       //             4 HO1  HO  M  3  2  1  1.000    90.0     180.0     0.445
-                       //             5 O1   OH  M  4  3  2  0.960   107.0     180.0    -0.639
-                       //
-                       //            DONE
-        };
-
-        void initializePrepResidue(
-            Residue* residue, PrepResidueProperties& properties, std::istream& in_file, std::string& line);
-
-        void generate3dStructure(Residue* residue, PrepResidueProperties& properties);
-        void deleteDummyAtoms(Residue* residue, PrepResidueProperties& properties);
-        void setConnectivities(Residue* residue, const PrepResidueProperties& properties);
-        std::vector<std::string> getAtomNames(Residue* residue);
-        std::vector<std::string> getHeavyAtomNames(Residue* residue);
-        double calculatePrepResidueCharge(Residue* residue);
-
-        CoordinateType extractResidueCoordinateType(std::istream& ss);
-        OutputFormat extractResidueOutputFormat(std::istream& ss);
-        GeometryType extractResidueGeometryType(std::istream& ss);
-        DummyAtomOmission extractResidueDummyAtomOmission(std::istream& ss);
-        DummyAtomPosition extractResidueDummyAtomPosition(std::istream& ss);
-        SectionType extractSectionType(std::string& line);
-        std::vector<std::pair<std::string, std::string>> extractLoops(std::istream& in_file);
-        DihedralVector extractImproperDihedral(std::istream& in_file);
-
-        std::string toString(Residue* residue, const PrepResidueProperties& properties);
-        void write(Residue* residue, const PrepResidueProperties& properties, std::ostream& stream);
+        std::string residueToString(const PrepData& data, size_t index);
+        void writeResidue(const PrepData& data, size_t index, std::ostream& stream);
     } // namespace prep
 } // namespace gmml
 

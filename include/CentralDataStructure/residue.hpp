@@ -53,8 +53,6 @@ namespace gmml
         inline void setName(const std::string& s) { name_ = s; }
 
         Atom* addAtom(std::unique_ptr<Atom> myAtom);
-        Atom* addAtomToFront(std::unique_ptr<Atom> myAtom);
-        bool moveAtomToLastPosition(const Atom* atom);
         bool deleteAtom(const Atom* atom);
 
         inline void SetType(ResidueType type) { type_ = type; }
