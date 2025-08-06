@@ -1,4 +1,4 @@
-#include "include/sequence/graphViz.hpp"
+#include "include/fileType/dot/graphViz.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/sequence/sequencePrinter.hpp"
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
         baseDir = "";
     }
 
-    sequence::GraphVizDotConfig config(baseDir, SNFGDir, filename);
+    dot::Config config {baseDir, SNFGDir, filename};
 
     printGraphViz(config, instantiate(parseSequence(sequence)));
     return 0;

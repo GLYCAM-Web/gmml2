@@ -1,6 +1,6 @@
 #include "include/carbohydrate/carbohydrate.hpp"
 #include "include/carbohydrate/parameterManager.hpp"
-#include "include/sequence/graphViz.hpp"
+#include "include/fileType/dot/graphViz.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/sequence/sequencePrinter.hpp"
@@ -183,7 +183,7 @@ int main(int argc, char** argv)
                 std::vector<ResidueLinkage> linkages;
                 initializeCarbohydrate(carbohydrate, linkages, parameterManager, elementRadii, sequenceData);
                 generate3DStructureFiles(carbohydrate, outputDir, line.id, headerLines);
-                GraphVizDotConfig config(dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot");
+                dot::Config config {dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot"};
                 printGraphViz(config, instantiate(parseSequence(line.sequence)));
             }
             catch (const std::runtime_error& error)

@@ -1,7 +1,7 @@
 #include "include/sequence/sequencePrinter.hpp"
 
+#include "include/fileType/dot/graphViz.hpp"
 #include "include/graph/graphManipulation.hpp"
-#include "include/sequence/graphViz.hpp"
 #include "include/sequence/sequenceGraph.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceTypes.hpp"
@@ -338,22 +338,22 @@ namespace gmml
             return ss.str();
         }
 
-        std::string printGraphViz(GraphVizDotConfig& configs, const SequenceData& sequence)
+        std::string printGraphViz(dot::Config& configs, const SequenceData& sequence)
         {
             std::vector<std::string> derivatives = sequenceDerivatives(sequence);
             std::vector<std::string> monosaccharideNames = sequenceMonosaccharideNames(sequence);
             graph::Graph graph = condensedSequenceGraph(sequence);
 
-            std::vector<GraphVizResidueNode> nodes;
+            std::vector<dot::Node> nodes;
             nodes.reserve(nodeCount(graph));
-            std::vector<GraphVizLinkage> linkages;
+            std::vector<dot::Edge> linkages;
             linkages.reserve(edgeCount(graph));
 
             for (size_t n = 0; n < nodeCount(graph); n++)
             {
                 size_t index = sourceNodeIndex(graph, n);
                 std::string& monosaccharideName = monosaccharideNames[index];
-                GraphVizImage image =
+                dot::Image image =
                     findImage(configs, monosaccharideName, (sequence.residues.ringType[index] == "f") ? "f" : "");
                 nodes.push_back({n, image, monosaccharideName, derivatives[index]});
             }
@@ -364,9 +364,8 @@ namespace gmml
                 size_t parent = adj[0];
                 size_t child = adj[1];
                 size_t childIndex = sourceNodeIndex(graph, child);
-                std::string label =
-                    (configs.show_config_labels_ ? sequence.residues.configuration[childIndex] : "") +
-                    (configs.show_position_labels_ ? edgeLinkage(sequence, graph.edges.indices[n]) : "");
+                std::string label = (configs.configLabels ? sequence.residues.configuration[childIndex] : "") +
+                                    (configs.positionLabels ? edgeLinkage(sequence, graph.edges.indices[n]) : "");
                 linkages.push_back({
                     {child, parent},
                     label
@@ -374,7 +373,7 @@ namespace gmml
             }
 
             std::stringstream ss;
-            ss << "graph G {graph [splines=false dpi=" << configs.dpi_ << " outputorder=\"edgesfirst\"];\n";
+            ss << "graph G {graph [splines=false dpi=" << configs.dpi << " outputorder=\"edgesfirst\"];\n";
             ss << "node [shape=\"none\" fontname=DejaVuSans labelfontsize=12 ";
             ss << "label=\"none\" size=50 fixedsize=\"true\" scale=\"true\"];\n";
             ss << "edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];\n";
@@ -383,16 +382,16 @@ namespace gmml
             {
                 size_t nodeIndex = sourceNodeIndex(graph, n);
                 bool isAglycone = sequence.residues.type[nodeIndex] == ResidueType::Aglycone;
-                ss << (isAglycone ? graphVizAglyconeNode(nodes[n]) : graphVizSugarNode(nodes[n]));
+                ss << (isAglycone ? nodeBoxStyle(nodes[n]) : nodeImageStyle(nodes[n]));
             }
             for (auto& linkage : linkages)
             {
-                ss << graphVizLinkageLine(nodes, linkage);
+                ss << edgeStyle(nodes, linkage);
             }
             ss << "}\n";
             std::string str = ss.str();
             // Open and overwrite.
-            util::writeToFile(configs.file_name_, [&str](std::ostream& stream) { stream << str; });
+            util::writeToFile(configs.fileName, [&str](std::ostream& stream) { stream << str; });
             return str;
         }
     } // namespace sequence

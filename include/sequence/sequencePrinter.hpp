@@ -1,7 +1,7 @@
 #ifndef INCLUDE_SEQUENCE_SEQUENCEPRINTER_HPP
 #define INCLUDE_SEQUENCE_SEQUENCEPRINTER_HPP
 
-#include "include/sequence/graphViz.hpp"
+#include "include/fileType/dot/graphViz.hpp"
 #include "include/sequence/sequenceTypes.hpp"
 #include "include/util/strings.hpp"
 
@@ -37,7 +37,7 @@ namespace gmml
         SequencePrintConfig defaultConfigLabelled();
         SequencePrintConfig iupacConfig();
         std::string printSequence(const SequencePrintConfig& config, const SequenceData& sequence);
-        std::string printGraphViz(GraphVizDotConfig& configs, const SequenceData& sequence);
+        std::string printGraphViz(dot::Config& configs, const SequenceData& sequence);
     } // namespace sequence
 } // namespace gmml
 

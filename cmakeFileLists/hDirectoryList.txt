@@ -5,6 +5,7 @@
 ./include/assembly
 ./include/carbohydrate
 ./include/fileType
+./include/fileType/dot
 ./include/fileType/lib
 ./include/fileType/off
 ./include/fileType/pdb

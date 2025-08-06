@@ -11,6 +11,7 @@
 ./src/CentralDataStructure/pdbWriter.cpp
 ./src/CentralDataStructure/residue.cpp
 ./src/CentralDataStructure/residueLinkage/linkageBranches.cpp
+./src/CentralDataStructure/residueLinkage/psiAngleHydrogen.cpp
 ./src/CentralDataStructure/residueLinkage/residueLinkageCreation.cpp
 ./src/CentralDataStructure/residueLinkage/residueLinkageFunctions.cpp
 ./src/assembly/assemblyBounds.cpp
@@ -21,7 +22,7 @@
 ./src/carbohydrate/dihedralAngleSearch.cpp
 ./src/carbohydrate/dihedralShape.cpp
 ./src/carbohydrate/parameterManager.cpp
-./src/carbohydrate/psiAngleHydrogen.cpp
+./src/fileType/dot/graphViz.cpp
 ./src/fileType/lib/libraryFile.cpp
 ./src/fileType/off/offFileWriter.cpp
 ./src/fileType/pdb/amberMdPrep.cpp
@@ -77,7 +78,6 @@
 ./src/programs/glycosylationSiteFinder.cpp
 ./src/programs/swig/carbohydrateBuilder.cpp
 ./src/programs/swig/sequence.cpp
-./src/sequence/graphViz.cpp
 ./src/sequence/parsedResidue.cpp
 ./src/sequence/sequenceGraph.cpp
 ./src/sequence/sequenceManipulation.cpp

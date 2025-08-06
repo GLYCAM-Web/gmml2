@@ -1,4 +1,4 @@
-#include "include/sequence/graphViz.hpp"
+#include "include/fileType/dot/graphViz.hpp"
 
 #include "include/util/filesystem.hpp"
 
@@ -8,26 +8,26 @@
 
 namespace gmml
 {
-    namespace sequence
+    namespace dot
     {
-        GraphVizImage findImage(const GraphVizDotConfig& configs, const std::string& name, const std::string& label)
+        Image findImage(const Config& configs, const std::string& name, const std::string& label)
         {
-            std::string imageFile = configs.svg_directory_path_ + "/" + name + ".svg";
-            if (util::pathExists(configs.base_path_ + imageFile))
+            std::string imageFile = configs.svgDirectory + "/" + name + ".svg";
+            if (util::pathExists(configs.basePath + imageFile))
             {
-                return GraphVizImage {true, imageFile, label};
+                return Image {true, imageFile, label};
             }
-            return GraphVizImage {false, "", ""};
+            return Image {false, "", ""};
         }
 
-        std::string graphVizAglyconeNode(const GraphVizResidueNode& node)
+        std::string nodeBoxStyle(const Node& node)
         {
             std::stringstream ss;
             ss << node.index << " [shape=box label=\"" << node.label << "\"]\n";
             return ss.str();
         }
 
-        std::string graphVizSugarNode(const GraphVizResidueNode& node)
+        std::string nodeImageStyle(const Node& node)
         {
             std::stringstream ss;
             ss << node.index;
@@ -52,7 +52,7 @@ namespace gmml
             return ss.str();
         }
 
-        std::string graphVizLinkageLine(const std::vector<GraphVizResidueNode>& nodes, const GraphVizLinkage& linkage)
+        std::string edgeStyle(const std::vector<Node>& nodes, const Edge& linkage)
         {
             std::array<std::string, 2> clip;
             for (size_t n = 0; n < 2; n++)
@@ -64,5 +64,5 @@ namespace gmml
                << linkage.label << "\" headclip=" << clip[1] << " tailclip=" << clip[0] << "];\n";
             return ss.str();
         }
-    } // namespace sequence
+    } // namespace dot
 } // namespace gmml
