@@ -81,6 +81,6 @@ namespace gmml
             return {path.absolute, take(pathSize - 2, path.constituents)};
         }
 
-        std::string SNFGSymbolsDir() { return "include/metadata/Sugars/SNFG_Symbol_Images"; }
+        std::string SNFGSymbolsDir() { return "SNFG"; }
     } // namespace util
 } // namespace gmml

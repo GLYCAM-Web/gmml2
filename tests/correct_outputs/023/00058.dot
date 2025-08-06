@@ -4,15 +4,15 @@ edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
 rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OH"]
 1 [shape=circle height="0.7" label="LIdoA(2SO)"];
-2 [shape=circle height="0.7" label="DGlcNS"];
+2 [label="" height="0.7" image="SNFG/DGlcNS.svg"];
 3 [shape=circle height="0.7" label="LIdoA(4C1)"];
-4 [shape=circle height="0.7" label="DGlcNS"];
+4 [label="" height="0.7" image="SNFG/DGlcNS.svg"];
 5 [shape=circle height="0.7" label="LIdoA(1C4)"];
 6 [shape=circle height="0.7" label="DGlcNP"];
 1--0 [label="a1-" headclip=true tailclip=true];
-2--1 [label="a1-4" headclip=true tailclip=true];
-3--2 [label="a1-4" headclip=true tailclip=true];
-4--3 [label="a1-4" headclip=true tailclip=true];
-5--4 [label="a1-4" headclip=true tailclip=true];
+2--1 [label="a1-4" headclip=true tailclip=false];
+3--2 [label="a1-4" headclip=false tailclip=true];
+4--3 [label="a1-4" headclip=true tailclip=false];
+5--4 [label="a1-4" headclip=false tailclip=true];
 6--5 [label="a1-4" headclip=true tailclip=true];
 }

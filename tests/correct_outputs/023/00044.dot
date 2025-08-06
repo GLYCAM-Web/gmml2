@@ -3,12 +3,12 @@ node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fix
 edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
 rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OME"]
-1 [shape=circle height="0.7" label="DKDN"];
-2 [shape=circle height="0.7" label="DKDN"];
-3 [shape=circle height="0.7" label="DKDN"];
-4 [shape=circle height="0.7" label="DKDN"];
-1--0 [label="b2-" headclip=true tailclip=true];
-2--1 [label="b2-7" headclip=true tailclip=true];
-3--2 [label="a2-9" headclip=true tailclip=true];
-4--3 [label="a2-8" headclip=true tailclip=true];
+1 [label="" height="0.7" image="SNFG/DKDN.svg"];
+2 [label="" height="0.7" image="SNFG/DKDN.svg"];
+3 [label="" height="0.7" image="SNFG/DKDN.svg"];
+4 [label="" height="0.7" image="SNFG/DKDN.svg"];
+1--0 [label="b2-" headclip=true tailclip=false];
+2--1 [label="b2-7" headclip=false tailclip=false];
+3--2 [label="a2-9" headclip=false tailclip=false];
+4--3 [label="a2-8" headclip=false tailclip=false];
 }

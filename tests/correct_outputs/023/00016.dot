@@ -3,8 +3,8 @@ node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fix
 edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
 rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OME"]
-1 [shape=circle height="0.7" label="DFru"];
-2 [shape=circle height="0.7" label="LFuc"];
-1--0 [label="b2-" headclip=true tailclip=true];
-2--1 [label="a1-1" headclip=true tailclip=true];
+1 [label="f" height="0.7" image="SNFG/DFru.svg"];
+2 [label="" height="0.7" image="SNFG/LFuc.svg"];
+1--0 [label="b2-" headclip=true tailclip=false];
+2--1 [label="a1-1" headclip=false tailclip=false];
 }

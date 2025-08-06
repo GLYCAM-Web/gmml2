@@ -3,22 +3,22 @@ node [shape="none" fontname=DejaVuSans labelfontsize=12 label="none" size=50 fix
 edge [labelfontsize=12 fontname=DejaVuSans labeldistance=1.2 labelangle=320.0];
 rankdir=LR nodesep="0.05" ranksep="0.8";
 0 [shape=box label="OH"]
-1 [shape=circle height="0.7" label="DNeu5Ac"];
+1 [label="" height="0.7" image="SNFG/DNeu5Ac.svg"];
 2 [shape=circle height="0.7" label="DAAT"];
-3 [shape=circle height="0.7" label="DGal"];
-4 [shape=circle height="0.7" label="DNeu5Ac"];
+3 [label="" height="0.7" image="SNFG/DGal.svg"];
+4 [label="" height="0.7" image="SNFG/DNeu5Ac.svg"];
 5 [shape=circle height="0.7" label="DAAT"];
-6 [shape=circle height="0.7" label="DGal"];
-7 [shape=circle height="0.7" label="DNeu5Ac"];
+6 [label="" height="0.7" image="SNFG/DGal.svg"];
+7 [label="" height="0.7" image="SNFG/DNeu5Ac.svg"];
 8 [shape=circle height="0.7" label="DAAT"];
-9 [shape=circle height="0.7" label="DGal"];
-1--0 [label="a2-" headclip=true tailclip=true];
-2--1 [label="a1-4" headclip=true tailclip=true];
-3--2 [label="b1-3" headclip=true tailclip=true];
-4--3 [label="a2-4" headclip=true tailclip=true];
-5--4 [label="a1-4" headclip=true tailclip=true];
-6--5 [label="b1-3" headclip=true tailclip=true];
-7--6 [label="a2-4" headclip=true tailclip=true];
-8--7 [label="a1-4" headclip=true tailclip=true];
-9--8 [label="b1-3" headclip=true tailclip=true];
+9 [label="" height="0.7" image="SNFG/DGal.svg"];
+1--0 [label="a2-" headclip=true tailclip=false];
+2--1 [label="a1-4" headclip=false tailclip=true];
+3--2 [label="b1-3" headclip=true tailclip=false];
+4--3 [label="a2-4" headclip=false tailclip=false];
+5--4 [label="a1-4" headclip=false tailclip=true];
+6--5 [label="b1-3" headclip=true tailclip=false];
+7--6 [label="a2-4" headclip=false tailclip=false];
+8--7 [label="a1-4" headclip=false tailclip=true];
+9--8 [label="b1-3" headclip=true tailclip=false];
 }
