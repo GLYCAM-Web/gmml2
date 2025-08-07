@@ -38,7 +38,6 @@ namespace gmml
                 const std::vector<size_t>& residueIndices,
                 const std::string& unitName)
             {
-                const std::vector<size_t> residueDataIndex = graph.residues.nodes.indices;
                 // WriteAtomSection
                 const std::string FLAG = "131072";
                 stream << "!entry." << unitName
@@ -47,7 +46,7 @@ namespace gmml
                        << "\n";
                 for (size_t graphIndex : residueIndices)
                 {
-                    size_t residueIndex = residueDataIndex[graphIndex];
+                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     uint atomNumberInResidue = 1;
                     for (size_t residueAtom : assembly::residueAtoms(graph, graphIndex))
                     {
@@ -105,7 +104,7 @@ namespace gmml
                 stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags"
                        << "\n";
                 std::vector<bool> residueIncluded = util::indicesToBools(
-                    residues.names.size(), util::indicesToValues(graph.residues.nodes.indices, residueIndices));
+                    residues.names.size(), util::indicesToValues(sourceIndices(graph.residues.nodes), residueIndices));
                 for (auto& bond : graph.atoms.edges.nodeAdjacencies)
                 {
                     size_t first = sourceNodeIndex(graph.atoms, bond[0]);
@@ -127,7 +126,7 @@ namespace gmml
                        << "\n";
                 for (size_t graphIndex : residueIndices)
                 {
-                    size_t residueIndex = residueDataIndex[graphIndex];
+                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     stream << " \"U\" 0 \"R\" " << residues.numbers[residueIndex] << "\n";
                     for (size_t residueAtom : assembly::residueAtoms(graph, graphIndex))
                     {
@@ -165,7 +164,7 @@ namespace gmml
                        << "\n";
                 for (size_t graphIndex : residueIndices)
                 {
-                    size_t residueIndex = residueDataIndex[graphIndex];
+                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     std::vector<size_t> connectedAtoms = residues.atomsConnectedToOtherResidues[residueIndex];
                     // Deal with residues that don't have a tail/head in reality:
                     if (connectedAtoms.size() == 1)
@@ -193,7 +192,7 @@ namespace gmml
                        << "\n";
                 for (size_t graphIndex : residueIndices)
                 {
-                    size_t residueIndex = residueDataIndex[graphIndex];
+                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     const std::vector<size_t>& atomIndices = assembly::residueAtoms(graph, graphIndex);
                     unsigned int childseq = atomIndices.size() + 1;
                     unsigned int startatomx = atoms.numbers[graph.residues.source.nodes[atomIndices.front()]];
@@ -234,15 +233,14 @@ namespace gmml
 
         void writeResiduesIndividually(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data)
         { // For writing each residue separately
-            std::vector<size_t> graphIndices = util::indexVector(graph.residues.nodes.indices);
             stream << "!!index array str"
                    << "\n";
-            for (size_t n : graph.residues.nodes.indices)
+            for (size_t n : sourceIndices(graph.residues.nodes))
             {
                 stream << " \"" << data.residues.names[n] << "\""
                        << "\n";
             }
-            for (size_t n : util::indexVector(graph.residues.nodes.indices))
+            for (size_t n : localIndices(graph.residues.nodes))
             {
                 writeUnit(
                     stream,
@@ -251,7 +249,7 @@ namespace gmml
                     data.residues,
                     data.atoms,
                     {n},
-                    data.residues.names[graph.residues.nodes.indices[n]]);
+                    data.residues.names[sourceNodeIndex(graph.residues, n)]);
             }
         }
 

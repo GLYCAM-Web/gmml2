@@ -119,11 +119,14 @@ namespace gmml
 
         Database asData(const Graph& graph)
         {
-            std::vector<size_t> nodes = util::indexVector(graph.nodes.indices);
-            std::vector<bool> nodeAlive = util::indicesToValues(graph.source.nodeAlive, graph.nodes.indices);
-            std::vector<size_t> edges = util::indexVector(graph.edges.indices);
-            std::vector<bool> edgeAlive = util::indicesToValues(graph.source.edgeAlive, graph.edges.indices);
-            return {nodes, nodeAlive, edges, edgeAlive, graph.edges.nodeAdjacencies};
+            std::vector<bool> nodeAlive = util::indicesToValues(graph.source.nodeAlive, sourceIndices(graph.nodes));
+            std::vector<bool> edgeAlive = util::indicesToValues(graph.source.edgeAlive, sourceIndices(graph.edges));
+            return {
+                localIndices(graph.nodes),
+                nodeAlive,
+                localIndices(graph.edges),
+                edgeAlive,
+                graph.edges.nodeAdjacencies};
         }
 
         Graph selectedQuotientAliveOrNot(
@@ -162,8 +165,8 @@ namespace gmml
             std::vector<std::vector<size_t>> nodeNodes = adjacencies.first;
             std::vector<std::vector<size_t>> nodeEdges = adjacencies.second;
             return {
-                {nodes, nodeNodes, nodeEdges, constituents},
-                {edges, edgeNodes},
+                {util::indexVector(nodes), nodes, nodeNodes, nodeEdges, constituents},
+                {util::indexVector(edges), edges, edgeNodes},
                 graph
             };
         }

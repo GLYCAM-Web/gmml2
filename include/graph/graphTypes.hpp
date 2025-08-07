@@ -20,7 +20,8 @@ namespace gmml
 
         struct GraphNodes
         {
-            std::vector<size_t> indices;
+            std::vector<size_t> localIndices;
+            std::vector<size_t> sourceIndices;
             std::vector<std::vector<size_t>> nodeAdjacencies;
             std::vector<std::vector<size_t>> edgeAdjacencies;
             std::vector<std::vector<size_t>> constituents;
@@ -28,7 +29,8 @@ namespace gmml
 
         struct GraphEdges
         {
-            std::vector<size_t> indices;
+            std::vector<size_t> localIndices;
+            std::vector<size_t> sourceIndices;
             std::vector<std::array<size_t, 2>> nodeAdjacencies;
         };
 
@@ -43,11 +45,21 @@ namespace gmml
 
         inline size_t edgeCount(const Database& db) { return db.edges.size(); }
 
-        inline size_t nodeCount(const Graph& graph) { return graph.nodes.indices.size(); }
+        inline size_t nodeCount(const Graph& graph) { return graph.nodes.localIndices.size(); }
 
-        inline size_t edgeCount(const Graph& graph) { return graph.edges.indices.size(); }
+        inline size_t edgeCount(const Graph& graph) { return graph.edges.localIndices.size(); }
 
-        inline size_t sourceNodeIndex(const Graph& graph, size_t n) { return graph.nodes.indices[n]; }
+        inline const std::vector<size_t>& localIndices(const GraphNodes& nodes) { return nodes.localIndices; }
+
+        inline const std::vector<size_t>& sourceIndices(const GraphNodes& nodes) { return nodes.sourceIndices; }
+
+        inline const std::vector<size_t>& localIndices(const GraphEdges& edges) { return edges.localIndices; }
+
+        inline const std::vector<size_t>& sourceIndices(const GraphEdges& edges) { return edges.sourceIndices; }
+
+        inline size_t sourceNodeIndex(const Graph& graph, size_t n) { return graph.nodes.sourceIndices[n]; }
+
+        inline size_t sourceEdgeIndex(const Graph& graph, size_t n) { return graph.edges.sourceIndices[n]; }
     } // namespace graph
 } // namespace gmml
 

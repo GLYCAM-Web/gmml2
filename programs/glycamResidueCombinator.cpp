@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
     {
         if (residueActive[residue.residueId])
         {
-            size_t graphId = util::indexOf(graph.residues.nodes.indices, residue.residueId);
+            size_t graphId = util::indexOf(sourceIndices(graph.residues.nodes), residue.residueId);
             std::vector<size_t> atomIds = residue.atomIds;
             // tleap requires the tail atoms to be at the end, so we rearrange them before writing
             for (size_t k : residue.tail)

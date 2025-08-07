@@ -119,7 +119,7 @@ namespace gmml
         subgraphData.nodeAlive = util::vectorAnd(includedAtoms, atomSelected);
         assembly::Graph subgraph = createAssemblyGraph(graphData.indices, subgraphData);
         std::vector<std::array<size_t, 2>> connectionIndices =
-            util::indicesToValues(subgraph.residues.source.edgeNodes, subgraph.residues.edges.indices);
+            util::indicesToValues(subgraph.residues.source.edgeNodes, sourceIndices(subgraph.residues.edges));
         pdb::writeConectCards(stream, data.atoms.numbers, connectionIndices);
         pdb::theEnd(stream);
     }

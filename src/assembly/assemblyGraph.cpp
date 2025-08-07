@@ -53,7 +53,7 @@ namespace gmml
         {
             std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
             { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
-            std::vector<bool> selected = util::vectorMap(inMolecule, graph.atoms.nodes.indices);
+            std::vector<bool> selected = util::vectorMap(inMolecule, sourceIndices(graph.atoms.nodes));
             return util::boolsToIndices(selected);
         }
 

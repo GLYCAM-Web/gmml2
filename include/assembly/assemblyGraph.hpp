@@ -33,12 +33,12 @@ namespace gmml
 
         inline size_t residueEdgeToAtomEdgeIndex(const Graph& graph, size_t edgeId)
         {
-            return graph.residues.edges.indices[edgeId];
+            return sourceEdgeIndex(graph.residues, edgeId);
         }
 
         inline size_t moleculeEdgeToResidueEdgeIndex(const Graph& graph, size_t edgeId)
         {
-            return graph.molecules.edges.indices[edgeId];
+            return sourceEdgeIndex(graph.molecules, edgeId);
         }
 
         inline size_t moleculeEdgeToAtomEdgeIndex(const Graph& graph, size_t edgeId)

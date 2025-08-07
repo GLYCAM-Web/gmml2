@@ -365,7 +365,7 @@ namespace gmml
                 size_t child = adj[1];
                 size_t childIndex = sourceNodeIndex(graph, child);
                 std::string label = (configs.configLabels ? sequence.residues.configuration[childIndex] : "") +
-                                    (configs.positionLabels ? edgeLinkage(sequence, graph.edges.indices[n]) : "");
+                                    (configs.positionLabels ? edgeLinkage(sequence, sourceEdgeIndex(graph, n)) : "");
                 linkages.push_back({
                     {child, parent},
                     label
