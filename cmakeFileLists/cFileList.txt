@@ -17,6 +17,7 @@
 ./src/assembly/assemblyBounds.cpp
 ./src/assembly/assemblyGraph.cpp
 ./src/assembly/assemblyIndices.cpp
+./src/assembly/assemblyOverlap.cpp
 ./src/assembly/assemblySelection.cpp
 ./src/carbohydrate/carbohydrate.cpp
 ./src/carbohydrate/dihedralAngleSearch.cpp
@@ -84,7 +85,6 @@
 ./src/sequence/sequenceParser.cpp
 ./src/sequence/sequencePrinter.cpp
 ./src/sequence/sequenceUtil.cpp
-./src/structure/atomOverlaps.cpp
 ./src/util/arguments.cpp
 ./src/util/containers.cpp
 ./src/util/files.cpp

@@ -1,0 +1,63 @@
+#ifndef INCLUDE_ASSEMBLY_ASSEMBLYOVERLAP_HPP
+#define INCLUDE_ASSEMBLY_ASSEMBLYOVERLAP_HPP
+
+#include "include/assembly/assemblyTypes.hpp"
+#include "include/geometry/geometryTypes.hpp"
+#include "include/geometry/overlap.hpp"
+#include "include/metadata/elements.hpp"
+#include "include/util/containerTypes.hpp"
+
+#include <utility>
+#include <vector>
+
+namespace gmml
+{
+    namespace assembly
+    {
+        void insertIndicesOfIntersection(
+            std::vector<size_t>& result,
+            double overlapTolerance,
+            const Sphere& sphere,
+            const std::vector<Sphere>& coords,
+            const std::vector<size_t>& indices);
+
+        std::vector<size_t> intersectingIndices(
+            double overlapTolerance,
+            const Sphere& sphere,
+            const std::vector<Sphere>& coords,
+            const std::vector<size_t>& indices);
+
+        void addResidueOverlaps(
+            std::vector<double>& result,
+            const PotentialTable& potential,
+            double overlapTolerance,
+            const Graph& graph,
+            const Bounds& bounds,
+            const Selection& selectionA,
+            const Selection& selectionB,
+            const std::vector<Element>& atomElements,
+            const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge,
+            size_t residueA,
+            size_t residueB);
+
+        std::vector<double> overlapsBetweenSelections(
+            const PotentialTable& potential,
+            double overlapTolerance,
+            const Graph& graph,
+            const Bounds& bounds,
+            const Selection& selectionA,
+            const Selection& selectionB,
+            const std::vector<Element>& atomElements,
+            const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge);
+
+        std::vector<double> overlapsWithinSelection(
+            const PotentialTable& potential,
+            double overlapTolerance,
+            const Graph& graph,
+            const Bounds& bounds,
+            const Selection& selection,
+            const std::vector<Element>& atomElements,
+            const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge);
+    } // namespace assembly
+} // namespace gmml
+#endif

@@ -20,6 +20,5 @@
 ./include/programs/swig
 ./include/readers
 ./include/sequence
-./include/structure
 ./include/templateGraph
 ./include/util

@@ -2,6 +2,7 @@
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
@@ -12,7 +13,6 @@
 #include "include/geometry/rotationMatrix.hpp"
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/elements.hpp"
-#include "include/structure/atomOverlaps.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"

@@ -1,6 +1,7 @@
 #ifndef INCLUDE_CARBOHYDRATE_DIHEDRALANGLESEARCH_HPP
 #define INCLUDE_CARBOHYDRATE_DIHEDRALANGLESEARCH_HPP
 
+#include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
 #include "include/carbohydrate/dihedralShapeTypes.hpp"
@@ -9,7 +10,6 @@
 #include "include/geometry/overlap.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
-#include "include/structure/atomOverlaps.hpp"
 
 #include <array>
 #include <functional>
