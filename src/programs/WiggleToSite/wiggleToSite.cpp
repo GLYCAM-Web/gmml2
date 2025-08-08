@@ -202,12 +202,10 @@ namespace gmml
             superimpositionTarget->FindAtom("C5")};
         std::vector<Coordinate> superimposeMeCoordinates = atomCoordinates(superimposeMeAtoms);
         std::vector<Coordinate> superTargetCoordinates = atomCoordinates(superTargetAtoms);
-        Superimpose(
-            superimposeMeCoordinates,
-            superTargetCoordinates,
-            carbohydrateCoordinates); // "alsoMoving" are the carbohydrate Coordinates
-        setAtomCoordinates(superimposeMeAtoms, superimposeMeCoordinates);
-        setAtomCoordinates(superTargetAtoms, superTargetCoordinates);
+        Eigen::Matrix3d movingMatrix = generateMatrix(superimposeMeCoordinates);
+        Eigen::Affine3d transform = affineTransform(generateMatrix(superTargetCoordinates), movingMatrix);
+        setAtomCoordinates(superimposeMeAtoms, matrixCoordinates(transform * movingMatrix));
+        carbohydrateCoordinates = matrixCoordinates(transform * generateMatrix(carbohydrateCoordinates));
     }
 
     std::vector<ResidueLinkage>& WiggleToSite::determineWiggleLinkages(

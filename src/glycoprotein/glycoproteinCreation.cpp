@@ -226,8 +226,10 @@ namespace gmml
                 }
                 // Get the 3 target atoms from protein residue.
                 std::vector<Coordinate> targetCoords;
-                for (auto name : aglyconeAtomNames)
+                targetCoords.reserve(3);
+                for (size_t n = 0; n < 3; n++)
                 {
+                    const std::string& name = aglyconeAtomNames[n];
                     size_t index = util::indexOf(proteinAtomNames, name);
                     if (index == proteinAtoms.size())
                     {
@@ -240,10 +242,10 @@ namespace gmml
                 std::vector<Atom*> glycanAtoms = attachment.glycan->mutableAtoms();
                 std::vector<Coordinate> aglyconeCoords = atomCoordinates(aglyconeAtoms);
                 std::vector<Coordinate> glycanCoords = atomCoordinates(glycanAtoms);
-                AffineTransform transform = affineTransform(targetCoords, aglyconeCoords);
-                std::vector<Coordinate> updatedAglycone = matrixCoordinates(transform.affine * transform.moving);
-                std::vector<Coordinate> updatedGlycan =
-                    matrixCoordinates(transform.affine * generateMatrix(glycanCoords));
+                Eigen::Matrix3d aglyconeMatrix = generateMatrix(aglyconeCoords);
+                Eigen::Affine3d transform = affineTransform(generateMatrix(targetCoords), aglyconeMatrix);
+                std::vector<Coordinate> updatedAglycone = matrixCoordinates(transform * aglyconeMatrix);
+                std::vector<Coordinate> updatedGlycan = matrixCoordinates(transform * generateMatrix(glycanCoords));
                 setAtomCoordinates(aglyconeAtoms, updatedAglycone);
                 setAtomCoordinates(glycanAtoms, updatedGlycan);
             }
