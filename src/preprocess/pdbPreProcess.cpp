@@ -1,10 +1,9 @@
-#include "include/fileType/pdb/pdbPreProcess.hpp"
+#include "include/preprocess/pdbPreProcess.hpp"
 
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/fileType/pdb/amberMdPrep.hpp" //all preprocessing should move to here.
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbChain.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
@@ -13,6 +12,7 @@
 #include "include/fileType/pdb/pdbResidueId.hpp"
 #include "include/geometry/geometryFunctions.hpp"
 #include "include/geometry/measurements.hpp"
+#include "include/preprocess/amberMdPrep.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
@@ -24,8 +24,10 @@
 
 namespace gmml
 {
-    namespace pdb
+    namespace preprocess
     {
+        using namespace pdb;
+
         namespace
         {
             void addResidueAtoms(
@@ -537,5 +539,5 @@ namespace gmml
             }
             return;
         }
-    } // namespace pdb
+    } // namespace preprocess
 } // namespace gmml

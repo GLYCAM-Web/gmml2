@@ -4,9 +4,9 @@
 #include "include/CentralDataStructure/offWriter.hpp"
 #include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/lib/libraryFile.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
 
@@ -19,7 +19,7 @@ int main()
     using namespace gmml;
     std::string libFilePath = "../dat/CurrentParams/leaprc.ff12SB_2014-04-24/amino12.lib";
     lib::LibraryData data = lib::loadLibraryData(libFilePath);
-    ParameterManager params {data};
+    preprocess::ParameterManager params {data};
     std::cout << "Finished loading libfile" << std::endl;
     Molecule molecule = Molecule();
     for (size_t n = 0; n < data.residues.size(); n++)

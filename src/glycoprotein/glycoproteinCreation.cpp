@@ -9,12 +9,12 @@
 #include "include/CentralDataStructure/residueLinkage/residueLinkageCreation.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/carbohydrate/carbohydrate.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/measurements.hpp"
 #include "include/geometry/superimposition.hpp"
 #include "include/metadata/glycoprotein.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/util/casting.hpp"
 #include "include/util/containerTypes.hpp"
@@ -321,7 +321,7 @@ namespace gmml
         void addGlycansToProtein(
             std::vector<Molecule*>& glycans,
             std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
-            const ParameterManager& parameterManager,
+            const preprocess::ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& metadataTable,
             const pdb::PdbData& pdbData,

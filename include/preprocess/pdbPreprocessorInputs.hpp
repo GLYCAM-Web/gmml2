@@ -1,5 +1,5 @@
-#ifndef INCLUDE_FILETYPE_PDB_PDBPREPROCESSORINPUTS_HPP
-#define INCLUDE_FILETYPE_PDB_PDBPREPROCESSORINPUTS_HPP
+#ifndef INCLUDE_PREPROCESS_PDBPREPROCESSORINPUTS_HPP
+#define INCLUDE_PREPROCESS_PDBPREPROCESSORINPUTS_HPP
 
 #include "include/fileType/pdb/pdbResidueId.hpp"
 
@@ -8,7 +8,7 @@
 
 namespace gmml
 {
-    namespace pdb
+    namespace preprocess
     {
         struct PreprocessorOptions
         {
@@ -62,9 +62,9 @@ namespace gmml
             std::vector<ChainTerminal> chainTerminals;
             std::vector<pdb::ResidueId> hisResidues;
             std::vector<DisulfideBond> cysBondResidues;
-            std::vector<ResidueId> nonNaturalProteinResidues;
+            std::vector<pdb::ResidueId> nonNaturalProteinResidues;
         };
-    } // namespace pdb
+    } // namespace preprocess
 } // namespace gmml
 
 #endif

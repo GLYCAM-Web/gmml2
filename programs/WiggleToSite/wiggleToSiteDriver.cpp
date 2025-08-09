@@ -1,4 +1,4 @@
-#include "include/carbohydrate/parameterManager.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/programs/WiggleToSite/inputs.hpp"
 #include "include/programs/WiggleToSite/wiggleToSite.hpp"
 #include "include/util/filesystem.hpp"
@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
     std::cout << "Reading input file complete\n" << std::flush;
     std::cout << inputStruct.Print();
     std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
-    const ParameterManager parameterManager = loadParameters(baseDir);
+    const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
     WiggleToSite wiggler(parameterManager, inputStruct);
     std::cout << "Program got to end ok" << std::endl;
     return 0;

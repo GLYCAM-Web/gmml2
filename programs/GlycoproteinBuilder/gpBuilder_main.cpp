@@ -3,15 +3,15 @@
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/atomicConnectivity.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
-#include "include/fileType/pdb/pdbPreProcess.hpp"
 #include "include/glycoprotein/cdsInterface.hpp"
 #include "include/glycoprotein/glycoproteinCreation.hpp"
 #include "include/glycoprotein/sidechains.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/sidechainRotamers.hpp"
+#include "include/preprocess/parameterManager.hpp"
+#include "include/preprocess/pdbPreProcess.hpp"
 #include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "include/programs/GlycoproteinBuilder/overlapResolution.hpp"
 #include "include/util/arguments.hpp"
@@ -165,12 +165,12 @@ int main(int argc, char* argv[])
         gpbuilder::GlycoproteinBuilderInputs settings = gpbuilder::readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
-        const ParameterManager parameterManager = loadParameters(baseDir);
+        const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
         pdb::PdbFile pdbFile = pdb::toPdbFile(settings.substrateFileName, pdb::modelsAsMolecules);
         if (settings.MDprep)
         {
             util::log(__LINE__, __FILE__, util::INF, "Performing MDPrep aka preprocessing.");
-            preProcess(pdbFile, parameterManager, pdb::defaultPreprocessorOptions);
+            preProcess(pdbFile, parameterManager, preprocess::defaultPreprocessorOptions);
         }
 
         util::SparseVector<double> elementRadii = vanDerWaalsRadii();

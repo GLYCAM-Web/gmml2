@@ -4,9 +4,9 @@
 #include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/util/containerTypes.hpp"
@@ -90,9 +90,10 @@ namespace gmml
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
-    carbohydrateBuilder::carbohydrateBuilder(const std::string& condensedSequence, const ParameterManager& param)
+    carbohydrateBuilder::carbohydrateBuilder(
+        const std::string& condensedSequence, const preprocess::ParameterManager& parameters)
 
-    try : parameters(param)
+    try
     {
         initializeCarbohydrate(
             carbohydrate,
@@ -128,7 +129,7 @@ namespace gmml
     }
 
     carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
-        : carbohydrateBuilder(condensedSequence, loadParameters(util::gmmlHomeDirPath)) {};
+        : carbohydrateBuilder(condensedSequence, preprocess::loadParameters(util::gmmlHomeDirPath)) {};
 
     void carbohydrateBuilder::GenerateSpecific3DStructure(
         SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory)

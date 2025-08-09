@@ -2,7 +2,6 @@
 
 #include "include/CentralDataStructure/assembly.hpp"
 #include "include/assembly/assemblyGraph.hpp"
-#include "include/fileType/pdb/amberMdPrep.hpp" //all preprocessing should move to here.
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbChain.hpp"
 #include "include/fileType/pdb/pdbData.hpp"

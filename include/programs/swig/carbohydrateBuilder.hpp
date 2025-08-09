@@ -3,8 +3,8 @@
 
 // This is becoming an interface to the carbohydrate class in gmml for Gems.
 #include "include/carbohydrate/carbohydrate.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/metadata/dihedralangledata.hpp"
+#include "include/preprocess/parameterManager.hpp"
 
 #include <string>
 #include <vector>
@@ -73,13 +73,12 @@ namespace gmml
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTORS                   //
         //////////////////////////////////////////////////////////
-        carbohydrateBuilder(const std::string& condensedSequence, const ParameterManager& param);
+        carbohydrateBuilder(const std::string& condensedSequence, const preprocess::ParameterManager& parameters);
         carbohydrateBuilder(std::string condensedSequence);
         std::string GetNumberOfShapes(bool likelyShapesOnly = false) const;
         LinkageOptionsVector GenerateUserOptionsDataStruct();
         void GenerateSpecific3DStructure(SingleRotamerInfoVector conformerInfo, std::string fileOutputDirectory);
 
-        ParameterManager parameters;
         Molecule carbohydrate;
         std::vector<ResidueLinkage> glycosidicLinkages;
     };

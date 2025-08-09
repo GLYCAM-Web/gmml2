@@ -1,6 +1,6 @@
 #include "include/carbohydrate/carbohydrate.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/dot/graphViz.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/sequenceManipulation.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/sequence/sequencePrinter.hpp"
@@ -170,7 +170,7 @@ int main(int argc, char** argv)
             }
         };
         util::readFileLineByLine(inputFile, processLine);
-        const ParameterManager parameterManager = loadParameters(baseDir);
+        const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
         const util::SparseVector<double> elementRadii = vanDerWaalsRadii();
         for (auto& line : lines)
         {

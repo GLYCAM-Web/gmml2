@@ -14,6 +14,7 @@
 ./include/glycoprotein
 ./include/graph
 ./include/metadata
+./include/preprocess
 ./include/programs
 ./include/programs/GlycoproteinBuilder
 ./include/programs/WiggleToSite

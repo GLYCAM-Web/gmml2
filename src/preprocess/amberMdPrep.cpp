@@ -1,4 +1,4 @@
-#include "include/fileType/pdb/amberMdPrep.hpp"
+#include "include/preprocess/amberMdPrep.hpp"
 
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
@@ -9,10 +9,10 @@
 
 namespace gmml
 {
-    namespace pdb
+    namespace preprocess
     {
         bool checkForNonNaturalProteinResidues(
-            const PdbData& data,
+            const pdb::PdbData& data,
             const std::vector<size_t>& unknownResidues,
             size_t cAtom,
             PreprocessorInformation& ppInfo)
@@ -29,5 +29,5 @@ namespace gmml
             }
             return false;
         }
-    } // namespace pdb
+    } // namespace preprocess
 } // namespace gmml

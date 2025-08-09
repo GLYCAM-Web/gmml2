@@ -8,7 +8,6 @@
 #include "include/assembly/assemblyOverlap.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/fileType/pdb/pdbModel.hpp"
@@ -16,6 +15,7 @@
 #include "include/geometry/superimposition.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/sequenceParser.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containerTypes.hpp"
@@ -60,7 +60,7 @@ namespace gmml
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
-    WiggleToSite::WiggleToSite(const ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
+    WiggleToSite::WiggleToSite(const preprocess::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
         : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}))
     {
         initializeCarbohydrate(

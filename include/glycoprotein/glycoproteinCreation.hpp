@@ -3,9 +3,9 @@
 
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/carbohydrate/carbohydrate.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/metadata/dihedralangledata.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "include/util/containerTypes.hpp"
 
@@ -30,7 +30,7 @@ namespace gmml
         void addGlycansToProtein(
             std::vector<Molecule*>& glycans,
             std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
-            const ParameterManager& parameterManager,
+            const preprocess::ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& metadataTable,
             const pdb::PdbData& pdbData,

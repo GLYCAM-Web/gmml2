@@ -4,10 +4,10 @@
 #include "include/CentralDataStructure/cdsTypes.hpp"
 #include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 #include "include/carbohydrate/carbohydrate.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/metadata/dihedralangledata.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/programs/WiggleToSite/inputs.hpp"
 #include "include/util/containerTypes.hpp"
 
@@ -19,7 +19,7 @@ namespace gmml
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        WiggleToSite(const ParameterManager& parameterManager, WiggleToSiteInputs inputStruct);
+        WiggleToSite(const preprocess::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct);
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////

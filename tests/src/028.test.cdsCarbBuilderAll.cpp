@@ -1,4 +1,4 @@
-#include "include/carbohydrate/parameterManager.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/programs/swig/carbohydrateBuilder.hpp"
 #include "include/programs/swig/sequence.hpp"
 #include "include/util/arguments.hpp"
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
     std::string programName = util::programName(argv);
     std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
-    const ParameterManager parameters = loadParameters(baseDir);
+    const preprocess::ParameterManager parameters = preprocess::loadParameters(baseDir);
 
     std::string outputFolderName = argv[3];
     struct stat info;

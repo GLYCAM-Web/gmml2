@@ -14,7 +14,6 @@
 #include "include/assembly/assemblySelection.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/measurements.hpp"
 #include "include/geometry/orientation.hpp"
@@ -23,6 +22,7 @@
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/glycam06Functions.hpp"
 #include "include/metadata/glycam06ResidueNameGenerator.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/parsedResidue.hpp"
 #include "include/sequence/sequenceTypes.hpp"
 #include "include/sequence/sequenceUtil.hpp"
@@ -468,7 +468,7 @@ namespace gmml
     void initializeCarbohydrate(
         Molecule& molecule,
         std::vector<ResidueLinkage>& glycosidicLinkages,
-        const ParameterManager& parameterManager,
+        const preprocess::ParameterManager& parameterManager,
         const util::SparseVector<double>& elementRadii,
         const sequence::SequenceData& sequence)
     {

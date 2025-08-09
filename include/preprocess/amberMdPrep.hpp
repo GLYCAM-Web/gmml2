@@ -1,8 +1,8 @@
-#ifndef INCLUDE_FILETYPE_PDB_AMBERMDPREP_HPP
-#define INCLUDE_FILETYPE_PDB_AMBERMDPREP_HPP
+#ifndef INCLUDE_PREPROCESS_AMBERMDPREP_HPP
+#define INCLUDE_PREPROCESS_AMBERMDPREP_HPP
 
 #include "include/fileType/pdb/pdbData.hpp"
-#include "include/fileType/pdb/pdbPreprocessorInputs.hpp"
+#include "include/preprocess/pdbPreprocessorInputs.hpp"
 
 #include <vector>
 
@@ -11,10 +11,10 @@
 // of ~May 2023
 namespace gmml
 {
-    namespace pdb
+    namespace preprocess
     {
         bool checkForNonNaturalProteinResidues(
-            const PdbData& data,
+            const pdb::PdbData& data,
             const std::vector<size_t>& unknownResidues,
             size_t cAtom,
             PreprocessorInformation& ppInfo);

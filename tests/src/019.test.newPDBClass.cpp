@@ -4,13 +4,13 @@
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
-#include "include/fileType/pdb/pdbPreProcess.hpp"
-#include "include/fileType/pdb/pdbPreprocessorInputs.hpp"
+#include "include/preprocess/parameterManager.hpp"
+#include "include/preprocess/pdbPreProcess.hpp"
+#include "include/preprocess/pdbPreprocessorInputs.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/filesystem.hpp"
@@ -35,10 +35,10 @@ int main(int argc, char* argv[])
     std::string outputFile = argv[2];
     pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
     std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
-    pdb::PreprocessorOptions options = pdb::defaultPreprocessorOptions; // Default values are good.
+    preprocess::PreprocessorOptions options = preprocess::defaultPreprocessorOptions; // Default values are good.
     std::cout << "Preprocessing\n";
-    const ParameterManager parameterManager = loadParameters(baseDir);
-    pdb::PreprocessorInformation ppInfo = preProcess(pdbFile, parameterManager, options);
+    const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
+    preprocess::PreprocessorInformation ppInfo = preProcess(pdbFile, parameterManager, options);
     std::vector<Assembly*> assemblies = getAssemblies(pdbFile);
     for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
     {
@@ -85,7 +85,8 @@ int main(int argc, char* argv[])
     auto residueIdStringChainFirst = [](const pdb::ResidueId& id)
     { return id.chainId + " | " + id.residueName + " | " + id.sequenceNumber + id.insertionCode; };
 
-    auto atomInfoString = [&](const pdb::AtomInfo& atom) { return atom.name + " | " + residueIdString(atom.residue); };
+    auto atomInfoString = [&](const preprocess::AtomInfo& atom)
+    { return atom.name + " | " + residueIdString(atom.residue); };
 
     // Just showing what's in the ppInfo and how to access it
     std::cout << "Unrecognized atoms:\n";

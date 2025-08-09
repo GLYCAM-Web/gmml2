@@ -22,11 +22,9 @@
 ./src/carbohydrate/carbohydrate.cpp
 ./src/carbohydrate/dihedralAngleSearch.cpp
 ./src/carbohydrate/dihedralShape.cpp
-./src/carbohydrate/parameterManager.cpp
 ./src/fileType/dot/graphViz.cpp
 ./src/fileType/lib/libraryFile.cpp
 ./src/fileType/off/offFileWriter.cpp
-./src/fileType/pdb/amberMdPrep.cpp
 ./src/fileType/pdb/atomicConnectivity.cpp
 ./src/fileType/pdb/bondByDistance.cpp
 ./src/fileType/pdb/pdbAtom.cpp
@@ -35,7 +33,6 @@
 ./src/fileType/pdb/pdbFileWriter.cpp
 ./src/fileType/pdb/pdbFunctions.cpp
 ./src/fileType/pdb/pdbModel.cpp
-./src/fileType/pdb/pdbPreProcess.cpp
 ./src/fileType/pdb/pdbRecords.cpp
 ./src/fileType/pdb/pdbResidue.cpp
 ./src/fileType/pdb/pdbResidueId.cpp
@@ -69,6 +66,9 @@
 ./src/metadata/glycam06ResidueNameGenerator.cpp
 ./src/metadata/glycoprotein.cpp
 ./src/metadata/sidechainRotamers.cpp
+./src/preprocess/amberMdPrep.cpp
+./src/preprocess/parameterManager.cpp
+./src/preprocess/pdbPreProcess.cpp
 ./src/programs/GlycoproteinBuilder/gpBuilderStats.cpp
 ./src/programs/GlycoproteinBuilder/gpInputStructs.cpp
 ./src/programs/GlycoproteinBuilder/overlapResolution.cpp

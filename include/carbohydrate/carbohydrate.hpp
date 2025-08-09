@@ -4,8 +4,8 @@
 #include "include/CentralDataStructure/molecule.hpp"
 #include "include/CentralDataStructure/residueLinkage/residueLinkageTypes.hpp"
 #include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
-#include "include/carbohydrate/parameterManager.hpp"
 #include "include/metadata/dihedralangledata.hpp"
+#include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/sequenceTypes.hpp"
 #include "include/util/containerTypes.hpp"
 
@@ -18,7 +18,7 @@ namespace gmml
     void initializeCarbohydrate(
         Molecule& molecule,
         std::vector<ResidueLinkage>& glycosidicLinkages,
-        const ParameterManager& parameterManager,
+        const preprocess::ParameterManager& parameterManager,
         const util::SparseVector<double>& elementRadii,
         const sequence::SequenceData& sequence);
 
