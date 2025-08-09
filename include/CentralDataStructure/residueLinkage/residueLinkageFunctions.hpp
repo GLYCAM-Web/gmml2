@@ -24,9 +24,9 @@ namespace gmml
         RotamerType rotamerType,
         const std::vector<std::vector<size_t>>& metadata);
 
-    DihedralCoordinates dihedralCoordinates(const RotatableDihedral& dihedral);
+    DihedralCoordinates dihedralCoordinates(const RotatableBond& bond);
     std::string print(const ResidueLink& link);
-    std::string print(const RotatableDihedral& dihedral);
+    std::string print(const RotatableBond& bond);
     std::string print(const DihedralAngleDataTable& table, const ResidueLinkage& linkage);
 } // namespace gmml
 #endif

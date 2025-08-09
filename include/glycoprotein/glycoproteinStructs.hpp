@@ -92,7 +92,7 @@ namespace gmml
             std::vector<bool> isGlycositeLinkage;
         };
 
-        struct RotatableDihedralIndices
+        struct RotatableBondIndices
         {
             std::array<size_t, 4> atoms;
             std::vector<size_t> movingAtoms;
@@ -101,13 +101,13 @@ namespace gmml
         struct ResidueLinkageIndices
         {
             size_t residueEdge;
-            std::vector<size_t> rotatableDihedrals;
+            std::vector<size_t> rotatableBonds;
         };
 
         struct AssemblyIndices
         {
             std::vector<size_t> proteinMolecules;
-            std::vector<RotatableDihedralIndices> rotatableDihedrals;
+            std::vector<RotatableBondIndices> rotatableBonds;
             std::vector<ResidueLinkageIndices> residueLinkages;
         };
 
@@ -130,7 +130,7 @@ namespace gmml
         struct MutableData
         {
             assembly::Bounds bounds;
-            std::vector<size_t> dihedralCurrentMetadata;
+            std::vector<size_t> rotatableBondCurrentMetadata;
             std::vector<bool> moleculeIncluded;
             std::vector<bool> residueSidechainMoved;
         };

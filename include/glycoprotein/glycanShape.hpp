@@ -13,15 +13,14 @@ namespace gmml
     namespace gpbuilder
     {
         std::array<Coordinate, 4> dihedralCoordinates(
-            const AssemblyData& data, const assembly::Bounds& bounds, size_t dihedralId);
-        AngleWithMetadata currentDihedralShape(
-            const AssemblyData& data, const MutableData& mutableData, size_t dihedralId);
+            const AssemblyData& data, const assembly::Bounds& bounds, size_t bondId);
+        AngleWithMetadata currentDihedralShape(const AssemblyData& data, const MutableData& mutableData, size_t bondId);
 
         void setDihedralAngle(
             const assembly::Graph& graph,
             const AssemblyData& data,
             MutableData& mutableData,
-            size_t dihedralId,
+            size_t bondId,
             const AngleWithMetadata& target);
 
         void setLinkageShape(

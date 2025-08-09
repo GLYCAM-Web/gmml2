@@ -85,9 +85,9 @@ namespace gmml
         return getNumberOfShapesBase(likelyMetadata, metadataTable, rotamerType, metadata);
     }
 
-    DihedralCoordinates dihedralCoordinates(const RotatableDihedral& dihedral)
+    DihedralCoordinates dihedralCoordinates(const RotatableBond& bond)
     {
-        auto& atoms = dihedral.atoms;
+        auto& atoms = bond.dihedralAtoms;
         return {atoms[3]->coordinate(), atoms[2]->coordinate(), atoms[1]->coordinate(), atoms[0]->coordinate()};
     }
 
@@ -100,12 +100,12 @@ namespace gmml
         return ss.str();
     }
 
-    std::string print(const RotatableDihedral& dihedral)
+    std::string print(const RotatableBond& bond)
     {
-        auto& atoms = dihedral.atoms;
+        auto& atoms = bond.dihedralAtoms;
         std::stringstream ss;
         ss << atoms[0]->getName() << ", " << atoms[1]->getName() << ", " << atoms[2]->getName() << ", "
-           << atoms[3]->getName() << ": " << angle(dihedralCoordinates(dihedral)) << ".\n";
+           << atoms[3]->getName() << ": " << angle(dihedralCoordinates(bond)) << ".\n";
         util::log(__LINE__, __FILE__, util::INF, ss.str());
         return ss.str();
     }
@@ -117,7 +117,7 @@ namespace gmml
            << ", NumberOfShapes: " << numberOfShapes(table, linkage.rotamerType, linkage.dihedralMetadata) << ", "
            << print(linkage.link);
         util::log(__LINE__, __FILE__, util::INF, ss.str());
-        for (auto& rotatableDihedral : linkage.rotatableDihedrals)
+        for (auto& rotatableDihedral : linkage.rotatableBonds)
         {
             ss << print(rotatableDihedral);
         }

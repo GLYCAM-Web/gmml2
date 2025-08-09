@@ -25,10 +25,10 @@ namespace gmml
 
     typedef std::array<Atom*, 4> DihedralAtoms;
 
-    struct RotatableDihedral
+    struct RotatableBond
     {
         // The four atoms that define the dihedral angle. The bond between atom2_ and atom3_ is what is rotated.
-        std::array<Atom*, 4> atoms;
+        std::array<Atom*, 4> dihedralAtoms;
         // A vector of pointers to the atoms that are connected to atom2_ and atom3_, and will be rotated when that bond
         // is rotated.
         std::vector<Atom*> movingAtoms;
@@ -38,7 +38,7 @@ namespace gmml
     struct ResidueLinkage
     {
         ResidueLink link;
-        std::vector<RotatableDihedral> rotatableDihedrals;
+        std::vector<RotatableBond> rotatableBonds;
         std::vector<std::vector<size_t>> dihedralMetadata;
         RotamerType rotamerType;
         bool isDerivative;

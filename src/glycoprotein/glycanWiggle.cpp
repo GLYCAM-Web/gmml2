@@ -29,26 +29,25 @@ namespace gmml
                 const AngleSearchSettings& settings,
                 const PermutationShapePreference& shapePreference)
             {
-                const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
+                const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
                 const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
                 //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
                 //  rotatable bond in Asn outwards
-                for (size_t rn = 0; rn < dihedrals.size(); rn++)
+                for (size_t rn = 0; rn < bonds.size(); rn++)
                 {
-                    size_t n = dihedrals.size() - 1 - rn;
-                    size_t dihedralId = dihedrals[n];
+                    size_t n = bonds.size() - 1 - rn;
+                    size_t bondId = bonds[n];
                     AngleSearchPreference preference = {
                         settings.deviation, shapePreference.angles[n], shapePreference.metadataOrder[n]};
-                    const std::array<Coordinate, 4> coordinates =
-                        dihedralCoordinates(data, mutableData.bounds, dihedralId);
-                    const std::vector<size_t>& movingAtoms = data.indices.rotatableDihedrals[dihedralId].movingAtoms;
+                    const std::array<Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData.bounds, bondId);
+                    const std::vector<size_t>& movingAtoms = data.indices.rotatableBonds[bondId].movingAtoms;
                     std::vector<bool> atomMoving = util::indicesToBools(graph.indices.atomCount, movingAtoms);
                     assembly::Selection moving =
                         assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
                     assembly::Selection nonMoving = assembly::intersection(
                         graph, selection, assembly::selectByAtoms(graph, util::vectorNot(atomMoving)));
 
-                    const std::vector<size_t>& metadata = dihedralMetadata[dihedralId];
+                    const std::vector<size_t>& metadata = dihedralMetadata[bondId];
                     auto searchOverlap = [&](const assembly::Bounds& bounds)
                     {
                         return overlapAboveThresholdSum(
@@ -75,7 +74,7 @@ namespace gmml
                         metadata,
                         preference);
                     mutableData.bounds = best.bounds;
-                    mutableData.dihedralCurrentMetadata[dihedralId] = best.angle.metadataIndex;
+                    mutableData.rotatableBondCurrentMetadata[bondId] = best.angle.metadataIndex;
                 }
             }
 
@@ -88,20 +87,20 @@ namespace gmml
                 const AngleSearchSettings& settings,
                 const ConformerShapePreference& shapePreference)
             {
-                const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
+                const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
                 const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
                 size_t numberOfMetadata = shapePreference.metadataOrder.size();
                 const std::vector<std::vector<double>>& preferenceAngles = shapePreference.angles;
                 const std::vector<bool>& isFrozen = shapePreference.isFrozen;
                 std::vector<assembly::Selection> dihedralMoving;
-                dihedralMoving.reserve(dihedrals.size());
+                dihedralMoving.reserve(bonds.size());
                 std::vector<assembly::Selection> dihedralNonMoving;
-                dihedralNonMoving.reserve(dihedrals.size());
-                for (size_t rn = 0; rn < dihedrals.size(); rn++)
+                dihedralNonMoving.reserve(bonds.size());
+                for (size_t rn = 0; rn < bonds.size(); rn++)
                 {
-                    size_t n = dihedrals.size() - 1 - rn;
-                    size_t dihedralId = dihedrals[n];
-                    const std::vector<size_t>& movingAtoms = data.indices.rotatableDihedrals[dihedralId].movingAtoms;
+                    size_t n = bonds.size() - 1 - rn;
+                    size_t bondId = bonds[n];
+                    const std::vector<size_t>& movingAtoms = data.indices.rotatableBonds[bondId].movingAtoms;
                     std::vector<bool> atomMoving = util::indicesToBools(graph.indices.atomCount, movingAtoms);
                     assembly::Selection moving =
                         assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
@@ -115,7 +114,7 @@ namespace gmml
                 bestResults.resize(numberOfMetadata + 1);
                 std::vector<assembly::Bounds> states;
                 states.resize(numberOfMetadata + 1);
-                std::vector<size_t> index = util::indexVector(dihedralMetadata[dihedrals[0]]);
+                std::vector<size_t> index = util::indexVector(dihedralMetadata[bonds[0]]);
                 assembly::Bounds initialBounds = mutableData.bounds;
                 auto runIterationWithMetadata = [&](size_t iteration, size_t metadataIndex)
                 {
@@ -123,15 +122,14 @@ namespace gmml
                     ConformerShapePreference pref {isFrozen, preferenceAngles, order};
                     //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
                     //  rotatable bond in Asn outwards
-                    for (size_t rn = 0; rn < dihedrals.size(); rn++)
+                    for (size_t rn = 0; rn < bonds.size(); rn++)
                     {
-                        size_t n = dihedrals.size() - 1 - rn;
-                        size_t dihedralId = dihedrals[n];
+                        size_t n = bonds.size() - 1 - rn;
+                        size_t bondId = bonds[n];
                         AngleSearchPreference preference = {
                             isFrozen[n] ? 0.0 : settings.deviation, preferenceAngles[n], order};
-                        DihedralCoordinates coordinates = dihedralCoordinates(data, mutableData.bounds, dihedralId);
-                        const std::vector<size_t>& movingAtoms =
-                            data.indices.rotatableDihedrals[dihedralId].movingAtoms;
+                        DihedralCoordinates coordinates = dihedralCoordinates(data, mutableData.bounds, bondId);
+                        const std::vector<size_t>& movingAtoms = data.indices.rotatableBonds[bondId].movingAtoms;
 
                         auto searchOverlap = [&](const assembly::Bounds& bounds)
                         {
@@ -156,7 +154,7 @@ namespace gmml
                             movingAtoms,
                             coordinates,
                             index,
-                            dihedralMetadata[dihedralId],
+                            dihedralMetadata[bondId],
                             preference);
                         mutableData.bounds = best.bounds;
                     }
@@ -174,7 +172,7 @@ namespace gmml
                     };
                     states[iteration] = mutableData.bounds;
                 };
-                size_t initialMetadata = mutableData.dihedralCurrentMetadata[dihedrals[0]];
+                size_t initialMetadata = mutableData.rotatableBondCurrentMetadata[bonds[0]];
                 // start by looking at current shape with current metadata
                 runIterationWithMetadata(0, initialMetadata);
                 // then look at the default shape for each metadata
@@ -189,9 +187,9 @@ namespace gmml
                 size_t bestIndex = bestOverlapResultIndex(bestResults);
                 size_t bestMetadata = bestResults[bestIndex].angle.metadataIndex;
                 mutableData.bounds = states[bestIndex];
-                for (size_t n = 0; n < dihedrals.size(); n++)
+                for (size_t n = 0; n < bonds.size(); n++)
                 {
-                    mutableData.dihedralCurrentMetadata[dihedrals[n]] = bestMetadata;
+                    mutableData.rotatableBondCurrentMetadata[bonds[n]] = bestMetadata;
                 }
             }
         } // namespace

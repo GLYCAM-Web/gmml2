@@ -15,20 +15,19 @@ namespace gmml
     namespace gpbuilder
     {
         std::array<Coordinate, 4> dihedralCoordinates(
-            const AssemblyData& data, const assembly::Bounds& bounds, size_t dihedralId)
+            const AssemblyData& data, const assembly::Bounds& bounds, size_t bondId)
         {
-            const std::array<size_t, 4>& atoms = data.indices.rotatableDihedrals[dihedralId].atoms;
+            const std::array<size_t, 4>& atoms = data.indices.rotatableBonds[bondId].atoms;
             auto coord = [&](size_t n) { return bounds.atoms[atoms[n]].center; };
             return {coord(3), coord(2), coord(1), coord(0)};
         }
 
-        AngleWithMetadata currentDihedralShape(
-            const AssemblyData& data, const MutableData& mutableData, size_t dihedralId)
+        AngleWithMetadata currentDihedralShape(const AssemblyData& data, const MutableData& mutableData, size_t bondId)
         {
-            size_t metadataIndex = mutableData.dihedralCurrentMetadata[dihedralId];
-            auto& currentMetadata = data.rotatableDihedralData.metadata[dihedralId][metadataIndex];
+            size_t metadataIndex = mutableData.rotatableBondCurrentMetadata[bondId];
+            auto& currentMetadata = data.rotatableDihedralData.metadata[bondId][metadataIndex];
             return {
-                constants::toDegrees(angle(dihedralCoordinates(data, mutableData.bounds, dihedralId))),
+                constants::toDegrees(angle(dihedralCoordinates(data, mutableData.bounds, bondId))),
                 data.dihedralAngleTable.entries[currentMetadata].default_angle,
                 metadataIndex};
         }
@@ -37,19 +36,19 @@ namespace gmml
             const assembly::Graph& graph,
             const AssemblyData& data,
             MutableData& mutableData,
-            size_t dihedralId,
+            size_t bondId,
             const AngleWithMetadata& target)
         {
-            mutableData.dihedralCurrentMetadata[dihedralId] = target.metadataIndex;
-            const RotatableDihedralIndices& dihedral = data.indices.rotatableDihedrals[dihedralId];
-            std::array<Coordinate, 4> dihedralCoords = dihedralCoordinates(data, mutableData.bounds, dihedralId);
+            mutableData.rotatableBondCurrentMetadata[bondId] = target.metadataIndex;
+            const RotatableBondIndices& bond = data.indices.rotatableBonds[bondId];
+            std::array<Coordinate, 4> dihedralCoords = dihedralCoordinates(data, mutableData.bounds, bondId);
             auto matrix = rotationTo(dihedralCoords, constants::toRadians(target.value));
-            for (size_t atom : dihedral.movingAtoms)
+            for (size_t atom : bond.movingAtoms)
             {
                 Coordinate& coord = mutableData.bounds.atoms[atom].center;
                 coord = matrix * coord;
             }
-            updateBoundsContainingAtoms(graph, mutableData.bounds, dihedral.movingAtoms);
+            updateBoundsContainingAtoms(graph, mutableData.bounds, bond.movingAtoms);
         }
 
         void setLinkageShape(
@@ -63,11 +62,11 @@ namespace gmml
             for (size_t n = 0; n < linkages.size(); n++)
             {
                 size_t linkageId = linkages[n];
-                const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
-                for (size_t k = 0; k < dihedrals.size(); k++)
+                const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
+                for (size_t k = 0; k < bonds.size(); k++)
                 {
-                    size_t dihedralId = dihedrals[k];
-                    setDihedralAngle(graph, data, mutableData, dihedralId, recordedShape[dihedralId]);
+                    size_t bondId = bonds[k];
+                    setDihedralAngle(graph, data, mutableData, bondId, recordedShape[bondId]);
                 }
             }
         }
@@ -80,7 +79,7 @@ namespace gmml
             const ResidueLinkageShapePreference& preference)
         {
             RotamerType rotamerType = data.residueLinkageData.rotamerTypes[linkageId];
-            const std::vector<size_t>& dihedrals = data.indices.residueLinkages[linkageId].rotatableDihedrals;
+            const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
 
             std::function<void(const ConformerShapePreference&)> onConformer = [&](const ConformerShapePreference& pref)
             {
@@ -90,11 +89,11 @@ namespace gmml
                         "expected but did not receive ConformerShapePreference for conformer linkage");
                 }
                 size_t metadataIndex = pref.metadataOrder[0];
-                for (size_t n = 0; n < dihedrals.size(); n++)
+                for (size_t n = 0; n < bonds.size(); n++)
                 {
                     double angle = pref.angles[n][metadataIndex];
                     AngleWithMetadata am {angle, angle, metadataIndex};
-                    setDihedralAngle(graph, data, mutableData, dihedrals[n], am);
+                    setDihedralAngle(graph, data, mutableData, bonds[n], am);
                 }
             };
             std::function<void(const PermutationShapePreference&)> onPermutation =
@@ -105,12 +104,12 @@ namespace gmml
                     throw std::runtime_error(
                         "expected but did not receive PermutationShapePreference for permutation linkage");
                 }
-                for (size_t n = 0; n < dihedrals.size(); n++)
+                for (size_t n = 0; n < bonds.size(); n++)
                 {
                     size_t metadataIndex = pref.metadataOrder[n][0];
                     double angle = pref.angles[n][metadataIndex];
                     AngleWithMetadata am {angle, angle, metadataIndex};
-                    setDihedralAngle(graph, data, mutableData, dihedrals[n], am);
+                    setDihedralAngle(graph, data, mutableData, bonds[n], am);
                 }
             };
             return onResidueLinkageShapePreference(onConformer, onPermutation, preference);

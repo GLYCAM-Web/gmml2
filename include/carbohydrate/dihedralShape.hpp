@@ -36,31 +36,31 @@ namespace gmml
         }
     };
 
-    void setDihedralAngle(RotatableDihedral& dihedral, AngleWithMetadata target);
+    void setDihedralAngle(RotatableBond& bond, AngleWithMetadata target);
 
     bool setSpecificShape(
         const DihedralAngleDataTable& metadataTable,
-        RotatableDihedral& dihedral,
+        RotatableBond& dihedral,
         const std::vector<size_t>& metadataVector,
         std::string dihedralName,
         std::string selectedRotamer);
 
     void setSpecificShape(
         const DihedralAngleDataTable& metadataTable,
-        std::vector<RotatableDihedral>& dihedrals,
+        std::vector<RotatableBond>& bonds,
         const std::vector<std::vector<size_t>>& metadata,
         std::string dihedralName,
         std::string selectedRotamer);
 
     std::vector<AngleWithMetadata> currentShape(
         const DihedralAngleDataTable& metadataTable,
-        const std::vector<RotatableDihedral>& dihedrals,
+        const std::vector<RotatableBond>& bonds,
         const std::vector<std::vector<size_t>>& metadata);
 
     std::vector<std::vector<AngleWithMetadata>> currentShape(
         const DihedralAngleDataTable& metadataTable, const std::vector<ResidueLinkage>& linkages);
     void setShape(std::vector<ResidueLinkage>& linkages, const std::vector<std::vector<AngleWithMetadata>>& angles);
-    void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles);
+    void setShape(std::vector<RotatableBond>& bonds, const std::vector<AngleWithMetadata>& angles);
     void setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference);
     void setShapeToPreference(std::vector<ResidueLinkage>& linkages, const GlycanShapePreference& preferences);
 

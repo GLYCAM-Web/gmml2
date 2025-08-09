@@ -369,14 +369,14 @@ namespace gmml
             const GraphIndexData& graphData, const ResidueLinkage& linkage)
         {
             std::vector<DihedralIndices> result;
-            result.reserve(linkage.rotatableDihedrals.size());
-            for (auto& dihedral : linkage.rotatableDihedrals)
+            result.reserve(linkage.rotatableBonds.size());
+            for (auto& bond : linkage.rotatableBonds)
             {
-                auto index = [&](size_t n) { return util::indexOf(graphData.objects.atoms, dihedral.atoms[n]); };
+                auto index = [&](size_t n) { return util::indexOf(graphData.objects.atoms, bond.dihedralAtoms[n]); };
                 result.push_back({
                     {index(0), index(1), index(2), index(3)},
-                    util::indicesOf(graphData.objects.atoms, dihedral.movingAtoms),
-                    dihedral.currentMetadataIndex
+                    util::indicesOf(graphData.objects.atoms, bond.movingAtoms),
+                    bond.currentMetadataIndex
                 });
             }
             return result;
@@ -548,7 +548,7 @@ namespace gmml
              glycosidicLinkages) // These will exist on the vector in order of edge connectivity set above.
         {                        // Greedy first means the atoms-to-move needs to be updated for every linkage:
             linkage.index = linkageIndex++;
-            determineAtomsThatMove(linkage.rotatableDihedrals);
+            determineAtomsThatMove(linkage.rotatableBonds);
         }
         util::log(__LINE__, __FILE__, util::INF, "Final carbohydrate overlap resolution starting.");
         resolveOverlaps(molecule, glycosidicLinkages, elementRadii, metadataTable, searchSettings);

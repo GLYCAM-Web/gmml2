@@ -12,7 +12,7 @@ namespace gmml
 {
     unsigned long long generateResidueLinkageIndex();
     ResidueLink findResidueLink(std::pair<Residue*, Residue*> residues);
-    void determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals);
+    void determineAtomsThatMove(std::vector<RotatableBond>& bonds);
     ResidueLinkage createResidueLinkage(const DihedralAngleDataTable& metadataTable, ResidueLink& link);
 } // namespace gmml
 #endif

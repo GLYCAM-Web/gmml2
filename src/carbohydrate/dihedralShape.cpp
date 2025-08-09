@@ -15,18 +15,18 @@
 
 namespace gmml
 {
-    void setDihedralAngle(RotatableDihedral& dihedral, AngleWithMetadata target)
+    void setDihedralAngle(RotatableBond& bond, AngleWithMetadata target)
     {
-        RotationMatrix matrix = rotationTo(dihedralCoordinates(dihedral), constants::toRadians(target.value));
-        std::vector<Coordinate> coordinates = atomCoordinates(dihedral.movingAtoms);
+        RotationMatrix matrix = rotationTo(dihedralCoordinates(bond), constants::toRadians(target.value));
+        std::vector<Coordinate> coordinates = atomCoordinates(bond.movingAtoms);
         matrix.rotateCoordinates(coordinates);
-        setAtomCoordinates(dihedral.movingAtoms, coordinates);
-        dihedral.currentMetadataIndex = target.metadataIndex;
+        setAtomCoordinates(bond.movingAtoms, coordinates);
+        bond.currentMetadataIndex = target.metadataIndex;
     }
 
     bool setSpecificShape(
         const DihedralAngleDataTable& metadataTable,
-        RotatableDihedral& dihedral,
+        RotatableBond& bond,
         const std::vector<size_t>& metadataVector,
         std::string dihedralName,
         std::string selectedRotamer)
@@ -38,7 +38,7 @@ namespace gmml
                 auto& metadata = metadataTable.entries[metadataVector[n]];
                 if (metadata.rotamer_name_ == selectedRotamer)
                 {
-                    setDihedralAngle(dihedral, {metadata.default_angle, metadata.default_angle, n});
+                    setDihedralAngle(bond, {metadata.default_angle, metadata.default_angle, n});
                     return true;
                 }
             }
@@ -48,15 +48,15 @@ namespace gmml
 
     void setSpecificShape(
         const DihedralAngleDataTable& metadataTable,
-        std::vector<RotatableDihedral>& dihedrals,
+        std::vector<RotatableBond>& bonds,
         const std::vector<std::vector<size_t>>& metadata,
         std::string dihedralName,
         std::string selectedRotamer)
     {
-        for (size_t n = 0; n < dihedrals.size(); n++)
+        for (size_t n = 0; n < bonds.size(); n++)
         {
             // This will call RotatableDihedrals that don't have dihedralName (phi,psi), and nothing will happen. Hmmm.
-            if (setSpecificShape(metadataTable, dihedrals[n], metadata[n], dihedralName, selectedRotamer))
+            if (setSpecificShape(metadataTable, bonds[n], metadata[n], dihedralName, selectedRotamer))
             {
                 return; // Return once you manage to set a shape.
             }
@@ -69,19 +69,19 @@ namespace gmml
 
     std::vector<AngleWithMetadata> currentShape(
         const DihedralAngleDataTable& metadataTable,
-        const std::vector<RotatableDihedral>& dihedrals,
+        const std::vector<RotatableBond>& bonds,
         const std::vector<std::vector<size_t>>& metadata)
     {
         std::vector<AngleWithMetadata> result;
-        result.reserve(dihedrals.size());
+        result.reserve(bonds.size());
 
-        for (size_t n = 0; n < dihedrals.size(); n++)
+        for (size_t n = 0; n < bonds.size(); n++)
         {
-            auto& dihedral = dihedrals[n];
-            auto& metadataIndex = dihedral.currentMetadataIndex;
+            auto& bond = bonds[n];
+            auto& metadataIndex = bond.currentMetadataIndex;
             auto& currentMetadata = metadata[n][metadataIndex];
             result.push_back(
-                {constants::toDegrees(angle(dihedralCoordinates(dihedral))),
+                {constants::toDegrees(angle(dihedralCoordinates(bond))),
                  metadataTable.entries[currentMetadata].default_angle,
                  metadataIndex});
         }
@@ -97,7 +97,7 @@ namespace gmml
 
         for (auto& a : linkages)
         {
-            result.push_back(currentShape(metadataTable, a.rotatableDihedrals, a.dihedralMetadata));
+            result.push_back(currentShape(metadataTable, a.rotatableBonds, a.dihedralMetadata));
         }
 
         return result;
@@ -107,21 +107,21 @@ namespace gmml
     {
         for (size_t n = 0; n < linkages.size(); n++)
         {
-            setShape(linkages[n].rotatableDihedrals, angles[n]);
+            setShape(linkages[n].rotatableBonds, angles[n]);
         }
     }
 
-    void setShape(std::vector<RotatableDihedral>& dihedrals, const std::vector<AngleWithMetadata>& angles)
+    void setShape(std::vector<RotatableBond>& bonds, const std::vector<AngleWithMetadata>& angles)
     {
         for (size_t n = 0; n < angles.size(); n++)
         {
-            setDihedralAngle(dihedrals[n], angles[n]);
+            setDihedralAngle(bonds[n], angles[n]);
         }
     }
 
     void setShapeToPreference(ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference)
     {
-        std::vector<RotatableDihedral>& dihedrals = linkage.rotatableDihedrals;
+        std::vector<RotatableBond>& bonds = linkage.rotatableBonds;
         std::function<void(const ConformerShapePreference&)> onConformer = [&](const ConformerShapePreference& pref)
         {
             if (linkage.rotamerType != RotamerType::conformer)
@@ -129,10 +129,10 @@ namespace gmml
                 throw std::runtime_error("expected but did not receive ConformerShapePreference for conformer linkage");
             }
             size_t metadataIndex = pref.metadataOrder[0];
-            for (size_t n = 0; n < dihedrals.size(); n++)
+            for (size_t n = 0; n < bonds.size(); n++)
             {
                 double angle = pref.angles[n][metadataIndex];
-                setDihedralAngle(dihedrals[n], {angle, angle, metadataIndex});
+                setDihedralAngle(bonds[n], {angle, angle, metadataIndex});
             }
         };
         std::function<void(const PermutationShapePreference&)> onPermutation =
@@ -143,11 +143,11 @@ namespace gmml
                 throw std::runtime_error(
                     "expected but did not receive PermutationShapePreference for permutation linkage");
             }
-            for (size_t n = 0; n < dihedrals.size(); n++)
+            for (size_t n = 0; n < bonds.size(); n++)
             {
                 size_t metadataIndex = pref.metadataOrder[n][0];
                 double angle = pref.angles[n][metadataIndex];
-                setDihedralAngle(dihedrals[n], {angle, angle, metadataIndex});
+                setDihedralAngle(bonds[n], {angle, angle, metadataIndex});
             }
         };
         return onResidueLinkageShapePreference(onConformer, onPermutation, preference);
@@ -214,9 +214,9 @@ namespace gmml
         std::function<ResidueLinkageShapePreference(const ConformerShapePreference&)> onConformer =
             [&](const ConformerShapePreference& pref)
         {
-            auto isFrozen = std::vector<bool>(linkage.rotatableDihedrals.size(), false);
+            auto isFrozen = std::vector<bool>(linkage.rotatableBonds.size(), false);
             return ConformerShapePreference {
-                isFrozen, pref.angles, metadataSelection(pref.metadataOrder, linkage.rotatableDihedrals[0])};
+                isFrozen, pref.angles, metadataSelection(pref.metadataOrder, linkage.rotatableBonds[0])};
         };
         std::function<ResidueLinkageShapePreference(const PermutationShapePreference&)> onPermutation =
             [&](const PermutationShapePreference& pref)
@@ -226,7 +226,7 @@ namespace gmml
             selected.reserve(order.size());
             for (size_t n = 0; n < order.size(); n++)
             {
-                selected.push_back(metadataSelection(order[n], linkage.rotatableDihedrals[n]));
+                selected.push_back(metadataSelection(order[n], linkage.rotatableBonds[n]));
             }
             return PermutationShapePreference {pref.angles, selected};
         };
@@ -236,15 +236,15 @@ namespace gmml
     ResidueLinkageShapePreference firstRotamerOnly(
         const ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference)
     {
-        auto first = [](std::vector<size_t> order, const RotatableDihedral&) { return std::vector<size_t> {order[0]}; };
+        auto first = [](std::vector<size_t> order, const RotatableBond&) { return std::vector<size_t> {order[0]}; };
         return selectedRotamersOnly(first, linkage, preference);
     }
 
     ResidueLinkageShapePreference currentRotamerOnly(
         const ResidueLinkage& linkage, const ResidueLinkageShapePreference& preference)
     {
-        auto current = [](std::vector<size_t>, const RotatableDihedral& dihedral)
-        { return std::vector<size_t> {dihedral.currentMetadataIndex}; };
+        auto current = [](std::vector<size_t>, const RotatableBond& bond)
+        { return std::vector<size_t> {bond.currentMetadataIndex}; };
         return selectedRotamersOnly(current, linkage, preference);
     }
 

@@ -60,7 +60,7 @@ namespace gmml
 
             std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
             std::vector<AngleWithMetadata> rotatableDihedralShape;
-            std::vector<RotatableDihedralIndices> rotatableDihedralIndices;
+            std::vector<RotatableBondIndices> rotatableBondIndices;
             std::vector<ResidueLinkageIndices> residueLinkages;
             std::vector<RotamerType> linkageRotamerTypes;
             std::vector<std::vector<size_t>> dihedralMetadata;
@@ -79,23 +79,23 @@ namespace gmml
                 {
                     isGlycositeLinkage.push_back(k == 0);
                     const ResidueLinkage& linkage = linkages[k];
-                    const std::vector<RotatableDihedral>& linkageDihedrals = linkage.rotatableDihedrals;
+                    const std::vector<RotatableBond>& linkageRotatableBonds = linkage.rotatableBonds;
                     std::vector<size_t> dihedralIndices =
-                        util::indexVectorWithOffset(rotatableDihedralIndices.size(), linkageDihedrals);
+                        util::indexVectorWithOffset(rotatableBondIndices.size(), linkageRotatableBonds);
                     util::insertInto(
                         rotatableDihedralShape,
-                        currentShape(dihedralAngleDataTable, linkage.rotatableDihedrals, linkage.dihedralMetadata));
+                        currentShape(dihedralAngleDataTable, linkage.rotatableBonds, linkage.dihedralMetadata));
                     util::insertInto(dihedralMetadata, linkage.dihedralMetadata);
-                    for (size_t q = 0; q < linkageDihedrals.size(); q++)
+                    for (size_t q = 0; q < linkageRotatableBonds.size(); q++)
                     {
-                        const RotatableDihedral& dihedral = linkageDihedrals[q];
+                        const RotatableBond& bond = linkageRotatableBonds[q];
                         std::array<size_t, 4> dihedralAtoms;
                         for (size_t i = 0; i < 4; i++)
                         {
-                            dihedralAtoms[i] = util::indexOf(atoms, dihedral.atoms[i]);
+                            dihedralAtoms[i] = util::indexOf(atoms, bond.dihedralAtoms[i]);
                         }
-                        rotatableDihedralIndices.push_back({dihedralAtoms, indexOfAtoms(dihedral.movingAtoms)});
-                        dihedralCurrentMetadata.push_back(dihedral.currentMetadataIndex);
+                        rotatableBondIndices.push_back({dihedralAtoms, indexOfAtoms(bond.movingAtoms)});
+                        dihedralCurrentMetadata.push_back(bond.currentMetadataIndex);
                     }
                     size_t firstResidue = util::indexOf(residues, linkage.link.residues.first);
                     size_t secondResidue = util::indexOf(residues, linkage.link.residues.second);
@@ -265,7 +265,7 @@ namespace gmml
                 }
             }
 
-            AssemblyIndices indices {proteinMolecules, rotatableDihedralIndices, residueLinkages};
+            AssemblyIndices indices {proteinMolecules, rotatableBondIndices, residueLinkages};
 
             std::vector<bool> foundElements = gmml::foundElements(atomElements);
 

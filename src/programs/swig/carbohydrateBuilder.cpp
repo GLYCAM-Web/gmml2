@@ -155,7 +155,7 @@ namespace gmml
             std::string standardDihedralName = convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
             setSpecificShape(
                 metadataTable,
-                currentLinkage->rotatableDihedrals,
+                currentLinkage->rotatableBonds,
                 currentLinkage->dihedralMetadata,
                 standardDihedralName,
                 rotamerInfo.selectedRotamer);

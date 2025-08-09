@@ -124,7 +124,7 @@ namespace gmml
                 for (size_t index : rotatableDihedralIndices)
                 {
                     ResidueLinkage splitLinkage = linkage; // Copy it to get correct info into class
-                    splitLinkage.rotatableDihedrals = {linkage.rotatableDihedrals[index]};
+                    splitLinkage.rotatableBonds = {linkage.rotatableBonds[index]};
                     splitLinkage.dihedralMetadata = {linkage.dihedralMetadata[index]};
                     sortedLinkages.push_back(splitLinkage);
                 }

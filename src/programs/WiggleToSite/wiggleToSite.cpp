@@ -167,7 +167,7 @@ namespace gmml
             util::log(__LINE__, __FILE__, util::INF, ss.str());
             for (auto& linkage : util::shuffleVector(rng, this->getWiggleLinkages()))
             {
-                auto recordedShape = currentShape(metadataTable, linkage.rotatableDihedrals, linkage.dihedralMetadata);
+                auto recordedShape = currentShape(metadataTable, linkage.rotatableBonds, linkage.dihedralMetadata);
                 setShapeToPreference(
                     linkage,
                     linkageShapePreference(
@@ -179,7 +179,7 @@ namespace gmml
                 }
                 else
                 {
-                    setShape(linkage.rotatableDihedrals, recordedShape);
+                    setShape(linkage.rotatableBonds, recordedShape);
                 }
             }
         }

@@ -78,19 +78,19 @@ namespace gmml
             return matching_entries;
         }
 
-        std::vector<RotatableDihedral> createRotatableDihedrals(
+        std::vector<RotatableBond> createRotatableBonds(
             const std::string& linkageName,
             const std::vector<DihedralAtoms>& dihedralAtoms,
             const std::vector<std::vector<size_t>>& metadataIndices)
         {
-            std::vector<RotatableDihedral> rotatableDihedrals;
-            rotatableDihedrals.reserve(dihedralAtoms.size());
+            std::vector<RotatableBond> result;
+            result.reserve(dihedralAtoms.size());
             for (size_t n = 0; n < dihedralAtoms.size(); n++)
             {
                 const std::vector<size_t>& currentMetadata = metadataIndices[n];
                 if (!currentMetadata.empty())
                 {
-                    rotatableDihedrals.emplace_back(RotatableDihedral {dihedralAtoms[n], {}, 0});
+                    result.emplace_back(RotatableBond {dihedralAtoms[n], {}, 0});
                 }
                 else
                 {
@@ -104,7 +104,7 @@ namespace gmml
                     throw std::runtime_error(ss.str());
                 }
             }
-            return rotatableDihedrals;
+            return result;
         }
 
         void validateRotamerTypes(const DihedralAngleDataTable& table, const ResidueLinkage& linkage)
@@ -124,7 +124,7 @@ namespace gmml
 
         void validateConformerMetadata(const DihedralAngleDataTable& table, const ResidueLinkage& linkage)
         {
-            auto& dihedrals = linkage.rotatableDihedrals;
+            auto& dihedrals = linkage.rotatableBonds;
             auto& metadata = linkage.dihedralMetadata;
             size_t conformerCount = metadata[0].size();
             for (size_t n = 1; n < dihedrals.size(); n++)
@@ -207,16 +207,16 @@ namespace gmml
         }
     }
 
-    void determineAtomsThatMove(std::vector<RotatableDihedral>& dihedrals)
+    void determineAtomsThatMove(std::vector<RotatableBond>& bonds)
     {
-        for (auto& dihedral : dihedrals)
+        for (auto& bond : bonds)
         {
-            auto& atoms = dihedral.atoms;
+            auto& atoms = bond.dihedralAtoms;
             std::vector<Atom*> atoms_that_move;
             atoms_that_move.push_back(atoms[2]);
             FindConnectedAtoms(atoms_that_move, atoms[1]);
             atoms_that_move.erase(atoms_that_move.begin());
-            dihedral.movingAtoms = atoms_that_move;
+            bond.movingAtoms = atoms_that_move;
         }
     }
 
@@ -285,12 +285,12 @@ namespace gmml
         auto& residues = link.residues;
         createHydrogenForPsiAngles(metadataTable, residues.second, dihedralAtoms, metadata);
         std::string linkageName = determineLinkageNameFromResidueNames(linkAttributes);
-        std::vector<RotatableDihedral> dihedrals = createRotatableDihedrals(linkageName, dihedralAtoms, metadata);
-        determineAtomsThatMove(dihedrals);
+        std::vector<RotatableBond> bonds = createRotatableBonds(linkageName, dihedralAtoms, metadata);
+        determineAtomsThatMove(bonds);
 
         unsigned long long index = generateResidueLinkageIndex();
 
-        if (dihedrals.empty() || metadata[0].empty())
+        if (bonds.empty() || metadata[0].empty())
         {
             throw std::runtime_error("missing dihedrals or metadata in residue linkage: " + print(link));
         }
@@ -299,7 +299,7 @@ namespace gmml
         RotamerType rotamerType = firstMetadata.rotamer_type_;
         const std::vector<std::string>& cond1 = firstMetadata.residue1_conditions_;
         bool isDerivative = cond1.size() > 0 && cond1[0] == "derivative";
-        ResidueLinkage linkage {link, dihedrals, metadata, rotamerType, isDerivative, index, linkageName};
+        ResidueLinkage linkage {link, bonds, metadata, rotamerType, isDerivative, index, linkageName};
 
         validateRotamerTypes(metadataTable, linkage);
         if (rotamerType == RotamerType::conformer)

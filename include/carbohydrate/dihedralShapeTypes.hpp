@@ -29,8 +29,7 @@ namespace gmml
         MetadataDistribution;
     typedef std::function<double(const DihedralAngleData&)> AngleDistribution;
 
-    typedef std::function<std::vector<size_t>(std::vector<size_t>, const RotatableDihedral&)>
-        MetadataPreferenceSelection;
+    typedef std::function<std::vector<size_t>(std::vector<size_t>, const RotatableBond&)> MetadataPreferenceSelection;
 
     struct ConformerShapePreference
     {
