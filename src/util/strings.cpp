@@ -140,10 +140,6 @@ namespace gmml
             return str;
         }
 
-        std::string truncate(size_t n, const std::string& str)
-        {
-            n = std::min(n, str.size());
-            return str.substr(0, n);
-        }
+        std::string truncate(size_t n, const std::string& str) { return (str.size() <= n) ? str : str.substr(0, n); }
     } // namespace util
 } // namespace gmml
