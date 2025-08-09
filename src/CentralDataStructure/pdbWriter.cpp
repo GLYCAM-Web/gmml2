@@ -95,10 +95,7 @@ namespace gmml
 
     void WritePdb(std::ostream& stream, const GraphIndexData& graphData, const std::vector<std::string>& headerLines)
     {
-        std::vector<bool> includedAtoms = atomVisibility(graphData.objects.atoms);
-        graph::Database atomGraphData = createGraphData(graphData.objects);
-        atomGraphData.nodeAlive = atomVisibility(graphData.objects.atoms);
-        assembly::Graph graph = createAssemblyGraph(graphData.indices, atomGraphData);
+        assembly::Graph graph = createVisibleAssemblyGraph(graphData);
         const std::vector<Residue*>& residues = graphData.objects.residues;
         std::vector<ResidueType> types = residueTypes(residues);
         std::vector<bool> ter = pdb::residueTER(types);
@@ -108,18 +105,8 @@ namespace gmml
             stream << "HEADER    " << line << "\n";
         }
         pdb::writeMoleculeToPdb(stream, graph, util::indexVector(residues), ter, data);
-        std::vector<bool> selectedResidueTypes(ResidueTypeCount, false);
-        for (auto type : {Sugar, Derivative, Aglycone, Undefined})
-        {
-            selectedResidueTypes[type] = true;
-        }
-        std::vector<bool> residueSelected = util::indicesToValues(selectedResidueTypes, types);
-        std::vector<bool> atomSelected = util::indicesToValues(residueSelected, graphData.indices.atomResidue);
-        graph::Database subgraphData = createGraphData(graphData.objects);
-        subgraphData.nodeAlive = util::vectorAnd(includedAtoms, atomSelected);
-        assembly::Graph subgraph = createAssemblyGraph(graphData.indices, subgraphData);
         std::vector<std::array<size_t, 2>> connectionIndices =
-            util::indicesToValues(subgraph.residues.source.edgeNodes, sourceIndices(subgraph.residues.edges));
+            util::indicesToValues(graph.residues.source.edgeNodes, sourceIndices(graph.residues.edges));
         pdb::writeConectCards(stream, data.atoms.numbers, connectionIndices);
         pdb::theEnd(stream);
     }
