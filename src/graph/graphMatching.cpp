@@ -16,7 +16,8 @@ namespace gmml
         {
             bool equalSize(const Database& a, const Database& b)
             {
-                return (a.nodes.size() == b.nodes.size()) && (a.edges.size() == b.edges.size());
+                return (a.nodes.indices.size() == b.nodes.indices.size()) &&
+                       (a.edges.indices.size() == b.edges.indices.size());
             }
         } // namespace
 
@@ -46,12 +47,12 @@ namespace gmml
                 }
                 // same for the edges, they match if they can be assigned an index
                 // unlike nodes, we don't need to store the assigned indices explicitly
-                std::vector<size_t> edgeIndices = util::indexVector(reference.db.edges);
-                for (auto& adj : other.db.edgeNodes)
+                std::vector<size_t> edgeIndices = util::indexVector(reference.db.edges.indices);
+                for (auto& adj : other.db.edges.nodes)
                 {
                     auto edgeEquals = [&](size_t n)
                     {
-                        const std::array<size_t, 2>& nodes = reference.db.edgeNodes[n];
+                        const std::array<size_t, 2>& nodes = reference.db.edges.nodes[n];
                         auto dirEqual = [&](int dir)
                         { return nodeOrder[adj[0]] == nodes[0 != dir] && nodeOrder[adj[1]] == nodes[1 != dir]; };
                         return dirEqual(0) || dirEqual(1);

@@ -184,7 +184,7 @@ namespace gmml
     assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& data)
     {
         graph::Database atomGraphData = createGraphData(data.objects);
-        atomGraphData.nodeAlive = atomVisibility(data.objects.atoms);
+        atomGraphData.nodes.alive = atomVisibility(data.objects.atoms);
         return createAssemblyGraph(data.indices, atomGraphData);
     }
 } // namespace gmml

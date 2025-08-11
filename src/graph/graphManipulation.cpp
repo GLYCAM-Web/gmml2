@@ -14,34 +14,15 @@ namespace gmml
     {
         namespace
         {
-            size_t groupMaxIndex(const std::vector<size_t>& group)
+            std::vector<bool> aliveGroups(
+                size_t groupCount, const std::vector<size_t>& nodeGroup, const std::vector<bool>& includeNode)
             {
-                size_t maxIndex = 0;
-                for (auto& n : group)
+                std::vector<bool> groupAlive(groupCount, false);
+                for (size_t group : util::boolsToValues(nodeGroup, includeNode))
                 {
-                    maxIndex = std::max(n, maxIndex);
+                    groupAlive[group] = true;
                 }
-                return maxIndex;
-            }
-
-            std::pair<std::vector<size_t>, std::vector<size_t>> createNodes(
-                const std::vector<size_t>& nodeGroup, const std::vector<bool>& includeNode)
-            {
-                std::vector<size_t> nodes;
-                size_t groupMax = groupMaxIndex(nodeGroup);
-                std::vector<size_t> groupIndex(groupMax + 1, -1);
-                std::vector<bool> groupIndexSet(groupMax + 1, false);
-                for (size_t n = 0; n < nodeGroup.size(); n++)
-                {
-                    size_t group = nodeGroup[n];
-                    if (includeNode[n] && !groupIndexSet[group])
-                    {
-                        groupIndex[group] = nodes.size();
-                        groupIndexSet[group] = true;
-                        nodes.push_back(group);
-                    }
-                }
-                return {nodes, groupIndex};
+                return groupAlive;
             }
 
             std::pair<std::vector<std::vector<size_t>>, std::vector<std::vector<size_t>>> nodeAdjacencies(
@@ -67,135 +48,139 @@ namespace gmml
 
         size_t addNode(Database& graph)
         {
-            size_t index = graph.nodes.size();
-            graph.nodes.push_back(index);
-            graph.nodeAlive.push_back(true);
+            size_t index = graph.nodes.indices.size();
+            graph.nodes.indices.push_back(index);
+            graph.nodes.alive.push_back(true);
             return index;
         }
 
         size_t addEdge(Database& graph, std::array<size_t, 2> nodes)
         {
-            if (nodes[0] >= graph.nodes.size() || nodes[1] >= graph.nodes.size())
+            if (nodes[0] >= graph.nodes.indices.size() || nodes[1] >= graph.nodes.indices.size())
             {
                 throw std::runtime_error("don't add connections between nodes that don't exist");
             }
-            size_t index = graph.edges.size();
-            graph.edges.push_back(index);
-            graph.edgeAlive.push_back(true);
-            graph.edgeNodes.push_back(nodes);
+            size_t index = graph.edges.indices.size();
+            graph.edges.indices.push_back(index);
+            graph.edges.alive.push_back(true);
+            graph.edges.nodes.push_back(nodes);
             return index;
         }
 
         void removeNode(Database& graph, size_t index)
         {
-            if (index >= graph.nodeAlive.size())
+            if (index >= graph.nodes.alive.size())
             {
                 throw std::runtime_error("don't remove nodes that don't exist");
             }
-            graph.nodeAlive[index] = false;
+            graph.nodes.alive[index] = false;
         }
 
         void removeEdge(Database& graph, size_t index)
         {
-            if (index >= graph.edgeAlive.size())
+            if (index >= graph.edges.alive.size())
             {
                 throw std::runtime_error("don't remove edges that don't exist");
             }
-            graph.edgeAlive[index] = false;
+            graph.edges.alive[index] = false;
         }
 
         void reserveNodes(Database& graph, size_t size)
         {
-            graph.nodes.reserve(size);
-            graph.nodeAlive.reserve(size);
+            graph.nodes.indices.reserve(size);
+            graph.nodes.alive.reserve(size);
         }
 
         void reserveEdges(Database& graph, size_t size)
         {
-            graph.edges.reserve(size);
-            graph.edgeNodes.reserve(size);
-            graph.edgeAlive.reserve(size);
+            graph.edges.indices.reserve(size);
+            graph.edges.nodes.reserve(size);
+            graph.edges.alive.reserve(size);
         }
 
         Database asData(const Graph& graph)
         {
-            std::vector<bool> nodeAlive = util::indicesToValues(graph.source.nodeAlive, sourceIndices(graph.nodes));
-            std::vector<bool> edgeAlive = util::indicesToValues(graph.source.edgeAlive, sourceIndices(graph.edges));
+            std::vector<bool> nodeAlive =
+                util::indicesToBools(graph.nodes.constituents.size(), graph.nodes.aliveIndices);
+            std::vector<bool> edgeAlive(graph.edges.nodeAdjacencies.size(), true);
             return {
-                localIndices(graph.nodes),
-                nodeAlive,
-                localIndices(graph.edges),
-                edgeAlive,
-                graph.edges.nodeAdjacencies};
+                {util::indexVector(nodeAlive), nodeAlive},
+                {util::indexVector(edgeAlive), edgeAlive, graph.edges.nodeAdjacencies}
+            };
         }
 
         Graph selectedQuotientAliveOrNot(
-            const Database& graph,
+            const Database& source,
+            size_t groupCount,
             const std::vector<size_t>& nodeGroup,
             const std::vector<bool>& includeNode,
             const std::vector<bool>& includeEdge)
         {
-            auto nodeData = createNodes(nodeGroup, includeNode);
-            std::vector<size_t> nodes = nodeData.first;
-            std::vector<size_t> groupIndex = nodeData.second;
-            std::vector<std::vector<size_t>> constituents(nodes.size(), std::vector<size_t> {});
-            for (size_t n = 0; n < graph.nodes.size(); n++)
+            std::vector<bool> groupAlive = aliveGroups(groupCount, nodeGroup, includeNode);
+            std::vector<std::vector<size_t>> constituents(groupCount, std::vector<size_t> {});
+            for (size_t n = 0; n < source.nodes.indices.size(); n++)
             {
                 if (includeNode[n])
                 {
-                    constituents[groupIndex[nodeGroup[n]]].push_back(graph.nodes[n]);
+                    constituents[nodeGroup[n]].push_back(source.nodes.indices[n]);
                 }
             }
             std::vector<size_t> edges;
             std::vector<std::array<size_t, 2>> edgeNodes;
-            for (size_t n = 0; n < graph.edges.size(); n++)
+            for (size_t n : source.edges.indices)
             {
-                auto& en = graph.edgeNodes[n];
+                const std::array<size_t, 2>& en = source.edges.nodes[n];
                 size_t a = en[0];
                 size_t b = en[1];
                 size_t ag = nodeGroup[a];
                 size_t bg = nodeGroup[b];
                 if (includeEdge[n] && includeNode[a] && includeNode[b] && (ag != bg))
                 {
-                    edges.push_back(graph.edges[n]);
-                    edgeNodes.push_back({groupIndex[ag], groupIndex[bg]});
+                    edges.push_back(source.edges.indices[n]);
+                    edgeNodes.push_back({ag, bg});
                 }
             }
-            auto adjacencies = nodeAdjacencies(nodes.size(), edgeNodes);
-            std::vector<std::vector<size_t>> nodeNodes = adjacencies.first;
-            std::vector<std::vector<size_t>> nodeEdges = adjacencies.second;
+            auto adjacencies = nodeAdjacencies(groupCount, edgeNodes);
+            std::vector<std::vector<size_t>>& nodeNodes = adjacencies.first;
+            std::vector<std::vector<size_t>>& nodeEdges = adjacencies.second;
             return {
-                {util::indexVector(nodes), nodes, nodeNodes, nodeEdges, constituents},
-                {util::indexVector(edges), edges, edgeNodes},
-                graph
+                {util::boolsToIndices(groupAlive), nodeNodes, nodeEdges, constituents},
+                {edges, edgeNodes},
+                source
             };
         }
 
         Graph selectedQuotient(
-            const Database& graph,
+            const Database& source,
+            size_t groupCount,
             const std::vector<size_t>& nodeGroup,
             const std::vector<bool>& includeNode,
             const std::vector<bool>& includeEdge)
         {
             return selectedQuotientAliveOrNot(
-                graph,
+                source,
+                groupCount,
                 nodeGroup,
-                util::vectorAnd(graph.nodeAlive, includeNode),
-                util::vectorAnd(graph.edgeAlive, includeEdge));
+                util::vectorAnd(source.nodes.alive, includeNode),
+                util::vectorAnd(source.edges.alive, includeEdge));
         }
 
         Graph subgraph(
-            const Database& graph, const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge)
+            const Database& source, const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge)
         {
-            return selectedQuotient(graph, graph.nodes, includeNode, includeEdge);
+            return selectedQuotient(
+                source, source.nodes.indices.size(), source.nodes.indices, includeNode, includeEdge);
         }
 
-        Graph quotient(const Database& graph, const std::vector<size_t>& nodeGroup)
+        Graph quotient(const Database& source, size_t groupCount, const std::vector<size_t>& nodeGroup)
         {
-            return selectedQuotient(graph, nodeGroup, graph.nodeAlive, graph.edgeAlive);
+            return selectedQuotient(source, groupCount, nodeGroup, source.nodes.alive, source.edges.alive);
         }
 
-        Graph identity(const Database& graph) { return quotient(graph, graph.nodes); }
+        Graph identity(const Database& source)
+        {
+            return quotient(source, source.nodes.indices.size(), source.nodes.indices);
+        }
 
     } // namespace graph
 } // namespace gmml

@@ -44,13 +44,11 @@ namespace gmml
                        << ".unit.atoms table  str name  str type  int typex  int resx  int flags  int seq  int elmnt  "
                           "dbl chg"
                        << "\n";
-                for (size_t graphIndex : residueIndices)
+                for (size_t residueIndex : residueIndices)
                 {
-                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     uint atomNumberInResidue = 1;
-                    for (size_t residueAtom : assembly::residueAtoms(graph, graphIndex))
+                    for (size_t atomIndex : assembly::residueAtoms(graph, residueIndex))
                     {
-                        size_t atomIndex = graph.residues.source.nodes[residueAtom];
                         stream << " \"" << atoms.names[atomIndex] << "\" "
                                << "\"" << atoms.types[atomIndex] << "\" "
                                << "0 " << residues.numbers[residueIndex] << " " << FLAG << " " << atomNumberInResidue
@@ -68,7 +66,7 @@ namespace gmml
                 {
                     for (size_t residueAtom : assembly::residueAtoms(graph, graphIndex))
                     {
-                        size_t atomIndex = graph.residues.source.nodes[residueAtom];
+                        size_t atomIndex = graph.residues.source.nodes.indices[residueAtom];
                         stream << " \"" << atoms.names[atomIndex] << "\""
                                << " \"" << atoms.types[atomIndex] << "\" 0 -1 0.0"
                                << "\n";
@@ -99,16 +97,15 @@ namespace gmml
                 stream << " 1"
                        << "\n";
                 size_t lastAtom = assembly::residueAtoms(graph, residueIndices.back()).back();
-                stream << " " << atoms.numbers[graph.residues.source.nodes[lastAtom]] << "\n";
+                stream << " " << atoms.numbers[graph.residues.source.nodes.indices[lastAtom]] << "\n";
                 // WriteConnectivitySection
                 stream << "!entry." << unitName << ".unit.connectivity table  int atom1x  int atom2x  int flags"
                        << "\n";
-                std::vector<bool> residueIncluded = util::indicesToBools(
-                    residues.names.size(), util::indicesToValues(sourceIndices(graph.residues.nodes), residueIndices));
+                std::vector<bool> residueIncluded = util::indicesToBools(residues.names.size(), residueIndices);
                 for (auto& bond : graph.atoms.edges.nodeAdjacencies)
                 {
-                    size_t first = sourceNodeIndex(graph.atoms, bond[0]);
-                    size_t second = sourceNodeIndex(graph.atoms, bond[1]);
+                    size_t first = bond[0];
+                    size_t second = bond[1];
                     if (residueIncluded[graph.indices.atomResidue[first]])
                     {
                         int number = atoms.numbers[first];
@@ -124,13 +121,11 @@ namespace gmml
                 stream << "!entry." << unitName
                        << ".unit.hierarchy table  str abovetype  int abovex  str belowtype  int belowx"
                        << "\n";
-                for (size_t graphIndex : residueIndices)
+                for (size_t residueIndex : residueIndices)
                 {
-                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     stream << " \"U\" 0 \"R\" " << residues.numbers[residueIndex] << "\n";
-                    for (size_t residueAtom : assembly::residueAtoms(graph, graphIndex))
+                    for (size_t atomIndex : assembly::residueAtoms(graph, residueIndex))
                     {
-                        size_t atomIndex = graph.residues.source.nodes[residueAtom];
                         stream << " \"R\" " << residues.numbers[residueIndex] << " \"A\" " << atoms.numbers[atomIndex]
                                << "\n";
                     }
@@ -147,7 +142,7 @@ namespace gmml
                 {
                     for (size_t residueAtom : assembly::residueAtoms(graph, graphIndex))
                     {
-                        size_t atomIndex = graph.residues.source.nodes[residueAtom];
+                        size_t atomIndex = graph.residues.source.nodes.indices[residueAtom];
                         Coordinate coord = atoms.coordinates[atomIndex];
                         for (size_t n = 0; n < 3; n++)
                         {
@@ -162,9 +157,8 @@ namespace gmml
                 stream << "!entry." << unitName
                        << ".unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x"
                        << "\n";
-                for (size_t graphIndex : residueIndices)
+                for (size_t residueIndex : residueIndices)
                 {
-                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
                     std::vector<size_t> connectedAtoms = residues.atomsConnectedToOtherResidues[residueIndex];
                     // Deal with residues that don't have a tail/head in reality:
                     if (connectedAtoms.size() == 1)
@@ -190,12 +184,11 @@ namespace gmml
                        << ".unit.residues table  str name  int seq  int childseq  int startatomx  str restype  int "
                           "imagingx"
                        << "\n";
-                for (size_t graphIndex : residueIndices)
+                for (size_t residueIndex : residueIndices)
                 {
-                    size_t residueIndex = sourceNodeIndex(graph.residues, graphIndex);
-                    const std::vector<size_t>& atomIndices = assembly::residueAtoms(graph, graphIndex);
+                    const std::vector<size_t>& atomIndices = assembly::residueAtoms(graph, residueIndex);
                     unsigned int childseq = atomIndices.size() + 1;
-                    unsigned int startatomx = atoms.numbers[graph.residues.source.nodes[atomIndices.front()]];
+                    unsigned int startatomx = atoms.numbers[graph.residues.source.nodes.indices[atomIndices.front()]];
                     std::string restype = residueOffType(residues.types[residueIndex]);
                     unsigned int imagingx = 0;
                     stream << " \"" << residues.names[residueIndex] << "\""
@@ -235,21 +228,14 @@ namespace gmml
         { // For writing each residue separately
             stream << "!!index array str"
                    << "\n";
-            for (size_t n : sourceIndices(graph.residues.nodes))
+            for (size_t n : indices(graph.residues.nodes))
             {
                 stream << " \"" << data.residues.names[n] << "\""
                        << "\n";
             }
-            for (size_t n : localIndices(graph.residues.nodes))
+            for (size_t n : indices(graph.residues.nodes))
             {
-                writeUnit(
-                    stream,
-                    data.format,
-                    graph,
-                    data.residues,
-                    data.atoms,
-                    {n},
-                    data.residues.names[sourceNodeIndex(graph.residues, n)]);
+                writeUnit(stream, data.format, graph, data.residues, data.atoms, {n}, data.residues.names[n]);
             }
         }
 

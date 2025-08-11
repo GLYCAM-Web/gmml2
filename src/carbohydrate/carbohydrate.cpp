@@ -323,7 +323,7 @@ namespace gmml
             size_t index = 0;
             for (size_t n = 0; n < residueCount; n++)
             {
-                if (sequence.graph.nodeAlive[n])
+                if (sequence.graph.nodes.alive[n])
                 {
                     size_t edge = parentEdge(sequence, n);
                     bool hasParent = edge < edgeCount(sequence.graph);
@@ -350,8 +350,8 @@ namespace gmml
             }
             for (size_t n = 0; n < edgeCount(sequence.graph); n++)
             {
-                auto& edge = sequence.graph.edgeNodes[n];
-                if (sequence.graph.nodeAlive[edge[1]] && !sequence.graph.edgeAlive[edge[0]])
+                auto& edge = sequence.graph.edges.nodes[n];
+                if (sequence.graph.nodes.alive[edge[1]] && !sequence.graph.edges.alive[edge[0]])
                 {
                     throw std::runtime_error(
                         "Error: required parent residue removed by random chance. Check sequence definition");

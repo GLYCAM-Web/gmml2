@@ -12,8 +12,8 @@ namespace gmml
     {
         bool edgeAlive(const Database& db, size_t edgeId)
         {
-            const std::array<size_t, 2>& nodes = db.edgeNodes[edgeId];
-            return db.nodeAlive[nodes[0]] && db.nodeAlive[nodes[1]];
+            const std::array<size_t, 2>& nodes = db.edges.nodes[edgeId];
+            return db.nodes.alive[nodes[0]] && db.nodes.alive[nodes[1]];
         }
 
         std::vector<bool> reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting)

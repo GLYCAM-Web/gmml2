@@ -11,8 +11,8 @@ namespace gmml
         size_t parentEdge(const SequenceData& sequence, size_t nodeId)
         {
             auto childEquals = [&](const std::array<size_t, 2>& nodes) { return nodes[1] == nodeId; };
-            auto it = std::find_if(sequence.graph.edgeNodes.begin(), sequence.graph.edgeNodes.end(), childEquals);
-            return it - sequence.graph.edgeNodes.begin();
+            auto it = std::find_if(sequence.graph.edges.nodes.begin(), sequence.graph.edges.nodes.end(), childEquals);
+            return it - sequence.graph.edges.nodes.begin();
         }
 
         std::string edgeLinkage(const SequenceData& sequence, size_t edgeId)

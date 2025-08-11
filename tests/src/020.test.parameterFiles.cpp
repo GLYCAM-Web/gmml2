@@ -29,21 +29,23 @@ int main()
         data.residueCount,
         1,
         1,
-        data.atomGraph.nodeAlive,
+        data.atomGraph.nodes.alive,
         data.atomResidue,
         std::vector<size_t>(data.residueCount, 0),
         {0}};
     assembly::Graph graph = assembly::createAssemblyGraph(indices, data.atomGraph);
     std::vector<bool> residueTER(data.residueCount, true);
 
-    std::function<std::string(const size_t&)> toElement = [&](size_t n)
-    { return (data.atomGraph.nodeAlive[n] && !data.atoms.name[n].empty()) ? std::string {data.atoms.name[n][0]} : ""; };
+    std::function<std::string(const size_t&)> toElement = [&](size_t n) {
+        return (data.atomGraph.nodes.alive[n] && !data.atoms.name[n].empty()) ? std::string {data.atoms.name[n][0]}
+                                                                              : "";
+    };
 
     std::vector<size_t> atomIndices = util::indexVector(data.atomCount);
     std::vector<std::string> elementStrings = util::vectorMap(toElement, atomIndices);
 
     std::function<uint(const size_t&)> atomicNumber = [&](size_t n)
-    { return data.atomGraph.nodeAlive[n] ? findElementAtomicNumber(elementStrings[n]) : Element::Unknown; };
+    { return data.atomGraph.nodes.alive[n] ? findElementAtomicNumber(elementStrings[n]) : Element::Unknown; };
 
     std::vector<uint> atomicNumbers = util::vectorMap(atomicNumber, atomIndices);
     std::vector<uint> residueNumbers(data.residueCount, 1);

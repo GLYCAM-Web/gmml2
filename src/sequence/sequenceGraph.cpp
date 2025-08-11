@@ -19,7 +19,7 @@ namespace gmml
 
             for (size_t n = 0; n < edgeCount(sequence.graph); n++)
             {
-                const std::array<size_t, 2>& adj = sequence.graph.edgeNodes[n];
+                const std::array<size_t, 2>& adj = sequence.graph.edges.nodes[n];
                 size_t parent = adj[0];
                 size_t child = adj[1];
                 if (sequence.residues.type[child] == ResidueType::Derivative)
@@ -43,7 +43,7 @@ namespace gmml
                 return sequence.residues.isomer[n] + sequence.residues.name[n] + sequence.residues.modifier[n] +
                        sequence.residues.ringShape[n];
             };
-            return util::vectorMap(monosaccharideName, util::indexVector(nodeCount(sequence.graph)));
+            return util::vectorMap(monosaccharideName, sequence.graph.nodes.indices);
         }
 
         graph::Graph condensedSequenceGraph(const SequenceData& sequence)
@@ -51,7 +51,7 @@ namespace gmml
             std::function<bool(const ResidueType&)> keepNode = [](const ResidueType& type)
             { return type != ResidueType::Derivative; };
             graph::Database db = sequence.graph;
-            db.nodeAlive = util::vectorMap(keepNode, sequence.residues.type);
+            db.nodes.alive = util::vectorMap(keepNode, sequence.residues.type);
             return graph::identity(db);
         }
     } // namespace sequence

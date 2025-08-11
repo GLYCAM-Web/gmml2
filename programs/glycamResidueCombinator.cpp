@@ -95,14 +95,16 @@ int main(int argc, char* argv[])
         allGeneratedResidues.push_back({true, special, prep::residueAtoms(data, special)});
     }
 
-    std::function<std::string(const size_t&)> toElement = [&](size_t n)
-    { return (data.atomGraph.nodeAlive[n] && !data.atoms.name[n].empty()) ? std::string {data.atoms.name[n][0]} : ""; };
+    std::function<std::string(const size_t&)> toElement = [&](size_t n) {
+        return (data.atomGraph.nodes.alive[n] && !data.atoms.name[n].empty()) ? std::string {data.atoms.name[n][0]}
+                                                                              : "";
+    };
 
     std::vector<size_t> atomIndices = util::indexVector(data.atomCount);
     std::vector<std::string> elementStrings = util::vectorMap(toElement, atomIndices);
 
     std::function<uint(const size_t&)> atomicNumber = [&](size_t n)
-    { return data.atomGraph.nodeAlive[n] ? findElementAtomicNumber(elementStrings[n]) : Element::Unknown; };
+    { return data.atomGraph.nodes.alive[n] ? findElementAtomicNumber(elementStrings[n]) : Element::Unknown; };
 
     std::vector<uint> atomicNumbers = util::vectorMap(atomicNumber, atomIndices);
 
@@ -119,7 +121,7 @@ int main(int argc, char* argv[])
         const std::vector<size_t>& atoms = prep::residueAtoms(data, n);
         if (!residueActive[n])
         {
-            util::setIndicesTo(data.atomGraph.nodeAlive, atoms, std::vector<bool>(atoms.size(), false));
+            util::setIndicesTo(data.atomGraph.nodes.alive, atoms, std::vector<bool>(atoms.size(), false));
         }
     }
 
@@ -128,7 +130,7 @@ int main(int argc, char* argv[])
         data.residueCount,
         1,
         1,
-        data.atomGraph.nodeAlive,
+        data.atomGraph.nodes.alive,
         data.atomResidue,
         std::vector<size_t>(data.residueCount, 0),
         {0}};
@@ -138,7 +140,6 @@ int main(int argc, char* argv[])
     {
         if (residueActive[residue.residueId])
         {
-            size_t graphId = util::indexOf(sourceIndices(graph.residues.nodes), residue.residueId);
             std::vector<size_t> atomIds = residue.atomIds;
             // tleap requires the tail atoms to be at the end, so we rearrange them before writing
             for (size_t k : residue.tail)
@@ -147,7 +148,7 @@ int main(int argc, char* argv[])
                 atomIds.erase(atomIds.begin() + index);
                 atomIds.push_back(k);
             }
-            graph.residues.nodes.constituents[graphId] = atomIds;
+            graph.residues.nodes.constituents[residue.residueId] = atomIds;
             util::setIndicesTo(offAtomData.numbers, atomIds, serializedNumberVector(atomIds.size()));
         }
     }

@@ -98,7 +98,7 @@ namespace gmml
                 size_t edgeCount = graph::edgeCount(sequence.graph);
                 size_t index = 0;
                 std::vector<size_t> edgeIndices(edgeCount, 0);
-                for (size_t nodeId : sequence.graph.nodes)
+                for (size_t nodeId : sequence.graph.nodes.indices)
                 {
                     for (size_t edgeId : nodeEdges[nodeId])
                     {
@@ -109,7 +109,7 @@ namespace gmml
 
                 std::vector<std::string> result;
                 result.reserve(edgeCount);
-                for (size_t n : sequence.graph.edges)
+                for (size_t n : sequence.graph.edges.indices)
                 {
                     result.push_back("&Label=link-" + std::to_string(edgeIndices[n]) + ";");
                 }
@@ -127,16 +127,16 @@ namespace gmml
             auto iupacLinkageBrackets = [](const SequenceData& sequence)
             {
                 std::vector<util::Brackets> result(nodeCount(sequence.graph), {"", ""});
-                for (size_t nodeId : sequence.graph.nodes)
+                for (size_t nodeId : sequence.graph.nodes.indices)
                 {
                     if (sequence.residues.type[nodeId] != ResidueType::Aglycone)
                     {
                         result[nodeId].open = "(";
                     }
                 }
-                for (size_t edgeId : sequence.graph.edges)
+                for (size_t edgeId : sequence.graph.edges.indices)
                 {
-                    const std::array<size_t, 2>& nodes = sequence.graph.edgeNodes[edgeId];
+                    const std::array<size_t, 2>& nodes = sequence.graph.edges.nodes[edgeId];
                     if (!util::contains(
                             {sequence.residues.type[nodes[0]], sequence.residues.type[nodes[1]]},
                             ResidueType::Aglycone))
@@ -154,7 +154,7 @@ namespace gmml
                 result.reserve(edgeCount);
                 for (size_t n = 0; n < edgeCount; n++)
                 {
-                    if (sequence.graph.edgeNodes[n][0] == residueId)
+                    if (sequence.graph.edges.nodes[n][0] == residueId)
                     {
                         result.push_back(n);
                     }
@@ -169,7 +169,7 @@ namespace gmml
                 result.reserve(edgeCount);
                 for (size_t n = 0; n < edgeCount; n++)
                 {
-                    if (sequence.graph.edgeNodes[n][1] == residueId)
+                    if (sequence.graph.edges.nodes[n][1] == residueId)
                     {
                         result.push_back(n);
                     }
@@ -204,7 +204,7 @@ namespace gmml
                 std::vector<std::string> derivatives;
                 for (size_t edgeId : edges)
                 {
-                    size_t neighbor = graph.edgeNodes[edgeId][1];
+                    size_t neighbor = graph.edges.nodes[edgeId][1];
                     if (util::contains({ResidueType::Derivative, ResidueType::Deoxy}, data.residueTypes[neighbor]))
                     {
                         --numberOfNeighbors;
@@ -233,7 +233,7 @@ namespace gmml
                 size_t loopCount = 0;
                 for (size_t edgeId : edges)
                 {
-                    size_t neighbor = graph.edgeNodes[edgeId][1];
+                    size_t neighbor = graph.edges.nodes[edgeId][1];
                     if (!util::contains({ResidueType::Derivative, ResidueType::Deoxy}, data.residueTypes[neighbor]))
                     {
                         ++loopCount;
@@ -308,7 +308,7 @@ namespace gmml
             size_t noEdgeId = size_t(-1);
             std::vector<std::vector<size_t>> residueChildEdges;
             std::vector<std::vector<size_t>> residueParentEdges;
-            for (size_t nodeId : sequence.graph.nodes)
+            for (size_t nodeId : sequence.graph.nodes.indices)
             {
                 residueChildEdges.push_back(config.edgeOrder(sequence, childEdges(sequence, nodeId)));
                 residueParentEdges.push_back(parentEdges(sequence, nodeId));
@@ -349,9 +349,15 @@ namespace gmml
             std::vector<dot::Edge> linkages;
             linkages.reserve(edgeCount(graph));
 
+            std::vector<size_t> nodeIndices(sourceNodeCount(graph), -1);
+            for (size_t n = 0; n < graph.nodes.aliveIndices.size(); n++)
+            {
+                nodeIndices[graph.nodes.aliveIndices[n]] = n;
+            }
+
             for (size_t n = 0; n < nodeCount(graph); n++)
             {
-                size_t index = sourceNodeIndex(graph, n);
+                size_t index = graph.nodes.aliveIndices[n];
                 std::string& monosaccharideName = monosaccharideNames[index];
                 dot::Image image =
                     findImage(configs, monosaccharideName, (sequence.residues.ringType[index] == "f") ? "f" : "");
@@ -363,11 +369,10 @@ namespace gmml
                 std::array<size_t, 2>& adj = graph.edges.nodeAdjacencies[n];
                 size_t parent = adj[0];
                 size_t child = adj[1];
-                size_t childIndex = sourceNodeIndex(graph, child);
-                std::string label = (configs.configLabels ? sequence.residues.configuration[childIndex] : "") +
-                                    (configs.positionLabels ? edgeLinkage(sequence, sourceEdgeIndex(graph, n)) : "");
+                std::string label = (configs.configLabels ? sequence.residues.configuration[child] : "") +
+                                    (configs.positionLabels ? edgeLinkage(sequence, sourceIndex(graph.edges, n)) : "");
                 linkages.push_back({
-                    {child, parent},
+                    {nodeIndices[child], nodeIndices[parent]},
                     label
                 });
             }
@@ -380,7 +385,7 @@ namespace gmml
             ss << "rankdir=LR nodesep=\"0.05\" ranksep=\"0.8\";\n";
             for (size_t n = 0; n < nodes.size(); n++)
             {
-                size_t nodeIndex = sourceNodeIndex(graph, n);
+                size_t nodeIndex = graph.nodes.aliveIndices[n];
                 bool isAglycone = sequence.residues.type[nodeIndex] == ResidueType::Aglycone;
                 ss << (isAglycone ? nodeBoxStyle(nodes[n]) : nodeImageStyle(nodes[n]));
             }

@@ -238,14 +238,15 @@ namespace gmml
             ParsedResidueComponents components;
             components.type = ResidueType::Undefined;
             addNode(result, components);
-            resultGraph.nodeAlive[0] = false;
+            resultGraph.nodes.alive[0] = false;
             instantiateNode(result, {0, 0}, data, data.root);
             if (!result.linkage[1].empty())
             {
                 throw std::runtime_error(
                     "Sequence tail should not contain linkage in: " + result.data.residues.fullString[1]);
             }
-            SequenceData rearr = rearrange(result.data, util::boolsToIndices(resultGraph.nodeAlive), resultGraph.edges);
+            SequenceData rearr =
+                rearrange(result.data, util::boolsToIndices(resultGraph.nodes.alive), resultGraph.edges.indices);
             return rearr;
         }
 
@@ -268,7 +269,7 @@ namespace gmml
 
             for (size_t n : edgeOrder)
             {
-                const std::array<size_t, 2>& edge = sequence.graph.edgeNodes[n];
+                const std::array<size_t, 2>& edge = sequence.graph.edges.nodes[n];
                 graph::addEdge(resultGraph, {invertedResidueOrder[edge[0]], invertedResidueOrder[edge[1]]});
             }
 
@@ -297,14 +298,14 @@ namespace gmml
         {
             std::function<bool(const size_t&, const size_t&)> compare = [&](const size_t& n, const size_t& k)
             {
-                if (sequence.graph.edgeNodes[n][0] == sequence.graph.edgeNodes[k][0])
+                if (sequence.graph.edges.nodes[n][0] == sequence.graph.edges.nodes[k][0])
                 {
-                    return mainLinkage(sequence, sequence.graph.edgeNodes[n][1]) >
-                           mainLinkage(sequence, sequence.graph.edgeNodes[k][1]);
+                    return mainLinkage(sequence, sequence.graph.edges.nodes[n][1]) >
+                           mainLinkage(sequence, sequence.graph.edges.nodes[k][1]);
                 }
                 else
                 {
-                    return sequence.graph.edgeNodes[n][0] < sequence.graph.edgeNodes[k][0];
+                    return sequence.graph.edges.nodes[n][0] < sequence.graph.edges.nodes[k][0];
                 }
             };
 
@@ -314,9 +315,10 @@ namespace gmml
         SequenceData reordered(const SequenceData& sequence)
         {
             size_t residueCount = nodeCount(sequence.graph);
-            std::vector<size_t> edgeOrder = edgesSortedByLink(sequence, util::indexVector(sequence.graph.edges));
+            std::vector<size_t> edgeOrder =
+                edgesSortedByLink(sequence, util::indexVector(sequence.graph.edges.indices));
             std::vector<std::array<size_t, 2>> reorderedEdges =
-                util::indicesToValues(sequence.graph.edgeNodes, edgeOrder);
+                util::indicesToValues(sequence.graph.edges.nodes, edgeOrder);
 
             size_t current = 0;
             std::vector<size_t> residueOrder = {current};

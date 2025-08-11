@@ -69,7 +69,7 @@ namespace gmml
                 size_t residueIndex = residueIndices[n];
                 for (size_t residueAtom : residueAtoms(graph, residueIndex))
                 {
-                    size_t atomIndex = graph.residues.source.nodes[residueAtom];
+                    size_t atomIndex = graph.residues.source.nodes.indices[residueAtom];
                     writeAtomToPdb(stream, data.format, residues, residueIndex, atoms, atomIndex);
                 }
                 if (residueTER[n])

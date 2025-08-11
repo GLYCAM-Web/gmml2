@@ -53,26 +53,30 @@ namespace gmml
         {
             std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
             { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
-            std::vector<bool> selected = util::vectorMap(inMolecule, sourceIndices(graph.atoms.nodes));
+            std::vector<bool> selected = util::vectorMap(inMolecule, indices(graph.atoms.nodes));
             return util::boolsToIndices(selected);
         }
 
         Graph createAssemblyGraph(const Indices& indices, const graph::Database& atomGraphData)
         {
             graph::Graph atomGraph = graph::identity(atomGraphData);
-            graph::Graph residueGraph = graph::quotient(atomGraphData, indices.atomResidue);
+            graph::Graph residueGraph = graph::quotient(atomGraphData, indices.residueCount, indices.atomResidue);
             graph::Database residueData = graph::asData(residueGraph);
-            graph::Graph moleculeGraph =
-                graph::quotient(residueData, util::indicesToValues(indices.residueMolecule, residueData.nodes));
+            graph::Graph moleculeGraph = graph::quotient(
+                residueData,
+                indices.moleculeCount,
+                util::indicesToValues(indices.residueMolecule, residueData.nodes.indices));
             graph::Database moleculeData = graph::asData(moleculeGraph);
-            graph::Graph assemblyGraph =
-                graph::quotient(moleculeData, util::indicesToValues(indices.moleculeAssembly, moleculeData.nodes));
+            graph::Graph assemblyGraph = graph::quotient(
+                moleculeData,
+                indices.assemblyCount,
+                util::indicesToValues(indices.moleculeAssembly, moleculeData.nodes.indices));
             return assembly::Graph {
                 {indices.atomCount,
                  indices.residueCount,
                  indices.moleculeCount,
                  indices.assemblyCount,
-                 atomGraphData.nodeAlive,
+                 atomGraphData.nodes.alive,
                  indices.atomResidue,
                  indices.residueMolecule,
                  indices.moleculeAssembly},

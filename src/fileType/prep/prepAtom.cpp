@@ -33,18 +33,19 @@ namespace gmml
 
             std::vector<size_t> findDihedralAtoms(const PrepData& data, size_t index)
             {
-                const std::vector<bool>& nodeAlive = data.atomGraph.nodeAlive;
+                const std::vector<bool>& nodeAlive = data.atomGraph.nodes.alive;
                 std::vector<size_t> result = {index};
                 size_t lastId = index;
                 auto isParent = [&](const std::array<size_t, 2>& nodes)
                 { return (nodes[1] == lastId) && nodeAlive[nodes[0]] && nodeAlive[nodes[1]]; };
                 for (int currentDepth = 0; currentDepth < 3; currentDepth++)
                 {
-                    auto it = std::find_if(data.atomGraph.edgeNodes.begin(), data.atomGraph.edgeNodes.end(), isParent);
+                    auto it =
+                        std::find_if(data.atomGraph.edges.nodes.begin(), data.atomGraph.edges.nodes.end(), isParent);
                     size_t edgeId =
-                        it - data.atomGraph.edgeNodes.begin(); // Go up the first parent only. Loops may create
-                                                               // another parent, but they should be ignored.
-                    size_t parent = data.atomGraph.edgeNodes[edgeId][0];
+                        it - data.atomGraph.edges.nodes.begin(); // Go up the first parent only. Loops may create
+                                                                 // another parent, but they should be ignored.
+                    size_t parent = data.atomGraph.edges.nodes[edgeId][0];
                     result.push_back(parent);
                     lastId = parent;
                 }

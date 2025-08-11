@@ -106,7 +106,7 @@ namespace gmml
         }
         pdb::writeMoleculeToPdb(stream, graph, util::indexVector(residues), ter, data);
         std::vector<std::array<size_t, 2>> connectionIndices =
-            util::indicesToValues(graph.residues.source.edgeNodes, sourceIndices(graph.residues.edges));
+            util::indicesToValues(graph.residues.source.edges.nodes, graph.residues.edges.sourceIndices);
         pdb::writeConectCards(stream, data.atoms.numbers, connectionIndices);
         pdb::theEnd(stream);
     }

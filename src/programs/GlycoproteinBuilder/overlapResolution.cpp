@@ -146,7 +146,7 @@ namespace gmml
                 std::vector<size_t> sidechainResiduesWithGlycanOverlap;
                 sidechainResiduesWithGlycanOverlap.reserve(graph.indices.residueCount);
 
-                for (size_t residue : sourceIndices(graph.residues.nodes))
+                for (size_t residue : indices(graph.residues.nodes))
                 {
                     if (data.residues.types[residue] == ResidueType::Protein &&
                         data.residues.sidechainDihedrals[residue].size() > 0 &&
@@ -307,7 +307,7 @@ namespace gmml
                 const std::array<size_t, 2>& adj = graph.residues.edges.nodeAdjacencies[n];
                 if (isNonProteinResidue(adj[0]) || isNonProteinResidue(adj[1]))
                 {
-                    size_t atomEdgeId = sourceEdgeIndex(graph.residues, n);
+                    size_t atomEdgeId = sourceIndex(graph.residues.edges, n);
                     const std::array<size_t, 2> atomAdj = graph.atoms.edges.nodeAdjacencies[atomEdgeId];
                     atomPairsConnectingNonProteinResidues.push_back(atomAdj);
                 }

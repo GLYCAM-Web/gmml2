@@ -215,7 +215,7 @@ namespace gmml
 
             for (size_t edgeId : prep::residueEdges(data, residue))
             {
-                const std::array<size_t, 2>& nodes = data.atomGraph.edgeNodes[edgeId];
+                const std::array<size_t, 2>& nodes = data.atomGraph.edges.nodes[edgeId];
                 graphAtoms[localIndex[nodes[0]]].addChild("", &graphAtoms[localIndex[nodes[1]]]);
             }
             glygraph::Graph<AtomIndex> atomGraph(&graphAtoms[0]);

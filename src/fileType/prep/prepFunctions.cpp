@@ -15,7 +15,7 @@ namespace gmml
         std::vector<size_t> residueAtoms(const PrepData& data, size_t residueId)
         {
             std::vector<size_t> atoms = util::indicesOfElement(data.atomResidue, residueId);
-            std::vector<bool> alive = util::indicesToValues(data.atomGraph.nodeAlive, atoms);
+            std::vector<bool> alive = util::indicesToValues(data.atomGraph.nodes.alive, atoms);
             return util::boolsToValues(atoms, alive);
         }
 
@@ -24,10 +24,10 @@ namespace gmml
             auto partOfResidue = [&](size_t n) { return data.atomResidue[n] == residueId; };
             std::function<bool(const size_t&)> condition = [&](size_t edgeId)
             {
-                const std::array<size_t, 2>& nodes = data.atomGraph.edgeNodes[edgeId];
+                const std::array<size_t, 2>& nodes = data.atomGraph.edges.nodes[edgeId];
                 return partOfResidue(nodes[0]) && partOfResidue(nodes[1]) && graph::edgeAlive(data.atomGraph, edgeId);
             };
-            return util::vectorFilter(condition, data.atomGraph.edges);
+            return util::vectorFilter(condition, data.atomGraph.edges.indices);
         }
 
         std::vector<size_t> atomNeighbors(const PrepData& data, size_t atomId)
@@ -37,7 +37,7 @@ namespace gmml
             std::vector<size_t> residueEdges = prep::residueEdges(data, residue);
             for (size_t edgeId : prep::residueEdges(data, residue))
             {
-                const std::array<size_t, 2>& nodes = data.atomGraph.edgeNodes[edgeId];
+                const std::array<size_t, 2>& nodes = data.atomGraph.edges.nodes[edgeId];
                 if (nodes[0] == atomId)
                 {
                     result.push_back(nodes[1]);
@@ -53,9 +53,10 @@ namespace gmml
         size_t findAtom(const PrepData& data, size_t residueId, const std::string& name)
         {
             std::function<bool(const size_t&)> condition = [&](size_t id) {
-                return data.atomResidue[id] == residueId && data.atoms.name[id] == name && data.atomGraph.nodeAlive[id];
+                return data.atomResidue[id] == residueId && data.atoms.name[id] == name &&
+                       data.atomGraph.nodes.alive[id];
             };
-            return util::findIf(data.atomGraph.nodes, condition);
+            return util::findIf(data.atomGraph.nodes.indices, condition);
         }
 
         size_t addAtom(prep::PrepData& data, size_t residueId)
@@ -97,7 +98,7 @@ namespace gmml
             residues.improperDihedrals.push_back(reference.residues.improperDihedrals[residue]);
             residues.loops.push_back(reference.residues.loops[residue]);
 
-            std::vector<size_t> newAtomIndex = reference.atomGraph.nodes;
+            std::vector<size_t> newAtomIndex = reference.atomGraph.nodes.indices;
 
             for (size_t atom : prep::residueAtoms(reference, residue))
             {
@@ -121,7 +122,7 @@ namespace gmml
 
             for (size_t edgeId : prep::residueEdges(reference, residue))
             {
-                const std::array<size_t, 2>& nodes = reference.atomGraph.edgeNodes[edgeId];
+                const std::array<size_t, 2>& nodes = reference.atomGraph.edges.nodes[edgeId];
                 graph::addEdge(data.atomGraph, {newAtomIndex[nodes[0]], newAtomIndex[nodes[1]]});
             }
             return newResidue;

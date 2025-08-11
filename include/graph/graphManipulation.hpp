@@ -21,19 +21,21 @@ namespace gmml
 
         Database asData(const Graph& graph);
         Graph selectedQuotientAliveOrNot(
-            const Database& graph,
+            const Database& source,
+            size_t groupCount,
             const std::vector<size_t>& nodeGroup,
             const std::vector<bool>& includeNode,
             const std::vector<bool>& includeEdge);
         Graph selectedQuotient(
-            const Database& graph,
+            const Database& source,
+            size_t groupCount,
             const std::vector<size_t>& nodeGroup,
             const std::vector<bool>& includeNode,
             const std::vector<bool>& includeEdge);
         Graph subgraph(
-            const Database& graph, const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge);
-        Graph quotient(const Database& graph, const std::vector<size_t>& nodeGroup);
-        Graph identity(const Database& graph);
+            const Database& source, const std::vector<bool>& includeNode, const std::vector<bool>& includeEdge);
+        Graph quotient(const Database& source, size_t groupCount, const std::vector<size_t>& nodeGroup);
+        Graph identity(const Database& source);
     } // namespace graph
 } // namespace gmml
 

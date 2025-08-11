@@ -151,7 +151,7 @@ namespace gmml
                     "Deleting atom with id: " + data.atoms.names[atomId] + "_" +
                         std::to_string(data.atoms.numbers[atomId]));
                 data.indices.atomAlive[atomId] = false;
-                data.atomGraph.nodeAlive[atomId] = false;
+                data.atomGraph.nodes.alive[atomId] = false;
                 size_t residueId = data.indices.atomResidue[atomId];
                 Atom* atom = data.objects.atoms[atomId];
                 data.objects.residues[residueId]->deleteAtom(atom);
