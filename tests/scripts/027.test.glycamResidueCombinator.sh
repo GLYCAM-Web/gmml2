@@ -4,6 +4,8 @@ printf "Testing 027 glycam residue combinator... "
 
 GMML_ROOT_DIR=$(git rev-parse --show-toplevel)
 BIN_PATH="${GMML_ROOT_DIR}/bin/glycamResidueCombinator"
+PREP="${GMML_ROOT_DIR}/dat/prep"
+BACT="${PREP}/bacterial"
 
 if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
     echo -e "Test 027 failed, we think our GMML root directory is:\t${GMML_ROOT_DIR}\n"
@@ -11,7 +13,7 @@ if [[ "${GMML_ROOT_DIR}" != *"gmml2" ]]; then
 fi
 
 outputFile=027.output.txt
-"${BIN_PATH}" ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep inputs/027.BacterialPrep/0aN-alfa_final.prep inputs/027.BacterialPrep/0an-beta_final.prep inputs/027.BacterialPrep/0DH-alfa_final.prep inputs/027.BacterialPrep/0Dh-beta_final.prep inputs/027.BacterialPrep/0eC-alfa_final.prep inputs/027.BacterialPrep/0ec-beta_final.prep inputs/027.BacterialPrep/0FC-alfa_final.prep inputs/027.BacterialPrep/0Fc-beta_final.prep inputs/027.BacterialPrep/0gF-alfa_final.prep inputs/027.BacterialPrep/0gf-beta_final.prep inputs/027.BacterialPrep/0KX-alfa_final.prep inputs/027.BacterialPrep/0Kx-beta_final.prep inputs/027.BacterialPrep/0LD_final.prep inputs/027.BacterialPrep/0LG-alfa_final.prep inputs/027.BacterialPrep/0Lg-beta_final.prep inputs/027.BacterialPrep/0LH-alfa_final.prep inputs/027.BacterialPrep/0Lh-beta_final.prep inputs/027.BacterialPrep/0LU_final.prep inputs/027.BacterialPrep/0mP-alfa_final.prep inputs/027.BacterialPrep/0mp-beta_final.prep inputs/027.BacterialPrep/0MR-alfa_final.prep inputs/027.BacterialPrep/0Mr-beta_final.prep inputs/027.BacterialPrep/0QF-alfa_final.prep inputs/027.BacterialPrep/0Qf-beta_final.prep inputs/027.BacterialPrep/0ZF-alfa_final.prep inputs/027.BacterialPrep/0Zf-beta_final.prep inputs/027.BacterialPrep/0KO-alfa_final.prep inputs/027.BacterialPrep/0Ko-beta_final.prep > $outputFile
+"${BIN_PATH}" "${PREP}"/GLYCAM_06j-1_GAGS_KDN.prep "${BACT}"/0aN-alfa_final.prep "${BACT}"/0an-beta_final.prep "${BACT}"/0DH-alfa_final.prep "${BACT}"/0Dh-beta_final.prep "${BACT}"/0eC-alfa_final.prep "${BACT}"/0ec-beta_final.prep "${BACT}"/0FC-alfa_final.prep "${BACT}"/0Fc-beta_final.prep "${BACT}"/0gF-alfa_final.prep "${BACT}"/0gf-beta_final.prep "${BACT}"/0KX-alfa_final.prep "${BACT}"/0Kx-beta_final.prep "${BACT}"/0LD_final.prep "${BACT}"/0LG-alfa_final.prep "${BACT}"/0Lg-beta_final.prep "${BACT}"/0LH-alfa_final.prep "${BACT}"/0Lh-beta_final.prep "${BACT}"/0LU_final.prep "${BACT}"/0mP-alfa_final.prep "${BACT}"/0mp-beta_final.prep "${BACT}"/0MR-alfa_final.prep "${BACT}"/0Mr-beta_final.prep "${BACT}"/0QF-alfa_final.prep "${BACT}"/0Qf-beta_final.prep "${BACT}"/0ZF-alfa_final.prep "${BACT}"/0Zf-beta_final.prep "${BACT}"/0KO-alfa_final.prep "${BACT}"/0Ko-beta_final.prep > $outputFile
 
 file="GLYCAM_06k.lib"
 if [ ! -f "${file}" ]; then
@@ -19,8 +21,8 @@ if [ ! -f "${file}" ]; then
     echo "Exit Code: 1"
      return 1
 fi
-if ! cmp -s "${file}" ../dat/CurrentParams/"${file}"; then
-    echo -e "Test FAILED!\n ${file} is different from ../dat/CurrentParams/${file}\n"
+if ! cmp -s "${file}" ../dat/parameters/"${file}"; then
+    echo -e "Test FAILED!\n ${file} is different from ../dat/parameters/${file}\n"
     echo "Exit Code: 1"
      return 1
 fi

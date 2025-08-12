@@ -19,7 +19,7 @@
 int main()
 {
     using namespace gmml;
-    std::string libFilePath = "../dat/CurrentParams/leaprc.ff12SB_2014-04-24/amino12.lib";
+    std::string libFilePath = "../dat/parameters/leaprc.ff12SB_2014-04-24/amino12.lib";
     lib::LibraryData data = lib::loadLibraryData(libFilePath);
     preprocess::ParameterManager params {data};
     std::cout << "Finished loading libfile" << std::endl;

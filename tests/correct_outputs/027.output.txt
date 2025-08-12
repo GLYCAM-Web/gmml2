@@ -1,4 +1,4 @@
-Loading ../dat/prep/GLYCAM_06j-1_GAGS_KDN.prep
+Loading "GLYCAM_06j-1_GAGS_KDN.prep"
 Generating those combos from 0AA
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4251,7 +4251,7 @@ Added 2233: 5KN
 Added 2234: 4KN
 Added with anomeric 2235: 2KN
 Added without anomeric 2236: 0KN
-Loading inputs/027.BacterialPrep/0aN-alfa_final.prep
+Loading "0aN-alfa_final.prep"
 Generating those combos from 0aN
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4278,7 +4278,7 @@ Added 2240: 3aN
 Added 2241: 2aN
 Added with anomeric 2242: 1aN
 Added without anomeric 2243: 0aN
-Loading inputs/027.BacterialPrep/0an-beta_final.prep
+Loading "0an-beta_final.prep"
 Generating those combos from 0an
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4305,7 +4305,7 @@ Added 2247: 3an
 Added 2248: 2an
 Added with anomeric 2249: 1an
 Added without anomeric 2250: 0an
-Loading inputs/027.BacterialPrep/0DH-alfa_final.prep
+Loading "0DH-alfa_final.prep"
 Generating those combos from 0DH
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4350,7 +4350,7 @@ Added 2282: 3DH
 Added 2283: 4DH
 Added with anomeric 2284: 1DH
 Added without anomeric 2285: 0DH
-Loading inputs/027.BacterialPrep/0Dh-beta_final.prep
+Loading "0Dh-beta_final.prep"
 Generating those combos from 0Dh
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4395,7 +4395,7 @@ Added 2317: 3Dh
 Added 2318: 4Dh
 Added with anomeric 2319: 1Dh
 Added without anomeric 2320: 0Dh
-Loading inputs/027.BacterialPrep/0eC-alfa_final.prep
+Loading "0eC-alfa_final.prep"
 Generating those combos from 0eC
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4422,7 +4422,7 @@ Added 2324: 8eC
 Added 2325: 4eC
 Added with anomeric 2326: 2eC
 Added without anomeric 2327: 0eC
-Loading inputs/027.BacterialPrep/0ec-beta_final.prep
+Loading "0ec-beta_final.prep"
 Generating those combos from 0ec
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4449,7 +4449,7 @@ Added 2331: 8ec
 Added 2332: 4ec
 Added with anomeric 2333: 2ec
 Added without anomeric 2334: 0ec
-Loading inputs/027.BacterialPrep/0FC-alfa_final.prep
+Loading "0FC-alfa_final.prep"
 Generating those combos from 0FC
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4474,7 +4474,7 @@ Anomer: 1
 Added 2337: 3FC
 Added with anomeric 2338: 1FC
 Added without anomeric 2339: 0FC
-Loading inputs/027.BacterialPrep/0Fc-beta_final.prep
+Loading "0Fc-beta_final.prep"
 Generating those combos from 0Fc
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4499,7 +4499,7 @@ Anomer: 1
 Added 2342: 3Fc
 Added with anomeric 2343: 1Fc
 Added without anomeric 2344: 0Fc
-Loading inputs/027.BacterialPrep/0gF-alfa_final.prep
+Loading "0gF-alfa_final.prep"
 Generating those combos from 0gF
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4530,7 +4530,7 @@ Added 2352: 7gF
 Added 2353: 4gF
 Added with anomeric 2354: 2gF
 Added without anomeric 2355: 0gF
-Loading inputs/027.BacterialPrep/0gf-beta_final.prep
+Loading "0gf-beta_final.prep"
 Generating those combos from 0gf
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4561,7 +4561,7 @@ Added 2363: 7gf
 Added 2364: 4gf
 Added with anomeric 2365: 2gf
 Added without anomeric 2366: 0gf
-Loading inputs/027.BacterialPrep/0KX-alfa_final.prep
+Loading "0KX-alfa_final.prep"
 Generating those combos from 0KX
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4605,7 +4605,7 @@ Added 2398: 4KX
 Added 2399: 5KX
 Added with anomeric 2400: 2KX
 Added without anomeric 2401: 0KX
-Loading inputs/027.BacterialPrep/0Kx-beta_final.prep
+Loading "0Kx-beta_final.prep"
 Generating those combos from 0Kx
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4649,7 +4649,7 @@ Added 2433: 4Kx
 Added 2434: 5Kx
 Added with anomeric 2435: 2Kx
 Added without anomeric 2436: 0Kx
-Loading inputs/027.BacterialPrep/0LD_final.prep
+Loading "0LD_final.prep"
 Generating those combos from 0LD
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4688,7 +4688,7 @@ Added 2452: 2LD
 Added 2453: 3LD
 Added with anomeric 2454: 1LD
 Added without anomeric 2455: 0LD
-Loading inputs/027.BacterialPrep/0LG-alfa_final.prep
+Loading "0LG-alfa_final.prep"
 Generating those combos from 0LG
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4715,7 +4715,7 @@ Added 2459: 8LG
 Added 2460: 4LG
 Added with anomeric 2461: 2LG
 Added without anomeric 2462: 0LG
-Loading inputs/027.BacterialPrep/0Lg-beta_final.prep
+Loading "0Lg-beta_final.prep"
 Generating those combos from 0Lg
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4742,7 +4742,7 @@ Added 2466: 8Lg
 Added 2467: 4Lg
 Added with anomeric 2468: 2Lg
 Added without anomeric 2469: 0Lg
-Loading inputs/027.BacterialPrep/0LH-alfa_final.prep
+Loading "0LH-alfa_final.prep"
 Generating those combos from 0LH
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4787,7 +4787,7 @@ Added 2501: 3LH
 Added 2502: 4LH
 Added with anomeric 2503: 1LH
 Added without anomeric 2504: 0LH
-Loading inputs/027.BacterialPrep/0Lh-beta_final.prep
+Loading "0Lh-beta_final.prep"
 Generating those combos from 0Lh
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4832,7 +4832,7 @@ Added 2536: 3Lh
 Added 2537: 4Lh
 Added with anomeric 2538: 1Lh
 Added without anomeric 2539: 0Lh
-Loading inputs/027.BacterialPrep/0LU_final.prep
+Loading "0LU_final.prep"
 Generating those combos from 0LU
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4871,7 +4871,7 @@ Added 2555: 2LU
 Added 2556: 3LU
 Added with anomeric 2557: 1LU
 Added without anomeric 2558: 0LU
-Loading inputs/027.BacterialPrep/0mP-alfa_final.prep
+Loading "0mP-alfa_final.prep"
 Generating those combos from 0mP
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4898,7 +4898,7 @@ Added 2562: 8mP
 Added 2563: 4mP
 Added with anomeric 2564: 2mP
 Added without anomeric 2565: 0mP
-Loading inputs/027.BacterialPrep/0mp-beta_final.prep
+Loading "0mp-beta_final.prep"
 Generating those combos from 0mp
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4925,7 +4925,7 @@ Added 2569: 8mp
 Added 2570: 4mp
 Added with anomeric 2571: 2mp
 Added without anomeric 2572: 0mp
-Loading inputs/027.BacterialPrep/0MR-alfa_final.prep
+Loading "0MR-alfa_final.prep"
 Generating those combos from 0MR
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4952,7 +4952,7 @@ Added 2576: 4MR
 Added 2577: 6MR
 Added with anomeric 2578: 1MR
 Added without anomeric 2579: 0MR
-Loading inputs/027.BacterialPrep/0Mr-beta_final.prep
+Loading "0Mr-beta_final.prep"
 Generating those combos from 0Mr
 Copying the input residue 
 Guessing anomeric oxygen
@@ -4979,7 +4979,7 @@ Added 2583: 4Mr
 Added 2584: 6Mr
 Added with anomeric 2585: 1Mr
 Added without anomeric 2586: 0Mr
-Loading inputs/027.BacterialPrep/0QF-alfa_final.prep
+Loading "0QF-alfa_final.prep"
 Generating those combos from 0QF
 Copying the input residue 
 Guessing anomeric oxygen
@@ -5004,7 +5004,7 @@ Anomer: 1
 Added 2589: 3QF
 Added with anomeric 2590: 1QF
 Added without anomeric 2591: 0QF
-Loading inputs/027.BacterialPrep/0Qf-beta_final.prep
+Loading "0Qf-beta_final.prep"
 Generating those combos from 0Qf
 Copying the input residue 
 Guessing anomeric oxygen
@@ -5029,7 +5029,7 @@ Anomer: 1
 Added 2594: 3Qf
 Added with anomeric 2595: 1Qf
 Added without anomeric 2596: 0Qf
-Loading inputs/027.BacterialPrep/0ZF-alfa_final.prep
+Loading "0ZF-alfa_final.prep"
 Generating those combos from 0ZF
 Copying the input residue 
 Guessing anomeric oxygen
@@ -5054,7 +5054,7 @@ Anomer: 1
 Added 2599: 4ZF
 Added with anomeric 2600: 1ZF
 Added without anomeric 2601: 0ZF
-Loading inputs/027.BacterialPrep/0Zf-beta_final.prep
+Loading "0Zf-beta_final.prep"
 Generating those combos from 0Zf
 Copying the input residue 
 Guessing anomeric oxygen
@@ -5079,7 +5079,7 @@ Anomer: 1
 Added 2604: 4Zf
 Added with anomeric 2605: 1Zf
 Added without anomeric 2606: 0Zf
-Loading inputs/027.BacterialPrep/0KO-alfa_final.prep
+Loading "0KO-alfa_final.prep"
 Generating those combos from 0KO
 Copying the input residue 
 Guessing anomeric oxygen
@@ -5112,7 +5112,7 @@ Added 2622: 7KO
 Added 2623: 8KO
 Added with anomeric 2624: 2KO
 Added without anomeric 2625: 0KO
-Loading inputs/027.BacterialPrep/0Ko-beta_final.prep
+Loading "0Ko-beta_final.prep"
 Generating those combos from 0Ko
 Copying the input residue 
 Guessing anomeric oxygen

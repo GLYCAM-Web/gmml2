@@ -17,15 +17,15 @@ namespace gmml
         //    static const std::vector<std::string> prepFilesToLoad = {"/dat/prep/GLYCAM_06j-1_GAGS_KDN.prep"};
         static const std::vector<std::string> prepFilesToLoad;
         static const std::vector<std::string> libFilesToLoad = {
-            "/dat/CurrentParams/GLYCAM_06k.lib",
-            "/dat/CurrentParams/leaprc_GLYCAM_06j-1_2014-03-14/GLYCAM_amino_06j_12SB.lib",
-            "/dat/CurrentParams/leaprc_GLYCAM_06j-1_2014-03-14/GLYCAM_aminont_06j_12SB.lib",
-            "/dat/CurrentParams/leaprc.ff12SB_2014-04-24/nucleic12.lib",
-            "/dat/CurrentParams/leaprc.ff12SB_2014-04-24/nucleic12.lib",
-            "/dat/CurrentParams/other/solvents.lib",
-            "/dat/CurrentParams/leaprc.ff12SB_2014-04-24/amino12.lib",
-            "/dat/CurrentParams/leaprc.ff12SB_2014-04-24/aminoct12.lib",
-            "/dat/CurrentParams/leaprc.ff12SB_2014-04-24/aminont12.lib",
+            "/dat/parameters/GLYCAM_06k.lib",
+            "/dat/parameters/leaprc_GLYCAM_06j-1_2014-03-14/GLYCAM_amino_06j_12SB.lib",
+            "/dat/parameters/leaprc_GLYCAM_06j-1_2014-03-14/GLYCAM_aminont_06j_12SB.lib",
+            "/dat/parameters/leaprc.ff12SB_2014-04-24/nucleic12.lib",
+            "/dat/parameters/leaprc.ff12SB_2014-04-24/nucleic12.lib",
+            "/dat/parameters/other/solvents.lib",
+            "/dat/parameters/leaprc.ff12SB_2014-04-24/amino12.lib",
+            "/dat/parameters/leaprc.ff12SB_2014-04-24/aminoct12.lib",
+            "/dat/parameters/leaprc.ff12SB_2014-04-24/aminont12.lib",
         };
 
         ParameterManager loadParameters(const std::string& baseDir)

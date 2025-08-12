@@ -12,6 +12,7 @@
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
 
+#include <filesystem>
 #include <iostream>
 #include <ostream>
 #include <string>
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
     for (int n = 1; n < argc; n++)
     {
         char* inputFileName = argv[n];
-        std::cout << "Loading " << inputFileName << std::endl;
+        std::cout << "Loading " << std::filesystem::path(inputFileName).filename() << std::endl;
         prep::PrepData reference = prep::readPrepFile(inputFileName, residuesToLoadFromPrep);
         for (size_t n = 0; n < reference.residueCount; n++)
         {
