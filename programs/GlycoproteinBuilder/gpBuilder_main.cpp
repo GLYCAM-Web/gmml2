@@ -12,11 +12,13 @@
 #include "include/metadata/sidechainRotamers.hpp"
 #include "include/preprocess/parameterManager.hpp"
 #include "include/preprocess/pdbPreProcess.hpp"
+#include "include/programs/GlycoproteinBuilder/gpBuilderStats.hpp"
 #include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "include/programs/GlycoproteinBuilder/overlapResolution.hpp"
 #include "include/util/arguments.hpp"
 #include "include/util/containerTypes.hpp"
 #include "include/util/containers.hpp"
+#include "include/util/files.hpp"
 #include "include/util/filesystem.hpp"
 #include "include/util/logging.hpp"
 #include "include/util/parsing.hpp"
@@ -46,6 +48,7 @@ int main(int argc, char* argv[])
     };
 
     using namespace gmml;
+    using namespace gmml::gpbuilder;
     using util::ArgReq;
     using util::ArgType;
     const std::string overwriteFlag = "overwrite-existing-files";
@@ -162,7 +165,7 @@ int main(int argc, char* argv[])
             sidechainRotamers = readSidechainRotamerData(dunbrackLib);
         }
         std::cout << "Input file is " << inputFile << "\n";
-        gpbuilder::GlycoproteinBuilderInputs settings = gpbuilder::readGPInputFile(inputFile);
+        GlycoproteinBuilderInputs settings = readGPInputFile(inputFile);
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
         const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
@@ -185,7 +188,7 @@ int main(int argc, char* argv[])
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
         pdb::setInterConnectivity(aminoAcidTable, pdbFile.data, bounds);
         util::log(__LINE__, __FILE__, util::INF, "Attaching Glycans To Glycosites.");
-        std::vector<gpbuilder::GlycosylationSite> glycosites =
+        std::vector<GlycosylationSite> glycosites =
             createGlycosites(pdbFile.data, glycoproteinAssemblyId, settings.glycositesInputVector);
         std::vector<Molecule*> glycans;
         std::vector<std::vector<ResidueLinkage>> linkages;
@@ -202,7 +205,7 @@ int main(int argc, char* argv[])
 
         std::vector<Molecule*> molecules = glycoprotein->getMolecules();
 
-        gpbuilder::GlycoproteinAssembly assembly = addSidechainRotamers(
+        GlycoproteinAssembly assembly = addSidechainRotamers(
             aminoAcidTable,
             sidechainRotamers,
             toGlycoproteinAssemblyStructs(
@@ -214,8 +217,6 @@ int main(int argc, char* argv[])
                 glycosites,
                 glycans,
                 linkages,
-                settings.overlapTolerance,
-                settings.overlapRejectionThreshold,
                 settings.ignoreHydrogen));
         if (settings.moveOverlappingSidechains)
         {
@@ -224,9 +225,61 @@ int main(int argc, char* argv[])
                 util::vectorNot(assembly.data.atoms.partOfMovableSidechain));
         }
 
+        std::vector<bool> foundElements = gmml::foundElements(assembly.data.atoms.elements);
+
+        OverlapSettings overlapSettings {
+            potentialTable(elementRadii, foundElements),
+            settings.overlapTolerance,
+            settings.overlapRejectionThreshold,
+        };
+
+        ResolutionSettings resolution {
+            settings.isDeterministic ? settings.seed : util::generateRandomSeed(),
+            settings.persistCycles,
+            settings.numberOfSamples,
+            settings.useInitialGlycositeResidueConformation,
+            settings.moveOverlappingSidechains,
+            settings.deleteSitesUntilResolved,
+            settings.MDprep,
+            settings.MDprep};
+
         std::cout << "Resolving overlaps" << std::endl;
-        uint64_t rngSeed = settings.isDeterministic ? settings.seed : util::generateRandomSeed();
-        resolveOverlaps(sidechainRotamers, assembly, settings, rngSeed, outputDir, headerLines, numThreads);
+        std::vector<StructureStats> stats;
+        resolveOverlaps(
+            stats,
+            sidechainRotamers,
+            dihedralAngleDataTable,
+            assembly,
+            overlapSettings,
+            resolution,
+            outputDir,
+            headerLines,
+            numThreads);
+
+        Summary summary = summarizeStats(assembly.graph, assembly.data, settings, resolution.rngSeed, stats);
+        std::vector<util::TextVariant> textStructure = {
+            util::TextVariant(util::TextHeader {2, "Glycoprotein Builder"}
+             ),
+            util::TextVariant(util::TextParagraph {headerLines}
+             ),
+            util::TextVariant(util::TextHeader {3, "Input"}
+             ),
+            util::TextVariant(
+                util::TextParagraph {{"Filename: " + summary.filename, "Protein: " + summary.proteinFilename}}
+             ),
+            util::TextVariant(summary.parameterTable),
+            util::TextVariant(util::TextHeader {3, "Structures"}
+             ),
+            util::TextVariant(summary.structuretable),
+        };
+
+        util::writeToFile(
+            outputDir + "/summary.txt", [&](std::ostream& stream) { util::toTxt(stream, textStructure); });
+        util::writeToFile(
+            outputDir + "/summary.html", [&](std::ostream& stream) { util::toHtml(stream, textStructure); });
+        util::writeToFile(
+            outputDir + "/structures.csv",
+            [&](std::ostream& stream) { util::toCsv(stream, ",", summary.structuretable); });
     }
     catch (const std::runtime_error& error)
     {

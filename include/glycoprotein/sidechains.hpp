@@ -27,6 +27,7 @@ namespace gmml
         };
 
         bool sidechainHasGlycanOverlap(
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const MutableData& mutableData,
@@ -46,6 +47,7 @@ namespace gmml
 
         void setSidechainToLowestOverlapState(
             const SidechainRotamerData& sidechains,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             MutableData& mutableData,
@@ -53,6 +55,7 @@ namespace gmml
             size_t residue);
 
         std::vector<double> sidechainOverlap(
+            const OverlapSettings& overlapSettings,
             const assembly::Indices& indices,
             const AssemblyData& data,
             const std::vector<Sphere>& bounds,
@@ -61,6 +64,7 @@ namespace gmml
 
         IndexedOverlap lowestOverlapSidechainRotation(
             const SidechainRotamerData& sidechains,
+            const OverlapSettings& overlapSettings,
             const assembly::Indices& indices,
             const AssemblyData& data,
             const MutableData& mutableData,
@@ -69,6 +73,7 @@ namespace gmml
             const std::vector<size_t>& otherAtoms);
 
         std::vector<size_t> atomsWithinSidechainPotentialBounds(
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const MutableData& mutableData,

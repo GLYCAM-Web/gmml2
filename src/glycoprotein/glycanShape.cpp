@@ -22,13 +22,17 @@ namespace gmml
             return {coord(3), coord(2), coord(1), coord(0)};
         }
 
-        AngleWithMetadata currentDihedralShape(const AssemblyData& data, const MutableData& mutableData, size_t bondId)
+        AngleWithMetadata currentDihedralShape(
+            const DihedralAngleDataTable& dihedralAngleTable,
+            const AssemblyData& data,
+            const MutableData& mutableData,
+            size_t bondId)
         {
             size_t metadataIndex = mutableData.rotatableBondCurrentMetadata[bondId];
             auto& currentMetadata = data.rotatableDihedralData.metadata[bondId][metadataIndex];
             return {
                 constants::toDegrees(angle(dihedralCoordinates(data, mutableData.bounds, bondId))),
-                data.dihedralAngleTable.entries[currentMetadata].default_angle,
+                dihedralAngleTable.entries[currentMetadata].default_angle,
                 metadataIndex};
         }
 

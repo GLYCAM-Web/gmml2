@@ -20,6 +20,7 @@ namespace gmml
 
         GlycanShapePreference randomLinkageShapePreference(
             pcg32& rng,
+            const DihedralAngleDataTable& dihedralAngleTable,
             const AngleSettings& settings,
             const AssemblyData& data,
             const assembly::Bounds& bounds,
@@ -42,14 +43,14 @@ namespace gmml
                     size_t bondId = rotatableBonds[k];
                     for (auto& metadata : dihedralMetadata[bondId])
                     {
-                        angles[k].push_back(randomAngle(rng, settings, data.dihedralAngleTable.entries[metadata]));
+                        angles[k].push_back(randomAngle(rng, settings, dihedralAngleTable.entries[metadata]));
                     }
                 }
                 if (data.residueLinkageData.rotamerTypes[linkageId] == RotamerType::conformer)
                 {
                     size_t firstbondId = rotatableBonds[0];
                     std::vector<size_t> order =
-                        settings.randomMetadata(rng, data.dihedralAngleTable, dihedralMetadata[firstbondId]);
+                        settings.randomMetadata(rng, dihedralAngleTable, dihedralMetadata[firstbondId]);
                     std::vector<bool> isFrozen(rotatableBonds.size(), false);
                     ConformerShapePreference pref {isFrozen, angles, order};
                     if (isGlycositeLinkage && freezeGlycositeResidueConformation)
@@ -58,7 +59,7 @@ namespace gmml
                         {
                             size_t bondId = rotatableBonds[n];
                             if (isChiAngle(
-                                    data.dihedralAngleTable.entries[dihedralMetadata[bondId][0]].dihedral_angle_name_))
+                                    dihedralAngleTable.entries[dihedralMetadata[bondId][0]].dihedral_angle_name_))
                             {
                                 pref.isFrozen[n] = true;
                                 size_t metadata = data.rotatableDihedralData.initialShape[bondId].metadataIndex;
@@ -76,8 +77,7 @@ namespace gmml
                     order.reserve(rotatableBonds.size());
                     for (size_t bondId : rotatableBonds)
                     {
-                        order.push_back(
-                            settings.randomMetadata(rng, data.dihedralAngleTable, dihedralMetadata[bondId]));
+                        order.push_back(settings.randomMetadata(rng, dihedralAngleTable, dihedralMetadata[bondId]));
                     }
                     result.push_back(PermutationShapePreference {angles, order});
                 }

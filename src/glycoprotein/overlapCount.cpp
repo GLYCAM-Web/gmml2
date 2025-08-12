@@ -40,14 +40,15 @@ namespace gmml
         } // namespace
 
         std::vector<double> totalOverlaps(
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,
             const assembly::Bounds& bounds)
         {
             return overlapsWithinSelection(
-                data.potentialTable,
-                data.overlapTolerance,
+                overlapSettings.potentialTable,
+                overlapSettings.tolerance,
                 graph,
                 bounds,
                 selection,
@@ -56,6 +57,7 @@ namespace gmml
         }
 
         double localOverlap(
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,
@@ -69,16 +71,16 @@ namespace gmml
                 assembly::selectByAtomsAndMolecules(graph, selection.atoms, otherMolecules);
 
             std::vector<double> overlapWithin = overlapsWithinSelection(
-                data.potentialTable,
-                data.overlapTolerance,
+                overlapSettings.potentialTable,
+                overlapSettings.tolerance,
                 graph,
                 bounds,
                 glycanSelection,
                 data.atoms.elements,
                 data.residueEdges.atomsCloseToEdge);
             std::vector<double> overlapBetween = overlapsBetweenSelections(
-                data.potentialTable,
-                data.overlapTolerance,
+                overlapSettings.potentialTable,
+                overlapSettings.tolerance,
                 graph,
                 bounds,
                 glycanSelection,
@@ -90,6 +92,7 @@ namespace gmml
 
         std::vector<size_t> determineSitesWithOverlap(
             double threshold,
+            const OverlapSettings& overlapSettings,
             const std::vector<size_t>& movedSites,
             const assembly::Graph& graph,
             const AssemblyData& data,
@@ -110,8 +113,8 @@ namespace gmml
                 return containsOverlapExceedingThreshold(
                     threshold,
                     overlapsBetweenSelections(
-                        data.potentialTable,
-                        data.overlapTolerance,
+                        overlapSettings.potentialTable,
+                        overlapSettings.tolerance,
                         graph,
                         bounds,
                         glycanSelection,
@@ -129,8 +132,8 @@ namespace gmml
                 return containsOverlapExceedingThreshold(
                     threshold,
                     overlapsWithinSelection(
-                        data.potentialTable,
-                        data.overlapTolerance,
+                        overlapSettings.potentialTable,
+                        overlapSettings.tolerance,
                         graph,
                         bounds,
                         glycanSelection,
@@ -163,8 +166,8 @@ namespace gmml
                         assembly::Selection selectionN = selectGlycan(graph, data, selection, n);
                         assembly::Selection selectionK = selectGlycan(graph, data, selection, k);
                         std::vector<double> overlap = overlapsBetweenSelections(
-                            data.potentialTable,
-                            data.overlapTolerance,
+                            overlapSettings.potentialTable,
+                            overlapSettings.tolerance,
                             graph,
                             bounds,
                             selectionN,

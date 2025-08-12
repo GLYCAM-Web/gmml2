@@ -30,7 +30,6 @@
 #include "include/graph/graphTypes.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/programs/GlycoproteinBuilder/gpBuilderStats.hpp"
-#include "include/programs/GlycoproteinBuilder/gpInputStructs.hpp"
 #include "include/programs/GlycoproteinBuilder/randomDescent.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
@@ -53,10 +52,12 @@ namespace gmml
     namespace gpbuilder
     {
         void resolveOverlaps(
+            std::vector<StructureStats>& stats,
             const SidechainRotamerData& sidechainRotamers,
+            const DihedralAngleDataTable& dihedralAngleDataTable,
             const GlycoproteinAssembly& assembly,
-            const GlycoproteinBuilderInputs& settings,
-            uint64_t rngSeed,
+            const OverlapSettings& overlapSettings,
+            const ResolutionSettings& resolutionSettings,
             const std::string& outputDir,
             const std::vector<std::string>& headerLines,
             int numThreads)
@@ -71,7 +72,8 @@ namespace gmml
             MetadataOrder randomMetadataOrder =
                 [](pcg32& rng, const DihedralAngleDataTable& table, const std::vector<size_t>& metadataIndices)
             { return util::weightedRandomOrder(rng, util::indicesToValues(table.weights, metadataIndices)); };
-            bool freezeGlycositeResidueConformation = settings.useInitialGlycositeResidueConformation;
+            bool freezeGlycositeResidueConformation = resolutionSettings.useInitialGlycositeResidueConformation;
+            bool moveOverlappingSidechains = resolutionSettings.moveOverlappingSidechains;
             auto standardDeviation = [](const AngleSettings& settings, const DihedralAngleData& metadata)
             {
                 std::function<std::pair<double, double>(const AngleLimit&)> onLimit = [&](const AngleLimit& dev)
@@ -94,15 +96,17 @@ namespace gmml
                 auto std = standardDeviation(settings, metadata);
                 return metadata.default_angle + num * (num < 0 ? std.first : std.second);
             };
-            GlycanShapeRandomizer randomizeShape = [&randomAngle, &freezeGlycositeResidueConformation](
-                                                       pcg32& rng,
-                                                       const AngleSettings& settings,
-                                                       const AssemblyData& data,
-                                                       const MutableData& mutableData,
-                                                       size_t linkageId)
+            GlycanShapeRandomizer randomizeShape =
+                [&dihedralAngleDataTable, &randomAngle, &freezeGlycositeResidueConformation](
+                    pcg32& rng,
+                    const AngleSettings& settings,
+                    const AssemblyData& data,
+                    const MutableData& mutableData,
+                    size_t linkageId)
             {
                 return randomLinkageShapePreference(
                     rng,
+                    dihedralAngleDataTable,
                     settings,
                     data,
                     mutableData.bounds,
@@ -150,7 +154,7 @@ namespace gmml
                 {
                     if (data.residues.types[residue] == ResidueType::Protein &&
                         data.residues.sidechainDihedrals[residue].size() > 0 &&
-                        sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residue))
+                        sidechainHasGlycanOverlap(overlapSettings, graph, data, mutableData, glycans, residue))
                     {
                         sidechainResiduesWithGlycanOverlap.push_back(residue);
                     }
@@ -160,7 +164,7 @@ namespace gmml
                 for (size_t n = 0; n < residues.size(); n++)
                 {
                     setSidechainToLowestOverlapState(
-                        sidechainRotamers, graph, data, mutableData, preferences[n], residues[n]);
+                        sidechainRotamers, overlapSettings, graph, data, mutableData, preferences[n], residues[n]);
                 }
                 assembly::Selection selection = assembly::selectByAtomsAndMolecules(
                     graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
@@ -188,10 +192,10 @@ namespace gmml
                 std::vector<std::vector<size_t>> preferences = sidechainRotationPreferences(rng, data, residues);
                 for (size_t n = 0; n < residues.size(); n++)
                 {
-                    if (sidechainHasGlycanOverlap(graph, data, mutableData, glycans, residues[n]))
+                    if (sidechainHasGlycanOverlap(overlapSettings, graph, data, mutableData, glycans, residues[n]))
                     {
                         setSidechainToLowestOverlapState(
-                            sidechainRotamers, graph, data, mutableData, preferences[n], residues[n]);
+                            sidechainRotamers, overlapSettings, graph, data, mutableData, preferences[n], residues[n]);
                     }
                 }
             };
@@ -205,7 +209,7 @@ namespace gmml
                                                             const std::vector<GlycanShapePreference>&,
                                                             const std::vector<size_t>&) { return; };
 
-            WiggleGlycan wiggle = [&standardDeviation](
+            WiggleGlycan wiggle = [&dihedralAngleDataTable, &overlapSettings, &standardDeviation](
                                       const assembly::Graph& graph,
                                       const AssemblyData& data,
                                       const assembly::Selection& selection,
@@ -222,6 +226,8 @@ namespace gmml
                         preference, deviation * std.first, deviation * std.second, settings.searchIncrement);
                 };
                 return wiggleGlycan(
+                    dihedralAngleDataTable,
+                    overlapSettings,
                     graph,
                     data,
                     selection,
@@ -294,9 +300,9 @@ namespace gmml
             const AssemblyData& data = assembly.data;
             const MutableData& initialState = assembly.mutableData;
             SidechainAdjustment sidechainAdjustment =
-                settings.moveOverlappingSidechains ? adjustSidechains : noSidechainAdjustment;
+                moveOverlappingSidechains ? adjustSidechains : noSidechainAdjustment;
             SidechainAdjustment sidechainRestoration =
-                settings.moveOverlappingSidechains ? restoreSidechains : noSidechainAdjustment;
+                moveOverlappingSidechains ? restoreSidechains : noSidechainAdjustment;
 
             auto isNonProteinResidue = [&graph, &data](size_t n)
             { return data.molecules.types[graph.indices.residueMolecule[n]] != MoleculeType::protein; };
@@ -313,7 +319,7 @@ namespace gmml
                 }
             }
 
-            auto nonViableSites = [&settings](
+            auto nonViableSites = [&overlapSettings](
                                       const assembly::Graph& graph,
                                       const assembly::Selection& selection,
                                       const AssemblyData& data,
@@ -324,7 +330,7 @@ namespace gmml
                 {
                     for (size_t n : assembly::moleculeSelectedAtoms(graph, selection, molecule))
                     {
-                        if (compareOverlaps(overlaps[n], settings.overlapRejectionThreshold) == 1)
+                        if (compareOverlaps(overlaps[n], overlapSettings.rejectionThreshold) == 1)
                         {
                             result[molecule] = true;
                         }
@@ -346,15 +352,17 @@ namespace gmml
                     sidechainRestoration,
                     randomizeShape,
                     wiggle,
+                    overlapSettings,
                     graph,
                     data,
                     mutableData,
-                    settings.persistCycles,
+                    resolutionSettings.persistCycles,
                     false);
                 std::vector<Coordinate> resolvedCoords = getCoordinates(mutableData.bounds.atoms);
                 assembly::Selection selection = assembly::selectAll(graph);
-                std::vector<double> atomOverlaps = totalOverlaps(graph, data, selection, mutableData.bounds);
-                bool serialized = settings.MDprep;
+                std::vector<double> atomOverlaps =
+                    totalOverlaps(overlapSettings, graph, data, selection, mutableData.bounds);
+                bool serialized = resolutionSettings.prepareForMD;
                 std::string prefix = "default";
                 writePdbFile(
                     graph,
@@ -366,7 +374,7 @@ namespace gmml
                     atomPairsConnectingNonProteinResidues,
                     outputDir,
                     prefix);
-                if (settings.writeOffFile)
+                if (resolutionSettings.writeOffFile)
                 {
                     writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, prefix);
                 }
@@ -394,11 +402,12 @@ namespace gmml
                     sidechainRestoration,
                     randomizeShape,
                     wiggle,
+                    overlapSettings,
                     graph,
                     data,
                     mutableData,
-                    settings.persistCycles,
-                    settings.deleteSitesUntilResolved);
+                    resolutionSettings.persistCycles,
+                    resolutionSettings.deleteSitesUntilResolved);
                 std::vector<Coordinate> coordinates = getCoordinates(mutableData.bounds.atoms);
                 const assembly::Selection fullSelection =
                     assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
@@ -407,11 +416,12 @@ namespace gmml
                 std::string directory = outputDir;
                 assembly::Selection selection = assembly::selectByAtomsAndMolecules(
                     graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
-                std::vector<double> atomOverlaps = totalOverlaps(graph, data, selection, mutableData.bounds);
+                std::vector<double> atomOverlaps =
+                    totalOverlaps(overlapSettings, graph, data, selection, mutableData.bounds);
                 std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
                 bool reject = util::contains(nonViable, true);
                 directory = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
-                bool serialized = settings.MDprep;
+                bool serialized = resolutionSettings.prepareForMD;
                 writePdbFile(
                     graph,
                     data,
@@ -422,7 +432,7 @@ namespace gmml
                     atomPairsConnectingNonProteinResidues,
                     directory,
                     prefix);
-                if (settings.writeOffFile)
+                if (resolutionSettings.writeOffFile)
                 {
                     writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefix);
                 }
@@ -449,9 +459,9 @@ namespace gmml
                 "unresolved");
 
             // order of parallel for loop is undefined, so we generate all seeds up front for determinism
-            size_t sampleCount = settings.numberOfSamples;
+            size_t sampleCount = resolutionSettings.numberOfSamples;
             size_t totalStructures = sampleCount + 1;
-            pcg32 seedingRng(rngSeed);
+            pcg32 seedingRng(resolutionSettings.rngSeed);
             std::vector<uint64_t> rngSeeds = util::randomIntegers<uint64_t>(totalStructures, seedingRng);
             std::vector<std::string> prefixes;
             prefixes.reserve(sampleCount);
@@ -470,11 +480,11 @@ namespace gmml
                 }
             }
             // will be initialized in loop
-            std::vector<StructureStats> stats(totalStructures);
+            stats.resize(totalStructures);
 
             util::setOpenMpNumberOfThreads(numThreads);
-// clang format doesn't align pragmas
-/*    */#pragma omp parallel for
+//        clang format doesn't align pragmas
+/*        */#pragma omp parallel for
             for (size_t count = 0; count < totalStructures; count++)
             {
                 pcg32 rng(rngSeeds[count]);
@@ -487,31 +497,6 @@ namespace gmml
                     runIteration(rng, stats[count], prefixes[count - 1]);
                 }
             }
-
-            Summary summary = summarizeStats(graph, data, settings, rngSeed, stats);
-            std::vector<util::TextVariant> textStructure = {
-                util::TextVariant(util::TextHeader {2, "Glycoprotein Builder"}
-                 ),
-                util::TextVariant(util::TextParagraph {headerLines}
-                 ),
-                util::TextVariant(util::TextHeader {3, "Input"}
-                 ),
-                util::TextVariant(
-                    util::TextParagraph {{"Filename: " + summary.filename, "Protein: " + summary.proteinFilename}}
-                 ),
-                util::TextVariant(summary.parameterTable),
-                util::TextVariant(util::TextHeader {3, "Structures"}
-                 ),
-                util::TextVariant(summary.structuretable),
-            };
-
-            util::writeToFile(
-                outputDir + "/summary.txt", [&](std::ostream& stream) { util::toTxt(stream, textStructure); });
-            util::writeToFile(
-                outputDir + "/summary.html", [&](std::ostream& stream) { util::toHtml(stream, textStructure); });
-            util::writeToFile(
-                outputDir + "/structures.csv",
-                [&](std::ostream& stream) { util::toCsv(stream, ",", summary.structuretable); });
         }
     } // namespace gpbuilder
 } // namespace gmml

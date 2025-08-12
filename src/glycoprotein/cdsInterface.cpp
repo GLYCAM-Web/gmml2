@@ -38,8 +38,6 @@ namespace gmml
             std::vector<GlycosylationSite>& glycosites,
             std::vector<Molecule*>& glycans,
             const std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
-            double overlapTolerance,
-            double overlapRejectionThreshold,
             bool excludeHydrogen)
         {
             GraphIndexData graphData = toIndexData(molecules);
@@ -267,8 +265,6 @@ namespace gmml
 
             AssemblyIndices indices {proteinMolecules, rotatableBondIndices, residueLinkages};
 
-            std::vector<bool> foundElements = gmml::foundElements(atomElements);
-
             AssemblyData data {
                 atomData,
                 residueData,
@@ -277,11 +273,7 @@ namespace gmml
                 GlycanData,
                 rotatableDihedralData,
                 residueLinkageData,
-                indices,
-                dihedralAngleDataTable,
-                potentialTable(elementRadii, foundElements),
-                overlapTolerance,
-                overlapRejectionThreshold};
+                indices};
 
             std::vector<bool> moleculeIncluded(graph.indices.moleculeCount, true);
             MutableData mutableData {

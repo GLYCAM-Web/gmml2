@@ -31,6 +31,7 @@ namespace gmml
             GlycanShapeRandomizer randomizeShape,
             SidechainAdjustment adjustSidechains,
             uint persistCycles,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             MutableData& mutableData,
@@ -61,7 +62,8 @@ namespace gmml
                 for (auto& glycanId : util::shuffleVector(rng, sitesWithOverlap))
                 {
                     const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
-                    double previousOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
+                    double previousOverlap =
+                        localOverlap(overlapSettings, graph, data, eachSelection, mutableData.bounds, glycanId);
                     std::vector<GlycanShapePreference> currentPreferences = glycositePreferences;
                     currentPreferences[glycanId] = randomizeShape(rng, settings, data, mutableData, glycanId);
                     GlycanShapePreference& glycanPreferences = currentPreferences[glycanId];
@@ -73,7 +75,8 @@ namespace gmml
                     wiggleGlycan(graph, data, mainSelection, settings, glycanPreferences, mutableData, glycanId);
                     adjustSidechains(
                         rng, settings, wiggleGlycan, graph, data, mutableData, currentPreferences, {glycanId});
-                    double newOverlap = localOverlap(graph, data, eachSelection, mutableData.bounds, glycanId);
+                    double newOverlap =
+                        localOverlap(overlapSettings, graph, data, eachSelection, mutableData.bounds, glycanId);
                     double diff = newOverlap + (previousOverlap * -1);
                     bool isWorse = compareOverlaps(newOverlap, previousOverlap) > 0;
                     if (isWorse)
@@ -97,10 +100,16 @@ namespace gmml
                     cycle = 0;
                 }
                 globalOverlap = newGlobalOverlap;
-                sitesWithOverlap =
-                    determineSitesWithOverlap(0.0, sitesWithOverlap, graph, data, eachSelection, mutableData.bounds);
+                sitesWithOverlap = determineSitesWithOverlap(
+                    0.0, overlapSettings, sitesWithOverlap, graph, data, eachSelection, mutableData.bounds);
                 sitesAboveOverlapThreshold = determineSitesWithOverlap(
-                    data.overlapRejectionThreshold, sitesWithOverlap, graph, data, eachSelection, mutableData.bounds);
+                    overlapSettings.rejectionThreshold,
+                    overlapSettings,
+                    sitesWithOverlap,
+                    graph,
+                    data,
+                    eachSelection,
+                    mutableData.bounds);
             }
             return {globalOverlap, sitesWithOverlap, sitesAboveOverlapThreshold, glycositePreferences};
         }
@@ -113,6 +122,7 @@ namespace gmml
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
             WiggleGlycan wiggleGlycan,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             MutableData& mutableData,
@@ -147,13 +157,20 @@ namespace gmml
                 rng, initialAngleSettings, wiggleGlycan, graph, data, mutableData, glycositePreferences, glycanIndices);
             assembly::Selection selection = assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
             GlycoproteinState currentState;
-            std::vector<size_t> sitesWithOverlap =
-                determineSitesWithOverlap(0.0, glycanIndices, graph, data, selection, mutableData.bounds);
+            std::vector<size_t> sitesWithOverlap = determineSitesWithOverlap(
+                0.0, overlapSettings, glycanIndices, graph, data, selection, mutableData.bounds);
             std::vector<size_t> sitesAboveOverlapThreshold = determineSitesWithOverlap(
-                data.overlapRejectionThreshold, sitesWithOverlap, graph, data, selection, mutableData.bounds);
+                overlapSettings.rejectionThreshold,
+                overlapSettings,
+                sitesWithOverlap,
+                graph,
+                data,
+                selection,
+                mutableData.bounds);
             for (bool done = false; !done; done = sitesAboveOverlapThreshold.empty() || !deleteSitesUntilResolved)
             {
-                double initialOverlap = overlapVectorSum(totalOverlaps(graph, data, selection, mutableData.bounds));
+                double initialOverlap =
+                    overlapVectorSum(totalOverlaps(overlapSettings, graph, data, selection, mutableData.bounds));
 
                 GlycoproteinState initialState = {
                     initialOverlap, sitesWithOverlap, sitesAboveOverlapThreshold, glycositePreferences};
@@ -164,6 +181,7 @@ namespace gmml
                     randomizeShape,
                     adjustSidechains,
                     persistCycles,
+                    overlapSettings,
                     graph,
                     data,
                     mutableData,
@@ -187,13 +205,20 @@ namespace gmml
                     updateResidueMoleculeBounds(graph, mutableData.bounds, proteinResidue);
                     sitesWithOverlap = determineSitesWithOverlap(
                         0.0,
+                        overlapSettings,
                         includedGlycanIndices(data, mutableData.moleculeIncluded),
                         graph,
                         data,
                         selection,
                         mutableData.bounds);
                     sitesAboveOverlapThreshold = determineSitesWithOverlap(
-                        data.overlapRejectionThreshold, sitesWithOverlap, graph, data, selection, mutableData.bounds);
+                        overlapSettings.rejectionThreshold,
+                        overlapSettings,
+                        sitesWithOverlap,
+                        graph,
+                        data,
+                        selection,
+                        mutableData.bounds);
                 }
             }
             restoreSidechains(

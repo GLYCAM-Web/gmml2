@@ -75,13 +75,14 @@ namespace gmml
         } // namespace
 
         bool sidechainHasGlycanOverlap(
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const MutableData& mutableData,
             const std::vector<size_t>& glycans,
             size_t sidechainResidue)
         {
-            double overlapTolerance = data.overlapTolerance;
+            double overlapTolerance = overlapSettings.tolerance;
             const std::vector<size_t>& sidechainAtoms = sidechainMovingAtoms(data, sidechainResidue);
             Sphere bounds = boundingSphere(util::indicesToValues(mutableData.bounds.atoms, sidechainAtoms));
             for (size_t glycanId : glycans)
@@ -100,7 +101,7 @@ namespace gmml
                                     for (size_t otherAtom : sidechainAtoms)
                                     {
                                         PotentialFactor factor = potentialFactor(
-                                            data.potentialTable,
+                                            overlapSettings.potentialTable,
                                             data.atoms.elements[atom],
                                             data.atoms.elements[otherAtom]);
                                         double overlap = overlapAmount(
@@ -108,7 +109,7 @@ namespace gmml
                                             overlapTolerance,
                                             mutableData.bounds.atoms[atom],
                                             mutableData.bounds.atoms[otherAtom]);
-                                        if (compareOverlaps(overlap, data.overlapRejectionThreshold) == 1)
+                                        if (compareOverlaps(overlap, overlapSettings.rejectionThreshold) == 1)
                                         {
                                             return true;
                                         }
@@ -151,6 +152,7 @@ namespace gmml
 
         void setSidechainToLowestOverlapState(
             const SidechainRotamerData& sidechains,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             MutableData& mutableData,
@@ -158,12 +160,17 @@ namespace gmml
             size_t residue)
         {
             std::vector<size_t> potentialOverlaps = atomsWithinSidechainPotentialBounds(
-                graph, data, mutableData, data.atoms.includeInEachOverlapCheck, residue);
+                overlapSettings, graph, data, mutableData, data.atoms.includeInEachOverlapCheck, residue);
             restoreSidechainRotation(graph, data, mutableData, residue);
             double initialOverlap = overlapVectorSum(sidechainOverlap(
-                graph.indices, data, mutableData.bounds.atoms, sidechainMovingAtoms(data, residue), potentialOverlaps));
+                overlapSettings,
+                graph.indices,
+                data,
+                mutableData.bounds.atoms,
+                sidechainMovingAtoms(data, residue),
+                potentialOverlaps));
             IndexedOverlap bestRotation = lowestOverlapSidechainRotation(
-                sidechains, graph.indices, data, mutableData, preference, residue, potentialOverlaps);
+                sidechains, overlapSettings, graph.indices, data, mutableData, preference, residue, potentialOverlaps);
             if (compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
             {
                 updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
@@ -171,6 +178,7 @@ namespace gmml
         }
 
         std::vector<double> sidechainOverlap(
+            const OverlapSettings& overlapSettings,
             const assembly::Indices& indices,
             const AssemblyData& data,
             const std::vector<Sphere>& bounds,
@@ -184,8 +192,8 @@ namespace gmml
                 for (size_t k : atomsB)
                 {
                     Element elementB = data.atoms.elements[k];
-                    PotentialFactor factor = potentialFactor(data.potentialTable, elementA, elementB);
-                    double overlap = overlapAmount(factor, data.overlapTolerance, bounds[n], bounds[k]);
+                    PotentialFactor factor = potentialFactor(overlapSettings.potentialTable, elementA, elementB);
+                    double overlap = overlapAmount(factor, overlapSettings.tolerance, bounds[n], bounds[k]);
                     result[indices.atomResidue[n]] += overlap;
                     result[indices.atomResidue[k]] += overlap;
                 }
@@ -195,6 +203,7 @@ namespace gmml
 
         IndexedOverlap lowestOverlapSidechainRotation(
             const SidechainRotamerData& sidechains,
+            const OverlapSettings& overlapSettings,
             const assembly::Indices& indices,
             const AssemblyData& data,
             const MutableData& mutableData,
@@ -213,7 +222,8 @@ namespace gmml
                 coords = mutableData.bounds.atoms;
                 setSidechainRotation(coords, dihedrals, sidechains.rotations[rotations[n]]);
                 double overlap = overlapAboveThresholdSum(
-                    data.overlapRejectionThreshold, sidechainOverlap(indices, data, coords, movingAtoms, otherAtoms));
+                    overlapSettings.rejectionThreshold,
+                    sidechainOverlap(overlapSettings, indices, data, coords, movingAtoms, otherAtoms));
                 overlaps.push_back(overlap);
             }
             size_t lowestIndex = preference[0];
@@ -229,6 +239,7 @@ namespace gmml
         }
 
         std::vector<size_t> atomsWithinSidechainPotentialBounds(
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const MutableData& mutableData,
@@ -239,7 +250,7 @@ namespace gmml
             std::vector<size_t> result;
             result.reserve(256); // some extra, don't need to be precise
             auto overlapsWithSidechainBounds = [&](const Sphere& sphere)
-            { return spheresOverlap(data.overlapTolerance, sidechainBounds, sphere); };
+            { return spheresOverlap(overlapSettings.tolerance, sidechainBounds, sphere); };
             auto insertOverlappingAtomsOfMolecule = [&](size_t molecule)
             {
                 if (overlapsWithSidechainBounds(mutableData.bounds.molecules[molecule]))

@@ -1,16 +1,15 @@
 #ifndef INCLUDE_GLYCOPROTEIN_GLYCOPROTEINSTRUCTS_HPP
 #define INCLUDE_GLYCOPROTEIN_GLYCOPROTEINSTRUCTS_HPP
 
-#include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/carbohydrate/dihedralAngleSearchTypes.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/geometry/geometryTypes.hpp"
-#include "include/geometry/overlap.hpp"
 #include "include/graph/graphTypes.hpp"
-#include "include/metadata/dihedralangledata.hpp"
+#include "include/metadata/elements.hpp"
+#include "include/metadata/residueTypes.hpp"
 
-#include <functional>
+#include <string>
 #include <vector>
 
 namespace gmml
@@ -121,10 +120,6 @@ namespace gmml
             RotatableDihedralData rotatableDihedralData;
             ResidueLinkageData residueLinkageData;
             AssemblyIndices indices;
-            DihedralAngleDataTable dihedralAngleTable;
-            PotentialTable potentialTable;
-            double overlapTolerance;
-            double overlapRejectionThreshold;
         };
 
         struct MutableData
@@ -135,44 +130,19 @@ namespace gmml
             std::vector<bool> residueSidechainMoved;
         };
 
+        struct OverlapSettings
+        {
+            PotentialTable potentialTable;
+            double tolerance;
+            double rejectionThreshold;
+        };
+
         struct GlycoproteinAssembly
         {
             assembly::Graph graph;
             AssemblyData data;
             MutableData mutableData;
         };
-
-        typedef std::function<std::vector<size_t>(pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>&)>
-            MetadataOrder;
-
-        struct AngleSettings
-        {
-            double preferenceDeviation;
-            double searchDeviation;
-            double searchIncrement;
-            MetadataOrder randomMetadata;
-        };
-
-        typedef std::function<void(
-            const assembly::Graph&,
-            const AssemblyData&,
-            const assembly::Selection&,
-            const AngleSettings&,
-            const GlycanShapePreference&,
-            MutableData&,
-            size_t)>
-            WiggleGlycan;
-
-        typedef std::function<void(
-            pcg32&,
-            const AngleSettings& settings,
-            WiggleGlycan,
-            const assembly::Graph&,
-            const AssemblyData&,
-            MutableData&,
-            const std::vector<GlycanShapePreference>&,
-            const std::vector<size_t>&)>
-            SidechainAdjustment;
     } // namespace gpbuilder
 } // namespace gmml
 

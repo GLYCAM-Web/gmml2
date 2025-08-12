@@ -11,6 +11,8 @@ namespace gmml
     namespace gpbuilder
     {
         void wiggleLinkage(
+            const DihedralAngleDataTable& dihedralAngleTable,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,
@@ -20,6 +22,8 @@ namespace gmml
             const ResidueLinkageShapePreference& shapePreference);
 
         void wiggleGlycan(
+            const DihedralAngleDataTable& dihedralAngleTable,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,

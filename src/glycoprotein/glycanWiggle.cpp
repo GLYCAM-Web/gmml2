@@ -21,6 +21,8 @@ namespace gmml
         namespace
         {
             void wigglePermutationLinkage(
+                const DihedralAngleDataTable& dihedralAngleTable,
+                const OverlapSettings& overlapSettings,
                 const assembly::Graph& graph,
                 const AssemblyData& data,
                 const assembly::Selection& selection,
@@ -51,10 +53,10 @@ namespace gmml
                     auto searchOverlap = [&](const assembly::Bounds& bounds)
                     {
                         return overlapAboveThresholdSum(
-                            data.overlapRejectionThreshold,
+                            overlapSettings.rejectionThreshold,
                             overlapsBetweenSelections(
-                                data.potentialTable,
-                                data.overlapTolerance,
+                                overlapSettings.potentialTable,
+                                overlapSettings.tolerance,
                                 graph,
                                 bounds,
                                 moving,
@@ -65,7 +67,7 @@ namespace gmml
                     OverlapState best = wiggleUsingRotamers(
                         searchOverlap,
                         settings.angles,
-                        data.dihedralAngleTable,
+                        dihedralAngleTable,
                         graph,
                         mutableData.bounds,
                         movingAtoms,
@@ -79,6 +81,8 @@ namespace gmml
             }
 
             void wiggleConformerLinkage(
+                const DihedralAngleDataTable& dihedralAngleTable,
+                const OverlapSettings& overlapSettings,
                 const assembly::Graph& graph,
                 const AssemblyData& data,
                 const assembly::Selection& selection,
@@ -134,10 +138,10 @@ namespace gmml
                         auto searchOverlap = [&](const assembly::Bounds& bounds)
                         {
                             return overlapAboveThresholdSum(
-                                data.overlapRejectionThreshold,
+                                overlapSettings.rejectionThreshold,
                                 overlapsBetweenSelections(
-                                    data.potentialTable,
-                                    data.overlapTolerance,
+                                    overlapSettings.potentialTable,
+                                    overlapSettings.tolerance,
                                     graph,
                                     bounds,
                                     dihedralMoving[n],
@@ -148,7 +152,7 @@ namespace gmml
                         OverlapState best = wiggleUsingRotamers(
                             searchOverlap,
                             settings.angles,
-                            data.dihedralAngleTable,
+                            dihedralAngleTable,
                             graph,
                             mutableData.bounds,
                             movingAtoms,
@@ -159,8 +163,8 @@ namespace gmml
                         mutableData.bounds = best.bounds;
                     }
                     std::vector<double> overlap = overlapsBetweenSelections(
-                        data.potentialTable,
-                        data.overlapTolerance,
+                        overlapSettings.potentialTable,
+                        overlapSettings.tolerance,
                         graph,
                         mutableData.bounds,
                         dihedralMoving[0],
@@ -195,6 +199,8 @@ namespace gmml
         } // namespace
 
         void wiggleLinkage(
+            const DihedralAngleDataTable& dihedralAngleTable,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,
@@ -209,13 +215,29 @@ namespace gmml
                     {
                         PermutationShapePreference preference = std::get<PermutationShapePreference>(shapePreference);
                         return wigglePermutationLinkage(
-                            graph, data, selection, mutableData, linkageId, searchSettings, preference);
+                            dihedralAngleTable,
+                            overlapSettings,
+                            graph,
+                            data,
+                            selection,
+                            mutableData,
+                            linkageId,
+                            searchSettings,
+                            preference);
                     }
                 case RotamerType::conformer:
                     {
                         ConformerShapePreference preference = std::get<ConformerShapePreference>(shapePreference);
                         return wiggleConformerLinkage(
-                            graph, data, selection, mutableData, linkageId, searchSettings, preference);
+                            dihedralAngleTable,
+                            overlapSettings,
+                            graph,
+                            data,
+                            selection,
+                            mutableData,
+                            linkageId,
+                            searchSettings,
+                            preference);
                     }
             }
             throw std::runtime_error(
@@ -223,6 +245,8 @@ namespace gmml
         }
 
         void wiggleGlycan(
+            const DihedralAngleDataTable& dihedralAngleTable,
+            const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,
@@ -238,7 +262,16 @@ namespace gmml
                 for (size_t n = 0; n < linkages.size(); n++)
                 {
                     size_t linkageId = linkages[n];
-                    wiggleLinkage(graph, data, selection, mutableData, linkageId, searchSettings, preferences[n]);
+                    wiggleLinkage(
+                        dihedralAngleTable,
+                        overlapSettings,
+                        graph,
+                        data,
+                        selection,
+                        mutableData,
+                        linkageId,
+                        searchSettings,
+                        preferences[n]);
                 }
             }
         }
