@@ -154,6 +154,7 @@ namespace gmml
     std::vector<bool> foundElements(const std::vector<Element>& elements);
     void validateElements(const util::SparseVector<double>& radii, const std::vector<Element>& elements);
     const std::string& elementName(Element element);
+    std::vector<std::string> elementNames(const std::vector<Element>& elements);
     util::SparseVector<double> vanDerWaalsRadii();
     bool isHeavyElement(Element element);
     const util::SparseVector<double>& elementMass();

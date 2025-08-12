@@ -17,7 +17,7 @@ namespace gmml
 {
     namespace
     {
-        const std::vector<std::string> elementNames = {
+        const std::vector<std::string> elementNameVector = {
             "",   "H",  "He", "Li", "Be", "B",  "C",  "N",  "O",  "F",  "Ne", "Na", "Mg", "Al", "Si", "P",  "S",
             "Cl", "Ar", "K",  "Ca", "Sc", "Ti", "V",  "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As",
             "Se", "Br", "Kr", "Rb", "Sr", "Y",  "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn",
@@ -189,8 +189,8 @@ namespace gmml
 
     Element toElement(const std::string& str)
     {
-        auto it = std::find(elementNames.begin(), elementNames.end(), str);
-        return (it == elementNames.end()) ? Element::Unknown : Element(it - elementNames.begin());
+        auto it = std::find(elementNameVector.begin(), elementNameVector.end(), str);
+        return (it == elementNameVector.end()) ? Element::Unknown : Element(it - elementNameVector.begin());
     }
 
     std::vector<bool> foundElements(const std::vector<Element>& elements)
@@ -214,11 +214,17 @@ namespace gmml
 
     const std::string& elementName(Element element)
     {
-        if (element >= elementNames.size())
+        if (element >= elementNameVector.size())
         {
             throw std::runtime_error("Element goes beyond range of handled elements: " + std::to_string(element));
         }
-        return elementNames[element];
+        return elementNameVector[element];
+    }
+
+    std::vector<std::string> elementNames(const std::vector<Element>& elements)
+    {
+        std::function<std::string(const Element&)> func = [](Element element) { return elementName(element); };
+        return util::vectorMap(func, elements);
     }
 
     util::SparseVector<double> vanDerWaalsRadii() { return atomVdwRadii; }
