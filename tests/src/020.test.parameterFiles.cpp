@@ -90,7 +90,7 @@ int main()
     for (size_t n = 0; n < data.residueCount; n++)
     {
         std::vector<size_t> atoms = prep::residueAtoms(data, n);
-        util::setIndicesTo(offAtomData.numbers, atoms, serializedNumberVector(atoms.size()));
+        util::setIndicesTo(offAtomData.numbers, atoms, util::serializedNumberVector(atoms.size()));
     }
 
     off::OffFileResidueData offResidueData {

@@ -67,24 +67,6 @@ namespace gmml
         return data.indices.residueCount;
     }
 
-    std::vector<uint> serializedNumberVector(const std::vector<bool>& included)
-    {
-        std::vector<uint> result;
-        result.reserve(included.size());
-        uint count = 0;
-        for (bool b : included)
-        {
-            result.push_back(b ? count + 1 : 0);
-            count += b;
-        }
-        return result;
-    }
-
-    std::vector<uint> serializedNumberVector(size_t count)
-    {
-        return serializedNumberVector(std::vector<bool>(count, true));
-    }
-
     size_t atomVectorIndex(const std::vector<Atom*>& atoms, Atom* find)
     {
         size_t index = util::indexOf(atoms, find);

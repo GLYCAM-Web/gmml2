@@ -83,8 +83,8 @@ namespace gmml
     {
         assembly::Graph graph = createVisibleAssemblyGraph(data);
         off::OffFileData offData = toOffFileData(data.objects.residues);
-        offData.atoms.numbers = serializedNumberVector(graph.atoms.source.nodes.alive);
-        offData.residues.numbers = serializedNumberVector(data.indices.residueCount);
+        offData.atoms.numbers = util::serializedNumberVector(graph.atoms.source.nodes.alive);
+        offData.residues.numbers = util::serializedNumberVector(data.indices.residueCount);
         off::writeResiduesTogether(stream, graph, offData, util::indexVector(data.objects.residues), name);
     }
 } // namespace gmml

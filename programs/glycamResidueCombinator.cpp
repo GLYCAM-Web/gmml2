@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
                 atomIds.push_back(k);
             }
             graph.residues.nodes.constituents[residue.residueId] = atomIds;
-            util::setIndicesTo(offAtomData.numbers, atomIds, serializedNumberVector(atomIds.size()));
+            util::setIndicesTo(offAtomData.numbers, atomIds, util::serializedNumberVector(atomIds.size()));
         }
     }
 

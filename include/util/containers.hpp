@@ -153,6 +153,8 @@ namespace gmml
 
         std::vector<size_t> indexVectorWithOffset(size_t offset, size_t count);
         std::vector<size_t> indexVector(size_t count);
+        std::vector<uint> serializedNumberVector(const std::vector<bool>& included);
+        std::vector<uint> serializedNumberVector(size_t count);
 
         template<class T> std::vector<size_t> indexVectorWithOffset(size_t offset, const std::vector<T>& vec)
         {

@@ -27,8 +27,6 @@ namespace gmml
     std::vector<Residue*> getResidues(const std::vector<Assembly*>& assemblies);
     size_t residueSelector(const pdb::PdbData& data, const pdb::ResidueId& residueId, uint modelNumber);
     size_t residueSelector(const pdb::PdbData& data, std::vector<size_t> residueIds, const pdb::ResidueId& queryId);
-    std::vector<uint> serializedNumberVector(const std::vector<bool>& included);
-    std::vector<uint> serializedNumberVector(size_t count);
     size_t atomVectorIndex(const std::vector<Atom*>& atoms, Atom* find);
     std::vector<uint> atomNumbers(const std::vector<Atom*>& atoms);
     std::vector<std::string> atomNames(const std::vector<Atom*>& atoms);
