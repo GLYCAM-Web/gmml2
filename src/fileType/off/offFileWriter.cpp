@@ -224,7 +224,7 @@ namespace gmml
             }
         } // namespace
 
-        void writeResiduesIndividually(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data)
+        void writeResiduesIndividually(std::ostream& stream, const OffFileData& data, const assembly::Graph& graph)
         { // For writing each residue separately
             stream << "!!index array str"
                    << "\n";
@@ -241,8 +241,8 @@ namespace gmml
 
         void writeResiduesTogether(
             std::ostream& stream,
-            const assembly::Graph& graph,
             const OffFileData& data,
+            const assembly::Graph& graph,
             const std::vector<size_t>& residueIndices,
             const std::string& unitName)
         { // For writing residues together as a molecule

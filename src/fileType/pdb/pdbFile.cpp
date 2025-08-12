@@ -2,8 +2,10 @@
 
 #include "include/CentralDataStructure/assembly.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/fileType/pdb/pdbFileData.hpp"
 #include "include/fileType/pdb/pdbFileWriter.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
 #include "include/fileType/pdb/pdbModel.hpp"
@@ -249,13 +251,51 @@ namespace gmml
                     out << "MODEL " << std::right << std::setw(4) << data.assemblies.numbers[n] << "\n";
                 }
                 std::vector<size_t> moleculeIds = assemblyMolecules(data.indices, n);
-                pdb::write(data, util::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
+                write(data, util::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
                 if (data.indices.assemblyCount > 1)
                 {
                     out << "ENDMDL\n";
                 }
             }
             theEnd(out);
+        }
+
+        void write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
+        {
+            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.indices.atomAlive[n]; };
+            std::function<std::string(const size_t&)> elementString = [&](size_t n)
+            { return data.atoms.names[n].empty() ? "" : data.atoms.names[n].substr(0, 1); };
+            std::function<std::string(const size_t&)> truncatedResidueNames = [&](size_t n)
+            { return util::truncate(3, data.residues.names[n]); };
+
+            assembly::Graph graph = createAssemblyGraph(data.indices, data.atomGraph);
+            PdbFileResidueData residueData {
+                data.residues.numbers,
+                util::vectorMap(truncatedResidueNames, util::indexVector(data.indices.residueCount)),
+                data.residues.chainIds,
+                data.residues.insertionCodes};
+            PdbFileAtomData atomData {
+                data.atoms.coordinates,
+                data.atoms.numbers,
+                data.atoms.names,
+                util::vectorMap(elementString, util::indexVector(data.indices.atomCount)),
+                data.atoms.recordNames,
+                data.atoms.occupancies,
+                data.atoms.temperatureFactors};
+            PdbFileFormat format;
+            PdbFileData pdbData {format, {}, residueData, atomData};
+            for (auto& residueIds : moleculeResidues)
+            {
+                for (size_t residueId : residueIds)
+                {
+                    writeAssemblyToPdb(
+                        stream, pdbData, graph, {{residueId}}, {{data.residues.hasTerCard[residueId]}}, {});
+                }
+                if (!residueIds.empty())
+                { // Sometimes you get empty chains after things have been deleted I guess.
+                    stream << "TER\n";
+                }
+            }
         }
     } // namespace pdb
 } // namespace gmml

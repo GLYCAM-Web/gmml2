@@ -1,9 +1,9 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
-#include "include/CentralDataStructure/offWriter.hpp"
-#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/carbohydrate/offWriter.hpp"
+#include "include/carbohydrate/pdbWriter.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/fileType/pdb/pdbFileWriter.hpp"
 #include "include/fileType/prep/prepFile.hpp"
@@ -73,7 +73,7 @@ int main()
             fileName,
             [&](std::ostream& stream)
             {
-                pdb::writeMoleculeToPdb(stream, graph, util::indexVector(data.residueCount), residueTER, pdbData);
+                pdb::writeMoleculeToPdb(stream, pdbData, graph, util::indexVector(data.residueCount), residueTER);
                 pdb::theEnd(stream);
             });
     }
@@ -105,7 +105,7 @@ int main()
     try
     {
         util::writeToFile(
-            fileName, [&](std::ostream& stream) { off::writeResiduesIndividually(stream, graph, offData); });
+            fileName, [&](std::ostream& stream) { off::writeResiduesIndividually(stream, offData, graph); });
     }
     catch (...)
     {
@@ -117,7 +117,7 @@ int main()
     try
     {
         util::writeToFile(
-            fileName, [&](std::ostream& stream) { off::writeResiduesIndividually(stream, graph, offData); });
+            fileName, [&](std::ostream& stream) { off::writeResiduesIndividually(stream, offData, graph); });
     }
     catch (...)
     {

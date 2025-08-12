@@ -1,10 +1,13 @@
 #include "include/fileType/pdb/pdbFileWriter.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
+#include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbFileData.hpp"
 #include "include/metadata/residueTypes.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/formatting.hpp"
+#include "include/util/strings.hpp"
 
 #include <array>
 #include <functional>
@@ -38,11 +41,11 @@ namespace gmml
 
         void writeAssemblyToPdb(
             std::ostream& stream,
+            const PdbFileData& data,
             const assembly::Graph& graph,
             const std::vector<std::vector<size_t>>& residueIndices,
             const std::vector<std::vector<bool>>& residueTER,
-            const std::vector<std::array<size_t, 2>>& connectionIndices,
-            const PdbFileData& data)
+            const std::vector<std::array<size_t, 2>>& connectionIndices)
         {
             for (auto& line : data.headerLines)
             {
@@ -50,17 +53,17 @@ namespace gmml
             }
             for (size_t n = 0; n < residueIndices.size(); n++)
             {
-                writeMoleculeToPdb(stream, graph, residueIndices[n], residueTER[n], data);
+                writeMoleculeToPdb(stream, data, graph, residueIndices[n], residueTER[n]);
             }
             writeConectCards(stream, data.atoms.numbers, connectionIndices);
         }
 
         void writeMoleculeToPdb(
             std::ostream& stream,
+            const PdbFileData& data,
             const assembly::Graph& graph,
             const std::vector<size_t>& residueIndices,
-            const std::vector<bool>& residueTER,
-            const PdbFileData& data)
+            const std::vector<bool>& residueTER)
         {
             const PdbFileResidueData& residues = data.residues;
             const PdbFileAtomData& atoms = data.atoms;
@@ -77,6 +80,57 @@ namespace gmml
                     stream << "TER\n";
                 }
             }
+        }
+
+        void writeTrajectoryToPdb(
+            std::ostream& stream,
+            const PdbData& data,
+            const assembly::Graph& graph,
+            const std::vector<size_t>& selectedResidues)
+        {
+            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.indices.atomAlive[n]; };
+            std::function<std::string(const size_t&)> elementString = [&](size_t n)
+            { return data.atoms.names[n].empty() ? "" : data.atoms.names[n].substr(0, 1); };
+            std::function<std::string(const size_t&)> truncatedResidueNames = [&](size_t n)
+            { return util::truncate(3, data.residues.names[n]); };
+
+            std::vector<bool> residueIncluded = util::indicesToBools(data.indices.residueCount, selectedResidues);
+            PdbFileResidueData residueData {
+                data.residues.numbers,
+                util::vectorMap(truncatedResidueNames, util::indexVector(data.indices.residueCount)),
+                std::vector<std::string>(data.indices.residueCount, ""),
+                data.residues.insertionCodes};
+            std::vector<std::string> elements =
+                util::vectorMap(elementString, util::indexVector(data.indices.atomCount));
+            PdbFileFormat format;
+
+            size_t modelCount = data.trajectory.coordinates.size();
+            for (size_t coordinateSet = 0; coordinateSet < modelCount; coordinateSet++)
+            {
+                PdbFileAtomData atomData {
+                    data.trajectory.coordinates[coordinateSet],
+                    data.atoms.numbers,
+                    data.atoms.names,
+                    elements,
+                    data.atoms.recordNames,
+                    data.atoms.occupancies,
+                    data.atoms.temperatureFactors};
+                PdbFileData pdbData {format, {}, residueData, atomData};
+                stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
+                for (size_t moleculeId = 0; moleculeId < data.indices.moleculeCount; moleculeId++)
+                {
+                    std::vector<size_t> residueIds = util::boolsToIndices(
+                        util::vectorAnd(residueIncluded, isMoleculeResidue(data.indices, moleculeId)));
+                    if (residueIds.size() > 0)
+                    {
+                        std::vector<ResidueType> types = util::indicesToValues(data.residues.types, residueIds);
+                        std::vector<bool> ter = residueTER(types);
+                        writeMoleculeToPdb(stream, pdbData, graph, residueIds, ter);
+                    }
+                }
+                stream << "ENDMDL\n";
+            }
+            theEnd(stream);
         }
 
         // Used by the PdbAtom class and cds classes. Thus what it takes as input is a bit odd.

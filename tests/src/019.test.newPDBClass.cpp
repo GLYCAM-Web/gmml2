@@ -1,9 +1,10 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
-#include "include/CentralDataStructure/offWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
+#include "include/carbohydrate/carbohydrate.hpp"
+#include "include/carbohydrate/offWriter.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
@@ -48,17 +49,34 @@ int main(int argc, char* argv[])
         // OFF molecule
         try
         {
-            GraphIndexData graphData = toIndexData(assemblies[assemblyId]->getMolecules());
-            assembly::Graph graph = createVisibleAssemblyGraph(graphData);
-            off::OffFileData data = toOffFileData(graphData.objects.residues);
-            serializeNumbers(graphData.objects.atoms);
-            serializeNumbers(graphData.objects.residues);
+            const pdb::PdbData& pdbData = pdbFile.data;
+            graph::Database atomGraph = pdbFile.data.atomGraph;
+            assembly::Graph graph = createAssemblyGraph(pdbFile.data.indices, atomGraph);
+            size_t residueCount = graph.indices.residueCount;
+
+            std::vector<std::vector<size_t>> connections = atomsConnectedToOtherResidues(graph);
+
+            std::function<uint(const Element&)> elementNumber = [](Element element) { return element; };
+
+            off::OffFileAtomData atomData {
+                util::serializedNumberVector(atomGraph.nodes.alive),
+                pdbData.atoms.names,
+                pdbData.atoms.types,
+                util::vectorMap(elementNumber, pdbFile.data.atoms.elements),
+                pdbData.atoms.charges,
+                pdbData.atoms.coordinates};
+            off::OffFileResidueData residueData {
+                util::serializedNumberVector(residueCount),
+                pdbData.residues.names,
+                pdbData.residues.types,
+                connections};
+            off::OffFileFormat format;
+            off::OffFileData offData {format, residueData, atomData};
+
             util::writeToFile(
                 baseDir + "/outputOffFile.off",
-                [&](std::ostream& stream) {
-                    off::writeResiduesTogether(
-                        stream, graph, data, util::indexVector(graphData.objects.residues), "Assembly");
-                });
+                [&](std::ostream& stream)
+                { off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), "Assembly"); });
         }
         catch (std::runtime_error& error)
         {

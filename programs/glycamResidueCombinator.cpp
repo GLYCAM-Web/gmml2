@@ -3,8 +3,8 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
-#include "include/CentralDataStructure/offWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/carbohydrate/offWriter.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/fileType/prep/prepFile.hpp"
 #include "include/fileType/prep/prepFunctions.hpp"
@@ -162,5 +162,5 @@ int main(int argc, char* argv[])
     off::OffFileData offData {off::OffFileFormat(), offResidueData, offAtomData};
 
     util::writeToFile(
-        "GLYCAM_06k.lib", [&](std::ostream& stream) { off::writeResiduesIndividually(stream, graph, offData); });
+        "GLYCAM_06k.lib", [&](std::ostream& stream) { off::writeResiduesIndividually(stream, offData, graph); });
 }

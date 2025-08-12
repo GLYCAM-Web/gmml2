@@ -180,11 +180,4 @@ namespace gmml
     {
         return createAssemblyGraph(data.indices, createGraphData(data.objects));
     }
-
-    assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& data)
-    {
-        graph::Database atomGraphData = createGraphData(data.objects);
-        atomGraphData.nodes.alive = atomVisibility(data.objects.atoms);
-        return createAssemblyGraph(data.indices, atomGraphData);
-    }
 } // namespace gmml

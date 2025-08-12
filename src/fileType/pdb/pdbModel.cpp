@@ -1,12 +1,9 @@
 #include "include/fileType/pdb/pdbModel.hpp"
 
 #include "include/CentralDataStructure/assembly.hpp"
-#include "include/assembly/assemblyGraph.hpp"
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbChain.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
-#include "include/fileType/pdb/pdbFileData.hpp"
-#include "include/fileType/pdb/pdbFileWriter.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/geometryFunctions.hpp"
@@ -138,44 +135,6 @@ namespace gmml
                 }
             }
             return;
-        }
-
-        void write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
-        {
-            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.indices.atomAlive[n]; };
-            std::function<std::string(const size_t&)> elementString = [&](size_t n)
-            { return data.atoms.names[n].empty() ? "" : data.atoms.names[n].substr(0, 1); };
-            std::function<std::string(const size_t&)> truncatedResidueNames = [&](size_t n)
-            { return util::truncate(3, data.residues.names[n]); };
-
-            assembly::Graph graph = createAssemblyGraph(data.indices, data.atomGraph);
-            PdbFileResidueData residueData {
-                data.residues.numbers,
-                util::vectorMap(truncatedResidueNames, util::indexVector(data.indices.residueCount)),
-                data.residues.chainIds,
-                data.residues.insertionCodes};
-            PdbFileAtomData atomData {
-                data.atoms.coordinates,
-                data.atoms.numbers,
-                data.atoms.names,
-                util::vectorMap(elementString, util::indexVector(data.indices.atomCount)),
-                data.atoms.recordNames,
-                data.atoms.occupancies,
-                data.atoms.temperatureFactors};
-            PdbFileFormat format;
-            PdbFileData writerData {format, {}, residueData, atomData};
-            for (auto& residueIds : moleculeResidues)
-            {
-                for (size_t residueId : residueIds)
-                {
-                    writeAssemblyToPdb(
-                        stream, graph, {{residueId}}, {{data.residues.hasTerCard[residueId]}}, {}, writerData);
-                }
-                if (!residueIds.empty())
-                { // Sometimes you get empty chains after things have been deleted I guess.
-                    stream << "TER\n";
-                }
-            }
         }
     } // namespace pdb
 } // namespace gmml

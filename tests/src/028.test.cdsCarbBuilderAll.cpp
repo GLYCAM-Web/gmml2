@@ -94,7 +94,12 @@ int main(int argc, char** argv)
                 }
             }
             std::vector<std::string> headerLines {"Produced by GMML carb builder all test"};
-            generate3DStructureFiles(carbBuilder.carbohydrate, outputFolderName, inputGlycanID, headerLines);
+            generate3DStructureFiles(
+                structured({&carbBuilder.carbohydrate}),
+                carbBuilder.carbohydrate.getName(),
+                outputFolderName,
+                inputGlycanID,
+                headerLines);
         }
         catch (const std::runtime_error& error)
         {

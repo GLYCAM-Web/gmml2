@@ -697,7 +697,7 @@
  19.223522 2.616965 8.765042
 !entry.CONDENSEDSEQUENCE.unit.residueconnect table  int c1x  int c2x  int c3x  int c4x  int c5x  int c6x
  2 2 0 0 0 0
- 3 14 0 0 0 0
+ 14 3 0 0 0 0
  22 46 0 0 0 0
  47 65 0 0 0 0
  66 90 0 0 0 0

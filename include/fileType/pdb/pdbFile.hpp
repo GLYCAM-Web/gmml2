@@ -54,6 +54,7 @@ namespace gmml
         std::vector<Assembly*> getAssemblies(PdbFile& file);
         void write(PdbFile& file, const std::string outName);
         void write(PdbFile& file, std::ostream& stream);
+        void write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream);
     } // namespace pdb
 } // namespace gmml
 

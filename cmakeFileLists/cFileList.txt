@@ -7,8 +7,6 @@
 ./src/CentralDataStructure/cdsFunctions.cpp
 ./src/CentralDataStructure/graphInterface.cpp
 ./src/CentralDataStructure/molecule.cpp
-./src/CentralDataStructure/offWriter.cpp
-./src/CentralDataStructure/pdbWriter.cpp
 ./src/CentralDataStructure/residue.cpp
 ./src/CentralDataStructure/residueLinkage/linkageBranches.cpp
 ./src/CentralDataStructure/residueLinkage/psiAngleHydrogen.cpp
@@ -22,6 +20,8 @@
 ./src/carbohydrate/carbohydrate.cpp
 ./src/carbohydrate/dihedralAngleSearch.cpp
 ./src/carbohydrate/dihedralShape.cpp
+./src/carbohydrate/offWriter.cpp
+./src/carbohydrate/pdbWriter.cpp
 ./src/fileType/dot/graphViz.cpp
 ./src/fileType/lib/libraryFile.cpp
 ./src/fileType/off/offFileWriter.cpp

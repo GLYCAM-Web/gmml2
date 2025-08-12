@@ -182,7 +182,8 @@ int main(int argc, char** argv)
                 Molecule carbohydrate;
                 std::vector<ResidueLinkage> linkages;
                 initializeCarbohydrate(carbohydrate, linkages, parameterManager, elementRadii, sequenceData);
-                generate3DStructureFiles(carbohydrate, outputDir, line.id, headerLines);
+                generate3DStructureFiles(
+                    structured({&carbohydrate}), carbohydrate.getName(), outputDir, line.id, headerLines);
                 dot::Config config {dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot"};
                 printGraphViz(config, instantiate(parseSequence(line.sequence)));
             }

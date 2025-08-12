@@ -1,7 +1,8 @@
-#include "include/CentralDataStructure/pdbWriter.hpp"
+#include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
+#include "include/fileType/pdb/pdbFileWriter.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/geometryFunctions.hpp"
@@ -69,8 +70,9 @@ int main(int argc, char* argv[])
 
     std::cout << "Found " << selectedResidues.size() << " residues\n";
     pdbFileTraj.data.indices.residueMolecule = std::vector<size_t>(pdbFileTraj.data.indices.residueCount, 0);
+    assembly::Graph graph = createAssemblyGraph(pdbFileTraj.data.indices, pdbFileTraj.data.atomGraph);
     util::writeToFile(
         "026.outputSelection.pdb",
-        [&](std::ostream& stream) { writeTrajectoryToPdb(stream, pdbFileTraj.data, selectedResidues); });
+        [&](std::ostream& stream) { pdb::writeTrajectoryToPdb(stream, pdbFileTraj.data, graph, selectedResidues); });
     return 0;
 }

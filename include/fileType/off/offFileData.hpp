@@ -1,6 +1,7 @@
 #ifndef INCLUDE_FILETYPE_OFF_OFFFILEDATA_HPP
 #define INCLUDE_FILETYPE_OFF_OFFFILEDATA_HPP
 
+#include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/geometryTypes.hpp"
 #include "include/metadata/residueTypes.hpp"
 #include "include/util/formatting.hpp"

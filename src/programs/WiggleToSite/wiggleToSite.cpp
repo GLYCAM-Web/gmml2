@@ -69,7 +69,7 @@ namespace gmml
             parameterManager,
             vanDerWaalsRadii(),
             sequence::parseAndReorder(inputStruct.carbohydrateSequence_));
-        generate3DStructureFiles(carbohydrate_, "./", "initial", {});
+        generate3DStructureFiles(structured({&carbohydrate_}), carbohydrate_.getName(), "./", "initial", {});
         pdb::PdbData& pdbData = this->getSubstrate().data;
         size_t superimpositionTargetId =
             residueSelector(pdbData, inputStruct.superimpositionTargetResidue_, inputStruct.substrateModelNumber_);
@@ -108,7 +108,7 @@ namespace gmml
         const DihedralAngleDataTable& metadataTable = dihedralAngleDataTable();
         this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
         setAtomCoordinates(atoms, carbohydrateCoordinates);
-        generate3DStructureFiles(carbohydrate_, "./", "superimposed", {});
+        generate3DStructureFiles(structured({&carbohydrate_}), carbohydrate_.getName(), "./", "superimposed", {});
         this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
         std::vector<Atom*> substrateWithoutSuperimpositionAtoms =
             findElementsNotInVector(getAtoms(getAssemblies(getSubstrate())), superimpositionTarget->getAtoms());
@@ -129,7 +129,7 @@ namespace gmml
         int structureCount = this->minimizeDistance(
             elementRadii, metadataTable, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
         this->minimizeDistance(elementRadii, metadataTable, inputStruct.persistCycles_, false, structureCount);
-        generate3DStructureFiles(carbohydrate_, "./", "finished", {});
+        generate3DStructureFiles(structured({&carbohydrate_}), carbohydrate_.getName(), "./", "finished", {});
     }
 
     int WiggleToSite::minimizeDistance(

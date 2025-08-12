@@ -1,12 +1,14 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
-#include "include/CentralDataStructure/offWriter.hpp"
-#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/carbohydrate/carbohydrate.hpp"
+#include "include/carbohydrate/offWriter.hpp"
+#include "include/carbohydrate/pdbWriter.hpp"
 #include "include/fileType/lib/libraryFile.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/preprocess/parameterManager.hpp"
+#include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/logging.hpp"
 
@@ -30,12 +32,13 @@ int main()
         residue->determineType(name);
         createAtomsForResidue(params, residue, name);
     }
-    GraphIndexData moleculeIndices = toIndexData({&molecule});
+    carbohydrate::CarbohydrateData carbData = structured({&molecule});
+    assembly::Graph graph = createVisibleAssemblyGraph(carbData);
     // Need a central place for this:
     std::string fileName = "./libAsPdbFile.pdb";
     try
     {
-        util::writeToFile(fileName, [&](std::ostream& stream) { WritePdb(stream, moleculeIndices, {}); });
+        util::writeToFile(fileName, [&](std::ostream& stream) { writePdb(stream, carbData, graph, {}); });
     }
     catch (...)
     {
@@ -46,7 +49,11 @@ int main()
     fileName = "./libAsOffFile.off";
     try
     {
-        util::writeToFile(fileName, [&](std::ostream& stream) { WriteOff(stream, "MOLECULE", moleculeIndices); });
+        off::OffFileData offData = toOffFileData(carbData, graph);
+        util::writeToFile(
+            fileName,
+            [&](std::ostream& stream)
+            { off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), "MOLECULE"); });
     }
     catch (...)
     {
@@ -57,13 +64,17 @@ int main()
     fileName = "./libAsLibFile.lib";
     try
     {
-        GraphIndexData graphData = toIndexData(molecule.getResidues());
-        assembly::Graph graph = createVisibleAssemblyGraph(graphData);
-        serializeResiduesIndividually(graphData.objects.residues);
+        off::OffFileData offData = toOffFileData(carbData, graph);
+        offData.residues.numbers = std::vector<uint>(graph.indices.residueCount, 1);
+        for (size_t n : indices(graph.residues.nodes))
+        {
+            std::vector<size_t> residueAtoms = assembly::residueAtoms(graph, n);
+            std::vector<bool> alive = util::indicesToValues(graph.atoms.source.nodes.alive, residueAtoms);
+            std::vector<size_t> aliveAtoms = util::boolsToValues(residueAtoms, alive);
+            util::setIndicesTo(offData.atoms.numbers, aliveAtoms, util::serializedNumberVector(aliveAtoms.size()));
+        }
         util::writeToFile(
-            fileName,
-            [&](std::ostream& stream)
-            { off::writeResiduesIndividually(stream, graph, toOffFileData(graphData.objects.residues)); });
+            fileName, [&](std::ostream& stream) { off::writeResiduesIndividually(stream, offData, graph); });
     }
     catch (...)
     {

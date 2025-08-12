@@ -4,8 +4,6 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
-#include "include/CentralDataStructure/offWriter.hpp"
-#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/CentralDataStructure/residue.hpp"
 #include "include/CentralDataStructure/residueLinkage/residueLinkageCreation.hpp"
 #include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
@@ -14,6 +12,10 @@
 #include "include/assembly/assemblySelection.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
+#include "include/carbohydrate/offWriter.hpp"
+#include "include/carbohydrate/pdbWriter.hpp"
+#include "include/fileType/off/offFileWriter.hpp"
+#include "include/fileType/pdb/pdbFileWriter.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/measurements.hpp"
 #include "include/geometry/orientation.hpp"
@@ -565,12 +567,14 @@ namespace gmml
     // std::string fileOutputDirectory = "unspecified", std::string fileType = "PDB", std::string outputFileNaming =
     // "structure"
     void generate3DStructureFiles(
-        Molecule& molecule,
+        const carbohydrate::CarbohydrateData& data,
+        const std::string& name,
         const std::string& fileOutputDirectory,
         const std::string& outputFileNaming,
         const std::vector<std::string>& headerLines)
     { // ToDo exception handling in centralized function for writing pdb/off
         // Build the filename and path, add appropriate suffix later
+        assembly::Graph graph = createVisibleAssemblyGraph(data);
         try
         {
             std::string PathAndFileName;
@@ -582,11 +586,15 @@ namespace gmml
             {
                 PathAndFileName += fileOutputDirectory + "/" + outputFileNaming;
             }
-            GraphIndexData indices = toIndexData({&molecule});
             util::writeToFile(
-                PathAndFileName + ".pdb", [&](std::ostream& stream) { WritePdb(stream, indices, headerLines); });
+                PathAndFileName + ".pdb", [&](std::ostream& stream) { writePdb(stream, data, graph, headerLines); });
             util::writeToFile(
-                PathAndFileName + ".off", [&](std::ostream& stream) { WriteOff(stream, molecule.getName(), indices); });
+                PathAndFileName + ".off",
+                [&](std::ostream& stream)
+                {
+                    off::OffFileData offData = toOffFileData(data, graph);
+                    off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), name);
+                });
         }
         catch (const std::string& exceptionMessage)
         {
@@ -659,5 +667,37 @@ namespace gmml
             graphData.objects.atoms[n]->setCoordinate(bounds.atoms[n].center);
         }
         return;
+    }
+
+    carbohydrate::CarbohydrateData structured(const std::vector<Molecule*>& molecules)
+    {
+        GraphIndexData indices = toIndexData(molecules);
+        assembly::Graph graph = createCompleteAssemblyGraph(indices);
+        graph::Graph atomGraph = graph.atoms;
+        std::vector<Atom*>& atoms = indices.objects.atoms;
+        std::vector<Residue*>& residues = indices.objects.residues;
+        carbohydrate::AtomData atomData {
+            atomNames(atoms),
+            atomTypes(atoms),
+            atomNumbers(atoms),
+            atomAtomicNumbers(atoms),
+            atomElements(atoms),
+            atomCoordinates(atoms),
+            atomCharges(atoms),
+            atomVisibility(atoms)};
+
+        carbohydrate::ResidueData residueData {
+            residueNames(residues), residueTypes(residues), residueStringIds(residues), residueNumbers(residues)};
+
+        carbohydrate::EdgeData edgeData {std::vector<std::string>(edgeCount(atomGraph), "")};
+
+        return {atomData, residueData, edgeData, indices.indices, graph.atoms.source};
+    }
+
+    assembly::Graph createVisibleAssemblyGraph(const carbohydrate::CarbohydrateData& data)
+    {
+        graph::Database atomGraph = data.atomGraph;
+        atomGraph.nodes.alive = data.atoms.visible;
+        return createAssemblyGraph(data.indices, atomGraph);
     }
 } // namespace gmml

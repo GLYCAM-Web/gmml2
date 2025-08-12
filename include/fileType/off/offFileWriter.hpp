@@ -12,12 +12,12 @@ namespace gmml
 {
     namespace off
     {
-        void writeResiduesIndividually(std::ostream& stream, const assembly::Graph& graph, const OffFileData& data);
+        void writeResiduesIndividually(std::ostream& stream, const OffFileData& data, const assembly::Graph& graph);
 
         void writeResiduesTogether(
             std::ostream& stream,
-            const assembly::Graph& graph,
             const OffFileData& data,
+            const assembly::Graph& graph,
             const std::vector<size_t>& residueIndices,
             const std::string& unitName);
     } // namespace off

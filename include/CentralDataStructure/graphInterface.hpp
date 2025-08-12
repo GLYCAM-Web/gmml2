@@ -29,7 +29,6 @@ namespace gmml
     GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
     graph::Database createGraphData(const GraphObjects& objects);
     assembly::Graph createCompleteAssemblyGraph(const GraphIndexData& data);
-    assembly::Graph createVisibleAssemblyGraph(const GraphIndexData& data);
 } // namespace gmml
 
 #endif

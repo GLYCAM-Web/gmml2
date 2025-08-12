@@ -1,13 +1,13 @@
 #include "include/programs/GlycoproteinBuilder/overlapResolution.hpp"
 
 #include "include/CentralDataStructure/graphInterface.hpp"
-#include "include/CentralDataStructure/pdbWriter.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
+#include "include/carbohydrate/pdbWriter.hpp"
 #include "include/external/pcg/pcg_random.h"
 #include "include/fileType/off/offFileData.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
@@ -249,7 +249,7 @@ namespace gmml
                     fileName,
                     [&](std::ostream& stream) {
                         off::writeResiduesTogether(
-                            stream, graph, offData, util::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
+                            stream, offData, graph, util::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
                     });
             };
 
@@ -285,7 +285,7 @@ namespace gmml
                     filename,
                     [&](std::ostream& stream)
                     {
-                        pdb::writeAssemblyToPdb(stream, graph, residueIndices, TER, connectionIndices, pdbData);
+                        pdb::writeAssemblyToPdb(stream, pdbData, graph, residueIndices, TER, connectionIndices);
                         pdb::theEnd(stream);
                     });
             };
