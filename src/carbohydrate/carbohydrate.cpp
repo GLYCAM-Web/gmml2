@@ -386,7 +386,7 @@ namespace gmml
 
         void initialWiggleLinkage(
             const util::SparseVector<double>& elementRadii,
-            const DihedralAngleDataTable& metadataTable,
+            const DihedralAngleDataTable& dihedralAngleData,
             Molecule& molecule,
             Residue* residue,
             ResidueLinkage& linkage,
@@ -395,7 +395,7 @@ namespace gmml
             // GREEDY: taken care of, but note that the atoms that move in RotatableDihedral class need to be updated
             // after more residues are added.
             auto shapePreference = firstRotamerOnly(
-                linkage, defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata));
+                linkage, defaultShapePreference(dihedralAngleData, linkage.rotamerType, linkage.dihedralMetadata));
             setShapeToPreference(linkage, shapePreference);
             auto searchPreference = angleSearchPreference(searchSettings.deviation, shapePreference);
             const GraphIndexData graphData = toIndexData({&molecule});
@@ -412,7 +412,7 @@ namespace gmml
             std::vector<bool> foundElements = gmml::foundElements(atomElements(graphData.objects.atoms));
             const PotentialTable potentials = potentialTable(elementRadii, foundElements);
             assembly::Bounds newBounds = simpleWiggleCurrentRotamers(
-                gmml::dihedralAngleDataTable(),
+                dihedralAngleData,
                 potentials,
                 searchSettings.angles,
                 linkageDihedralIndices(graphData, linkage),
@@ -435,7 +435,7 @@ namespace gmml
             std::vector<ResidueLinkage>& glycosidicLinkages,
             const AngleSearchSettings& searchSettings,
             const util::SparseVector<double>& elementRadii,
-            const DihedralAngleDataTable& metadataTable,
+            const DihedralAngleDataTable& dihedralAngleData,
             Residue* currentParent)
         {
             // MolecularModeling::ResidueVector neighbors = to_this_residue2->GetNode()->GetResidueNeighbors();
@@ -459,10 +459,11 @@ namespace gmml
             {
                 connectAndSetGeometry(currentParent, child);
                 ResidueLink link = findResidueLink({child, currentParent});
-                ResidueLinkage& linkage = glycosidicLinkages.emplace_back(createResidueLinkage(metadataTable, link));
-                initialWiggleLinkage(elementRadii, metadataTable, molecule, child, linkage, searchSettings);
+                ResidueLinkage& linkage =
+                    glycosidicLinkages.emplace_back(createResidueLinkage(dihedralAngleData, link));
+                initialWiggleLinkage(elementRadii, dihedralAngleData, molecule, child, linkage, searchSettings);
                 depthFirstSetConnectivityAndGeometry(
-                    molecule, glycosidicLinkages, searchSettings, elementRadii, metadataTable, child);
+                    molecule, glycosidicLinkages, searchSettings, elementRadii, dihedralAngleData, child);
             }
         }
     } // namespace
@@ -472,6 +473,7 @@ namespace gmml
         std::vector<ResidueLinkage>& glycosidicLinkages,
         const preprocess::ParameterManager& parameterManager,
         const util::SparseVector<double>& elementRadii,
+        const DihedralAngleDataTable& dihedralAngleData,
         const sequence::SequenceData& sequence)
     {
         {
@@ -535,13 +537,12 @@ namespace gmml
         serializeNumbers(molecule.getAtoms());
         auto searchSettings = defaultSearchSettings;
         // Set 3D structure
-        const DihedralAngleDataTable& metadataTable = gmml::dihedralAngleDataTable();
         depthFirstSetConnectivityAndGeometry(
             molecule,
             glycosidicLinkages,
             searchSettings,
             elementRadii,
-            metadataTable,
+            dihedralAngleData,
             molecule.getResidues().front()); // recurve start with terminal
         // Re-numbering is a hack as indices have global scope and two instances give too high numbers.
         unsigned int linkageIndex = 0;
@@ -553,7 +554,7 @@ namespace gmml
             determineAtomsThatMove(linkage.rotatableBonds);
         }
         util::log(__LINE__, __FILE__, util::INF, "Final carbohydrate overlap resolution starting.");
-        resolveOverlaps(molecule, glycosidicLinkages, elementRadii, metadataTable, searchSettings);
+        resolveOverlaps(molecule, glycosidicLinkages, elementRadii, dihedralAngleData, searchSettings);
         util::log(
             __LINE__,
             __FILE__,
@@ -625,7 +626,7 @@ namespace gmml
         Molecule& molecule,
         std::vector<ResidueLinkage>& glycosidicLinkages,
         const util::SparseVector<double>& elementRadii,
-        const DihedralAngleDataTable& metadataTable,
+        const DihedralAngleDataTable& dihedralAngleData,
         const AngleSearchSettings& searchSettings)
     {
         const GraphIndexData graphData = toIndexData({&molecule});
@@ -647,9 +648,10 @@ namespace gmml
                 auto preference = angleSearchPreference(
                     searchSettings.deviation,
                     currentRotamerOnly(
-                        linkage, defaultShapePreference(metadataTable, linkage.rotamerType, linkage.dihedralMetadata)));
+                        linkage,
+                        defaultShapePreference(dihedralAngleData, linkage.rotamerType, linkage.dihedralMetadata)));
                 bounds = simpleWiggleCurrentRotamers(
-                    metadataTable,
+                    dihedralAngleData,
                     potentials,
                     searchSettings.angles,
                     linkageDihedralIndices(graphData, linkage),

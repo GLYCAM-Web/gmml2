@@ -323,7 +323,7 @@ namespace gmml
             std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
             const preprocess::ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
-            const DihedralAngleDataTable& metadataTable,
+            const DihedralAngleDataTable& dihedralAngleData,
             const pdb::PdbData& pdbData,
             Assembly* glycoprotein,
             const std::vector<GlycosylationSite>& glycosites)
@@ -335,7 +335,7 @@ namespace gmml
                 Molecule* glycan = glycoprotein->addMolecule(std::make_unique<Molecule>());
                 glycans.push_back(glycan);
                 std::vector<ResidueLinkage> linkages;
-                initializeCarbohydrate(*glycan, linkages, parameterManager, elementRadii, sequence);
+                initializeCarbohydrate(*glycan, linkages, parameterManager, elementRadii, dihedralAngleData, sequence);
                 Attachment attachment = toAttachment(glycan);
                 Residue* aglycone = attachment.aglycone;
                 Residue* reducingResidue = attachment.reducing;
@@ -357,7 +357,7 @@ namespace gmml
                         "Error: found more than 1 linkage to aglycone in " + glycositeInput.glycanInput);
                 }
                 glycan->Molecule::deleteResidue(aglycone);
-                ResidueLinkage newLinkage = replaceAglycone(metadataTable, reducingResidue, glycositeResidue);
+                ResidueLinkage newLinkage = replaceAglycone(dihedralAngleData, reducingResidue, glycositeResidue);
                 size_t aglyconeLinkage = aglyconeLinkages[0];
                 linkages[aglyconeLinkage] = newLinkage;
                 glycosidicLinkages.push_back(linkages);

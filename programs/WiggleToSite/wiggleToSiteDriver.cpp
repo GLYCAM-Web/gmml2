@@ -21,7 +21,9 @@ int main(int argc, char* argv[])
     std::cout << inputStruct.Print();
     std::string baseDir = util::toString(util::pathAboveCurrentExecutableDir());
     const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
-    WiggleToSite wiggler(parameterManager, inputStruct);
+    const util::SparseVector<double> elementRadii = vanDerWaalsRadii();
+    const DihedralAngleDataTable dihedralAngleData = dihedralAngleDataTable();
+    WiggleToSite wiggler(parameterManager, elementRadii, dihedralAngleData, inputStruct);
     std::cout << "Program got to end ok" << std::endl;
     return 0;
 }

@@ -81,6 +81,8 @@ namespace gmml
 
         Molecule carbohydrate;
         std::vector<ResidueLinkage> glycosidicLinkages;
+        DihedralAngleDataTable dihedralAngleData;
+        util::SparseVector<double> elementRadii;
     };
 } // namespace gmml
 #endif

@@ -73,59 +73,66 @@ namespace gmml
             throw ss.str();
         }
 
-        unsigned long long countShapes(const std::vector<ResidueLinkage>& linkages, bool likelyShapesOnly = false)
+        unsigned long long countShapes(
+            const DihedralAngleDataTable& dihedralAngleData,
+            const std::vector<ResidueLinkage>& linkages,
+            bool likelyShapesOnly = false)
         {
-            const DihedralAngleDataTable& metadataTable = gmml::dihedralAngleDataTable();
             ulong result = 1;
             for (auto& linkage : nonDerivativeResidueLinkages(linkages))
             {
                 auto rotamerType = linkage.rotamerType;
                 auto& metadata = linkage.dihedralMetadata;
-                result *= likelyShapesOnly ? numberOfLikelyShapes(metadataTable, rotamerType, metadata)
-                                           : numberOfShapes(metadataTable, rotamerType, metadata);
+                result *= likelyShapesOnly ? numberOfLikelyShapes(dihedralAngleData, rotamerType, metadata)
+                                           : numberOfShapes(dihedralAngleData, rotamerType, metadata);
             }
             return result;
         }
     } // namespace
+
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
     carbohydrateBuilder::carbohydrateBuilder(
         const std::string& condensedSequence, const preprocess::ParameterManager& parameters)
+        : dihedralAngleData(dihedralAngleDataTable()), elementRadii(vanDerWaalsRadii())
+    {
+        try
+        {
+            initializeCarbohydrate(
+                carbohydrate,
+                glycosidicLinkages,
+                parameters,
+                elementRadii,
+                dihedralAngleData,
+                sequence::parseAndReorder(condensedSequence));
+        }
 
-    try
-    {
-        initializeCarbohydrate(
-            carbohydrate,
-            glycosidicLinkages,
-            parameters,
-            vanDerWaalsRadii(),
-            sequence::parseAndReorder(condensedSequence));
-    }
-
-    // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a message.
-    catch (const std::string& exceptionMessage)
-    {
-        util::log(
-            __LINE__,
-            __FILE__,
-            util::ERR,
-            "carbohydrateBuilder class caught this exception message: " + exceptionMessage);
-        throw std::runtime_error(exceptionMessage);
-    }
-    catch (const std::runtime_error& error)
-    {
-        util::log(__LINE__, __FILE__, util::ERR, "carbohydrateBuilder class caught a runtime error:");
-        util::log(__LINE__, __FILE__, util::ERR, error.what());
-        throw error;
-    }
-    catch (...)
-    {
-        std::string message =
-            "carbohydrateBuilder class caught a throw that was not anticipated. Please report how you "
-            "got to this to glycam@gmail.com.";
-        util::log(__LINE__, __FILE__, util::ERR, message);
-        throw std::runtime_error(message);
+        // If a ctor throws, even if you catch it the standard guarantees another throw. So this is just to make a
+        // message.
+        catch (const std::string& exceptionMessage)
+        {
+            util::log(
+                __LINE__,
+                __FILE__,
+                util::ERR,
+                "carbohydrateBuilder class caught this exception message: " + exceptionMessage);
+            throw std::runtime_error(exceptionMessage);
+        }
+        catch (const std::runtime_error& error)
+        {
+            util::log(__LINE__, __FILE__, util::ERR, "carbohydrateBuilder class caught a runtime error:");
+            util::log(__LINE__, __FILE__, util::ERR, error.what());
+            throw error;
+        }
+        catch (...)
+        {
+            std::string message =
+                "carbohydrateBuilder class caught a throw that was not anticipated. Please report how you "
+                "got to this to glycam@gmail.com.";
+            util::log(__LINE__, __FILE__, util::ERR, message);
+            throw std::runtime_error(message);
+        }
     }
 
     carbohydrateBuilder::carbohydrateBuilder(std::string condensedSequence)
@@ -142,8 +149,6 @@ namespace gmml
         // "A", whereas for linkages with combinatorial rotamers (e,g, phi -g/t, omg gt/gg/tg), we need to set each
         // dihedral as specified, but maybe it will be ok to go through and find the value for "A" in each rotatable
         // dihedral.. yeah actually it should be fine. Leaving comment for time being.
-        const util::SparseVector<double>& elementRadii = vanDerWaalsRadii();
-        const DihedralAngleDataTable& metadataTable = dihedralAngleDataTable();
         for (auto& rotamerInfo : conformerInfo)
         {
             std::stringstream ss;
@@ -155,14 +160,14 @@ namespace gmml
             ResidueLinkage* currentLinkage = selectLinkageWithIndex(glycosidicLinkages, currentLinkageIndex);
             std::string standardDihedralName = convertIncomingRotamerNamesToStandard(rotamerInfo.dihedralName);
             setSpecificShape(
-                metadataTable,
+                dihedralAngleData,
                 currentLinkage->rotatableBonds,
                 currentLinkage->dihedralMetadata,
                 standardDihedralName,
                 rotamerInfo.selectedRotamer);
         }
         std::string fileName = "structure";
-        resolveOverlaps(carbohydrate, glycosidicLinkages, elementRadii, metadataTable, defaultSearchSettings);
+        resolveOverlaps(carbohydrate, glycosidicLinkages, elementRadii, dihedralAngleData, defaultSearchSettings);
         std::vector<std::string> headerLines {
             "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)  version " + std::string(GMML_VERSION)};
         generate3DStructureFiles(
@@ -171,16 +176,15 @@ namespace gmml
 
     std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly) const
     {
-        if (countShapes(glycosidicLinkages, likelyShapesOnly) > 4294967296)
+        if (countShapes(dihedralAngleData, glycosidicLinkages, likelyShapesOnly) > 4294967296)
         {
             return ">2^32";
         }
-        return std::to_string(countShapes(glycosidicLinkages, likelyShapesOnly));
+        return std::to_string(countShapes(dihedralAngleData, glycosidicLinkages, likelyShapesOnly));
     }
 
     LinkageOptionsVector carbohydrateBuilder::GenerateUserOptionsDataStruct()
     {
-        const DihedralAngleDataTable metadataTable = dihedralAngleDataTable();
         LinkageOptionsVector userOptionsForSequence;
         // carbohydrate_.SetIndexByConnectivity();
         for (auto& linkage : nonDerivativeResidueLinkages(glycosidicLinkages))
@@ -195,16 +199,16 @@ namespace gmml
                 auto& metadataVector = linkage.dihedralMetadata[index];
                 for (auto& metadata : metadataVector)
                 {
-                    buffer.push_back(metadataTable.entries[metadata].rotamer_name_);
+                    buffer.push_back(dihedralAngleData.entries[metadata].rotamer_name_);
                 }
-                std::vector<size_t> likely = likelyMetadata(metadataTable, metadataVector);
+                std::vector<size_t> likely = likelyMetadata(dihedralAngleData, metadataVector);
                 std::string dihedralName =
-                    likely.empty() ? "Boo" : metadataTable.entries[likely[0]].dihedral_angle_name_;
+                    likely.empty() ? "Boo" : dihedralAngleData.entries[likely[0]].dihedral_angle_name_;
                 possibleRotamers.emplace_back(dihedralName, buffer);
                 buffer.clear();
                 for (auto& metadata : likely)
                 {
-                    buffer.push_back(metadataTable.entries[metadata].rotamer_name_);
+                    buffer.push_back(dihedralAngleData.entries[metadata].rotamer_name_);
                 }
                 likelyRotamers.emplace_back(dihedralName, buffer);
                 buffer.clear();

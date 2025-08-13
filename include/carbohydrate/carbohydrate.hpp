@@ -21,13 +21,14 @@ namespace gmml
         std::vector<ResidueLinkage>& glycosidicLinkages,
         const preprocess::ParameterManager& parameterManager,
         const util::SparseVector<double>& elementRadii,
+        const DihedralAngleDataTable& dihedralAngleData,
         const sequence::SequenceData& sequence);
 
     void resolveOverlaps(
         Molecule& molecule,
         std::vector<ResidueLinkage>& glycosidicLinkages,
         const util::SparseVector<double>& elementRadii,
-        const DihedralAngleDataTable& metadataTable,
+        const DihedralAngleDataTable& dihedralAngleData,
         const AngleSearchSettings& searchSettings);
 
     void generate3DStructureFiles(

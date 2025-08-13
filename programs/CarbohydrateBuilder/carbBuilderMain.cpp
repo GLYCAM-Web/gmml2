@@ -172,6 +172,7 @@ int main(int argc, char** argv)
         util::readFileLineByLine(inputFile, processLine);
         const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
         const util::SparseVector<double> elementRadii = vanDerWaalsRadii();
+        const DihedralAngleDataTable dihedralAngleData = dihedralAngleDataTable();
         for (auto& line : lines)
         {
             try
@@ -181,7 +182,8 @@ int main(int argc, char** argv)
                 SequenceData sequenceData = parseAndReorder(line.sequence);
                 Molecule carbohydrate;
                 std::vector<ResidueLinkage> linkages;
-                initializeCarbohydrate(carbohydrate, linkages, parameterManager, elementRadii, sequenceData);
+                initializeCarbohydrate(
+                    carbohydrate, linkages, parameterManager, elementRadii, dihedralAngleData, sequenceData);
                 generate3DStructureFiles(
                     structured({&carbohydrate}), carbohydrate.getName(), outputDir, line.id, headerLines);
                 dot::Config config {dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot"};

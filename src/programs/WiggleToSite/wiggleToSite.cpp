@@ -60,14 +60,19 @@ namespace gmml
     //////////////////////////////////////////////////////////
     //                       CONSTRUCTOR                    //
     //////////////////////////////////////////////////////////
-    WiggleToSite::WiggleToSite(const preprocess::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct)
+    WiggleToSite::WiggleToSite(
+        const preprocess::ParameterManager& parameterManager,
+        const util::SparseVector<double>& elementRadii,
+        const DihedralAngleDataTable& dihedralAngleData,
+        const WiggleToSiteInputs& inputStruct)
         : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}))
     {
         initializeCarbohydrate(
             carbohydrate_,
             glycosidicLinkages_,
             parameterManager,
-            vanDerWaalsRadii(),
+            elementRadii,
+            dihedralAngleData,
             sequence::parseAndReorder(inputStruct.carbohydrateSequence_));
         generate3DStructureFiles(structured({&carbohydrate_}), carbohydrate_.getName(), "./", "initial", {});
         pdb::PdbData& pdbData = this->getSubstrate().data;
@@ -105,17 +110,15 @@ namespace gmml
         }
         Residue* superimposeMe = residues[superimposedIndex];
         Residue* wiggleMe = residues[wiggleIndex];
-        const DihedralAngleDataTable& metadataTable = dihedralAngleDataTable();
         this->superimpose(carbohydrateCoordinates, superimpositionTarget, superimposeMe);
         setAtomCoordinates(atoms, carbohydrateCoordinates);
         generate3DStructureFiles(structured({&carbohydrate_}), carbohydrate_.getName(), "./", "superimposed", {});
-        this->determineWiggleLinkages(metadataTable, superimposeMe, wiggleMe);
+        this->determineWiggleLinkages(dihedralAngleData, superimposeMe, wiggleMe);
         std::vector<Atom*> substrateWithoutSuperimpositionAtoms =
             findElementsNotInVector(getAtoms(getAssemblies(getSubstrate())), superimpositionTarget->getAtoms());
         std::vector<Atom*> substrateAtomsToAvoidOverlappingWith =
             findElementsNotInVector(substrateWithoutSuperimpositionAtoms, wigglingTarget->getAtoms());
         this->atomsToAvoid_ = substrateAtomsToAvoidOverlappingWith;
-        const util::SparseVector<double>& elementRadii = vanDerWaalsRadii();
         this->setCurrentOverlap(CountOverlappingAtoms(elementRadii, atomsToAvoid_, carbohydrate_.getAtoms()));
         this->wiggleMeAtoms_ = {wiggleMe->FindAtom("C1"), wiggleMe->FindAtom("C3"), wiggleMe->FindAtom("C5")};
         this->wiggleTargetAtoms_ = {
@@ -127,8 +130,8 @@ namespace gmml
         }
         this->setCurrentDistance(this->calculateDistance());
         int structureCount = this->minimizeDistance(
-            elementRadii, metadataTable, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
-        this->minimizeDistance(elementRadii, metadataTable, inputStruct.persistCycles_, false, structureCount);
+            elementRadii, dihedralAngleData, inputStruct.persistCycles_, !inputStruct.isDeterministic_);
+        this->minimizeDistance(elementRadii, dihedralAngleData, inputStruct.persistCycles_, false, structureCount);
         generate3DStructureFiles(structured({&carbohydrate_}), carbohydrate_.getName(), "./", "finished", {});
     }
 

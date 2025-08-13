@@ -254,9 +254,6 @@ namespace gmml
         std::function<double(const DihedralAngleData&)> metadataWeight = [](const DihedralAngleData& entry)
         { return entry.weight_; };
 
-        const DihedralAngleDataTable dihedralAngleDataTable_ {
-            dihedralAngleDataVector_, util::vectorMap(metadataWeight, dihedralAngleDataVector_)};
-
         bool checkIfResidueConditionsAreSatisfied(
             const std::vector<std::string>& residue_types, const std::vector<std::string>& entry_conditions)
         {
@@ -287,7 +284,11 @@ namespace gmml
         };
     } // namespace
 
-    const DihedralAngleDataTable& dihedralAngleDataTable() { return dihedralAngleDataTable_; }
+    DihedralAngleDataTable dihedralAngleDataTable()
+    {
+        return DihedralAngleDataTable {
+            dihedralAngleDataVector_, util::vectorMap(metadataWeight, dihedralAngleDataVector_)};
+    }
 
     // All of this is rubbish but I want to match what's already in the metadata (strings).
     // Much better to e.g. put the enum type into the metadata than convert to strings.

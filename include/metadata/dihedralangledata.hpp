@@ -56,7 +56,7 @@ namespace gmml
         std::vector<double> weights;
     };
 
-    const DihedralAngleDataTable& dihedralAngleDataTable();
+    DihedralAngleDataTable dihedralAngleDataTable();
 
     std::vector<std::vector<size_t>> getDihedralAngleDataEntriesForLinkage(
         const std::string& atom1Name,

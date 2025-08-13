@@ -19,7 +19,11 @@ namespace gmml
         //////////////////////////////////////////////////////////
         //                       CONSTRUCTOR                    //
         //////////////////////////////////////////////////////////
-        WiggleToSite(const preprocess::ParameterManager& parameterManager, WiggleToSiteInputs inputStruct);
+        WiggleToSite(
+            const preprocess::ParameterManager& parameterManager,
+            const util::SparseVector<double>& elementRadii,
+            const DihedralAngleDataTable& dihedralAngleData,
+            const WiggleToSiteInputs& inputStruct);
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
         //////////////////////////////////////////////////////////

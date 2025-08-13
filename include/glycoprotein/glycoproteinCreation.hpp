@@ -32,7 +32,7 @@ namespace gmml
             std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
             const preprocess::ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
-            const DihedralAngleDataTable& metadataTable,
+            const DihedralAngleDataTable& dihedralAngleData,
             const pdb::PdbData& pdbData,
             Assembly* glycoprotein,
             const std::vector<GlycosylationSite>& glycosites);
