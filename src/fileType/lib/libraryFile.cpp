@@ -67,8 +67,8 @@ namespace gmml
                 atoms.elements.push_back(toElement(atom.name));
                 atoms.charges.push_back(atom.charge);
                 atoms.numbers.push_back(atom.number);
+                atoms.coordinates.push_back({0, 0, 0});
             }
-            atoms.coordinates.resize(atoms.names.size(), {0.0, 0.0, 0.0});
             // Ok atoms are made, now go through the rest of the stream to get their connectivity and coordinates. Not
             // ideal.
             while (getline(residueStream, line))
