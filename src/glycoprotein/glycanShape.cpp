@@ -1,11 +1,11 @@
 #include "include/glycoprotein/glycanShape.hpp"
 
-#include "include/CentralDataStructure/atom.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 
 #include <functional>
@@ -17,7 +17,7 @@ namespace gmml
         std::array<Coordinate, 4> dihedralCoordinates(
             const AssemblyData& data, const assembly::Bounds& bounds, size_t bondId)
         {
-            const std::array<size_t, 4>& atoms = data.indices.rotatableBonds[bondId].atoms;
+            const std::array<size_t, 4>& atoms = data.rotatableBonds.dihedralAtoms[bondId];
             auto coord = [&](size_t n) { return bounds.atoms[atoms[n]].center; };
             return {coord(3), coord(2), coord(1), coord(0)};
         }
@@ -29,7 +29,7 @@ namespace gmml
             size_t bondId)
         {
             size_t metadataIndex = mutableData.rotatableBondCurrentMetadata[bondId];
-            auto& currentMetadata = data.rotatableDihedralData.metadata[bondId][metadataIndex];
+            auto& currentMetadata = data.rotatableBonds.metadata[bondId][metadataIndex];
             return {
                 constants::toDegrees(angle(dihedralCoordinates(data, mutableData.bounds, bondId))),
                 dihedralAngleTable.entries[currentMetadata].default_angle,
@@ -44,15 +44,15 @@ namespace gmml
             const AngleWithMetadata& target)
         {
             mutableData.rotatableBondCurrentMetadata[bondId] = target.metadataIndex;
-            const RotatableBondIndices& bond = data.indices.rotatableBonds[bondId];
+            const std::vector<size_t>& movingAtoms = data.rotatableBonds.movingAtoms[bondId];
             std::array<Coordinate, 4> dihedralCoords = dihedralCoordinates(data, mutableData.bounds, bondId);
             auto matrix = rotationTo(dihedralCoords, constants::toRadians(target.value));
-            for (size_t atom : bond.movingAtoms)
+            for (size_t atom : movingAtoms)
             {
                 Coordinate& coord = mutableData.bounds.atoms[atom].center;
                 coord = matrix * coord;
             }
-            updateBoundsContainingAtoms(graph, mutableData.bounds, bond.movingAtoms);
+            updateBoundsContainingAtoms(graph, mutableData.bounds, movingAtoms);
         }
 
         void setLinkageShape(
@@ -66,7 +66,7 @@ namespace gmml
             for (size_t n = 0; n < linkages.size(); n++)
             {
                 size_t linkageId = linkages[n];
-                const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
+                const std::vector<size_t>& bonds = data.residueLinkages.rotatableBonds[linkageId];
                 for (size_t k = 0; k < bonds.size(); k++)
                 {
                     size_t bondId = bonds[k];
@@ -82,8 +82,8 @@ namespace gmml
             size_t linkageId,
             const ResidueLinkageShapePreference& preference)
         {
-            RotamerType rotamerType = data.residueLinkageData.rotamerTypes[linkageId];
-            const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
+            RotamerType rotamerType = data.residueLinkages.rotamerTypes[linkageId];
+            const std::vector<size_t>& bonds = data.residueLinkages.rotatableBonds[linkageId];
 
             std::function<void(const ConformerShapePreference&)> onConformer = [&](const ConformerShapePreference& pref)
             {

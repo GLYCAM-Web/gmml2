@@ -31,8 +31,8 @@ namespace gmml
                 const AngleSearchSettings& settings,
                 const PermutationShapePreference& shapePreference)
             {
-                const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
-                const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
+                const std::vector<size_t>& bonds = data.residueLinkages.rotatableBonds[linkageId];
+                const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableBonds.metadata;
                 //  Reverse as convention is Glc1-4Gal and I want to wiggle in opposite direction i.e. from first
                 //  rotatable bond in Asn outwards
                 for (size_t rn = 0; rn < bonds.size(); rn++)
@@ -42,7 +42,7 @@ namespace gmml
                     AngleSearchPreference preference = {
                         settings.deviation, shapePreference.angles[n], shapePreference.metadataOrder[n]};
                     const std::array<Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData.bounds, bondId);
-                    const std::vector<size_t>& movingAtoms = data.indices.rotatableBonds[bondId].movingAtoms;
+                    const std::vector<size_t>& movingAtoms = data.rotatableBonds.movingAtoms[bondId];
                     std::vector<bool> atomMoving = util::indicesToBools(graph.indices.atomCount, movingAtoms);
                     assembly::Selection moving =
                         assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
@@ -91,8 +91,8 @@ namespace gmml
                 const AngleSearchSettings& settings,
                 const ConformerShapePreference& shapePreference)
             {
-                const std::vector<size_t>& bonds = data.indices.residueLinkages[linkageId].rotatableBonds;
-                const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
+                const std::vector<size_t>& bonds = data.residueLinkages.rotatableBonds[linkageId];
+                const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableBonds.metadata;
                 size_t numberOfMetadata = shapePreference.metadataOrder.size();
                 const std::vector<std::vector<double>>& preferenceAngles = shapePreference.angles;
                 const std::vector<bool>& isFrozen = shapePreference.isFrozen;
@@ -104,7 +104,7 @@ namespace gmml
                 {
                     size_t n = bonds.size() - 1 - rn;
                     size_t bondId = bonds[n];
-                    const std::vector<size_t>& movingAtoms = data.indices.rotatableBonds[bondId].movingAtoms;
+                    const std::vector<size_t>& movingAtoms = data.rotatableBonds.movingAtoms[bondId];
                     std::vector<bool> atomMoving = util::indicesToBools(graph.indices.atomCount, movingAtoms);
                     assembly::Selection moving =
                         assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
@@ -133,7 +133,7 @@ namespace gmml
                         AngleSearchPreference preference = {
                             isFrozen[n] ? 0.0 : settings.deviation, preferenceAngles[n], order};
                         DihedralCoordinates coordinates = dihedralCoordinates(data, mutableData.bounds, bondId);
-                        const std::vector<size_t>& movingAtoms = data.indices.rotatableBonds[bondId].movingAtoms;
+                        const std::vector<size_t>& movingAtoms = data.rotatableBonds.movingAtoms[bondId];
 
                         auto searchOverlap = [&](const assembly::Bounds& bounds)
                         {
@@ -209,7 +209,7 @@ namespace gmml
             const AngleSearchSettings& searchSettings,
             const ResidueLinkageShapePreference& shapePreference)
         {
-            switch (data.residueLinkageData.rotamerTypes[linkageId])
+            switch (data.residueLinkages.rotamerTypes[linkageId])
             {
                 case RotamerType::permutation:
                     {

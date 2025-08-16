@@ -13,7 +13,6 @@
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/orientation.hpp"
-#include "include/glycoprotein/glycoproteinCreation.hpp"
 #include "include/graph/graphTypes.hpp"
 #include "include/metadata/aminoAcids.hpp"
 #include "include/metadata/elements.hpp"
@@ -29,21 +28,14 @@ namespace gmml
 {
     namespace gpbuilder
     {
-        GlycoproteinAssembly toGlycoproteinAssemblyStructs(
-            const AminoAcidTable& aminoAcidTable,
+        PartialLinkageData linkageData(
             const DihedralAngleDataTable& dihedralAngleDataTable,
-            const util::SparseVector<double>& elementRadii,
-            const pdb::PdbData& pdbData,
-            std::vector<Molecule*>& molecules,
-            std::vector<GlycosylationSite>& glycosites,
-            std::vector<Molecule*>& glycans,
-            const std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
-            bool excludeHydrogen)
+            const GraphIndexData& graphData,
+            const assembly::Graph& graph,
+            const std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages)
         {
-            GraphIndexData graphData = toIndexData(molecules);
-            assembly::Graph graph = createCompleteAssemblyGraph(graphData);
-            std::vector<Atom*>& atoms = graphData.objects.atoms;
-            std::vector<Residue*>& residues = graphData.objects.residues;
+            const std::vector<Atom*>& atoms = graphData.objects.atoms;
+            const std::vector<Residue*>& residues = graphData.objects.residues;
 
             auto indexOfAtoms = [&atoms](const std::vector<Atom*>& toFind)
             {
@@ -56,30 +48,28 @@ namespace gmml
                 return result;
             };
 
-            std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
             std::vector<AngleWithMetadata> rotatableDihedralShape;
-            std::vector<RotatableBondIndices> rotatableBondIndices;
-            std::vector<ResidueLinkageIndices> residueLinkages;
+            std::vector<std::array<size_t, 4>> rotatableBondDihedralAtoms;
+            std::vector<std::vector<size_t>> rotatableBondMovingAtoms;
+            std::vector<size_t> residueLinkageEdgeId;
+            std::vector<std::vector<size_t>> residueLinkageBonds;
             std::vector<RotamerType> linkageRotamerTypes;
             std::vector<std::vector<size_t>> dihedralMetadata;
-            std::vector<size_t> dihedralCurrentMetadata;
+            std::vector<size_t> currentDihedralMetadata;
             std::vector<bool> isGlycositeLinkage;
-            std::vector<size_t> glycanAttachmentResidue;
-            std::vector<size_t> glycanMoleculeId;
             std::vector<std::vector<size_t>> glycanLinkages;
-            for (size_t n = 0; n < glycosites.size(); n++)
+
+            for (size_t n = 0; n < glycosidicLinkages.size(); n++)
             {
-                size_t site = glycosites[n].residueId;
-                size_t moleculeIndex = util::indexOf(molecules, glycans[n]);
                 const std::vector<ResidueLinkage>& linkages = glycosidicLinkages[n];
-                std::vector<size_t> linkageIds = util::indexVectorWithOffset(residueLinkages.size(), linkages);
+                std::vector<size_t> linkageIds = util::indexVectorWithOffset(residueLinkageEdgeId.size(), linkages);
                 for (size_t k = 0; k < linkages.size(); k++)
                 {
                     isGlycositeLinkage.push_back(k == 0);
                     const ResidueLinkage& linkage = linkages[k];
                     const std::vector<RotatableBond>& linkageRotatableBonds = linkage.rotatableBonds;
-                    std::vector<size_t> dihedralIndices =
-                        util::indexVectorWithOffset(rotatableBondIndices.size(), linkageRotatableBonds);
+                    std::vector<size_t> bondIndices =
+                        util::indexVectorWithOffset(rotatableBondDihedralAtoms.size(), linkageRotatableBonds);
                     util::insertInto(
                         rotatableDihedralShape,
                         currentShape(dihedralAngleDataTable, linkage.rotatableBonds, linkage.dihedralMetadata));
@@ -92,8 +82,9 @@ namespace gmml
                         {
                             dihedralAtoms[i] = util::indexOf(atoms, bond.dihedralAtoms[i]);
                         }
-                        rotatableBondIndices.push_back({dihedralAtoms, indexOfAtoms(bond.movingAtoms)});
-                        dihedralCurrentMetadata.push_back(bond.currentMetadataIndex);
+                        rotatableBondDihedralAtoms.push_back(dihedralAtoms);
+                        rotatableBondMovingAtoms.push_back(indexOfAtoms(bond.movingAtoms));
+                        currentDihedralMetadata.push_back(bond.currentMetadataIndex);
                     }
                     size_t firstResidue = util::indexOf(residues, linkage.link.residues.first);
                     size_t secondResidue = util::indexOf(residues, linkage.link.residues.second);
@@ -104,14 +95,41 @@ namespace gmml
                         throw std::runtime_error("no residue adjacency");
                     }
                     size_t edgeId = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
-                    residueLinkages.push_back({edgeId, dihedralIndices});
+                    residueLinkageEdgeId.push_back(edgeId);
+                    residueLinkageBonds.push_back(bondIndices);
                     linkageRotamerTypes.push_back(linkage.rotamerType);
                 }
-                moleculeTypes[moleculeIndex] = MoleculeType::glycan;
-                glycanAttachmentResidue.push_back(site);
-                glycanMoleculeId.push_back(moleculeIndex);
                 glycanLinkages.push_back(linkageIds);
             }
+
+            RotatableBondData rotatableBondData {
+                rotatableBondDihedralAtoms, rotatableBondMovingAtoms, dihedralMetadata, rotatableDihedralShape};
+
+            ResidueLinkageData residueLinkages {
+                linkageRotamerTypes, isGlycositeLinkage, residueLinkageEdgeId, residueLinkageBonds};
+
+            return {rotatableBondData, currentDihedralMetadata, residueLinkages, glycanLinkages};
+        }
+
+        GlycoproteinAssembly toGlycoproteinAssemblyStructs(
+            const AminoAcidTable& aminoAcidTable,
+            const util::SparseVector<double>& elementRadii,
+            const pdb::PdbData& pdbData,
+            const GraphIndexData& graphData,
+            const assembly::Graph& graph,
+            const std::vector<size_t>& glycanMoleculeIds,
+            const std::vector<size_t>& glycositeIds,
+            const PartialLinkageData& linkageData,
+            bool excludeHydrogen)
+        {
+            const std::vector<Atom*>& atoms = graphData.objects.atoms;
+            const std::vector<Residue*>& residues = graphData.objects.residues;
+
+            std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
+            util::setIndicesTo(
+                moleculeTypes,
+                glycanMoleculeIds,
+                std::vector<MoleculeType>(glycanMoleculeIds.size(), MoleculeType::glycan));
 
             std::vector<std::string> atomNames = gmml::atomNames(atoms);
             std::vector<Sphere> atomBoundingSpheres =
@@ -137,43 +155,36 @@ namespace gmml
                 return std::array<Coordinate, 4> {coord(0), coord(1), coord(2), coord(3)};
             };
 
-            for (size_t n = 0; n < residues.size(); n++)
+            for (size_t n : util::indicesOfElement(residueTypes, ResidueType::Protein))
             {
-                if (residueTypes[n] == ResidueType::Protein)
+                size_t aminoAcidIndex = gmml::aminoAcidIndex(aminoAcidTable, residueNames[n]);
+                std::vector<size_t> nonHydrogenAtoms = util::vectorFilter(nonHydrogen, residueAtoms(graph, n));
+                std::vector<std::string> nonHydrogenNames = util::indicesToValues(atomNames, nonHydrogenAtoms);
+                auto atomIndex = [&](const std::string& str)
+                { return nonHydrogenAtoms[util::indexOf(nonHydrogenNames, str)]; };
+                size_t atomN = atomIndex("N");
+                size_t atomCA = atomIndex("CA");
+                size_t atomC = atomIndex("C");
+                bool hasExpectedAtoms = (util::sorted(nonHydrogenNames) == aminoAcidTable.atomNames[aminoAcidIndex]);
+                bool isNonTerminal = pdbData.residues.terminality[n] == pdb::NonTerminal;
+                for (size_t residueBondId : graph.residues.nodes.edgeAdjacencies[n])
                 {
-                    size_t aminoAcidIndex = gmml::aminoAcidIndex(aminoAcidTable, residueNames[n]);
-                    std::vector<size_t> nonHydrogenAtoms = util::vectorFilter(nonHydrogen, residueAtoms(graph, n));
-                    std::vector<std::string> nonHydrogenNames = util::indicesToValues(atomNames, nonHydrogenAtoms);
-                    auto atomIndex = [&](const std::string& str)
-                    { return nonHydrogenAtoms[util::indexOf(nonHydrogenNames, str)]; };
-                    size_t atomN = atomIndex("N");
-                    size_t atomCA = atomIndex("CA");
-                    size_t atomC = atomIndex("C");
-                    bool hasExpectedAtoms =
-                        (util::sorted(nonHydrogenNames) == aminoAcidTable.atomNames[aminoAcidIndex]);
-                    bool isNTerminal = true;
-                    bool isCTerminal = true;
-                    for (size_t residueBondId : graph.residues.nodes.edgeAdjacencies[n])
+                    bool direction = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);
+                    size_t atomBondId = residueEdgeToAtomEdgeIndex(graph, residueBondId);
+                    const std::array<size_t, 2>& atomBond = graph.atoms.edges.nodeAdjacencies[atomBondId];
+                    size_t thisAtom = atomBond[0 == direction];
+                    size_t otherAtom = atomBond[1 == direction];
+                    std::string otherName = atomNames[otherAtom];
+                    if ((thisAtom == atomC) && (otherName == "N"))
                     {
-                        bool direction = (n == graph.residues.edges.nodeAdjacencies[residueBondId][0]);
-                        size_t atomBondId = residueEdgeToAtomEdgeIndex(graph, residueBondId);
-                        const std::array<size_t, 2>& atomBond = graph.atoms.edges.nodeAdjacencies[atomBondId];
-                        size_t thisAtom = atomBond[0 == direction];
-                        size_t otherAtom = atomBond[1 == direction];
-                        std::string otherName = atomNames[otherAtom];
-                        if ((thisAtom == atomC) && (otherName == "N"))
-                        {
-                            isCTerminal = false;
-                            psiAngles[n] = angle(dihedralCoordinates({atomN, atomCA, atomC, otherAtom}));
-                        }
-                        else if ((thisAtom == atomN) && (otherName == "C"))
-                        {
-                            isNTerminal = false;
-                            phiAngles[n] = angle(dihedralCoordinates({otherAtom, atomN, atomCA, atomC}));
-                        }
+                        psiAngles[n] = angle(dihedralCoordinates({atomN, atomCA, atomC, otherAtom}));
                     }
-                    residuesHaveAllExpectedAtoms[n] = hasExpectedAtoms && !(isNTerminal || isCTerminal);
+                    else if ((thisAtom == atomN) && (otherName == "C"))
+                    {
+                        phiAngles[n] = angle(dihedralCoordinates({otherAtom, atomN, atomCA, atomC}));
+                    }
                 }
+                residuesHaveAllExpectedAtoms[n] = hasExpectedAtoms && isNonTerminal;
             }
 
             std::vector<std::vector<SidechainDihedral>> sidechainDihedrals(residues.size());
@@ -206,10 +217,10 @@ namespace gmml
 
             std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
             {
-                size_t residueId = (residueMoleculeTypes[n] == MoleculeType::protein)
-                                       ? n
-                                       : glycanAttachmentResidue[util::indexOf(
-                                             glycanMoleculeId, graphData.indices.residueMolecule[n])];
+                size_t residueId =
+                    (residueMoleculeTypes[n] == MoleculeType::protein)
+                        ? n
+                        : glycositeIds[util::indexOf(glycanMoleculeIds, graphData.indices.residueMolecule[n])];
                 return pdbData.residues.chainIds[residueId];
             };
 
@@ -249,35 +260,24 @@ namespace gmml
                 sidechainWeights,
                 sidechainPotentialBounds};
 
-            MoleculeData moleculeData {moleculeTypes};
-            GlycanData GlycanData {glycanAttachmentResidue, glycanMoleculeId, glycanLinkages};
-            RotatableDihedralData rotatableDihedralData {dihedralMetadata, rotatableDihedralShape};
-            ResidueLinkageData residueLinkageData {linkageRotamerTypes, isGlycositeLinkage};
-
-            std::vector<size_t> proteinMolecules;
-            for (size_t n = 0; n < moleculeTypes.size(); n++)
-            {
-                if (moleculeTypes[n] == MoleculeType::protein)
-                {
-                    proteinMolecules.push_back(n);
-                }
-            }
-
-            AssemblyIndices indices {proteinMolecules, rotatableBondIndices, residueLinkages};
+            MoleculeData moleculeData {moleculeTypes, util::vectorMap(isProtein, moleculeTypes)};
+            GlycanData glycanData {glycositeIds, glycanMoleculeIds, linkageData.glycanLinkageIds};
 
             AssemblyData data {
                 atomData,
                 residueData,
                 moleculeData,
                 ResidueEdgeData {assembly::atomsCloseToResidueEdges(graph)},
-                GlycanData,
-                rotatableDihedralData,
-                residueLinkageData,
-                indices};
+                linkageData.bonds,
+                linkageData.linkages,
+                glycanData};
 
             std::vector<bool> moleculeIncluded(graph.indices.moleculeCount, true);
             MutableData mutableData {
-                bounds, dihedralCurrentMetadata, moleculeIncluded, std::vector<bool>(residues.size(), false)};
+                bounds,
+                linkageData.initialDihedralMetadata,
+                moleculeIncluded,
+                std::vector<bool>(residues.size(), false)};
 
             return GlycoproteinAssembly {graph, data, mutableData};
         }

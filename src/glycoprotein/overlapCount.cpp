@@ -105,10 +105,8 @@ namespace gmml
             auto hasProteinOverlap = [&](size_t n)
             {
                 assembly::Selection glycanSelection = selectGlycan(graph, data, selection, n);
-                assembly::Selection proteinSelection = assembly::selectByAtomsAndMolecules(
-                    graph,
-                    selection.atoms,
-                    util::indicesToBools(graph.indices.moleculeCount, data.indices.proteinMolecules));
+                assembly::Selection proteinSelection =
+                    assembly::selectByAtomsAndMolecules(graph, selection.atoms, data.molecules.isProtein);
 
                 return containsOverlapExceedingThreshold(
                     threshold,

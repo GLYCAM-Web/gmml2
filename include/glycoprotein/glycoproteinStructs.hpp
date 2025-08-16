@@ -62,14 +62,31 @@ namespace gmml
             std::vector<Sphere> sidechainPotentialBounds;
         };
 
+        struct MoleculeData
+        {
+            std::vector<MoleculeType> types;
+            std::vector<bool> isProtein;
+        };
+
         struct ResidueEdgeData
         {
             std::vector<std::array<std::vector<bool>, 2>> atomsCloseToEdge;
         };
 
-        struct MoleculeData
+        struct RotatableBondData
         {
-            std::vector<MoleculeType> types;
+            std::vector<std::array<size_t, 4>> dihedralAtoms;
+            std::vector<std::vector<size_t>> movingAtoms;
+            std::vector<std::vector<size_t>> metadata;
+            std::vector<AngleWithMetadata> initialShape;
+        };
+
+        struct ResidueLinkageData
+        {
+            std::vector<RotamerType> rotamerTypes;
+            std::vector<bool> isGlycositeLinkage;
+            std::vector<size_t> edgeId;
+            std::vector<std::vector<size_t>> rotatableBonds;
         };
 
         struct GlycanData
@@ -79,47 +96,15 @@ namespace gmml
             std::vector<std::vector<size_t>> linkages;
         };
 
-        struct RotatableDihedralData
-        {
-            std::vector<std::vector<size_t>> metadata;
-            std::vector<AngleWithMetadata> initialShape;
-        };
-
-        struct ResidueLinkageData
-        {
-            std::vector<RotamerType> rotamerTypes;
-            std::vector<bool> isGlycositeLinkage;
-        };
-
-        struct RotatableBondIndices
-        {
-            std::array<size_t, 4> atoms;
-            std::vector<size_t> movingAtoms;
-        };
-
-        struct ResidueLinkageIndices
-        {
-            size_t residueEdge;
-            std::vector<size_t> rotatableBonds;
-        };
-
-        struct AssemblyIndices
-        {
-            std::vector<size_t> proteinMolecules;
-            std::vector<RotatableBondIndices> rotatableBonds;
-            std::vector<ResidueLinkageIndices> residueLinkages;
-        };
-
         struct AssemblyData
         {
             AtomData atoms;
             ResidueData residues;
             MoleculeData molecules;
             ResidueEdgeData residueEdges;
+            RotatableBondData rotatableBonds;
+            ResidueLinkageData residueLinkages;
             GlycanData glycans;
-            RotatableDihedralData rotatableDihedralData;
-            ResidueLinkageData residueLinkageData;
-            AssemblyIndices indices;
         };
 
         struct MutableData

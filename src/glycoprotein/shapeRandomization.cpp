@@ -29,13 +29,13 @@ namespace gmml
             bool freezeGlycositeResidueConformation)
         {
             const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
-            const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableDihedralData.metadata;
+            const std::vector<std::vector<size_t>>& dihedralMetadata = data.rotatableBonds.metadata;
             GlycanShapePreference result;
             for (size_t n = 0; n < linkages.size(); n++)
             {
                 size_t linkageId = linkages[n];
-                const std::vector<size_t>& rotatableBonds = data.indices.residueLinkages[linkageId].rotatableBonds;
-                bool isGlycositeLinkage = data.residueLinkageData.isGlycositeLinkage[linkageId];
+                const std::vector<size_t>& rotatableBonds = data.residueLinkages.rotatableBonds[linkageId];
+                bool isGlycositeLinkage = data.residueLinkages.isGlycositeLinkage[linkageId];
                 std::vector<std::vector<double>> angles;
                 angles.resize(rotatableBonds.size());
                 for (size_t k = 0; k < rotatableBonds.size(); k++)
@@ -46,7 +46,7 @@ namespace gmml
                         angles[k].push_back(randomAngle(rng, settings, dihedralAngleTable.entries[metadata]));
                     }
                 }
-                if (data.residueLinkageData.rotamerTypes[linkageId] == RotamerType::conformer)
+                if (data.residueLinkages.rotamerTypes[linkageId] == RotamerType::conformer)
                 {
                     size_t firstbondId = rotatableBonds[0];
                     std::vector<size_t> order =
@@ -62,7 +62,7 @@ namespace gmml
                                     dihedralAngleTable.entries[dihedralMetadata[bondId][0]].dihedral_angle_name_))
                             {
                                 pref.isFrozen[n] = true;
-                                size_t metadata = data.rotatableDihedralData.initialShape[bondId].metadataIndex;
+                                size_t metadata = data.rotatableBonds.initialShape[bondId].metadataIndex;
                                 pref.angles[n][metadata] =
                                     constants::toDegrees(angle(dihedralCoordinates(data, bounds, bondId)));
                                 pref.metadataOrder = {metadata};

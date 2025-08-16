@@ -181,8 +181,8 @@ int main(int argc, char* argv[])
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
         const std::vector<Sphere> atomBounds =
             assembly::toAtomBounds(elementRadii, pdbFile.data.atoms.elements, pdbFile.data.atoms.coordinates);
-        const assembly::Graph graph = assembly::createAssemblyGraph(pdbFile.data.indices, pdbFile.data.atomGraph);
-        const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
+        const assembly::Graph pdbGraph = assembly::createAssemblyGraph(pdbFile.data.indices, pdbFile.data.atomGraph);
+        const assembly::Bounds bounds = assembly::toAssemblyBounds(pdbGraph, atomBounds);
         size_t glycoproteinAssemblyId = 0;
         Assembly* glycoprotein = getAssemblies(pdbFile)[glycoproteinAssemblyId];
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);
@@ -191,10 +191,10 @@ int main(int argc, char* argv[])
         std::vector<GlycosylationSite> glycosites =
             createGlycosites(pdbFile.data, glycoproteinAssemblyId, settings.glycositesInputVector);
         std::vector<Molecule*> glycans;
-        std::vector<std::vector<ResidueLinkage>> linkages;
+        std::vector<std::vector<ResidueLinkage>> glycosidicLinkages;
         addGlycansToProtein(
             glycans,
-            linkages,
+            glycosidicLinkages,
             parameterManager,
             elementRadii,
             dihedralAngleDataTable,
@@ -204,18 +204,26 @@ int main(int argc, char* argv[])
         util::log(__LINE__, __FILE__, util::INF, "Initialization of Glycoprotein builder complete!");
 
         std::vector<Molecule*> molecules = glycoprotein->getMolecules();
+        GraphIndexData graphData = toIndexData(molecules);
+        assembly::Graph graph = createCompleteAssemblyGraph(graphData);
+        std::vector<size_t> glycanIndices = util::indicesOf(molecules, glycans);
+        std::function<size_t(const GlycosylationSite&)> glycositeId = [](const GlycosylationSite& site)
+        { return site.residueId; };
+        std::vector<size_t> glycositeIds = util::vectorMap(glycositeId, glycosites);
+
+        PartialLinkageData linkages = linkageData(dihedralAngleDataTable, graphData, graph, glycosidicLinkages);
 
         GlycoproteinAssembly assembly = addSidechainRotamers(
             aminoAcidTable,
             sidechainRotamers,
             toGlycoproteinAssemblyStructs(
                 aminoAcidTable,
-                dihedralAngleDataTable,
                 elementRadii,
                 pdbFile.data,
-                molecules,
-                glycosites,
-                glycans,
+                graphData,
+                graph,
+                glycanIndices,
+                glycositeIds,
                 linkages,
                 settings.ignoreHydrogen));
         if (settings.moveOverlappingSidechains)
