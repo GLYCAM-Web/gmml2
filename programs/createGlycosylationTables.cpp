@@ -4,6 +4,7 @@
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/metadata/elements.hpp"
+#include "include/metadata/glycoprotein.hpp"
 #include "include/programs/glycosylationSiteFinder.hpp"
 #include "include/util/arguments.hpp"
 #include "include/util/containers.hpp"
@@ -107,8 +108,9 @@ int main(int argc, char* argv[])
     const assembly::Graph graph = assembly::createAssemblyGraph(pdbData.indices, pdbData.atomGraph);
     const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
     pdb::bondAtomsAndResiduesByDistance(pdbData, bounds);
+    const AminoAcidLinkTable linkTable = defaultAminoAcidLinkTable();
     std::vector<gpbuilder::GlycosylationSiteInfo> table =
-        gpbuilder::createGlycosylationSiteTable(pdbData, util::indexVector(pdbData.indices.residueCount));
+        gpbuilder::createGlycosylationSiteTable(linkTable, pdbData, util::indexVector(pdbData.indices.residueCount));
     std::vector<std::string> header {"Chain", "ResidueNumber", "InsertionCode", "SequenceContext", "Tags"};
 
     std::function<std::vector<std::string>(const gpbuilder::GlycosylationSiteInfo&)> toRow =

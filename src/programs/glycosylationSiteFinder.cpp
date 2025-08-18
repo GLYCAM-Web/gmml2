@@ -157,9 +157,8 @@ namespace gmml
         } // namespace
 
         std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(
-            const pdb::PdbData& pdbData, const std::vector<size_t>& residues)
+            const AminoAcidLinkTable& table, const pdb::PdbData& pdbData, const std::vector<size_t>& residues)
         {
-            const AminoAcidLinkTable& table = defaultAminoAcidLinkTable();
             graph::Graph atomGraph = graph::identity(pdbData.atomGraph);
             std::vector<GlycosylationSiteInfo> result;
             for (size_t residueId : residues)

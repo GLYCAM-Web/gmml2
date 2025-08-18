@@ -2,6 +2,7 @@
 #define INCLUDE_PROGRAMS_GLYCOSYLATIONSITEFINDER_HPP
 
 #include "include/fileType/pdb/pdbData.hpp"
+#include "include/metadata/glycoprotein.hpp"
 
 #include <string>
 #include <vector>
@@ -20,7 +21,7 @@ namespace gmml
         };
 
         std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(
-            const pdb::PdbData& pdbData, const std::vector<size_t>& residues);
+            const AminoAcidLinkTable& table, const pdb::PdbData& pdbData, const std::vector<size_t>& residues);
     } // namespace gpbuilder
 } // namespace gmml
 

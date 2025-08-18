@@ -33,24 +33,6 @@ namespace gmml
             {"TYR", "OLY",  "OH",  {"OH", "CZ", "CE1"},      {{112, 68, 1.46}, {117, 60, 1.35}, {120, 180, 1.37}}}
         };
 
-        std::function<std::string(const GlycosylationEntry&)> getGlycosylationResidue = [](const GlycosylationEntry& a)
-        { return a.residue; };
-        std::function<std::string(const GlycosylationEntry&)> getGlycosylationRenamedResidue =
-            [](const GlycosylationEntry& a) { return a.renamed; };
-        std::function<std::string(const GlycosylationEntry&)> getGlycosylationConnectingAtom =
-            [](const GlycosylationEntry& a) { return a.connectingAtom; };
-        std::function<std::vector<std::string>(const GlycosylationEntry&)> getGlycosylationAtoms =
-            [](const GlycosylationEntry& a) { return a.atoms; };
-        std::function<std::vector<SuperimpositionValues>(const GlycosylationEntry&)> getGlycosylationValues =
-            [](const GlycosylationEntry& a) { return a.values; };
-
-        const GlycosylationTable glycosylationTable {
-            util::vectorMap(getGlycosylationResidue, glycosylationTableData),
-            util::vectorMap(getGlycosylationRenamedResidue, glycosylationTableData),
-            util::vectorMap(getGlycosylationConnectingAtom, glycosylationTableData),
-            util::vectorMap(getGlycosylationAtoms, glycosylationTableData),
-            util::vectorMap(getGlycosylationValues, glycosylationTableData)};
-
         const std::string nLink = "nLink";
         const std::string oLink = "oLink";
         const std::string cLink = "cLink";
@@ -82,7 +64,31 @@ namespace gmml
             {"OLY", "Y", oLink},
             {"CLW", "W", cLink}
         };
+    } // namespace
 
+    GlycosylationTable defaultGlycosylationTable()
+    {
+        std::function<std::string(const GlycosylationEntry&)> getGlycosylationResidue = [](const GlycosylationEntry& a)
+        { return a.residue; };
+        std::function<std::string(const GlycosylationEntry&)> getGlycosylationRenamedResidue =
+            [](const GlycosylationEntry& a) { return a.renamed; };
+        std::function<std::string(const GlycosylationEntry&)> getGlycosylationConnectingAtom =
+            [](const GlycosylationEntry& a) { return a.connectingAtom; };
+        std::function<std::vector<std::string>(const GlycosylationEntry&)> getGlycosylationAtoms =
+            [](const GlycosylationEntry& a) { return a.atoms; };
+        std::function<std::vector<SuperimpositionValues>(const GlycosylationEntry&)> getGlycosylationValues =
+            [](const GlycosylationEntry& a) { return a.values; };
+
+        return GlycosylationTable {
+            util::vectorMap(getGlycosylationResidue, glycosylationTableData),
+            util::vectorMap(getGlycosylationRenamedResidue, glycosylationTableData),
+            util::vectorMap(getGlycosylationConnectingAtom, glycosylationTableData),
+            util::vectorMap(getGlycosylationAtoms, glycosylationTableData),
+            util::vectorMap(getGlycosylationValues, glycosylationTableData)};
+    }
+
+    AminoAcidLinkTable defaultAminoAcidLinkTable()
+    {
         std::function<std::string(const AminoAcidEntry&)> getAminoAcidName = [](const AminoAcidEntry& a)
         { return a.name; };
         std::function<std::string(const AminoAcidEntry&)> getAminoAcidCode = [](const AminoAcidEntry& a)
@@ -90,13 +96,10 @@ namespace gmml
         std::function<std::string(const AminoAcidEntry&)> getAminoAcidLinkType = [](const AminoAcidEntry& a)
         { return a.linkType; };
 
-        const AminoAcidLinkTable aminoAcidLinkTable {
+        return AminoAcidLinkTable {
             util::vectorMap(getAminoAcidName, aminoAcidLinkTableData),
             util::vectorMap(getAminoAcidCode, aminoAcidLinkTableData),
             util::vectorMap(getAminoAcidLinkType, aminoAcidLinkTableData)};
-    } // namespace
-
-    const GlycosylationTable& defaultGlycosylationTable() { return glycosylationTable; }
-
-    const AminoAcidLinkTable& defaultAminoAcidLinkTable() { return aminoAcidLinkTable; }
+        ;
+    }
 } // namespace gmml

@@ -321,6 +321,7 @@ namespace gmml
         void addGlycansToProtein(
             std::vector<Molecule*>& glycans,
             std::vector<std::vector<ResidueLinkage>>& glycosidicLinkages,
+            const GlycosylationTable& glycosylationTable,
             const preprocess::ParameterManager& parameterManager,
             const util::SparseVector<double>& elementRadii,
             const DihedralAngleDataTable& dihedralAngleData,
@@ -328,7 +329,6 @@ namespace gmml
             Assembly* glycoprotein,
             const std::vector<GlycosylationSite>& glycosites)
         {
-            const GlycosylationTable glycosylationTable = defaultGlycosylationTable();
             for (auto& glycosite : glycosites)
             {
                 sequence::SequenceData sequence = sequence::parseAndReorder(glycosite.input.glycanInput);

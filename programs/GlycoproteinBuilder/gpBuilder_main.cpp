@@ -9,6 +9,7 @@
 #include "include/glycoprotein/glycoproteinCreation.hpp"
 #include "include/glycoprotein/sidechains.hpp"
 #include "include/metadata/dihedralangledata.hpp"
+#include "include/metadata/glycoprotein.hpp"
 #include "include/metadata/sidechainRotamers.hpp"
 #include "include/preprocess/parameterManager.hpp"
 #include "include/preprocess/pdbPreProcess.hpp"
@@ -178,6 +179,7 @@ int main(int argc, char* argv[])
 
         util::SparseVector<double> elementRadii = vanDerWaalsRadii();
         const AminoAcidTable& aminoAcidTable = gmml::aminoAcidTable();
+        const GlycosylationTable glycosylationTable = defaultGlycosylationTable();
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
         const std::vector<Sphere> atomBounds =
             assembly::toAtomBounds(elementRadii, pdbFile.data.atoms.elements, pdbFile.data.atoms.coordinates);
@@ -195,6 +197,7 @@ int main(int argc, char* argv[])
         addGlycansToProtein(
             glycans,
             glycosidicLinkages,
+            glycosylationTable,
             parameterManager,
             elementRadii,
             dihedralAngleDataTable,

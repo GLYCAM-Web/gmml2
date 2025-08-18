@@ -29,8 +29,8 @@ namespace gmml
         std::vector<std::string> linkTypes;
     };
 
-    const GlycosylationTable& defaultGlycosylationTable();
-    const AminoAcidLinkTable& defaultAminoAcidLinkTable();
+    GlycosylationTable defaultGlycosylationTable();
+    AminoAcidLinkTable defaultAminoAcidLinkTable();
 } // namespace gmml
 
 #endif
