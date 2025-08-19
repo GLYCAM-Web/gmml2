@@ -2,6 +2,7 @@
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/geometry/overlap.hpp"
@@ -20,7 +21,7 @@ namespace gmml
             assembly::Selection selectMolecule(
                 const assembly::Graph& graph, const assembly::Selection& selection, size_t n)
             {
-                std::vector<bool> molecule(graph.indices.moleculeCount, false);
+                std::vector<bool> molecule(moleculeCount(graph.source), false);
                 molecule[n] = true;
                 return assembly::selectByAtomsAndMolecules(graph, selection.atoms, molecule);
             };
@@ -122,7 +123,7 @@ namespace gmml
             };
             auto hasSelfOverlap = [&](size_t n)
             {
-                std::vector<bool> glycanMolecule(graph.indices.moleculeCount, false);
+                std::vector<bool> glycanMolecule(moleculeCount(graph.source), false);
                 glycanMolecule[data.glycans.moleculeId[n]] = true;
                 assembly::Selection glycanSelection =
                     assembly::selectByAtomsAndMolecules(graph, selection.atoms, glycanMolecule);

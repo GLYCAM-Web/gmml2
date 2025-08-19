@@ -2,6 +2,7 @@
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/assembly/assemblyTypes.hpp"
@@ -184,7 +185,7 @@ namespace gmml
         for (size_t n = 0; n < dihedrals.size(); n++)
         {
             const DihedralIndices& dihedral = dihedrals[n];
-            std::vector<bool> atomMoving = util::indicesToBools(graph.indices.atomCount, dihedral.movingAtoms);
+            std::vector<bool> atomMoving = util::indicesToBools(atomCount(graph.source), dihedral.movingAtoms);
             std::array<Coordinate, 4> coordinates = dihedralCoords(dihedral);
             assembly::Selection selectionA =
                 assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));

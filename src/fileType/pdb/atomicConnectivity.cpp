@@ -26,7 +26,7 @@ namespace gmml
             void addBonds(
                 PdbData& data, size_t proteinRes, const std::vector<std::pair<std::string, std::string>>& bonds)
             {
-                size_t atomCount = data.indices.atomCount;
+                size_t atomCount = data.assembly.indices.atomCount;
                 for (auto& bondPair : bonds)
                 {
                     size_t firstAtom = findResidueAtom(data, proteinRes, bondPair.first);
@@ -40,12 +40,12 @@ namespace gmml
 
             void bondHydrogenAtomsToClosestNonHydrogen(PdbData& data, size_t residueId)
             {
-                std::vector<bool> isResidueAtom = assembly::isResidueAtom(data.indices, residueId);
+                std::vector<bool> isResidueAtom = assembly::isResidueAtom(data.assembly.indices, residueId);
                 std::vector<bool> isHydrogen = util::vectorEquals(data.atoms.elements, Element::H);
                 std::vector<size_t> hydrogenAtoms =
-                    indicesOfLivingAtoms(data.indices, util::vectorAnd(isResidueAtom, isHydrogen));
-                std::vector<size_t> nonHydrogenAtoms =
-                    indicesOfLivingAtoms(data.indices, util::vectorAnd(isResidueAtom, util::vectorNot(isHydrogen)));
+                    indicesOfLivingAtoms(data.assembly.indices, util::vectorAnd(isResidueAtom, isHydrogen));
+                std::vector<size_t> nonHydrogenAtoms = indicesOfLivingAtoms(
+                    data.assembly.indices, util::vectorAnd(isResidueAtom, util::vectorNot(isHydrogen)));
                 if (nonHydrogenAtoms.empty())
                 {
                     return;
@@ -100,7 +100,7 @@ namespace gmml
 
             bool autoConnectSuccessiveResidues(PdbData& data, size_t cTermRes, size_t nTermRes)
             {
-                size_t atomCount = data.indices.atomCount;
+                size_t atomCount = data.assembly.indices.atomCount;
                 size_t cAtom = findResidueAtom(data, cTermRes, "C");
                 size_t oxtAtom = findResidueAtom(data, cTermRes, "OXT");
                 size_t nAtom = findResidueAtom(data, nTermRes, "N");

@@ -43,11 +43,11 @@ namespace gmml
         size_t n = util::indexOf(data.assemblies.numbers, modelNumber);
         if (n < data.assemblies.numbers.size())
         {
-            return residueSelector(data, assemblyResidues(data.indices, n), residueId);
+            return residueSelector(data, assemblyResidues(data.assembly.indices, n), residueId);
         }
         else
         {
-            return data.indices.residueCount;
+            return data.assembly.indices.residueCount;
         }
     }
 
@@ -64,7 +64,7 @@ namespace gmml
                 return residueId;
             }
         }
-        return data.indices.residueCount;
+        return data.assembly.indices.residueCount;
     }
 
     size_t atomVectorIndex(const std::vector<Atom*>& atoms, Atom* find)

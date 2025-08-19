@@ -2,6 +2,7 @@
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
@@ -164,13 +165,20 @@ namespace gmml
             restoreSidechainRotation(graph, data, mutableData, residue);
             double initialOverlap = overlapVectorSum(sidechainOverlap(
                 overlapSettings,
-                graph.indices,
+                graph.source.indices,
                 data,
                 mutableData.bounds.atoms,
                 sidechainMovingAtoms(data, residue),
                 potentialOverlaps));
             IndexedOverlap bestRotation = lowestOverlapSidechainRotation(
-                sidechains, overlapSettings, graph.indices, data, mutableData, preference, residue, potentialOverlaps);
+                sidechains,
+                overlapSettings,
+                graph.source.indices,
+                data,
+                mutableData,
+                preference,
+                residue,
+                potentialOverlaps);
             if (compareOverlaps(initialOverlap, bestRotation.overlap) > 0)
             {
                 updateSidechainRotation(sidechains, graph, data, mutableData, residue, bestRotation.index);
@@ -271,7 +279,7 @@ namespace gmml
                     }
                 }
             };
-            for (size_t molecule = 0; molecule < graph.indices.moleculeCount; molecule++)
+            for (size_t molecule = 0; molecule < moleculeCount(graph.source); molecule++)
             {
                 if (mutableData.moleculeIncluded[molecule])
                 {
@@ -285,8 +293,8 @@ namespace gmml
             const AminoAcidTable& aminoAcidTable, const assembly::Graph& graph, const AssemblyData& data)
         {
             std::vector<std::vector<SidechainDihedral>> result(
-                graph.indices.residueCount, std::vector<SidechainDihedral> {});
-            for (size_t n = 0; n < graph.indices.residueCount; n++)
+                residueCount(graph.source), std::vector<SidechainDihedral> {});
+            for (size_t n = 0; n < residueCount(graph.source); n++)
             {
                 bool isProtein = data.residues.types[n] == ResidueType::Protein;
                 bool hasExpectedAtoms = data.residues.hasAllExpectedAtoms[n];
@@ -312,7 +320,7 @@ namespace gmml
                             std::vector<bool> reachable = graph::reachableNodes(
                                 graph.atoms,
                                 util::indicesToBools(
-                                    graph.indices.atomCount, std::vector<size_t> {indices[1], indices[2]}),
+                                    atomCount(graph.source), std::vector<size_t> {indices[1], indices[2]}),
                                 indices[2]);
                             std::vector<size_t> movingAtoms = util::boolsToIndices(reachable);
                             sidechainDihedrals.push_back({indices, movingAtoms});
@@ -404,12 +412,13 @@ namespace gmml
             assembly.data.residues.sidechainDihedrals =
                 sidechainDihedrals(aminoAcidTable, assembly.graph, assembly.data);
             SidechainRotationsAndWeights rotationsAndWeights =
-                sidechainRotationsAndWeights(assembly.graph.indices, assembly.data, sidechains);
+                sidechainRotationsAndWeights(assembly.graph.source.indices, assembly.data, sidechains);
             assembly.data.residues.sidechainRotations = rotationsAndWeights.rotations;
             assembly.data.residues.sidechainRotationWeights = rotationsAndWeights.weights;
-            assembly.data.residues.sidechainPotentialBounds =
-                sidechainPotentialBounds(assembly.graph.indices, assembly.data, assembly.mutableData, sidechains);
-            assembly.data.atoms.partOfMovableSidechain = partOfMovableSidechain(assembly.graph.indices, assembly.data);
+            assembly.data.residues.sidechainPotentialBounds = sidechainPotentialBounds(
+                assembly.graph.source.indices, assembly.data, assembly.mutableData, sidechains);
+            assembly.data.atoms.partOfMovableSidechain =
+                partOfMovableSidechain(assembly.graph.source.indices, assembly.data);
             return assembly;
         }
     } // namespace gpbuilder

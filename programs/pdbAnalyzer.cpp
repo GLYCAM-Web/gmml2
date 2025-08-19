@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
     const PotentialTable potential = potentialTable(elementRadii, foundElements(data.atoms.elements));
     const std::vector<Sphere> atomBounds =
         assembly::toAtomBounds(elementRadii, data.atoms.elements, data.atoms.coordinates);
-    const assembly::Graph graph = assembly::createAssemblyGraph(data.indices, data.atomGraph);
+    const assembly::Graph graph = assembly::createAssemblyGraph(data.assembly.indices, data.assembly.atomGraph);
     const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
 
     pdb::bondAtomsAndResiduesByDistance(data, bounds);
@@ -191,13 +191,14 @@ int main(int argc, char* argv[])
     {
         std::string chain = data.molecules.chainIds[moleculeId];
         std::vector<bool> includedTypes(ResidueTypeCount, false);
-        for (ResidueType type : util::indicesToValues(data.residues.types, moleculeResidues(data.indices, moleculeId)))
+        for (ResidueType type :
+             util::indicesToValues(data.residues.types, moleculeResidues(data.assembly.indices, moleculeId)))
         {
             includedTypes[type] = true;
         }
         std::string types = util::join(", ", util::boolsToValues(residueTypeNames, includedTypes));
-        std::string residueCount = std::to_string(assembly::moleculeResidues(data.indices, moleculeId).size());
-        std::string atomCount = std::to_string(assembly::moleculeAtoms(data.indices, moleculeId).size());
+        std::string residueCount = std::to_string(moleculeResidues(data.assembly.indices, moleculeId).size());
+        std::string atomCount = std::to_string(moleculeAtoms(data.assembly.indices, moleculeId).size());
         return std::vector<std::string> {chain, residueCount, atomCount, types};
     };
     std::vector<std::string> moleculeHeader {"chain", "residues", "atoms", "residue types"};
@@ -208,14 +209,14 @@ int main(int argc, char* argv[])
         std::string name = data.residues.names[residueId];
         std::string number = std::to_string(data.residues.numbers[residueId]);
         std::string type = residueTypeNames[data.residues.types[residueId]];
-        std::string atomCount = std::to_string(assembly::residueAtoms(data.indices, residueId).size());
+        std::string atomCount = std::to_string(residueAtoms(data.assembly.indices, residueId).size());
         return std::vector<std::string> {chain, name, number, type, atomCount};
     };
     std::vector<std::string> residueHeader {"chain", "name", "number", "type", "atom count"};
 
     std::function<std::vector<std::string>(const size_t&)> atomRow = [&](size_t atomId)
     {
-        size_t residueId = data.indices.atomResidue[atomId];
+        size_t residueId = atomResidue(data.assembly.indices, atomId);
         std::string chain = data.residues.chainIds[residueId];
         std::string residueName = data.residues.names[residueId];
         std::string residueNumber = std::to_string(data.residues.numbers[residueId]);
@@ -287,8 +288,8 @@ int main(int argc, char* argv[])
     {
         size_t atomA = contact.atomA;
         size_t atomB = contact.atomB;
-        size_t residueA = data.indices.atomResidue[atomA];
-        size_t residueB = data.indices.atomResidue[atomB];
+        size_t residueA = atomResidue(data.assembly.indices, atomA);
+        size_t residueB = atomResidue(data.assembly.indices, atomB);
         return std::vector<std::string> {
             data.residues.chainIds[residueA],
             data.residues.names[residueA],
@@ -310,12 +311,13 @@ int main(int argc, char* argv[])
         case MOLECULES:
             {
                 textTable = {
-                    moleculeHeader, util::vectorMap(moleculeRow, util::indexVector(data.indices.moleculeCount))};
+                    moleculeHeader, util::vectorMap(moleculeRow, util::indexVector(moleculeCount(data.assembly)))};
                 break;
             }
         case RESIDUES:
             {
-                textTable = {residueHeader, util::vectorMap(residueRow, util::indexVector(data.indices.residueCount))};
+                textTable = {
+                    residueHeader, util::vectorMap(residueRow, util::indexVector(moleculeCount(data.assembly)))};
                 break;
             }
         case ATOMS:
@@ -327,7 +329,7 @@ int main(int argc, char* argv[])
             }
         case CONTACTS:
             {
-                size_t residueCount = data.indices.residueCount;
+                size_t residueCount = assembly::residueCount(data.assembly);
                 std::vector<AtomContact> contacts;
                 for (size_t n = 0; n < residueCount; n++)
                 {

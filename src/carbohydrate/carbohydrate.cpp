@@ -9,6 +9,7 @@
 #include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
 #include "include/carbohydrate/dihedralShape.hpp"
@@ -402,7 +403,7 @@ namespace gmml
             const assembly::Graph graph = createCompleteAssemblyGraph(graphData);
             size_t residueIndex = util::indexOf(graphData.objects.residues, residue);
             std::vector<bool> reachable = graph::reachableNodes(
-                graph.residues, std::vector<bool>(graph.indices.residueCount, false), residueIndex);
+                graph.residues, std::vector<bool>(residueCount(graph.source), false), residueIndex);
             const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
             const std::vector<Sphere> atomBounds = assembly::toAtomBounds(
                 elementRadii, atomElements(graphData.objects.atoms), atomCoordinates(graphData.objects.atoms));
@@ -423,7 +424,7 @@ namespace gmml
                 selection,
                 bounds,
                 residueAtomsCloseToEdge);
-            for (size_t n = 0; n < graph.indices.atomCount; n++)
+            for (size_t n = 0; n < atomCount(graph.source); n++)
             {
                 graphData.objects.atoms[n]->setCoordinate(newBounds.atoms[n].center);
             }
@@ -664,7 +665,7 @@ namespace gmml
                     residueAtomsCloseToEdge);
             }
         }
-        for (size_t n = 0; n < graph.indices.atomCount; n++)
+        for (size_t n = 0; n < atomCount(graph.source); n++)
         {
             graphData.objects.atoms[n]->setCoordinate(bounds.atoms[n].center);
         }

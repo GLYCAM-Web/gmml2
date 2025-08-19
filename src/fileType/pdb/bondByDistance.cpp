@@ -69,12 +69,12 @@ namespace gmml
 
             std::vector<std::vector<size_t>> residueAtomVectors(const PdbData& data)
             {
-                std::vector<std::vector<size_t>> result(data.indices.residueCount, std::vector<size_t>());
-                for (size_t n = 0; n < data.indices.atomCount; n++)
+                std::vector<std::vector<size_t>> result(data.assembly.indices.residueCount, std::vector<size_t>());
+                for (size_t n = 0; n < data.assembly.indices.atomCount; n++)
                 {
-                    if (data.indices.atomAlive[n])
+                    if (data.assembly.indices.atomAlive[n])
                     {
-                        result[data.indices.atomResidue[n]].push_back(n);
+                        result[data.assembly.indices.atomResidue[n]].push_back(n);
                     }
                 }
                 return result;

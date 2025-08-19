@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
     // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
     // every molecule to have any chain ID you can do:
-    pdbFile.data.residues.chainIds = std::vector<std::string>(pdbFile.data.indices.residueCount, "Y");
+    pdbFile.data.residues.chainIds = std::vector<std::string>(residueCount(pdbFile.data.assembly), "Y");
     // ResidueTypes are guessed upon input. Using that guess to find the ligand, can improve this if you need:
     std::vector<size_t> ligandResidues = util::indicesOfElement(pdbFile.data.residues.types, ResidueType::Undefined);
     if (ligandResidues.empty())
@@ -50,17 +50,17 @@ int main(int argc, char* argv[])
 
     std::function<Coordinate(const size_t&)> residueMean = [&](size_t n)
     {
-        std::vector<size_t> atomIds = residueAtoms(pdbFileTraj.data.indices, n);
+        std::vector<size_t> atomIds = residueAtoms(pdbFileTraj.data.assembly.indices, n);
         return coordinateMean(util::indicesToValues(pdbFileTraj.data.atoms.coordinates, atomIds));
     };
     std::vector<Coordinate> residueMeans =
-        util::vectorMap(residueMean, util::indexVector(pdbFileTraj.data.indices.residueCount));
+        util::vectorMap(residueMean, util::indexVector(residueCount(pdbFileTraj.data.assembly)));
     // somehow you specify number in inputs. e.g. A_405 chain A, residue 405.
     size_t residueIndex = util::indexOf(pdbFileTraj.data.residues.numbers, uint(5));
     double distance = 12.345; // inputs
 
     std::vector<size_t> selectedResidues;
-    for (size_t n = 0; n < pdbFileTraj.data.indices.residueCount; n++)
+    for (size_t n = 0; n < residueCount(pdbFileTraj.data.assembly); n++)
     {
         if (withinDistance(distance, residueMeans[residueIndex], residueMeans[n]))
         {
@@ -69,8 +69,8 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Found " << selectedResidues.size() << " residues\n";
-    pdbFileTraj.data.indices.residueMolecule = std::vector<size_t>(pdbFileTraj.data.indices.residueCount, 0);
-    assembly::Graph graph = createAssemblyGraph(pdbFileTraj.data.indices, pdbFileTraj.data.atomGraph);
+    pdbFileTraj.data.assembly.indices.residueMolecule = std::vector<size_t>(residueCount(pdbFileTraj.data.assembly), 0);
+    assembly::Graph graph = createAssemblyGraph(pdbFileTraj.data.assembly.indices, pdbFileTraj.data.assembly.atomGraph);
     util::writeToFile(
         "026.outputSelection.pdb",
         [&](std::ostream& stream) { pdb::writeTrajectoryToPdb(stream, pdbFileTraj.data, graph, selectedResidues); });

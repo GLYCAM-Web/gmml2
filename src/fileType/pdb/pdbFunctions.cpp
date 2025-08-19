@@ -2,6 +2,7 @@
 
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
+#include "include/assembly/assemblyFunctions.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
@@ -107,11 +108,8 @@ namespace gmml
         size_t addAtom(PdbData& data, size_t residueId, const AtomEntry& entry)
         {
             Atom* atom = data.objects.residues[residueId]->addAtom(std::make_unique<Atom>());
-            size_t atomId = data.indices.atomCount;
+            size_t atomId = assembly::addAtom(data.assembly, residueId);
             data.objects.atoms.push_back(atom);
-            data.indices.atomResidue.push_back(residueId);
-            data.indices.atomAlive.push_back(true);
-            data.indices.atomCount++;
             data.atoms.recordNames.push_back(entry.recordName);
             data.atoms.names.push_back(entry.name);
             data.atoms.elements.push_back(atomElement(entry.name));
@@ -125,11 +123,6 @@ namespace gmml
             atom->setName(entry.name);
             atom->setCoordinate(entry.coordinate);
             atom->setElement(data.atoms.elements[atomId]);
-            size_t nodeId = graph::addNode(data.atomGraph);
-            if (nodeId != atomId)
-            {
-                throw std::runtime_error("atom id mismatch");
-            }
             return atomId;
         }
 
@@ -142,7 +135,7 @@ namespace gmml
 
         void deleteAtom(PdbData& data, size_t atomId)
         {
-            if (atomId < data.indices.atomCount)
+            if (atomId < atomCount(data.assembly))
             {
                 util::log(
                     __LINE__,
@@ -150,9 +143,9 @@ namespace gmml
                     util::INF,
                     "Deleting atom with id: " + data.atoms.names[atomId] + "_" +
                         std::to_string(data.atoms.numbers[atomId]));
-                data.indices.atomAlive[atomId] = false;
-                data.atomGraph.nodes.alive[atomId] = false;
-                size_t residueId = data.indices.atomResidue[atomId];
+                data.assembly.indices.atomAlive[atomId] = false;
+                data.assembly.atomGraph.nodes.alive[atomId] = false;
+                size_t residueId = atomResidue(data.assembly.indices, atomId);
                 Atom* atom = data.objects.atoms[atomId];
                 data.objects.residues[residueId]->deleteAtom(atom);
             }
@@ -160,13 +153,11 @@ namespace gmml
 
         size_t addResidue(PdbData& data, size_t moleculeId, size_t position, const ResidueEntry& entry)
         {
-            size_t residueId = data.indices.residueCount;
+            size_t residueId = assembly::addResidue(data.assembly, moleculeId);
             Residue* residue =
                 data.objects.molecules[moleculeId]->insertNewResidue(std::make_unique<Residue>(), position);
             std::vector<size_t>& order = data.molecules.residueOrder[moleculeId];
             order.insert(order.begin() + position, residueId);
-            data.indices.residueMolecule.push_back(moleculeId);
-            data.indices.residueCount++;
             data.objects.residues.push_back(residue);
             data.residues.names.push_back(entry.name);
             data.residues.types.push_back(entry.type);
@@ -184,19 +175,19 @@ namespace gmml
         void addBond(PdbData& data, size_t atom1, size_t atom2)
         {
             addBond(data.objects.atoms[atom1], data.objects.atoms[atom2]);
-            graph::addEdge(data.atomGraph, {atom1, atom2});
+            graph::addEdge(data.assembly.atomGraph, {atom1, atom2});
         }
 
         size_t findResidueAtom(const PdbData& data, size_t residueId, const std::string& atomName)
         {
-            for (size_t n : assembly::residueAtoms(data.indices, residueId))
+            for (size_t n : assembly::residueAtoms(data.assembly.indices, residueId))
             {
                 if (data.atoms.names[n] == atomName)
                 {
                     return n;
                 }
             }
-            return data.indices.atomCount;
+            return atomCount(data.assembly);
         }
     } // namespace pdb
 } // namespace gmml

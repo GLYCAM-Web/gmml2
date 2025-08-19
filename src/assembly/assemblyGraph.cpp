@@ -1,5 +1,6 @@
 #include "include/assembly/assemblyGraph.hpp"
 
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/graph/graphManipulation.hpp"
 #include "include/util/containers.hpp"
 
@@ -18,7 +19,7 @@ namespace gmml
             close[util::indexOf(atomIndices, atomIndex)] = true;
             for (size_t adj : atomAdj)
             {
-                if (graph.indices.atomResidue[adj] == residueIndex)
+                if (atomResidue(graph.source.indices, adj) == residueIndex)
                 {
                     close[util::indexOf(atomIndices, adj)] = true;
                 }
@@ -52,7 +53,7 @@ namespace gmml
         std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
         {
             std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
-            { return graph.indices.residueMolecule[graph.indices.atomResidue[n]] == moleculeId; };
+            { return atomMolecule(graph.source.indices, n) == moleculeId; };
             std::vector<bool> selected = util::vectorMap(inMolecule, indices(graph.atoms.nodes));
             return util::boolsToIndices(selected);
         }
@@ -71,20 +72,17 @@ namespace gmml
                 moleculeData,
                 indices.assemblyCount,
                 util::indicesToValues(indices.moleculeAssembly, moleculeData.nodes.indices));
-            return assembly::Graph {
-                {indices.atomCount,
-                 indices.residueCount,
-                 indices.moleculeCount,
-                 indices.assemblyCount,
-                 atomGraphData.nodes.alive,
-                 indices.atomResidue,
-                 indices.residueMolecule,
-                 indices.moleculeAssembly},
-                atomGraph,
-                residueGraph,
-                moleculeGraph,
-                assemblyGraph
-            };
+            assembly::Indices resultIndices {
+                indices.atomCount,
+                indices.residueCount,
+                indices.moleculeCount,
+                indices.assemblyCount,
+                atomGraphData.nodes.alive,
+                indices.atomResidue,
+                indices.residueMolecule,
+                indices.moleculeAssembly};
+            assembly::Assembly source {resultIndices, atomGraphData};
+            return assembly::Graph {source, atomGraph, residueGraph, moleculeGraph, assemblyGraph};
         }
     } // namespace assembly
 } // namespace gmml

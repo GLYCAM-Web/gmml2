@@ -94,7 +94,7 @@ namespace gmml
 
             const lib::AtomData& parameterAtoms = parameters.lib.residues[index].atoms;
             size_t parameterAtomCount = parameterAtoms.names.size();
-            for (size_t n : assembly::residueAtoms(data.indices, residueId))
+            for (size_t n : assembly::residueAtoms(data.assembly.indices, residueId))
             {
                 const std::string& atomName = data.atoms.names[n];
                 size_t atomIndex = util::indexOf(parameterAtoms.names, atomName);

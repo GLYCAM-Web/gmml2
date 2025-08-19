@@ -1,6 +1,7 @@
 #include "include/programs/glycosylationSiteFinder.hpp"
 
 #include "include/CentralDataStructure/Selections/residueSelections.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
@@ -50,15 +51,15 @@ namespace gmml
             size_t firstNeighborInOtherResidue(
                 const pdb::PdbData& pdbData, const graph::Graph& atomGraph, size_t atomId)
             {
-                size_t residueId = pdbData.indices.atomResidue[atomId];
+                size_t residueId = atomResidue(pdbData.assembly.indices, atomId);
                 for (size_t n : atomGraph.nodes.nodeAdjacencies[atomId])
                 {
-                    if (pdbData.indices.atomResidue[n] != residueId)
+                    if (atomResidue(pdbData.assembly.indices, n) != residueId)
                     {
                         return n;
                     }
                 }
-                return pdbData.indices.atomCount;
+                return atomCount(pdbData.assembly);
             }
 
             // Not having Atom know which Residue it is in makes this funky. Make a decision about whether that happens
@@ -69,8 +70,8 @@ namespace gmml
                 size_t queryResidueId,
                 const std::string& queryAtomName)
             {
-                size_t atomCount = pdbData.indices.atomCount;
-                size_t residueCount = pdbData.indices.residueCount;
+                size_t atomCount = assembly::atomCount(pdbData.assembly);
+                size_t residueCount = assembly::residueCount(pdbData.assembly);
                 std::string queryResidueStr = pdb::residueStringId(pdbData, queryResidueId);
                 size_t queryAtom = pdb::findResidueAtom(pdbData, queryResidueId, queryAtomName);
                 if (queryAtom == atomCount)
@@ -93,7 +94,7 @@ namespace gmml
                             " in residue: " + queryResidueStr);
                     return residueCount;
                 }
-                return pdbData.indices.atomResidue[foreignAtomNeighbor];
+                return atomResidue(pdbData.assembly.indices, foreignAtomNeighbor);
             }
 
             std::string GetSequenceContextAndDetermineTags(
@@ -103,7 +104,7 @@ namespace gmml
                 size_t residueId,
                 std::vector<std::string>& tags)
             {
-                size_t residueCount = pdbData.indices.residueCount;
+                size_t residueCount = assembly::residueCount(pdbData.assembly);
                 auto getCode = [&](size_t residueId)
                 {
                     const std::string& name = pdbData.residues.names[residueId];
@@ -159,7 +160,7 @@ namespace gmml
         std::vector<GlycosylationSiteInfo> createGlycosylationSiteTable(
             const AminoAcidLinkTable& table, const pdb::PdbData& pdbData, const std::vector<size_t>& residues)
         {
-            graph::Graph atomGraph = graph::identity(pdbData.atomGraph);
+            graph::Graph atomGraph = graph::identity(pdbData.assembly.atomGraph);
             std::vector<GlycosylationSiteInfo> result;
             for (size_t residueId : residues)
             {

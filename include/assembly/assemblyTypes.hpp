@@ -37,9 +37,15 @@ namespace gmml
             std::vector<bool> molecules;
         };
 
-        struct Graph
+        struct Assembly
         {
             Indices indices;
+            graph::Database atomGraph;
+        };
+
+        struct Graph
+        {
+            Assembly source;
             graph::Graph atoms;
             graph::Graph residues;
             graph::Graph molecules;

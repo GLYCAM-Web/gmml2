@@ -1,6 +1,7 @@
 #include "include/glycoprotein/writerInterface.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/off/offFileData.hpp"
 #include "include/fileType/pdb/pdbFileData.hpp"
 #include "include/geometry/geometryTypes.hpp"
@@ -25,7 +26,7 @@ namespace gmml
                 data.atoms.charges,
                 atomCoordinates};
 
-            size_t residueCount = graph.indices.residueCount;
+            size_t residueCount = assembly::residueCount(graph.source);
             std::vector<std::vector<size_t>> atomsConnectedToOtherResidues;
             atomsConnectedToOtherResidues.resize(residueCount);
             for (size_t n = 0; n < edgeCount(graph.residues); n++)

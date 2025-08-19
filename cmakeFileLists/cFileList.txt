@@ -13,6 +13,7 @@
 ./src/CentralDataStructure/residueLinkage/residueLinkageCreation.cpp
 ./src/CentralDataStructure/residueLinkage/residueLinkageFunctions.cpp
 ./src/assembly/assemblyBounds.cpp
+./src/assembly/assemblyFunctions.cpp
 ./src/assembly/assemblyGraph.cpp
 ./src/assembly/assemblyIndices.cpp
 ./src/assembly/assemblyOverlap.cpp

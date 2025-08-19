@@ -22,7 +22,7 @@ namespace gmml
 
         void updateResidueMoleculeBounds(const Graph& graph, Bounds& bounds, size_t index)
         {
-            size_t moleculeIndex = graph.indices.residueMolecule[index];
+            size_t moleculeIndex = residueMolecule(graph.source.indices, index);
             bounds.molecules[moleculeIndex] =
                 boundingSphereIncluding(bounds.molecules[moleculeIndex], bounds.residues[index]);
         }
@@ -35,7 +35,7 @@ namespace gmml
 
         void updateBoundsContainingAtoms(const Graph& graph, Bounds& bounds, const std::vector<size_t>& selectedAtoms)
         {
-            const Indices& indices = graph.indices;
+            const Indices& indices = graph.source.indices;
             std::vector<bool> updateResidue(indices.residueCount, false);
             std::vector<bool> updateMolecule(indices.moleculeCount, false);
             for (size_t atom : selectedAtoms)
@@ -75,14 +75,14 @@ namespace gmml
 
         Bounds toAssemblyBounds(const Graph& graph, const std::vector<Sphere>& atomBounds)
         {
-            size_t residueCount = graph.indices.residueCount;
+            size_t residueCount = assembly::residueCount(graph.source);
             std::vector<Sphere> residueBounds;
             residueBounds.reserve(residueCount);
             for (size_t n = 0; n < residueCount; n++)
             {
                 residueBounds.push_back(boundingSphere(util::indicesToValues(atomBounds, residueAtoms(graph, n))));
             }
-            size_t moleculeCount = graph.indices.moleculeCount;
+            size_t moleculeCount = assembly::moleculeCount(graph.source);
             std::vector<Sphere> moleculeBounds;
             moleculeBounds.reserve(moleculeCount);
             for (size_t n = 0; n < moleculeCount; n++)

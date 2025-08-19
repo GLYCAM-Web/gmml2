@@ -88,20 +88,19 @@ namespace gmml
             const assembly::Graph& graph,
             const std::vector<size_t>& selectedResidues)
         {
-            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.indices.atomAlive[n]; };
+            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.assembly.indices.atomAlive[n]; };
             std::function<std::string(const size_t&)> elementString = [&](size_t n)
             { return data.atoms.names[n].empty() ? "" : data.atoms.names[n].substr(0, 1); };
             std::function<std::string(const size_t&)> truncatedResidueNames = [&](size_t n)
             { return util::truncate(3, data.residues.names[n]); };
 
-            std::vector<bool> residueIncluded = util::indicesToBools(data.indices.residueCount, selectedResidues);
+            std::vector<bool> residueIncluded =
+                util::indicesToBools(data.assembly.indices.residueCount, selectedResidues);
             PdbFileResidueData residueData {
                 data.residues.numbers,
-                util::vectorMap(truncatedResidueNames, util::indexVector(data.indices.residueCount)),
-                std::vector<std::string>(data.indices.residueCount, ""),
+                util::vectorMap(truncatedResidueNames, util::indexVector(data.assembly.indices.residueCount)),
+                std::vector<std::string>(data.assembly.indices.residueCount, ""),
                 data.residues.insertionCodes};
-            std::vector<std::string> elements =
-                util::vectorMap(elementString, util::indexVector(data.indices.atomCount));
             PdbFileFormat format;
 
             size_t modelCount = data.trajectory.coordinates.size();
@@ -111,16 +110,16 @@ namespace gmml
                     data.trajectory.coordinates[coordinateSet],
                     data.atoms.numbers,
                     data.atoms.names,
-                    elements,
+                    elementNames(data.atoms.elements),
                     data.atoms.recordNames,
                     data.atoms.occupancies,
                     data.atoms.temperatureFactors};
                 PdbFileData pdbData {format, {}, residueData, atomData};
                 stream << "MODEL " << std::right << std::setw(8) << (coordinateSet + 1) << "\n";
-                for (size_t moleculeId = 0; moleculeId < data.indices.moleculeCount; moleculeId++)
+                for (size_t moleculeId = 0; moleculeId < data.assembly.indices.moleculeCount; moleculeId++)
                 {
                     std::vector<size_t> residueIds = util::boolsToIndices(
-                        util::vectorAnd(residueIncluded, isMoleculeResidue(data.indices, moleculeId)));
+                        util::vectorAnd(residueIncluded, isMoleculeResidue(data.assembly.indices, moleculeId)));
                     if (residueIds.size() > 0)
                     {
                         std::vector<ResidueType> types = util::indicesToValues(data.residues.types, residueIds);

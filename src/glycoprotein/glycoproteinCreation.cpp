@@ -278,10 +278,11 @@ namespace gmml
             const std::vector<GlycositeInput>& glycositesInputVector)
         {
             std::vector<GlycosylationSite> result;
-            std::vector<size_t> assemblyResidues = assembly::assemblyResidues(pdbData.indices, glycoproteinAssemblyId);
+            std::vector<size_t> assemblyResidues =
+                assembly::assemblyResidues(pdbData.assembly.indices, glycoproteinAssemblyId);
             std::vector<std::string> numberAndInsertionCodes;
             std::vector<std::string> residueIds;
-            for (size_t n = 0; n < pdbData.indices.residueCount; n++)
+            for (size_t n = 0; n < residueCount(pdbData.assembly); n++)
             {
                 numberAndInsertionCodes.push_back(pdb::getNumberAndInsertionCode(pdbData, n));
                 residueIds.push_back(pdb::residueStringId(pdbData, n));
@@ -296,13 +297,13 @@ namespace gmml
                         glycositeInput.glycanInput);
                 ChainAndResidue selection = selectionChainAndResidue(glycositeInput.proteinResidueId);
                 size_t residueIndex = selectResidueFromInput(
-                    pdbData.indices.residueCount,
+                    residueCount(pdbData.assembly),
                     assemblyResidues,
                     residueIds,
                     pdbData.residues.chainIds,
                     numberAndInsertionCodes,
                     selection);
-                if (residueIndex == pdbData.indices.residueCount)
+                if (residueIndex == residueCount(pdbData.assembly))
                 {
                     throw std::runtime_error(
                         "Error: Did not find a residue with id matching " + glycositeInput.proteinResidueId + "\n");

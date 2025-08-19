@@ -2,6 +2,7 @@
 
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/boundingSphere.hpp"
@@ -165,7 +166,7 @@ namespace gmml
             const std::vector<Element>& atomElements,
             const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge)
         {
-            std::vector<double> result(graph.indices.atomCount, 0.0);
+            std::vector<double> result(atomCount(graph.source), 0.0);
             std::vector<size_t> moleculesA = selectedMolecules(selectionA);
             std::vector<size_t> moleculesB = selectedMolecules(selectionB);
             std::vector<std::vector<size_t>> moleculeResiduesA =
@@ -224,7 +225,7 @@ namespace gmml
             const std::vector<Element>& atomElements,
             const std::vector<std::array<std::vector<bool>, 2>>& residueAtomsCloseToEdge)
         {
-            std::vector<double> result(graph.indices.atomCount, 0.0);
+            std::vector<double> result(atomCount(graph.source), 0.0);
             std::vector<size_t> molecules = selectedMolecules(selection);
             std::vector<std::vector<size_t>> moleculeResidues = moleculeSelectedResidues(graph, selection, molecules);
             for (size_t maIndex = 0; maIndex < molecules.size(); maIndex++)

@@ -2,6 +2,7 @@
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/carbohydrate/carbohydrate.hpp"
 #include "include/carbohydrate/offWriter.hpp"
 #include "include/carbohydrate/pdbWriter.hpp"
@@ -65,7 +66,7 @@ int main()
     try
     {
         off::OffFileData offData = toOffFileData(carbData, graph);
-        offData.residues.numbers = std::vector<uint>(graph.indices.residueCount, 1);
+        offData.residues.numbers = std::vector<uint>(residueCount(graph.source), 1);
         for (size_t n : indices(graph.residues.nodes))
         {
             std::vector<size_t> residueAtoms = assembly::residueAtoms(graph, n);

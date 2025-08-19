@@ -1,5 +1,6 @@
 #include "include/preprocess/amberMdPrep.hpp"
 
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
@@ -17,11 +18,10 @@ namespace gmml
             size_t cAtom,
             PreprocessorInformation& ppInfo)
         {
-            size_t atomCount = data.indices.atomCount;
             for (size_t residueId : unknownResidues)
             {
                 size_t nAtom = findResidueAtom(data, residueId, "N");
-                if (nAtom < atomCount && isWithinBondingDistance(data, nAtom, cAtom))
+                if (nAtom < atomCount(data.assembly) && isWithinBondingDistance(data, nAtom, cAtom))
                 {
                     ppInfo.nonNaturalProteinResidues.emplace_back(pdbResidueId(data, residueId));
                     return true;

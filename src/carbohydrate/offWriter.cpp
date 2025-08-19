@@ -1,6 +1,7 @@
 #include "include/carbohydrate/offWriter.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/off/offFileData.hpp"
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/graph/graphFunctions.hpp"
@@ -13,15 +14,15 @@ namespace gmml
 {
     std::vector<std::vector<size_t>> atomsConnectedToOtherResidues(const assembly::Graph& graph)
     {
+        const assembly::Indices& indices = graph.source.indices;
         const graph::Database& atomDB = graph.atoms.source;
-        const std::vector<size_t>& atomResidue = graph.indices.atomResidue;
-        std::vector<std::vector<size_t>> connections(graph.indices.residueCount, std::vector<size_t> {});
+        std::vector<std::vector<size_t>> connections(residueCount(graph.source), std::vector<size_t> {});
         for (size_t n : atomDB.edges.indices)
         {
             if (graph::edgeAlive(atomDB, n))
             {
                 std::array<size_t, 2> nodes = atomDB.edges.nodes[n];
-                std::array<size_t, 2> res = {atomResidue[nodes[0]], atomResidue[nodes[1]]};
+                std::array<size_t, 2> res = {atomResidue(indices, nodes[0]), atomResidue(indices, nodes[1])};
                 if (res[0] != res[1])
                 {
                     for (size_t k = 0; k < 2; k++)
@@ -46,7 +47,7 @@ namespace gmml
             data.atoms.charges,
             data.atoms.coordinates};
         off::OffFileResidueData residueData {
-            util::serializedNumberVector(graph.indices.residueCount),
+            util::serializedNumberVector(residueCount(graph.source)),
             data.residues.names,
             data.residues.types,
             connections};

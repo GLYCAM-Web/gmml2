@@ -93,5 +93,27 @@ namespace gmml
         {
             return util::boolsToIndices(isAssemblyMolecule(indices, assemblyId));
         }
+
+        size_t atomResidue(const Indices& indices, size_t atomId) { return indices.atomResidue[atomId]; }
+
+        size_t atomMolecule(const Indices& indices, size_t atomId)
+        {
+            return residueMolecule(indices, atomResidue(indices, atomId));
+        }
+
+        size_t residueMolecule(const Indices& indices, size_t residueId) { return indices.residueMolecule[residueId]; }
+
+        size_t moleculeAssembly(const Indices& indices, size_t moleculeId)
+        {
+            return indices.moleculeAssembly[moleculeId];
+        }
+
+        size_t atomCount(const Assembly& assembly) { return assembly.indices.atomCount; }
+
+        size_t residueCount(const Assembly& assembly) { return assembly.indices.residueCount; }
+
+        size_t moleculeCount(const Assembly& assembly) { return assembly.indices.moleculeCount; }
+
+        size_t assemblyCount(const Assembly& assembly) { return assembly.indices.assemblyCount; }
     } // namespace assembly
 } // namespace gmml

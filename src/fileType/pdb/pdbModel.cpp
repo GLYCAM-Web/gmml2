@@ -1,6 +1,8 @@
 #include "include/fileType/pdb/pdbModel.hpp"
 
 #include "include/CentralDataStructure/assembly.hpp"
+#include "include/assembly/assemblyFunctions.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbChain.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
@@ -48,9 +50,7 @@ namespace gmml
                     std::string chainId = extractChainId(line);
                     std::stringstream singleChainSection =
                         extractSingleChainFromRecordSection(stream_block, line, chainId);
-                    size_t moleculeId = data.indices.moleculeCount;
-                    data.indices.moleculeAssembly.push_back(assemblyId);
-                    data.indices.moleculeCount++;
+                    size_t moleculeId = addMolecule(data.assembly, assemblyId);
                     data.molecules.chainIds.push_back(chainId);
                     data.molecules.residueOrder.push_back({});
                     std::unique_ptr<Molecule> molecule = std::make_unique<Molecule>();
@@ -101,7 +101,7 @@ namespace gmml
         {
             const int iPdbLineLength = 80; // repeat for now, fix later
             util::log(__LINE__, __FILE__, util::INF, "Section to extract coordinates from is\n" + stream_block.str());
-            size_t atomCount = data.indices.atomCount;
+            size_t atomCount = assembly::atomCount(data.assembly);
             if (atomCount == 0)
             {
                 std::string message = "No atoms available when extracting coords from multiple models";

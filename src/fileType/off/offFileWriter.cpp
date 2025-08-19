@@ -1,6 +1,7 @@
 #include "include/fileType/off/offFileWriter.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/off/offFileData.hpp"
 #include "include/metadata/residueTypes.hpp"
 #include "include/util/containers.hpp"
@@ -106,7 +107,7 @@ namespace gmml
                 {
                     size_t first = bond[0];
                     size_t second = bond[1];
-                    if (residueIncluded[graph.indices.atomResidue[first]])
+                    if (residueIncluded[atomResidue(graph.source.indices, first)])
                     {
                         int number = atoms.numbers[first];
                         int neighborNumber = atoms.numbers[second];

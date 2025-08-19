@@ -211,9 +211,9 @@ namespace gmml
             std::function<bool(const MoleculeType&)> isProtein = [](const MoleculeType& type)
             { return type == MoleculeType::protein; };
             std::vector<MoleculeType> residueMoleculeTypes =
-                util::indicesToValues(moleculeTypes, residueMolecules(graph.indices));
+                util::indicesToValues(moleculeTypes, residueMolecules(graph.source.indices));
             std::vector<MoleculeType> atomMoleculeTypes =
-                util::indicesToValues(residueMoleculeTypes, atomResidues(graph.indices));
+                util::indicesToValues(residueMoleculeTypes, atomResidues(graph.source.indices));
 
             std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
             {
@@ -272,7 +272,7 @@ namespace gmml
                 linkageData.linkages,
                 glycanData};
 
-            std::vector<bool> moleculeIncluded(graph.indices.moleculeCount, true);
+            std::vector<bool> moleculeIncluded(moleculeCount(graph.source), true);
             MutableData mutableData {
                 bounds,
                 linkageData.initialDihedralMetadata,

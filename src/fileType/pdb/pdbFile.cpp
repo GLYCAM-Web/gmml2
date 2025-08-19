@@ -2,6 +2,7 @@
 
 #include "include/CentralDataStructure/assembly.hpp"
 #include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/assembly/assemblyFunctions.hpp"
 #include "include/assembly/assemblyGraph.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
@@ -133,7 +134,7 @@ namespace gmml
                         std::stringstream recordSection =
                             extractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
                         Assembly& assembly = file.assemblies.emplace_back(Assembly());
-                        data.indices.assemblyCount++;
+                        addAssembly(data.assembly);
                         data.assemblies.numbers.push_back(assemblyId + 1);
                         readAssembly(data, assemblyId, assembly, recordSection);
                         assemblyId++;
@@ -244,15 +245,15 @@ namespace gmml
             {
                 write(dbref, out);
             }
-            for (size_t n = 0; n < data.indices.assemblyCount; n++)
+            for (size_t n = 0; n < assemblyCount(data.assembly); n++)
             {
-                if (data.indices.assemblyCount > 1)
+                if (assemblyCount(data.assembly) > 1)
                 {
                     out << "MODEL " << std::right << std::setw(4) << data.assemblies.numbers[n] << "\n";
                 }
-                std::vector<size_t> moleculeIds = assemblyMolecules(data.indices, n);
+                std::vector<size_t> moleculeIds = assemblyMolecules(data.assembly.indices, n);
                 write(data, util::indicesToValues(data.molecules.residueOrder, moleculeIds), out);
-                if (data.indices.assemblyCount > 1)
+                if (assemblyCount(data.assembly) > 1)
                 {
                     out << "ENDMDL\n";
                 }
@@ -262,23 +263,23 @@ namespace gmml
 
         void write(const PdbData& data, const std::vector<std::vector<size_t>>& moleculeResidues, std::ostream& stream)
         {
-            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.indices.atomAlive[n]; };
+            std::function<bool(const size_t&)> atomAlive = [&](size_t n) { return data.assembly.indices.atomAlive[n]; };
             std::function<std::string(const size_t&)> elementString = [&](size_t n)
             { return data.atoms.names[n].empty() ? "" : data.atoms.names[n].substr(0, 1); };
             std::function<std::string(const size_t&)> truncatedResidueNames = [&](size_t n)
             { return util::truncate(3, data.residues.names[n]); };
 
-            assembly::Graph graph = createAssemblyGraph(data.indices, data.atomGraph);
+            assembly::Graph graph = createAssemblyGraph(data.assembly.indices, data.assembly.atomGraph);
             PdbFileResidueData residueData {
                 data.residues.numbers,
-                util::vectorMap(truncatedResidueNames, util::indexVector(data.indices.residueCount)),
+                util::vectorMap(truncatedResidueNames, util::indexVector(residueCount(data.assembly))),
                 data.residues.chainIds,
                 data.residues.insertionCodes};
             PdbFileAtomData atomData {
                 data.atoms.coordinates,
                 data.atoms.numbers,
                 data.atoms.names,
-                util::vectorMap(elementString, util::indexVector(data.indices.atomCount)),
+                util::vectorMap(elementString, util::indexVector(atomCount(data.assembly))),
                 data.atoms.recordNames,
                 data.atoms.occupancies,
                 data.atoms.temperatureFactors};

@@ -85,7 +85,7 @@ namespace gmml
             util::log(__LINE__, __FILE__, util::INF, "Preprocesssing has begun");
             PreprocessorInformation ppInfo;
             PdbData& data = file.data;
-            for (size_t assemblyId = 0; assemblyId < file.data.indices.assemblyCount;
+            for (size_t assemblyId = 0; assemblyId < assemblyCount(file.data.assembly);
                  assemblyId++) // Now we do all, but maybe user can select at some point.
             {
                 preProcessCysResidues(data, assemblyId, ppInfo);
@@ -93,7 +93,8 @@ namespace gmml
                 preProcessChainTerminals(data, assemblyId, ppInfo, inputOptions);
                 preProcessGapsUsingDistance(data, assemblyId, ppInfo, inputOptions);
                 preProcessMissingUnrecognized(data, assemblyId, ppInfo, parameterManager);
-                setAtomChargesForResidues(parameterManager, data, assembly::assemblyResidues(data.indices, assemblyId));
+                setAtomChargesForResidues(
+                    parameterManager, data, assembly::assemblyResidues(data.assembly.indices, assemblyId));
             }
             util::log(__LINE__, __FILE__, util::INF, "Preprocessing completed");
             return ppInfo;
@@ -102,7 +103,7 @@ namespace gmml
         void changeResidueName(
             PdbData& data, size_t assemblyId, const std::string& selector, const std::string& newName)
         {
-            for (size_t residueId : assemblyResidues(data.indices, assemblyId))
+            for (size_t residueId : assemblyResidues(data.assembly.indices, assemblyId))
             {
                 std::size_t found = toString(pdbResidueId(data, residueId)).find(selector);
                 if (found != std::string::npos)
@@ -125,7 +126,7 @@ namespace gmml
                 return util::contains({"CYS", "CYX"}, data.residues.names[n]);
             };
             util::log(__LINE__, __FILE__, util::INF, "Start CYS preprocessing for this Model\n");
-            std::vector<size_t> assemblyResidues = assembly::assemblyResidues(data.indices, assemblyId);
+            std::vector<size_t> assemblyResidues = assembly::assemblyResidues(data.assembly.indices, assemblyId);
             std::vector<size_t> cysResidues = util::vectorFilter(isCYS, assemblyResidues);
             if (cysResidues.empty())
             {
@@ -139,7 +140,7 @@ namespace gmml
                 {
                     size_t cysRes2Id = cysResidues[k];
                     size_t sgAtom2Id = findResidueAtom(data, cysRes2Id, "SG");
-                    size_t atomCount = data.indices.atomCount;
+                    size_t atomCount = assembly::atomCount(data.assembly);
                     if ((sgAtom1Id < atomCount) && (sgAtom2Id < atomCount))
                     {
                         double dist = distance(data.atoms.coordinates[sgAtom1Id], data.atoms.coordinates[sgAtom2Id]);
@@ -175,7 +176,7 @@ namespace gmml
             }
             util::log(__LINE__, __FILE__, util::INF, "Auto His protonation");
             // HIS protonation, automatic handling.
-            for (size_t residueId : assemblyResidues(data.indices, assemblyId))
+            for (size_t residueId : assemblyResidues(data.assembly.indices, assemblyId))
             {
                 const std::string& name = data.residues.names[residueId];
                 if (util::contains({"HIE", "HID", "HIP"}, name))
@@ -184,7 +185,7 @@ namespace gmml
                 }
                 else if (name == "HIS")
                 {
-                    size_t atomCount = data.indices.atomCount;
+                    size_t atomCount = assembly::atomCount(data.assembly);
                     size_t atomHE2 = findResidueAtom(data, residueId, "HE2");
                     size_t atomHD1 = findResidueAtom(data, residueId, "HD1");
                     auto newResidueName = [&]()
@@ -227,7 +228,7 @@ namespace gmml
             }
             else if (type == "CO2-")
             {
-                size_t atomCount = data.indices.atomCount;
+                size_t atomCount = assembly::atomCount(data.assembly);
                 util::log(
                     __LINE__,
                     __FILE__,
@@ -279,12 +280,12 @@ namespace gmml
             PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo, const PreprocessorOptions& inputOptions)
         {
             util::log(__LINE__, __FILE__, util::INF, "Chain terminations");
-            for (size_t moleculeId : assemblyMolecules(data.indices, assemblyId))
+            for (size_t moleculeId : assemblyMolecules(data.assembly.indices, assemblyId))
             {
                 util::log(__LINE__, __FILE__, util::INF, "Chain termination processing started for this chain");
                 // Do the thing
                 size_t nTerResidue = getNTerminal(data, moleculeId);
-                if (nTerResidue >= data.indices.residueCount)
+                if (nTerResidue >= residueCount(data.assembly))
                 {
                     util::log(__LINE__, __FILE__, util::INF, "Could not modify terminals of this chain.");
                 }
@@ -417,7 +418,7 @@ namespace gmml
             // bond: this is a gap regardless of residue number/insertion code. User will want caps(ACE/NME) or
             // zwitterionic, we can't know ourselves without knowledge of the system, but most of the time caps.
             util::log(__LINE__, __FILE__, util::INF, "Gaps");
-            for (size_t moleculeId : assemblyMolecules(data.indices, assemblyId))
+            for (size_t moleculeId : assemblyMolecules(data.assembly.indices, assemblyId))
             {
                 util::log(
                     __LINE__,
@@ -426,7 +427,7 @@ namespace gmml
                     "Gap detection started for chain " + data.molecules.chainIds[moleculeId]);
                 std::vector<size_t> proteinResidues = util::boolsToIndices(util::vectorAnd(
                     util::vectorEquals(data.residues.types, ResidueType::Protein),
-                    isMoleculeResidue(data.indices, moleculeId)));
+                    isMoleculeResidue(data.assembly.indices, moleculeId)));
                 if (proteinResidues.empty())
                 {
                     util::log(
@@ -440,7 +441,7 @@ namespace gmml
                 {
                     size_t res1 = proteinResidues[n];
                     size_t res2 = proteinResidues[n + 1];
-                    size_t atomCount = data.indices.atomCount;
+                    size_t atomCount = assembly::atomCount(data.assembly);
                     size_t res1AtomC = findResidueAtom(data, res1, "C");
                     size_t res2AtomN = findResidueAtom(data, res2, "N");
                     if ((res1AtomC < atomCount) && (res2AtomN < atomCount) &&
@@ -490,7 +491,7 @@ namespace gmml
         void preProcessMissingUnrecognized(
             PdbData& data, size_t assemblyId, PreprocessorInformation& ppInfo, const ParameterManager& parmManager)
         {
-            for (size_t residueId : assemblyResidues(data.indices, assemblyId))
+            for (size_t residueId : assemblyResidues(data.assembly.indices, assemblyId))
             {
                 std::string parmName = residueParameterName(data, residueId);
                 ResidueId residueIdObj = pdbResidueId(data, residueId);
@@ -507,7 +508,7 @@ namespace gmml
                     std::vector<size_t> parmHeavyAtoms = findHeavyAtoms(parmResidue.atoms.elements);
                     std::vector<std::string> parmHeavyAtomNames =
                         util::indicesToValues(parmResidue.atoms.names, parmHeavyAtoms);
-                    std::vector<size_t> atomIds = residueAtoms(data.indices, residueId);
+                    std::vector<size_t> atomIds = residueAtoms(data.assembly.indices, residueId);
                     std::vector<std::string> pdbAtomNames = util::indicesToValues(data.atoms.names, atomIds);
                     for (auto& parmHeavyAtomName :
                          parmHeavyAtomNames) // What heavy atoms are missing from the pdb residue?

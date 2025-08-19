@@ -3,6 +3,7 @@
 #include "include/CentralDataStructure/graphInterface.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyOverlap.hpp"
 #include "include/assembly/assemblySelection.hpp"
 #include "include/carbohydrate/dihedralAngleSearch.hpp"
@@ -148,7 +149,7 @@ namespace gmml
                                                        const std::vector<size_t>& glycans)
             {
                 std::vector<size_t> sidechainResiduesWithGlycanOverlap;
-                sidechainResiduesWithGlycanOverlap.reserve(graph.indices.residueCount);
+                sidechainResiduesWithGlycanOverlap.reserve(residueCount(graph.source));
 
                 for (size_t residue : indices(graph.residues.nodes))
                 {
@@ -244,10 +245,10 @@ namespace gmml
                                    const std::string& outputDir,
                                    const std::string& prefix)
             {
-                std::vector<bool> residueIncluded(graph.indices.residueCount, false);
-                for (size_t n = 0; n < graph.indices.residueCount; n++)
+                std::vector<bool> residueIncluded(residueCount(graph.source), false);
+                for (size_t n = 0; n < residueCount(graph.source); n++)
                 {
-                    residueIncluded[n] = includedMolecules[graph.indices.residueMolecule[n]];
+                    residueIncluded[n] = includedMolecules[residueMolecule(graph.source.indices, n)];
                 }
                 off::OffFileData offData = toOffFileData(graph, data, coordinates);
                 std::string fileName = outputDir + "/" + prefix + ".off";
@@ -281,7 +282,13 @@ namespace gmml
                                     const std::string& prefix)
             {
                 pdb::PdbFileData pdbData = toPdbFileData(
-                    graph.indices, data, coordinates, atomNumbers, residueNumbers, data.residues.chainIds, headerLines);
+                    graph.source.indices,
+                    data,
+                    coordinates,
+                    atomNumbers,
+                    residueNumbers,
+                    data.residues.chainIds,
+                    headerLines);
                 std::vector<std::vector<size_t>> residueIndices =
                     util::boolsToValues(graph.molecules.nodes.constituents, includedMolecules);
                 std::vector<std::vector<bool>> TER = residueTER(data, residueIndices);
@@ -305,7 +312,7 @@ namespace gmml
                 moveOverlappingSidechains ? restoreSidechains : noSidechainAdjustment;
 
             auto isNonProteinResidue = [&graph, &data](size_t n)
-            { return data.molecules.types[graph.indices.residueMolecule[n]] != MoleculeType::protein; };
+            { return data.molecules.types[residueMolecule(graph.source.indices, n)] != MoleculeType::protein; };
 
             std::vector<std::array<size_t, 2>> atomPairsConnectingNonProteinResidues;
             for (size_t n = 0; n < edgeCount(graph.residues); n++)
@@ -325,7 +332,7 @@ namespace gmml
                                       const AssemblyData& data,
                                       const std::vector<double>& overlaps)
             {
-                std::vector<bool> result(graph.indices.moleculeCount, false);
+                std::vector<bool> result(moleculeCount(graph.source), false);
                 for (size_t molecule : includedGlycanMoleculeIds(data, selection.molecules))
                 {
                     for (size_t n : assembly::moleculeSelectedAtoms(graph, selection, molecule))

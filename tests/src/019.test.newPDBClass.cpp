@@ -41,18 +41,18 @@ int main(int argc, char* argv[])
     const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
     preprocess::PreprocessorInformation ppInfo = preProcess(pdbFile, parameterManager, options);
     std::vector<Assembly*> assemblies = getAssemblies(pdbFile);
-    for (size_t assemblyId = 0; assemblyId < pdbFile.data.indices.assemblyCount; assemblyId++)
+    for (size_t assemblyId = 0; assemblyId < assemblyCount(pdbFile.data.assembly); assemblyId++)
     {
-        std::vector<size_t> atomIds = assemblyAtoms(pdbFile.data.indices, assemblyId);
+        std::vector<size_t> atomIds = assemblyAtoms(pdbFile.data.assembly.indices, assemblyId);
         std::cout << "Bonding atoms by distance for assembly" << std::endl;
         pdb::bondAtomsByDistance(pdbFile.data, atomIds);
         // OFF molecule
         try
         {
             const pdb::PdbData& pdbData = pdbFile.data;
-            graph::Database atomGraph = pdbFile.data.atomGraph;
-            assembly::Graph graph = createAssemblyGraph(pdbFile.data.indices, atomGraph);
-            size_t residueCount = graph.indices.residueCount;
+            graph::Database atomGraph = pdbFile.data.assembly.atomGraph;
+            assembly::Graph graph = createAssemblyGraph(pdbFile.data.assembly.indices, atomGraph);
+            size_t residueCount = assembly::residueCount(pdbFile.data.assembly);
 
             std::vector<std::vector<size_t>> connections = atomsConnectedToOtherResidues(graph);
 

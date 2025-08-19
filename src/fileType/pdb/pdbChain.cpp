@@ -1,6 +1,7 @@
 #include "include/fileType/pdb/pdbChain.hpp"
 
 #include "include/CentralDataStructure/residue.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/geometryTypes.hpp"
@@ -43,13 +44,13 @@ namespace gmml
         void tagTerminalResidues(PdbData& data, size_t moleculeId)
         {
             size_t nTer = getNTerminal(data, moleculeId);
-            if (nTer < data.indices.residueCount)
+            if (nTer < residueCount(data.assembly))
             {
                 data.residues.terminality[nTer] = NTerminal;
                 data.objects.residues[nTer]->setNTerminal(true);
             }
             size_t cTer = getCTerminal(data, moleculeId);
-            if (cTer < data.indices.residueCount)
+            if (cTer < residueCount(data.assembly))
             {
                 data.residues.terminality[cTer] = CTerminal;
                 data.objects.residues[cTer]->setCTerminal(true);
@@ -88,7 +89,7 @@ namespace gmml
             if (proteinResidues.empty())
             {
                 util::log(__LINE__, __FILE__, util::WAR, "Looked for terminal residue of chain with protein residues.");
-                return data.indices.residueCount;
+                return residueCount(data.assembly);
             }
             return proteinResidues.front();
         }
@@ -102,7 +103,7 @@ namespace gmml
             if (proteinResidues.empty())
             {
                 util::log(__LINE__, __FILE__, util::WAR, "Looked for terminal residue of chain with protein residues.");
-                return data.indices.residueCount;
+                return residueCount(data.assembly);
             }
             return proteinResidues.back();
         }

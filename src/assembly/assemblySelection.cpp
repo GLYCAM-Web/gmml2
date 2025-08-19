@@ -1,6 +1,7 @@
 #include "include/assembly/assemblySelection.hpp"
 
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/util/containers.hpp"
 
 #include <vector>
@@ -11,9 +12,9 @@ namespace gmml
     {
         Selection selectAll(const Graph& graph)
         {
-            std::vector<bool> atoms(graph.indices.atomCount, true);
-            std::vector<bool> residues(graph.indices.residueCount, true);
-            std::vector<bool> molecules(graph.indices.moleculeCount, true);
+            std::vector<bool> atoms(atomCount(graph.source), true);
+            std::vector<bool> residues(residueCount(graph.source), true);
+            std::vector<bool> molecules(moleculeCount(graph.source), true);
             return {atoms, residues, molecules};
         }
 
@@ -63,22 +64,25 @@ namespace gmml
                     result[index] = result[index] || value[n];
                 }
             };
-            const Indices& indices = graph.indices;
-            std::vector<bool> atoms(indices.atomCount, false);
-            std::vector<bool> residues(indices.residueCount, false);
-            std::vector<bool> molecules(indices.moleculeCount, false);
+            size_t atomCount = assembly::atomCount(graph.source);
+            size_t residueCount = assembly::residueCount(graph.source);
+            size_t moleculeCount = assembly::moleculeCount(graph.source);
+            const Indices& indices = graph.source.indices;
+            std::vector<bool> atoms(atomCount, false);
+            std::vector<bool> residues(residueCount, false);
+            std::vector<bool> molecules(moleculeCount, false);
 
-            for (size_t n = 0; n < indices.moleculeCount; n++)
+            for (size_t n = 0; n < moleculeCount; n++)
             {
                 molecules[n] = first.molecules[n] && second.molecules[n];
             }
-            for (size_t n = 0; n < indices.residueCount; n++)
+            for (size_t n = 0; n < residueCount; n++)
             {
-                residues[n] = molecules[indices.residueMolecule[n]] && first.residues[n] && second.residues[n];
+                residues[n] = molecules[residueMolecule(indices, n)] && first.residues[n] && second.residues[n];
             }
-            for (size_t n = 0; n < indices.atomCount; n++)
+            for (size_t n = 0; n < atomCount; n++)
             {
-                atoms[n] = residues[indices.atomResidue[n]] && first.atoms[n] && second.atoms[n];
+                atoms[n] = residues[atomResidue(indices, n)] && first.atoms[n] && second.atoms[n];
             }
             setValues(residues, indices.atomResidue, atoms);
             setValues(molecules, indices.residueMolecule, residues);

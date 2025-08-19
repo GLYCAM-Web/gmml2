@@ -183,7 +183,8 @@ int main(int argc, char* argv[])
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
         const std::vector<Sphere> atomBounds =
             assembly::toAtomBounds(elementRadii, pdbFile.data.atoms.elements, pdbFile.data.atoms.coordinates);
-        const assembly::Graph pdbGraph = assembly::createAssemblyGraph(pdbFile.data.indices, pdbFile.data.atomGraph);
+        const assembly::Graph pdbGraph =
+            assembly::createAssemblyGraph(pdbFile.data.assembly.indices, pdbFile.data.assembly.atomGraph);
         const assembly::Bounds bounds = assembly::toAssemblyBounds(pdbGraph, atomBounds);
         size_t glycoproteinAssemblyId = 0;
         Assembly* glycoprotein = getAssemblies(pdbFile)[glycoproteinAssemblyId];

@@ -91,8 +91,7 @@ namespace gmml
             MoleculeData molecules;
             AssemblyData assemblies;
             TrajectoryData trajectory;
-            graph::Database atomGraph;
-            assembly::Indices indices;
+            assembly::Assembly assembly;
             GraphObjects objects;
         };
     } // namespace pdb

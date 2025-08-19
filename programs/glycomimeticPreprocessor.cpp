@@ -34,9 +34,9 @@ int main(int argc, char* argv[])
     pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
     auto panic = [&]()
     {
-        for (size_t n = 0; n < pdbFile.data.indices.residueCount; n++)
+        for (size_t n = 0; n < residueCount(pdbFile.data.assembly); n++)
         {
-            auto atomIds = residueAtoms(pdbFile.data.indices, n);
+            auto atomIds = residueAtoms(pdbFile.data.assembly.indices, n);
             auto atoms = pdbFile.data.objects.residues[n]->getAtoms();
             if (atomIds.size() != atoms.size())
             {
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
     parameterManager.lib.residues = util::reverse(parameterManager.lib.residues);
     preprocess::PreprocessorInformation ppInfo = preProcess(pdbFile, parameterManager, options);
     std::vector<Assembly*> assemblies = getAssemblies(pdbFile);
-    assembly::Indices& graphIndices = pdbFile.data.indices;
+    assembly::Indices& graphIndices = pdbFile.data.assembly.indices;
     std::vector<size_t> moleculeIds = util::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
-    size_t residueCount = pdbFile.data.indices.residueCount;
+    size_t residueCount = assembly::residueCount(pdbFile.data.assembly);
     std::vector<bool> residueAlive(residueCount, true);
     for (size_t residueId = 0; residueId < residueCount; residueId++)
     {
@@ -77,8 +77,7 @@ int main(int argc, char* argv[])
     }
     std::ofstream outFileStream;
     outFileStream.open(argv[2]);
-    std::vector<size_t> firstAssemblyMoleculeIds =
-        util::indicesOfElement(pdbFile.data.indices.moleculeAssembly, size_t(0));
+    std::vector<size_t> firstAssemblyMoleculeIds = util::indicesOfElement(graphIndices.moleculeAssembly, size_t(0));
     std::function<std::vector<size_t>(const std::vector<size_t>&)> onlyAliveResidues =
         [&](const std::vector<size_t>& residueIds)
     {

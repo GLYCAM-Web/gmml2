@@ -29,6 +29,16 @@ namespace gmml
         std::vector<size_t> assemblyAtoms(const Indices& indices, size_t assemblyId);
         std::vector<size_t> assemblyResidues(const Indices& indices, size_t assemblyId);
         std::vector<size_t> assemblyMolecules(const Indices& indices, size_t assemblyId);
+
+        size_t atomResidue(const Indices& indices, size_t atomId);
+        size_t residueMolecule(const Indices& indices, size_t residueId);
+        size_t moleculeAssembly(const Indices& indices, size_t moleculeId);
+        size_t atomMolecule(const Indices& indices, size_t atomId);
+
+        size_t atomCount(const Assembly& assembly);
+        size_t residueCount(const Assembly& assembly);
+        size_t moleculeCount(const Assembly& assembly);
+        size_t assemblyCount(const Assembly& assembly);
     } // namespace assembly
 } // namespace gmml
 

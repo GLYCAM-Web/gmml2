@@ -1,5 +1,6 @@
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblyIndices.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/fileType/pdb/bondByDistance.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
@@ -105,12 +106,12 @@ int main(int argc, char* argv[])
     util::SparseVector<double> elementRadii = vanDerWaalsRadii();
     const std::vector<Sphere> atomBounds =
         assembly::toAtomBounds(elementRadii, pdbData.atoms.elements, pdbData.atoms.coordinates);
-    const assembly::Graph graph = assembly::createAssemblyGraph(pdbData.indices, pdbData.atomGraph);
+    const assembly::Graph graph = assembly::createAssemblyGraph(pdbData.assembly.indices, pdbData.assembly.atomGraph);
     const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
     pdb::bondAtomsAndResiduesByDistance(pdbData, bounds);
     const AminoAcidLinkTable linkTable = defaultAminoAcidLinkTable();
     std::vector<gpbuilder::GlycosylationSiteInfo> table =
-        gpbuilder::createGlycosylationSiteTable(linkTable, pdbData, util::indexVector(pdbData.indices.residueCount));
+        gpbuilder::createGlycosylationSiteTable(linkTable, pdbData, util::indexVector(residueCount(pdbData.assembly)));
     std::vector<std::string> header {"Chain", "ResidueNumber", "InsertionCode", "SequenceContext", "Tags"};
 
     std::function<std::vector<std::string>(const gpbuilder::GlycosylationSiteInfo&)> toRow =
