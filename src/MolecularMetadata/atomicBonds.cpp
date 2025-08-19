@@ -124,6 +124,11 @@ namespace
     // clang-format on
 } // namespace
 
+double MolecularMetadata::deoxyHydrogenBondLength()
+{
+    return 1.090;
+}
+
 double MolecularMetadata::hydrogenCovalentBondMaxLength()
 {
     return hydrogenMaxCutoff;

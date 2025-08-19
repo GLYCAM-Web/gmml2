@@ -185,8 +185,10 @@ namespace
         carbonAtom->setCharge(carbonAtom->getCharge() + oxygenAtom->getCharge() + hydrogenAtom->getCharge());
         // Delete the H of O-H
         residue->deleteAtom(hydrogenAtom);
-        // Now transform the Oxygen to a Hd. Easier than deleting O and creating H. Note: this H looks weird in LiteMol
-        // as bond length is too long.
+        // Now transform the Oxygen to a Hd. Easier than deleting O and creating H
+        Coordinate carbonPos = carbonAtom->coordinate();
+        Coordinate direction = normal(oxygenAtom->coordinate() - carbonPos);
+        oxygenAtom->setCoordinate(carbonPos + scaleBy(MolecularMetadata::deoxyHydrogenBondLength(), direction));
         oxygenAtom->setName("Hd");
         oxygenAtom->setType("H1");
         oxygenAtom->setCharge(0.0000);
