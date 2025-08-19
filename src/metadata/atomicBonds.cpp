@@ -124,6 +124,8 @@ namespace gmml
         // clang-format on
     } // namespace
 
+    double deoxyHydrogenBondLength() { return 1.090; }
+
     double hydrogenCovalentBondMaxLength() { return hydrogenMaxCutoff; }
 
     double maxBondLengthByAtomType(Element atom1Element, Element atom2Element)
