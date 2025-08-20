@@ -20,7 +20,7 @@ shopt -s nullglob
 for filepath in inputs/"${directory}"/*.pdb; do
     file=$(basename "${filepath}")
     filename="${file%.*}"
-    ./newPdbClass "inputs/${directory}/${file}" "${output}/${file}" > "${output}/${filename}.txt"
+    ./newPdbClass "inputs/${directory}/${file}" "${output}/${filename}" > "${output}/${filename}.txt"
 done
 
 expected="correct_outputs/${directory}"

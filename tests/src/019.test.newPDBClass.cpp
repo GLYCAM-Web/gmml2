@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
             off::OffFileData offData {format, residueData, atomData};
 
             util::writeToFile(
-                baseDir + "/outputOffFile.off",
+                outputFile + ".off",
                 [&](std::ostream& stream)
                 { off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), "Assembly"); });
         }
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     std::cout << "Finished bonding atoms by distance" << std::endl;
     pdbFile.data.atoms.numbers = atomNumbers(pdbFile.data.objects.atoms);
     pdbFile.data.residues.numbers = residueNumbers(pdbFile.data.objects.residues);
-    write(pdbFile, outputFile);
+    write(pdbFile, outputFile + ".pdb");
 
     auto residueIdString = [](const pdb::ResidueId& id)
     { return id.residueName + " | " + id.chainId + " | " + id.sequenceNumber + id.insertionCode; };
