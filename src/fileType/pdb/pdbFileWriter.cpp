@@ -152,9 +152,10 @@ namespace gmml
             stream << std::right << std::setw(4) << residues.numbers[residueIndex];
             stream << std::left << std::setw(1) << residues.insertionCodes[residueIndex] << std::left << std::setw(3)
                    << " ";
-            util::writeFloat(stream, format.coordinate, coord.GetX());
-            util::writeFloat(stream, format.coordinate, coord.GetY());
-            util::writeFloat(stream, format.coordinate, coord.GetZ());
+            for (size_t n = 0; n < 3; n++)
+            {
+                util::writeFloat(stream, format.coordinate, coord.nth(n));
+            }
             util::writeFloat(stream, format.occupancy, atoms.occupancies[atomIndex]);
             util::writeFloat(stream, format.temperatureFactor, atoms.temperatureFactors[atomIndex]);
             stream << std::left << std::setw(10) << " ";

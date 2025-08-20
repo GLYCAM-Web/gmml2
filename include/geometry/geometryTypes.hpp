@@ -9,15 +9,9 @@ namespace gmml
     class Coordinate
     {
       public:
-        Coordinate(double x, double y, double z) : values_({x, y, z}) {}
+        Coordinate(double x, double y, double z) : values({x, y, z}) {}
 
-        inline double nth(int n) const { return values_[n]; }
-
-        inline double GetX() const { return nth(0); }
-
-        inline double GetY() const { return nth(1); }
-
-        inline double GetZ() const { return nth(2); }
+        inline double nth(int n) const { return values[n]; }
 
         inline Coordinate operator+(const Coordinate& a) const
         {
@@ -32,7 +26,7 @@ namespace gmml
         }
 
       private:
-        std::array<double, 3> values_;
+        std::array<double, 3> values;
     };
 
     struct Sphere

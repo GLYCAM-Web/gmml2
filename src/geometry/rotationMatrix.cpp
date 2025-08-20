@@ -24,9 +24,9 @@ namespace gmml
         auto diag = [&](double a) { return cosA + a * a * (1 - cosA); };
         auto cell = [&](double a, double b, double c) { return a * b * (1 - cosA) + c * sinA; };
 
-        double x = axis.GetX();
-        double y = axis.GetY();
-        double z = axis.GetZ();
+        double x = axis.nth(0);
+        double y = axis.nth(1);
+        double z = axis.nth(2);
 
         RotationMatrixInternals mat {
             {{diag(x), cell(x, y, -z), cell(x, z, y), 0.0},
