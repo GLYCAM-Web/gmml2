@@ -6,9 +6,9 @@
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/geometry/matrix.hpp"
 #include "include/geometry/orientation.hpp"
 #include "include/geometry/overlap.hpp"
-#include "include/geometry/rotationMatrix.hpp"
 #include "include/glycoprotein/glycanShape.hpp"
 #include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/graph/graphFunctions.hpp"
@@ -52,7 +52,7 @@ namespace gmml
             }
 
             void moveSphereCenters(
-                std::vector<Sphere>& coords, const RotationMatrix& matrix, const std::vector<size_t>& toMove)
+                std::vector<Sphere>& coords, const Matrix4x4& matrix, const std::vector<size_t>& toMove)
             {
                 for (size_t n : toMove)
                 {
@@ -67,7 +67,7 @@ namespace gmml
             {
                 for (size_t k = 0; k < dihedrals.size(); k++)
                 {
-                    RotationMatrix matrix = rotationTo(
+                    Matrix4x4 matrix = rotationTo(
                         sidechainDihedralCoordinates(coords, dihedrals[k].atoms),
                         constants::toRadians(rotation.chi[k]));
                     moveSphereCenters(coords, matrix, dihedrals[k].movingAtoms);

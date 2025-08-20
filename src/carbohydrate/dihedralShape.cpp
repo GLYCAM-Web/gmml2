@@ -4,7 +4,7 @@
 #include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/residueLinkage/residueLinkageFunctions.hpp"
 #include "include/geometry/geometryTypes.hpp"
-#include "include/geometry/rotationMatrix.hpp"
+#include "include/geometry/matrix.hpp"
 #include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/logging.hpp"
@@ -17,9 +17,9 @@ namespace gmml
 {
     void setDihedralAngle(RotatableBond& bond, AngleWithMetadata target)
     {
-        RotationMatrix matrix = rotationTo(dihedralCoordinates(bond), constants::toRadians(target.value));
+        Matrix4x4 matrix = rotationTo(dihedralCoordinates(bond), constants::toRadians(target.value));
         std::vector<Coordinate> coordinates = atomCoordinates(bond.movingAtoms);
-        matrix.rotateCoordinates(coordinates);
+        transformCoordinates(matrix, coordinates);
         setAtomCoordinates(bond.movingAtoms, coordinates);
         bond.currentMetadataIndex = target.metadataIndex;
     }

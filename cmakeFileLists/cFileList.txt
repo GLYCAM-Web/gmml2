@@ -43,10 +43,10 @@
 ./src/fileType/prep/prepResidue.cpp
 ./src/geometry/boundingSphere.cpp
 ./src/geometry/geometryFunctions.cpp
+./src/geometry/matrix.cpp
 ./src/geometry/measurements.cpp
 ./src/geometry/orientation.cpp
 ./src/geometry/overlap.cpp
-./src/geometry/rotationMatrix.cpp
 ./src/geometry/superimposition.cpp
 ./src/glycoprotein/cdsInterface.cpp
 ./src/glycoprotein/glycanShape.cpp

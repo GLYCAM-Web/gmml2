@@ -9,9 +9,9 @@
 #include "include/carbohydrate/dihedralShape.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/geometry/matrix.hpp"
 #include "include/geometry/orientation.hpp"
 #include "include/geometry/overlap.hpp"
-#include "include/geometry/rotationMatrix.hpp"
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/elements.hpp"
 #include "include/util/constants.hpp"
@@ -52,7 +52,7 @@ namespace gmml
             const assembly::Graph& graph,
             const assembly::Bounds& initial,
             const std::vector<size_t>& movingAtoms,
-            const RotationMatrix& matrix,
+            const Matrix4x4& matrix,
             assembly::Bounds& bounds)
         {
             for (size_t n : movingAtoms)
@@ -76,7 +76,7 @@ namespace gmml
             std::vector<AngleOverlap> results;
             for (double angle : angles)
             {
-                RotationMatrix matrix = rotationTo(dihedral, constants::toRadians(angle));
+                Matrix4x4 matrix = rotationTo(dihedral, constants::toRadians(angle));
                 applyMatrix(graph, initialBounds, movingAtoms, matrix, bounds);
                 double overlaps = searchOverlap(bounds);
 
@@ -132,7 +132,7 @@ namespace gmml
         auto resultState = [&](const AngleOverlap best)
         {
             assembly::Bounds bounds = initialBounds;
-            RotationMatrix matrix = rotationTo(coordinates, constants::toRadians(best.angle.value));
+            Matrix4x4 matrix = rotationTo(coordinates, constants::toRadians(best.angle.value));
             applyMatrix(graph, initialBounds, movingAtoms, matrix, bounds);
             return OverlapState {best.overlaps, best.angle, bounds};
         };

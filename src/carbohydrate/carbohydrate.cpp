@@ -18,9 +18,9 @@
 #include "include/fileType/off/offFileWriter.hpp"
 #include "include/fileType/pdb/pdbFileWriter.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
+#include "include/geometry/matrix.hpp"
 #include "include/geometry/measurements.hpp"
 #include "include/geometry/orientation.hpp"
-#include "include/geometry/rotationMatrix.hpp"
 #include "include/graph/graphFunctions.hpp"
 #include "include/metadata/atomicBonds.hpp"
 #include "include/metadata/glycam06Functions.hpp"
@@ -277,7 +277,7 @@ namespace gmml
                         constants::toRadians(constants::DEFAULT_ANGLE));
                     std::vector<Atom*> childResidueAtoms = childResidue->mutableAtoms();
                     std::vector<Coordinate> coordinates = atomCoordinates(childResidueAtoms);
-                    matrix.rotateCoordinates(coordinates);
+                    transformCoordinates(matrix, coordinates);
                     setAtomCoordinates(childResidueAtoms, coordinates);
                     break;
                 }

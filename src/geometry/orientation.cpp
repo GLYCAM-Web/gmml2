@@ -2,7 +2,7 @@
 
 #include "include/geometry/geometryFunctions.hpp"
 #include "include/geometry/geometryTypes.hpp"
-#include "include/geometry/rotationMatrix.hpp"
+#include "include/geometry/matrix.hpp"
 
 #include <cmath>
 #include <limits>
@@ -35,12 +35,12 @@ namespace gmml
         return std::acos((dotProduct(b1, b2)) / (length(b1) * length(b2) + std::numeric_limits<double>::epsilon()));
     }
 
-    RotationMatrix rotationTo(const DihedralCoordinates& coords, double targetAngle)
+    Matrix4x4 rotationTo(const DihedralCoordinates& coords, double targetAngle)
     {
         return rotationAroundPoint(coords[1], axis(coords), angle(coords) - targetAngle);
     }
 
-    RotationMatrix rotationTo(const std::array<Coordinate, 3>& coords, double targetAngle)
+    Matrix4x4 rotationTo(const std::array<Coordinate, 3>& coords, double targetAngle)
     {
         return rotationAroundPoint(coords[1], axis(coords), angle(coords) - targetAngle);
     }

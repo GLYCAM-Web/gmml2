@@ -2,7 +2,7 @@
 #define INCLUDE_GEOMETRY_ORIENTATION_HPP
 
 #include "include/geometry/geometryTypes.hpp"
-#include "include/geometry/rotationMatrix.hpp"
+#include "include/geometry/matrix.hpp"
 
 #include <array>
 
@@ -14,8 +14,8 @@ namespace gmml
     Coordinate axis(const std::array<Coordinate, 3>& coords);
     double angle(const DihedralCoordinates& coords);
     double angle(const std::array<Coordinate, 3>& coords);
-    RotationMatrix rotationTo(const DihedralCoordinates& coords, double targetAngle);
-    RotationMatrix rotationTo(const std::array<Coordinate, 3>& coords, double targetAngle);
+    Matrix4x4 rotationTo(const DihedralCoordinates& coords, double targetAngle);
+    Matrix4x4 rotationTo(const std::array<Coordinate, 3>& coords, double targetAngle);
 } // namespace gmml
 
 #endif
