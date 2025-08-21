@@ -47,7 +47,6 @@
 ./src/geometry/measurements.cpp
 ./src/geometry/orientation.cpp
 ./src/geometry/overlap.cpp
-./src/geometry/superimposition.cpp
 ./src/glycoprotein/cdsInterface.cpp
 ./src/glycoprotein/glycanShape.cpp
 ./src/glycoprotein/glycanWiggle.cpp

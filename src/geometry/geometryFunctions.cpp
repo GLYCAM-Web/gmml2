@@ -25,6 +25,11 @@ namespace gmml
         return {cross(1, 2), cross(2, 0), cross(0, 1)};
     }
 
+    double angle(const Coordinate& a, const Coordinate& b)
+    {
+        return std::acos(dotProduct(a, b) / (length(a) * length(b)));
+    }
+
     Coordinate projection(const Coordinate& a, const Coordinate& b)
     {
         return scaleBy(dotProduct(a, b) / dotProduct(b, b), b);

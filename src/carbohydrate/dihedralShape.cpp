@@ -18,9 +18,7 @@ namespace gmml
     void setDihedralAngle(RotatableBond& bond, AngleWithMetadata target)
     {
         Matrix4x4 matrix = rotationTo(dihedralCoordinates(bond), constants::toRadians(target.value));
-        std::vector<Coordinate> coordinates = atomCoordinates(bond.movingAtoms);
-        transformCoordinates(matrix, coordinates);
-        setAtomCoordinates(bond.movingAtoms, coordinates);
+        setAtomCoordinates(bond.movingAtoms, transform(matrix, atomCoordinates(bond.movingAtoms)));
         bond.currentMetadataIndex = target.metadataIndex;
     }
 

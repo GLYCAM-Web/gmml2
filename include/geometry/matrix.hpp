@@ -62,11 +62,12 @@ namespace gmml
         MatrixInternals4x4 values;
     };
 
+    std::vector<Coordinate> transform(const Matrix4x4& matrix, const std::vector<Coordinate>& coords);
+
     Matrix4x4 translation(const Coordinate& offset);
     Matrix4x4 rotation(const Coordinate& axis, double angle);
     Matrix4x4 rotationAroundPoint(const Coordinate& point, const Coordinate& axis, double angle);
-
-    void transformCoordinates(const Matrix4x4& matrix, std::vector<Coordinate>& coords);
+    Matrix4x4 superimposition(const std::array<Coordinate, 3>& target, const std::array<Coordinate, 3>& superimposed);
 } // namespace gmml
 
 #endif

@@ -11,8 +11,8 @@
 #include "include/carbohydrate/carbohydrate.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbResidue.hpp"
+#include "include/geometry/matrix.hpp"
 #include "include/geometry/measurements.hpp"
-#include "include/geometry/superimposition.hpp"
 #include "include/metadata/glycoprotein.hpp"
 #include "include/preprocess/parameterManager.hpp"
 #include "include/sequence/sequenceParser.hpp"
@@ -214,7 +214,7 @@ namespace gmml
                 std::string residueId = pdb::residueStringId(pdbData, glycositeId);
                 std::vector<Atom*> proteinAtoms = glycosite->getAtoms();
                 std::vector<std::string> proteinAtomNames = atomNames(proteinAtoms);
-                std::vector<Atom*> aglyconeAtoms = attachment.aglycone->mutableAtoms();
+                std::vector<Atom*> aglyconeAtoms = util::reverse(attachment.aglycone->mutableAtoms());
                 std::vector<std::string> aglyconeAtomNames = atomNames(aglyconeAtoms);
                 // Sanity check
                 if (aglyconeAtoms.size() < 3)
@@ -225,9 +225,7 @@ namespace gmml
                         residueId + ".\nCheck your input structure!\n");
                 }
                 // Get the 3 target atoms from protein residue.
-                std::vector<Coordinate> targetCoords;
-                targetCoords.reserve(3);
-                for (size_t n = 0; n < 3; n++)
+                auto nthCoord = [&](size_t n)
                 {
                     const std::string& name = aglyconeAtomNames[n];
                     size_t index = util::indexOf(proteinAtomNames, name);
@@ -237,17 +235,18 @@ namespace gmml
                             "Error: atom '" + name + "' not found in residue " + residueId +
                             " with atoms: " + util::join(", ", proteinAtomNames));
                     }
-                    targetCoords.push_back(proteinAtoms[index]->coordinate());
-                }
+                    return proteinAtoms[index]->coordinate();
+                };
+                std::array<Coordinate, 3> targetCoords {
+                    {nthCoord(0), nthCoord(1), nthCoord(2)}
+                };
+                std::array<Coordinate, 3> superimposedCoords {
+                    {aglyconeAtoms[0]->coordinate(), aglyconeAtoms[1]->coordinate(), aglyconeAtoms[2]->coordinate()}
+                };
+                Matrix4x4 mat = superimposition(targetCoords, superimposedCoords);
                 std::vector<Atom*> glycanAtoms = attachment.glycan->mutableAtoms();
-                std::vector<Coordinate> aglyconeCoords = atomCoordinates(aglyconeAtoms);
-                std::vector<Coordinate> glycanCoords = atomCoordinates(glycanAtoms);
-                Eigen::Matrix3d aglyconeMatrix = generateMatrix(aglyconeCoords);
-                Eigen::Affine3d transform = affineTransform(generateMatrix(targetCoords), aglyconeMatrix);
-                std::vector<Coordinate> updatedAglycone = matrixCoordinates(transform * aglyconeMatrix);
-                std::vector<Coordinate> updatedGlycan = matrixCoordinates(transform * generateMatrix(glycanCoords));
-                setAtomCoordinates(aglyconeAtoms, updatedAglycone);
-                setAtomCoordinates(glycanAtoms, updatedGlycan);
+                setAtomCoordinates(aglyconeAtoms, transform(mat, atomCoordinates(aglyconeAtoms)));
+                setAtomCoordinates(glycanAtoms, transform(mat, atomCoordinates(glycanAtoms)));
             }
 
             std::vector<size_t> linkagesContainingResidue(

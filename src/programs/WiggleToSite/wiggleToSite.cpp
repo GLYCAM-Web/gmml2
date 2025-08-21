@@ -11,8 +11,8 @@
 #include "include/external/pcg/pcg_random.h"
 #include "include/fileType/pdb/pdbFile.hpp"
 #include "include/fileType/pdb/pdbModel.hpp"
+#include "include/geometry/matrix.hpp"
 #include "include/geometry/overlap.hpp"
-#include "include/geometry/superimposition.hpp"
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/metadata/elements.hpp"
 #include "include/preprocess/parameterManager.hpp"
@@ -198,17 +198,22 @@ namespace gmml
         // Limiting the selection to just these atoms as sometimes hydrogens or an oxygen is missing from xtal. That's
         // ok.
         std::vector<Atom*> superimposeMeAtoms = {
-            superimposeMe->FindAtom("C1"), superimposeMe->FindAtom("C3"), superimposeMe->FindAtom("C5")};
+            superimposeMe->FindAtom("C5"), superimposeMe->FindAtom("C3"), superimposeMe->FindAtom("C1")};
         std::vector<Atom*> superTargetAtoms = {
-            superimpositionTarget->FindAtom("C1"),
+            superimpositionTarget->FindAtom("C5"),
             superimpositionTarget->FindAtom("C3"),
-            superimpositionTarget->FindAtom("C5")};
-        std::vector<Coordinate> superimposeMeCoordinates = atomCoordinates(superimposeMeAtoms);
-        std::vector<Coordinate> superTargetCoordinates = atomCoordinates(superTargetAtoms);
-        Eigen::Matrix3d movingMatrix = generateMatrix(superimposeMeCoordinates);
-        Eigen::Affine3d transform = affineTransform(generateMatrix(superTargetCoordinates), movingMatrix);
-        setAtomCoordinates(superimposeMeAtoms, matrixCoordinates(transform * movingMatrix));
-        carbohydrateCoordinates = matrixCoordinates(transform * generateMatrix(carbohydrateCoordinates));
+            superimpositionTarget->FindAtom("C1")};
+        auto toArray = [](const std::vector<Atom*>& atoms)
+        {
+            return std::array<Coordinate, 3> {
+                {atoms[0]->coordinate(), atoms[1]->coordinate(), atoms[2]->coordinate()}
+            };
+        };
+        std::array<Coordinate, 3> superimpose = toArray(superimposeMeAtoms);
+        std::array<Coordinate, 3> target = toArray(superTargetAtoms);
+        Matrix4x4 mat = superimposition(target, superimpose);
+        setAtomCoordinates(superimposeMeAtoms, transform(mat, atomCoordinates(superimposeMeAtoms)));
+        carbohydrateCoordinates = transform(mat, carbohydrateCoordinates);
     }
 
     std::vector<ResidueLinkage>& WiggleToSite::determineWiggleLinkages(

@@ -277,8 +277,7 @@ namespace gmml
                         constants::toRadians(constants::DEFAULT_ANGLE));
                     std::vector<Atom*> childResidueAtoms = childResidue->mutableAtoms();
                     std::vector<Coordinate> coordinates = atomCoordinates(childResidueAtoms);
-                    transformCoordinates(matrix, coordinates);
-                    setAtomCoordinates(childResidueAtoms, coordinates);
+                    setAtomCoordinates(childResidueAtoms, transform(matrix, coordinates));
                     break;
                 }
             }
