@@ -16,7 +16,14 @@ namespace gmml
         }
     }
 
-    Matrix4x4 rotationAroundPoint(const Coordinate& point, const Coordinate& axis, double angle)
+    Matrix4x4 translation(const Coordinate& offset)
+    {
+        return Matrix4x4({
+            {{1, 0, 0, offset.nth(0)}, {0, 1, 0, offset.nth(1)}, {0, 0, 1, offset.nth(2)}, {0, 0, 0, 1}}
+        });
+    }
+
+    Matrix4x4 rotation(const Coordinate& axis, double angle)
     {
         double cosA = std::cos(angle);
         double sinA = std::sin(angle);
@@ -28,18 +35,16 @@ namespace gmml
         double y = axis.nth(1);
         double z = axis.nth(2);
 
-        MatrixInternals4x4 mat {
+        return Matrix4x4({
             {{diag(x), cell(x, y, -z), cell(x, z, y), 0},
              {cell(x, y, z), diag(y), cell(y, z, -x), 0},
              {cell(x, z, -y), cell(y, z, x), diag(z), 0},
              {0, 0, 0, 1}}
-        };
+        });
+    }
 
-        for (size_t n = 0; n < 3; n++)
-        {
-            mat[n][3] = point.nth(n) - dotProduct(point, {mat[n][0], mat[n][1], mat[n][2]});
-        }
-
-        return Matrix4x4(mat);
+    Matrix4x4 rotationAroundPoint(const Coordinate& point, const Coordinate& axis, double angle)
+    {
+        return translation(point) * rotation(axis, angle) * translation(scaleBy(-1, point));
     }
 } // namespace gmml
