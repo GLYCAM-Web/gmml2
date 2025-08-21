@@ -63,7 +63,7 @@ else
 fi
 echo ""
 
-#Gets all our EXTERNAL lib headers. This is Eigen3 and pcg files. This is important because when cmake uses this file
+#Gets all our EXTERNAL lib headers. These are the pcg files. This is important because when cmake uses this file
 #list to have all the files use the -isystem flag on the files which prevents linting on em and should help clean up
 #our build outputs.
 echo "Hitting the list that contains all our paths to the directories that have all our 3rd party libraries"

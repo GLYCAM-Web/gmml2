@@ -37,18 +37,15 @@ if (${SWIG_WRAP})
     #Get python lib package
     find_package(Python3 3.9 COMPONENTS Interpreter Development EXACT REQUIRED)
 endif()
-find_package(Eigen3 REQUIRED)
 
 message("")
 message(STATUS "Building GMML2 version ${GMML_VERSION}")
 message("")
 
-#include_directories(SYSTEM ${EIGEN3_INCLUDE_DIRS})
 #Show user what compiler they using
 message("################## TOOLS CMAKE IS USING ###################\n")
 message(STATUS "CMake Version:\t${CMAKE_VERSION}")
 message("")
-message(STATUS "Eigen Lib Path:\t${EIGEN3_INCLUDE_DIRS}\n")
 #https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html
 message(STATUS "C++ Compiler Used:\t${CMAKE_CXX_COMPILER_ID}")
 message(STATUS "C++ Compiler Ver:\t${CMAKE_CXX_COMPILER_VERSION}")
@@ -160,9 +157,6 @@ add_custom_target(versionHeader
 )
 
 add_dependencies(${PROJECT_NAME} versionHeader)
-
-#Add eigen lib
-target_include_directories(${PROJECT_NAME} PUBLIC ${EIGEN3_INCLUDE_DIRS})
 
 # OpenMP
 find_package(OpenMP)

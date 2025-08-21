@@ -12,7 +12,6 @@ git \
 cmake \
 g++ \
 libgomp1 \
-libeigen3-dev \
 && rm -rf /var/lib/apt/lists/*;
 
 # Set working directory

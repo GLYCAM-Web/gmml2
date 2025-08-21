@@ -45,8 +45,6 @@ A curated data set of the [Smooth Backbone-Dependent Rotamer Library 2010](http:
 
 The [PCG Library](https://www.pcg-random.org/index.html), licensed under the [Apache License](https://www.apache.org/licenses/LICENSE-2.0)
 
-The [Eigen C++ template library](https://eigen.tuxfamily.org/index.php?title=Main_Page), licensed under [MPL2](https://www.mozilla.org/en-US/MPL/2.0/)
-
 ## Prerequisites
 
 ### Building GMML2
@@ -58,13 +56,12 @@ In order to build GMML2, you are required to have the following software availab
 * `openmp`
 * `make`
 * `git`
-* `libeigen3-dev` (Version >= `3.3.7`)
 
 Installation instructions will vary according to what package manager your distro uses. If you are using apt as a package manager on a linux system, you should be able to use a command like this:
 
 ```bash
 sudo apt-get update &&\
-sudo apt-get install git git-all cmake g++ libgomp1 libeigen3-dev
+sudo apt-get install git git-all cmake g++ libgomp1
 ```
 For other linux distros, please follow the instructions for the package managment software included with your system.
 

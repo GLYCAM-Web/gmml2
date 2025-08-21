@@ -49,7 +49,7 @@ jobs:
     - name: Install Deps
       run: |
         sudo apt-get update
-        sudo apt-get install -yq libeigen3-dev ccache graphviz
+        sudo apt-get install -yq ccache graphviz
 
       #need to think of a better way to do the cache tagging but whatevah 4 now
     - name: Get Date
