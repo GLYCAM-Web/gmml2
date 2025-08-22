@@ -20,7 +20,7 @@ namespace gmml
             const util::SparseVector<double>& elementRadii,
             const std::vector<Element>& elements,
             const std::vector<Coordinate>& coordinates);
-        Bounds toAssemblyBounds(const Graph& graph, const std::vector<Sphere>& atomBounds);
+        Bounds toAssemblyBounds(const Indices& indices, const std::vector<Sphere>& atomBounds);
     } // namespace assembly
 } // namespace gmml
 

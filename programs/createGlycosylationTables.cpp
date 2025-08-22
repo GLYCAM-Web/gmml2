@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
     const std::vector<Sphere> atomBounds =
         assembly::toAtomBounds(elementRadii, pdbData.atoms.elements, pdbData.atoms.coordinates);
     const assembly::Graph graph = assembly::createAssemblyGraph(pdbData.assembly.indices, pdbData.assembly.atomGraph);
-    const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
+    const assembly::Bounds bounds = assembly::toAssemblyBounds(pdbData.assembly.indices, atomBounds);
     pdb::bondAtomsAndResiduesByDistance(pdbData, bounds);
     const AminoAcidLinkTable linkTable = defaultAminoAcidLinkTable();
     std::vector<gpbuilder::GlycosylationSiteInfo> table =

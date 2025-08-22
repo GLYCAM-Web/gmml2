@@ -134,7 +134,7 @@ namespace gmml
             std::vector<std::string> atomNames = gmml::atomNames(atoms);
             std::vector<Sphere> atomBoundingSpheres =
                 assembly::toAtomBounds(elementRadii, atomElements(atoms), atomCoordinates(atoms));
-            assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBoundingSpheres);
+            assembly::Bounds bounds = assembly::toAssemblyBounds(graphData.indices, atomBoundingSpheres);
             std::vector<bool> partOfMovableSidechain(atoms.size(), false);
             std::vector<Element> atomElements = gmml::atomElements(atoms);
             std::function<bool(const size_t&)> nonHydrogen = [&](const size_t& n)

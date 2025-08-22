@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
             assembly::toAtomBounds(elementRadii, pdbFile.data.atoms.elements, pdbFile.data.atoms.coordinates);
         const assembly::Graph pdbGraph =
             assembly::createAssemblyGraph(pdbFile.data.assembly.indices, pdbFile.data.assembly.atomGraph);
-        const assembly::Bounds bounds = assembly::toAssemblyBounds(pdbGraph, atomBounds);
+        const assembly::Bounds bounds = assembly::toAssemblyBounds(pdbFile.data.assembly.indices, atomBounds);
         size_t glycoproteinAssemblyId = 0;
         Assembly* glycoprotein = getAssemblies(pdbFile)[glycoproteinAssemblyId];
         pdb::setIntraConnectivity(aminoAcidTable, pdbFile.data);

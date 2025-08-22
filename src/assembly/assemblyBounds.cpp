@@ -73,22 +73,22 @@ namespace gmml
             return spheres;
         }
 
-        Bounds toAssemblyBounds(const Graph& graph, const std::vector<Sphere>& atomBounds)
+        Bounds toAssemblyBounds(const Indices& indices, const std::vector<Sphere>& atomBounds)
         {
-            size_t residueCount = assembly::residueCount(graph.source);
+            size_t residueCount = indices.residueCount;
             std::vector<Sphere> residueBounds;
             residueBounds.reserve(residueCount);
             for (size_t n = 0; n < residueCount; n++)
             {
-                residueBounds.push_back(boundingSphere(util::indicesToValues(atomBounds, residueAtoms(graph, n))));
+                residueBounds.push_back(boundingSphere(util::indicesToValues(atomBounds, residueAtoms(indices, n))));
             }
-            size_t moleculeCount = assembly::moleculeCount(graph.source);
+            size_t moleculeCount = indices.moleculeCount;
             std::vector<Sphere> moleculeBounds;
             moleculeBounds.reserve(moleculeCount);
             for (size_t n = 0; n < moleculeCount; n++)
             {
                 moleculeBounds.push_back(
-                    boundingSphere(util::indicesToValues(residueBounds, moleculeResidues(graph, n))));
+                    boundingSphere(util::indicesToValues(residueBounds, moleculeResidues(indices, n))));
             }
             return {atomBounds, residueBounds, moleculeBounds};
         }

@@ -408,7 +408,7 @@ namespace gmml
             const assembly::Selection selection = assembly::selectByResidues(graph, reachable);
             const std::vector<Sphere> atomBounds = assembly::toAtomBounds(
                 elementRadii, atomElements(graphData.objects.atoms), atomCoordinates(graphData.objects.atoms));
-            const assembly::Bounds bounds = toAssemblyBounds(graph, atomBounds);
+            const assembly::Bounds bounds = toAssemblyBounds(graphData.indices, atomBounds);
             std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge =
                 assembly::atomsCloseToResidueEdges(graph);
             std::vector<bool> foundElements = gmml::foundElements(atomElements(graphData.objects.atoms));
@@ -636,7 +636,7 @@ namespace gmml
         const assembly::Selection selection = selectAll(graph);
         const std::vector<Sphere> atomBounds = assembly::toAtomBounds(
             elementRadii, atomElements(graphData.objects.atoms), atomCoordinates(graphData.objects.atoms));
-        assembly::Bounds bounds = toAssemblyBounds(graph, atomBounds);
+        assembly::Bounds bounds = toAssemblyBounds(graphData.indices, atomBounds);
         std::vector<Element> atomElements = gmml::atomElements(graphData.objects.atoms);
         std::vector<bool> foundElements = gmml::foundElements(atomElements);
         const PotentialTable potentials = potentialTable(elementRadii, foundElements);

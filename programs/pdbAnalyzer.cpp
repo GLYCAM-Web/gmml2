@@ -171,10 +171,9 @@ int main(int argc, char* argv[])
     const PotentialTable potential = potentialTable(elementRadii, foundElements(data.atoms.elements));
     const std::vector<Sphere> atomBounds =
         assembly::toAtomBounds(elementRadii, data.atoms.elements, data.atoms.coordinates);
-    const assembly::Graph graph = assembly::createAssemblyGraph(data.assembly.indices, data.assembly.atomGraph);
-    const assembly::Bounds bounds = assembly::toAssemblyBounds(graph, atomBounds);
-
+    const assembly::Bounds bounds = assembly::toAssemblyBounds(data.assembly.indices, atomBounds);
     pdb::bondAtomsAndResiduesByDistance(data, bounds);
+    const assembly::Graph graph = assembly::createAssemblyGraph(data.assembly.indices, data.assembly.atomGraph);
     auto residueAtomsCloseToEdge = assembly::atomsCloseToResidueEdges(graph);
 
     std::vector<std::string> residueTypeNames(ResidueTypeCount, "");
