@@ -1,4 +1,4 @@
 Filename,Status,Highest Lennard-Jones potential,Failed glycosites,Deleted glycosites,Moved sidechains
-default,,0.727217,A_297,,TYR296 ARG155
-0_glycoprotein,rejected,3.159482,A_297 B_297,,TYR296 PHE153 ARG155
-1_glycoprotein,rejected,0.320616,A_297,,LEU124 PHE153 ARG155
+default,,64.201957,A_297,,TYR296 LYS340 ARG155
+0_glycoprotein,rejected,13.483972,A_297 B_297 C_162,,PHE241 TYR296 TYR296 ARG155
+1_glycoprotein,rejected,3.961412,A_297 B_297,,TYR296 TYR296 PHE153 ARG155

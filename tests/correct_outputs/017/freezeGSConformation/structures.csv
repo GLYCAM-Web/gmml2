@@ -1,4 +1,4 @@
 Filename,Status,Highest Lennard-Jones potential,Failed glycosites,Deleted glycosites,Moved sidechains
-default,,14195.455306,A_24 A_38 A_40,,
-0_glycoprotein,rejected,427.745879,A_24 A_38 A_40,,
-1_glycoprotein,rejected,2972.582676,A_24 A_38 A_40,,
+default,,3292.800875,A_24 A_38 A_40,,
+0_glycoprotein,rejected,2156.368414,A_24 A_38 A_40,,
+1_glycoprotein,rejected,962.415992,A_24 A_38 A_40,,
