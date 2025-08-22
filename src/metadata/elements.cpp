@@ -297,9 +297,9 @@ namespace gmml
         double rmin = factor.rmin;
         double pow2 = (rmin * rmin) / (std::numeric_limits<double>::epsilon() + squaredDistance);
         double pow4 = pow2 * pow2;
-        double pow6 = pow4 * pow4;
+        double pow6 = pow2 * pow4;
         double pow12 = pow6 * pow6;
-        return factor.epsilon * (pow12 - 2.0 * pow6);
+        return 4.0 * factor.epsilon * (pow12 - pow6);
     }
 
     Element findElementAtomicNumber(const std::string& queryElement)
