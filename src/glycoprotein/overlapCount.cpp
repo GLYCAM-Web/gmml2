@@ -91,24 +91,28 @@ namespace gmml
             return overlapVectorSum(overlapWithin) + overlapVectorSum(overlapBetween);
         };
 
-        std::vector<size_t> determineSitesWithOverlap(
+        OverlapSites determineOverlapState(
             double threshold,
             const OverlapSettings& overlapSettings,
-            const std::vector<size_t>& movedSites,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const assembly::Selection& selection,
             const assembly::Bounds& bounds)
-
         {
             const std::vector<bool>& included = glycanIncluded(data, selection.molecules);
 
+            size_t glycanCount = data.glycans.moleculeId.size();
+            assembly::Selection proteinSelection =
+                assembly::selectByAtomsAndMolecules(graph, selection.atoms, data.molecules.isProtein);
+            std::vector<assembly::Selection> glycanSelections;
+            glycanSelections.reserve(glycanCount);
+            for (size_t n = 0; n < glycanCount; n++)
+            {
+                glycanSelections.push_back(selectGlycan(graph, data, selection, n));
+            }
+
             auto hasProteinOverlap = [&](size_t n)
             {
-                assembly::Selection glycanSelection = selectGlycan(graph, data, selection, n);
-                assembly::Selection proteinSelection =
-                    assembly::selectByAtomsAndMolecules(graph, selection.atoms, data.molecules.isProtein);
-
                 return containsOverlapExceedingThreshold(
                     threshold,
                     overlapsBetweenSelections(
@@ -116,7 +120,7 @@ namespace gmml
                         overlapSettings.tolerance,
                         graph,
                         bounds,
-                        glycanSelection,
+                        glycanSelections[n],
                         proteinSelection,
                         data.atoms.elements,
                         data.residueEdges.atomsCloseToEdge));
@@ -139,58 +143,56 @@ namespace gmml
                         data.atoms.elements,
                         data.residueEdges.atomsCloseToEdge));
             };
-            size_t glycanCount = data.glycans.moleculeId.size();
-            std::vector<size_t> sitesToCheck;
-            sitesToCheck.reserve(glycanCount);
-            for (size_t n : movedSites)
+            std::vector<bool> hasGlycanOverlap(glycanCount, false);
+            std::vector<std::vector<bool>> interactions(glycanCount, std::vector<bool>(glycanCount, false));
+            for (size_t n = 0; n < glycanCount; n++)
             {
-                if (included[n])
+                for (size_t k = n + 1; k < glycanCount; k++)
                 {
-                    sitesToCheck.push_back(n);
-                }
-            }
-            std::vector<bool> justMoved(glycanCount, false);
-            for (size_t n : sitesToCheck)
-            {
-                justMoved[n] = included[n];
-            }
-            std::vector<bool> glycanOverlap(glycanCount, false);
-            for (size_t n : sitesToCheck)
-            {
-                for (size_t k = 0; k < glycanCount; k++)
-                {
-                    bool avoidDoubleCount = k > n || !justMoved[k];
-                    if (included[k] && (k != n) && avoidDoubleCount && !(glycanOverlap[n] && glycanOverlap[k]))
+                    if (included[n] && included[k])
                     {
-                        assembly::Selection selectionN = selectGlycan(graph, data, selection, n);
-                        assembly::Selection selectionK = selectGlycan(graph, data, selection, k);
                         std::vector<double> overlap = overlapsBetweenSelections(
                             overlapSettings.potentialTable,
                             overlapSettings.tolerance,
                             graph,
                             bounds,
-                            selectionN,
-                            selectionK,
+                            glycanSelections[n],
+                            glycanSelections[k],
                             data.atoms.elements,
                             data.residueEdges.atomsCloseToEdge);
                         if (containsOverlapExceedingThreshold(threshold, overlap))
                         {
-                            glycanOverlap[n] = true;
-                            glycanOverlap[k] = true;
+                            interactions[n][k] = true;
+                            interactions[k][n] = true;
+                            hasGlycanOverlap[n] = true;
+                            hasGlycanOverlap[k] = true;
                         }
                     }
                 }
             }
-            std::vector<size_t> indices;
+            std::vector<bool> hasOverlap(glycanCount, false);
             for (size_t n = 0; n < glycanCount; n++)
             {
                 // glycans which haven't moved won't overlap with protein or themselves (at least not more than before)
-                if (included[n] && (glycanOverlap[n] || (justMoved[n] && (hasProteinOverlap(n) || hasSelfOverlap(n)))))
+                if (included[n] && (hasGlycanOverlap[n] || (hasProteinOverlap(n) || hasSelfOverlap(n))))
                 {
-                    indices.push_back(n);
+                    hasOverlap[n] = true;
                 }
             }
-            return indices;
+
+            std::vector<size_t> concertId = util::indexVector(glycanCount);
+            for (size_t n = 0; n < glycanCount; n++)
+            {
+                for (size_t k = n + 1; k < glycanCount; k++)
+                {
+                    if (interactions[n][k])
+                    {
+                        concertId[k] = concertId[n];
+                    }
+                }
+            }
+
+            return {util::boolsToIndices(hasOverlap), hasOverlap, interactions, concertId};
         }
     } // namespace gpbuilder
 } // namespace gmml

@@ -140,12 +140,9 @@ namespace gmml
             };
 
             SidechainAdjustment adjustSidechains = [&](pcg32& rng,
-                                                       const AngleSettings& settings,
-                                                       WiggleGlycan wiggleGlycan,
                                                        const assembly::Graph& graph,
                                                        const AssemblyData& data,
                                                        MutableData& mutableData,
-                                                       const std::vector<GlycanShapePreference>& glycositePreferences,
                                                        const std::vector<size_t>& glycans)
             {
                 std::vector<size_t> sidechainResiduesWithGlycanOverlap;
@@ -167,22 +164,12 @@ namespace gmml
                     setSidechainToLowestOverlapState(
                         sidechainRotamers, overlapSettings, graph, data, mutableData, preferences[n], residues[n]);
                 }
-                assembly::Selection selection = assembly::selectByAtomsAndMolecules(
-                    graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
-                for (size_t glycanId : util::shuffleVector(rng, glycans))
-                {
-                    wiggleGlycan(
-                        graph, data, selection, settings, glycositePreferences[glycanId], mutableData, glycanId);
-                }
             };
 
             SidechainAdjustment restoreSidechains = [&](pcg32& rng,
-                                                        const AngleSettings&,
-                                                        WiggleGlycan,
                                                         const assembly::Graph& graph,
                                                         const AssemblyData& data,
                                                         MutableData& mutableData,
-                                                        const std::vector<GlycanShapePreference>&,
                                                         const std::vector<size_t>& glycans)
             {
                 std::vector<size_t> residues = util::boolsToIndices(mutableData.residueSidechainMoved);
@@ -201,42 +188,9 @@ namespace gmml
                 }
             };
 
-            SidechainAdjustment noSidechainAdjustment = [&](pcg32&,
-                                                            const AngleSettings&,
-                                                            WiggleGlycan,
-                                                            const assembly::Graph&,
-                                                            const AssemblyData&,
-                                                            MutableData&,
-                                                            const std::vector<GlycanShapePreference>&,
-                                                            const std::vector<size_t>&) { return; };
-
-            WiggleGlycan wiggle = [&dihedralAngleDataTable, &overlapSettings, &standardDeviation](
-                                      const assembly::Graph& graph,
-                                      const AssemblyData& data,
-                                      const assembly::Selection& selection,
-                                      const AngleSettings& settings,
-                                      const GlycanShapePreference& preference,
-                                      MutableData& mutableData,
-                                      size_t glycanId)
-            {
-                auto searchAngles = [&standardDeviation,
-                                     &settings](const DihedralAngleData& metadata, double preference, double deviation)
-                {
-                    auto std = standardDeviation(settings, metadata);
-                    return evenlySpacedAngles(
-                        preference, deviation * std.first, deviation * std.second, settings.searchIncrement);
-                };
-                return wiggleGlycan(
-                    dihedralAngleDataTable,
-                    overlapSettings,
-                    graph,
-                    data,
-                    selection,
-                    {settings.searchDeviation, searchAngles},
-                    preference,
-                    mutableData,
-                    glycanId);
-            };
+            SidechainAdjustment noSidechainAdjustment =
+                [&](pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&, const std::vector<size_t>&)
+            { return; };
 
             auto writeOffFile = [](const assembly::Graph& graph,
                                    const AssemblyData& data,
@@ -348,27 +302,26 @@ namespace gmml
 
             auto runInitial = [&](pcg32 rng, StructureStats& stats)
             {
-                MutableData mutableData = initialState;
                 AngleSettings initialAngleSettings {0.0, 2.0, 1.0, initialMetadataOrder};
                 AngleSettings mainAngleSettings {0.5, 2.0, 1.0, initialMetadataOrder};
-                resolveOverlapsWithWiggler(
+                GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
+                    dihedralAngleDataTable,
                     initialAngleSettings,
                     mainAngleSettings,
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
-                    wiggle,
                     overlapSettings,
                     graph,
                     data,
-                    mutableData,
+                    initialState,
                     resolutionSettings.persistCycles,
                     false);
-                std::vector<Coordinate> resolvedCoords = getCoordinates(mutableData.bounds.atoms);
+                std::vector<Coordinate> resolvedCoords = getCoordinates(state.mutableData.bounds.atoms);
                 assembly::Selection selection = assembly::selectAll(graph);
                 std::vector<double> atomOverlaps =
-                    totalOverlaps(overlapSettings, graph, data, selection, mutableData.bounds);
+                    totalOverlaps(overlapSettings, graph, data, selection, state.mutableData.bounds);
                 bool serialized = resolutionSettings.prepareForMD;
                 std::string prefix = "default";
                 writePdbFile(
@@ -377,54 +330,53 @@ namespace gmml
                     resolvedCoords,
                     atomNumbers(serialized, data),
                     residueNumbers(serialized, data),
-                    mutableData.moleculeIncluded,
+                    state.mutableData.moleculeIncluded,
                     atomPairsConnectingNonProteinResidues,
                     outputDir,
                     prefix);
                 if (resolutionSettings.writeOffFile)
                 {
-                    writeOffFile(graph, data, resolvedCoords, mutableData.moleculeIncluded, outputDir, prefix);
+                    writeOffFile(graph, data, resolvedCoords, state.mutableData.moleculeIncluded, outputDir, prefix);
                 }
                 std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
                 stats = StructureStats {
                     prefix,
                     false,
                     false,
-                    mutableData.bounds,
+                    state.mutableData.bounds,
                     selection,
                     nonViable,
-                    mutableData.residueSidechainMoved,
+                    state.mutableData.residueSidechainMoved,
                     atomOverlaps};
             };
 
             auto runIteration = [&](pcg32 rng, StructureStats& stats, const std::string& prefix)
             {
-                MutableData mutableData = initialState;
                 AngleSettings angleSettings {2.0, 0.5, 1.0, randomMetadataOrder};
-                resolveOverlapsWithWiggler(
+                GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
+                    dihedralAngleDataTable,
                     angleSettings,
                     angleSettings,
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
-                    wiggle,
                     overlapSettings,
                     graph,
                     data,
-                    mutableData,
+                    initialState,
                     resolutionSettings.persistCycles,
                     resolutionSettings.deleteSitesUntilResolved);
-                std::vector<Coordinate> coordinates = getCoordinates(mutableData.bounds.atoms);
+                std::vector<Coordinate> coordinates = getCoordinates(state.mutableData.bounds.atoms);
                 const assembly::Selection fullSelection =
                     assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
 
-                bool hasDeleted = util::contains(mutableData.moleculeIncluded, false);
+                bool hasDeleted = util::contains(state.mutableData.moleculeIncluded, false);
                 std::string directory = outputDir;
                 assembly::Selection selection = assembly::selectByAtomsAndMolecules(
-                    graph, data.atoms.includeInEachOverlapCheck, mutableData.moleculeIncluded);
+                    graph, data.atoms.includeInEachOverlapCheck, state.mutableData.moleculeIncluded);
                 std::vector<double> atomOverlaps =
-                    totalOverlaps(overlapSettings, graph, data, selection, mutableData.bounds);
+                    totalOverlaps(overlapSettings, graph, data, selection, state.mutableData.bounds);
                 std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
                 bool reject = util::contains(nonViable, true);
                 directory = hasDeleted ? deletionDir : (reject ? rejectDir : structureDir);
@@ -435,22 +387,22 @@ namespace gmml
                     coordinates,
                     atomNumbers(serialized, data),
                     residueNumbers(serialized, data),
-                    mutableData.moleculeIncluded,
+                    state.mutableData.moleculeIncluded,
                     atomPairsConnectingNonProteinResidues,
                     directory,
                     prefix);
                 if (resolutionSettings.writeOffFile)
                 {
-                    writeOffFile(graph, data, coordinates, mutableData.moleculeIncluded, directory, prefix);
+                    writeOffFile(graph, data, coordinates, state.mutableData.moleculeIncluded, directory, prefix);
                 }
                 stats = StructureStats {
                     prefix,
                     reject,
                     hasDeleted,
-                    mutableData.bounds,
+                    state.mutableData.bounds,
                     selection,
                     nonViable,
-                    mutableData.residueSidechainMoved,
+                    state.mutableData.residueSidechainMoved,
                     atomOverlaps};
             };
 

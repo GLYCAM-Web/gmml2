@@ -62,10 +62,12 @@ namespace gmml
                                     dihedralAngleTable.entries[dihedralMetadata[bondId][0]].dihedral_angle_name_))
                             {
                                 pref.isFrozen[n] = true;
-                                size_t metadata = data.rotatableBonds.initialShape[bondId].metadataIndex;
-                                pref.angles[n][metadata] =
-                                    constants::toDegrees(angle(dihedralCoordinates(data, bounds, bondId)));
-                                pref.metadataOrder = {metadata};
+                                double a = constants::toDegrees(angle(dihedralCoordinates(data, bounds, bondId)));
+                                for (size_t metadata : order)
+                                {
+                                    pref.angles[n][metadata] = a;
+                                }
+                                pref.metadataOrder = order;
                             }
                         }
                     }

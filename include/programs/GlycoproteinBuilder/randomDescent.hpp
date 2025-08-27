@@ -19,10 +19,10 @@ namespace gmml
     {
         struct GlycoproteinState
         {
-            double overlap;
-            std::vector<size_t> sitesWithOverlap;
-            std::vector<size_t> sitesAboveOverlapThreshold;
+            double totalOverlap;
+            OverlapSites overlapSites;
             std::vector<GlycanShapePreference> preferences;
+            MutableData mutableData;
         };
 
         typedef std::function<void(
@@ -36,14 +36,7 @@ namespace gmml
             WiggleGlycan;
 
         typedef std::function<void(
-            pcg32&,
-            const AngleSettings& settings,
-            WiggleGlycan,
-            const assembly::Graph&,
-            const AssemblyData&,
-            MutableData&,
-            const std::vector<GlycanShapePreference>&,
-            const std::vector<size_t>&)>
+            pcg32&, const assembly::Graph&, const AssemblyData&, MutableData&, const std::vector<size_t>&)>
             SidechainAdjustment;
 
         typedef std::function<GlycanShapePreference(
@@ -52,29 +45,28 @@ namespace gmml
 
         GlycoproteinState randomDescent(
             pcg32& rng,
+            const DihedralAngleDataTable& dihedralAngleDataTable,
             const AngleSettings& settings,
-            WiggleGlycan wiggleGlycan,
             GlycanShapeRandomizer randomizeShape,
             SidechainAdjustment adjustSidechains,
             uint persistCycles,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
-            MutableData& mutableData,
             const GlycoproteinState& initialState);
 
-        void resolveOverlapsWithWiggler(
+        GlycoproteinState resolveOverlapsWithWiggler(
             pcg32& rng,
+            const DihedralAngleDataTable& dihedralAngleDataTable,
             const AngleSettings& initialAngleSettings,
             const AngleSettings& mainAngleSettings,
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
-            WiggleGlycan wiggleGlycan,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
-            MutableData& mutableData,
+            const MutableData& initialState,
             size_t persistCycles,
             bool deleteSitesUntilResolved);
     } // namespace gpbuilder

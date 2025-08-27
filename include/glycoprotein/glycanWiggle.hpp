@@ -21,7 +21,7 @@ namespace gmml
             const AngleSearchSettings& searchSettings,
             const ResidueLinkageShapePreference& shapePreference);
 
-        void wiggleGlycan(
+        void wiggleLinkages(
             const DihedralAngleDataTable& dihedralAngleTable,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
@@ -29,8 +29,8 @@ namespace gmml
             const assembly::Selection& selection,
             const AngleSearchSettings& searchSettings,
             const GlycanShapePreference& preferences,
-            MutableData& mutableData,
-            size_t glycanId);
+            const std::vector<size_t>& linkages,
+            MutableData& mutableData);
     } // namespace gpbuilder
 } // namespace gmml
 

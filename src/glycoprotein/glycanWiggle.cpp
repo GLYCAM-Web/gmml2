@@ -245,7 +245,7 @@ namespace gmml
                 "unhandled linkage shape preference in glycoproteinOverlapResolution wiggleLinkage");
         }
 
-        void wiggleGlycan(
+        void wiggleLinkages(
             const DihedralAngleDataTable& dihedralAngleTable,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
@@ -253,27 +253,22 @@ namespace gmml
             const assembly::Selection& selection,
             const AngleSearchSettings& searchSettings,
             const GlycanShapePreference& preferences,
-            MutableData& mutableData,
-            size_t glycanId)
+            const std::vector<size_t>& linkages,
+            MutableData& mutableData)
         {
-            const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
-            // wiggling twice gives the first linkages a second chance to resolve in a better structure
-            for (size_t k = 0; k < 2; k++)
+            for (size_t n = 0; n < linkages.size(); n++)
             {
-                for (size_t n = 0; n < linkages.size(); n++)
-                {
-                    size_t linkageId = linkages[n];
-                    wiggleLinkage(
-                        dihedralAngleTable,
-                        overlapSettings,
-                        graph,
-                        data,
-                        selection,
-                        mutableData,
-                        linkageId,
-                        searchSettings,
-                        preferences[n]);
-                }
+                size_t linkageId = linkages[n];
+                wiggleLinkage(
+                    dihedralAngleTable,
+                    overlapSettings,
+                    graph,
+                    data,
+                    selection,
+                    mutableData,
+                    linkageId,
+                    searchSettings,
+                    preferences[n]);
             }
         }
     } // namespace gpbuilder
