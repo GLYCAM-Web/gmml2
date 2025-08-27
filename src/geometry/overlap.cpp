@@ -32,9 +32,9 @@ namespace gmml
     {
         std::vector<double> result;
         result.reserve(vec.size());
-        for (auto& a : vec)
+        for (double val : vec)
         {
-            result.push_back(std::max(0.0, a - threshold));
+            result.push_back(val < threshold ? 0.0 : val - threshold);
         }
         return result;
     }
