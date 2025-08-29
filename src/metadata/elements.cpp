@@ -68,8 +68,8 @@ namespace gmml
             { Element::P, 0.2000},
             { Element::S, 0.2500},
             {Element::Cl, 0.2650},
-            {Element::Br, 0.4200},
-            { Element::I, 0.5000}
+            {Element::Br, 0.3200},
+            { Element::I, 0.4000}
         });
 
         std::vector<FlaggedDouble> mass = withValues({
