@@ -40,12 +40,22 @@ namespace gmml
         size_t currentMetadataIndex;
     };
 
-    typedef std::function<std::vector<double>(const DihedralAngleData&, double, double)> SearchAngles;
+    struct AngleSpacing
+    {
+        double preference;
+        double lowerDeviation;
+        double upperDeviation;
+        double initialIncrement;
+        uint halfIntervalSearches;
+    };
+
+    typedef std::function<AngleSpacing(const DihedralAngleData&, double, double, unsigned int)> SearchAngles;
     typedef std::function<double(const assembly::Bounds&)> SearchOverlap;
 
     struct AngleSearchSettings
     {
         double deviation;
+        uint halfIntervalSearches;
         SearchAngles angles;
     };
 } // namespace gmml

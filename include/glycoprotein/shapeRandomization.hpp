@@ -21,6 +21,7 @@ namespace gmml
             double preferenceDeviation;
             double searchDeviation;
             double searchIncrement;
+            uint halfIntervalSearches;
             MetadataOrder randomMetadata;
         };
 

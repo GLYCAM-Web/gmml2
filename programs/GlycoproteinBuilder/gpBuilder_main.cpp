@@ -233,7 +233,7 @@ int main(int argc, char* argv[])
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck = util::vectorAnd(
-                assembly.data.atoms.includeInMainOverlapCheck,
+                assembly.data.atoms.includeInEachOverlapCheck,
                 util::vectorNot(assembly.data.atoms.partOfMovableSidechain));
         }
 

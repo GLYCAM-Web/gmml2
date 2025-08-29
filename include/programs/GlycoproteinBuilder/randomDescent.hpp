@@ -25,6 +25,8 @@ namespace gmml
             MutableData mutableData;
         };
 
+        typedef std::function<AngleSettings(uint)> PersistCycleAngleSettings;
+
         typedef std::function<void(
             const assembly::Graph&,
             const AssemblyData&,
@@ -46,7 +48,7 @@ namespace gmml
         GlycoproteinState randomDescent(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleDataTable,
-            const AngleSettings& settings,
+            PersistCycleAngleSettings toAngleSettings,
             GlycanShapeRandomizer randomizeShape,
             SidechainAdjustment adjustSidechains,
             uint persistCycles,
@@ -58,8 +60,7 @@ namespace gmml
         GlycoproteinState resolveOverlapsWithWiggler(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleDataTable,
-            const AngleSettings& initialAngleSettings,
-            const AngleSettings& mainAngleSettings,
+            PersistCycleAngleSettings toAngleSettings,
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,

@@ -302,13 +302,19 @@ namespace gmml
 
             auto runInitial = [&](pcg32 rng, StructureStats& stats)
             {
-                AngleSettings initialAngleSettings {0.0, 2.0, 1.0, initialMetadataOrder};
-                AngleSettings mainAngleSettings {0.5, 2.0, 1.0, initialMetadataOrder};
+                uint persistCycles = resolutionSettings.persistCycles;
+                std::function<AngleSettings(uint)> toAngleSettings = [&](uint cycle)
+                {
+                    double c = cycle;
+                    double ratio = std::min(1.0, c / 4.0);
+                    double preferenceDev = 0.5 * ratio;
+                    double wiggleRoom = 3.0 - preferenceDev;
+                    return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, initialMetadataOrder};
+                };
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
                     dihedralAngleDataTable,
-                    initialAngleSettings,
-                    mainAngleSettings,
+                    toAngleSettings,
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
@@ -316,7 +322,7 @@ namespace gmml
                     graph,
                     data,
                     initialState,
-                    resolutionSettings.persistCycles,
+                    persistCycles,
                     false);
                 std::vector<Coordinate> resolvedCoords = getCoordinates(state.mutableData.bounds.atoms);
                 assembly::Selection selection = assembly::selectAll(graph);
@@ -352,12 +358,19 @@ namespace gmml
 
             auto runIteration = [&](pcg32 rng, StructureStats& stats, const std::string& prefix)
             {
-                AngleSettings angleSettings {2.0, 0.5, 1.0, randomMetadataOrder};
+                uint persistCycles = resolutionSettings.persistCycles;
+                std::function<AngleSettings(uint)> toAngleSettings = [&](uint cycle)
+                {
+                    double c = cycle;
+                    double ratio = std::min(1.0, c / 4.0);
+                    double preferenceDev = 2.0 - 1.5 * ratio;
+                    double wiggleRoom = 3.0 - preferenceDev;
+                    return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, randomMetadataOrder};
+                };
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
                     dihedralAngleDataTable,
-                    angleSettings,
-                    angleSettings,
+                    toAngleSettings,
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
@@ -365,7 +378,7 @@ namespace gmml
                     graph,
                     data,
                     initialState,
-                    resolutionSettings.persistCycles,
+                    persistCycles,
                     resolutionSettings.deleteSitesUntilResolved);
                 std::vector<Coordinate> coordinates = getCoordinates(state.mutableData.bounds.atoms);
                 const assembly::Selection fullSelection =

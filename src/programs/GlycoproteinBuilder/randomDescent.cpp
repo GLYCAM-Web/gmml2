@@ -53,12 +53,19 @@ namespace gmml
                     };
                     return onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
                 };
-                auto searchAngles = [&standardDeviation,
-                                     &settings](const DihedralAngleData& metadata, double preference, double deviation)
+                auto searchAngles = [&standardDeviation, &settings](
+                                        const DihedralAngleData& metadata,
+                                        double preference,
+                                        double deviation,
+                                        uint halfIntervalSearches)
                 {
                     auto std = standardDeviation(settings, metadata);
-                    return evenlySpacedAngles(
-                        preference, deviation * std.first, deviation * std.second, settings.searchIncrement);
+                    return AngleSpacing {
+                        preference,
+                        deviation * std.first,
+                        deviation * std.second,
+                        settings.searchIncrement,
+                        halfIntervalSearches};
                 };
                 MutableData currentState = initialState;
                 size_t maxLinkageCount = 0;
@@ -83,7 +90,7 @@ namespace gmml
                                     selection,
                                     currentState,
                                     linkages[k],
-                                    {settings.searchDeviation, searchAngles},
+                                    {settings.searchDeviation, settings.halfIntervalSearches, searchAngles},
                                     shapePreferences[glycanId][k]);
                             }
                         }
@@ -114,7 +121,7 @@ namespace gmml
         GlycoproteinState randomDescent(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleDataTable,
-            const AngleSettings& settings,
+            PersistCycleAngleSettings toAngleSettings,
             GlycanShapeRandomizer randomizeShape,
             SidechainAdjustment adjustSidechains,
             uint persistCycles,
@@ -153,6 +160,7 @@ namespace gmml
                     mutableData);
             };
             uint cycle = 0;
+            uint maxCycle = 0;
             GlycoproteinState bestState = initialState;
             bestState.totalOverlap = overlapVectorSum(
                 totalOverlaps(overlapSettings, graph, data, fullSelection, bestState.mutableData.bounds));
@@ -164,7 +172,9 @@ namespace gmml
                     __FILE__,
                     util::INF,
                     "Cycle " + std::to_string(cycle) + "/" + std::to_string(persistCycles));
+                AngleSettings settings = toAngleSettings(maxCycle);
                 cycle++;
+                maxCycle = std::max(cycle, maxCycle);
                 std::vector<std::vector<size_t>> concerts = overlapConcerts(currentState.overlapSites);
                 for (auto& concertGlycans : concerts)
                 {
@@ -190,6 +200,7 @@ namespace gmml
                         totalOverlaps(overlapSettings, graph, data, fullSelection, currentState.mutableData.bounds));
                     if (currentState.totalOverlap < bestState.totalOverlap)
                     {
+                        std::cout << "best: " << currentState.totalOverlap << "\n";
                         cycle = 0;
                         bestState = currentState;
                     }
@@ -212,8 +223,7 @@ namespace gmml
         GlycoproteinState resolveOverlapsWithWiggler(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleDataTable,
-            const AngleSettings& initialAngleSettings,
-            const AngleSettings& mainAngleSettings,
+            PersistCycleAngleSettings toAngleSettings,
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
@@ -226,6 +236,7 @@ namespace gmml
         {
             GlycoproteinState currentState;
             currentState.mutableData = initialState;
+            AngleSettings initialAngleSettings = toAngleSettings(0);
             const std::vector<size_t> glycanIndices = util::indexVector(data.glycans.moleculeId);
             for (size_t glycanId : glycanIndices)
             {
@@ -270,7 +281,7 @@ namespace gmml
                 currentState = randomDescent(
                     rng,
                     dihedralAngleDataTable,
-                    mainAngleSettings,
+                    toAngleSettings,
                     randomizeShape,
                     adjustSidechains,
                     persistCycles,

@@ -68,6 +68,7 @@ namespace gmml
                     OverlapState best = wiggleUsingRotamers(
                         searchOverlap,
                         settings.angles,
+                        settings.halfIntervalSearches,
                         dihedralAngleTable,
                         graph,
                         mutableData.bounds,
@@ -153,6 +154,7 @@ namespace gmml
                         OverlapState best = wiggleUsingRotamers(
                             searchOverlap,
                             settings.angles,
+                            settings.halfIntervalSearches,
                             dihedralAngleTable,
                             graph,
                             mutableData.bounds,

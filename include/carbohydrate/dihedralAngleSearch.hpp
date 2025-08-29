@@ -43,6 +43,7 @@ namespace gmml
     OverlapState wiggleUsingRotamers(
         SearchOverlap searchOverlap,
         SearchAngles searchAngles,
+        uint halfIntervalSearches,
         const DihedralAngleDataTable& metadataTable,
         const assembly::Graph& graph,
         const assembly::Bounds& bounds,
@@ -56,6 +57,7 @@ namespace gmml
         const DihedralAngleDataTable& metadataTable,
         const PotentialTable& potential,
         SearchAngles searchAngles,
+        uint halfIntervalSearches,
         const std::vector<DihedralIndices>& dihedrals,
         const std::vector<std::vector<size_t>>& metadata,
         const std::vector<AngleSearchPreference>& preference,
@@ -65,27 +67,32 @@ namespace gmml
         const assembly::Bounds& initialBounds,
         const std::vector<std::array<std::vector<bool>, 2>> residueAtomsCloseToEdge);
 
-    std::vector<double> evenlySpacedAngles(
-        double preference, double lowerDeviation, double upperDeviation, double increment);
-
     std::vector<AngleSearchPreference> angleSearchPreference(
         double deviation, const ResidueLinkageShapePreference& preference);
 
     std::vector<std::vector<AngleSearchPreference>> angleSearchPreference(
         double deviation, const GlycanShapePreference& preferences);
 
-    constexpr auto defaultSearchAngles = [](const DihedralAngleData& metadata, double preference, double deviation)
+    constexpr auto defaultSearchAngles =
+        [](const DihedralAngleData& metadata, double preference, double deviation, uint halfIntervalSearches)
     {
         double increment = 1.0;
-        std::function<std::vector<double>(const AngleLimit&)> onLimit = [&](const AngleLimit& dev)
-        { return evenlySpacedAngles(preference, dev.lowerDeviationLimit, dev.upperDeviationLimit, increment); };
-        std::function<std::vector<double>(const AngleStd&)> onStd = [&](const AngleStd& dev)
+        std::function<AngleSpacing(const AngleLimit&)> onLimit = [&](const AngleLimit& dev)
         {
-            return evenlySpacedAngles(
-                preference, deviation * dev.lowerDeviationStd, deviation * dev.upperDeviationStd, increment);
+            return AngleSpacing {
+                preference, dev.lowerDeviationLimit, dev.upperDeviationLimit, increment, halfIntervalSearches};
+        };
+        std::function<AngleSpacing(const AngleStd&)> onStd = [&](const AngleStd& dev)
+        {
+            return AngleSpacing {
+                preference,
+                deviation * dev.lowerDeviationStd,
+                deviation * dev.upperDeviationStd,
+                increment,
+                halfIntervalSearches};
         };
         return onAngleDeviation(onLimit, onStd, metadata.angle_deviation);
     };
-    const AngleSearchSettings defaultSearchSettings = {1.0, defaultSearchAngles};
+    const AngleSearchSettings defaultSearchSettings = {3.0, 2, defaultSearchAngles};
 } // namespace gmml
 #endif

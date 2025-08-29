@@ -26,28 +26,6 @@ namespace gmml
 {
     namespace
     {
-        std::vector<double> evenlySpaced(double lower, double upper, double approximateIncrement)
-        {
-            double range = upper - lower;
-            int steps = std::ceil(std::abs(range) / approximateIncrement);
-            if (steps == 0)
-            {
-                // range == 0, hence lower == upper
-                return {};
-            }
-            else
-            {
-                double increment = range / steps;
-                std::vector<double> result;
-                result.reserve(steps);
-                for (int k = 0; k < steps; k++)
-                {
-                    result.push_back(lower + k * increment);
-                }
-                return result;
-            }
-        }
-
         void applyMatrix(
             const assembly::Graph& graph,
             const assembly::Bounds& initial,
@@ -62,39 +40,99 @@ namespace gmml
             assembly::updateBoundsContainingAtoms(graph, bounds, movingAtoms);
         };
 
-        AngleOverlap WiggleAnglesOverlaps(
+        struct AngleWithAdjacent
+        {
+            double angle;
+            double lowerIncrement;
+            double upperIncrement;
+        };
+
+        AngleOverlap findLeastOverlapAngle(
             SearchOverlap searchOverlap,
             const assembly::Graph& graph,
             const assembly::Bounds& initialBounds,
             const std::vector<size_t>& movingAtoms,
             const DihedralCoordinates dihedral,
             size_t metadataIndex,
-            double anglePreference,
-            std::vector<double> angles)
+            const AngleSpacing& spacing)
         {
+            double preference = spacing.preference;
             assembly::Bounds bounds = initialBounds;
-            std::vector<AngleOverlap> results;
-            for (double angle : angles)
+            // lambda reuses and mutates bounds variable to avoid repeated memory allocation
+            // without parallel execution it's fine
+            auto overlapAt = [&](double angle)
             {
                 Matrix4x4 matrix = rotationTo(dihedral, constants::toRadians(angle));
                 applyMatrix(graph, initialBounds, movingAtoms, matrix, bounds);
                 double overlaps = searchOverlap(bounds);
 
-                AngleOverlap current {
-                    overlaps, AngleWithMetadata {angle, anglePreference, metadataIndex}
+                return AngleOverlap {
+                    overlaps, {angle, preference, metadataIndex}
                 };
-                if (overlaps <= 0.0)
+            };
+            AngleOverlap def = overlapAt(preference);
+            if (def.overlaps == 0)
+            {
+                return def;
+            }
+
+            double lowerRange = spacing.lowerDeviation;
+            double upperRange = spacing.upperDeviation;
+            uint lowerSteps = std::floor(lowerRange / spacing.initialIncrement);
+            uint upperSteps = std::floor(upperRange / spacing.initialIncrement);
+            double lowerIncrement = lowerRange / (lowerSteps + 1);
+            double upperIncrement = upperRange / (upperSteps + 1);
+
+            std::vector<AngleWithAdjacent> anglesToCheck;
+            anglesToCheck.reserve(lowerSteps + upperSteps + 1);
+            anglesToCheck.push_back({preference, lowerIncrement, upperIncrement});
+            for (size_t n = 1; n <= lowerSteps; n++)
+            {
+                anglesToCheck.push_back({preference - n * lowerIncrement, lowerIncrement, lowerIncrement});
+            }
+            for (size_t n = 1; n <= upperSteps; n++)
+            {
+                anglesToCheck.push_back({preference + n * upperIncrement, upperIncrement, upperIncrement});
+            }
+
+            std::sort(
+                anglesToCheck.begin(),
+                anglesToCheck.end(),
+                [&](const AngleWithAdjacent& a, const AngleWithAdjacent& b)
+                { return std::abs(a.angle - preference) < (b.angle - preference); });
+
+            std::vector<AngleOverlap> results {def};
+
+            for (size_t n = 1; n < anglesToCheck.size(); n++)
+            {
+                double angle = anglesToCheck[n].angle;
+                AngleOverlap current = overlapAt(angle);
+                results.push_back(current);
+                if (current.overlaps <= 0.0)
                 {
-                    // requires that the angles are sorted in order of closest to preference
-                    return current;
-                }
-                else
-                {
-                    results.push_back(current);
+                    break;
                 }
             }
             size_t index = bestOverlapResultIndex(results);
-            return results[index];
+            AngleWithAdjacent lookBy = anglesToCheck[index];
+            results = {results[index]};
+            for (size_t k = 0; k < spacing.halfIntervalSearches; k++)
+            {
+                double lowerInc = lookBy.lowerIncrement * 0.5;
+                double upperInc = lookBy.upperIncrement * 0.5;
+                double lower = lookBy.angle - lowerInc;
+                double upper = lookBy.angle + upperInc;
+                std::vector<AngleWithAdjacent> localAngles {
+                    {lower, lowerInc, lowerInc},
+                    {upper, upperInc, upperInc}
+                };
+                std::vector<AngleOverlap> local {overlapAt(lower), overlapAt(upper)};
+                size_t bestLocal = bestOverlapResultIndex(local);
+                results.push_back(local[bestLocal]);
+                lookBy = localAngles[bestLocal];
+            }
+            size_t bestIndex = bestOverlapResultIndex(results);
+            return results[bestIndex];
         }
     } // namespace
 
@@ -120,6 +158,7 @@ namespace gmml
     OverlapState wiggleUsingRotamers(
         SearchOverlap searchOverlap,
         SearchAngles searchAngles,
+        uint halfIntervalSearches,
         const DihedralAngleDataTable& metadataTable,
         const assembly::Graph& graph,
         const assembly::Bounds& initialBounds,
@@ -141,15 +180,14 @@ namespace gmml
         {
             double angle = preference.angles[n];
             double deviation = preference.deviation;
-            AngleOverlap best = WiggleAnglesOverlaps(
+            AngleOverlap best = findLeastOverlapAngle(
                 searchOverlap,
                 graph,
                 initialBounds,
                 movingAtoms,
                 coordinates,
                 indices[n],
-                preference.angles[n],
-                searchAngles(metadataTable.entries[rotamers[n]], angle, deviation));
+                searchAngles(metadataTable.entries[rotamers[n]], angle, deviation, halfIntervalSearches));
             // found something with no overlaps
             // if metadata and angles are sorted in order of preference, we can quit here
             if (best.overlaps <= 0.0)
@@ -166,6 +204,7 @@ namespace gmml
         const DihedralAngleDataTable& metadataTable,
         const PotentialTable& potential,
         SearchAngles searchAngles,
+        uint halfIntervalSearches,
         const std::vector<DihedralIndices>& dihedrals,
         const std::vector<std::vector<size_t>>& metadata,
         const std::vector<AngleSearchPreference>& preference,
@@ -202,6 +241,7 @@ namespace gmml
             OverlapState best = wiggleUsingRotamers(
                 searchOverlap,
                 searchAngles,
+                halfIntervalSearches,
                 metadataTable,
                 graph,
                 bounds,
@@ -213,20 +253,6 @@ namespace gmml
             bounds = best.bounds;
         }
         return bounds;
-    }
-
-    std::vector<double> evenlySpacedAngles(
-        double preference, double lowerDeviation, double upperDeviation, double increment)
-    {
-        auto closerToPreference = [&preference](double a, double b)
-        { return std::abs(a - preference) < std::abs(b - preference); };
-        auto lowerRange = evenlySpaced(preference - lowerDeviation, preference, increment);
-        auto upperRange = evenlySpaced(preference + upperDeviation, preference, increment);
-        std::vector<double> result = util::vectorAppend(lowerRange, upperRange);
-        result.push_back(preference);
-        // sorted angles enable early return from angle search when 0 overlaps found
-        std::sort(result.begin(), result.end(), closerToPreference);
-        return result;
     }
 
     std::vector<AngleSearchPreference> angleSearchPreference(
