@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         FORMAT,
         MODE,
         ORDER,
-        OVERLAPTOLERANCE
+        POTENTIALTHRESHOLD
     };
 
     enum OUTPUT_FORMAT
@@ -43,17 +43,17 @@ int main(int argc, char* argv[])
 
     enum OUTPUT_MODE
     {
+        CONTACTS,
         MOLECULES,
         RESIDUES,
-        ATOMS,
-        CONTACTS
+        ATOMS
     };
 
     enum OUTPUT_ORDER
     {
-        INDEX,
+        POTENTIAL,
         OVERLAP,
-        POTENTIAL
+        INDEX
     };
 
     using namespace gmml;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
         {ArgReq::optional, ArgType::option, FORMAT, "format", 'f', util::join("|", knownFormats)},
         {ArgReq::optional, ArgType::option, MODE, "mode", 'm', util::join("|", modes)},
         {ArgReq::optional, ArgType::option, ORDER, "order", 'o', util::join("|", orders)},
-        {ArgReq::optional, ArgType::option, OVERLAPTOLERANCE, "tolerance", 't', "value"}
+        {ArgReq::optional, ArgType::option, POTENTIALTHRESHOLD, "threshold", 't', "value"}
     };
     std::string programName = util::programName(argv);
 
@@ -104,8 +104,8 @@ int main(int argc, char* argv[])
     std::string inputFileName = "";
     OUTPUT_FORMAT format = TXT;
     OUTPUT_MODE mode = CONTACTS;
-    OUTPUT_ORDER order = INDEX;
-    double overlapTolerance = 0.0;
+    OUTPUT_ORDER order = POTENTIAL;
+    double potentialThreshold = 0.0;
     for (const auto& arg : arguments.args)
     {
         switch (arg.id)
@@ -148,12 +148,12 @@ int main(int argc, char* argv[])
                     order = OUTPUT_ORDER(index);
                     break;
                 }
-            case ARGUMENTS::OVERLAPTOLERANCE:
+            case ARGUMENTS::POTENTIALTHRESHOLD:
                 {
                     std::optional<double> opt = util::parseDouble(arg.value);
                     if (opt.has_value())
                     {
-                        overlapTolerance = opt.value();
+                        potentialThreshold = opt.value();
                     }
                     else
                     {
@@ -241,8 +241,7 @@ int main(int argc, char* argv[])
                            (data.residues.types[residueB] == ResidueType::Protein);
         bool eitherWater =
             util::contains({data.residues.names[residueA], data.residues.names[residueB]}, std::string("HOH"));
-        if (!bothProtein && !eitherWater &&
-            spheresOverlap(overlapTolerance, bounds.residues[residueA], bounds.residues[residueB]))
+        if (!bothProtein && !eitherWater && spheresOverlap(0.0, bounds.residues[residueA], bounds.residues[residueB]))
         {
             const std::vector<size_t>& atomsA = graph.residues.nodes.constituents[residueA];
             const std::vector<size_t>& atomsB = graph.residues.nodes.constituents[residueB];
@@ -268,13 +267,16 @@ int main(int argc, char* argv[])
                     {
                         Sphere a = bounds.atoms[n];
                         Sphere b = bounds.atoms[k];
-                        double cutoff = std::max(0.0, a.radius + b.radius - overlapTolerance);
+                        double cutoff = a.radius + b.radius;
                         double sqDist = squaredDistance(a.center, b.center);
                         if (sqDist < cutoff * cutoff)
                         {
                             PotentialFactor factor = potentialFactor(potential, elementA, elementB);
                             double lennardJones = lennardJonesPotential(factor, sqDist);
-                            result.push_back({n, k, (a.radius + b.radius) - std::sqrt(sqDist), lennardJones});
+                            if (lennardJones > potentialThreshold)
+                            {
+                                result.push_back({n, k, (a.radius + b.radius) - std::sqrt(sqDist), lennardJones});
+                            }
                         }
                     }
                 }
@@ -301,7 +303,7 @@ int main(int argc, char* argv[])
             std::to_string(contact.overlap),
             std::to_string(contact.potential)};
     };
-    std::vector<std::string> contactHeader {"", "", "", "", "", "", "", "", "overlap", "lennard-jones potential"};
+    std::vector<std::string> contactHeader {"", "", "", "", "", "", "", "", "vdw overlap", "lennard-jones potential"};
 
     util::TextTable textTable {{}, {}};
 
