@@ -52,9 +52,9 @@ namespace gmml
 
         std::vector<size_t> moleculeAtoms(const Graph& graph, size_t moleculeId)
         {
-            std::function<bool(const size_t&)> inMolecule = [&](const size_t& n)
-            { return atomMolecule(graph.source.indices, n) == moleculeId; };
-            std::vector<bool> selected = util::vectorMap(inMolecule, indices(graph.atoms.nodes));
+            std::vector<size_t> atomMolecule =
+                util::indicesToValues(graph.source.indices.residueMolecule, graph.source.indices.atomResidue);
+            std::vector<bool> selected = util::vectorEquals(atomMolecule, moleculeId);
             return util::boolsToIndices(selected);
         }
 
