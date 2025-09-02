@@ -61,7 +61,8 @@ namespace gmml
         Graph createAssemblyGraph(const Indices& indices, const graph::Database& atomGraphData)
         {
             graph::Graph atomGraph = graph::identity(atomGraphData);
-            graph::Graph residueGraph = graph::quotient(atomGraphData, indices.residueCount, indices.atomResidue);
+            graph::Graph residueGraph =
+                graph::quotient(graph::asData(atomGraph), indices.residueCount, indices.atomResidue);
             graph::Database residueData = graph::asData(residueGraph);
             graph::Graph moleculeGraph = graph::quotient(
                 residueData,
