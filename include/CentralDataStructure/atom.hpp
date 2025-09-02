@@ -46,6 +46,8 @@ namespace gmml
 
         inline bool isVisible() const { return isVisible_; }
 
+        inline bool isSoftDeleted() const { return softDeleted_; }
+
         unsigned int getNumberFromName() const;
 
         //////////////////////////////////////////////////////////
@@ -58,6 +60,8 @@ namespace gmml
         inline void setNumber(uint i) { number_ = i; }
 
         inline void makeInvisible() { isVisible_ = false; }
+
+        inline void softDelete() { softDeleted_ = true; }
 
         void setElement(Element element);
 
@@ -87,6 +91,7 @@ namespace gmml
         Element element_ = Element::Unknown;
         bool gotElement_ = false;
         bool isVisible_ = true;
+        bool softDeleted_ = false;
     };
 } // namespace gmml
 #endif
