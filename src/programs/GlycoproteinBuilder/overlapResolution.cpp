@@ -199,18 +199,16 @@ namespace gmml
                                    const std::string& outputDir,
                                    const std::string& prefix)
             {
-                std::vector<bool> residueIncluded(residueCount(graph.source), false);
-                for (size_t n = 0; n < residueCount(graph.source); n++)
-                {
-                    residueIncluded[n] = includedMolecules[residueMolecule(graph.source.indices, n)];
-                }
+                assembly::Selection selection =
+                    selectByAtomsAndMolecules(graph, graph.source.atomGraph.nodes.alive, includedMolecules);
                 off::OffFileData offData = toOffFileData(graph, data, coordinates);
                 std::string fileName = outputDir + "/" + prefix + ".off";
                 util::writeToFile(
                     fileName,
-                    [&](std::ostream& stream) {
+                    [&](std::ostream& stream)
+                    {
                         off::writeResiduesTogether(
-                            stream, offData, graph, util::boolsToIndices(residueIncluded), "GLYCOPROTEINBUILDER");
+                            stream, offData, graph, util::boolsToIndices(selection.residues), "GLYCOPROTEINBUILDER");
                     });
             };
 
