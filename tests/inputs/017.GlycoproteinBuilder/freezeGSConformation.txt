@@ -2,7 +2,7 @@ Protein:inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 prepareForMD:true
 
-numberOfSamples:2
+numberOfSamples:1
 
 persistCycles:5
 

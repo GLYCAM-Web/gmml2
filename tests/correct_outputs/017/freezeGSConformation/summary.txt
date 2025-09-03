@@ -8,7 +8,7 @@ Filename: inputs/017.GlycoproteinBuilder/freezeGSConformation.txt
 Protein: inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 Parameter                              | Value   
-numberOfSamples                          2       
+numberOfSamples                          1       
 rngSeed                                  0       
 prepareForMD                             true    
 persistCycles                            5       
@@ -21,8 +21,7 @@ ignoreHydrogen                           false
 
 #### Structures ####
 
-Filename       | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains
-default                     3292.800875                       A_24 A_38 A_40                                           
-0_glycoprotein   rejected   2156.368414                       A_24 A_38 A_40                                           
-1_glycoprotein   rejected   962.415992                        A_24 A_38 A_40                                           
+Filename     | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains
+default                   6.695666                          A_24 A_38 A_40                                           
+glycoprotein   rejected   9.450018                          A_24 A_38 A_40                                           
 

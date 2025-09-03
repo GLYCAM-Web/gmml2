@@ -1,8 +1,8 @@
 Protein:inputs/017.GlycoproteinBuilder/3SGK.pdb
 
-numberOfSamples:2
+numberOfSamples:1
 
-persistCycles:20
+persistCycles:2
 
 rngSeed:0
 

@@ -2,11 +2,11 @@ Protein:inputs/017.GlycoproteinBuilder/1eer_eop_Asn.pdb
 
 prepareForMD:true
 
-numberOfSamples:4
+numberOfSamples:1
 
 moveOverlappingSidechains:true
 
-overlapRejectionThreshold:0.01
+overlapRejectionThreshold:1.0
 
 persistCycles:5
 
