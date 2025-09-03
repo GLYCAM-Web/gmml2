@@ -200,7 +200,6 @@ namespace gmml
                         totalOverlaps(overlapSettings, graph, data, fullSelection, currentState.mutableData.bounds));
                     if (currentState.totalOverlap < bestState.totalOverlap)
                     {
-                        std::cout << "best: " << currentState.totalOverlap << "\n";
                         cycle = 0;
                         bestState = currentState;
                     }
@@ -249,13 +248,7 @@ namespace gmml
                 currentState.preferences.push_back(preference);
             }
             assembly::Selection fullSelection = assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
-            currentState.overlapSites = determineOverlapState(
-                overlapSettings.rejectionThreshold,
-                overlapSettings,
-                graph,
-                data,
-                fullSelection,
-                currentState.mutableData.bounds);
+            currentState.overlapSites.indices = util::indexVector(data.glycans.moleculeId);
             currentState.mutableData = adjustGlycans(
                 rng,
                 dihedralAngleDataTable,

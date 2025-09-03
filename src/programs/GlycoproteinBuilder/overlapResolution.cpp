@@ -289,7 +289,7 @@ namespace gmml
                 {
                     for (size_t n : assembly::moleculeSelectedAtoms(graph, selection, molecule))
                     {
-                        if (compareOverlaps(overlaps[n], overlapSettings.rejectionThreshold) == 1)
+                        if (overlaps[n] > overlapSettings.rejectionThreshold)
                         {
                             result[molecule] = true;
                         }
@@ -379,9 +379,6 @@ namespace gmml
                     persistCycles,
                     resolutionSettings.deleteSitesUntilResolved);
                 std::vector<Coordinate> coordinates = getCoordinates(state.mutableData.bounds.atoms);
-                const assembly::Selection fullSelection =
-                    assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
-
                 bool hasDeleted = util::contains(state.mutableData.moleculeIncluded, false);
                 std::string directory = outputDir;
                 assembly::Selection selection = assembly::selectByAtomsAndMolecules(
