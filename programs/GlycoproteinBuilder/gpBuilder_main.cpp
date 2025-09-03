@@ -35,6 +35,18 @@
 #include <string>
 #include <vector>
 
+void deleteNonProteinResidues(gmml::pdb::PdbData& data)
+{
+    for (size_t n = 0; n < data.assembly.indices.atomCount; n++)
+    {
+        size_t residueId = data.assembly.indices.atomResidue[n];
+        if (data.residues.types[residueId] != gmml::ResidueType::Protein)
+        {
+            data.objects.atoms[n]->softDelete();
+        }
+    }
+}
+
 int main(int argc, char* argv[])
 {
     enum ARGUMENTS
@@ -171,6 +183,7 @@ int main(int argc, char* argv[])
 
         const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
         pdb::PdbFile pdbFile = pdb::toPdbFile(settings.substrateFileName, pdb::modelsAsMolecules);
+        deleteNonProteinResidues(pdbFile.data);
         if (settings.MDprep)
         {
             util::log(__LINE__, __FILE__, util::INF, "Performing MDPrep aka preprocessing.");
@@ -183,8 +196,6 @@ int main(int argc, char* argv[])
         const DihedralAngleDataTable& dihedralAngleDataTable = gmml::dihedralAngleDataTable();
         const std::vector<Sphere> atomBounds =
             assembly::toAtomBounds(elementRadii, pdbFile.data.atoms.elements, pdbFile.data.atoms.coordinates);
-        const assembly::Graph pdbGraph =
-            assembly::createAssemblyGraph(pdbFile.data.assembly.indices, pdbFile.data.assembly.atomGraph);
         const assembly::Bounds bounds = assembly::toAssemblyBounds(pdbFile.data.assembly.indices, atomBounds);
         size_t glycoproteinAssemblyId = 0;
         Assembly* glycoprotein = getAssemblies(pdbFile)[glycoproteinAssemblyId];

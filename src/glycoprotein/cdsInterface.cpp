@@ -141,7 +141,8 @@ namespace gmml
             { return atomElements[n] != Element::H; };
             std::vector<bool> allAtoms(atoms.size(), true);
             std::vector<bool> nonHydrogenAtoms = util::vectorMap(nonHydrogen, util::indexVector(atomElements));
-            std::vector<bool> includeInOverlapCheck = excludeHydrogen ? nonHydrogenAtoms : allAtoms;
+            std::vector<bool> includeInOverlapCheck =
+                util::vectorAnd(graph.source.atomGraph.nodes.alive, excludeHydrogen ? nonHydrogenAtoms : allAtoms);
 
             std::vector<std::string> residueNames = gmml::residueNames(residues);
             std::vector<ResidueType> residueTypes = gmml::residueTypes(residues);

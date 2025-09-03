@@ -18,6 +18,14 @@
 #include <string>
 #include <vector>
 
+void deleteNonProteinResidues(gmml::pdb::PdbData& data)
+{
+    using namespace gmml;
+    std::vector<ResidueType> atomResidueType =
+        util::indicesToValues(data.residues.types, data.assembly.indices.atomResidue);
+    data.assembly.atomGraph.nodes.alive = util::vectorEquals(atomResidueType, ResidueType::Protein);
+}
+
 int main(int argc, char* argv[])
 {
     enum ARGUMENTS
@@ -103,6 +111,7 @@ int main(int argc, char* argv[])
     }
     pdb::PdbFile pdbFile = pdb::toPdbFile(inputFileName, {pdb::InputType::modelsAsMolecules, false});
     pdb::PdbData& pdbData = pdbFile.data;
+    deleteNonProteinResidues(pdbData);
     util::SparseVector<double> elementRadii = vanDerWaalsRadii();
     const std::vector<Sphere> atomBounds =
         assembly::toAtomBounds(elementRadii, pdbData.atoms.elements, pdbData.atoms.coordinates);

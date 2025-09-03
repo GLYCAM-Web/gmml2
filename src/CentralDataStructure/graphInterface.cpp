@@ -156,6 +156,7 @@ namespace gmml
         {
             atoms[n]->setIndex(n);
             addNode(graph);
+            graph.nodes.alive[n] = !atoms[n]->isSoftDeleted();
         }
         for (size_t n = 0; n < atoms.size(); n++)
         {
