@@ -171,7 +171,7 @@ namespace gmml
         std::vector<std::string> headerLines {
             "Produced by GMML (https://github.com/GLYCAM-Web/gmml2)  version " + std::string(GMML_VERSION)};
         generate3DStructureFiles(
-            structured({&carbohydrate}), carbohydrate.getName(), fileOutputDirectory, fileName, headerLines);
+            structured(carbohydrate), carbohydrate.getName(), fileOutputDirectory, fileName, headerLines);
     }
 
     std::string carbohydrateBuilder::GetNumberOfShapes(bool likelyShapesOnly) const

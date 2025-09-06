@@ -38,7 +38,7 @@ namespace gmml
         const std::string& outputFileNaming,
         const std::vector<std::string>& headerLines);
 
-    carbohydrate::CarbohydrateData structured(const std::vector<Molecule*>& molecules);
+    carbohydrate::CarbohydrateData structured(Molecule& molecule);
     assembly::Graph createVisibleAssemblyGraph(const carbohydrate::CarbohydrateData& data);
 
 } // namespace gmml

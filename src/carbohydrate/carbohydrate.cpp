@@ -675,9 +675,9 @@ namespace gmml
         return;
     }
 
-    carbohydrate::CarbohydrateData structured(const std::vector<Molecule*>& molecules)
+    carbohydrate::CarbohydrateData structured(Molecule& molecule)
     {
-        GraphIndexData indices = toIndexData(molecules);
+        GraphIndexData indices = toIndexData({&molecule});
         assembly::Graph graph = createCompleteAssemblyGraph(indices);
         graph::Graph atomGraph = graph.atoms;
         std::vector<Atom*>& atoms = indices.objects.atoms;

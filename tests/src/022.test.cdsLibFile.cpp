@@ -33,7 +33,7 @@ int main()
         residue->determineType(name);
         createAtomsForResidue(params, residue, name);
     }
-    carbohydrate::CarbohydrateData carbData = structured({&molecule});
+    carbohydrate::CarbohydrateData carbData = structured(molecule);
     assembly::Graph graph = createVisibleAssemblyGraph(carbData);
     // Need a central place for this:
     std::string fileName = "./libAsPdbFile.pdb";
