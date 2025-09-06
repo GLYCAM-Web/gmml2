@@ -156,8 +156,7 @@ namespace gmml
                 return index;
             }
 
-            std::array<Coordinate, 3> superimpositionCoordinates(
-                const std::vector<SuperimpositionValues>& values, Residue* reducing)
+            std::array<Coordinate, 3> anomericCarbonCoordinates(Residue* reducing)
             {
                 // Want: residue.FindAtomByTag("anomeric-carbon"); The below is risky as it uses atoms names, i.e. would
                 // break for Sialic acid. ToDo Ok so I reckon the below is just assuming alpha or beta depending on the
@@ -166,9 +165,14 @@ namespace gmml
                 //   This won't work as sometimes want alpha, sometimes beta. i.e. a coordinateOppositeToNeighborAverage
                 //   function
                 // This needs to be abstracted so it works for C2 reducing residues:
-
                 auto atomCoord = [&](const std::string& name) { return reducing->FindAtom(name)->coordinate(); };
-                std::vector<Coordinate> coords {atomCoord("C5"), atomCoord("O5"), atomCoord("C1")};
+                return {atomCoord("C5"), atomCoord("O5"), atomCoord("C1")};
+            }
+
+            std::array<Coordinate, 3> superimpositionCoordinates(
+                const std::vector<SuperimpositionValues>& values, const std::array<Coordinate, 3>& anomeric)
+            {
+                std::vector<Coordinate> coords {anomeric[0], anomeric[1], anomeric[2]};
                 for (size_t n = 0; n < 3; n++)
                 {
                     coords.push_back(calculateCoordinateFromInternalCoords(
@@ -301,8 +305,8 @@ namespace gmml
                 const GlycositeInput& glycositeInput = glycosite.input;
                 size_t tableIndex =
                     glycosylationTableIndex(glycosylationTable, glycositeResidueName, glycositeInput.proteinResidueId);
-                std::array<Coordinate, 3> superimposedCoords =
-                    superimpositionCoordinates(glycosylationTable.values[tableIndex], attachment.reducing);
+                std::array<Coordinate, 3> superimposedCoords = superimpositionCoordinates(
+                    glycosylationTable.values[tableIndex], anomericCarbonCoordinates(attachment.reducing));
                 std::array<Coordinate, 3> targetCoords = proteinTargetCoordinates(
                     pdbData, util::reverse(glycosylationTable.atomNames[tableIndex]), glycositeResidue);
                 std::vector<Atom*> glycanAtoms = attachment.glycan->mutableAtoms();
