@@ -33,7 +33,6 @@ namespace gmml
             std::vector<Element> elements;
             std::vector<double> charges;
             std::vector<Sphere> initialState;
-            std::vector<bool> all;
             std::vector<bool> includeInEachOverlapCheck;
             std::vector<bool> includeInMainOverlapCheck;
             std::vector<bool> partOfMovableSidechain;

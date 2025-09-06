@@ -114,13 +114,13 @@ namespace gmml
         GlycoproteinAssembly toGlycoproteinAssemblyStructs(
             const AminoAcidTable& aminoAcidTable,
             const util::SparseVector<double>& elementRadii,
+            const std::vector<bool>& includedElements,
             const pdb::PdbData& pdbData,
             const GraphIndexData& graphData,
             const assembly::Graph& graph,
             const std::vector<size_t>& glycanMoleculeIds,
             const std::vector<size_t>& glycositeIds,
-            const PartialLinkageData& linkageData,
-            bool excludeHydrogen)
+            const PartialLinkageData& linkageData)
         {
             const std::vector<Atom*>& atoms = graphData.objects.atoms;
             const std::vector<Residue*>& residues = graphData.objects.residues;
@@ -141,8 +141,8 @@ namespace gmml
             { return atomElements[n] != Element::H; };
             std::vector<bool> allAtoms(atoms.size(), true);
             std::vector<bool> nonHydrogenAtoms = util::vectorMap(nonHydrogen, util::indexVector(atomElements));
-            std::vector<bool> includeInOverlapCheck =
-                util::vectorAnd(graph.source.atomGraph.nodes.alive, excludeHydrogen ? nonHydrogenAtoms : allAtoms);
+            std::vector<bool> includeInOverlapCheck = util::vectorAnd(
+                graph.source.atomGraph.nodes.alive, util::indicesToValues(includedElements, atomElements));
 
             std::vector<std::string> residueNames = gmml::residueNames(residues);
             std::vector<ResidueType> residueTypes = gmml::residueTypes(residues);
@@ -241,7 +241,6 @@ namespace gmml
                 atomElements,
                 atomCharges(atoms),
                 atomBoundingSpheres,
-                allAtoms,
                 includeInOverlapCheck,
                 includeInOverlapCheck,
                 partOfMovableSidechain};

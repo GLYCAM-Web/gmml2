@@ -227,6 +227,8 @@ int main(int argc, char* argv[])
         std::vector<size_t> glycositeIds = util::vectorMap(glycositeId, glycosites);
 
         PartialLinkageData linkages = linkageData(dihedralAngleDataTable, graphData, graph, glycosidicLinkages);
+        std::vector<bool> includedElements(ElementCount, true);
+        includedElements[Element::H] = !settings.ignoreHydrogen;
 
         GlycoproteinAssembly assembly = addSidechainRotamers(
             aminoAcidTable,
@@ -234,13 +236,13 @@ int main(int argc, char* argv[])
             toGlycoproteinAssemblyStructs(
                 aminoAcidTable,
                 elementRadii,
+                includedElements,
                 pdbFile.data,
                 graphData,
                 graph,
                 glycanIndices,
                 glycositeIds,
-                linkages,
-                settings.ignoreHydrogen));
+                linkages));
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck = util::vectorAnd(

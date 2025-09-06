@@ -30,13 +30,13 @@ namespace gmml
         GlycoproteinAssembly toGlycoproteinAssemblyStructs(
             const AminoAcidTable& aminoAcidTable,
             const util::SparseVector<double>& elementRadii,
+            const std::vector<bool>& includedElements,
             const pdb::PdbData& pdbData,
             const GraphIndexData& graphData,
             const assembly::Graph& graph,
             const std::vector<size_t>& glycanMoleculeIds,
             const std::vector<size_t>& glycositeIds,
-            const PartialLinkageData& linkageData,
-            bool excludeHydrogen);
+            const PartialLinkageData& linkageData);
     } // namespace gpbuilder
 } // namespace gmml
 
