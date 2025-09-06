@@ -156,12 +156,8 @@ namespace gmml
                 return index;
             }
 
-            // This function prepares the glycan molecule in the glycan_ assembly for superimpostion onto an amino acid
-            // in the protein It does this by "growing" the atoms of the amino acid side chain (e.g. Asn, Thr or Ser)
-            // out from the glycan reducing terminal Another function will use these additional atoms to superimpose the
-            // glycan onto residue
-            void prepareGlycansForSuperimpositionToParticularResidue(
-                const GlycosylationTable& table, size_t index, Attachment& attachment)
+            std::array<Coordinate, 3> superimpositionCoordinates(
+                const std::vector<SuperimpositionValues>& values, Residue* reducing)
             {
                 // Want: residue.FindAtomByTag("anomeric-carbon"); The below is risky as it uses atoms names, i.e. would
                 // break for Sialic acid. ToDo Ok so I reckon the below is just assuming alpha or beta depending on the
@@ -170,23 +166,10 @@ namespace gmml
                 //   This won't work as sometimes want alpha, sometimes beta. i.e. a coordinateOppositeToNeighborAverage
                 //   function
                 // This needs to be abstracted so it works for C2 reducing residues:
-                // Delete aglycon atoms from glycan.
-                Residue* aglycone = attachment.aglycone;
-                for (auto& atom : aglycone->getAtoms())
-                {
-                    aglycone->deleteAtom(atom);
-                }
-                aglycone->setName("SUP");
 
-                const std::vector<std::string>& names = table.atomNames[index];
-                const std::vector<SuperimpositionValues>& values = table.values[index];
-                Residue* reducing = attachment.reducing;
-                Atom* anomericAtom = reducing->FindAtom("C1");
-                Coordinate coordC5 = reducing->FindAtom("C5")->coordinate();
-                Coordinate coordO5 = reducing->FindAtom("O5")->coordinate();
-                Coordinate coordC1 = anomericAtom->coordinate();
-                std::vector<Coordinate> coords {coordC5, coordO5, coordC1};
-                for (size_t n = 0; n < values.size(); n++)
+                auto atomCoord = [&](const std::string& name) { return reducing->FindAtom(name)->coordinate(); };
+                std::vector<Coordinate> coords {atomCoord("C5"), atomCoord("O5"), atomCoord("C1")};
+                for (size_t n = 0; n < 3; n++)
                 {
                     coords.push_back(calculateCoordinateFromInternalCoords(
                         coords[n],
@@ -196,38 +179,20 @@ namespace gmml
                         values[n].dihedral,
                         values[n].distance));
                 }
-                std::vector<Atom*> atoms;
-                atoms.reserve(names.size());
-                for (size_t n = 0; n < names.size(); n++)
-                {
-                    atoms.push_back(aglycone->addAtom(std::make_unique<Atom>(names[n], coords[n + 3])));
-                }
-                addBond(anomericAtom, atoms[0]);
+                return {coords[5], coords[4], coords[3]};
             }
 
-            void superimposeGlycanToGlycosite(const pdb::PdbData& pdbData, Residue* glycosite, Attachment& attachment)
+            std::array<Coordinate, 3> proteinTargetCoordinates(
+                const pdb::PdbData& pdbData, const std::vector<std::string>& names, Residue* glycosite)
             {
-                // superimposition_atoms_ points to three atoms that were added to the glycan. Based on their names e.g.
-                // CG, ND2, we will superimpose them onto the correspoinding "target" atoms in the protein residue
-                // (glycosite_residue).
                 size_t glycositeId = util::indexOf(pdbData.objects.residues, glycosite);
                 std::string residueId = pdb::residueStringId(pdbData, glycositeId);
                 std::vector<Atom*> proteinAtoms = glycosite->getAtoms();
                 std::vector<std::string> proteinAtomNames = atomNames(proteinAtoms);
-                std::vector<Atom*> aglyconeAtoms = util::reverse(attachment.aglycone->mutableAtoms());
-                std::vector<std::string> aglyconeAtomNames = atomNames(aglyconeAtoms);
-                // Sanity check
-                if (aglyconeAtoms.size() < 3)
-                {
-                    throw std::runtime_error(
-                        "The aglycone does not contain enough atoms to perform the requested "
-                        "superimposition to " +
-                        residueId + ".\nCheck your input structure!\n");
-                }
                 // Get the 3 target atoms from protein residue.
                 auto nthCoord = [&](size_t n)
                 {
-                    const std::string& name = aglyconeAtomNames[n];
+                    const std::string& name = names[n];
                     size_t index = util::indexOf(proteinAtomNames, name);
                     if (index == proteinAtoms.size())
                     {
@@ -237,16 +202,9 @@ namespace gmml
                     }
                     return proteinAtoms[index]->coordinate();
                 };
-                std::array<Coordinate, 3> targetCoords {
+                return {
                     {nthCoord(0), nthCoord(1), nthCoord(2)}
                 };
-                std::array<Coordinate, 3> superimposedCoords {
-                    {aglyconeAtoms[0]->coordinate(), aglyconeAtoms[1]->coordinate(), aglyconeAtoms[2]->coordinate()}
-                };
-                Matrix4x4 mat = superimposition(targetCoords, superimposedCoords);
-                std::vector<Atom*> glycanAtoms = attachment.glycan->mutableAtoms();
-                setAtomCoordinates(aglyconeAtoms, transform(mat, atomCoordinates(aglyconeAtoms)));
-                setAtomCoordinates(glycanAtoms, transform(mat, atomCoordinates(glycanAtoms)));
             }
 
             std::vector<size_t> linkagesContainingResidue(
@@ -337,19 +295,24 @@ namespace gmml
                 std::vector<ResidueLinkage> linkages;
                 initializeCarbohydrate(*glycan, linkages, parameterManager, elementRadii, dihedralAngleData, sequence);
                 Attachment attachment = toAttachment(glycan);
-                Residue* aglycone = attachment.aglycone;
                 Residue* reducingResidue = attachment.reducing;
                 Residue* glycositeResidue = pdbData.objects.residues[glycosite.residueId];
                 std::string glycositeResidueName = glycositeResidue->getName();
                 const GlycositeInput& glycositeInput = glycosite.input;
                 size_t tableIndex =
                     glycosylationTableIndex(glycosylationTable, glycositeResidueName, glycositeInput.proteinResidueId);
-                prepareGlycansForSuperimpositionToParticularResidue(glycosylationTable, tableIndex, attachment);
-                superimposeGlycanToGlycosite(pdbData, glycositeResidue, attachment);
+                std::array<Coordinate, 3> superimposedCoords =
+                    superimpositionCoordinates(glycosylationTable.values[tableIndex], attachment.reducing);
+                std::array<Coordinate, 3> targetCoords = proteinTargetCoordinates(
+                    pdbData, util::reverse(glycosylationTable.atomNames[tableIndex]), glycositeResidue);
+                std::vector<Atom*> glycanAtoms = attachment.glycan->mutableAtoms();
+                Matrix4x4 matrix = superimposition(targetCoords, superimposedCoords);
+                setAtomCoordinates(glycanAtoms, transform(matrix, atomCoordinates(glycanAtoms)));
                 addBond(
                     glycositeResidue->FindAtom(glycosylationTable.connectingAtomNames[tableIndex]),
                     guessAnomericAtomByForeignNeighbor(attachment.reducing));
                 glycositeResidue->setName(glycosylationTable.renamedResidues[tableIndex]);
+                Residue* aglycone = attachment.aglycone;
                 std::vector<size_t> aglyconeLinkages = linkagesContainingResidue(linkages, aglycone);
                 if (aglyconeLinkages.size() != 1)
                 {
