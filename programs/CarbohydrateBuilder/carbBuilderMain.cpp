@@ -185,7 +185,7 @@ int main(int argc, char** argv)
                 initializeCarbohydrate(
                     carbohydrate, linkages, parameterManager, elementRadii, dihedralAngleData, sequenceData);
                 generate3DStructureFiles(
-                    structured(carbohydrate), carbohydrate.getName(), outputDir, line.id, headerLines);
+                    structured(carbohydrate, {}), carbohydrate.getName(), outputDir, line.id, headerLines);
                 dot::Config config {dotBaseDir, SNFGDir, outputDir + "/" + line.id + ".dot"};
                 printGraphViz(config, instantiate(parseSequence(line.sequence)));
             }

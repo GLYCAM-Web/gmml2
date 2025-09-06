@@ -675,7 +675,7 @@ namespace gmml
         return;
     }
 
-    carbohydrate::CarbohydrateData structured(Molecule& molecule)
+    carbohydrate::CarbohydrateData structured(Molecule& molecule, const std::vector<ResidueLinkage>& linkages)
     {
         GraphIndexData indices = toIndexData({&molecule});
         assembly::Graph graph = createCompleteAssemblyGraph(indices);
@@ -697,7 +697,70 @@ namespace gmml
 
         carbohydrate::EdgeData edgeData {std::vector<std::string>(edgeCount(atomGraph), "")};
 
-        return {atomData, residueData, edgeData, indices.indices, graph.atoms.source};
+        auto indexOfAtoms = [&atoms](const std::vector<Atom*>& toFind)
+        {
+            std::vector<size_t> result;
+            result.reserve(toFind.size());
+            for (auto& res : toFind)
+            {
+                result.push_back(util::indexOf(atoms, res));
+            }
+            return result;
+        };
+
+        std::vector<std::array<size_t, 4>> rotatableBondDihedralAtoms;
+        std::vector<std::vector<size_t>> rotatableBondMovingAtoms;
+        std::vector<size_t> residueLinkageEdgeId;
+        std::vector<std::vector<size_t>> residueLinkageBonds;
+        std::vector<RotamerType> linkageRotamerTypes;
+        std::vector<std::vector<size_t>> dihedralMetadata;
+
+        for (size_t k = 0; k < linkages.size(); k++)
+        {
+            const ResidueLinkage& linkage = linkages[k];
+            const std::vector<RotatableBond>& linkageRotatableBonds = linkage.rotatableBonds;
+            std::vector<size_t> bondIndices =
+                util::indexVectorWithOffset(rotatableBondDihedralAtoms.size(), linkageRotatableBonds);
+            util::insertInto(dihedralMetadata, linkage.dihedralMetadata);
+            for (size_t q = 0; q < linkageRotatableBonds.size(); q++)
+            {
+                const RotatableBond& bond = linkageRotatableBonds[q];
+                std::array<size_t, 4> dihedralAtoms;
+                for (size_t i = 0; i < 4; i++)
+                {
+                    dihedralAtoms[i] = util::indexOf(atoms, bond.dihedralAtoms[i]);
+                }
+                rotatableBondDihedralAtoms.push_back(dihedralAtoms);
+                rotatableBondMovingAtoms.push_back(indexOfAtoms(bond.movingAtoms));
+            }
+            size_t firstResidue = util::indexOf(residues, linkage.link.residues.first);
+            size_t secondResidue = util::indexOf(residues, linkage.link.residues.second);
+            const std::vector<size_t>& adjacencies = graph.residues.nodes.nodeAdjacencies[firstResidue];
+            size_t edgeN = util::indexOf(adjacencies, secondResidue);
+            if (edgeN >= adjacencies.size())
+            {
+                throw std::runtime_error("no residue adjacency");
+            }
+            size_t edgeId = graph.residues.nodes.edgeAdjacencies[firstResidue][edgeN];
+            residueLinkageEdgeId.push_back(edgeId);
+            residueLinkageBonds.push_back(bondIndices);
+            linkageRotamerTypes.push_back(linkage.rotamerType);
+        }
+
+        carbohydrate::RotatableBondData rotatableBondData {
+            rotatableBondDihedralAtoms, rotatableBondMovingAtoms, dihedralMetadata};
+
+        carbohydrate::ResidueLinkageData residueLinkageData {
+            linkageRotamerTypes, residueLinkageEdgeId, residueLinkageBonds};
+
+        return {
+            atomData,
+            residueData,
+            edgeData,
+            rotatableBondData,
+            residueLinkageData,
+            indices.indices,
+            graph.atoms.source};
     }
 
     assembly::Graph createVisibleAssemblyGraph(const carbohydrate::CarbohydrateData& data)
