@@ -1,7 +1,6 @@
 #include "include/glycoprotein/glycoproteinCreation.hpp"
 
 #include "include/CentralDataStructure/Selections/atomSelections.hpp"
-#include "include/CentralDataStructure/Selections/residueSelections.hpp"
 #include "include/CentralDataStructure/assembly.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/cdsFunctions.hpp"

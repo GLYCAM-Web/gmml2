@@ -1,6 +1,5 @@
 #include "include/programs/glycosylationSiteFinder.hpp"
 
-#include "include/CentralDataStructure/Selections/residueSelections.hpp"
 #include "include/assembly/assemblyIndices.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/fileType/pdb/pdbFunctions.hpp"

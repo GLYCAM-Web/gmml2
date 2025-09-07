@@ -25,7 +25,6 @@ namespace gmml
     void ClearAtomLabels(Residue* residue);
     ResidueLinkage* selectLinkageWithIndex(
         std::vector<ResidueLinkage>& inputLinkages, const long long unsigned int indexQuery);
-    std::vector<ResidueLinkage> SplitLinkagesIntoPermutants(std::vector<ResidueLinkage>& inputLinkages);
     std::vector<DihedralAtoms> splitAtomVectorIntoRotatableDihedrals(const std::vector<Atom*>& atoms);
     std::vector<DihedralAtoms> findRotatableDihedralsConnectingResidues(const ResidueLink& link);
 } // namespace gmml

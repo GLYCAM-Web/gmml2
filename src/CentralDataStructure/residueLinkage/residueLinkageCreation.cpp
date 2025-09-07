@@ -1,7 +1,6 @@
 #include "include/CentralDataStructure/residueLinkage/residueLinkageCreation.hpp"
 
 #include "include/CentralDataStructure/Selections/atomSelections.hpp"
-#include "include/CentralDataStructure/Selections/residueSelections.hpp"
 #include "include/CentralDataStructure/Selections/shaperSelections.hpp"
 #include "include/CentralDataStructure/atom.hpp"
 #include "include/CentralDataStructure/residue.hpp"

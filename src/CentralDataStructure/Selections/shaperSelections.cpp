@@ -102,37 +102,6 @@ namespace gmml
         throw std::runtime_error(ss.str());
     }
 
-    // Gonna choke on cyclic glycans. Add a check for IsVisited when that is required.
-    /* This is a straight copy from glycoprotein_builder. I need a high level class that deals with both
-     * ResidueLinkages, ring shapes etc. That way I can create X shapes of a molecule. For now this will do to figure
-     * out some implementation details like file naming.
-     */
-    std::vector<ResidueLinkage> SplitLinkagesIntoPermutants(std::vector<ResidueLinkage>& inputLinkages)
-    {
-        std::vector<ResidueLinkage> sortedLinkages;
-        for (auto& linkage : inputLinkages)
-        {
-            if (linkage.rotamerType == RotamerType::conformer)
-            {
-                sortedLinkages.push_back(linkage);
-            }
-            else // if not a conformer
-            {
-                std::vector<size_t> rotatableDihedralIndices = rotatableDihedralsWithMultipleRotamers(
-                    linkage.dihedralMetadata); // only want the rotatabe dihedrals within a linkage
-                                               // that have multiple rotamers. Some bonds won't.
-                for (size_t index : rotatableDihedralIndices)
-                {
-                    ResidueLinkage splitLinkage = linkage; // Copy it to get correct info into class
-                    splitLinkage.rotatableBonds = {linkage.rotatableBonds[index]};
-                    splitLinkage.dihedralMetadata = {linkage.dihedralMetadata[index]};
-                    sortedLinkages.push_back(splitLinkage);
-                }
-            }
-        }
-        return sortedLinkages;
-    }
-
     //  This function splits that list into groups of 4 and creates RotatableDihedral object
     std::vector<DihedralAtoms> splitAtomVectorIntoRotatableDihedrals(const std::vector<Atom*>& atoms)
     {
