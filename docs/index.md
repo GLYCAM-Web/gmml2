@@ -31,3 +31,5 @@ Molecules can further be assembled into larger structures (e.g multi-chain prote
 [Swig wrapping](swig-wrapping.md)
 
 [Releases and versioning](releases-versioning.md)
+
+[Scripts and coding standards](scripts-standards.md)
