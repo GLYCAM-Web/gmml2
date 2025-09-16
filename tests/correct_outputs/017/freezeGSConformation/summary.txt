@@ -22,6 +22,6 @@ ignoreHydrogen                           false
 #### Structures ####
 
 Filename     | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains
-default                   6.695666                          A_24 A_38 A_40                                           
-glycoprotein   rejected   9.450018                          A_24 A_38 A_40                                           
+default                   24.211807                         A_24 A_38 A_40                                           
+glycoprotein   rejected   31.370467                         A_24 A_38 A_40                                           
 

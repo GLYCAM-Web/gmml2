@@ -179,22 +179,22 @@ namespace gmml
           { ".*"   , "O8"     , "Omg7" , -59.6  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 4 , 1 , {"derivative"}                        , {"ulosonate"}    , "C8" , "C7" , "C6" , "O6"  },
           { ".*"   , "O8"     , "Omg9" ,  73.4  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , ""   , 5 , 1 , {"derivative"}                        , {"ulosonate"}    , "O9" , "C9" , "C8" , "O8"  },
           // Protein linkages
-          // ASN // Values are from Petrescu et al 2004.
+          // ASN // Values are from Petrescu et al 2004. Psi values from https://pmc.ncbi.nlm.nih.gov/articles/PMC3258596/.
           { "C."   , "ND2"    , "Chi1" , 191.6  ,   AngleStd{14.4, 14.4}  , 0.497 , RotamerType::conformer   , "A"  , 4 , 1 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
           { "C."   , "ND2"    , "Chi2" , 177.6  ,   AngleStd{43.0, 43.0}  , 0.497 , RotamerType::conformer   , "A"  , 3 , 1 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 177.3  ,   AngleStd{12.3, 12.3}  , 0.497 , RotamerType::conformer   , "A"  , 2 , 1 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C."   , "ND2"    , "Psi"  , 180.0  ,   AngleStd{6.3,   6.3}  , 0.497 , RotamerType::conformer   , "A"  , 2 , 1 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
           { "C1"   , "ND2"    , "Phi"  , 141.0  ,   AngleStd{21.3, 21.3}  , 0.497 , RotamerType::conformer   , "A"  , 1 , 1 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
           { "C."   , "ND2"    , "Chi1" ,  63.6  ,   AngleStd{ 8.9,  8.9}  , 0.178 , RotamerType::conformer   , "B"  , 4 , 2 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
           { "C."   , "ND2"    , "Chi2" , 191.1  ,   AngleStd{31.6, 31.6}  , 0.178 , RotamerType::conformer   , "B"  , 3 , 2 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 178.5  ,   AngleStd{13.9, 13.9}  , 0.178 , RotamerType::conformer   , "B"  , 2 , 2 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C."   , "ND2"    , "Psi"  , 180.0  ,   AngleStd{6.3,   6.3}  , 0.178 , RotamerType::conformer   , "B"  , 2 , 2 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
           { "C1"   , "ND2"    , "Phi"  , 133.7  ,   AngleStd{21.5, 21.5}  , 0.178 , RotamerType::conformer   , "B"  , 1 , 2 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
           { "C."   , "ND2"    , "Chi1" , 290.6  ,   AngleStd{12.7, 12.7}  , 0.235 , RotamerType::conformer   , "C"  , 4 , 3 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
           { "C."   , "ND2"    , "Chi2" , 152.9  ,   AngleStd{23.9, 23.9}  , 0.235 , RotamerType::conformer   , "C"  , 3 , 3 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 173.1  ,   AngleStd{12.2, 12.2}  , 0.235 , RotamerType::conformer   , "C"  , 2 , 3 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C."   , "ND2"    , "Psi"  , 180.0  ,   AngleStd{6.3,   6.3}  , 0.235 , RotamerType::conformer   , "C"  , 2 , 3 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
           { "C1"   , "ND2"    , "Phi"  , 148.0  ,   AngleStd{20.3, 20.3}  , 0.235 , RotamerType::conformer   , "C"  , 1 , 3 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
           { "C."   , "ND2"    , "Chi1" , 302.3  ,   AngleStd{11.5, 11.5}  , 0.090 , RotamerType::conformer   , "D"  , 4 , 4 , {}             , {"amino-acid"}            , "CG" , "CB" , "CA" , "N"   },
           { "C."   , "ND2"    , "Chi2" , 255.0  ,   AngleStd{28.8, 28.8}  , 0.090 , RotamerType::conformer   , "D"  , 3 , 4 , {}             , {"amino-acid"}            , "ND2", "CG" , "CB" , "CA"  },
-          { "C."   , "ND2"    , "Psi"  , 178.1  ,   AngleStd{11.5, 11.5}  , 0.090 , RotamerType::conformer   , "D"  , 2 , 4 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
+          { "C."   , "ND2"    , "Psi"  , 180.0  ,   AngleStd{6.3,   6.3}  , 0.090 , RotamerType::conformer   , "D"  , 2 , 4 , {}             , {"amino-acid"}            , "C." , "ND2", "CG" , "CB"  },
           { "C1"   , "ND2"    , "Phi"  , 147.5  ,   AngleStd{23.9, 23.9}  , 0.090 , RotamerType::conformer   , "D"  , 1 , 4 , {}             , {"amino-acid"}            , "C." , "C." , "ND2", "CG"  },
           // THR // Values are from Lovell et al "PENULTIMATE ROTAMER LIBRARY"
           { "C."   , "OG1"    , "Chi1" ,  59.0  ,   AngleStd{10.0, 10.0}  , 0.490 , RotamerType::conformer   , "p"  , 3 , 1 , {}             , {"amino-acid"}            , "OG1", "CB" , "CA" , "N"   },
