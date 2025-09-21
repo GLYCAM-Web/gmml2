@@ -6,6 +6,8 @@ numberOfSamples:2
 
 persistCycles:5
 
+overlapRejectionThreshold:1.0
+
 rngSeed:0
 
 ProteinResidue, GlycanName:

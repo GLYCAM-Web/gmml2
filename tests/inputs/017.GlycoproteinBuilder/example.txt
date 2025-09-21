@@ -4,6 +4,8 @@ numberOfSamples:1
 
 persistCycles:5
 
+overlapRejectionThreshold:1.0
+
 rngSeed:0
 
 prepareForMD:true

@@ -6,6 +6,8 @@ numberOfSamples:1
 
 persistCycles:5
 
+overlapRejectionThreshold:1.0
+
 deleteIncompatibleSites:true
 
 rngSeed:0
