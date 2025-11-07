@@ -2,6 +2,7 @@
 #define INCLUDE_GLYCOPROTEIN_CDSINTERFACE_HPP
 
 #include "include/CentralDataStructure/graphInterface.hpp"
+#include "include/assembly/assemblyTypes.hpp"
 #include "include/fileType/pdb/pdbData.hpp"
 #include "include/glycoprotein/glycoproteinStructs.hpp"
 #include "include/metadata/aminoAcids.hpp"
@@ -34,6 +35,8 @@ namespace gmml
             const pdb::PdbData& pdbData,
             const GraphIndexData& graphData,
             const assembly::Graph& graph,
+            const std::vector<MoleculeType>& moleculeTypes,
+            const assembly::Selection& proteinSelection,
             const std::vector<size_t>& glycanMoleculeIds,
             const std::vector<size_t>& glycositeIds,
             const PartialLinkageData& linkageData);

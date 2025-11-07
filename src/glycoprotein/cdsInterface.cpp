@@ -118,18 +118,14 @@ namespace gmml
             const pdb::PdbData& pdbData,
             const GraphIndexData& graphData,
             const assembly::Graph& graph,
+            const std::vector<MoleculeType>& moleculeTypes,
+            const assembly::Selection& proteinSelection,
             const std::vector<size_t>& glycanMoleculeIds,
             const std::vector<size_t>& glycositeIds,
             const PartialLinkageData& linkageData)
         {
             const std::vector<Atom*>& atoms = graphData.objects.atoms;
             const std::vector<Residue*>& residues = graphData.objects.residues;
-
-            std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
-            util::setIndicesTo(
-                moleculeTypes,
-                glycanMoleculeIds,
-                std::vector<MoleculeType>(glycanMoleculeIds.size(), MoleculeType::glycan));
 
             std::vector<std::string> atomNames = gmml::atomNames(atoms);
             std::vector<Sphere> atomBoundingSpheres =
@@ -209,27 +205,19 @@ namespace gmml
                 return result;
             };
 
-            std::function<bool(const MoleculeType&)> isProtein = [](const MoleculeType& type)
-            { return type == MoleculeType::protein; };
-            std::vector<MoleculeType> residueMoleculeTypes =
-                util::indicesToValues(moleculeTypes, residueMolecules(graph.source.indices));
-            std::vector<MoleculeType> atomMoleculeTypes =
-                util::indicesToValues(residueMoleculeTypes, atomResidues(graph.source.indices));
-
             std::function<std::string(const size_t&)> chainId = [&](const size_t& n)
             {
                 size_t residueId =
-                    (residueMoleculeTypes[n] == MoleculeType::protein)
+                    proteinSelection.residues[n]
                         ? n
                         : glycositeIds[util::indexOf(glycanMoleculeIds, graphData.indices.residueMolecule[n])];
                 return pdbData.residues.chainIds[residueId];
             };
 
             std::vector<std::string> chainIds = util::vectorMap(chainId, util::indexVector(residues));
-            std::vector<bool> proteinResidue = util::vectorMap(isProtein, residueMoleculeTypes);
-            std::vector<bool> proteinAtom = util::vectorMap(isProtein, atomMoleculeTypes);
-            std::vector<uint> residueNumbers = serializeNonProtein(gmml::residueNumbers(residues), proteinResidue);
-            std::vector<uint> atomNumbers = serializeNonProtein(gmml::atomNumbers(atoms), proteinAtom);
+            std::vector<uint> residueNumbers =
+                serializeNonProtein(gmml::residueNumbers(residues), proteinSelection.residues);
+            std::vector<uint> atomNumbers = serializeNonProtein(gmml::atomNumbers(atoms), proteinSelection.atoms);
 
             AtomData atomData {
                 atomNames,
@@ -260,7 +248,7 @@ namespace gmml
                 sidechainWeights,
                 sidechainPotentialBounds};
 
-            MoleculeData moleculeData {moleculeTypes, util::vectorMap(isProtein, moleculeTypes)};
+            MoleculeData moleculeData {moleculeTypes, proteinSelection.molecules};
             GlycanData glycanData {glycositeIds, glycanMoleculeIds, linkageData.glycanLinkageIds};
 
             AssemblyData data {

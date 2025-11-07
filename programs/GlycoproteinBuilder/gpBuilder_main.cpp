@@ -2,6 +2,7 @@
 #include "include/CentralDataStructure/molecule.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
+#include "include/assembly/assemblySelection.hpp"
 #include "include/assembly/assemblyTypes.hpp"
 #include "include/fileType/pdb/atomicConnectivity.hpp"
 #include "include/fileType/pdb/pdbFile.hpp"
@@ -226,6 +227,14 @@ int main(int argc, char* argv[])
         { return site.residueId; };
         std::vector<size_t> glycositeIds = util::vectorMap(glycositeId, glycosites);
 
+        std::vector<MoleculeType> moleculeTypes(graphData.indices.moleculeCount, MoleculeType::protein);
+        util::setIndicesTo(
+            moleculeTypes, glycanIndices, std::vector<MoleculeType>(glycanIndices.size(), MoleculeType::glycan));
+        std::function<bool(const MoleculeType&)> isProtein = [](const MoleculeType& type)
+        { return type == MoleculeType::protein; };
+        assembly::Selection proteinSelection =
+            assembly::selectByMolecules(graph, util::vectorMap(isProtein, moleculeTypes));
+
         PartialLinkageData linkages = linkageData(dihedralAngleDataTable, graphData, graph, glycosidicLinkages);
         std::vector<bool> includedElements(ElementCount, true);
         includedElements[Element::H] = !settings.ignoreHydrogen;
@@ -240,6 +249,8 @@ int main(int argc, char* argv[])
                 pdbFile.data,
                 graphData,
                 graph,
+                moleculeTypes,
+                proteinSelection,
                 glycanIndices,
                 glycositeIds,
                 linkages));
