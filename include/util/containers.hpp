@@ -189,7 +189,6 @@ namespace gmml
         {
             for (size_t n = 0; n < indices.size(); n++)
             {
-
                 modify[indices[n]] = values[n];
             }
         }
