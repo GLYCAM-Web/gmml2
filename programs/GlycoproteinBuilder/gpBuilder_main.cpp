@@ -1,4 +1,5 @@
 #include "include/CentralDataStructure/assembly.hpp"
+#include "include/CentralDataStructure/cdsFunctions.hpp"
 #include "include/CentralDataStructure/molecule.hpp"
 #include "include/assembly/assemblyBounds.hpp"
 #include "include/assembly/assemblyGraph.hpp"
@@ -234,6 +235,14 @@ int main(int argc, char* argv[])
         { return type == MoleculeType::protein; };
         assembly::Selection proteinSelection =
             assembly::selectByMolecules(graph, util::vectorMap(isProtein, moleculeTypes));
+        std::vector<Element> atomElements = gmml::atomElements(graphData.objects.atoms);
+
+        std::function<bool(const size_t&)> isProteinHydrogen = [&](size_t n)
+        { return proteinSelection.atoms[n] && (atomElements[n] == Element::H); };
+        graphData.indices.atomAlive = util::vectorAnd(
+            graphData.indices.atomAlive,
+            util::vectorNot(util::vectorMap(isProteinHydrogen, util::indexVector(graphData.indices.atomCount))));
+        assembly::Graph subgraph = createCompleteAssemblyGraph(graphData);
 
         PartialLinkageData linkages = linkageData(dihedralAngleDataTable, graphData, graph, glycosidicLinkages);
         std::vector<bool> includedElements(ElementCount, true);
@@ -248,7 +257,7 @@ int main(int argc, char* argv[])
                 includedElements,
                 pdbFile.data,
                 graphData,
-                graph,
+                subgraph,
                 moleculeTypes,
                 proteinSelection,
                 glycanIndices,
