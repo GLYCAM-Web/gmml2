@@ -16,7 +16,6 @@ overlapRejectionThreshold                1.000000
 useInitialGlycositeResidueConformation   true    
 moveOverlappingSidechains                false   
 deleteUnresolvableGlycosites             false   
-atomOverlapTolerance                     0.000000
 ignoreHydrogen                           false   
 
 #### Structures ####
