@@ -223,7 +223,7 @@ namespace gmml
                 atomNames,
                 atomTypes(atoms),
                 atomNumbers,
-                util::serializedNumberVector(atoms.size()),
+                util::serializedNumberVector(graphData.indices.atomAlive),
                 atomAtomicNumbers(atoms),
                 atomElementStrings(atoms),
                 atomElements,
