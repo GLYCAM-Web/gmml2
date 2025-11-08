@@ -15,10 +15,6 @@ Note that the GMML2 code was originally developed within GMML1. We then forked t
 
 [Testing the Library](#testing-the-library)
 
-[For Developers](#for-developers)
-
-[Coding Standards](#coding-standards)
-
 ---
 ## Overview
 

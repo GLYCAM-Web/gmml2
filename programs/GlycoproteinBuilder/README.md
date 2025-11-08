@@ -87,12 +87,4 @@ Additional settings:
 | useInitialGlycositeResidueConformation | false | Enable to preserve chi1 and chi2 angles of protein-glycan linkages according to their initial shape |
 | moveOverlappingSidechains | false | Enable to adjust protein sidechains from their initial shape if and only if it allows for reduced glycan overlap or a greater range of glycan shapes |
 | deleteUnresolvableGlycosites | false | Enable to delete glycans in samples where the overlap rejection threshold is exceeded in order to produce a structure with no overlaps. Structures with deleted sites will be placed in a /deletions directory. Glycans will not be deleted in the default structure |
-
-Experimental settings
-
-The following settings are mainly used by our development team for purposes of improving our algorithms. Regular users are advised to leave them at their default values
-| Setting  | Default | Explanation |
-| --- | --- | --- |
-| atomRadiiSource | chimera | amber or chimera. The radii used by chimera are based on those from amber, but are slightly smaller |
-| atomOverlapTolerance | 0.6 | How much atoms are allowed to overlap in their van der Waals radii. Larger values are more permissive, whereas smaller values are more restrictive |
-| ignoreHydrogen | false | Whether hydrogen atoms are included in overlap checks or not |
+| ignoreHydrogen | false | Whether glycan hydrogen atoms are included in overlap checks or not |
