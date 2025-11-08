@@ -91,7 +91,6 @@ namespace gmml
                   boolStr(input.useInitialGlycositeResidueConformation)},
                  {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
                  {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
-                 {overlapToleranceParameter, std::to_string(input.overlapTolerance)},
                  {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)}}
             };
 

@@ -18,7 +18,6 @@ namespace gmml
         static const std::string moveOverlappingSidechainsParameter = "moveOverlappingSidechains";
         static const std::string deleteIncompatibleSitesParameter = "deleteUnresolvableGlycosites";
         static const std::string overlapRejectionThresholdParameter = "overlapRejectionThreshold";
-        static const std::string overlapToleranceParameter = "atomOverlapTolerance";
         static const std::string ignoreHydrogenParameter = "ignoreHydrogen";
         static const std::string seedParameter = "rngSeed";
         static const std::string prepareForMDParameter = "prepareForMD";
@@ -36,7 +35,6 @@ namespace gmml
             std::string substrateFileName = "Undefined"; // Program should throw if left as "Undefined".
             ulong numberOfSamples = 1;
             ulong persistCycles = 5;
-            double overlapTolerance = 0.0;
             bool ignoreHydrogen = false;
             bool useInitialGlycositeResidueConformation = false;
             bool moveOverlappingSidechains = false;

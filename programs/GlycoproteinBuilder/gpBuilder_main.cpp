@@ -272,9 +272,11 @@ int main(int argc, char* argv[])
 
         std::vector<bool> foundElements = gmml::foundElements(assembly.data.atoms.elements);
 
+        double overlapTolerance = 0.0;
+
         OverlapSettings overlapSettings {
             potentialTable(elementRadii, foundElements),
-            settings.overlapTolerance,
+            overlapTolerance,
             settings.overlapRejectionThreshold,
         };
 

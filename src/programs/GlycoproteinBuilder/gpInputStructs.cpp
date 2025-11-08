@@ -133,10 +133,6 @@ namespace gmml
                         {
                             gpInputs.overlapRejectionThreshold = parseDouble(value);
                         }
-                        else if (parameter == overlapToleranceParameter)
-                        {
-                            gpInputs.overlapTolerance = parseDouble(value);
-                        }
                         else if (parameter == ignoreHydrogenParameter)
                         {
                             gpInputs.ignoreHydrogen = parseBool(value);
