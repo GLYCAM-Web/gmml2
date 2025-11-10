@@ -175,7 +175,8 @@ namespace gmml
                         data.atoms.elements,
                         data.residueEdges.atomsCloseToEdge);
                     bestResults[iteration] = {
-                        overlapVectorSum(overlap), {0.0, 0.0, metadataIndex}
+                        overlapAboveThresholdSum(overlapSettings.rejectionThreshold, overlap),
+                        {0.0, 0.0, metadataIndex}
                     };
                     states[iteration] = mutableData.bounds;
                 };
