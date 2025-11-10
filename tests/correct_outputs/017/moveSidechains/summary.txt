@@ -22,5 +22,5 @@ ignoreHydrogen                           false
 
 Filename     | Status   | Highest Lennard-Jones potential | Failed glycosites | Deleted glycosites | Moved sidechains
 default                   0.952843                                                                                   
-glycoprotein   rejected   2.406741                          A_24                                     GLU72           
+glycoprotein   rejected   2.996502                          A_24                                     GLU72           
 
