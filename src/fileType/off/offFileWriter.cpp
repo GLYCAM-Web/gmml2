@@ -229,12 +229,12 @@ namespace gmml
         { // For writing each residue separately
             stream << "!!index array str"
                    << "\n";
-            for (size_t n : indices(graph.residues.nodes))
+            for (size_t n : aliveIndices(graph.residues.nodes))
             {
                 stream << " \"" << data.residues.names[n] << "\""
                        << "\n";
             }
-            for (size_t n : indices(graph.residues.nodes))
+            for (size_t n : aliveIndices(graph.residues.nodes))
             {
                 writeUnit(stream, data.format, graph, data.residues, data.atoms, {n}, data.residues.names[n]);
             }

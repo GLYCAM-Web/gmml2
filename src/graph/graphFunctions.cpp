@@ -18,9 +18,10 @@ namespace gmml
 
         std::vector<bool> reachableNodes(const Graph& graph, const std::vector<bool>& excluded, size_t starting)
         {
-            std::vector<bool> reachable(nodeCount(graph), false);
+            size_t count = nodeCount(graph);
+            std::vector<bool> reachable(count, false);
             std::vector<size_t> toVisit;
-            toVisit.reserve(nodeCount(graph));
+            toVisit.reserve(count);
             toVisit.push_back(starting);
             reachable[starting] = !excluded[starting];
             while (!toVisit.empty())

@@ -102,7 +102,7 @@ namespace gmml
         {
             std::vector<bool> nodeAlive =
                 util::indicesToBools(graph.nodes.constituents.size(), graph.nodes.aliveIndices);
-            std::vector<bool> edgeAlive(graph.edges.nodeAdjacencies.size(), true);
+            std::vector<bool> edgeAlive(edgeCount(graph), true);
             return {
                 {util::indexVector(nodeAlive), nodeAlive},
                 {util::indexVector(edgeAlive), edgeAlive, graph.edges.nodeAdjacencies}
@@ -144,7 +144,7 @@ namespace gmml
             std::vector<std::vector<size_t>>& nodeNodes = adjacencies.first;
             std::vector<std::vector<size_t>>& nodeEdges = adjacencies.second;
             return {
-                {util::boolsToIndices(groupAlive), nodeNodes, nodeEdges, constituents},
+                {util::indexVector(groupCount), util::boolsToIndices(groupAlive), nodeNodes, nodeEdges, constituents},
                 {edges, edgeNodes},
                 source
             };

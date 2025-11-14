@@ -345,7 +345,7 @@ namespace gmml
             graph::Graph graph = condensedSequenceGraph(sequence);
 
             std::vector<dot::Node> nodes;
-            nodes.reserve(nodeCount(graph));
+            nodes.reserve(aliveNodeCount(graph));
             std::vector<dot::Edge> linkages;
             linkages.reserve(edgeCount(graph));
 
@@ -355,7 +355,7 @@ namespace gmml
                 nodeIndices[graph.nodes.aliveIndices[n]] = n;
             }
 
-            for (size_t n = 0; n < nodeCount(graph); n++)
+            for (size_t n = 0; n < aliveNodeCount(graph); n++)
             {
                 size_t index = graph.nodes.aliveIndices[n];
                 std::string& monosaccharideName = monosaccharideNames[index];

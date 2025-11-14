@@ -597,7 +597,7 @@ namespace gmml
                 [&](std::ostream& stream)
                 {
                     off::OffFileData offData = toOffFileData(data, graph);
-                    off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), name);
+                    off::writeResiduesTogether(stream, offData, graph, aliveIndices(graph.residues.nodes), name);
                 });
         }
         catch (const std::string& exceptionMessage)

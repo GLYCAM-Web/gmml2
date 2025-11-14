@@ -148,7 +148,7 @@ namespace gmml
                 std::vector<size_t> sidechainResiduesWithGlycanOverlap;
                 sidechainResiduesWithGlycanOverlap.reserve(residueCount(graph.source));
 
-                for (size_t residue : indices(graph.residues.nodes))
+                for (size_t residue : aliveIndices(graph.residues.nodes))
                 {
                     if (data.residues.types[residue] == ResidueType::Protein &&
                         data.residues.sidechainDihedrals[residue].size() > 0 &&

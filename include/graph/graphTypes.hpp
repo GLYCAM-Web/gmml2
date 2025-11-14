@@ -30,6 +30,7 @@ namespace gmml
 
         struct GraphNodes
         {
+            std::vector<size_t> indices;
             std::vector<size_t> aliveIndices;
             std::vector<std::vector<size_t>> nodeAdjacencies;
             std::vector<std::vector<size_t>> edgeAdjacencies;
@@ -53,13 +54,15 @@ namespace gmml
 
         inline size_t edgeCount(const Database& db) { return db.edges.indices.size(); }
 
-        inline size_t nodeCount(const Graph& graph) { return graph.nodes.aliveIndices.size(); }
+        inline size_t nodeCount(const Graph& graph) { return graph.nodes.indices.size(); }
+
+        inline size_t aliveNodeCount(const Graph& graph) { return graph.nodes.aliveIndices.size(); }
 
         inline size_t edgeCount(const Graph& graph) { return graph.edges.sourceIndices.size(); }
 
         inline size_t sourceNodeCount(const Graph& graph) { return graph.nodes.constituents.size(); }
 
-        inline const std::vector<size_t>& indices(const GraphNodes& nodes) { return nodes.aliveIndices; }
+        inline const std::vector<size_t>& aliveIndices(const GraphNodes& nodes) { return nodes.aliveIndices; }
 
         inline size_t sourceIndex(const GraphEdges& edges, size_t n) { return edges.sourceIndices[n]; }
 

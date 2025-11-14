@@ -54,7 +54,7 @@ int main()
         util::writeToFile(
             fileName,
             [&](std::ostream& stream)
-            { off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), "MOLECULE"); });
+            { off::writeResiduesTogether(stream, offData, graph, aliveIndices(graph.residues.nodes), "MOLECULE"); });
     }
     catch (...)
     {
@@ -67,7 +67,7 @@ int main()
     {
         off::OffFileData offData = toOffFileData(carbData, graph);
         offData.residues.numbers = std::vector<uint>(residueCount(graph.source), 1);
-        for (size_t n : indices(graph.residues.nodes))
+        for (size_t n : aliveIndices(graph.residues.nodes))
         {
             std::vector<size_t> residueAtoms = assembly::residueAtoms(graph, n);
             std::vector<bool> alive = util::indicesToValues(graph.atoms.source.nodes.alive, residueAtoms);

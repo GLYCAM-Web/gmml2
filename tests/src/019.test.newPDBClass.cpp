@@ -75,8 +75,9 @@ int main(int argc, char* argv[])
 
             util::writeToFile(
                 outputFile + ".off",
-                [&](std::ostream& stream)
-                { off::writeResiduesTogether(stream, offData, graph, indices(graph.residues.nodes), "Assembly"); });
+                [&](std::ostream& stream) {
+                    off::writeResiduesTogether(stream, offData, graph, aliveIndices(graph.residues.nodes), "Assembly");
+                });
         }
         catch (std::runtime_error& error)
         {
