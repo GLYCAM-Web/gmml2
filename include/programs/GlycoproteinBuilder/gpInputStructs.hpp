@@ -3,6 +3,7 @@
 
 #include "include/util/constants.hpp"
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
