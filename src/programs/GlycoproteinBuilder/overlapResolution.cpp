@@ -68,18 +68,21 @@ namespace gmml
             const std::string deletionDir = structureDir + "/deletions";
 
             MetadataOrder initialMetadataOrder =
-                [](pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>& metadataVector)
-            { return util::indexVector(metadataVector); };
+                [](pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>& metadataVector, bool allowFallback)
+            { return allowFallback ? util::indexVector(metadataVector) : std::vector<size_t> {0}; };
             // only picks out the first of randomly ordered metadata
-            MetadataOrder randomMetadataSelection =
-                [&resolutionSettings](
-                    pcg32& rng, const DihedralAngleDataTable& table, const std::vector<size_t>& metadataIndices)
+            MetadataOrder randomMetadataSelection = [&resolutionSettings](
+                                                        pcg32& rng,
+                                                        const DihedralAngleDataTable& table,
+                                                        const std::vector<size_t>& metadataIndices,
+                                                        bool allowFallback)
             {
                 std::vector<size_t> reordered =
                     util::weightedRandomOrder(rng, util::indicesToValues(table.weights, metadataIndices));
-                return resolutionSettings.allowRotamerFallback ? reordered : std::vector<size_t> {reordered[0]};
+                return allowFallback ? reordered : std::vector<size_t> {reordered[0]};
             };
             bool freezeGlycositeResidueConformation = resolutionSettings.useInitialGlycositeResidueConformation;
+            bool allowRotamerFallback = resolutionSettings.allowRotamerFallback;
             bool moveOverlappingSidechains = resolutionSettings.moveOverlappingSidechains;
             auto standardDeviation = [](const AngleSettings& settings, const DihedralAngleData& metadata)
             {
@@ -104,11 +107,12 @@ namespace gmml
                 return metadata.default_angle + num * (num < 0 ? std.first : std.second);
             };
             GlycanShapeRandomizer randomizeShape =
-                [&dihedralAngleDataTable, &randomAngle, &freezeGlycositeResidueConformation](
+                [&dihedralAngleDataTable, &randomAngle, &freezeGlycositeResidueConformation, &allowRotamerFallback](
                     pcg32& rng,
                     const AngleSettings& settings,
                     const AssemblyData& data,
                     const assembly::Bounds& bounds,
+                    const LinkageShapeSettings& shapeSettings,
                     size_t glycanId)
             {
                 return randomLinkageShapePreference(
@@ -117,6 +121,7 @@ namespace gmml
                     settings,
                     data,
                     bounds,
+                    shapeSettings,
                     glycanId,
                     randomAngle,
                     freezeGlycositeResidueConformation);
@@ -304,6 +309,20 @@ namespace gmml
                 return result;
             };
 
+            std::function<std::vector<bool>(const size_t&)> defaultLinkageFallback = [&](size_t glycanId)
+            { return std::vector<bool>(data.glycans.linkages[glycanId].size(), true); };
+
+            const std::vector<std::vector<bool>> defaultAllowFallback =
+                util::vectorMap(defaultLinkageFallback, util::indexVector(data.glycans.linkages));
+
+            std::function<std::vector<bool>(const size_t&)> glycanLinkageFallback = [&](size_t glycanId) {
+                return std::vector<bool>(
+                    data.glycans.linkages[glycanId].size(), resolutionSettings.allowRotamerFallback);
+            };
+
+            const std::vector<std::vector<bool>> iterationAllowFallback =
+                util::vectorMap(glycanLinkageFallback, util::indexVector(data.glycans.linkages));
+
             auto runInitial = [&](pcg32 rng, StructureStats& stats)
             {
                 uint persistCycles = resolutionSettings.persistCycles;
@@ -315,6 +334,11 @@ namespace gmml
                     double wiggleRoom = 3.0 - preferenceDev;
                     return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, initialMetadataOrder};
                 };
+
+                const LinkageShapeSettings shapeSettings {defaultAllowFallback};
+                const std::vector<GlycanShapePreference> initialPreference = randomizeInitialShapePreference(
+                    rng, toAngleSettings(0), randomizeShape, shapeSettings, data, initialState.bounds);
+
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
                     dihedralAngleDataTable,
@@ -322,6 +346,8 @@ namespace gmml
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
+                    shapeSettings,
+                    initialPreference,
                     overlapSettings,
                     graph,
                     data,
@@ -371,6 +397,11 @@ namespace gmml
                     double wiggleRoom = 3.0 - preferenceDev;
                     return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, randomMetadataSelection};
                 };
+
+                const LinkageShapeSettings shapeSettings {iterationAllowFallback};
+                const std::vector<GlycanShapePreference> initialPreference = randomizeInitialShapePreference(
+                    rng, toAngleSettings(0), randomizeShape, shapeSettings, data, initialState.bounds);
+
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
                     dihedralAngleDataTable,
@@ -378,6 +409,8 @@ namespace gmml
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
+                    shapeSettings,
+                    initialPreference,
                     overlapSettings,
                     graph,
                     data,

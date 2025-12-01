@@ -13,7 +13,8 @@ namespace gmml
 {
     namespace gpbuilder
     {
-        typedef std::function<std::vector<size_t>(pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>&)>
+        typedef std::function<std::vector<size_t>(
+            pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>&, bool)>
             MetadataOrder;
 
         struct AngleSettings
@@ -25,12 +26,18 @@ namespace gmml
             MetadataOrder randomMetadata;
         };
 
+        struct LinkageShapeSettings
+        {
+            std::vector<std::vector<bool>> allowRotamerFallback;
+        };
+
         GlycanShapePreference randomLinkageShapePreference(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleTable,
             const AngleSettings& settings,
             const AssemblyData& data,
             const assembly::Bounds& bounds,
+            const LinkageShapeSettings& glycanSettings,
             size_t glycanId,
             std::function<double(pcg32&, const AngleSettings&, const DihedralAngleData& metadata)> randomAngle,
             bool freezeGlycositeResidueConformation);

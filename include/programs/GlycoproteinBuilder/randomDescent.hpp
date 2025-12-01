@@ -42,7 +42,12 @@ namespace gmml
             SidechainAdjustment;
 
         typedef std::function<GlycanShapePreference(
-            pcg32& rng, const AngleSettings&, const AssemblyData&, const assembly::Bounds&, size_t glycanId)>
+            pcg32& rng,
+            const AngleSettings&,
+            const AssemblyData&,
+            const assembly::Bounds&,
+            const LinkageShapeSettings&,
+            size_t)>
             GlycanShapeRandomizer;
 
         GlycoproteinState randomDescent(
@@ -50,12 +55,21 @@ namespace gmml
             const DihedralAngleDataTable& dihedralAngleDataTable,
             PersistCycleAngleSettings toAngleSettings,
             GlycanShapeRandomizer randomizeShape,
+            const LinkageShapeSettings& shapeSettings,
             SidechainAdjustment adjustSidechains,
             uint persistCycles,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
             const GlycoproteinState& initialState);
+
+        std::vector<GlycanShapePreference> randomizeInitialShapePreference(
+            pcg32& rng,
+            const AngleSettings& angleSettings,
+            GlycanShapeRandomizer& randomizeShape,
+            const LinkageShapeSettings& shapeSettings,
+            const AssemblyData& data,
+            const assembly::Bounds& bounds);
 
         GlycoproteinState resolveOverlapsWithWiggler(
             pcg32& rng,
@@ -64,6 +78,8 @@ namespace gmml
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
+            const LinkageShapeSettings& shapeSettings,
+            const std::vector<GlycanShapePreference>& initialPreference,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,

@@ -123,6 +123,7 @@ namespace gmml
             const DihedralAngleDataTable& dihedralAngleDataTable,
             PersistCycleAngleSettings toAngleSettings,
             GlycanShapeRandomizer randomizeShape,
+            const LinkageShapeSettings& shapeSettings,
             SidechainAdjustment adjustSidechains,
             uint persistCycles,
             const OverlapSettings& overlapSettings,
@@ -181,8 +182,8 @@ namespace gmml
                     for (auto& glycanId : util::shuffleVector(rng, concertGlycans))
                     {
                         const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
-                        currentState.preferences[glycanId] =
-                            randomizeShape(rng, settings, data, currentState.mutableData.bounds, glycanId);
+                        currentState.preferences[glycanId] = randomizeShape(
+                            rng, settings, data, currentState.mutableData.bounds, shapeSettings, glycanId);
                         const GlycanShapePreference& glycanPreferences = currentState.preferences[glycanId];
                         for (size_t n = 0; n < linkageIds.size(); n++)
                         {
@@ -219,6 +220,24 @@ namespace gmml
             return currentState;
         }
 
+        std::vector<GlycanShapePreference> randomizeInitialShapePreference(
+            pcg32& rng,
+            const AngleSettings& angleSettings,
+            GlycanShapeRandomizer& randomizeShape,
+            const LinkageShapeSettings& shapeSettings,
+            const AssemblyData& data,
+            const assembly::Bounds& bounds)
+        {
+            std::vector<GlycanShapePreference> result;
+            const std::vector<size_t> glycanIndices = util::indexVector(data.glycans.moleculeId);
+            result.reserve(glycanIndices.size());
+            for (size_t glycanId : glycanIndices)
+            {
+                result.push_back(randomizeShape(rng, angleSettings, data, bounds, shapeSettings, glycanId));
+            }
+            return result;
+        }
+
         GlycoproteinState resolveOverlapsWithWiggler(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleDataTable,
@@ -226,6 +245,8 @@ namespace gmml
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
+            const LinkageShapeSettings& shapeSettings,
+            const std::vector<GlycanShapePreference>& initialPreference,
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
@@ -235,18 +256,17 @@ namespace gmml
         {
             GlycoproteinState currentState;
             currentState.mutableData = initialState;
+            currentState.preferences = initialPreference;
             AngleSettings initialAngleSettings = toAngleSettings(0);
             const std::vector<size_t> glycanIndices = util::indexVector(data.glycans.moleculeId);
             for (size_t glycanId : glycanIndices)
             {
-                auto preference =
-                    randomizeShape(rng, initialAngleSettings, data, currentState.mutableData.bounds, glycanId);
                 const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                 for (size_t k = 0; k < linkageIds.size(); k++)
                 {
-                    setLinkageShapeToPreference(graph, data, currentState.mutableData, linkageIds[k], preference[k]);
+                    setLinkageShapeToPreference(
+                        graph, data, currentState.mutableData, linkageIds[k], currentState.preferences[glycanId][k]);
                 }
-                currentState.preferences.push_back(preference);
             }
             assembly::Selection fullSelection = assembly::selectByAtoms(graph, data.atoms.includeInEachOverlapCheck);
             currentState.overlapSites.indices = util::indexVector(data.glycans.moleculeId);
@@ -277,6 +297,7 @@ namespace gmml
                     dihedralAngleDataTable,
                     toAngleSettings,
                     randomizeShape,
+                    shapeSettings,
                     adjustSidechains,
                     persistCycles,
                     overlapSettings,

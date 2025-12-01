@@ -24,6 +24,7 @@ namespace gmml
             const AngleSettings& settings,
             const AssemblyData& data,
             const assembly::Bounds& bounds,
+            const LinkageShapeSettings& glycanSettings,
             size_t glycanId,
             std::function<double(pcg32&, const AngleSettings&, const DihedralAngleData& metadata)> randomAngle,
             bool freezeGlycositeResidueConformation)
@@ -36,6 +37,7 @@ namespace gmml
                 size_t linkageId = linkages[n];
                 const std::vector<size_t>& rotatableBonds = data.residueLinkages.rotatableBonds[linkageId];
                 bool isGlycositeLinkage = data.residueLinkages.isGlycositeLinkage[linkageId];
+                bool fallback = glycanSettings.allowRotamerFallback[glycanId][n];
                 std::vector<std::vector<double>> angles;
                 angles.resize(rotatableBonds.size());
                 for (size_t k = 0; k < rotatableBonds.size(); k++)
@@ -50,7 +52,7 @@ namespace gmml
                 {
                     size_t firstbondId = rotatableBonds[0];
                     std::vector<size_t> order =
-                        settings.randomMetadata(rng, dihedralAngleTable, dihedralMetadata[firstbondId]);
+                        settings.randomMetadata(rng, dihedralAngleTable, dihedralMetadata[firstbondId], fallback);
                     std::vector<bool> isFrozen(rotatableBonds.size(), false);
                     ConformerShapePreference pref {isFrozen, angles, order};
                     if (isGlycositeLinkage && freezeGlycositeResidueConformation)
@@ -79,7 +81,8 @@ namespace gmml
                     order.reserve(rotatableBonds.size());
                     for (size_t bondId : rotatableBonds)
                     {
-                        order.push_back(settings.randomMetadata(rng, dihedralAngleTable, dihedralMetadata[bondId]));
+                        order.push_back(
+                            settings.randomMetadata(rng, dihedralAngleTable, dihedralMetadata[bondId], fallback));
                     }
                     result.push_back(PermutationShapePreference {angles, order});
                 }
