@@ -113,9 +113,10 @@ namespace gmml
                     const AssemblyData& data,
                     const assembly::Bounds& bounds,
                     const LinkageShapeSettings& shapeSettings,
+                    const std::vector<GlycanShapePreference>& currentPreference,
                     size_t glycanId)
             {
-                return randomLinkageShapePreference(
+                GlycanShapePreference result = randomLinkageShapePreference(
                     rng,
                     dihedralAngleDataTable,
                     settings,
@@ -125,6 +126,15 @@ namespace gmml
                     glycanId,
                     randomAngle,
                     freezeGlycositeResidueConformation);
+                const std::vector<bool>& retain = shapeSettings.retainInitialPreference[glycanId];
+                for (size_t n = 0; n < retain.size(); n++)
+                {
+                    if (retain[n])
+                    {
+                        result[n] = currentPreference[glycanId][n];
+                    }
+                }
+                return result;
             };
 
             auto getCoordinates = [](const std::vector<Sphere>& bounds)
@@ -309,19 +319,39 @@ namespace gmml
                 return result;
             };
 
-            std::function<std::vector<bool>(const size_t&)> defaultLinkageFallback = [&](size_t glycanId)
+            const std::vector<size_t> glycanIndices = util::indexVector(data.glycans.moleculeId);
+
+            std::function<std::vector<bool>(const size_t&)> allLinkagesFalse = [&](size_t glycanId)
+            { return std::vector<bool>(data.glycans.linkages[glycanId].size(), false); };
+
+            std::function<std::vector<bool>(const size_t&)> allLinkagesTrue = [&](size_t glycanId)
             { return std::vector<bool>(data.glycans.linkages[glycanId].size(), true); };
 
-            const std::vector<std::vector<bool>> defaultAllowFallback =
-                util::vectorMap(defaultLinkageFallback, util::indexVector(data.glycans.linkages));
+            const std::vector<std::vector<bool>> dontRetainInitialPreference =
+                util::vectorMap(allLinkagesFalse, glycanIndices);
 
-            std::function<std::vector<bool>(const size_t&)> glycanLinkageFallback = [&](size_t glycanId) {
-                return std::vector<bool>(
+            const std::vector<std::vector<bool>> defaultAllowFallback = util::vectorMap(allLinkagesTrue, glycanIndices);
+
+            std::function<std::vector<bool>(const size_t&)> retainPreference = [&](size_t glycanId)
+            {
+                std::vector<bool> result(data.glycans.linkages[glycanId].size(), false);
+                result[0] = resolutionSettings.forceGlycositeRotamerVariety;
+                return result;
+            };
+
+            const std::vector<std::vector<bool>> retainInitialPreference =
+                util::vectorMap(retainPreference, glycanIndices);
+
+            std::function<std::vector<bool>(const size_t&)> glycanLinkageFallback = [&](size_t glycanId)
+            {
+                std::vector<bool> result(
                     data.glycans.linkages[glycanId].size(), resolutionSettings.allowRotamerFallback);
+                result[0] = result[0] && !resolutionSettings.forceGlycositeRotamerVariety;
+                return result;
             };
 
             const std::vector<std::vector<bool>> iterationAllowFallback =
-                util::vectorMap(glycanLinkageFallback, util::indexVector(data.glycans.linkages));
+                util::vectorMap(glycanLinkageFallback, glycanIndices);
 
             auto runInitial = [&](pcg32 rng, StructureStats& stats)
             {
@@ -335,7 +365,8 @@ namespace gmml
                     return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, initialMetadataOrder};
                 };
 
-                const LinkageShapeSettings shapeSettings {defaultAllowFallback};
+                const LinkageShapeSettings shapeSettings {dontRetainInitialPreference, defaultAllowFallback};
+
                 const std::vector<GlycanShapePreference> initialPreference = randomizeInitialShapePreference(
                     rng, toAngleSettings(0), randomizeShape, shapeSettings, data, initialState.bounds);
 
@@ -398,9 +429,11 @@ namespace gmml
                     return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, randomMetadataSelection};
                 };
 
-                const LinkageShapeSettings shapeSettings {iterationAllowFallback};
+                const LinkageShapeSettings initialShapeSettings {dontRetainInitialPreference, iterationAllowFallback};
                 const std::vector<GlycanShapePreference> initialPreference = randomizeInitialShapePreference(
-                    rng, toAngleSettings(0), randomizeShape, shapeSettings, data, initialState.bounds);
+                    rng, toAngleSettings(0), randomizeShape, initialShapeSettings, data, initialState.bounds);
+
+                const LinkageShapeSettings shapeSettings {retainInitialPreference, iterationAllowFallback};
 
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,

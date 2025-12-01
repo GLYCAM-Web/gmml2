@@ -22,6 +22,7 @@ namespace gmml
             bool moveOverlappingSidechains;
             bool deleteSitesUntilResolved;
             bool allowRotamerFallback;
+            bool forceGlycositeRotamerVariety;
             bool prepareForMD;
             bool writeOffFile;
         };

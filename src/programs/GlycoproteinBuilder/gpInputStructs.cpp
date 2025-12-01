@@ -133,6 +133,10 @@ namespace gmml
                         {
                             gpInputs.allowRotamerFallback = parseBool(value);
                         }
+                        else if (parameter == forceGlycositeRotamerVarietyParameter)
+                        {
+                            gpInputs.forceGlycositeRotamerVariety = parseBool(value);
+                        }
                         else if (parameter == overlapRejectionThresholdParameter)
                         {
                             gpInputs.overlapRejectionThreshold = parseDouble(value);

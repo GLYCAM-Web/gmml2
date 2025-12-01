@@ -28,6 +28,7 @@ namespace gmml
 
         struct LinkageShapeSettings
         {
+            std::vector<std::vector<bool>> retainInitialPreference;
             std::vector<std::vector<bool>> allowRotamerFallback;
         };
 

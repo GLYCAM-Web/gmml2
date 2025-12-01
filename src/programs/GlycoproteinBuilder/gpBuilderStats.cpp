@@ -89,6 +89,8 @@ namespace gmml
                  {overlapRejectionThresholdParameter, std::to_string(input.overlapRejectionThreshold)},
                  {useInitialGlycositeResidueConformationParameter,
                   boolStr(input.useInitialGlycositeResidueConformation)},
+                 {forceGlycositeRotamerVarietyParameter, boolStr(input.forceGlycositeRotamerVariety)},
+                 {allowRotamerFallbackParameter, boolStr(input.allowRotamerFallback)},
                  {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
                  {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
                  {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)}}

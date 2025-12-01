@@ -47,6 +47,7 @@ namespace gmml
             const AssemblyData&,
             const assembly::Bounds&,
             const LinkageShapeSettings&,
+            const std::vector<GlycanShapePreference>&,
             size_t)>
             GlycanShapeRandomizer;
 

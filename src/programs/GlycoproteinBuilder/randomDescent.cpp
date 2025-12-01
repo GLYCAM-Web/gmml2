@@ -183,7 +183,13 @@ namespace gmml
                     {
                         const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                         currentState.preferences[glycanId] = randomizeShape(
-                            rng, settings, data, currentState.mutableData.bounds, shapeSettings, glycanId);
+                            rng,
+                            settings,
+                            data,
+                            currentState.mutableData.bounds,
+                            shapeSettings,
+                            currentState.preferences,
+                            glycanId);
                         const GlycanShapePreference& glycanPreferences = currentState.preferences[glycanId];
                         for (size_t n = 0; n < linkageIds.size(); n++)
                         {
@@ -233,7 +239,7 @@ namespace gmml
             result.reserve(glycanIndices.size());
             for (size_t glycanId : glycanIndices)
             {
-                result.push_back(randomizeShape(rng, angleSettings, data, bounds, shapeSettings, glycanId));
+                result.push_back(randomizeShape(rng, angleSettings, data, bounds, shapeSettings, {}, glycanId));
             }
             return result;
         }
