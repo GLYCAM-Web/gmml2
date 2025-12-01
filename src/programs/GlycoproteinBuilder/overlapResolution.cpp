@@ -109,7 +109,7 @@ namespace gmml
                     const AngleSettings& settings,
                     const AssemblyData& data,
                     const assembly::Bounds& bounds,
-                    size_t linkageId)
+                    size_t glycanId)
             {
                 return randomLinkageShapePreference(
                     rng,
@@ -117,7 +117,7 @@ namespace gmml
                     settings,
                     data,
                     bounds,
-                    linkageId,
+                    glycanId,
                     randomAngle,
                     freezeGlycositeResidueConformation);
             };
