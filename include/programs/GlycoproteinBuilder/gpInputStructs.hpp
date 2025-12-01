@@ -18,6 +18,7 @@ namespace gmml
             "useInitialGlycositeResidueConformation";
         static const std::string moveOverlappingSidechainsParameter = "moveOverlappingSidechains";
         static const std::string deleteIncompatibleSitesParameter = "deleteUnresolvableGlycosites";
+        static const std::string allowRotamerFallbackParameter = "allowRotamerFallback";
         static const std::string overlapRejectionThresholdParameter = "overlapRejectionThreshold";
         static const std::string ignoreHydrogenParameter = "ignoreHydrogen";
         static const std::string seedParameter = "rngSeed";
@@ -40,6 +41,7 @@ namespace gmml
             bool useInitialGlycositeResidueConformation = false;
             bool moveOverlappingSidechains = false;
             bool deleteSitesUntilResolved = false;
+            bool allowRotamerFallback = true;
             double overlapRejectionThreshold = 0.0;
             bool isDeterministic = false;
             uint64_t seed = 0;

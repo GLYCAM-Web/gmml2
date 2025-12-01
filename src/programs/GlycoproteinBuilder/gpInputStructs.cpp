@@ -129,6 +129,10 @@ namespace gmml
                         {
                             gpInputs.deleteSitesUntilResolved = parseBool(value);
                         }
+                        else if (parameter == allowRotamerFallbackParameter)
+                        {
+                            gpInputs.allowRotamerFallback = parseBool(value);
+                        }
                         else if (parameter == overlapRejectionThresholdParameter)
                         {
                             gpInputs.overlapRejectionThreshold = parseDouble(value);

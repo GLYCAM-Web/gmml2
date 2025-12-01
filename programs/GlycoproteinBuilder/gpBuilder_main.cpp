@@ -287,6 +287,7 @@ int main(int argc, char* argv[])
             settings.useInitialGlycositeResidueConformation,
             settings.moveOverlappingSidechains,
             settings.deleteSitesUntilResolved,
+            settings.allowRotamerFallback,
             settings.MDprep,
             settings.MDprep};
 

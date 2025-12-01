@@ -70,9 +70,15 @@ namespace gmml
             MetadataOrder initialMetadataOrder =
                 [](pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>& metadataVector)
             { return util::indexVector(metadataVector); };
-            MetadataOrder randomMetadataOrder =
-                [](pcg32& rng, const DihedralAngleDataTable& table, const std::vector<size_t>& metadataIndices)
-            { return util::weightedRandomOrder(rng, util::indicesToValues(table.weights, metadataIndices)); };
+            // only picks out the first of randomly ordered metadata
+            MetadataOrder randomMetadataSelection =
+                [&resolutionSettings](
+                    pcg32& rng, const DihedralAngleDataTable& table, const std::vector<size_t>& metadataIndices)
+            {
+                std::vector<size_t> reordered =
+                    util::weightedRandomOrder(rng, util::indicesToValues(table.weights, metadataIndices));
+                return resolutionSettings.allowRotamerFallback ? reordered : std::vector<size_t> {reordered[0]};
+            };
             bool freezeGlycositeResidueConformation = resolutionSettings.useInitialGlycositeResidueConformation;
             bool moveOverlappingSidechains = resolutionSettings.moveOverlappingSidechains;
             auto standardDeviation = [](const AngleSettings& settings, const DihedralAngleData& metadata)
@@ -363,7 +369,7 @@ namespace gmml
                     double ratio = std::min(1.0, c / 4.0);
                     double preferenceDev = 2.0 - 1.5 * ratio;
                     double wiggleRoom = 3.0 - preferenceDev;
-                    return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, randomMetadataOrder};
+                    return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, randomMetadataSelection};
                 };
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,

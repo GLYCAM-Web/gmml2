@@ -21,6 +21,7 @@ namespace gmml
             bool useInitialGlycositeResidueConformation;
             bool moveOverlappingSidechains;
             bool deleteSitesUntilResolved;
+            bool allowRotamerFallback;
             bool prepareForMD;
             bool writeOffFile;
         };
