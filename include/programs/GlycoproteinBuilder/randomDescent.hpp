@@ -42,7 +42,7 @@ namespace gmml
             SidechainAdjustment;
 
         typedef std::function<GlycanShapePreference(
-            pcg32& rng, const AngleSettings&, const AssemblyData&, const MutableData&, size_t glycanId)>
+            pcg32& rng, const AngleSettings&, const AssemblyData&, const assembly::Bounds&, size_t glycanId)>
             GlycanShapeRandomizer;
 
         GlycoproteinState randomDescent(

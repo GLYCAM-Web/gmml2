@@ -108,7 +108,7 @@ namespace gmml
                     pcg32& rng,
                     const AngleSettings& settings,
                     const AssemblyData& data,
-                    const MutableData& mutableData,
+                    const assembly::Bounds& bounds,
                     size_t linkageId)
             {
                 return randomLinkageShapePreference(
@@ -116,7 +116,7 @@ namespace gmml
                     dihedralAngleDataTable,
                     settings,
                     data,
-                    mutableData.bounds,
+                    bounds,
                     linkageId,
                     randomAngle,
                     freezeGlycositeResidueConformation);
