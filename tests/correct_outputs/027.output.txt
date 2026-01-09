@@ -5149,6 +5149,27 @@ Added 2641: 7Ko
 Added 2642: 8Ko
 Added with anomeric 2643: 2Ko
 Added without anomeric 2644: 0Ko
+Loading "LGulNAca.prep"
+Generating those combos from 0kC
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+H1_H2
+C2_Cg
+O5_Os
+No Anomeric Oxygen Found in Template
+O3,O4
+LastLetter is C
+glycamCode is K
+So far for 0kC we think isomer ringtype config is L_p_a
+Finding name for code: KC
+Found name is: L_DGulpNAcA_p__a
+Anomer: 1
+Added 2647: WkC
+Added 2648: 3kC
+Added 2649: 4kC
+Added with anomeric 2650: 1kC
+Added without anomeric 2651: 0kC
 nAD is new in lib file
 tAD is new in lib file
 uAD is new in lib file
@@ -5860,6 +5881,11 @@ HKo is new in lib file
 8Ko is new in lib file
 2Ko is new in lib file
 0Ko is new in lib file
+WkC is new in lib file
+3kC is new in lib file
+4kC is new in lib file
+1kC is new in lib file
+0kC is new in lib file
 CA2 not found in lib file
 4YP not found in lib file
 LKn not found in lib file
