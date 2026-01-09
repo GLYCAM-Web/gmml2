@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
         {"0YS"},  {"0Ys"}, {"0yS"}, {"0ys"}, {"0Kn"}, {"0Ko"}, {"0KN"}, {"0KO"}, {"0AE"}, {"0Ae"}, {"0YnP"}, {"0YNP"},
         {"0ZBP"}, {"0an"}, {"0aN"}, {"0DH"}, {"0Dh"}, {"0eC"}, {"0ec"}, {"0FC"}, {"0Fc"}, {"0gF"}, {"0gf"},  {"0KX"},
         {"0Kx"},  {"0LD"}, {"0LG"}, {"0Lg"}, {"0LH"}, {"0Lh"}, {"0LU"}, {"0mP"}, {"0mp"}, {"0MR"}, {"0Mr"},  {"0QF"},
-        {"0Qf"},  {"0ZF"}, {"0Zf"}};
+        {"0Qf"},  {"0ZF"}, {"0Zf"}, {"0kC"}};
 
     std::vector<gmml::Recombined> allGeneratedResidues;
 

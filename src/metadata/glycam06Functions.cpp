@@ -145,7 +145,7 @@ namespace gmml
 
             static const std::vector<NamesCodesTypes> ResidueNameCodeLookup = {
   // residueName_, glycamCode_ , residueType_
-                {          "All",   "N", "Saccharide"},
+                {          "All","N", "Saccharide"                                 },
                 {          "Alt",   "E", "Saccharide"},
                 {          "Ara",   "A", "Saccharide"},
                 {          "Fru",   "C", "Saccharide"},
@@ -221,6 +221,9 @@ namespace gmml
                 { "QuipNAc4NAcb",  "Qf", "Saccharide"}, // Bacterial Ferran.
                 {"GlcpNAc3NAcAa",  "ZF", "Saccharide"}, // Bacterial Ferran.
                 {"GlcpNAc3NAcAb",  "Zf", "Saccharide"}, // Bacterial Ferran.
+                {    "LGulpNAcA",  "kC", "Saccharide"}, // Bacterial Rajan.
+                {    "DGulpNAcA",
+                 "KC", "Saccharide"                  }, // Bacterial Rajan. note he only provided L. D is necessary for name lookup.
                 {          "ROH", "ROH",   "Aglycone"},
                 {           "OH", "ROH",   "Aglycone"},
                 {          "OME", "OME",   "Aglycone"},
