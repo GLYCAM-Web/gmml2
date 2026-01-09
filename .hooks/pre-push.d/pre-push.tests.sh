@@ -38,201 +38,16 @@ if [ -z "${GEMSHOME}" ]; then
     echo -e "${YELLOW_BOLD}WARNING: Your GEMSHOME environment variable is not set! It should be set to the GEMS directory\nthat is the parent of the GMML directory. This can cause some issues as some of the codebase\nstill relies upon the GEMSHOME variable. Continuing but you have been warned.${RESET_STYLE}"
 fi
 
-#fetch our most recent gmml-test from origin. Assumes we are in gmml dir
-echo -e "\n${YELLOW_BOLD}Fetching changes from remote for GMML-TEST${RESET_STYLE}"
-git fetch --verbose origin gmml-test:gmml-test || {
-    echo -e "${RED_BOLD}Failed fetching changes for gmml-test. Exiting...${RESET_STYLE}"
-    exit 1
-}
-
-#ensure our branch naming pattern is correct
-ensure_branch_naming()
-{
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-    case "${CURRENT_BRANCH}" in
-        gmml-dev | gmml-test | actual | stable)
-            echo -e "Since you are pushing on of our stable branches, we will be skipping\nensuring that you are not too far away from your parent branch"
-            return 0
-            ;;
-        *) ;;
-
-    esac
-
-    if [[ ! ${CURRENT_BRANCH} =~ ${branch_regex} ]]; then
-        #branch isnt on remote
-        if [ -z "$(git ls-remote --heads origin "${CURRENT_BRANCH}")" ]; then
-            echo -e "${RED_BOLD}ERROR: Youre trying to push a new branch that does not fit our naming schema"
-            echo -e "please refer to the gmml readme on github for the naming scheme. Aborting!${RESET_STYLE}"
-            exit 1
-        else
-            echo -e "${YELLOW_BOLD}WARNING: Youre trying to push to a branch that does not fit our naming schema"
-            echo -e "we should eventually take care of this.${RESET_STYLE}"
-        fi
-    fi
-}
-
-#need to make this so it automatically grabs the parent branch but it will take some fenangling
-ensure_feature_close()
-{
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-    case "${CURRENT_BRANCH}" in
-        gmml-dev | gmml-test | actual | stable)
-            echo -e "Since you are pushing on of our stable branches, we will be skipping\nensuring that you are not too far away from your parent branch"
-            return 0
-            ;;
-        *)
-            echo -e "\nEnsuring feature branch ${YELLOW_BOLD}${CURRENT_BRANCH}${RESET_STYLE} in repo ${YELLOW_BOLD}GMML${RESET_STYLE}\nis less than ${MAX_FEATURE_BEHIND_TEST} commits behind the parent branch...."
-            ;;
-    esac
-
-    TOTAL_NUM_BEHIND=$(git rev-list --left-only --count origin/gmml-test..."${CURRENT_BRANCH}")
-    echo "You are ${TOTAL_NUM_BEHIND} commits behind gmml-test"
-    if ((TOTAL_NUM_BEHIND > MAX_FEATURE_BEHIND_TEST * 2)); then
-        echo -e "${RED_BOLD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!${RESET_STYLE}"
-        echo -e "${RED_BOLD}ERROR:${RESET_STYLE} YOU ARE MISSING MORE THAN DOUBLE THE RECOMMEND COMMITS FROM GMML-TEST\nTHE HAMMER HAS FALLEN, WILL EVENTUALLY ABORT YOUR PUSHES.\nMERGE GMML-TEST INTO YOUR BRANCH ASAP BEFORE YOUR NEXT PUSH.\n"
-        echo -e "${RED_BOLD}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!${RESET_STYLE}"
-        #exit 1
-    elif [ "${TOTAL_NUM_BEHIND}" -gt "${MAX_FEATURE_BEHIND_TEST}" ]; then
-        echo -e "${RED_BOLD}WARNING:${RESET_STYLE} YOU ARE MISSING A BUNCH OF COMMITS FROM GMML-TEST\nIT IS HIGHLY RECOMMENDED TO INCORPERATE CURRENT GMML-TEST CODE\nINTO YOUR FEATURE BRANCH BEFORE PUSHING AGIN.\n"
-    else
-        echo -e "${GREEN_BOLD}passed...${RESET_STYLE} Feature branch is not too far from gmml-test, proceding\n"
-    fi
-}
-
 ## OG Oct 2021 have the hooks update themselves.
 #TODO: Do this more auto like, if this script is updated the first run the next time will not
 #reflect the made changes due to the old script calling the copy then continuing.
 cp -r "${GMML_DIR}"/.hooks/* "${GMML_DIR}"/.git/hooks/
 
-#imagine this means "check if current branch is behind origin of the same branch". Basically all
-#we are doing are checking either the GEMS or GMML repo to ensure there are no commits that the
-#user has not pulled.
-# @param $1 is either GEMS or GMML, whichever defined is what will be checked and pathing
-# will be based off of the GEMSHOME variable. I picked caps in order to just make the check more
-# apparent about how its checking an actual repo status
-check_if_branch_behind()
-{
-    #we check we have a single arg, then if the single arg is what we want.
-    if [ "$#" == 1 ] && {
-        [ "$1" == "GEMS" ] || [ "$1" == "GMML" ]
-    }; then
-        #TODO: More legit error checking in this
-        if [ "$1" == "GEMS" ]; then
-            cd "${GEMS_DIR}" || {
-                echo -e "${RED_BOLD}failed...${RESET_STYLE} We could not change directory to the following:\n\t ${GEMS_DIR}"
-                echo "Exiting..."
-                exit 1
-            }
-        elif [ "$1" == "GMML" ]; then
-            cd "${GMML_DIR}" || {
-                echo -e "${RED_BOLD}failed...${RESET_STYLE} We could not change directory to the following:\n\t ${GMML_DIR}"
-                echo "Exiting..."
-                exit 1
-            }
-        else
-            echo -e "${RED_BOLD}Error checking if branch was behind when changing dir!${RESET_STYLE}"
-            echo "Given param: $1"
-            exit 1
-        fi
-        CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-
-        #fetch from origin
-        echo -e "\n${YELLOW_BOLD}Fetching changes from remote${RESET_STYLE}"
-        git fetch || {
-            echo -e "${RED_BOLD}Failed fetching changes. Exiting...${RESET_STYLE}"
-            exit 1
-        }
-        echo -e "\n${GREEN_BOLD}Changes fetched for $1${RESET_STYLE}"
-
-        #let the user know what is going on, i.e. what branch is being checked and in what repo
-        echo -e "\nEnsuring branch ${YELLOW_BOLD}${CURRENT_BRANCH}${RESET_STYLE} in repo ${YELLOW_BOLD}$1${RESET_STYLE} is up to date...."
-
-        #Done to check if we actually need to hit up origin to see if we are behind, the "branch hash and name on origin"
-        #part is mostly there to bug check
-        echo -e "First checking if ${YELLOW_BOLD}${CURRENT_BRANCH}${RESET_STYLE} is on remote, if the branch status below is empty"
-        echo "then we know that the branch is not on remote."
-        echo "Branch hash and name on origin: $(git ls-remote --heads origin "${CURRENT_BRANCH}")"
-        #check if we get a non-empty return aka branch is on remote, if we are on a head branch we want to "force" acceptance to go ahead
-        #and add if our branch name is HEAD then we fail
-        if [ -n "$(git ls-remote --heads origin "${CURRENT_BRANCH}")" ] || [ "${CURRENT_BRANCH}" == "HEAD" ]; then
-            #we hit here if our branch is actually on remote, thus we must check
-            #that the current branch is up to date on remote
-            echo -e "\nBranch is present on remote, now to check if local is behind remote"
-            #the left only part of this command shows how many commits behind the repo on the right is from
-            #the left repo that has origin tacked onto it., the right side
-            if [ "$(git rev-list --left-only --count origin/"${CURRENT_BRANCH}"..."${CURRENT_BRANCH}")" != 0 ] || [ "${CURRENT_BRANCH}" == "HEAD" ]; then
-                #here the given value is non zero thus remote is ahead of our local so we want to go ahead and stop everything and just exit with an error
-                echo -e "${RED_BOLD}ERROR:${RESET_STYLE} $1 REMOTE IS AHEAD OF YOUR LOCAL BRANCH, PULL BEFORE YOU TRY TO PUSH"
-
-                #If our repo is behind, we give user option to pull repo from here. The test will still have to be rurun since
-                #we want to run our new pulled changes on everything aka the hook will still fail.
-                echo -e "${YELLOW_BOLD}$1 repo is behind... Would you like to pull?\nWARNING: This does have the potential to clobber changes! Keep that in mind!!${RESET_STYLE}"
-                read -p 'Enter response (y/n): ' response </dev/tty
-                if [[ "${response}" == [yY] ]]; then
-                    echo -e "Pulling branch ${CURRENT_BRANCH} from $1 repo...."
-                    git pull --verbose || {
-                        echo -e "{RED_BOLD}ERROR: COULD NOT PULL REPO $1, EXITING...${RESET_STYLE}"
-                        exit 1
-                    }
-                else
-                    echo -e "${YELLOW_BOLD}Not pulling repo for $1. You will be reminded to pull the repo at script completion${RESET_STYLE}"
-                fi
-
-                #since remote is ahead of local we know we want to stop the push and make the user pull the new code,
-                #BUT we want to go ahead and check both repos first and THEN exit so the user can know if they
-                #need to pull both GEMS and GMML. Basically this var is only populated if local branch is behind origin branch
-                if [ -n "${BRANCH_IS_BEHIND}" ]; then
-                    BRANCH_IS_BEHIND="${BRANCH_IS_BEHIND}\n\t$1"
-                else
-                    BRANCH_IS_BEHIND="\t$1"
-                fi
-            else
-                echo -e "${GREEN_BOLD}passed...${RESET_STYLE}Local branch ${YELLOW_BOLD}${CURRENT_BRANCH}${RESET_STYLE} on repo ${YELLOW_BOLD}$1${RESET_STYLE} is not behind the remote branch, proceeding"
-            fi
-        else
-            echo -e "${GREEN_BOLD}passed...${RESET_STYLE} Branch is not on remote, so no need to check if local is behind remote, proceeding"
-        fi
-        cd "${GMML_DIR}" || {
-            echo -e "${RED_BOLD}failed...${RESET_STYLE} We could not change directory to the following:\n\t ${GMML_DIR}"
-            echo "Exiting..."
-            exit 1
-        }
-    #bad input, so end script
-    else
-        echo -e "${RED_BOLD}ERROR${RESET_STYLE} Incorrect param given to check_if_branch_behind function. Exiting."
-        echo -e "\tInput given:$1"
-        exit 1
-    fi
-} #End ensuring branches not behind function
-
-#check branch naming schema
-ensure_branch_naming
-
-#before we try anything major we first figure out if any branches are behind.
-check_if_branch_behind "GMML"
-check_if_branch_behind "GEMS"
-echo -e "\nChecking if branches are behind remote completed\n"
-#if they are behind then the string we are checking wont be empty, thus we should exit.
-if [ -n "${BRANCH_IS_BEHIND}" ]; then
-    echo -e "${RED_BOLD}failed...${RESET_STYLE} At least one of you branches are behind."
-    echo -e "Pull the following repos:\n${RED_BOLD}${BRANCH_IS_BEHIND}${RESET_STYLE}\n"
-    echo "Exiting..."
-    exit 1
-fi
 
 TEST_SKIP=0
 #### Allow skipping tests ####
 branch=$(git rev-parse --abbrev-ref HEAD)
-if [[ "${branch}" != "gmml-dev" ]] && [[ "${branch}" != "gmml-test" ]] && [[ "${branch}" != "stable" ]]; then
-
-    if [[ "${branch}" != hotfix* ]]; then
-        echo -e "Ensuring feature branch is not too far from gmml-test\n"
-        ensure_feature_close
-    else
-        echo -e "You are applying making a hotfix for one of our main branches EXCEPT gmml-test,\nif this is not the case ABORT AND BUG PRESTON\n"
-    fi
+if [[ "${branch}" != "dev" ]] && [[ "${branch}" != "main" ]]; then
 
     echo -e "Branch is ${branch}\nSkipping tests is allowed.\nDo you want to skip them?\ns=skip\na=abort\nEnter anything to run tests.\n"
     read -p "Enter response: " response </dev/tty
@@ -273,7 +88,7 @@ if [ -d "${GMML_DIR}/cmakeBuild" ]; then
     rm "${GMML_DIR}/cmakeBuild/gmml2.py"
 fi
 
-echo "Compiling gmml using GEMS ./make.sh, no wrap flag cause it auto wraps"
+echo "Compiling gmml2 using GEMS ./make.sh, no wrap flag cause it auto wraps"
 
 ./make.sh -j "$(nproc --all --ignore=2)"
 
