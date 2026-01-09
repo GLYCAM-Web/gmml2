@@ -5170,6 +5170,60 @@ Added 2648: 3kC
 Added 2649: 4kC
 Added with anomeric 2650: 1kC
 Added without anomeric 2651: 0kC
+Loading "0Qe-beta_final.prep"
+Generating those combos from 0Qe
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O_Os
+H1_H2
+O5_Os
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O4,O3
+LastLetter is e
+glycamCode is Q
+So far for 0Qe we think isomer ringtype config is D_p_b
+Finding name for code: QE
+Found name is: D_QuipNAca_p__b
+Anomer: 1
+Added 2654: WQe
+Added 2655: 4Qe
+Added 2656: 3Qe
+Added with anomeric 2657: 1Qe
+Added without anomeric 2658: 0Qe
+Loading "0QE-alfa_final.prep"
+Generating those combos from 0QE
+Copying the input residue 
+Guessing anomeric oxygen
+Names and types of neighbors:
+O_Os
+H1_H2
+O5_Os
+C2_Cg
+OMe Oxygen Found
+In here OMeOxygen name: O
+All done here no issues
+Copying
+Deleting O1
+Continuing
+O4,O3
+LastLetter is E
+glycamCode is Q
+So far for 0QE we think isomer ringtype config is D_p_a
+Finding name for code: QE
+Found name is: D_QuipNAca_p__a
+Anomer: 1
+Added 2661: WQE
+Added 2662: 4QE
+Added 2663: 3QE
+Added with anomeric 2664: 1QE
+Added without anomeric 2665: 0QE
 nAD is new in lib file
 tAD is new in lib file
 uAD is new in lib file
@@ -5886,6 +5940,16 @@ WkC is new in lib file
 4kC is new in lib file
 1kC is new in lib file
 0kC is new in lib file
+WQe is new in lib file
+4Qe is new in lib file
+3Qe is new in lib file
+1Qe is new in lib file
+0Qe is new in lib file
+WQE is new in lib file
+4QE is new in lib file
+3QE is new in lib file
+1QE is new in lib file
+0QE is new in lib file
 CA2 not found in lib file
 4YP not found in lib file
 LKn not found in lib file
