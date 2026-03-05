@@ -85,10 +85,9 @@ if [ -d "${GMML_DIR}/cmakeBuild" ]; then
     echo "Removing the libgmml.so from our cmakeBuild directory"
     rm "${GMML_DIR}/cmakeBuild/libgmml2.so"
     rm "${GMML_DIR}/cmakeBuild/_gmml2.so"
-    rm "${GMML_DIR}/cmakeBuild/gmml2.py"
 fi
 
-echo "Compiling gmml2 using GEMS ./make.sh, no wrap flag cause it auto wraps"
+echo "Compiling gmml2 using GEMS ./make.sh"
 
 ./make.sh -j "$(nproc --all --ignore=2)"
 
