@@ -337,12 +337,12 @@ namespace gmml
                     data,
                     residueId,
                     {
-                        {   "N",    nCoordNME},
-                        {   "H",    hCoordNME},
-                        { "CH3",  ch3CoordNME},
-                        {"HH31", hh31CoordNME},
-                        {"HH32", hh32CoordNME},
-                        {"HH33", hh33CoordNME}
+                        { "N",    nCoordNME},
+                        { "H",    hCoordNME},
+                        { "C",  ch3CoordNME},
+                        {"H1", hh31CoordNME},
+                        {"H2", hh32CoordNME},
+                        {"H3", hh33CoordNME}
                 });
                 addResidueBonds(
                     data,
@@ -350,10 +350,10 @@ namespace gmml
                     {
                         {"N", findResidueAtom(data, refResidueId, "C")},
                         {"N", "H"},
-                        {"N", "CH3"},
-                        {"CH3", "HH31"},
-                        {"CH3", "HH32"},
-                        {"CH3", "HH33"}
+                        {"N", "C"},
+                        {"C", "H1"},
+                        {"C", "H2"},
+                        {"C", "H3"}
                 });
             }
             else if (type == "COCH3") // ACE
@@ -388,12 +388,12 @@ namespace gmml
                     data,
                     residueId,
                     {
-                        {   "C",    cCoordACE},
-                        {   "O",    oCoordACE},
-                        { "CH3",  ch3CoordACE},
-                        {"HH31", hh31CoordACE},
-                        {"HH32", hh32CoordACE},
-                        {"HH33", hh33CoordACE}
+                        {  "C",    cCoordACE},
+                        {  "O",    oCoordACE},
+                        {"CH3",  ch3CoordACE},
+                        { "H1", hh31CoordACE},
+                        { "H2", hh32CoordACE},
+                        { "H3", hh33CoordACE}
                 });
                 addResidueBonds(
                     data,
@@ -402,9 +402,9 @@ namespace gmml
                         {"C", findResidueAtom(data, refResidueId, "N")},
                         {"C", "O"},
                         {"C", "CH3"},
-                        {"CH3", "HH31"},
-                        {"CH3", "HH32"},
-                        {"CH3", "HH33"}
+                        {"CH3", "H1"},
+                        {"CH3", "H2"},
+                        {"CH3", "H3"}
                 });
                 util::log(
                     __LINE__, __FILE__, util::INF, "Created ACE residue: " + toString(pdbResidueId(data, residueId)));
