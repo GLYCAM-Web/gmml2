@@ -21,9 +21,12 @@ namespace gmml
     {
         namespace
         {
+            bool isHydrogen(PdbData& data, size_t atomId) { return data.atoms.elements[atomId] == H; }
+
             bool bondCloseAtoms(PdbData& data, size_t atom1, size_t atom2)
             {
-                if (isWithinBondingDistance(data, atom1, atom2))
+                if (isWithinBondingDistance(data, atom1, atom2) &&
+                    !(isHydrogen(data, atom1) || isHydrogen(data, atom2)))
                 {
                     addBond(data, atom1, atom2);
                     return true;
@@ -95,7 +98,8 @@ namespace gmml
                 {
                     size_t atom1 = atoms[n];
                     size_t atom2 = atoms[k];
-                    if (isWithinBondingDistance(data, atom1, atom2))
+                    if (isWithinBondingDistance(data, atom1, atom2) &&
+                        !(isHydrogen(data, atom1) && isHydrogen(data, atom2)))
                     {
                         addBond(data, atom1, atom2);
                     }
