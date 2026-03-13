@@ -43,6 +43,7 @@
 
 #include <ostream>
 #include <sstream>
+#include <stddef.h> // size_t
 #include <stdexcept>
 #include <string>
 #include <variant>
@@ -291,7 +292,9 @@ namespace gmml
             for (size_t n = 0; n < edgeCount(graph.residues); n++)
             {
                 const std::array<size_t, 2>& adj = graph.residues.edges.nodeAdjacencies[n];
-                if (isNonProteinResidue(adj[0]) || isNonProteinResidue(adj[1]))
+                // Local lambda to deal make sure our substractions don't go wrong.
+                auto index_diff = [](size_t a, size_t b) -> size_t { return (a > b) ? (a - b) : (b - a); };
+                if (isNonProteinResidue(adj[0]) || isNonProteinResidue(adj[1]) || index_diff(adj[1], adj[0]) > 1)
                 {
                     size_t atomEdgeId = sourceIndex(graph.residues.edges, n);
                     const std::array<size_t, 2> atomAdj = graph.atoms.edges.nodeAdjacencies[atomEdgeId];
