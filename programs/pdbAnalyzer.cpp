@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
                 break;
         }
     }
-    pdb::PdbFile pdbFile = pdb::toPdbFile(inputFileName, pdb::modelsAsMolecules);
+    pdb::PdbFile pdbFile = pdb::toPdbFile(inputFileName, {pdb::modelsAsMolecules, false, true});
     pdb::PdbData& data = pdbFile.data;
     util::SparseVector<double> elementRadii = vanDerWaalsRadii();
     const PotentialTable potential = potentialTable(elementRadii, foundElements(data.atoms.elements));

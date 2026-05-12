@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
         std::exit(EXIT_FAILURE);
     }
     // requirement: a chain ID for every single ATOM entry, and all ligand atoms should be put in a single residue.
-    pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
+    pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], {pdb::modelsAsMolecules, true, true});
     // PdbFile is an "Ensemble" (made up of "Assemblies"), but if you want to just set
     // every molecule to have any chain ID you can do:
     pdbFile.data.residues.chainIds = std::vector<std::string>(residueCount(pdbFile.data.assembly), "Y");

@@ -128,7 +128,7 @@ namespace gmml
         result.reserve(atoms.size());
         for (auto& atom : atoms)
         {
-            result.push_back(atom->getAtomicNumber());
+            result.push_back(toElement(atom->getElement()));
         }
         return result;
     }

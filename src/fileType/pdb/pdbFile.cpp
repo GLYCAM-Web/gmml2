@@ -123,7 +123,11 @@ namespace gmml
                 {
                     expandLine(line, iPdbLineLength);
                     std::string recordName = util::RemoveWhiteSpace(line.substr(0, 6));
-                    std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER", "HETATM"};
+                    std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER"};
+                    if (options.readHETATM)
+                    { // This will only read HETATM entries if enabled. GP builder does not want them.
+                        coordSectionCards.push_back("HETATM");
+                    }
                     if (options.inputType == modelsAsCoordinates)
                     { // want to pass in the whole block to assembly so it can read the extra coords
                         coordSectionCards.push_back("ENDMDL");

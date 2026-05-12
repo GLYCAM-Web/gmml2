@@ -184,8 +184,10 @@ int main(int argc, char* argv[])
         std::cout << "Reading input file complete, on to construction\n" << std::flush;
 
         const preprocess::ParameterManager parameterManager = preprocess::loadParameters(baseDir);
-        pdb::PdbFile pdbFile = pdb::toPdbFile(settings.substrateFileName, pdb::modelsAsMolecules);
-        deleteNonProteinResidues(pdbFile.data);
+        bool readHETATM = false;
+        pdb::PdbFile pdbFile = pdb::toPdbFile(settings.substrateFileName, pdb::modelsAsMolecules, readHETATM);
+        deleteNonProteinResidues(
+            pdbFile.data); // The soft delete done here is not respected. Added readHETATM flag too.
         if (settings.MDprep)
         {
             util::log(__LINE__, __FILE__, util::INF, "Performing MDPrep aka preprocessing.");

@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
         std::cout << "Example: " << argv[0] << " inputs/4mbz.pdb 030.outputPdbFile.pdb\n";
         std::exit(EXIT_FAILURE);
     }
-    pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], pdb::modelsAsMolecules);
+    pdb::PdbFile pdbFile = pdb::toPdbFile(argv[1], {pdb::modelsAsMolecules, false, true});
     auto panic = [&]()
     {
         for (size_t n = 0; n < residueCount(pdbFile.data.assembly); n++)

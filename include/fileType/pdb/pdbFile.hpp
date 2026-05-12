@@ -27,8 +27,9 @@ namespace gmml
 
         struct ReaderOptions
         {
-            InputType inputType;
-            bool readConectRows;
+            InputType inputType = modelsAsMolecules;
+            bool readConectRows = true;
+            bool readHETATM = true;
         };
 
         struct PdbFile
@@ -46,9 +47,9 @@ namespace gmml
 
         PdbFile toPdbFile(const std::string& pdbFilePath, const ReaderOptions& options);
 
-        inline PdbFile toPdbFile(const std::string& pdbFilePath, const InputType pdbFileType)
+        inline PdbFile toPdbFile(const std::string& pdbFilePath, const InputType pdbFileType, const bool readHETATM)
         {
-            return toPdbFile(pdbFilePath, {pdbFileType, false});
+            return toPdbFile(pdbFilePath, {pdbFileType, false, readHETATM});
         }
 
         std::vector<Assembly*> getAssemblies(PdbFile& file);

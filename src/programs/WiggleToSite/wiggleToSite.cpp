@@ -65,7 +65,7 @@ namespace gmml
         const util::SparseVector<double>& elementRadii,
         const DihedralAngleDataTable& dihedralAngleData,
         const WiggleToSiteInputs& inputStruct)
-        : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false}))
+        : substrate_(pdb::toPdbFile(inputStruct.substrateFile_, {pdb::InputType::modelsAsMolecules, false, true}))
     {
         initializeCarbohydrate(
             carbohydrate_,
