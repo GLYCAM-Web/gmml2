@@ -50,6 +50,8 @@ namespace gmml
 
         unsigned int getNumberFromName() const;
 
+        inline size_t getDataIndex() const { return dataIndex_; }
+
         //////////////////////////////////////////////////////////
         //                       MUTATOR                        //
         //////////////////////////////////////////////////////////
@@ -66,6 +68,8 @@ namespace gmml
         void setElement(Element element);
 
         inline void setCoordinate(const Coordinate& c) { coordinate_ = c; }
+
+        inline void setDataIndex(size_t n) { dataIndex_ = n; }
 
         //////////////////////////////////////////////////////////
         //                       FUNCTIONS                      //
@@ -92,6 +96,7 @@ namespace gmml
         bool gotElement_ = false;
         bool isVisible_ = true;
         bool softDeleted_ = false;
+        size_t dataIndex_ = -1;
     };
 } // namespace gmml
 #endif

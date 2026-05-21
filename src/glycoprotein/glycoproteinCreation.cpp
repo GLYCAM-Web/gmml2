@@ -288,7 +288,8 @@ namespace gmml
             const DihedralAngleDataTable& dihedralAngleData,
             const pdb::PdbData& pdbData,
             Assembly* glycoprotein,
-            const std::vector<GlycosylationSite>& glycosites)
+            const std::vector<GlycosylationSite>& glycosites,
+            AssemblyIndexOffset offset)
         {
             for (auto& glycosite : glycosites)
             {
@@ -327,6 +328,8 @@ namespace gmml
                 size_t aglyconeLinkage = aglyconeLinkages[0];
                 linkages[aglyconeLinkage] = newLinkage;
                 glycosidicLinkages.push_back(linkages);
+                std::vector<Molecule*> glycanVec = {glycan};
+                offset = reorderDataIndices(glycanVec, offset);
                 util::log(
                     __LINE__,
                     __FILE__,

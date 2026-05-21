@@ -38,6 +38,8 @@ namespace gmml
         //////////////////////////////////////////////////////////
         inline const int& getNumber() { return number_; }
 
+        inline size_t getDataIndex() const { return dataIndex_; }
+
         std::vector<Atom*> getAtoms() const;
         std::vector<Atom*> mutableAtoms();
         std::vector<Residue*> getResidues() const;
@@ -46,6 +48,8 @@ namespace gmml
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
         inline void setNumber(const int i) { number_ = i; }
+
+        inline void setDataIndex(size_t n) { dataIndex_ = n; }
 
         void swapResiduePosition(Residue* queryResidue, size_t newPosition);
         //////////////////////////////////////////////////////////
@@ -68,6 +72,7 @@ namespace gmml
         //////////////////////////////////////////////////////////
         std::vector<std::unique_ptr<Residue>> residues_;
         int number_;
+        size_t dataIndex_ = -1;
     };
 } // namespace gmml
 

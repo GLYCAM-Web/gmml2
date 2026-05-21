@@ -400,7 +400,9 @@ namespace gmml
                 linkage, defaultShapePreference(dihedralAngleData, linkage.rotamerType, linkage.dihedralMetadata));
             setShapeToPreference(linkage, shapePreference);
             auto searchPreference = angleSearchPreference(searchSettings.deviation, shapePreference);
-            const GraphIndexData graphData = toIndexData({&molecule});
+            std::vector<Molecule*> molecules = {&molecule};
+            reorderDataIndices(molecules, {0, 0, 0});
+            const GraphIndexData graphData = toIndexData(molecules);
             const assembly::Graph graph = createCompleteAssemblyGraph(graphData);
             size_t residueIndex = util::indexOf(graphData.objects.residues, residue);
             std::vector<bool> reachable = graph::reachableNodes(
@@ -632,7 +634,9 @@ namespace gmml
         const DihedralAngleDataTable& dihedralAngleData,
         const AngleSearchSettings& searchSettings)
     {
-        const GraphIndexData graphData = toIndexData({&molecule});
+        std::vector<Molecule*> molecules = {&molecule};
+        reorderDataIndices(molecules, {0, 0, 0});
+        const GraphIndexData graphData = toIndexData(molecules);
         const assembly::Graph graph = createCompleteAssemblyGraph(graphData);
         const assembly::Selection selection = selectAll(graph);
         const std::vector<Sphere> atomBounds = assembly::toAtomBounds(
@@ -677,7 +681,9 @@ namespace gmml
 
     carbohydrate::CarbohydrateData structured(Molecule& molecule, const std::vector<ResidueLinkage>& linkages)
     {
-        GraphIndexData indices = toIndexData({&molecule});
+        std::vector<Molecule*> molecules = {&molecule};
+        reorderDataIndices(molecules, {0, 0, 0});
+        GraphIndexData indices = toIndexData(molecules);
         assembly::Graph graph = createCompleteAssemblyGraph(indices);
         graph::Graph atomGraph = graph.atoms;
         std::vector<Atom*>& atoms = indices.objects.atoms;

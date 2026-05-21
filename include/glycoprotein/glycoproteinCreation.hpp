@@ -37,7 +37,8 @@ namespace gmml
             const DihedralAngleDataTable& dihedralAngleData,
             const pdb::PdbData& pdbData,
             Assembly* glycoprotein,
-            const std::vector<GlycosylationSite>& glycosites);
+            const std::vector<GlycosylationSite>& glycosites,
+            AssemblyIndexOffset offset);
     } // namespace gpbuilder
 } // namespace gmml
 

@@ -123,6 +123,7 @@ namespace gmml
             atom->setName(entry.name);
             atom->setCoordinate(entry.coordinate);
             atom->setElement(data.atoms.elements[atomId]);
+            atom->setDataIndex(atomId);
             return atomId;
         }
 
@@ -169,6 +170,7 @@ namespace gmml
             residue->setName(entry.name);
             residue->SetType(entry.type);
             residue->setNumber(entry.number);
+            residue->setDataIndex(residueId);
             return residueId;
         }
 

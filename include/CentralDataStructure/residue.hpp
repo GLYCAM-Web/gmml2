@@ -47,6 +47,8 @@ namespace gmml
 
         inline const ResidueAttributes& getAttributes() const { return residueAttributes_; }
 
+        inline size_t getDataIndex() const { return dataIndex_; }
+
         //////////////////////////////////////////////////////////
         //                    MUTATOR                           //
         //////////////////////////////////////////////////////////
@@ -66,6 +68,8 @@ namespace gmml
         inline void setNTerminal(bool b) { isNTerminal = b; }
 
         inline void setAttributes(const ResidueAttributes ra) { residueAttributes_ = ra; }
+
+        inline void setDataIndex(size_t n) { dataIndex_ = n; }
 
         //////////////////////////////////////////////////////////
         //                    FUNCTIONS                         //
@@ -112,6 +116,7 @@ namespace gmml
             1; // constants::iNotSet; ToDo: For prep residues a default 1 value is good. Is there a reason not to?
         bool isCTerminal = false;
         bool isNTerminal = false;
+        size_t dataIndex_ = -1;
     };
 
     std::string residueStringId(Residue* residue);

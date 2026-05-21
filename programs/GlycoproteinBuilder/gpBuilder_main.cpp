@@ -219,7 +219,10 @@ int main(int argc, char* argv[])
             dihedralAngleDataTable,
             pdbFile.data,
             glycoprotein,
-            glycosites);
+            glycosites,
+            {pdbFile.data.molecules.chainIds.size(),
+             pdbFile.data.residues.names.size(),
+             pdbFile.data.atoms.names.size()});
         util::log(__LINE__, __FILE__, util::INF, "Initialization of Glycoprotein builder complete!");
 
         std::vector<Molecule*> molecules = glycoprotein->getMolecules();

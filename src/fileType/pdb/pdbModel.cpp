@@ -55,6 +55,7 @@ namespace gmml
                     data.molecules.residueOrder.push_back({});
                     std::unique_ptr<Molecule> molecule = std::make_unique<Molecule>();
                     Molecule* mol = assembly.addMolecule(std::move(molecule));
+                    mol->setDataIndex(moleculeId);
                     data.objects.molecules.push_back(mol);
                     readChain(data, moleculeId, singleChainSection);
                 }

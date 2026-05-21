@@ -24,6 +24,14 @@ namespace gmml
         GraphObjects objects;
     };
 
+    struct AssemblyIndexOffset
+    {
+        size_t molecule;
+        size_t residue;
+        size_t atom;
+    };
+
+    AssemblyIndexOffset reorderDataIndices(std::vector<Molecule*>& molecules, AssemblyIndexOffset offset);
     GraphIndexData toIndexData(const std::vector<Residue*> inputResidues);
     GraphIndexData toIndexData(const std::vector<Molecule*> molecules);
     GraphIndexData toIndexData(const std::vector<Assembly*> assemblies);
