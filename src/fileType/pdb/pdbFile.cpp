@@ -90,14 +90,18 @@ namespace gmml
             // Should extract all lines that start with the strings in recordNames.
             // Returns when it hits a line that does not start with one of those records.
             std::stringstream extractHeterogenousRecordSection(
-                std::istream& pdbFileStream, std::string& line, const std::vector<std::string> recordNames)
+                std::istream& pdbFileStream,
+                std::string& line,
+                const std::vector<std::string>& recordNames,
+                const std::vector<bool>& includeRecord)
             {
                 std::streampos previousLinePosition = pdbFileStream.tellg(); // Save current line position
                 std::stringstream recordSection;
                 std::string recordName = util::RemoveWhiteSpace(line.substr(0, 6));
-                while (util::contains(recordNames, recordName))
+                size_t index = util::indexOf(recordNames, recordName);
+                while (index < recordNames.size())
                 {
-                    if (recordName != "ANISOU") // Do nothing for ANISOU
+                    if (includeRecord[index])
                     {
                         std::stringstream partialRecordSection =
                             extractHomogenousRecordSection(pdbFileStream, line, recordName);
@@ -109,6 +113,7 @@ namespace gmml
                         break; // Time to leave.
                     }
                     recordName = util::RemoveWhiteSpace(line.substr(0, 6));
+                    index = util::indexOf(recordNames, recordName);
                 }
                 pdbFileStream.seekg(previousLinePosition); // Go back to previous line position. E.g. was reading HEADER
                                                            // and found TITLE.
@@ -118,10 +123,13 @@ namespace gmml
             void parseInFileStream(PdbFile& file, std::istream& pdbFileStream, const ReaderOptions& options)
             {
                 std::vector<std::string> databaseCards {"DBREF", "DBREF1", "DBREF2"};
-                std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER"};
+                std::vector<bool> includeDatabase = {true, true, true};
+                std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "HETATM", "ANISOU", "TER"};
+                std::vector<bool> includeCoordSection {true, true, false, false, true};
                 if (options.readHETATM)
                 { // This will only read HETATM entries if enabled. GP builder does not want them.
-                    coordSectionCards.push_back("HETATM");
+                    std::string hetatm = "HETATM";
+                    includeCoordSection[util::indexOf(coordSectionCards, hetatm)] = true;
                 }
                 if (options.inputType == modelsAsCoordinates)
                 { // want to pass in the whole block to assembly so it can read the extra coords
@@ -133,10 +141,11 @@ namespace gmml
                 {
                     expandLine(line, iPdbLineLength);
                     std::string recordName = util::RemoveWhiteSpace(line.substr(0, 6));
-                    if (util::contains(coordSectionCards, recordName))
+                    size_t sectionIndex = util::indexOf(coordSectionCards, recordName);
+                    if (sectionIndex < coordSectionCards.size() && includeCoordSection[sectionIndex])
                     {
-                        std::stringstream recordSection =
-                            extractHeterogenousRecordSection(pdbFileStream, line, coordSectionCards);
+                        std::stringstream recordSection = extractHeterogenousRecordSection(
+                            pdbFileStream, line, coordSectionCards, includeCoordSection);
                         Assembly& assembly = file.assemblies.emplace_back(Assembly());
                         addAssembly(data.assembly);
                         data.assemblies.numbers.push_back(assemblyId + 1);
@@ -176,7 +185,7 @@ namespace gmml
                     else if (util::contains(databaseCards, recordName))
                     {
                         std::stringstream databaseSection =
-                            extractHeterogenousRecordSection(pdbFileStream, line, databaseCards);
+                            extractHeterogenousRecordSection(pdbFileStream, line, databaseCards, includeDatabase);
                         while (getline(databaseSection, line))
                         {
                             file.databaseReferences.push_back(readDatabaseReference(line));
