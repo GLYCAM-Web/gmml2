@@ -117,22 +117,22 @@ namespace gmml
 
             void parseInFileStream(PdbFile& file, std::istream& pdbFileStream, const ReaderOptions& options)
             {
+                std::vector<std::string> databaseCards {"DBREF", "DBREF1", "DBREF2"};
+                std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER"};
+                if (options.readHETATM)
+                { // This will only read HETATM entries if enabled. GP builder does not want them.
+                    coordSectionCards.push_back("HETATM");
+                }
+                if (options.inputType == modelsAsCoordinates)
+                { // want to pass in the whole block to assembly so it can read the extra coords
+                    coordSectionCards.push_back("ENDMDL");
+                }
                 PdbData& data = file.data;
                 size_t assemblyId = 0;
                 for (std::string line; std::getline(pdbFileStream, line);)
                 {
                     expandLine(line, iPdbLineLength);
                     std::string recordName = util::RemoveWhiteSpace(line.substr(0, 6));
-                    std::vector<std::string> coordSectionCards {"MODEL", "ATOM", "ANISOU", "TER"};
-                    if (options.readHETATM)
-                    { // This will only read HETATM entries if enabled. GP builder does not want them.
-                        coordSectionCards.push_back("HETATM");
-                    }
-                    if (options.inputType == modelsAsCoordinates)
-                    { // want to pass in the whole block to assembly so it can read the extra coords
-                        coordSectionCards.push_back("ENDMDL");
-                    }
-                    std::vector<std::string> databaseCards {"DBREF", "DBREF1", "DBREF2"};
                     if (util::contains(coordSectionCards, recordName))
                     {
                         std::stringstream recordSection =
