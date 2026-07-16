@@ -32,7 +32,7 @@ namespace gmml
                 {
                     for (size_t n = 0; n < glycans.size(); n++)
                     {
-                        stream << input.glycositesInputVector[n].proteinResidueId
+                        stream << input.glycositesInputVector[glycans[n]].proteinResidueId
                                << (n == glycans.size() - 1 ? "" : " ");
                     }
                 };
