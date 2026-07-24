@@ -22,6 +22,7 @@ After all concerts/glycans have been iterated over, the algorithm again checks w
 1. No overlaps remain, or
 2. The algorithm has run for X iterations without finding a global improvement, where X is defined as persist cycles in the input
 
+If overlaps remain after that persist-cycles attempt, and randomization cycles is greater than 1, a new randomization cycle starts by re-randomizing all dihedral preferences of each remaining overlapping glycosite (reported as failed glycosites) using default-structure metadata sampling, re-wiggling those glycans, and retrying the persist-cycle search. This outer retry (named as randomization cycle) repeats until overlaps are resolved or the configured number of randomization cycles is exhausted.
 #### Adjusting sidechains
 In certain cases, sidechains close to a glycan attachment point can make resolving all overlap impossible without being moved out of the way. Enabling sidechain movement can help with this. It can also allow for a greater variety of glycan shapes in general.
 
