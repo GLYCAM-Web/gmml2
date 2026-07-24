@@ -12,6 +12,7 @@ numberOfSamples                          2
 rngSeed                                  0       
 prepareForMD                             false   
 persistCycles                            5       
+randomizationCycles                      1       
 overlapRejectionThreshold                1.000000
 useInitialGlycositeResidueConformation   false   
 forceGlycositeRotamerVariety             false   
