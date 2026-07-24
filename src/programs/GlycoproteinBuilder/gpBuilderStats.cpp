@@ -32,7 +32,7 @@ namespace gmml
                 {
                     for (size_t n = 0; n < glycans.size(); n++)
                     {
-                        stream << input.glycositesInputVector[n].proteinResidueId
+                        stream << input.glycositesInputVector[glycans[n]].proteinResidueId
                                << (n == glycans.size() - 1 ? "" : " ");
                     }
                 };
@@ -86,6 +86,7 @@ namespace gmml
                  {seedParameter, std::to_string(seed)},
                  {prepareForMDParameter, boolStr(input.MDprep)},
                  {persistCyclesParameter, std::to_string(input.persistCycles)},
+                 {randomizationCyclesParameter, std::to_string(input.randomizationCycles)},
                  {overlapRejectionThresholdParameter, std::to_string(input.overlapRejectionThreshold)},
                  {useInitialGlycositeResidueConformationParameter,
                   boolStr(input.useInitialGlycositeResidueConformation)},

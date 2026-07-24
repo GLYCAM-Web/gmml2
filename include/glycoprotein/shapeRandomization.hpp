@@ -32,6 +32,18 @@ namespace gmml
             std::vector<std::vector<bool>> allowRotamerFallback;
         };
 
+        ResidueLinkageShapePreference randomSingleLinkageShapePreference(
+            pcg32& rng,
+            const DihedralAngleDataTable& dihedralAngleTable,
+            const AngleSettings& settings,
+            const AssemblyData& data,
+            const assembly::Bounds& bounds,
+            bool allowRotamerFallback,
+            size_t glycanId,
+            size_t linkageIndex,
+            std::function<double(pcg32&, const AngleSettings&, const DihedralAngleData& metadata)> randomAngle,
+            bool freezeGlycositeResidueConformation);
+
         GlycanShapePreference randomLinkageShapePreference(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleTable,

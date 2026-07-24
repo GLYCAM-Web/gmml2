@@ -138,6 +138,38 @@ namespace gmml
                 return result;
             };
 
+            // Default-structure sampling for a full glycan (all linkages): preferenceDev = 0,
+            // initialMetadataOrder, no retain, allow rotamer fallback on every linkage.
+            const AngleSettings defaultGlycositeAngleSettings {0.0, 3.0, 3.0, 2, initialMetadataOrder};
+            FullGlycanDihedralRandomizer randomizeAllDihedrals =
+                [&dihedralAngleDataTable,
+                 &randomAngle,
+                 &defaultGlycositeAngleSettings,
+                 &freezeGlycositeResidueConformation](
+                    pcg32& rng, const AssemblyData& data, const assembly::Bounds& bounds, size_t glycanId)
+            {
+                const size_t glycanCount = data.glycans.moleculeId.size();
+                std::vector<std::vector<bool>> retain(glycanCount);
+                std::vector<std::vector<bool>> allowFallback(glycanCount);
+                for (size_t g = 0; g < glycanCount; g++)
+                {
+                    const size_t linkageCount = data.glycans.linkages[g].size();
+                    retain[g] = std::vector<bool>(linkageCount, false);
+                    allowFallback[g] = std::vector<bool>(linkageCount, true);
+                }
+                const LinkageShapeSettings fullRandomSettings {retain, allowFallback};
+                return randomLinkageShapePreference(
+                    rng,
+                    dihedralAngleDataTable,
+                    defaultGlycositeAngleSettings,
+                    data,
+                    bounds,
+                    fullRandomSettings,
+                    glycanId,
+                    randomAngle,
+                    freezeGlycositeResidueConformation);
+            };
+
             auto getCoordinates = [](const std::vector<Sphere>& bounds)
             {
                 std::vector<Coordinate> result;
@@ -380,6 +412,7 @@ namespace gmml
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
+                    randomizeAllDihedrals,
                     shapeSettings,
                     initialPreference,
                     overlapSettings,
@@ -387,6 +420,7 @@ namespace gmml
                     data,
                     initialState,
                     persistCycles,
+                    resolutionSettings.randomizationCycles,
                     false);
                 std::vector<Coordinate> resolvedCoords = getCoordinates(state.mutableData.bounds.atoms);
                 assembly::Selection selection = assembly::selectAll(graph);
@@ -445,6 +479,7 @@ namespace gmml
                     sidechainAdjustment,
                     sidechainRestoration,
                     randomizeShape,
+                    randomizeAllDihedrals,
                     shapeSettings,
                     initialPreference,
                     overlapSettings,
@@ -452,6 +487,7 @@ namespace gmml
                     data,
                     initialState,
                     persistCycles,
+                    resolutionSettings.randomizationCycles,
                     resolutionSettings.deleteSitesUntilResolved);
                 std::vector<Coordinate> coordinates = getCoordinates(state.mutableData.bounds.atoms);
                 bool hasDeleted = util::contains(state.mutableData.moleculeIncluded, false);

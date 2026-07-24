@@ -288,6 +288,7 @@ int main(int argc, char* argv[])
         ResolutionSettings resolution {
             settings.isDeterministic ? settings.seed : util::generateRandomSeed(),
             settings.persistCycles,
+            settings.randomizationCycles,
             settings.numberOfSamples,
             settings.useInitialGlycositeResidueConformation,
             settings.moveOverlappingSidechains,

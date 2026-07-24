@@ -81,6 +81,7 @@ Additional settings:
 | --- | --- | --- |
 | numberOfSamples | 1 | Number of structure samples to create in addition to the default structure |
 | persistCycles | 5 | How long the algorithm persists in looking for a solution with a lower number of overlaps. Higher values take more time, but may yield better results |
+| randomizationCycles | 1 | After a persist-cycle attempt fails, how many times to start a new randomization cycle by re-randomizing all dihedral preferences of remaining overlapping/failed glycosites (default-structure metadata sampling) and retry. Higher values take more time, but may yield better results |
 | rngSeed | random | The random number generator used in the algorithm will pick a random starting point by default, the value of which will be written into the output summary. Alternatively, a specific integer such as rngSeed:42 can be provided in order to exactly reproduce the output of another run with the same seed and settings. Multithreading does not hinder reproducibility |
 | prepareForMD | false | Recommended and likely necessary if you wish to run an energy minimization or MD simulation. OFF files will be created for each output structure when this option is turned on |
 | overlapRejectionThreshold | 0.0 | The algorithm will attempt to keep the Lennard-Jones repulsive potential of all glycan atoms equal to or lower than this value. Samples where this failed will be placed in a /rejected directory |

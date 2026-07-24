@@ -117,6 +117,10 @@ namespace gmml
                         {
                             gpInputs.persistCycles = parseUlong(value);
                         }
+                        else if (parameter == randomizationCyclesParameter)
+                        {
+                            gpInputs.randomizationCycles = parseUlong(value);
+                        }
                         else if (parameter == useInitialGlycositeResidueConformationParameter)
                         {
                             gpInputs.useInitialGlycositeResidueConformation = parseBool(value);

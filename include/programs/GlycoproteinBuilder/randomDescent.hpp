@@ -51,6 +51,10 @@ namespace gmml
             size_t)>
             GlycanShapeRandomizer;
 
+        typedef std::function<GlycanShapePreference(
+            pcg32& rng, const AssemblyData&, const assembly::Bounds&, size_t glycanId)>
+            FullGlycanDihedralRandomizer;
+
         GlycoproteinState randomDescent(
             pcg32& rng,
             const DihedralAngleDataTable& dihedralAngleDataTable,
@@ -79,6 +83,7 @@ namespace gmml
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
+            FullGlycanDihedralRandomizer& randomizeAllDihedrals,
             const LinkageShapeSettings& shapeSettings,
             const std::vector<GlycanShapePreference>& initialPreference,
             const OverlapSettings& overlapSettings,
@@ -86,6 +91,7 @@ namespace gmml
             const AssemblyData& data,
             const MutableData& initialState,
             size_t persistCycles,
+            size_t randomizationCycles,
             bool deleteSitesUntilResolved);
     } // namespace gpbuilder
 } // namespace gmml

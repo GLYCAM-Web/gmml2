@@ -32,6 +32,22 @@ namespace gmml
                 molecules.end(),
                 [](Molecule* a, Molecule* b) { return a->getDataIndex() < b->getDataIndex(); });
         }
+
+        void reindex(std::vector<Atom*>& atoms, std::vector<Residue*>& residues, std::vector<Molecule*>& molecules)
+        {
+            for (size_t n = 0; n < atoms.size(); n++)
+            {
+                atoms[n]->setDataIndex(n);
+            }
+            for (size_t n = 0; n < residues.size(); n++)
+            {
+                residues[n]->setDataIndex(n);
+            }
+            for (size_t n = 0; n < molecules.size(); n++)
+            {
+                molecules[n]->setDataIndex(n);
+            }
+        }
     } // namespace
 
     AssemblyIndexOffset reorderDataIndices(std::vector<Molecule*>& molecules, AssemblyIndexOffset offset)
@@ -56,31 +72,34 @@ namespace gmml
 
     GraphIndexData toIndexData(const std::vector<Residue*> inputResidues)
     {
-        size_t residueIndex = 0;
-        size_t atomIndex = 0;
-
         std::vector<Atom*> atoms;
-        std::vector<Residue*> residues;
-        std::vector<Molecule*> molecules;
-        std::vector<size_t> atomResidue;
-        std::vector<size_t> residueMolecule;
+        std::vector<Residue*> residues = inputResidues;
+        std::vector<Molecule*> molecules {};
+
+        for (auto& residue : residues)
+        {
+            for (auto& atom : residue->getAtoms())
+            {
+                atoms.push_back(atom);
+            }
+        }
+
+        sortByIndex(atoms, residues, molecules);
+        reindex(atoms, residues, molecules);
+
+        std::vector<size_t> atomResidue(atoms.size(), residues.size());
+        std::vector<size_t> residueMolecule(residues.size(), 0);
         std::vector<size_t> moleculeAssembly {0};
 
         residues.reserve(inputResidues.size());
         for (auto& residue : inputResidues)
         {
+            size_t residueIndex = residue->getDataIndex();
             for (auto& atom : residue->getAtoms())
             {
-                atomResidue.push_back(residueIndex);
-                atoms.push_back(atom);
-                atomIndex++;
+                atomResidue[atom->getDataIndex()] = residueIndex;
             }
-            residueMolecule.push_back(0);
-            residues.push_back(residue);
-            residueIndex++;
         }
-
-        sortByIndex(atoms, residues, molecules);
 
         return {
             {atoms.size(),
@@ -97,13 +116,28 @@ namespace gmml
     {
         std::vector<Atom*> atoms;
         std::vector<Residue*> residues;
-        std::vector<Molecule*> molecules;
-        std::vector<size_t> atomResidue;
-        std::vector<size_t> residueMolecule;
-        std::vector<size_t> moleculeAssembly;
+        std::vector<Molecule*> molecules = inputMolecules;
 
-        molecules.reserve(inputMolecules.size());
-        for (auto& molecule : inputMolecules)
+        for (auto& molecule : molecules)
+        {
+            for (auto& residue : molecule->getResidues())
+            {
+                for (auto& atom : residue->getAtoms())
+                {
+                    atoms.push_back(atom);
+                }
+                residues.push_back(residue);
+            }
+        }
+
+        sortByIndex(atoms, residues, molecules);
+        reindex(atoms, residues, molecules);
+
+        std::vector<size_t> atomResidue(atoms.size(), residues.size());
+        std::vector<size_t> residueMolecule(residues.size(), molecules.size());
+        std::vector<size_t> moleculeAssembly(molecules.size(), 0);
+
+        for (auto& molecule : molecules)
         {
             size_t moleculeIndex = molecule->getDataIndex();
             for (auto& residue : molecule->getResidues())
@@ -111,17 +145,11 @@ namespace gmml
                 size_t residueIndex = residue->getDataIndex();
                 for (auto& atom : residue->getAtoms())
                 {
-                    atomResidue.push_back(residueIndex);
-                    atoms.push_back(atom);
+                    atomResidue[atom->getDataIndex()] = residueIndex;
                 }
-                residueMolecule.push_back(moleculeIndex);
-                residues.push_back(residue);
+                residueMolecule[residueIndex] = moleculeIndex;
             }
-            moleculeAssembly.push_back(0);
-            molecules.push_back(molecule);
         }
-
-        sortByIndex(atoms, residues, molecules);
 
         return {
             {atoms.size(),
@@ -168,6 +196,7 @@ namespace gmml
         }
 
         sortByIndex(atoms, residues, molecules);
+        reindex(atoms, residues, molecules);
 
         return {
             {atoms.size(),
@@ -183,17 +212,11 @@ namespace gmml
 
     graph::Database createGraphData(const GraphObjects& objects)
     {
-        std::vector<uint> initialIndices;
         const std::vector<Atom*>& atoms = objects.atoms;
-        // save indices
-        for (auto& atom : atoms)
-        {
-            initialIndices.push_back(atom->getDataIndex());
-        }
         graph::Database graph;
         for (size_t n = 0; n < atoms.size(); n++)
         {
-            atoms[n]->setIndex(n);
+            atoms[n]->setDataIndex(n);
             addNode(graph);
             graph.nodes.alive[n] = !atoms[n]->isSoftDeleted();
         }
@@ -207,11 +230,6 @@ namespace gmml
                     addEdge(graph, {n, index});
                 }
             }
-        }
-        // restore indices
-        for (size_t n = 0; n < atoms.size(); n++)
-        {
-            atoms[n]->setIndex(initialIndices[n]);
         }
         return graph;
     }

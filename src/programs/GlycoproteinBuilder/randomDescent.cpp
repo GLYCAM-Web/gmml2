@@ -18,6 +18,7 @@
 #include "include/util/logging.hpp"
 #include "include/util/random.hpp"
 
+#include <algorithm>
 #include <sstream>
 
 namespace gmml
@@ -251,6 +252,7 @@ namespace gmml
             SidechainAdjustment adjustSidechains,
             SidechainAdjustment restoreSidechains,
             GlycanShapeRandomizer& randomizeShape,
+            FullGlycanDihedralRandomizer& randomizeAllDihedrals,
             const LinkageShapeSettings& shapeSettings,
             const std::vector<GlycanShapePreference>& initialPreference,
             const OverlapSettings& overlapSettings,
@@ -258,6 +260,7 @@ namespace gmml
             const AssemblyData& data,
             const MutableData& initialState,
             size_t persistCycles,
+            size_t randomizationCycles,
             bool deleteSitesUntilResolved)
         {
             GlycoproteinState currentState;
@@ -295,21 +298,84 @@ namespace gmml
                 data,
                 fullSelection,
                 currentState.mutableData.bounds);
+            const size_t maxRandomizationCycles = std::max(size_t {1}, randomizationCycles);
             for (bool done = false; !done;
                  done = currentState.overlapSites.indices.empty() || !deleteSitesUntilResolved)
             {
-                currentState = randomDescent(
-                    rng,
-                    dihedralAngleDataTable,
-                    toAngleSettings,
-                    randomizeShape,
-                    shapeSettings,
-                    adjustSidechains,
-                    persistCycles,
-                    overlapSettings,
-                    graph,
-                    data,
-                    currentState);
+                for (size_t randCycle = 0; randCycle < maxRandomizationCycles; randCycle++)
+                {
+                    util::log(
+                        __LINE__,
+                        __FILE__,
+                        util::INF,
+                        "Randomization cycle " + std::to_string(randCycle) + "/" +
+                            std::to_string(maxRandomizationCycles));
+                    // At the start of each subsequent randomization cycle, re-randomize all
+                    // dihedral preferences on currently failed glycosites. Refresh overlap only
+                    // after each such glycan has been added with its new randomized dihedrals.
+                    if (randCycle > 0)
+                    {
+                        const std::vector<size_t> failedGlycans = currentState.overlapSites.indices;
+                        for (size_t glycanId : failedGlycans)
+                        {
+                            if (!currentState.mutableData.moleculeIncluded[data.glycans.moleculeId[glycanId]])
+                            {
+                                continue;
+                            }
+                            currentState.preferences[glycanId] = randomizeAllDihedrals(
+                                rng, data, currentState.mutableData.bounds, glycanId);
+                            const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
+                            for (size_t k = 0; k < linkageIds.size(); k++)
+                            {
+                                setLinkageShapeToPreference(
+                                    graph,
+                                    data,
+                                    currentState.mutableData,
+                                    linkageIds[k],
+                                    currentState.preferences[glycanId][k]);
+                            }
+                            currentState.overlapSites = determineOverlapState(
+                                overlapSettings.rejectionThreshold,
+                                overlapSettings,
+                                graph,
+                                data,
+                                fullSelection,
+                                currentState.mutableData.bounds);
+                        }
+                        if (currentState.overlapSites.indices.empty())
+                        {
+                            break;
+                        }
+                        currentState.mutableData = adjustGlycans(
+                            rng,
+                            dihedralAngleDataTable,
+                            overlapSettings,
+                            initialAngleSettings,
+                            2,
+                            graph,
+                            fullSelection,
+                            data,
+                            currentState.preferences,
+                            currentState.overlapSites.indices,
+                            currentState.mutableData);
+                    }
+                    currentState = randomDescent(
+                        rng,
+                        dihedralAngleDataTable,
+                        toAngleSettings,
+                        randomizeShape,
+                        shapeSettings,
+                        adjustSidechains,
+                        persistCycles,
+                        overlapSettings,
+                        graph,
+                        data,
+                        currentState);
+                    if (currentState.overlapSites.indices.empty())
+                    {
+                        break;
+                    }
+                }
                 if (deleteSitesUntilResolved && !currentState.overlapSites.indices.empty())
                 {
                     size_t indexToRemove = util::randomIndex(rng, currentState.overlapSites.indices);

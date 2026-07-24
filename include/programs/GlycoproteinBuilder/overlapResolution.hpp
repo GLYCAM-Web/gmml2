@@ -17,6 +17,7 @@ namespace gmml
         {
             uint64_t rngSeed;
             ulong persistCycles;
+            ulong randomizationCycles;
             ulong numberOfSamples;
             bool useInitialGlycositeResidueConformation;
             bool moveOverlappingSidechains;
