@@ -52,8 +52,8 @@ namespace gmml
           { "C."   , "O[6-9]" , "Psi"  , 180.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "t"  , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "C."  },
           // Omega angle in x-6 linkages.
           { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
-          { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  },
-          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"pyranose"} 				 , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 0.4   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"pyranose"} 		     , "O6" , "C6" , "C5" , "O5"  },
           { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=gluco"}       , "O6" , "C6" , "C5" , "O5"  },
           // Omega angle in x-5 linkages.
           { "C.*"  , "O5"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"furanose"}                  , "O5" , "C5" , "C4" , "O4"  },
