@@ -41,7 +41,9 @@ namespace gmml
         // clang-format off
     std::vector<DihedralAngleData> dihedralAngleDataVector_ {
       { // Regex1  , Regex2   , Name   , Angle  , Deviation               , Weight, Entry Type               , Name , B , I , Res1 Condition , Res2 Conditions           , Atom names                                                               // Atom names this applies to
-          { "C1"   , "O[1-9]" , "Phi"  , 180.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"aldose"}     , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
+          { "C1"   , "O[1-9]" , "Phi"  , 190.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"aldose", "alpha", "D"}     , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
+          { "C1"   , "O[1-9]" , "Phi"  , 170.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"aldose", "alpha", "L"}     , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
+          { "C1"   , "O[1-9]" , "Phi"  , 170.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"aldose", "beta"}           , {"monosaccharide"}                  , "C2" , "C1" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
           { "C2"   , "O[1-9]" , "Phi"  , -60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "g"  , 1 , 1 , {"n-carbon=6", "ketose", "alpha"}     , {"monosaccharide"}            , "C1" , "C2" , "O." , "C."  }, // Phi is defined by C1-C2(ano)-Ox-Cx for ketoses like Fru
           { "C2"   , "O[1-9]" , "Phi"  ,  60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 1 , {"n-carbon=6", "ketose", "beta"}     , {"monosaccharide"}            , "C1" , "C2" , "O." , "C."  }, // Phi is defined by C1-C2(ano)-Ox-Cx for ketoses like Fru
           { "C2"   , "O[1-9]" , "Phi"  , 180.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "t"  , 1 , 1 , {"ketose", "ulosonate"}     , {"monosaccharide"}      , "C1" , "C2" , "O." , "C."  }, // Phi should be C2-C1(ano)-Ox-Cx, or C1-C2(ano)-Ox-Cx
@@ -52,7 +54,7 @@ namespace gmml
           { "C."   , "O[6-9]" , "Psi"  , 180.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "t"  , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "C."  },
           // Omega angle in x-6 linkages.
           { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
-          { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 0.4   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  },
+          { "C.*"  , "O6"     , "Omg"  ,  60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gt" , 3 , 2 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  },
           { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"pyranose"} 		     , "O6" , "C6" , "C5" , "O5"  },
           { "C.*"  , "O6"     , "Omg"  , 180.0  , AngleLimit{20.0, 20.0}  , 0.001 , RotamerType::permutation , "tg" , 3 , 3 , {}             , {"gauche-effect=gluco"}       , "O6" , "C6" , "C5" , "O5"  },
           // Omega angle in x-5 linkages.
@@ -340,6 +342,14 @@ namespace gmml
         if (residueAttributes.configuration == "b")
         {
             foundAttributes.push_back("beta");
+        };
+        if (residueAttributes.isomer == "D")
+        {
+            foundAttributes.push_back("D");
+        };
+        if (residueAttributes.isomer == "L")
+        {
+            foundAttributes.push_back("L");
         };
         if (residueAttributes.ringType == "p")
         {
