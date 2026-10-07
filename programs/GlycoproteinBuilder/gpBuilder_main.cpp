@@ -296,7 +296,8 @@ int main(int argc, char* argv[])
             settings.allowRotamerFallback,
             settings.forceGlycositeRotamerVariety,
             settings.MDprep,
-            settings.MDprep};
+            settings.MDprep,
+            settings.enumerateOmegaConformers};
 
         std::cout << "Resolving overlaps" << std::endl;
         std::vector<StructureStats> stats;

@@ -23,6 +23,7 @@ namespace gmml
         static const std::string forceGlycositeRotamerVarietyParameter = "forceGlycositeRotamerVariety";
         static const std::string overlapRejectionThresholdParameter = "overlapRejectionThreshold";
         static const std::string ignoreHydrogenParameter = "ignoreHydrogen";
+        static const std::string enumerateOmegaConformersParameter = "enumerateOmegaConformers";
         static const std::string seedParameter = "rngSeed";
         static const std::string prepareForMDParameter = "prepareForMD";
 
@@ -51,6 +52,9 @@ namespace gmml
             uint64_t seed = 0;
             bool MDprep = false;
             bool writeOffFile = false;
+            // For the default structure and every sample, also write each other gg/gt combination of
+            // alpha1-6 omegas. Alternatives change only that omega, and are rejected when overlaps remain.
+            bool enumerateOmegaConformers = false;
             std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
         };
 

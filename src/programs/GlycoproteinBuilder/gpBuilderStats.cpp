@@ -94,7 +94,8 @@ namespace gmml
                  {allowRotamerFallbackParameter, boolStr(input.allowRotamerFallback)},
                  {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
                  {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
-                 {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)}}
+                 {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)},
+                 {enumerateOmegaConformersParameter, boolStr(input.enumerateOmegaConformers)}}
             };
 
             util::TextTable structureTable {

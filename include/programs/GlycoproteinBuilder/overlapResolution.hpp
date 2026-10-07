@@ -26,6 +26,7 @@ namespace gmml
             bool forceGlycositeRotamerVariety;
             bool prepareForMD;
             bool writeOffFile;
+            bool enumerateOmegaConformers;
         };
 
         void resolveOverlaps(

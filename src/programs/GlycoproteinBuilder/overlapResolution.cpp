@@ -18,6 +18,7 @@
 #include "include/fileType/pdb/pdbResidue.hpp"
 #include "include/geometry/boundingSphere.hpp"
 #include "include/geometry/geometryTypes.hpp"
+#include "include/geometry/orientation.hpp"
 #include "include/geometry/overlap.hpp"
 #include "include/glycoprotein/glycanShape.hpp"
 #include "include/glycoprotein/glycanWiggle.hpp"
@@ -32,6 +33,7 @@
 #include "include/metadata/dihedralangledata.hpp"
 #include "include/programs/GlycoproteinBuilder/gpBuilderStats.hpp"
 #include "include/programs/GlycoproteinBuilder/randomDescent.hpp"
+#include "include/util/constants.hpp"
 #include "include/util/containers.hpp"
 #include "include/util/files.hpp"
 #include "include/util/filesystem.hpp"
@@ -41,6 +43,9 @@
 #include "include/util/structuredFiles.hpp"
 #include "include/util/threads.hpp"
 
+#include <cmath>
+#include <iostream>
+#include <optional>
 #include <ostream>
 #include <sstream>
 #include <stddef.h> // size_t
@@ -53,6 +58,214 @@ namespace gmml
 {
     namespace gpbuilder
     {
+        namespace
+        {
+            struct OmegaConformerSite
+            {
+                size_t glycanId;
+                size_t linkageIndex;
+                size_t bondIndex;
+                size_t ggMetadataIndex;
+                size_t gtMetadataIndex;
+                std::string label;
+            };
+
+            bool isAlphaC1Phi(const DihedralAngleData& entry)
+            {
+                return entry.dihedral_angle_name_ == "Phi" && entry.linking_atom1_ == "C1" &&
+                       util::contains(entry.residue1_conditions_, std::string("alpha"));
+            }
+
+            // Each alpha1-6 linkage whose omega metadata contains both gg and gt.
+            std::vector<OmegaConformerSite> alpha16OmegaSites(
+                const DihedralAngleDataTable& table, const AssemblyData& data)
+            {
+                std::vector<OmegaConformerSite> sites;
+                const size_t glycanCount = data.glycans.linkages.size();
+                for (size_t glycanId = 0; glycanId < glycanCount; glycanId++)
+                {
+                    const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
+                    for (size_t linkageIndex = 0; linkageIndex < linkages.size(); linkageIndex++)
+                    {
+                        size_t linkageId = linkages[linkageIndex];
+                        if (data.residueLinkages.rotamerTypes[linkageId] != RotamerType::permutation)
+                        {
+                            continue;
+                        }
+                        const std::vector<size_t>& bonds = data.residueLinkages.rotatableBonds[linkageId];
+                        bool alphaC1 = false;
+                        for (size_t bondId : bonds)
+                        {
+                            for (size_t metadata : data.rotatableBonds.metadata[bondId])
+                            {
+                                if (isAlphaC1Phi(table.entries[metadata]))
+                                {
+                                    alphaC1 = true;
+                                }
+                            }
+                        }
+                        if (!alphaC1)
+                        {
+                            continue;
+                        }
+                        for (size_t bondIndex = 0; bondIndex < bonds.size(); bondIndex++)
+                        {
+                            const std::vector<size_t>& metadata = data.rotatableBonds.metadata[bonds[bondIndex]];
+                            std::optional<size_t> gg;
+                            std::optional<size_t> gt;
+                            for (size_t n = 0; n < metadata.size(); n++)
+                            {
+                                const DihedralAngleData& entry = table.entries[metadata[n]];
+                                if (entry.dihedral_angle_name_ != "Omg" || entry.linking_atom2_ != "O6")
+                                {
+                                    continue;
+                                }
+                                if (entry.rotamer_name_ == "gg")
+                                {
+                                    gg = n;
+                                }
+                                else if (entry.rotamer_name_ == "gt")
+                                {
+                                    gt = n;
+                                }
+                            }
+                            if (gg.has_value() && gt.has_value())
+                            {
+                                sites.push_back(
+                                    OmegaConformerSite {glycanId, linkageIndex, bondIndex, gg.value(), gt.value(), ""});
+                            }
+                        }
+                    }
+                }
+                std::vector<size_t> perGlycan(glycanCount, 0);
+                for (const OmegaConformerSite& site : sites)
+                {
+                    perGlycan[site.glycanId] += 1;
+                }
+                for (OmegaConformerSite& site : sites)
+                {
+                    size_t residue = data.glycans.attachmentResidue[site.glycanId];
+                    const std::string& chain = data.residues.chainIds[residue];
+                    site.label =
+                        (chain.empty() ? std::string() : chain + "_") + std::to_string(data.residues.numbers[residue]);
+                    if (perGlycan[site.glycanId] > 1)
+                    {
+                        site.label += "-L" + std::to_string(site.linkageIndex);
+                    }
+                }
+                return sites;
+            }
+
+            size_t omegaBondId(const AssemblyData& data, const OmegaConformerSite& site)
+            {
+                size_t linkageId = data.glycans.linkages[site.glycanId][site.linkageIndex];
+                return data.residueLinkages.rotatableBonds[linkageId][site.bondIndex];
+            }
+
+            double circularDistanceDegrees(double a, double b)
+            {
+                double distance = std::fmod(std::abs(a - b), 360.0);
+                return distance > 180.0 ? 360.0 - distance : distance;
+            }
+
+            // Nearest of the three omega wells. Sampling can leave the canonical angle, including tg.
+            std::string omegaRotamerName(double degrees)
+            {
+                const std::array<std::pair<const char*, double>, 3> rotamers {
+                    {
+                     {"gg", -60.0},
+                     {"gt", 60.0},
+                     {"tg", 180.0},
+                     }
+                };
+                const char* bestName = rotamers[0].first;
+                double bestDistance = circularDistanceDegrees(degrees, rotamers[0].second);
+                for (size_t n = 1; n < rotamers.size(); n++)
+                {
+                    double distance = circularDistanceDegrees(degrees, rotamers[n].second);
+                    if (distance < bestDistance)
+                    {
+                        bestName = rotamers[n].first;
+                        bestDistance = distance;
+                    }
+                }
+                return bestName;
+            }
+
+            double currentOmegaDegrees(
+                const AssemblyData& data, const assembly::Bounds& bounds, const OmegaConformerSite& site)
+            {
+                return constants::toDegrees(angle(dihedralCoordinates(data, bounds, omegaBondId(data, site))));
+            }
+
+            // Move only this alpha1-6 omega into the chosen rotamer. Every other dihedral stays put.
+            void wiggleSingleOmega(
+                const DihedralAngleDataTable& dihedralAngleTable,
+                const OverlapSettings& overlapSettings,
+                const assembly::Graph& graph,
+                const AssemblyData& data,
+                const assembly::Selection& selection,
+                MutableData& mutableData,
+                const OmegaConformerSite& site,
+                bool useGt)
+            {
+                size_t bondId = omegaBondId(data, site);
+                const std::vector<size_t>& metadata = data.rotatableBonds.metadata[bondId];
+                size_t chosen = useGt ? site.gtMetadataIndex : site.ggMetadataIndex;
+                std::vector<double> angles(metadata.size(), 0.0);
+                angles[chosen] = dihedralAngleTable.entries[metadata[chosen]].default_angle;
+                AngleSearchPreference preference {defaultSearchSettings.deviation, angles, {chosen}};
+                const std::array<Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData.bounds, bondId);
+                const std::vector<size_t>& movingAtoms = data.rotatableBonds.movingAtoms[bondId];
+                std::vector<bool> atomMoving = util::indicesToBools(atomCount(graph.source), movingAtoms);
+                assembly::Selection moving =
+                    assembly::intersection(graph, selection, assembly::selectByAtoms(graph, atomMoving));
+                assembly::Selection nonMoving = assembly::intersection(
+                    graph, selection, assembly::selectByAtoms(graph, util::vectorNot(atomMoving)));
+                auto searchOverlap = [&](const assembly::Bounds& bounds)
+                {
+                    return overlapAboveThresholdSum(
+                        overlapSettings.rejectionThreshold,
+                        overlapsBetweenSelections(
+                            overlapSettings.potentialTable,
+                            overlapSettings.tolerance,
+                            graph,
+                            bounds,
+                            moving,
+                            nonMoving,
+                            data.atoms.elements,
+                            data.residueEdges.atomsCloseToEdge));
+                };
+                OverlapState best = wiggleUsingRotamers(
+                    searchOverlap,
+                    defaultSearchSettings.angles,
+                    defaultSearchSettings.halfIntervalSearches,
+                    dihedralAngleTable,
+                    graph,
+                    mutableData.bounds,
+                    movingAtoms,
+                    coordinates,
+                    util::indexVector(metadata),
+                    metadata,
+                    preference);
+                mutableData.bounds = best.bounds;
+                mutableData.rotatableBondCurrentMetadata[bondId] = best.angle.metadataIndex;
+            }
+
+            std::string omegaCombinationPrefix(
+                const std::vector<OmegaConformerSite>& sites, size_t mask, const std::string& base)
+            {
+                std::vector<std::string> parts;
+                parts.reserve(sites.size());
+                for (size_t n = 0; n < sites.size(); n++)
+                {
+                    bool useGt = (mask & (size_t(1) << n)) != 0;
+                    parts.push_back(sites[n].label + "-" + (useGt ? "gt" : "gg"));
+                }
+                return base + "_" + util::join("_", parts);
+            }
+        } // namespace
+
         void resolveOverlaps(
             std::vector<StructureStats>& stats,
             const SidechainRotamerData& sidechainRotamers,
@@ -388,6 +601,16 @@ namespace gmml
             const std::vector<std::vector<bool>> iterationAllowFallback =
                 util::vectorMap(glycanLinkageFallback, glycanIndices);
 
+            const std::vector<OmegaConformerSite> omegaSites = resolutionSettings.enumerateOmegaConformers
+                                                                   ? alpha16OmegaSites(dihedralAngleDataTable, data)
+                                                                   : std::vector<OmegaConformerSite> {};
+            if (omegaSites.size() > 12)
+            {
+                throw std::runtime_error(
+                    "enumerateOmegaConformers found " + std::to_string(omegaSites.size()) +
+                    " alpha1-6 linkages. Each one doubles the number of conformations, and more than 12 is refused.");
+            }
+
             auto runInitial = [&](pcg32 rng, StructureStats& stats)
             {
                 uint persistCycles = resolutionSettings.persistCycles;
@@ -427,7 +650,7 @@ namespace gmml
                 std::vector<double> atomOverlaps =
                     totalOverlaps(overlapSettings, graph, data, selection, state.mutableData.bounds);
                 bool serialized = resolutionSettings.prepareForMD;
-                std::string prefix = "default";
+                const std::string prefix = "default";
                 writePdbFile(
                     graph,
                     data,
@@ -539,6 +762,12 @@ namespace gmml
             // order of parallel for loop is undefined, so we generate all seeds up front for determinism
             size_t sampleCount = resolutionSettings.numberOfSamples;
             size_t totalStructures = sampleCount + 1;
+            if (!omegaSites.empty())
+            {
+                std::cout << "Each resolved structure gets gg/gt alternatives that set every alpha1-6 omega to the "
+                             "named rotamer"
+                          << std::endl;
+            }
             pcg32 seedingRng(resolutionSettings.rngSeed);
             std::vector<uint64_t> rngSeeds = util::randomIntegers<uint64_t>(totalStructures, seedingRng);
             std::vector<std::string> prefixes;
@@ -574,6 +803,117 @@ namespace gmml
                 {
                     runIteration(rng, stats[count], prefixes[count - 1]);
                 }
+            }
+
+            if (!omegaSites.empty())
+            {
+                const size_t combinationCount = size_t(1) << omegaSites.size();
+                const std::string defaultRejectedDir = outputDir + "/rejected_defaults";
+                auto alternativesOf = [&](const StructureStats& parent, bool isSample)
+                {
+                    std::vector<StructureStats> alternatives;
+                    alternatives.reserve(combinationCount);
+                    assembly::Selection selection = assembly::selectByAtomsAndMolecules(
+                        graph, data.atoms.includeInEachOverlapCheck, parent.selection.molecules);
+                    std::vector<std::string> parentRotamers;
+                    parentRotamers.reserve(omegaSites.size());
+                    for (const OmegaConformerSite& site : omegaSites)
+                    {
+                        parentRotamers.push_back(omegaRotamerName(currentOmegaDegrees(data, parent.bounds, site)));
+                    }
+                    for (size_t mask = 0; mask < combinationCount; mask++)
+                    {
+                        bool sameAsParent = true;
+                        for (size_t n = 0; n < omegaSites.size(); n++)
+                        {
+                            bool useGt = (mask & (size_t(1) << n)) != 0;
+                            if (parentRotamers[n] != (useGt ? "gt" : "gg"))
+                            {
+                                sameAsParent = false;
+                            }
+                        }
+                        // The parent is already this gg/gt combination. A sample may instead be tg, or a mix.
+                        if (sameAsParent)
+                        {
+                            continue;
+                        }
+                        MutableData state = initialState;
+                        state.bounds = parent.bounds;
+                        state.residueSidechainMoved = parent.residueSidechainMoved;
+                        state.moleculeIncluded = parent.selection.molecules;
+                        for (size_t n = 0; n < omegaSites.size(); n++)
+                        {
+                            bool useGt = (mask & (size_t(1) << n)) != 0;
+                            if (parentRotamers[n] == (useGt ? "gt" : "gg"))
+                            {
+                                continue;
+                            }
+                            wiggleSingleOmega(
+                                dihedralAngleDataTable,
+                                overlapSettings,
+                                graph,
+                                data,
+                                selection,
+                                state,
+                                omegaSites[n],
+                                useGt);
+                        }
+                        std::vector<Coordinate> coordinates = getCoordinates(state.bounds.atoms);
+                        std::vector<double> atomOverlaps =
+                            totalOverlaps(overlapSettings, graph, data, selection, state.bounds);
+                        std::vector<bool> nonViable = nonViableSites(graph, selection, data, atomOverlaps);
+                        bool reject = util::contains(nonViable, true);
+                        bool hasDeleted = parent.deletions;
+                        std::string prefix = omegaCombinationPrefix(omegaSites, mask, parent.filename);
+                        std::string directory = isSample
+                                                    ? (hasDeleted ? deletionDir : (reject ? rejectDir : structureDir))
+                                                    : (reject ? defaultRejectedDir : outputDir);
+                        bool serialized = resolutionSettings.prepareForMD;
+                        writePdbFile(
+                            graph,
+                            data,
+                            coordinates,
+                            atomNumbers(serialized, data),
+                            residueNumbers(serialized, data),
+                            state.moleculeIncluded,
+                            atomPairsConnectingNonProteinResidues,
+                            directory,
+                            prefix);
+                        if (resolutionSettings.writeOffFile)
+                        {
+                            writeOffFile(graph, data, coordinates, state.moleculeIncluded, directory, prefix);
+                        }
+                        alternatives.push_back(StructureStats {
+                            prefix,
+                            reject,
+                            hasDeleted,
+                            state.bounds,
+                            selection,
+                            nonViable,
+                            state.residueSidechainMoved,
+                            atomOverlaps});
+                    }
+                    return alternatives;
+                };
+
+                std::vector<StructureStats> ordered;
+                ordered.reserve(stats.size() * combinationCount);
+                size_t rejectedCount = 0;
+                size_t alternativeCount = 0;
+                for (size_t n = 0; n < stats.size(); n++)
+                {
+                    ordered.push_back(stats[n]);
+                    std::vector<StructureStats> alternatives = alternativesOf(stats[n], n > 0);
+                    for (const StructureStats& alternative : alternatives)
+                    {
+                        rejectedCount += alternative.rejected ? 1 : 0;
+                    }
+                    alternativeCount += alternatives.size();
+                    ordered.insert(ordered.end(), alternatives.begin(), alternatives.end());
+                }
+                stats = std::move(ordered);
+                std::cout << "Rejected " << rejectedCount << " of " << alternativeCount
+                          << " alternative omega conformations" << std::endl;
             }
         }
     } // namespace gpbuilder

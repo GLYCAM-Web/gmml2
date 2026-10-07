@@ -149,6 +149,10 @@ namespace gmml
                         {
                             gpInputs.ignoreHydrogen = parseBool(value);
                         }
+                        else if (parameter == enumerateOmegaConformersParameter)
+                        {
+                            gpInputs.enumerateOmegaConformers = parseBool(value);
+                        }
                         else if (parameter == seedParameter)
                         {
                             if (value != "random")
