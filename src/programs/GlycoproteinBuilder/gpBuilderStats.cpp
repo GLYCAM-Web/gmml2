@@ -95,6 +95,7 @@ namespace gmml
                  {moveOverlappingSidechainsParameter, boolStr(input.moveOverlappingSidechains)},
                  {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
                  {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)},
+                 {ignoreO6Parameter, boolStr(input.ignoreO6)},
                  {enumerateOmegaConformersParameter, boolStr(input.enumerateOmegaConformers)}}
             };
 

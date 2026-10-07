@@ -149,6 +149,10 @@ namespace gmml
                         {
                             gpInputs.ignoreHydrogen = parseBool(value);
                         }
+                        else if (parameter == ignoreO6Parameter)
+                        {
+                            gpInputs.ignoreO6 = parseBool(value);
+                        }
                         else if (parameter == enumerateOmegaConformersParameter)
                         {
                             gpInputs.enumerateOmegaConformers = parseBool(value);

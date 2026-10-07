@@ -20,6 +20,7 @@ allowRotamerFallback                     true
 moveOverlappingSidechains                false   
 deleteUnresolvableGlycosites             false   
 ignoreHydrogen                           false   
+ignoreO6                                 false   
 enumerateOmegaConformers                 false   
 
 #### Structures ####

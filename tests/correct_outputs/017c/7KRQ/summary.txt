@@ -20,6 +20,7 @@ deleteUnresolvableGlycosites             false
 atomRadiiSource                          chimera 
 atomOverlapTolerance                     0.600000
 ignoreHydrogen                           false   
+ignoreO6                                 false   
 enumerateOmegaConformers                 false   
 
 #### Structures ####

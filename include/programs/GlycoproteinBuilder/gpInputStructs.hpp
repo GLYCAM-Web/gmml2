@@ -23,6 +23,7 @@ namespace gmml
         static const std::string forceGlycositeRotamerVarietyParameter = "forceGlycositeRotamerVariety";
         static const std::string overlapRejectionThresholdParameter = "overlapRejectionThreshold";
         static const std::string ignoreHydrogenParameter = "ignoreHydrogen";
+        static const std::string ignoreO6Parameter = "ignoreO6";
         static const std::string enumerateOmegaConformersParameter = "enumerateOmegaConformers";
         static const std::string seedParameter = "rngSeed";
         static const std::string prepareForMDParameter = "prepareForMD";
@@ -42,6 +43,7 @@ namespace gmml
             ulong persistCycles = 5;
             ulong randomizationCycles = 1;
             bool ignoreHydrogen = false;
+            bool ignoreO6 = false;
             bool useInitialGlycositeResidueConformation = false;
             bool moveOverlappingSidechains = false;
             bool deleteSitesUntilResolved = false;

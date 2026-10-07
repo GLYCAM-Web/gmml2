@@ -268,6 +268,20 @@ int main(int argc, char* argv[])
                 glycanIndices,
                 glycositeIds,
                 linkages));
+        if (settings.ignoreO6)
+        {
+            std::vector<bool>& eachCheck = assembly.data.atoms.includeInEachOverlapCheck;
+            std::vector<bool>& mainCheck = assembly.data.atoms.includeInMainOverlapCheck;
+            const std::vector<std::string>& atomNames = assembly.data.atoms.names;
+            for (size_t n = 0; n < atomNames.size(); n++)
+            {
+                if (atomNames[n] == "O6")
+                {
+                    eachCheck[n] = false;
+                    mainCheck[n] = false;
+                }
+            }
+        }
         if (settings.moveOverlappingSidechains)
         {
             assembly.data.atoms.includeInMainOverlapCheck = util::vectorAnd(
