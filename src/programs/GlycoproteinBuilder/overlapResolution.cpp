@@ -43,14 +43,17 @@
 #include "include/util/structuredFiles.hpp"
 #include "include/util/threads.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <limits>
 #include <optional>
 #include <ostream>
 #include <sstream>
 #include <stddef.h> // size_t
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <variant>
 #include <vector>
 
@@ -263,6 +266,81 @@ namespace gmml
                     parts.push_back(sites[n].label + "-" + (useGt ? "gt" : "gg"));
                 }
                 return base + "_" + util::join("_", parts);
+            }
+
+            // Linkage indices, within the glycan, strictly beyond this alpha1-6 linkage.
+            std::vector<size_t> linkagesAfterOmega(
+                const assembly::Graph& graph, const AssemblyData& data, const OmegaConformerSite& site)
+            {
+                size_t glycanId = site.glycanId;
+                size_t linkageId = data.glycans.linkages[glycanId][site.linkageIndex];
+                size_t edgeId = data.residueLinkages.edgeId[linkageId];
+                const std::array<size_t, 2>& ends = graph.residues.edges.nodeAdjacencies[edgeId];
+                size_t attachment = data.glycans.attachmentResidue[glycanId];
+                const std::vector<size_t>& glycanResidues =
+                    assembly::moleculeResidues(graph, data.glycans.moleculeId[glycanId]);
+                const size_t residueCount = graph::nodeCount(graph.residues);
+                std::vector<bool> inGlycan(residueCount, false);
+                for (size_t residue : glycanResidues)
+                {
+                    inGlycan[residue] = true;
+                }
+                inGlycan[attachment] = true;
+
+                std::vector<size_t> distance(residueCount, std::numeric_limits<size_t>::max());
+                std::vector<size_t> queue {attachment};
+                distance[attachment] = 0;
+                for (size_t q = 0; q < queue.size(); q++)
+                {
+                    size_t residue = queue[q];
+                    for (size_t neighbor : graph.residues.nodes.nodeAdjacencies[residue])
+                    {
+                        if (inGlycan[neighbor] && distance[neighbor] == std::numeric_limits<size_t>::max())
+                        {
+                            distance[neighbor] = distance[residue] + 1;
+                            queue.push_back(neighbor);
+                        }
+                    }
+                }
+                size_t closer = distance[ends[0]] <= distance[ends[1]] ? ends[0] : ends[1];
+                size_t farther = closer == ends[0] ? ends[1] : ends[0];
+
+                std::vector<bool> inSubtree(residueCount, false);
+                queue.clear();
+                queue.push_back(farther);
+                inSubtree[farther] = true;
+                for (size_t q = 0; q < queue.size(); q++)
+                {
+                    size_t residue = queue[q];
+                    const std::vector<size_t>& neighbors = graph.residues.nodes.nodeAdjacencies[residue];
+                    const std::vector<size_t>& edges = graph.residues.nodes.edgeAdjacencies[residue];
+                    for (size_t n = 0; n < neighbors.size(); n++)
+                    {
+                        if (edges[n] == edgeId || !inGlycan[neighbors[n]] || inSubtree[neighbors[n]])
+                        {
+                            continue;
+                        }
+                        inSubtree[neighbors[n]] = true;
+                        queue.push_back(neighbors[n]);
+                    }
+                }
+
+                std::vector<size_t> result;
+                const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
+                for (size_t n = 0; n < linkages.size(); n++)
+                {
+                    if (n == site.linkageIndex)
+                    {
+                        continue;
+                    }
+                    const std::array<size_t, 2>& linkageEnds =
+                        graph.residues.edges.nodeAdjacencies[data.residueLinkages.edgeId[linkages[n]]];
+                    if (inSubtree[linkageEnds[0]] && inSubtree[linkageEnds[1]])
+                    {
+                        result.push_back(n);
+                    }
+                }
+                return result;
             }
         } // namespace
 
@@ -765,7 +843,7 @@ namespace gmml
             if (!omegaSites.empty())
             {
                 std::cout << "Each resolved structure gets gg/gt alternatives that set every alpha1-6 omega to the "
-                             "named rotamer"
+                             "named rotamer, then run the randomization and persist cycles on linkages beyond it"
                           << std::endl;
             }
             pcg32 seedingRng(resolutionSettings.rngSeed);
@@ -809,7 +887,220 @@ namespace gmml
             {
                 const size_t combinationCount = size_t(1) << omegaSites.size();
                 const std::string defaultRejectedDir = outputDir + "/rejected_defaults";
-                auto alternativesOf = [&](const StructureStats& parent, bool isSample)
+                auto randomizeLinkagesAfterOmega = [&](pcg32& rng,
+                                                       MutableData& state,
+                                                       const assembly::Selection& selection,
+                                                       const std::vector<std::pair<size_t, size_t>>& linkages,
+                                                       size_t mask,
+                                                       bool isSample)
+                {
+                    if (linkages.empty())
+                    {
+                        return;
+                    }
+                    auto angleSettingsForCycle = [&](uint cycle)
+                    {
+                        double ratio = std::min(1.0, double(cycle) / 4.0);
+                        if (isSample)
+                        {
+                            double preferenceDev = 2.0 - 1.5 * ratio;
+                            double wiggleRoom = 3.0 - preferenceDev;
+                            return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, randomMetadataSelection};
+                        }
+                        double preferenceDev = 0.5 * ratio;
+                        double wiggleRoom = 3.0 - preferenceDev;
+                        return AngleSettings {preferenceDev, wiggleRoom, 3.0, 2, initialMetadataOrder};
+                    };
+                    auto linkageSearchFor = [&](const AngleSettings& settings)
+                    {
+                        return AngleSearchSettings {
+                            settings.searchDeviation,
+                            settings.halfIntervalSearches,
+                            [&, settings](
+                                const DihedralAngleData& metadata,
+                                double preference,
+                                double deviation,
+                                uint halfIntervalSearches)
+                            {
+                                std::pair<double, double> deviationStd = standardDeviation(settings, metadata);
+                                return AngleSpacing {
+                                    preference,
+                                    deviation * deviationStd.first,
+                                    deviation * deviationStd.second,
+                                    settings.searchIncrement,
+                                    halfIntervalSearches};
+                            }};
+                    };
+                    auto stillOverlapping = [&](const MutableData& current)
+                    {
+                        OverlapSites sites = determineOverlapState(
+                            overlapSettings.rejectionThreshold,
+                            overlapSettings,
+                            graph,
+                            data,
+                            selection,
+                            current.bounds);
+                        return !sites.indices.empty();
+                    };
+                    auto overlapSum = [&](const MutableData& current) {
+                        return overlapVectorSum(totalOverlaps(overlapSettings, graph, data, selection, current.bounds));
+                    };
+                    auto lockNamedOmega =
+                        [&](ResidueLinkageShapePreference& preference, size_t glycanId, size_t linkageIndex)
+                    {
+                        PermutationShapePreference* permutation = std::get_if<PermutationShapePreference>(&preference);
+                        if (permutation == nullptr)
+                        {
+                            return;
+                        }
+                        for (size_t n = 0; n < omegaSites.size(); n++)
+                        {
+                            if (omegaSites[n].glycanId != glycanId || omegaSites[n].linkageIndex != linkageIndex)
+                            {
+                                continue;
+                            }
+                            bool useGt = (mask & (size_t(1) << n)) != 0;
+                            size_t chosen = useGt ? omegaSites[n].gtMetadataIndex : omegaSites[n].ggMetadataIndex;
+                            size_t bondId = omegaBondId(data, omegaSites[n]);
+                            permutation->metadataOrder[omegaSites[n].bondIndex] = {chosen};
+                            permutation->angles[omegaSites[n].bondIndex][chosen] =
+                                dihedralAngleDataTable.entries[data.rotatableBonds.metadata[bondId][chosen]]
+                                    .default_angle;
+                        }
+                    };
+                    auto pinDownstreamOmegas = [&](MutableData& trial)
+                    {
+                        for (size_t n = 0; n < omegaSites.size(); n++)
+                        {
+                            bool downstream = false;
+                            for (const std::pair<size_t, size_t>& linkage : linkages)
+                            {
+                                if (linkage.first == omegaSites[n].glycanId &&
+                                    linkage.second == omegaSites[n].linkageIndex)
+                                {
+                                    downstream = true;
+                                }
+                            }
+                            if (!downstream)
+                            {
+                                continue;
+                            }
+                            bool useGt = (mask & (size_t(1) << n)) != 0;
+                            wiggleSingleOmega(
+                                dihedralAngleDataTable,
+                                overlapSettings,
+                                graph,
+                                data,
+                                selection,
+                                trial,
+                                omegaSites[n],
+                                useGt);
+                        }
+                    };
+                    auto drawAndSet = [&](MutableData& trial, const AngleSettings& settings, bool allowFallback)
+                    {
+                        std::vector<ResidueLinkageShapePreference> preferences;
+                        preferences.reserve(linkages.size());
+                        for (const std::pair<size_t, size_t>& linkage : linkages)
+                        {
+                            size_t glycanId = linkage.first;
+                            size_t linkageIndex = linkage.second;
+                            size_t linkageId = data.glycans.linkages[glycanId][linkageIndex];
+                            ResidueLinkageShapePreference preference = randomSingleLinkageShapePreference(
+                                rng,
+                                dihedralAngleDataTable,
+                                settings,
+                                data,
+                                trial.bounds,
+                                allowFallback,
+                                glycanId,
+                                linkageIndex,
+                                randomAngle,
+                                freezeGlycositeResidueConformation);
+                            lockNamedOmega(preference, glycanId, linkageIndex);
+                            setLinkageShapeToPreference(graph, data, trial, linkageId, preference);
+                            preferences.push_back(std::move(preference));
+                        }
+                        return preferences;
+                    };
+                    auto wiggleAll = [&](MutableData& trial,
+                                         const AngleSettings& settings,
+                                         const assembly::Selection& wiggleSelection,
+                                         size_t times,
+                                         const std::vector<ResidueLinkageShapePreference>& preferences)
+                    {
+                        AngleSearchSettings linkageSearch = linkageSearchFor(settings);
+                        for (size_t pass = 0; pass < times; pass++)
+                        {
+                            for (size_t n = 0; n < linkages.size(); n++)
+                            {
+                                size_t linkageId = data.glycans.linkages[linkages[n].first][linkages[n].second];
+                                wiggleLinkage(
+                                    dihedralAngleDataTable,
+                                    overlapSettings,
+                                    graph,
+                                    data,
+                                    wiggleSelection,
+                                    trial,
+                                    linkageId,
+                                    linkageSearch,
+                                    preferences[n]);
+                            }
+                        }
+                    };
+                    auto persistDownstream = [&](MutableData& current)
+                    {
+                        uint cycle = 0;
+                        uint maxCycle = 0;
+                        MutableData bestState = current;
+                        double bestOverlap = overlapSum(bestState);
+                        bool allowFallback = isSample ? resolutionSettings.allowRotamerFallback : true;
+                        while (cycle < resolutionSettings.persistCycles && stillOverlapping(bestState))
+                        {
+                            AngleSettings settings = angleSettingsForCycle(maxCycle);
+                            cycle++;
+                            maxCycle = std::max(cycle, maxCycle);
+                            MutableData trial = bestState;
+                            std::vector<ResidueLinkageShapePreference> preferences =
+                                drawAndSet(trial, settings, allowFallback);
+                            assembly::Selection mainSelection = assembly::selectByAtomsAndMolecules(
+                                graph, data.atoms.includeInMainOverlapCheck, trial.moleculeIncluded);
+                            wiggleAll(trial, settings, mainSelection, 1, preferences);
+                            wiggleAll(trial, settings, selection, 2, preferences);
+                            pinDownstreamOmegas(trial);
+                            double overlap = overlapSum(trial);
+                            if (overlap < bestOverlap)
+                            {
+                                cycle = 0;
+                                bestState = trial;
+                                bestOverlap = overlap;
+                            }
+                        }
+                        current = bestState;
+                    };
+                    const size_t maxRandomizationCycles = std::max(size_t {1}, resolutionSettings.randomizationCycles);
+                    AngleSettings initialAngleSettings = angleSettingsForCycle(0);
+                    for (size_t randCycle = 0; randCycle < maxRandomizationCycles; randCycle++)
+                    {
+                        if (randCycle > 0)
+                        {
+                            std::vector<ResidueLinkageShapePreference> preferences =
+                                drawAndSet(state, defaultGlycositeAngleSettings, true);
+                            if (!stillOverlapping(state))
+                            {
+                                break;
+                            }
+                            wiggleAll(state, initialAngleSettings, selection, 2, preferences);
+                            pinDownstreamOmegas(state);
+                        }
+                        persistDownstream(state);
+                        if (!stillOverlapping(state))
+                        {
+                            break;
+                        }
+                    }
+                };
+                auto alternativesOf = [&](const StructureStats& parent, bool isSample, size_t parentIndex)
                 {
                     std::vector<StructureStats> alternatives;
                     alternatives.reserve(combinationCount);
@@ -858,6 +1149,33 @@ namespace gmml
                                 omegaSites[n],
                                 useGt);
                         }
+                        std::vector<std::pair<size_t, size_t>> linkagesAfter;
+                        std::vector<std::vector<bool>> alreadyIncluded(data.glycans.moleculeId.size());
+                        for (size_t n = 0; n < omegaSites.size(); n++)
+                        {
+                            bool useGt = (mask & (size_t(1) << n)) != 0;
+                            if (parentRotamers[n] == (useGt ? "gt" : "gg"))
+                            {
+                                continue;
+                            }
+                            size_t glycanId = omegaSites[n].glycanId;
+                            if (alreadyIncluded[glycanId].empty())
+                            {
+                                alreadyIncluded[glycanId] =
+                                    std::vector<bool>(data.glycans.linkages[glycanId].size(), false);
+                            }
+                            for (size_t linkageIndex : linkagesAfterOmega(graph, data, omegaSites[n]))
+                            {
+                                if (!alreadyIncluded[glycanId][linkageIndex])
+                                {
+                                    alreadyIncluded[glycanId][linkageIndex] = true;
+                                    linkagesAfter.push_back({glycanId, linkageIndex});
+                                }
+                            }
+                        }
+                        std::sort(linkagesAfter.begin(), linkagesAfter.end());
+                        pcg32 omegaRng(resolutionSettings.rngSeed + parentIndex * 1000003ULL + mask);
+                        randomizeLinkagesAfterOmega(omegaRng, state, selection, linkagesAfter, mask, isSample);
                         std::vector<Coordinate> coordinates = getCoordinates(state.bounds.atoms);
                         std::vector<double> atomOverlaps =
                             totalOverlaps(overlapSettings, graph, data, selection, state.bounds);
@@ -903,7 +1221,7 @@ namespace gmml
                 for (size_t n = 0; n < stats.size(); n++)
                 {
                     ordered.push_back(stats[n]);
-                    std::vector<StructureStats> alternatives = alternativesOf(stats[n], n > 0);
+                    std::vector<StructureStats> alternatives = alternativesOf(stats[n], n > 0, n);
                     for (const StructureStats& alternative : alternatives)
                     {
                         rejectedCount += alternative.rejected ? 1 : 0;

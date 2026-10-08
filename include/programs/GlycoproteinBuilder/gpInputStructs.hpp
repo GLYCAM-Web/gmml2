@@ -55,7 +55,9 @@ namespace gmml
             bool MDprep = false;
             bool writeOffFile = false;
             // For the default structure and every sample, also write each other gg/gt combination of
-            // alpha1-6 omegas. Alternatives change only that omega, and are rejected when overlaps remain.
+            // alpha1-6 omegas. Each alternative sets that omega, then runs the input randomizationCycles
+            // and persistCycles on linkages beyond it. Linkages before the omega stay fixed, and the
+            // alternative is rejected when overlaps remain.
             bool enumerateOmegaConformers = false;
             std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
         };
