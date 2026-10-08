@@ -1214,6 +1214,19 @@ namespace gmml
                     return alternatives;
                 };
 
+                std::vector<std::vector<StructureStats>> alternativesByParent(stats.size());
+                util::setOpenMpNumberOfThreads(numThreads);
+                util::createDirectories(outputDir);
+                util::createDirectories(structureDir);
+                util::createDirectories(rejectDir);
+                util::createDirectories(deletionDir);
+                util::createDirectories(defaultRejectedDir);
+//        clang format doesn't align pragmas
+/*        */#pragma omp parallel for
+                for (size_t n = 0; n < stats.size(); n++)
+                {
+                    alternativesByParent[n] = alternativesOf(stats[n], n > 0, n);
+                }
                 std::vector<StructureStats> ordered;
                 ordered.reserve(stats.size() * combinationCount);
                 size_t rejectedCount = 0;
@@ -1221,7 +1234,7 @@ namespace gmml
                 for (size_t n = 0; n < stats.size(); n++)
                 {
                     ordered.push_back(stats[n]);
-                    std::vector<StructureStats> alternatives = alternativesOf(stats[n], n > 0, n);
+                    const std::vector<StructureStats>& alternatives = alternativesByParent[n];
                     for (const StructureStats& alternative : alternatives)
                     {
                         rejectedCount += alternative.rejected ? 1 : 0;
