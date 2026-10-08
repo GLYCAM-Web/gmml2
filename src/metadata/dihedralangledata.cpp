@@ -50,7 +50,8 @@ namespace gmml
           // Sialic acid type 2- linkages:
           { "C2"   , "O[3-6]" , "Phi"  , -60.0  , AngleLimit{25.0, 25.0}  , 1.0   , RotamerType::permutation , "-g" , 1 , 2 , {"ulosonate" }  , {"monosaccharide"}         , "C1" , "C2" , "O." , "C."  },
           // Generic psi linkages, why is this labelled "ap"?
-          { "C."   , "O[1-5]" , "Psi"  ,   0.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "ap" , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "H."  }, // Psi should be C(ano)-Ox-Cx-Hx, if Cx is ring, otherwise, C(ano)-Ox-Cx-C(x-1)
+          { "C."   , "O[1-5]" , "Psi"  ,   0.0  , AngleLimit{50.0, 50.0}  , 1.0   , RotamerType::permutation , "ap" , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "H."  }, // Psi should be C(ano)-Ox-Cx-Hx, if Cx is ring, otherwise, C(ano)-Ox-Cx-C(x-1)
+          { "C."   , "O2"     , "Psi"  , -85.0  , AngleLimit{50.0, 50.0}  , 1.0   , RotamerType::permutation , "ap" , 2 , 1 , {"monosaccharide","beta"}       , {"monosaccharide"}           , "C." , "O." , "C." , "C3"  }, // Psi should be C(ano)-Ox-Cx-Hx, if Cx is ring, otherwise, C(ano)-Ox-Cx-C(x-1)
           { "C."   , "O[6-9]" , "Psi"  , 180.0  , AngleLimit{40.0, 40.0}  , 1.0   , RotamerType::permutation , "t"  , 2 , 1 , {"monosaccharide"}       , {"monosaccharide"}                  , "C." , "O." , "C." , "C."  },
           // Omega angle in x-6 linkages.
           { "C.*"  , "O6"     , "Omg"  , -60.0  , AngleLimit{20.0, 20.0}  , 1.0   , RotamerType::permutation , "gg" , 3 , 1 , {}             , {"pyranose"}                  , "O6" , "C6" , "C5" , "O5"  }, // omg is O6-C5-C5-O5
