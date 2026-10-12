@@ -25,6 +25,7 @@ namespace gmml
         static const std::string ignoreHydrogenParameter = "ignoreHydrogen";
         static const std::string ignoreO6Parameter = "ignoreO6";
         static const std::string enumerateOmegaConformersParameter = "enumerateOmegaConformers";
+        static const std::string omegaCycleMultiplierParameter = "omegaCycleMultiplier";
         static const std::string seedParameter = "rngSeed";
         static const std::string prepareForMDParameter = "prepareForMD";
 
@@ -55,10 +56,11 @@ namespace gmml
             bool MDprep = false;
             bool writeOffFile = false;
             // For the default structure and every sample, also write each other gg/gt combination of
-            // alpha1-6 omegas. Each alternative sets that omega, then runs the input randomizationCycles
-            // and persistCycles on linkages beyond it. Linkages before the omega stay fixed, and the
-            // alternative is rejected when overlaps remain.
+            // alpha1-6 omegas. Each alternative sets that omega, then runs omegaCycleMultiplier times
+            // the input randomizationCycles and persistCycles on linkages beyond it. Linkages before
+            // the omega stay fixed, and the alternative is rejected when overlaps remain.
             bool enumerateOmegaConformers = false;
+            ulong omegaCycleMultiplier = 3;
             std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.
         };
 

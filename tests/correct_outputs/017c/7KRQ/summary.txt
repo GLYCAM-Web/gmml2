@@ -22,6 +22,7 @@ atomOverlapTolerance                     0.600000
 ignoreHydrogen                           false   
 ignoreO6                                 false   
 enumerateOmegaConformers                 false   
+omegaCycleMultiplier                     3       
 
 #### Structures ####
 

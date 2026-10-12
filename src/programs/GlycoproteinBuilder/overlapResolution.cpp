@@ -1055,7 +1055,8 @@ namespace gmml
                         MutableData bestState = current;
                         double bestOverlap = overlapSum(bestState);
                         bool allowFallback = isSample ? resolutionSettings.allowRotamerFallback : true;
-                        while (cycle < resolutionSettings.persistCycles && stillOverlapping(bestState))
+                        while (cycle < resolutionSettings.omegaCycleMultiplier * resolutionSettings.persistCycles &&
+                               stillOverlapping(bestState))
                         {
                             AngleSettings settings = angleSettingsForCycle(maxCycle);
                             cycle++;
@@ -1078,7 +1079,8 @@ namespace gmml
                         }
                         current = bestState;
                     };
-                    const size_t maxRandomizationCycles = std::max(size_t {1}, resolutionSettings.randomizationCycles);
+                    const size_t maxRandomizationCycles =
+                        resolutionSettings.omegaCycleMultiplier * resolutionSettings.randomizationCycles;
                     AngleSettings initialAngleSettings = angleSettingsForCycle(0);
                     for (size_t randCycle = 0; randCycle < maxRandomizationCycles; randCycle++)
                     {

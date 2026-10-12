@@ -157,6 +157,10 @@ namespace gmml
                         {
                             gpInputs.enumerateOmegaConformers = parseBool(value);
                         }
+                        else if (parameter == omegaCycleMultiplierParameter)
+                        {
+                            gpInputs.omegaCycleMultiplier = parseUlong(value);
+                        }
                         else if (parameter == seedParameter)
                         {
                             if (value != "random")

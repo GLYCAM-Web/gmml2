@@ -96,7 +96,8 @@ namespace gmml
                  {deleteIncompatibleSitesParameter, boolStr(input.deleteSitesUntilResolved)},
                  {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)},
                  {ignoreO6Parameter, boolStr(input.ignoreO6)},
-                 {enumerateOmegaConformersParameter, boolStr(input.enumerateOmegaConformers)}}
+                 {enumerateOmegaConformersParameter, boolStr(input.enumerateOmegaConformers)},
+                 {omegaCycleMultiplierParameter, std::to_string(input.omegaCycleMultiplier)}}
             };
 
             util::TextTable structureTable {
