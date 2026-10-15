@@ -57,8 +57,9 @@ namespace gmml
             bool writeOffFile = false;
             // For the default structure and every sample, also write each other gg/gt combination of
             // alpha1-6 omegas. Each alternative sets that omega, then runs omegaCycleMultiplier times
-            // the input randomizationCycles and persistCycles on linkages beyond it. Linkages before
-            // the omega stay fixed, and the alternative is rejected when overlaps remain.
+            // the input randomizationCycles, and always 10 persist cycles, on that omega within the
+            // chosen rotamer range and on linkages beyond it. Linkages before the omega stay fixed, and the
+            // alternative is rejected when overlaps remain.
             bool enumerateOmegaConformers = false;
             ulong omegaCycleMultiplier = 3;
             std::vector<GlycositeInput> glycositesInputVector; // No default, program will throw if uninitialized.

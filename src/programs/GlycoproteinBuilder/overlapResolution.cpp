@@ -201,7 +201,8 @@ namespace gmml
                 return constants::toDegrees(angle(dihedralCoordinates(data, bounds, omegaBondId(data, site))));
             }
 
-            // Move only this alpha1-6 omega into the chosen rotamer. Every other dihedral stays put.
+            // Move only this alpha1-6 omega inside the chosen rotamer. The search settings select the
+            // range around that rotamer. Every other dihedral stays put.
             void wiggleSingleOmega(
                 const DihedralAngleDataTable& dihedralAngleTable,
                 const OverlapSettings& overlapSettings,
@@ -210,14 +211,15 @@ namespace gmml
                 const assembly::Selection& selection,
                 MutableData& mutableData,
                 const OmegaConformerSite& site,
-                bool useGt)
+                bool useGt,
+                const AngleSearchSettings& searchSettings)
             {
                 size_t bondId = omegaBondId(data, site);
                 const std::vector<size_t>& metadata = data.rotatableBonds.metadata[bondId];
                 size_t chosen = useGt ? site.gtMetadataIndex : site.ggMetadataIndex;
                 std::vector<double> angles(metadata.size(), 0.0);
                 angles[chosen] = dihedralAngleTable.entries[metadata[chosen]].default_angle;
-                AngleSearchPreference preference {defaultSearchSettings.deviation, angles, {chosen}};
+                AngleSearchPreference preference {searchSettings.deviation, angles, {chosen}};
                 const std::array<Coordinate, 4> coordinates = dihedralCoordinates(data, mutableData.bounds, bondId);
                 const std::vector<size_t>& movingAtoms = data.rotatableBonds.movingAtoms[bondId];
                 std::vector<bool> atomMoving = util::indicesToBools(atomCount(graph.source), movingAtoms);
@@ -241,8 +243,8 @@ namespace gmml
                 };
                 OverlapState best = wiggleUsingRotamers(
                     searchOverlap,
-                    defaultSearchSettings.angles,
-                    defaultSearchSettings.halfIntervalSearches,
+                    searchSettings.angles,
+                    searchSettings.halfIntervalSearches,
                     dihedralAngleTable,
                     graph,
                     mutableData.bounds,
@@ -843,7 +845,8 @@ namespace gmml
             if (!omegaSites.empty())
             {
                 std::cout << "Each resolved structure gets gg/gt alternatives that set every alpha1-6 omega to the "
-                             "named rotamer, then run the randomization and persist cycles on linkages beyond it"
+                             "named rotamer, then run the randomization and persist cycles on that omega within its "
+                             "rotamer range and on linkages beyond it"
                           << std::endl;
             }
             pcg32 seedingRng(resolutionSettings.rngSeed);
@@ -891,10 +894,11 @@ namespace gmml
                                                        MutableData& state,
                                                        const assembly::Selection& selection,
                                                        const std::vector<std::pair<size_t, size_t>>& linkages,
+                                                       const std::vector<size_t>& changedOmegaSites,
                                                        size_t mask,
                                                        bool isSample)
                 {
-                    if (linkages.empty())
+                    if (linkages.empty() && changedOmegaSites.empty())
                     {
                         return;
                     }
@@ -994,7 +998,25 @@ namespace gmml
                                 selection,
                                 trial,
                                 omegaSites[n],
-                                useGt);
+                                useGt,
+                                defaultSearchSettings);
+                        }
+                    };
+                    auto wiggleAlternativeOmegas = [&](MutableData& trial, const AngleSearchSettings& linkageSearch)
+                    {
+                        for (size_t siteIndex : changedOmegaSites)
+                        {
+                            bool useGt = (mask & (size_t(1) << siteIndex)) != 0;
+                            wiggleSingleOmega(
+                                dihedralAngleDataTable,
+                                overlapSettings,
+                                graph,
+                                data,
+                                selection,
+                                trial,
+                                omegaSites[siteIndex],
+                                useGt,
+                                linkageSearch);
                         }
                     };
                     auto drawAndSet = [&](MutableData& trial, const AngleSettings& settings, bool allowFallback)
@@ -1032,6 +1054,7 @@ namespace gmml
                         AngleSearchSettings linkageSearch = linkageSearchFor(settings);
                         for (size_t pass = 0; pass < times; pass++)
                         {
+                            wiggleAlternativeOmegas(trial, linkageSearch);
                             for (size_t n = 0; n < linkages.size(); n++)
                             {
                                 size_t linkageId = data.glycans.linkages[linkages[n].first][linkages[n].second];
@@ -1055,8 +1078,8 @@ namespace gmml
                         MutableData bestState = current;
                         double bestOverlap = overlapSum(bestState);
                         bool allowFallback = isSample ? resolutionSettings.allowRotamerFallback : true;
-                        while (cycle < resolutionSettings.omegaCycleMultiplier * resolutionSettings.persistCycles &&
-                               stillOverlapping(bestState))
+                        const uint alternativePersistCycles = 10;
+                        while (cycle < alternativePersistCycles && stillOverlapping(bestState))
                         {
                             AngleSettings settings = angleSettingsForCycle(maxCycle);
                             cycle++;
@@ -1070,9 +1093,9 @@ namespace gmml
                             wiggleAll(trial, settings, selection, 2, preferences);
                             pinDownstreamOmegas(trial);
                             double overlap = overlapSum(trial);
-                            if (overlap < bestOverlap)
+                            double improvement = bestOverlap - overlap;
+                            if (improvement > 4.5)
                             {
-                                cycle = 0;
                                 bestState = trial;
                                 bestOverlap = overlap;
                             }
@@ -1149,8 +1172,10 @@ namespace gmml
                                 selection,
                                 state,
                                 omegaSites[n],
-                                useGt);
+                                useGt,
+                                defaultSearchSettings);
                         }
+                        std::vector<size_t> changedOmegaSites;
                         std::vector<std::pair<size_t, size_t>> linkagesAfter;
                         std::vector<std::vector<bool>> alreadyIncluded(data.glycans.moleculeId.size());
                         for (size_t n = 0; n < omegaSites.size(); n++)
@@ -1160,6 +1185,7 @@ namespace gmml
                             {
                                 continue;
                             }
+                            changedOmegaSites.push_back(n);
                             size_t glycanId = omegaSites[n].glycanId;
                             if (alreadyIncluded[glycanId].empty())
                             {
@@ -1177,7 +1203,8 @@ namespace gmml
                         }
                         std::sort(linkagesAfter.begin(), linkagesAfter.end());
                         pcg32 omegaRng(resolutionSettings.rngSeed + parentIndex * 1000003ULL + mask);
-                        randomizeLinkagesAfterOmega(omegaRng, state, selection, linkagesAfter, mask, isSample);
+                        randomizeLinkagesAfterOmega(
+                            omegaRng, state, selection, linkagesAfter, changedOmegaSites, mask, isSample);
                         std::vector<Coordinate> coordinates = getCoordinates(state.bounds.atoms);
                         std::vector<double> atomOverlaps =
                             totalOverlaps(overlapSettings, graph, data, selection, state.bounds);
