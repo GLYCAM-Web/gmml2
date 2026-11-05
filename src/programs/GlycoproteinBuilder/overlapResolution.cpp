@@ -344,6 +344,104 @@ namespace gmml
                 }
                 return result;
             }
+
+            bool linkageContainsChi(const DihedralAngleDataTable& table, const AssemblyData& data, size_t linkageId)
+            {
+                for (size_t bondId : data.residueLinkages.rotatableBonds[linkageId])
+                {
+                    const std::vector<size_t>& metadata = data.rotatableBonds.metadata[bondId];
+                    if (metadata.empty())
+                    {
+                        continue;
+                    }
+                    const std::string& name = table.entries[metadata[0]].dihedral_angle_name_;
+                    if (name == "Chi1" || name == "Chi2")
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // Linkage index, within the glycan, of the linkage immediately closer to the attachment than
+            // this alpha1-6. Empty when there is no such linkage, or when it carries Chi1 or Chi2.
+            std::optional<size_t> linkageBeforeOmega(
+                const DihedralAngleDataTable& table,
+                const assembly::Graph& graph,
+                const AssemblyData& data,
+                const OmegaConformerSite& site)
+            {
+                size_t glycanId = site.glycanId;
+                size_t linkageId = data.glycans.linkages[glycanId][site.linkageIndex];
+                size_t edgeId = data.residueLinkages.edgeId[linkageId];
+                const std::array<size_t, 2>& ends = graph.residues.edges.nodeAdjacencies[edgeId];
+                size_t attachment = data.glycans.attachmentResidue[glycanId];
+                const std::vector<size_t>& glycanResidues =
+                    assembly::moleculeResidues(graph, data.glycans.moleculeId[glycanId]);
+                const size_t residueCount = graph::nodeCount(graph.residues);
+                std::vector<bool> inGlycan(residueCount, false);
+                for (size_t residue : glycanResidues)
+                {
+                    inGlycan[residue] = true;
+                }
+                inGlycan[attachment] = true;
+
+                std::vector<size_t> distance(residueCount, std::numeric_limits<size_t>::max());
+                std::vector<size_t> queue {attachment};
+                distance[attachment] = 0;
+                for (size_t q = 0; q < queue.size(); q++)
+                {
+                    size_t residue = queue[q];
+                    for (size_t neighbor : graph.residues.nodes.nodeAdjacencies[residue])
+                    {
+                        if (inGlycan[neighbor] && distance[neighbor] == std::numeric_limits<size_t>::max())
+                        {
+                            distance[neighbor] = distance[residue] + 1;
+                            queue.push_back(neighbor);
+                        }
+                    }
+                }
+                size_t closer = distance[ends[0]] <= distance[ends[1]] ? ends[0] : ends[1];
+                if (closer == attachment || distance[closer] == std::numeric_limits<size_t>::max())
+                {
+                    return std::nullopt;
+                }
+                size_t parent = std::numeric_limits<size_t>::max();
+                for (size_t neighbor : graph.residues.nodes.nodeAdjacencies[closer])
+                {
+                    if (inGlycan[neighbor] && distance[neighbor] + 1 == distance[closer])
+                    {
+                        parent = neighbor;
+                        break;
+                    }
+                }
+                if (parent == std::numeric_limits<size_t>::max())
+                {
+                    return std::nullopt;
+                }
+                const std::vector<size_t>& linkages = data.glycans.linkages[glycanId];
+                for (size_t n = 0; n < linkages.size(); n++)
+                {
+                    if (n == site.linkageIndex)
+                    {
+                        continue;
+                    }
+                    const std::array<size_t, 2>& linkageEnds =
+                        graph.residues.edges.nodeAdjacencies[data.residueLinkages.edgeId[linkages[n]]];
+                    bool connectsParent = (linkageEnds[0] == closer && linkageEnds[1] == parent) ||
+                                          (linkageEnds[1] == closer && linkageEnds[0] == parent);
+                    if (!connectsParent)
+                    {
+                        continue;
+                    }
+                    if (linkageContainsChi(table, data, linkages[n]))
+                    {
+                        return std::nullopt;
+                    }
+                    return n;
+                }
+                return std::nullopt;
+            }
         } // namespace
 
         void resolveOverlaps(
@@ -846,7 +944,8 @@ namespace gmml
             {
                 std::cout << "Each resolved structure gets gg/gt alternatives that set every alpha1-6 omega to the "
                              "named rotamer, then run the randomization and persist cycles on that omega within its "
-                             "rotamer range and on linkages beyond it"
+                             "rotamer range, on the linkage immediately before it, and on linkages beyond it. A "
+                             "chi1/chi2 linkage before the omega stays fixed"
                           << std::endl;
             }
             pcg32 seedingRng(resolutionSettings.rngSeed);
@@ -1176,8 +1275,21 @@ namespace gmml
                                 defaultSearchSettings);
                         }
                         std::vector<size_t> changedOmegaSites;
-                        std::vector<std::pair<size_t, size_t>> linkagesAfter;
+                        std::vector<std::pair<size_t, size_t>> linkagesToWiggle;
                         std::vector<std::vector<bool>> alreadyIncluded(data.glycans.moleculeId.size());
+                        auto includeLinkage = [&](size_t glycanId, size_t linkageIndex)
+                        {
+                            if (alreadyIncluded[glycanId].empty())
+                            {
+                                alreadyIncluded[glycanId] =
+                                    std::vector<bool>(data.glycans.linkages[glycanId].size(), false);
+                            }
+                            if (!alreadyIncluded[glycanId][linkageIndex])
+                            {
+                                alreadyIncluded[glycanId][linkageIndex] = true;
+                                linkagesToWiggle.push_back({glycanId, linkageIndex});
+                            }
+                        };
                         for (size_t n = 0; n < omegaSites.size(); n++)
                         {
                             bool useGt = (mask & (size_t(1) << n)) != 0;
@@ -1187,24 +1299,21 @@ namespace gmml
                             }
                             changedOmegaSites.push_back(n);
                             size_t glycanId = omegaSites[n].glycanId;
-                            if (alreadyIncluded[glycanId].empty())
+                            std::optional<size_t> before =
+                                linkageBeforeOmega(dihedralAngleDataTable, graph, data, omegaSites[n]);
+                            if (before.has_value())
                             {
-                                alreadyIncluded[glycanId] =
-                                    std::vector<bool>(data.glycans.linkages[glycanId].size(), false);
+                                includeLinkage(glycanId, before.value());
                             }
                             for (size_t linkageIndex : linkagesAfterOmega(graph, data, omegaSites[n]))
                             {
-                                if (!alreadyIncluded[glycanId][linkageIndex])
-                                {
-                                    alreadyIncluded[glycanId][linkageIndex] = true;
-                                    linkagesAfter.push_back({glycanId, linkageIndex});
-                                }
+                                includeLinkage(glycanId, linkageIndex);
                             }
                         }
-                        std::sort(linkagesAfter.begin(), linkagesAfter.end());
+                        std::sort(linkagesToWiggle.begin(), linkagesToWiggle.end());
                         pcg32 omegaRng(resolutionSettings.rngSeed + parentIndex * 1000003ULL + mask);
                         randomizeLinkagesAfterOmega(
-                            omegaRng, state, selection, linkagesAfter, changedOmegaSites, mask, isSample);
+                            omegaRng, state, selection, linkagesToWiggle, changedOmegaSites, mask, isSample);
                         std::vector<Coordinate> coordinates = getCoordinates(state.bounds.atoms);
                         std::vector<double> atomOverlaps =
                             totalOverlaps(overlapSettings, graph, data, selection, state.bounds);
