@@ -312,7 +312,8 @@ int main(int argc, char* argv[])
             settings.MDprep,
             settings.MDprep,
             settings.enumerateOmegaConformers,
-            settings.omegaCycleMultiplier};
+            settings.omegaCycleMultiplier,
+            settings.persistCyclesAlternativeOmega};
 
         std::cout << "Resolving overlaps" << std::endl;
         std::vector<StructureStats> stats;

@@ -28,6 +28,7 @@ namespace gmml
             bool writeOffFile;
             bool enumerateOmegaConformers;
             ulong omegaCycleMultiplier;
+            ulong persistCyclesAlternativeOmega;
         };
 
         void resolveOverlaps(

@@ -1177,7 +1177,7 @@ namespace gmml
                         MutableData bestState = current;
                         double bestOverlap = overlapSum(bestState);
                         bool allowFallback = isSample ? resolutionSettings.allowRotamerFallback : true;
-                        const uint alternativePersistCycles = 10;
+                        const uint alternativePersistCycles = resolutionSettings.persistCyclesAlternativeOmega;
                         while (cycle < alternativePersistCycles && stillOverlapping(bestState))
                         {
                             AngleSettings settings = angleSettingsForCycle(maxCycle);

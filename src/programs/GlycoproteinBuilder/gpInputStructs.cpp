@@ -161,6 +161,10 @@ namespace gmml
                         {
                             gpInputs.omegaCycleMultiplier = parseUlong(value);
                         }
+                        else if (parameter == persistCyclesAlternativeOmegaParameter)
+                        {
+                            gpInputs.persistCyclesAlternativeOmega = parseUlong(value);
+                        }
                         else if (parameter == seedParameter)
                         {
                             if (value != "random")

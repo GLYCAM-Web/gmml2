@@ -97,7 +97,8 @@ namespace gmml
                  {ignoreHydrogenParameter, boolStr(input.ignoreHydrogen)},
                  {ignoreO6Parameter, boolStr(input.ignoreO6)},
                  {enumerateOmegaConformersParameter, boolStr(input.enumerateOmegaConformers)},
-                 {omegaCycleMultiplierParameter, std::to_string(input.omegaCycleMultiplier)}}
+                 {omegaCycleMultiplierParameter, std::to_string(input.omegaCycleMultiplier)},
+                 {persistCyclesAlternativeOmegaParameter, std::to_string(input.persistCyclesAlternativeOmega)}}
             };
 
             util::TextTable structureTable {

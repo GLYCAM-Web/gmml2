@@ -23,6 +23,7 @@ ignoreHydrogen                           false
 ignoreO6                                 false   
 enumerateOmegaConformers                 false   
 omegaCycleMultiplier                     3       
+persistCyclesAlternativeOmega            10      
 
 #### Structures ####
 
