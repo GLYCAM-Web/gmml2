@@ -19,6 +19,7 @@
 #include "include/util/random.hpp"
 
 #include <algorithm>
+#include <limits>
 #include <sstream>
 
 namespace gmml
@@ -130,7 +131,8 @@ namespace gmml
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
-            const GlycoproteinState& initialState)
+            const GlycoproteinState& initialState,
+            bool stopWhenResolved)
         {
             std::stringstream logss;
             logss << "Random Decent, persisting for " << persistCycles << " cycles.\n";
@@ -206,6 +208,21 @@ namespace gmml
                         settings, currentState.preferences, currentState.mutableData, fullSelection, concertGlycans, 2);
                     currentState.totalOverlap = overlapVectorSum(
                         totalOverlaps(overlapSettings, graph, data, fullSelection, currentState.mutableData.bounds));
+                    if (stopWhenResolved)
+                    {
+                        OverlapSites candidateSites = determineOverlapState(
+                            overlapSettings.rejectionThreshold,
+                            overlapSettings,
+                            graph,
+                            data,
+                            fullSelection,
+                            currentState.mutableData.bounds);
+                        if (candidateSites.indices.empty())
+                        {
+                            currentState.overlapSites = candidateSites;
+                            return currentState;
+                        }
+                    }
                     if (currentState.totalOverlap < bestState.totalOverlap)
                     {
                         cycle = 0;
@@ -261,7 +278,9 @@ namespace gmml
             const MutableData& initialState,
             size_t persistCycles,
             size_t randomizationCycles,
-            bool deleteSitesUntilResolved)
+            bool deleteSitesUntilResolved,
+            bool pursueOverlapTarget,
+            double acceptanceThreshold)
         {
             GlycoproteinState currentState;
             currentState.mutableData = initialState;
@@ -299,9 +318,37 @@ namespace gmml
                 fullSelection,
                 currentState.mutableData.bounds);
             const size_t maxRandomizationCycles = std::max(size_t {1}, randomizationCycles);
-            for (bool done = false; !done;
-                 done = currentState.overlapSites.indices.empty() || !deleteSitesUntilResolved)
+            GlycoproteinState bestAcrossCycles = currentState;
+            double bestAcrossCyclesOverlap = std::numeric_limits<double>::max();
+            auto overlapSumOf = [&](const MutableData& mutableData) {
+                return overlapVectorSum(totalOverlaps(overlapSettings, graph, data, fullSelection, mutableData.bounds));
+            };
+            auto refreshOverlapSites = [&](GlycoproteinState& state)
             {
+                state.overlapSites = determineOverlapState(
+                    overlapSettings.rejectionThreshold,
+                    overlapSettings,
+                    graph,
+                    data,
+                    fullSelection,
+                    state.mutableData.bounds);
+            };
+            auto noteState = [&](const GlycoproteinState& state)
+            {
+                if (pursueOverlapTarget && state.totalOverlap < bestAcrossCyclesOverlap)
+                {
+                    bestAcrossCyclesOverlap = state.totalOverlap;
+                    bestAcrossCycles = state;
+                }
+            };
+            if (pursueOverlapTarget)
+            {
+                currentState.totalOverlap = overlapSumOf(currentState.mutableData);
+                noteState(currentState);
+            }
+            while (true)
+            {
+                bool hitTarget = false;
                 for (size_t randCycle = 0; randCycle < maxRandomizationCycles; randCycle++)
                 {
                     util::log(
@@ -322,8 +369,8 @@ namespace gmml
                             {
                                 continue;
                             }
-                            currentState.preferences[glycanId] = randomizeAllDihedrals(
-                                rng, data, currentState.mutableData.bounds, glycanId);
+                            currentState.preferences[glycanId] =
+                                randomizeAllDihedrals(rng, data, currentState.mutableData.bounds, glycanId);
                             const std::vector<size_t>& linkageIds = data.glycans.linkages[glycanId];
                             for (size_t k = 0; k < linkageIds.size(); k++)
                             {
@@ -334,16 +381,11 @@ namespace gmml
                                     linkageIds[k],
                                     currentState.preferences[glycanId][k]);
                             }
-                            currentState.overlapSites = determineOverlapState(
-                                overlapSettings.rejectionThreshold,
-                                overlapSettings,
-                                graph,
-                                data,
-                                fullSelection,
-                                currentState.mutableData.bounds);
+                            refreshOverlapSites(currentState);
                         }
                         if (currentState.overlapSites.indices.empty())
                         {
+                            hitTarget = true;
                             break;
                         }
                         currentState.mutableData = adjustGlycans(
@@ -358,6 +400,17 @@ namespace gmml
                             currentState.preferences,
                             currentState.overlapSites.indices,
                             currentState.mutableData);
+                        if (pursueOverlapTarget)
+                        {
+                            currentState.totalOverlap = overlapSumOf(currentState.mutableData);
+                            refreshOverlapSites(currentState);
+                            noteState(currentState);
+                            if (currentState.overlapSites.indices.empty())
+                            {
+                                hitTarget = true;
+                                break;
+                            }
+                        }
                     }
                     currentState = randomDescent(
                         rng,
@@ -370,34 +423,63 @@ namespace gmml
                         overlapSettings,
                         graph,
                         data,
-                        currentState);
+                        currentState,
+                        pursueOverlapTarget);
+                    noteState(currentState);
                     if (currentState.overlapSites.indices.empty())
                     {
+                        hitTarget = true;
                         break;
                     }
                 }
-                if (deleteSitesUntilResolved && !currentState.overlapSites.indices.empty())
+                if (pursueOverlapTarget && !hitTarget)
                 {
-                    size_t indexToRemove = util::randomIndex(rng, currentState.overlapSites.indices);
-                    size_t glycan = currentState.overlapSites.indices[indexToRemove];
-                    deleteMolecule(currentState.mutableData, data.glycans.moleculeId[glycan]);
-                    fullSelection = assembly::selectByAtomsAndMolecules(
-                        graph, data.atoms.includeInEachOverlapCheck, currentState.mutableData.moleculeIncluded);
-                    size_t proteinResidue = data.glycans.attachmentResidue[glycan];
-                    // restore atoms to initial shape
-                    for (size_t n : residueAtoms(graph, proteinResidue))
-                    {
-                        currentState.mutableData.bounds.atoms[n] = data.atoms.initialState[n];
-                    }
-                    updateResidueBounds(graph, currentState.mutableData.bounds, proteinResidue);
-                    updateResidueMoleculeBounds(graph, currentState.mutableData.bounds, proteinResidue);
-                    currentState.overlapSites = determineOverlapState(
-                        overlapSettings.rejectionThreshold,
+                    currentState = bestAcrossCycles;
+                    refreshOverlapSites(currentState);
+                    util::log(
+                        __LINE__,
+                        __FILE__,
+                        util::INF,
+                        "Overlap target not met. Returning best overlap " + std::to_string(bestAcrossCyclesOverlap));
+                }
+                OverlapSites sitesForDeletion = currentState.overlapSites;
+                if (pursueOverlapTarget)
+                {
+                    sitesForDeletion = determineOverlapState(
+                        acceptanceThreshold,
                         overlapSettings,
                         graph,
                         data,
                         fullSelection,
                         currentState.mutableData.bounds);
+                }
+                if (!(deleteSitesUntilResolved && !sitesForDeletion.indices.empty()))
+                {
+                    break;
+                }
+                size_t indexToRemove = util::randomIndex(rng, sitesForDeletion.indices);
+                size_t glycan = sitesForDeletion.indices[indexToRemove];
+                deleteMolecule(currentState.mutableData, data.glycans.moleculeId[glycan]);
+                fullSelection = assembly::selectByAtomsAndMolecules(
+                    graph, data.atoms.includeInEachOverlapCheck, currentState.mutableData.moleculeIncluded);
+                size_t proteinResidue = data.glycans.attachmentResidue[glycan];
+                // restore atoms to initial shape
+                for (size_t n : residueAtoms(graph, proteinResidue))
+                {
+                    currentState.mutableData.bounds.atoms[n] = data.atoms.initialState[n];
+                }
+                updateResidueBounds(graph, currentState.mutableData.bounds, proteinResidue);
+                updateResidueMoleculeBounds(graph, currentState.mutableData.bounds, proteinResidue);
+                refreshOverlapSites(currentState);
+                if (currentState.overlapSites.indices.empty())
+                {
+                    break;
+                }
+                if (pursueOverlapTarget)
+                {
+                    currentState.totalOverlap = overlapSumOf(currentState.mutableData);
+                    bestAcrossCycles = currentState;
+                    bestAcrossCyclesOverlap = currentState.totalOverlap;
                 }
             }
             restoreSidechains(

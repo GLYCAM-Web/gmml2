@@ -458,6 +458,15 @@ namespace gmml
             const std::string structureDir = outputDir + "/samples";
             const std::string rejectDir = structureDir + "/rejected";
             const std::string deletionDir = structureDir + "/deletions";
+            // Samples whose rejection threshold is above this keep searching for a structure at or below it.
+            // Acceptance still uses the user threshold. The default structure does not use this target.
+            constexpr double sampleOverlapTarget = 20.0;
+            const bool pursueSampleOverlapTarget = overlapSettings.rejectionThreshold > sampleOverlapTarget;
+            OverlapSettings sampleSearchSettings = overlapSettings;
+            if (pursueSampleOverlapTarget)
+            {
+                sampleSearchSettings.rejectionThreshold = sampleOverlapTarget;
+            }
 
             MetadataOrder initialMetadataOrder =
                 [](pcg32&, const DihedralAngleDataTable&, const std::vector<size_t>& metadataVector, bool allowFallback)
@@ -584,53 +593,65 @@ namespace gmml
                 return result;
             };
 
-            SidechainAdjustment adjustSidechains = [&](pcg32& rng,
-                                                       const assembly::Graph& graph,
-                                                       const AssemblyData& data,
-                                                       MutableData& mutableData,
-                                                       const std::vector<size_t>& glycans)
+            auto adjustSidechainsWith = [&](const OverlapSettings& settings)
             {
-                std::vector<size_t> sidechainResiduesWithGlycanOverlap;
-                sidechainResiduesWithGlycanOverlap.reserve(residueCount(graph.source));
-
-                for (size_t residue : aliveIndices(graph.residues.nodes))
-                {
-                    if (data.residues.types[residue] == ResidueType::Protein &&
-                        data.residues.sidechainDihedrals[residue].size() > 0 &&
-                        sidechainHasGlycanOverlap(overlapSettings, graph, data, mutableData, glycans, residue))
+                return SidechainAdjustment(
+                    [&, settings](
+                        pcg32& rng,
+                        const assembly::Graph& graph,
+                        const AssemblyData& data,
+                        MutableData& mutableData,
+                        const std::vector<size_t>& glycans)
                     {
-                        sidechainResiduesWithGlycanOverlap.push_back(residue);
-                    }
-                }
-                std::vector<size_t> residues = util::shuffleVector(rng, sidechainResiduesWithGlycanOverlap);
-                std::vector<std::vector<size_t>> preferences = sidechainRotationPreferences(rng, data, residues);
-                for (size_t n = 0; n < residues.size(); n++)
-                {
-                    setSidechainToLowestOverlapState(
-                        sidechainRotamers, overlapSettings, graph, data, mutableData, preferences[n], residues[n]);
-                }
+                        std::vector<size_t> sidechainResiduesWithGlycanOverlap;
+                        sidechainResiduesWithGlycanOverlap.reserve(residueCount(graph.source));
+
+                        for (size_t residue : aliveIndices(graph.residues.nodes))
+                        {
+                            if (data.residues.types[residue] == ResidueType::Protein &&
+                                data.residues.sidechainDihedrals[residue].size() > 0 &&
+                                sidechainHasGlycanOverlap(settings, graph, data, mutableData, glycans, residue))
+                            {
+                                sidechainResiduesWithGlycanOverlap.push_back(residue);
+                            }
+                        }
+                        std::vector<size_t> residues = util::shuffleVector(rng, sidechainResiduesWithGlycanOverlap);
+                        std::vector<std::vector<size_t>> preferences =
+                            sidechainRotationPreferences(rng, data, residues);
+                        for (size_t n = 0; n < residues.size(); n++)
+                        {
+                            setSidechainToLowestOverlapState(
+                                sidechainRotamers, settings, graph, data, mutableData, preferences[n], residues[n]);
+                        }
+                    });
             };
 
-            SidechainAdjustment restoreSidechains = [&](pcg32& rng,
-                                                        const assembly::Graph& graph,
-                                                        const AssemblyData& data,
-                                                        MutableData& mutableData,
-                                                        const std::vector<size_t>& glycans)
+            auto restoreSidechainsWith = [&](const OverlapSettings& settings)
             {
-                std::vector<size_t> residues = util::boolsToIndices(mutableData.residueSidechainMoved);
-                for (size_t residue : residues)
-                {
-                    restoreSidechainRotation(graph, data, mutableData, residue);
-                }
-                std::vector<std::vector<size_t>> preferences = sidechainRotationPreferences(rng, data, residues);
-                for (size_t n = 0; n < residues.size(); n++)
-                {
-                    if (sidechainHasGlycanOverlap(overlapSettings, graph, data, mutableData, glycans, residues[n]))
+                return SidechainAdjustment(
+                    [&, settings](
+                        pcg32& rng,
+                        const assembly::Graph& graph,
+                        const AssemblyData& data,
+                        MutableData& mutableData,
+                        const std::vector<size_t>& glycans)
                     {
-                        setSidechainToLowestOverlapState(
-                            sidechainRotamers, overlapSettings, graph, data, mutableData, preferences[n], residues[n]);
-                    }
-                }
+                        std::vector<size_t> residues = util::boolsToIndices(mutableData.residueSidechainMoved);
+                        for (size_t residue : residues)
+                        {
+                            restoreSidechainRotation(graph, data, mutableData, residue);
+                        }
+                        std::vector<std::vector<size_t>> preferences =
+                            sidechainRotationPreferences(rng, data, residues);
+                        for (size_t n = 0; n < residues.size(); n++)
+                        {
+                            if (sidechainHasGlycanOverlap(settings, graph, data, mutableData, glycans, residues[n]))
+                            {
+                                setSidechainToLowestOverlapState(
+                                    sidechainRotamers, settings, graph, data, mutableData, preferences[n], residues[n]);
+                            }
+                        }
+                    });
             };
 
             SidechainAdjustment noSidechainAdjustment =
@@ -704,9 +725,13 @@ namespace gmml
             const AssemblyData& data = assembly.data;
             const MutableData& initialState = assembly.mutableData;
             SidechainAdjustment sidechainAdjustment =
-                moveOverlappingSidechains ? adjustSidechains : noSidechainAdjustment;
+                moveOverlappingSidechains ? adjustSidechainsWith(overlapSettings) : noSidechainAdjustment;
             SidechainAdjustment sidechainRestoration =
-                moveOverlappingSidechains ? restoreSidechains : noSidechainAdjustment;
+                moveOverlappingSidechains ? restoreSidechainsWith(overlapSettings) : noSidechainAdjustment;
+            SidechainAdjustment sampleSidechainAdjustment =
+                moveOverlappingSidechains ? adjustSidechainsWith(sampleSearchSettings) : noSidechainAdjustment;
+            SidechainAdjustment sampleSidechainRestoration =
+                moveOverlappingSidechains ? restoreSidechainsWith(sampleSearchSettings) : noSidechainAdjustment;
 
             auto isNonProteinResidue = [&graph, &data](size_t n)
             { return data.molecules.types[residueMolecule(graph.source.indices, n)] != MoleculeType::protein; };
@@ -822,7 +847,9 @@ namespace gmml
                     initialState,
                     persistCycles,
                     resolutionSettings.randomizationCycles,
-                    false);
+                    false,
+                    false,
+                    overlapSettings.rejectionThreshold);
                 std::vector<Coordinate> resolvedCoords = getCoordinates(state.mutableData.bounds.atoms);
                 assembly::Selection selection = assembly::selectAll(graph);
                 std::vector<double> atomOverlaps =
@@ -873,23 +900,31 @@ namespace gmml
 
                 const LinkageShapeSettings shapeSettings {retainInitialPreference, iterationAllowFallback};
 
+                const OverlapSettings& resolutionOverlap =
+                    pursueSampleOverlapTarget ? sampleSearchSettings : overlapSettings;
+                SidechainAdjustment resolutionSidechains =
+                    pursueSampleOverlapTarget ? sampleSidechainAdjustment : sidechainAdjustment;
+                SidechainAdjustment resolutionRestoration =
+                    pursueSampleOverlapTarget ? sampleSidechainRestoration : sidechainRestoration;
                 GlycoproteinState state = resolveOverlapsWithWiggler(
                     rng,
                     dihedralAngleDataTable,
                     toAngleSettings,
-                    sidechainAdjustment,
-                    sidechainRestoration,
+                    resolutionSidechains,
+                    resolutionRestoration,
                     randomizeShape,
                     randomizeAllDihedrals,
                     shapeSettings,
                     initialPreference,
-                    overlapSettings,
+                    resolutionOverlap,
                     graph,
                     data,
                     initialState,
                     persistCycles,
                     resolutionSettings.randomizationCycles,
-                    resolutionSettings.deleteSitesUntilResolved);
+                    resolutionSettings.deleteSitesUntilResolved,
+                    pursueSampleOverlapTarget,
+                    overlapSettings.rejectionThreshold);
                 std::vector<Coordinate> coordinates = getCoordinates(state.mutableData.bounds.atoms);
                 bool hasDeleted = util::contains(state.mutableData.moleculeIncluded, false);
                 std::string directory = outputDir;
@@ -1001,6 +1036,8 @@ namespace gmml
                     {
                         return;
                     }
+                    const bool pursueTarget = isSample && pursueSampleOverlapTarget;
+                    const OverlapSettings& searchOverlap = pursueTarget ? sampleSearchSettings : overlapSettings;
                     auto angleSettingsForCycle = [&](uint cycle)
                     {
                         double ratio = std::min(1.0, double(cycle) / 4.0);
@@ -1037,12 +1074,7 @@ namespace gmml
                     auto stillOverlapping = [&](const MutableData& current)
                     {
                         OverlapSites sites = determineOverlapState(
-                            overlapSettings.rejectionThreshold,
-                            overlapSettings,
-                            graph,
-                            data,
-                            selection,
-                            current.bounds);
+                            searchOverlap.rejectionThreshold, searchOverlap, graph, data, selection, current.bounds);
                         return !sites.indices.empty();
                     };
                     auto overlapSum = [&](const MutableData& current) {
@@ -1091,7 +1123,7 @@ namespace gmml
                             bool useGt = (mask & (size_t(1) << n)) != 0;
                             wiggleSingleOmega(
                                 dihedralAngleDataTable,
-                                overlapSettings,
+                                searchOverlap,
                                 graph,
                                 data,
                                 selection,
@@ -1108,7 +1140,7 @@ namespace gmml
                             bool useGt = (mask & (size_t(1) << siteIndex)) != 0;
                             wiggleSingleOmega(
                                 dihedralAngleDataTable,
-                                overlapSettings,
+                                searchOverlap,
                                 graph,
                                 data,
                                 selection,
@@ -1159,7 +1191,7 @@ namespace gmml
                                 size_t linkageId = data.glycans.linkages[linkages[n].first][linkages[n].second];
                                 wiggleLinkage(
                                     dihedralAngleDataTable,
-                                    overlapSettings,
+                                    searchOverlap,
                                     graph,
                                     data,
                                     wiggleSelection,
@@ -1192,11 +1224,16 @@ namespace gmml
                             wiggleAll(trial, settings, selection, 2, preferences);
                             pinDownstreamOmegas(trial);
                             double overlap = overlapSum(trial);
+                            bool reachedTarget = pursueTarget && !stillOverlapping(trial);
                             double improvement = bestOverlap - overlap;
-                            if (improvement > 4.5)
+                            if (reachedTarget || (pursueTarget ? overlap < bestOverlap : improvement > 4.5))
                             {
                                 bestState = trial;
                                 bestOverlap = overlap;
+                            }
+                            if (reachedTarget)
+                            {
+                                break;
                             }
                         }
                         current = bestState;
@@ -1204,7 +1241,10 @@ namespace gmml
                     const size_t maxRandomizationCycles =
                         resolutionSettings.omegaCycleMultiplier * resolutionSettings.randomizationCycles;
                     AngleSettings initialAngleSettings = angleSettingsForCycle(0);
-                    for (size_t randCycle = 0; randCycle < maxRandomizationCycles; randCycle++)
+                    MutableData bestOverall = state;
+                    double bestOverallOverlap = overlapSum(state);
+                    bool hitTarget = pursueTarget && !stillOverlapping(state);
+                    for (size_t randCycle = 0; randCycle < maxRandomizationCycles && !hitTarget; randCycle++)
                     {
                         if (randCycle > 0)
                         {
@@ -1212,16 +1252,36 @@ namespace gmml
                                 drawAndSet(state, defaultGlycositeAngleSettings, true);
                             if (!stillOverlapping(state))
                             {
+                                hitTarget = true;
                                 break;
                             }
                             wiggleAll(state, initialAngleSettings, selection, 2, preferences);
                             pinDownstreamOmegas(state);
+                            if (pursueTarget && !stillOverlapping(state))
+                            {
+                                hitTarget = true;
+                                break;
+                            }
                         }
                         persistDownstream(state);
+                        if (pursueTarget)
+                        {
+                            double sum = overlapSum(state);
+                            if (sum < bestOverallOverlap)
+                            {
+                                bestOverall = state;
+                                bestOverallOverlap = sum;
+                            }
+                        }
                         if (!stillOverlapping(state))
                         {
+                            hitTarget = true;
                             break;
                         }
+                    }
+                    if (pursueTarget && !hitTarget)
+                    {
+                        state = bestOverall;
                     }
                 };
                 auto alternativesOf = [&](const StructureStats& parent, bool isSample, size_t parentIndex)

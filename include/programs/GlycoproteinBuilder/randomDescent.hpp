@@ -66,7 +66,8 @@ namespace gmml
             const OverlapSettings& overlapSettings,
             const assembly::Graph& graph,
             const AssemblyData& data,
-            const GlycoproteinState& initialState);
+            const GlycoproteinState& initialState,
+            bool stopWhenResolved);
 
         std::vector<GlycanShapePreference> randomizeInitialShapePreference(
             pcg32& rng,
@@ -92,7 +93,9 @@ namespace gmml
             const MutableData& initialState,
             size_t persistCycles,
             size_t randomizationCycles,
-            bool deleteSitesUntilResolved);
+            bool deleteSitesUntilResolved,
+            bool pursueOverlapTarget,
+            double acceptanceThreshold);
     } // namespace gpbuilder
 } // namespace gmml
 
