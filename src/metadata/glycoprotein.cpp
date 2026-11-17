@@ -27,7 +27,7 @@ namespace gmml
         // Dear future self, the order that you add the atoms to the residue matters for superimposition
         // ie N, CA, CB, not CB, CA, N.
         const std::vector<GlycosylationEntry> glycosylationTableData {
-            {"ASN", "NLN", "ND2", {"ND2", "CG", "OD1"}, {{109.3, 180, 1.53}, {109.3, 261, 1.325}, {126, 0, 1.22}}},
+            {"ASN", "NLN", "ND2", {"ND2", "CG", "OD1"}, {{105.0, 180, 1.53}, {120.0, 261, 1.325}, {126, 0, 1.22}}},
             {"THR", "OLT", "OG1",  {"OG1", "CB", "CA"},  {{112, 68, 1.46}, {109.3, 75, 1.53}, {109.3, 125, 1.53}}},
             {"SER", "OLS",  "OG",   {"OG", "CB", "CA"},  {{112, 68, 1.46}, {109.3, 75, 1.53}, {109.3, 125, 1.53}}},
             {"TYR", "OLY",  "OH",  {"OH", "CZ", "CE1"},      {{112, 68, 1.46}, {117, 60, 1.35}, {120, 180, 1.37}}}
